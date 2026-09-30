@@ -295,6 +295,107 @@ internal static class HeadlessSelfTest
             }
             window.AddSession();
             Check("new comparison tab is independent", window.ActivePane != pane && window.ActivePane.LeftEditor.Text == "");
+            var workspaceLeft = Path.Combine(output, "workspace-left.txt"); var workspaceRight = Path.Combine(output, "workspace-right.txt");
+            File.WriteAllText(workspaceLeft, "same\nleft\n", new UTF8Encoding(false)); File.WriteAllText(workspaceRight, "same\nright\n", new UTF8Encoding(false));
+            var tableLeft = Path.Combine(output, "workspace-left.csv"); var tableRight = Path.Combine(output, "workspace-right.csv");
+            File.WriteAllText(tableLeft, "id;value\n1;'semi;colon'\n"); File.WriteAllText(tableRight, "id;value\n1;'changed'\n");
+            var foldersLeft = Path.Combine(output, "workspace-left-dir"); var foldersRight = Path.Combine(output, "workspace-right-dir");
+            foreach (var folder in new[] { foldersLeft, foldersRight })
+            {
+                Directory.CreateDirectory(Path.Combine(folder, "nested"));
+                File.WriteAllText(Path.Combine(folder, "a.txt"), "same"); File.WriteAllText(Path.Combine(folder, "skip.bin"), "different");
+                File.WriteAllText(Path.Combine(folder, "ignore.txt"), "excluded"); File.WriteAllText(Path.Combine(folder, "nested", "deeper.txt"), "nested");
+            }
+            var projectPath = Path.Combine(output, "workspace.diffbeacon.json");
+            var project = new ComparisonWorkspace { Entries = [
+                new() { LeftPath = workspaceLeft, RightPath = workspaceRight, Mode = "Text", LeftDescription = "原本（編集禁止）", RightDescription = "変更後", LeftReadOnly = true, LegacySettings = new() { ["prediffer"] = "unregistered-tool.exe" } },
+                new() { LeftPath = tableLeft, RightPath = tableRight, Mode = "Table", TableDelimiter = ';', TableQuote = '\'', TableAllowNewlinesInQuotes = false },
+                new() { LeftPath = foldersLeft, RightPath = foldersRight, Mode = "Folder", Recursive = false, FolderMode = "Hash", ExcludedPaths = "ignore.txt", LegacyFilter = "*.txt", RightReadOnly = true }
+            ], ActiveEntryIndex = 1 };
+            Pump(WorkspaceStore.SaveWorkspaceAsync(projectPath, project)); Pump(window.OpenWorkspaceAsync(projectPath, discardChanges: true));
+            Check("workspace opens all comparisons in order and restores active tab", window.SessionPanes.Count == 3 && window.ActivePane == window.SessionPanes[1] && window.SessionPanes.Select(x => x.LeftPath.Text).SequenceEqual(project.Entries.Select(x => x.LeftPath)));
+            Check("workspace table applies custom separator and quote", window.ActivePane.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text == "semi;colon"));
+            Screenshot("workspace-table.png");
+            window.SelectSession(2); Dispatcher.UIThread.RunJobs();
+            var folderPane = window.SessionPanes[2];
+            var projectDirectoryRows = folderPane.GetVisualDescendants().OfType<ListBox>().SelectMany(list => list.Items.OfType<DiffBeacon.Core.DirectoryEntry>()).ToArray();
+            Check("workspace folder applies mask exclusion and nonrecursive comparison", projectDirectoryRows.Any(row => row.RelativePath == "a.txt") && !projectDirectoryRows.Any(row => row.RelativePath is "skip.bin" or "ignore.txt" || row.RelativePath.Contains("deeper", StringComparison.Ordinal)));
+            Screenshot("workspace-folder.png");
+            var textPane = window.SessionPanes[0]; window.SelectSession(0); Dispatcher.UIThread.RunJobs();
+            Check("workspace retains unsupported plugin without registering or running it", textPane.CaptureProject().LegacySettings["prediffer"] == "unregistered-tool.exe" && textPane.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text?.Contains("未適用の旧設定", StringComparison.Ordinal) == true));
+            Check("workspace readonly is applied to actual text editor", textPane.LeftEditor.IsReadOnly && !textPane.RightEditor.IsReadOnly);
+            textPane.NavigateDifference(1); var beforeReadOnly = textPane.LeftEditor.Text;
+            rejected = false; try { textPane.CopySelected(false); } catch (InvalidOperationException) { rejected = true; }
+            Check("workspace readonly refuses diff copy into protected side", rejected && textPane.LeftEditor.Text == beforeReadOnly);
+            rejected = false; try { Pump(textPane.SaveAsync(false)); } catch (InvalidOperationException) { rejected = true; }
+            Check("workspace readonly refuses original save", rejected && File.ReadAllText(workspaceLeft) == "same\nleft\n");
+            textPane.ResultEditor.Text = "replacement";
+            rejected = false; try { Pump(textPane.SaveMergeResultToAsync(workspaceLeft)); } catch (InvalidOperationException) { rejected = true; }
+            Check("workspace readonly refuses merge output targeting protected input", rejected && File.ReadAllText(workspaceLeft) == "same\nleft\n");
+            rejected = false; try { Pump(window.SaveWorkspaceAsync(workspaceLeft)); } catch (InvalidOperationException) { rejected = true; }
+            Check("workspace save cannot overwrite protected comparison input", rejected && File.ReadAllText(workspaceLeft) == "same\nleft\n");
+            textPane.DiscardChanges(); Screenshot("workspace-readonly.png");
+            var invalidProject = Path.Combine(output, "workspace-invalid.json"); File.WriteAllText(invalidProject, "{\"entries\":[null],\"formatVersion\":1}");
+            var currentPanes = window.SessionPanes.ToArray(); textPane.RightEditor.Text += "pending edit";
+            rejected = false; try { Pump(window.OpenWorkspaceAsync(invalidProject)); } catch (InvalidDataException) { rejected = true; }
+            Check("invalid workspace retains existing tabs and unsaved text", rejected && window.SessionPanes.SequenceEqual(currentPanes) && textPane.RightEditor.Text!.EndsWith("pending edit", StringComparison.Ordinal));
+            var opening = window.OpenWorkspaceAsync(projectPath);
+            var dialogWait = Stopwatch.StartNew();
+            while (!window.OwnedWindows.Any(dialog => dialog.Title == "未保存の変更") && !opening.IsCompleted)
+            { Dispatcher.UIThread.RunJobs(); if (dialogWait.Elapsed > TimeSpan.FromSeconds(30)) throw new TimeoutException("プロジェクト確認が表示されません。"); Thread.Sleep(5); }
+            var projectDialog = window.OwnedWindows.Single(dialog => dialog.Title == "未保存の変更");
+            projectDialog.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "キャンセル")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Pump(opening);
+            Check("canceling workspace replacement preserves all tabs and pending edits", !opening.Result && window.SessionPanes.SequenceEqual(currentPanes) && textPane.HasUnsavedChanges);
+            textPane.DiscardChanges(); window.SelectSession(2);
+            var savedWorkspace = Path.Combine(output, "workspace-saved.json"); Pump(window.SaveWorkspaceAsync(savedWorkspace));
+            Pump(window.OpenWorkspaceAsync(savedWorkspace, discardChanges: true));
+            Check("workspace GUI save reload preserves all tab settings and selection", window.SessionPanes.Count == 3 && window.ActivePane == window.SessionPanes[2] && window.SessionPanes[0].CaptureProject().LeftReadOnly && window.SessionPanes[1].CaptureProject().TableQuote == '\'' && !window.SessionPanes[2].CaptureProject().Recursive && window.SessionPanes[2].CaptureProject().ExcludedPaths == "ignore.txt");
+            window.SelectSession(0); Dispatcher.UIThread.RunJobs(); textPane = window.ActivePane;
+            textPane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "比較の設定…")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
+            var settingsDialog = window.OwnedWindows.Single(dialog => dialog.Title == "比較の設定");
+            settingsDialog.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "右を読取り専用にする")).IsChecked = true;
+            settingsDialog.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "適用")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
+            Check("project options dialog applies readonly to live editor and captured settings", textPane.RightEditor.IsReadOnly && textPane.CaptureProject().RightReadOnly);
+            var projectBinaryLeft = Path.Combine(output, "workspace-left.bin"); var projectBinaryRight = Path.Combine(output, "workspace-right.bin");
+            File.WriteAllBytes(projectBinaryLeft, [1, 2, 3]); File.WriteAllBytes(projectBinaryRight, [1, 9, 3]);
+            var readOnlyAncestor = Path.Combine(output, "workspace-readonly-ancestor.7z"); File.WriteAllText(readOnlyAncestor, "keep ancestor");
+            textPane.ApplyProject(new() { LeftPath = projectBinaryLeft, RightPath = projectBinaryRight, BasePath = readOnlyAncestor, BaseReadOnly = true, Mode = "Binary", LeftReadOnly = true }); textPane.DiscardChanges(); Pump(textPane.CompareProjectAsync());
+            var binaryEditors = textPane.GetVisualDescendants().OfType<TextBox>().Where(box => box.AcceptsReturn).ToArray();
+            Check("project readonly reaches binary editor", binaryEditors.Any(editor => editor.IsReadOnly && (editor.Text ?? "").Contains("01 02 03", StringComparison.Ordinal)));
+            var binaryRanges = textPane.GetVisualDescendants().OfType<ListBox>().Single(list => list.Items.Count > 0 && list.Items[0]?.ToString()?.StartsWith("0x", StringComparison.Ordinal) == true);
+            binaryRanges.SelectedIndex = 0;
+            textPane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "← 選択範囲")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
+            var binaryPanel = textPane.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().Single();
+            var binarySaved = Path.Combine(output, "workspace-binary-copy.bin"); Pump(binaryPanel.SaveToAsync(false, binarySaved));
+            Check("project readonly refuses binary merge into protected side", File.ReadAllBytes(binarySaved).SequenceEqual(new byte[] { 1, 2, 3 }) && !textPane.HasUnsavedChanges);
+            rejected = false; try { Pump(binaryPanel.SaveToAsync(true, readOnlyAncestor)); } catch (InvalidOperationException) { rejected = true; }
+            Check("binary save protects readonly ancestor through actual save path", rejected && File.ReadAllText(readOnlyAncestor) == "keep ancestor");
+            rejected = false; try { Pump(binaryPanel.SaveToAsync(true, projectBinaryLeft)); } catch (InvalidOperationException) { rejected = true; }
+            Check("binary save protects readonly opposite input", rejected && File.ReadAllBytes(projectBinaryLeft).SequenceEqual(new byte[] { 1, 2, 3 }));
+            textPane.ApplyProject(new() { LeftPath = sevenPath, RightPath = zipPath, BasePath = readOnlyAncestor, BaseReadOnly = true, Mode = "Archive" }); textPane.DiscardChanges(); Pump(textPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            var projectArchivePanel = textPane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+            rejected = false; try { Pump(projectArchivePanel.ExportToAsync(false, "folder/value.txt", readOnlyAncestor)); } catch (InvalidOperationException) { rejected = true; }
+            Check("archive export protects readonly ancestor", rejected && File.ReadAllText(readOnlyAncestor) == "keep ancestor");
+            rejected = false; try { Pump(projectArchivePanel.RepackToAsync(false, readOnlyAncestor)); } catch (InvalidOperationException) { rejected = true; }
+            Check("archive repack protects readonly ancestor", rejected && File.ReadAllText(readOnlyAncestor) == "keep ancestor");
+            textPane.ApplyProject(new() { LeftPath = sevenPath, RightPath = zipPath, BasePath = foldersLeft, BaseReadOnly = true, Mode = "Archive" }); textPane.DiscardChanges(); Pump(textPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            projectArchivePanel = textPane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+            var forbiddenExtract = Path.Combine(foldersLeft, "protected-extract");
+            rejected = false; try { Pump(projectArchivePanel.ExtractToAsync(false, forbiddenExtract)); } catch (InvalidOperationException) { rejected = true; }
+            Check("archive extraction cannot write inside readonly project directory", rejected && !Directory.Exists(forbiddenExtract));
+            textPane.ApplyProject(new() { LeftPath = "https://example.invalid/left", RightPath = "https://example.invalid/right", Mode = "Web", ProviderId = "external-not-registered" }); textPane.DiscardChanges(); Pump(textPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            Check("project unknown provider is preserved and requires explicit registration", textPane.CaptureProject().ProviderId == "external-not-registered" && textPane.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text?.Contains("未登録", StringComparison.Ordinal) == true));
+            var multilineLeft = Path.Combine(output, "workspace-multiline-left.csv"); var multilineRight = Path.Combine(output, "workspace-multiline-right.csv");
+            File.WriteAllText(multilineLeft, "id;value\n1;'two\nlines'\n"); File.WriteAllText(multilineRight, "id;value\n1;'two\nlines'\n");
+            textPane.ApplyProject(new() { LeftPath = multilineLeft, RightPath = multilineRight, Mode = "Table", TableDelimiter = ';', TableQuote = '\'', TableAllowNewlinesInQuotes = false }); textPane.DiscardChanges(); Pump(textPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            Check("project table forbids quoted newlines when disabled", textPane.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text?.Contains("引用符内の改行は許可されていません", StringComparison.Ordinal) == true));
+            textPane.ApplyProject(textPane.CaptureProject() with { TableAllowNewlinesInQuotes = true }); Pump(textPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            Check("project table accepts quoted newlines when enabled", textPane.GetVisualDescendants().OfType<TextBlock>().Count(block => block.Text == "two\nlines") == 2);
+            var multiXml = Path.Combine(output, "workspace-legacy.WinMerge");
+            File.WriteAllText(multiXml, "<project><paths><left>workspace-left.txt</left><right>workspace-right.txt</right><left-desc>旧プロジェクト</left-desc><left-readonly>1</left-readonly></paths><paths><left>workspace-left.csv</left><right>workspace-right.csv</right><window-type>2</window-type><table-delimiter>;</table-delimiter><table-quote>'</table-quote><table-allownewlinesinquotes>0</table-allownewlinesinquotes></paths></project>");
+            Pump(window.OpenWorkspaceAsync(multiXml, discardChanges: true));
+            Check("legacy multi-project opens separate text and table tabs", window.SessionPanes.Count == 2 && window.SessionPanes[0].LeftEditor.IsReadOnly && window.SessionPanes[1].CaptureProject().Mode == "Table");
+            window.SelectSession(1); Screenshot("workspace-legacy.png");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }
@@ -309,7 +410,7 @@ internal static class HeadlessSelfTest
             writer.WriteEndArray(); writer.WriteEndObject();
             window?.Close();
         }
-        void Check(string name, bool passed) { assertions.Add((name, passed, "")); if (!passed) throw new InvalidOperationException(name); }
+        void Check(string name, bool passed, string detail = "") { assertions.Add((name, passed, detail)); if (!passed) throw new InvalidOperationException(name + (detail.Length > 0 ? ": " + detail : "")); }
         void TwoWay(string leftText, string rightText)
         {
             var currentPane = paneForTests(); currentPane.BasePath.Text = ""; currentPane.DiscardChanges();

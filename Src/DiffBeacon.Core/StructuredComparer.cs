@@ -18,9 +18,10 @@ public sealed record StructuredDiffResult(StructuredTable Left, StructuredTable 
 
 public static class StructuredComparer
 {
-    public static StructuredTable ParseDelimited(string text, char delimiter = ',')
+    public static StructuredTable ParseDelimited(string text, char delimiter = ',', char quote = '"', bool allowNewlinesInQuotes = true)
     {
-        if (delimiter is '\r' or '\n' or '"') throw new ArgumentException("区切り文字が不正です。", nameof(delimiter));
+        if (delimiter is '\r' or '\n' or '\0' || char.IsSurrogate(delimiter) || delimiter == quote) throw new ArgumentException("区切り文字が不正です。", nameof(delimiter));
+        if (quote is '\r' or '\n' or '\0' || char.IsSurrogate(quote)) throw new ArgumentException("引用符が不正です。", nameof(quote));
         var rows = new List<IReadOnlyList<string>>();
         if (text.Length == 0) return new(rows);
         var row = new List<string>();
@@ -35,15 +36,16 @@ public static class StructuredComparer
             endedRow = false;
             if (quoted)
             {
-                if (character == '"')
+                if (character == quote)
                 {
-                    if (index + 1 < text.Length && text[index + 1] == '"') { cell.Append('"'); index++; }
+                    if (index + 1 < text.Length && text[index + 1] == quote) { cell.Append(quote); index++; }
                     else { quoted = false; quoteClosed = true; }
                 }
+                else if (!allowNewlinesInQuotes && character is '\r' or '\n') throw new FormatException("引用符内の改行は許可されていません。");
                 else cell.Append(character);
                 continue;
             }
-            if (character == '"' && atStart) { quoted = true; atStart = false; continue; }
+            if (character == quote && atStart) { quoted = true; atStart = false; continue; }
             if (character == delimiter || character is '\r' or '\n')
             {
                 row.Add(cell.ToString());
@@ -59,7 +61,7 @@ public static class StructuredComparer
                 }
                 continue;
             }
-            if (quoteClosed || character == '"') throw new FormatException($"区切りテキストの {index + 1} 文字目に不正な引用符があります。");
+            if (quoteClosed || character == quote) throw new FormatException($"区切りテキストの {index + 1} 文字目に不正な引用符があります。");
             cell.Append(character);
             atStart = false;
         }
@@ -69,11 +71,11 @@ public static class StructuredComparer
     }
 
     public static StructuredDiffResult CompareDelimited(string left, string right, char delimiter = ',',
-        ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+        ComparisonOptions? options = null, CancellationToken cancellationToken = default, char quote = '"', bool allowNewlinesInQuotes = true)
     {
         options ??= new();
-        var a = ParseDelimited(left, delimiter);
-        var b = ParseDelimited(right, delimiter);
+        var a = ParseDelimited(left, delimiter, quote, allowNewlinesInQuotes);
+        var b = ParseDelimited(right, delimiter, quote, allowNewlinesInQuotes);
         var differences = new List<CellDifference>();
         for (var row = 0; row < Math.Max(a.RowCount, b.RowCount); row++)
         {

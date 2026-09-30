@@ -71,7 +71,7 @@ var comparison = TextDiffer.Compare(left.Text, right.Text, options, cancellation
 
 `UnifiedPatch.Create(leftText, rightText, leftPath, rightPath, contextLines = 3)` は一つのファイルの unified patch を作り、混在行末と最終改行なしマーカーを保持します。`Apply(text, patch)` は全 hunk の位置・行数・文脈を検証し、成功時だけ完成文字列を返します。不正／複数ファイルパッチは `FormatException`、文脈不一致は `InvalidOperationException`。`TryApply` は失敗時に元の文字列とエラーを返します。ファイルを直接書き換えないのでパッチ内パスを使ったファイルアクセスはありません。
 
-`StructuredComparer.ParseDelimited(text, delimiter)` と `CompareDelimited(left, right, delimiter, options?, cancellationToken)` は CSV/TSV の引用符、二重引用符エスケープ、引用セル内の改行を扱います。比較は位置による行・列単位で、`CellDifference` の番号は 1 始まりです。キー列による行再整列は行いません。
+`StructuredComparer.ParseDelimited(text, delimiter, quote?, allowNewlinesInQuotes?)`と`CompareDelimited(left, right, delimiter, options?, cancellationToken, quote?, allowNewlinesInQuotes?)`は任意の1文字区切り・引用符、その引用符の二重エスケープ、引用セル内の改行を扱います。既定はカンマ・ダブルクォート・引用内改行許可です。改行禁止時の引用内改行、区切りと引用符の一致、NUL・改行・単独サロゲートの指定は拒否します。比較は位置による行・列単位で、`CellDifference`の番号は1始まりです。キー列による行再整列は行いません。
 
 `NormalizeJson(text, sortProperties = true)` / `CompareJson(left, right, options?)` はオブジェクトプロパティを ordinal ソートして整形します。配列の順番は保持し、数値は十進係数と指数で精度を失わずに正規化します (`1.0` と `1`、`1e2` と `100` は同じ結果)。巨大整数を double へ丸めません。構文不正／深さ 128 超／入力 16,777,216 文字超／数値 65,536 文字超／指数 512 文字超は `JsonException` です。
 

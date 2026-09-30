@@ -10,6 +10,7 @@ public sealed partial class ComparisonPane
         if (folders.Count == 0 || folders[0].TryGetLocalPath() is not string directory) return;
         var file = await _owner.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = "非暗号化アーカイブを作成", SuggestedFileName = "archive.7z", ShowOverwritePrompt = true, FileTypeChoices = ArchivePickers.FileTypes });
         if (file?.TryGetLocalPath() is not string path) return;
+        EnsureProjectOutputWritable(path);
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         _status.Text = "アーカイブを作成しています…";
         await ArchiveActions.CreateAsync(directory, path, _operation.Token);

@@ -69,9 +69,10 @@ internal static class CommandLine
             }
             if (command == "--project-copy")
             {
-                var project = await WorkspaceStore.LoadAsync(args[1], token);
-                await WorkspaceStore.SaveAsync(args[2], project, token);
-                WriteJson(w => w.WriteString("output", Path.GetFullPath(args[2]))); return 0;
+                var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], token);
+                if (workspace.Entries.Length == 1) await WorkspaceStore.SaveAsync(args[2], workspace.Entries[0], token);
+                else await WorkspaceStore.SaveWorkspaceAsync(args[2], workspace, token);
+                WriteJson(w => { w.WriteString("output", Path.GetFullPath(args[2])); w.WriteNumber("entries", workspace.Entries.Length); w.WriteNumber("activeEntryIndex", workspace.ActiveEntryIndex); }); return 0;
             }
             if (command == "--report")
             {

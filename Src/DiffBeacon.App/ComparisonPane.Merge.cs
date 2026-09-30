@@ -138,6 +138,7 @@ public sealed partial class ComparisonPane
         SynchronizeMergeText();
         if (CurrentMergeSession is { UnresolvedCount: > 0 } && !allowUnresolved) throw new InvalidOperationException("未解決の差分が残っています。");
         var output = Path.GetFullPath(path);
+        EnsureProjectOutputWritable(output);
         if (!_textSaveAllowed)
         {
             foreach (var source in new[] { LeftPath.Text, BasePath.Text, RightPath.Text })

@@ -12,6 +12,7 @@ namespace DiffBeacon.App;
 public sealed class ArchivePanel : UserControl, IDisposable
 {
     private readonly string _leftPath, _rightPath;
+    private readonly Action<string>? _guardOutput;
     private readonly CancellationTokenSource _lifetime;
     private CancellationTokenSource? _operation;
     private int _previewVersion;
@@ -27,9 +28,9 @@ public sealed class ArchivePanel : UserControl, IDisposable
     public string PreviewText => _preview.Text ?? "";
     public string StatusText => _status.Text ?? "";
 
-    private ArchivePanel(string left, string right, CancellationToken token)
+    private ArchivePanel(string left, string right, CancellationToken token, Action<string>? guardOutput)
     {
-        _leftPath = left; _rightPath = right; _lifetime = CancellationTokenSource.CreateLinkedTokenSource(token);
+        _leftPath = left; _rightPath = right; _guardOutput = guardOutput; _lifetime = CancellationTokenSource.CreateLinkedTokenSource(token);
         var panel = new DockPanel(); var actions = new WrapPanel(); actions.Children.Add(LeftPassword); actions.Children.Add(RightPassword);
         Button("アーカイブを再比較", RefreshAsync);
         Button("左エントリを書き出す", () => ExportAsync(false)); Button("右エントリを書き出す", () => ExportAsync(true));
@@ -57,9 +58,9 @@ public sealed class ArchivePanel : UserControl, IDisposable
         }
     }
     public static bool Supports(string path) => ManagedArchive.SupportsOutput(path) || Path.GetExtension(path).Equals(".rar", StringComparison.OrdinalIgnoreCase);
-    public static async Task<ArchivePanel> CreateAsync(string left, string right, CancellationToken token)
+    public static async Task<ArchivePanel> CreateAsync(string left, string right, CancellationToken token, Action<string>? guardOutput = null)
     {
-        var panel = new ArchivePanel(left, right, token); await panel.GuardAsync(panel.RefreshAsync); return panel;
+        var panel = new ArchivePanel(left, right, token, guardOutput); await panel.GuardAsync(panel.RefreshAsync); return panel;
     }
     public async Task RefreshAsync()
     {
@@ -111,6 +112,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     }
     public Task ExtractToAsync(bool rightSide, string directory, CancellationToken token = default)
     {
+        _guardOutput?.Invoke(directory);
         var input = rightSide ? _rightPath : _leftPath; var password = Password(rightSide);
         return Task.Run(() => new ManagedArchive().ExtractAll(input, directory, password, token), token);
     }
@@ -144,6 +146,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private string? Password(bool rightSide) => string.IsNullOrEmpty(rightSide ? RightPassword.Text : LeftPassword.Text) ? null : rightSide ? RightPassword.Text : LeftPassword.Text;
     private void EnsureNewOutput(string output)
     {
+        _guardOutput?.Invoke(output);
         foreach (var original in new[] { _leftPath, _rightPath })
             if (ArchivePaths.SameFile(output, original)) throw new IOException("比較元アーカイブは上書きできません。");
     }

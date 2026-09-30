@@ -76,6 +76,271 @@ string Tar(string name, params (string Entry, string Content)[] entries)
 
 void Check(string name, bool passed, string detail = "") => assertions.Add(new(name, passed ? "passed" : "failed", detail));
 
+async Task ProjectWorkspaceCases()
+{
+    // 失敗条件: 比較組・順序・active・設定の欠落、旧単組形式の破壊、パスの誤変換、
+    // 不正/過大入力の受入れ、旧プラグイン実行、拒否時の原本破壊、一時ファイル残留。
+    bool ContainsFields(JsonElement expected, JsonElement actual) => expected.ValueKind switch
+    {
+        JsonValueKind.Object => actual.ValueKind == JsonValueKind.Object && expected.EnumerateObject().All(p => actual.TryGetProperty(p.Name, out var value) && ContainsFields(p.Value, value)),
+        JsonValueKind.Array => actual.ValueKind == JsonValueKind.Array && expected.GetArrayLength() == actual.GetArrayLength()
+            && expected.EnumerateArray().Select((entry, index) => ContainsFields(entry, actual[index])).All(equal => equal),
+        _ => JsonElement.DeepEquals(expected, actual)
+    };
+    void VerifyJson(string name, string path, Action<JsonElement> verify)
+    {
+        Check(name + " output exists", File.Exists(path), path);
+        if (!File.Exists(path)) return;
+        try { using var document = JsonDocument.Parse(File.ReadAllText(path)); verify(document.RootElement); }
+        catch (Exception exception) when (exception is JsonException or KeyNotFoundException or InvalidOperationException)
+        { Check(name + " structure", false, exception.Message); }
+    }
+    async Task Reject(string name, string source)
+    {
+        var saved = Text("workspace-rejected/" + name + ".json", "existing output must survive\n");
+        var bytes = File.ReadAllBytes(saved);
+        await Run("workspace-reject-" + name, 2, false, "--project-copy", source, saved);
+        Check("workspace reject preserves " + name, File.Exists(saved) && File.ReadAllBytes(saved).SequenceEqual(bytes));
+    }
+
+    var fullEntry = """
+        {"leftPath":"left.txt","basePath":"base.txt","rightPath":"right.txt","mode":"Table",
+         "providerId":"html-text","fileFilterPath":"filters/example.flt","ignoreCase":true,
+         "ignoreWhitespace":true,"ignoreBlankLines":true,"ignoreLinePattern":"^generated$",
+         "ignoreNumbers":true,"commentSyntax":3,"whitespace":3,
+         "substitutionRules":[{"pattern":"foo","replacement":"bar","matchCase":false,"useRegex":false,"wholeWord":true,"enabled":true},
+           {"pattern":"[","replacement":"disabled","matchCase":true,"useRegex":true,"wholeWord":false,"enabled":false}],
+         "leftDescription":"左 & <日本語>","baseDescription":"祖先","rightDescription":"右",
+         "leftReadOnly":true,"baseReadOnly":true,"rightReadOnly":true,"recursive":false,
+         "folderMode":"Hash","excludedPaths":"cache;generated","legacyFilter":"*.cs;*.xml",
+         "tableDelimiter":";","tableQuote":"\"","tableAllowNewlinesInQuotes":true,
+         "legacySettings":{"unpacker":"DO_NOT_EXECUTE.exe","prediffer":"DO_NOT_EXECUTE_TOO.exe","future-option":"preserve & value"}}
+        """;
+    var secondEntry = """
+        {"leftPath":"https://example.invalid/left?a=1&b=2","rightPath":"http://example.invalid/right",
+         "mode":"Web","recursive":true,"folderMode":"TimestampAndSize","tableAllowNewlinesInQuotes":false}
+        """;
+    var workspace = Text("workspace-all-fields.json", "{\"formatVersion\":1,\"entries\":[" + fullEntry + "," + secondEntry + "],\"activeEntryIndex\":1}");
+    var savedWorkspace = Path.Combine(fixtures, "workspace-all-fields-saved.json");
+    var result = await Run("workspace-all-fields", 0, true, "--project-copy", workspace, savedWorkspace);
+    VerifyJson("workspace all fields", savedWorkspace, actual =>
+    {
+        using var expected = JsonDocument.Parse(File.ReadAllText(workspace));
+        Check("workspace all fields order and active preserved", ContainsFields(expected.RootElement, actual));
+    });
+    if (result.ExitCode == 0)
+    {
+        using var response = JsonDocument.Parse(result.Stdout);
+        var root = response.RootElement;
+        Check("workspace CLI metadata", root.TryGetProperty("entries", out var count) && count.GetInt32() == 2
+            && root.TryGetProperty("activeEntryIndex", out var active) && active.GetInt32() == 1
+            && root.TryGetProperty("output", out var target) && target.GetString() == savedWorkspace);
+    }
+    var savedAgain = Path.Combine(fixtures, "workspace-all-fields-again.json");
+    await Run("workspace-json-roundtrip", 0, true, "--project-copy", savedWorkspace, savedAgain);
+    Check("workspace stable roundtrip bytes", File.Exists(savedWorkspace) && File.Exists(savedAgain)
+        && File.ReadAllBytes(savedWorkspace).SequenceEqual(File.ReadAllBytes(savedAgain)));
+
+    var single = Text("workspace-old-single.json", "{\"leftPath\":\"old-left.txt\",\"rightPath\":\"old-right.txt\",\"mode\":\"Text\"}");
+    var savedSingle = Path.Combine(fixtures, "workspace-old-single-saved.json");
+    await Run("workspace-old-single", 0, true, "--project-copy", single, savedSingle);
+    VerifyJson("workspace old single", savedSingle, actual => Check("workspace old single root retained",
+        !actual.TryGetProperty("entries", out _) && actual.GetProperty("leftPath").GetString() == "old-left.txt"));
+    VerifyJson("workspace old single defaults", savedSingle, actual => Check("workspace omitted fields preserve constructor defaults",
+        actual.GetProperty("basePath").GetString() == "" && actual.GetProperty("recursive").GetBoolean()
+        && actual.GetProperty("folderMode").GetString() == "Content" && actual.GetProperty("substitutionRules").GetArrayLength() == 0
+        && !actual.GetProperty("legacySettings").EnumerateObject().Any()));
+    var defaultWrapper = Text("workspace-default-wrapper.json", "{\"entries\":[{},{}]}");
+    var defaultWrapperSaved = Path.Combine(fixtures, "workspace-default-wrapper-saved.json");
+    await Run("workspace-wrapper-defaults", 0, true, "--project-copy", defaultWrapper, defaultWrapperSaved);
+    VerifyJson("workspace wrapper defaults", defaultWrapperSaved, actual => Check("workspace omitted version and active index restored",
+        actual.GetProperty("formatVersion").GetInt32() == 1 && actual.GetProperty("activeEntryIndex").GetInt32() == 0
+        && actual.GetProperty("entries").EnumerateArray().All(entry => entry.GetProperty("recursive").GetBoolean() && entry.GetProperty("basePath").GetString() == "")));
+    foreach (var enabled in new[] { true, false })
+    {
+        var suffix = enabled ? "omitted" : "false";
+        var flags = enabled ? "" : ",\"matchCase\":false,\"useRegex\":false,\"enabled\":false";
+        var ruleProject = Text("workspace-rule-" + suffix + ".json", "{\"substitutionRules\":[{\"pattern\":\"build=[0-9]+\",\"replacement\":\"build=*\"" + flags + "}]}");
+        var ruleSaved = Path.Combine(fixtures, "workspace-rule-" + suffix + "-saved.json");
+        await Run("workspace-rule-" + suffix, 0, true, "--project-copy", ruleProject, ruleSaved);
+        VerifyJson("workspace rule " + suffix, ruleSaved, actual =>
+        {
+            var rule = actual.GetProperty("substitutionRules")[0];
+            Check("workspace rule flags " + suffix, rule.GetProperty("matchCase").GetBoolean() == enabled
+                && rule.GetProperty("useRegex").GetBoolean() == enabled && rule.GetProperty("enabled").GetBoolean() == enabled
+                && !rule.GetProperty("wholeWord").GetBoolean());
+        });
+    }
+    var fullSingle = Text("workspace-full-single.json", fullEntry);
+    var savedFullSingle = Path.Combine(fixtures, "workspace-full-single-saved.json");
+    await Run("workspace-full-single", 0, true, "--project-copy", fullSingle, savedFullSingle);
+    VerifyJson("workspace full single", savedFullSingle, actual =>
+    {
+        using var expected = JsonDocument.Parse(fullEntry);
+        Check("workspace full single fields", !actual.TryGetProperty("entries", out _) && ContainsFields(expected.RootElement, actual));
+    });
+    var maximum = Text("workspace-maximum.json", "{\"formatVersion\":1,\"entries\":[" + string.Join(',', Enumerable.Repeat(secondEntry, 256)) + "],\"activeEntryIndex\":255}");
+    var savedMaximum = Path.Combine(fixtures, "workspace-maximum-saved.json");
+    await Run("workspace-maximum", 0, true, "--project-copy", maximum, savedMaximum);
+    VerifyJson("workspace maximum", savedMaximum, actual => Check("workspace maximum count active",
+        actual.GetProperty("entries").GetArrayLength() == 256 && actual.GetProperty("activeEntryIndex").GetInt32() == 255));
+    var oneEntryWrapper = Text("workspace-one-entry.json", "{\"formatVersion\":1,\"entries\":[" + fullEntry + "],\"activeEntryIndex\":0}");
+    var savedOneEntry = Path.Combine(fixtures, "workspace-one-entry-saved.json");
+    await Run("workspace-one-entry", 0, true, "--project-copy", oneEntryWrapper, savedOneEntry);
+    VerifyJson("workspace one entry", savedOneEntry, actual =>
+    {
+        using var expected = JsonDocument.Parse(fullEntry);
+        Check("workspace one entry uses single root", !actual.TryGetProperty("entries", out _) && ContainsFields(expected.RootElement, actual));
+    });
+
+    foreach (var (method, mode) in new[] { (0, "Content"), (2, "Hash"), (4, "TimestampAndSize"), (99, "Content") })
+    {
+        var legacy = Text($"workspace-method-{method}.WinMerge", $"<project><paths><left>left</left><right>right</right><window-type>6</window-type><compare-method>{method}</compare-method></paths></project>");
+        var migrated = Path.Combine(fixtures, $"workspace-method-{method}.json");
+        await Run($"workspace-method-{method}", 0, true, "--project-copy", legacy, migrated);
+        VerifyJson($"workspace method {method}", migrated, actual =>
+        {
+            Check($"workspace folder method {method}", actual.GetProperty("folderMode").GetString() == mode && actual.GetProperty("recursive").GetBoolean());
+            if (method == 99) Check("workspace unsupported folder method preserved", actual.GetProperty("legacySettings").GetProperty("compare-method").GetString() == "99");
+        });
+    }
+
+    var environmentName = "DIFFBEACON_E2E_PROJECT_ROOT";
+    var previousEnvironment = Environment.GetEnvironmentVariable(environmentName);
+    var environmentRoot = Path.Combine(fixtures, "environment-root");
+    Environment.SetEnvironmentVariable(environmentName, environmentRoot);
+    try
+    {
+        var legacy = Text("workspace-nested/multiple.WinMerge", """
+            <project><paths><left>left &amp; 日本語.txt</left><middle>base.txt</middle><right>right.txt</right>
+            <left-desc>左 &amp; &lt;説明&gt;</left-desc><middle-desc>祖先</middle-desc><right-desc>右</right-desc>
+            <left-readonly>1</left-readonly><middle-readonly>1</middle-readonly><right-readonly>1</right-readonly>
+            <subfolders>0</subfolders><filter>*.cs;*.xml</filter><table-delimiter>;</table-delimiter><table-quote>&quot;</table-quote>
+            <table-allownewlinesinquotes>1</table-allownewlinesinquotes><unpacker>DO_NOT_EXECUTE.exe</unpacker>
+            <prediffer>DO_NOT_EXECUTE_TOO.exe</prediffer><future-option>preserve &amp; value</future-option></paths>
+            <paths><left>https://example.invalid/left?a=1&amp;b=2</left><right>http://example.invalid/right</right><window-type>5</window-type></paths>
+            <paths><left>%DIFFBEACON_E2E_PROJECT_ROOT%/env.txt</left><middle>C:\foreign\base.txt</middle><right>/foreign/right.txt</right></paths></project>
+            """);
+        var migrated = Path.Combine(fixtures, "workspace-multiple-legacy.json");
+        await Run("workspace-multiple-legacy", 0, true, "--project-copy", legacy, migrated);
+        VerifyJson("workspace legacy", migrated, actual =>
+        {
+            var entries = actual.GetProperty("entries");
+            Check("workspace legacy count active", entries.GetArrayLength() == 3 && actual.GetProperty("activeEntryIndex").GetInt32() == 0);
+            var first = entries[0];
+            Check("workspace legacy relative paths", first.GetProperty("leftPath").GetString() == Path.Combine(Path.GetDirectoryName(legacy)!, "left & 日本語.txt")
+                && first.GetProperty("basePath").GetString() == Path.Combine(Path.GetDirectoryName(legacy)!, "base.txt"));
+            Check("workspace legacy descriptions and read only", first.GetProperty("leftDescription").GetString() == "左 & <説明>"
+                && first.GetProperty("baseDescription").GetString() == "祖先" && first.GetProperty("rightDescription").GetString() == "右"
+                && first.GetProperty("leftReadOnly").GetBoolean() && first.GetProperty("baseReadOnly").GetBoolean() && first.GetProperty("rightReadOnly").GetBoolean());
+            Check("workspace legacy table folder settings", !first.GetProperty("recursive").GetBoolean()
+                && first.GetProperty("legacyFilter").GetString() == "*.cs;*.xml" && first.GetProperty("tableDelimiter").GetString() == ";"
+                && first.GetProperty("tableQuote").GetString() == "\"" && first.GetProperty("tableAllowNewlinesInQuotes").GetBoolean());
+            var unsupported = first.GetProperty("legacySettings");
+            Check("workspace unsupported legacy settings preserved", unsupported.GetProperty("unpacker").GetString() == "DO_NOT_EXECUTE.exe"
+                && unsupported.GetProperty("prediffer").GetString() == "DO_NOT_EXECUTE_TOO.exe" && unsupported.GetProperty("future-option").GetString() == "preserve & value");
+            Check("workspace legacy URLs unchanged", entries[1].GetProperty("leftPath").GetString() == "https://example.invalid/left?a=1&b=2"
+                && entries[1].GetProperty("rightPath").GetString() == "http://example.invalid/right" && entries[1].GetProperty("mode").GetString() == "Web");
+            Check("workspace legacy environment and foreign absolute paths", Path.GetFullPath(entries[2].GetProperty("leftPath").GetString()!) == Path.Combine(environmentRoot, "env.txt")
+                && entries[2].GetProperty("basePath").GetString() == @"C:\foreign\base.txt" && entries[2].GetProperty("rightPath").GetString() == "/foreign/right.txt");
+        });
+        var migratedAgain = Path.Combine(fixtures, "workspace-multiple-legacy-again.json");
+        await Run("workspace-legacy-json-roundtrip", 0, true, "--project-copy", migrated, migratedAgain);
+        Check("workspace legacy stable roundtrip", File.Exists(migrated) && File.Exists(migratedAgain)
+            && File.ReadAllBytes(migrated).SequenceEqual(File.ReadAllBytes(migratedAgain)));
+    }
+    finally { Environment.SetEnvironmentVariable(environmentName, previousEnvironment); }
+
+    foreach (var (name, content) in new (string, string)[]
+    {
+        ("empty", "{\"formatVersion\":1,\"entries\":[],\"activeEntryIndex\":0}"),
+        ("null-entry", "{\"formatVersion\":1,\"entries\":[null],\"activeEntryIndex\":0}"),
+        ("null-entries", "{\"formatVersion\":1,\"entries\":null,\"activeEntryIndex\":0}"),
+        ("null-base", "{\"basePath\":null}"),
+        ("null-mode", "{\"mode\":null}"),
+        ("null-folder-mode", "{\"folderMode\":null}"),
+        ("null-rules", "{\"substitutionRules\":null}"),
+        ("null-legacy-settings", "{\"legacySettings\":null}"),
+        ("unknown-mode", "{\"mode\":\"Unsupported\"}"),
+        ("unknown-folder-mode", "{\"folderMode\":\"Unsupported\"}"),
+        ("unknown-comments", "{\"commentSyntax\":999}"),
+        ("unknown-whitespace", "{\"whitespace\":999}"),
+        ("null-rule", "{\"substitutionRules\":[null]}"),
+        ("null-pattern", "{\"substitutionRules\":[{\"pattern\":null,\"replacement\":\"x\"}]}"),
+        ("null-replacement", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":null}]}"),
+        ("null-rule-flag", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":\"y\",\"enabled\":null}]}"),
+        ("null-legacy-value", "{\"legacySettings\":{\"unpacker\":null}}"),
+        ("unknown-version", "{\"formatVersion\":2,\"entries\":[{}],\"activeEntryIndex\":0}"),
+        ("negative-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":-1}"),
+        ("large-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":1}"),
+        ("too-many", "{\"formatVersion\":1,\"entries\":[" + string.Join(',', Enumerable.Repeat("{}", 257)) + "],\"activeEntryIndex\":0}"),
+        ("large-json", "{\"leftPath\":\"" + new string('x', 4 * 1024 * 1024 + 1) + "\"}"),
+        ("malformed-json", "{\"formatVersion\":1,\"entries\":[")
+    }) await Reject(name, Text("workspace-invalid/" + name + ".json", content));
+    await Reject("empty-xml", Text("workspace-invalid/empty.WinMerge", "<project/>"));
+    await Reject("too-many-xml", Text("workspace-invalid/many.WinMerge", "<project>" + string.Concat(Enumerable.Repeat("<paths><left>a</left><right>b</right></paths>", 257)) + "</project>"));
+    await Reject("dtd", Text("workspace-invalid/dtd.WinMerge", "<!DOCTYPE project [<!ENTITY attack 'injected'>]><project><paths><left>&attack;</left></paths></project>"));
+
+    var readOnly = Text("workspace-rejected/readonly.json", "protected project output\n");
+    var readOnlyBytes = File.ReadAllBytes(readOnly);
+    var attributes = File.GetAttributes(readOnly);
+    try
+    {
+        File.SetAttributes(readOnly, attributes | FileAttributes.ReadOnly);
+        await Run("workspace-readonly-output", 2, false, "--project-copy", workspace, readOnly);
+        Check("workspace read only output preserved", File.ReadAllBytes(readOnly).SequenceEqual(readOnlyBytes));
+    }
+    finally { File.SetAttributes(readOnly, attributes); }
+    if (OperatingSystem.IsWindows())
+    {
+        var attributed = Text("workspace-rejected/attributes.json", "old project bytes");
+        var originalAttributes = File.GetAttributes(attributed);
+        try
+        {
+            File.SetAttributes(attributed, FileAttributes.Hidden | FileAttributes.System | FileAttributes.Archive | FileAttributes.NotContentIndexed);
+            await Run("workspace-windows-attributes", 0, true, "--project-copy", single, attributed);
+            var preserved = FileAttributes.Hidden | FileAttributes.System | FileAttributes.Archive | FileAttributes.NotContentIndexed;
+            Check("workspace Windows attributes preserved", (File.GetAttributes(attributed) & preserved) == preserved);
+        }
+        finally { File.SetAttributes(attributed, originalAttributes); }
+    }
+    else
+    {
+        var executableProject = Text("workspace-rejected/mode.json", "old project bytes");
+        var originalMode = File.GetUnixFileMode(executableProject);
+        try
+        {
+            var executableMode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute;
+            File.SetUnixFileMode(executableProject, executableMode);
+            await Run("workspace-unix-mode", 0, true, "--project-copy", single, executableProject);
+            Check("workspace Unix mode preserved", File.GetUnixFileMode(executableProject) == executableMode);
+        }
+        finally { File.SetUnixFileMode(executableProject, originalMode); }
+    }
+    try
+    {
+        var link = Path.Combine(fixtures, "workspace-linked-output");
+        var target = Path.Combine(fixtures, "workspace-link-target");
+        Directory.CreateDirectory(target);
+        var targetFile = Path.Combine(target, "project.json");
+        File.WriteAllText(targetFile, "protected linked project\n", utf8);
+        var bytes = File.ReadAllBytes(targetFile);
+        Directory.CreateSymbolicLink(link, target);
+        links.Add(new(link, new DirectoryInfo(link).LinkTarget!, false));
+        await Run("workspace-linked-output", 2, false, "--project-copy", workspace, Path.Combine(link, "project.json"));
+        Check("workspace linked target preserved", File.ReadAllBytes(targetFile).SequenceEqual(bytes));
+        var fileLink = Path.Combine(fixtures, "workspace-file-link.json");
+        File.CreateSymbolicLink(fileLink, targetFile);
+        links.Add(new(fileLink, new FileInfo(fileLink).LinkTarget!, false, IsDirectory: false));
+        await Run("workspace-file-link-output", 2, false, "--project-copy", workspace, fileLink);
+        Check("workspace file link target preserved", File.ReadAllBytes(targetFile).SequenceEqual(bytes)
+            && new FileInfo(fileLink).LinkTarget == targetFile);
+    }
+    catch (Exception exception) when (exception is UnauthorizedAccessException or PlatformNotSupportedException or IOException)
+    { assertions.Add(new("workspace output symlink", "skipped", exception.Message)); }
+    Check("workspace temporary outputs removed", !Directory.EnumerateFiles(fixtures, ".diffbeacon-project-*.tmp", SearchOption.AllDirectories).Any());
+}
+
 async Task TextAdvancedCases()
 {
     async Task Compare(string name, int exit, string left, string right, params string[] options)
@@ -188,7 +453,8 @@ async Task WorkspaceAdvancedCases()
     {
         using var expected = JsonDocument.Parse(File.ReadAllText(source));
         using var actual = JsonDocument.Parse(File.ReadAllText(saved));
-        Check("advanced project fields and rule order preserved", JsonElement.DeepEquals(expected.RootElement, actual.RootElement));
+        Check("advanced project fields and rule order preserved", expected.RootElement.EnumerateObject().All(property =>
+            actual.RootElement.TryGetProperty(property.Name, out var value) && JsonElement.DeepEquals(property.Value, value)));
     }
     else Check("advanced project fields and rule order preserved", false, "保存先が作成されませんでした。");
 
@@ -624,7 +890,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--archives-only", StringComparer.Ordinal))
+    if (args.Contains("--projects-only", StringComparer.Ordinal))
+    {
+        await ProjectWorkspaceCases();
+    }
+    else if (args.Contains("--archives-only", StringComparer.Ordinal))
     {
         await ArchiveCases();
     }
@@ -644,6 +914,7 @@ try
     {
     await ArchiveCases();
     await TextAdvancedCases();
+    await ProjectWorkspaceCases();
     var left = Text("left.txt", "alpha\nbeta\n");
     var equal = Text("equal.txt", "alpha\nbeta\n");
     var right = Text("right.txt", "alpha\nchanged\n");
@@ -913,11 +1184,11 @@ finally
         var link = links[index];
         try
         {
-            var current = new DirectoryInfo(link.Path).LinkTarget;
+            var current = link.IsDirectory ? new DirectoryInfo(link.Path).LinkTarget : new FileInfo(link.Path).LinkTarget;
             if (current != link.Target || !link.Path.StartsWith(fixtures + Path.DirectorySeparatorChar, StringComparison.Ordinal)) throw new IOException("作成したリンクと一致しないため解除を中止しました。");
-            Directory.Delete(link.Path);
+            if (link.IsDirectory) Directory.Delete(link.Path); else File.Delete(link.Path);
             links[index] = link with { Removed = true };
-            Check("owned symlink removed", !Directory.Exists(link.Path), link.Path);
+            Check("owned symlink removed", !Directory.Exists(link.Path) && !File.Exists(link.Path), link.Path);
         }
         catch (Exception exception) { Check("owned symlink cleanup", false, exception.Message); }
     }
@@ -930,7 +1201,7 @@ return assertions.Any(a => a.Status == "failed") ? 1 : 0;
 sealed record Assertion(string Name, string Status, string Detail);
 sealed record CommandResult(string Name, string[] Arguments, int ExitCode, string Stdout, string Stderr, long DurationMilliseconds);
 sealed record SeededCase(int Seed, string Source, string Target, string Patch, string Applied);
-sealed record LinkEvidence(string Path, string Target, bool Removed);
+sealed record LinkEvidence(string Path, string Target, bool Removed, bool IsDirectory = true);
 sealed record ArchiveFile(string Path, bool Directory, long Size, string Sha256, bool Encrypted);
 
 sealed class LocalHttpSite : IAsyncDisposable

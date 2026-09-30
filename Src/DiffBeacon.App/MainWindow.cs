@@ -11,7 +11,7 @@ using DiffBeacon.Providers;
 
 namespace DiffBeacon.App;
 
-public sealed class MainWindow : Window
+public sealed partial class MainWindow : Window
 {
     private readonly TabControl _tabs = new();
     private readonly List<TabItem> _sessions = [];
@@ -29,7 +29,7 @@ public sealed class MainWindow : Window
         var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto,Auto"), Margin = new Thickness(20, 12) };
         header.Children.Add(new TextBlock { Text = "DiffBeacon", FontSize = 23, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
         var add = new Button { Content = "+ 新しい比較", Margin = new Thickness(8, 0) };
-        add.Click += (_, _) => AddSession();
+        add.Click += async (_, _) => await AddSessionFromUiAsync();
         Grid.SetColumn(add, 1);
         header.Children.Add(add);
         var theme = new Button { Content = "明 / 暗" };
@@ -42,10 +42,10 @@ public sealed class MainWindow : Window
         root.Children.Add(_tabs);
         Content = root;
         AddSession(arguments);
-        KeyDown += (_, e) =>
+        KeyDown += async (_, e) =>
         {
             if (e.Key == Key.F7) { ActivePane.NavigateDifference(e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? -1 : 1); e.Handled = true; }
-            if (e.KeyModifiers.HasFlag(KeyModifiers.Control) && e.Key == Key.N) { AddSession(); e.Handled = true; }
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Control) && e.Key == Key.N) { e.Handled = true; await AddSessionFromUiAsync(); }
         };
         Closing += async (_, e) =>
         {
@@ -59,22 +59,11 @@ public sealed class MainWindow : Window
         };
     }
 
-    public void AddSession(string[]? arguments = null)
+    public ComparisonPane AddSession(string[]? arguments = null)
     {
+        if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
         var pane = new ComparisonPane(this);
-        var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
-        header.Children.Add(new TextBlock { Text = $"比較 {_sessions.Count + 1}", VerticalAlignment = VerticalAlignment.Center });
-        var close = new Button { Content = "×", Padding = new Thickness(5, 0) }; header.Children.Add(close);
-        var item = new TabItem { Header = header, Content = pane };
-        close.Click += async (_, _) =>
-        {
-            if (pane.HasUnsavedChanges && !await Dialogs.ConfirmAsync(this, "未保存の変更", "変更を保存せずにタブを閉じますか？")) return;
-            _sessions.Remove(item); pane.Dispose(); _tabs.ItemsSource = _sessions.ToArray();
-            if (_sessions.Count == 0) AddSession(); else _tabs.SelectedItem = _sessions[^1];
-        };
-        _sessions.Add(item);
-        _tabs.ItemsSource = _sessions.ToArray();
-        _tabs.SelectedItem = item;
+        AttachProjectSession(pane); _tabs.SelectedItem = _sessions[^1];
         if (arguments is { Length: >= 2 })
         {
             pane.LeftPath.Text = arguments[0];
@@ -82,6 +71,12 @@ public sealed class MainWindow : Window
             if (arguments.Length == 3) pane.BasePath.Text = arguments[1];
             Opened += async (_, _) => await pane.ComparePathsAsync();
         }
+        return pane;
+    }
+    private Task AddSessionFromUiAsync()
+    {
+        if (_sessions.Count >= WorkspaceStore.MaxEntries) return Dialogs.MessageAsync(this, "比較タブの上限", "比較タブは256件以下にしてください。");
+        AddSession(); return Task.CompletedTask;
     }
 }
 
@@ -113,6 +108,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly TextBox _excludes = new() { PlaceholderText = "除外パス（;区切り）", Width = 180 };
     private readonly ComboBox _folderMode = new() { ItemsSource = new[] { "内容", "SHA-256", "日時とサイズ" }, SelectedIndex = 0, Width = 140 };
     private readonly TextBlock _status = new() { Text = "パスを選択するか、編集タブにテキストを貼り付けて比較できます。", Margin = new Thickness(12, 8) };
+    private readonly TextBlock _leftCaption = new() { Text = "左", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold };
+    private readonly TextBlock _rightCaption = new() { Text = "右", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold };
     private readonly TabControl _views = new();
     private readonly TabItem _diffTab;
     private readonly TabItem _specialTab = new() { Header = "形式別ビュー" };
@@ -165,6 +162,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", OpenProjectAsync);
         AddAction(projectActions, "プロジェクトを保存", SaveProjectAsync);
+        AddAction(projectActions, "比較の設定…", EditProjectOptionsAsync);
         AddAction(projectActions, "HTMLレポート", ExportReportAsync);
         AddAction(projectActions, "外部ツールを追加", AddExternalProviderAsync);
         projectActions.Children.Add(_externalFormat);
@@ -181,8 +179,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         DiffList.ItemTemplate = new FuncDataTemplate<DiffRow>((row, _) => BuildRow(row), false);
         var diffRoot = new DockPanel();
         var captions = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*") };
-        captions.Children.Add(new TextBlock { Text = "左", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold });
-        var rightCaption = new TextBlock { Text = "右", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold }; Grid.SetColumn(rightCaption, 1); captions.Children.Add(rightCaption);
+        captions.Children.Add(_leftCaption);
+        Grid.SetColumn(_rightCaption, 1); captions.Children.Add(_rightCaption);
         DockPanel.SetDock(captions, Dock.Top); diffRoot.Children.Add(captions); diffRoot.Children.Add(DiffList);
         _diffTab = new TabItem { Header = "差分", Content = diffRoot };
         _ancestorEditor.IsReadOnly = true;
@@ -275,17 +273,18 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             }
             if (mode == 3)
             {
-                SetSpecialView(await SpecializedViews.BinaryAsync(left, right, token));
+                SetSpecialView(await SpecializedViews.BinaryAsync(left, right, token, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, EnsureProjectOutputWritable));
                 _views.SelectedItem = _specialTab; _status.Text = "バイナリを比較しました。"; return;
             }
             if (mode == 7 || (mode == 0 && ArchivePanel.Supports(left) && ArchivePanel.Supports(right)))
             {
-                SetSpecialView(await ArchivePanel.CreateAsync(left, right, token));
+                SetSpecialView(await ArchivePanel.CreateAsync(left, right, token, EnsureProjectOutputWritable));
                 _views.SelectedItem = _specialTab; _status.Text = "アーカイブビューを開きました。"; return;
             }
             _leftDocument = await TextDocument.LoadAsync(left, token);
             _rightDocument = await TextDocument.LoadAsync(right, token);
-            LeftEditor.IsReadOnly = RightEditor.IsReadOnly = false;
+            LeftEditor.IsReadOnly = _projectMetadata.LeftReadOnly;
+            RightEditor.IsReadOnly = _projectMetadata.RightReadOnly;
             LeftEditor.Text = _savedLeft = _leftDocument.Text;
             RightEditor.Text = _savedRight = _rightDocument.Text;
             _baseDocument = !string.IsNullOrWhiteSpace(BasePath.Text) ? await TextDocument.LoadAsync(BasePath.Text, token) : null;
@@ -293,8 +292,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             _ancestorEditor.Text = _baseText ?? "";
             UpdateEditorLayout(_baseText is not null);
             _textSaveAllowed = true;
-            if (mode is 5 or 6) { SetSpecialView(SpecializedViews.Structured(LeftEditor.Text, RightEditor.Text, mode == 5)); _views.SelectedItem = _specialTab; }
+            if (mode is 5 or 6) { SetSpecialView(SpecializedViews.Structured(LeftEditor.Text, RightEditor.Text, mode == 5, _projectMetadata.TableDelimiter, _projectMetadata.TableQuote, _projectMetadata.TableAllowNewlinesInQuotes)); _views.SelectedItem = _specialTab; }
             else await CompareEditorsAsync();
+            if (mode is 5 or 6) _status.Text = mode == 5 ? "JSONの構造を比較しました。" : "表の区切り・引用符設定で比較しました。";
         }
         finally { CompareButton.IsEnabled = true; }
     }
@@ -334,6 +334,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public void CopySelected(bool leftToRight)
     {
+        EnsureSideWritable(leftToRight);
         if (CurrentDiff is null) return;
         // 編集後の古い差分座標で上書きしない。
         if (CurrentDiff.LeftText != LeftEditor.Text || CurrentDiff.RightText != RightEditor.Text) CompareEditors();
@@ -361,6 +362,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private async Task CopySelectionAsync(bool toRight)
     {
+        EnsureSideWritable(toRight);
         if (_views.SelectedItem == _specialTab && _specialTab.Content == _directoryList && _directoryList.SelectedItem is DirectoryEntry entry && _directoryLeft is not null && _directoryRight is not null)
         {
             if (!await Dialogs.ConfirmAsync(_owner, "フォルダー内のコピー", $"{entry.RelativePath} を{(toRight ? "右" : "左")}へコピーします。既存ファイルは上書きされます。")) return;
@@ -373,23 +375,21 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         var path = await SavePathAsync("比較プロジェクトを保存", "comparison.diffbeacon.json");
         if (path is null) return;
-        await WorkspaceStore.SaveAsync(path, new ComparisonProject { LeftPath = LeftPath.Text ?? "", BasePath = BasePath.Text ?? "", RightPath = RightPath.Text ?? "", Mode = _mode.SelectedIndex.ToString(), ProviderId = _provider.SelectedItem as string, FileFilterPath = _fileFilter.Text, IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true, IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = _ignoreRegex.Text, IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex, Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions });
-        _status.Text = "プロジェクトを保存しました。";
+        if (_owner is MainWindow window) await window.SaveWorkspaceAsync(path);
+        else await WorkspaceStore.SaveAsync(path, CaptureProject());
+        _status.Text = "すべての比較タブをプロジェクトへ保存しました。編集本文は元ファイルへ別途保存してください。";
     }
     private async Task OpenProjectAsync()
     {
-        if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してプロジェクトを開きますか？")) return;
         var paths = await _owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions { Title = "比較プロジェクトを開く" });
         if (paths.Count == 0 || paths[0].TryGetLocalPath() is not string path) return;
-        var project = await WorkspaceStore.LoadAsync(path);
-        LeftPath.Text = project.LeftPath; BasePath.Text = project.BasePath; RightPath.Text = project.RightPath;
-        _mode.SelectedIndex = int.TryParse(project.Mode, out var index) && index is >= 0 and <= 8 ? index : project.Mode switch { "Folder" => 2, "Binary" => 3, "Image" => 4, "Json" => 5, "Table" => 6, "Web" => 8, _ => 1 };
-        if (project.ProviderId is not null) _provider.SelectedItem = project.ProviderId;
-        else if (project.Mode == "Web") _provider.SelectedItem = "web-text";
-        _fileFilter.Text = project.FileFilterPath;
-        _ignoreCase.IsChecked = project.IgnoreCase; _ignoreSpace.IsChecked = project.IgnoreWhitespace; _ignoreBlank.IsChecked = project.IgnoreBlankLines; _ignoreRegex.Text = project.IgnoreLinePattern;
-        SetAdvancedFilters(project.IgnoreNumbers, project.CommentSyntax, project.Whitespace, project.SubstitutionRules);
-        DiscardChanges(); await ComparePathsAsync();
+        if (_owner is MainWindow window) await window.OpenWorkspaceAsync(path);
+        else
+        {
+            var project = await WorkspaceStore.LoadAsync(path);
+            if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してプロジェクトを開きますか？")) return;
+            ApplyProject(project); DiscardChanges(); await CompareProjectAsync();
+        }
     }
     private async Task AddExternalProviderAsync()
     {
@@ -406,7 +406,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         CompareEditors();
         var path = await SavePathAsync("HTMLレポートを保存", "comparison.html");
-        if (path is not null) await File.WriteAllTextAsync(path, HtmlReport.Create(CurrentDiff!, LeftPath.Text ?? "左", RightPath.Text ?? "右"));
+        if (path is not null) { EnsureProjectOutputWritable(path); await File.WriteAllTextAsync(path, HtmlReport.Create(CurrentDiff!, LeftPath.Text ?? "左", RightPath.Text ?? "右")); }
     }
     private void Find()
     {
@@ -423,6 +423,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public async Task SaveAsync(bool right)
     {
+        EnsureSideWritable(right);
         if (!_textSaveAllowed) throw new InvalidOperationException("この比較はテキスト保存の対象ではありません。形式別ビューの保存操作を使用してください。");
         var path = right ? RightPath.Text : LeftPath.Text;
         var document = right ? _rightDocument : _leftDocument;
@@ -432,6 +433,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             throw new InvalidOperationException("このパスの文書はまだ読み込まれていません。比較してから保存してください。");
         if (string.IsNullOrWhiteSpace(path)) path = await SavePathAsync("テキストを保存", "untitled.txt");
         if (path is null) return;
+        EnsureProjectOutputWritable(path);
         var text = (right ? RightEditor.Text : LeftEditor.Text) ?? "";
         if (document is not null) await document.SaveAsync(path, text, CancellationToken.None);
         else await File.WriteAllTextAsync(path, text, new System.Text.UTF8Encoding(false));
@@ -444,6 +446,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         var path = await SavePathAsync("Unifiedパッチを保存", "changes.patch");
         if (path is null) return;
+        EnsureProjectOutputWritable(path);
         await File.WriteAllTextAsync(path, UnifiedPatch.Create(LeftEditor.Text ?? "", RightEditor.Text ?? "", LeftPath.Text ?? "left", RightPath.Text ?? "right"));
         _status.Text = "パッチを保存しました。";
     }
@@ -454,7 +457,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _editGrid.Children.Clear();
         _editGrid.ColumnDefinitions = new ColumnDefinitions(fourPanes ? "*,6,*,6,*,6,*" : "*,6,*");
         var editors = fourPanes ? new[] { LeftEditor, _ancestorEditor, RightEditor, _resultPreview } : new[] { LeftEditor, RightEditor };
-        var labels = fourPanes ? new[] { "左", "共通の祖先", "右", "マージ結果" } : new[] { "左", "右" };
+        var labels = fourPanes ? new[] { ProjectCaption(false), _projectMetadata.BaseDescription ?? "共通の祖先", ProjectCaption(true), "マージ結果" } : new[] { ProjectCaption(false), ProjectCaption(true) };
         for (var index = 0; index < editors.Length; index++)
         {
             var pane = new DockPanel();
@@ -500,7 +503,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var textOptions = Options();
         var filtered = textOptions.IgnoreCase || textOptions.IgnoreWhitespace || textOptions.IgnoreBlankLines || textOptions.IgnoreLinePattern is not null
             || textOptions.IgnoreNumbers || textOptions.CommentSyntax != CommentSyntax.None || textOptions.Whitespace != WhitespaceMode.None || textOptions.SubstitutionRules.Any(rule => rule.Enabled);
-        var filter = string.IsNullOrWhiteSpace(_fileFilter.Text) ? null : FileFilter.Load(_fileFilter.Text);
+        var filter = ResolveProjectFilter();
         var result = await DirectoryComparer.CompareAsync(left, right, new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter }, token);
         _directoryLeft = left; _directoryRight = right;
         _directoryList.ItemsSource = result.Entries;

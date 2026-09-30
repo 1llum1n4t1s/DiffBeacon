@@ -120,17 +120,19 @@ public static class SpecializedViews
         return pixels;
     }
 
-    public static async Task<Control> BinaryAsync(string left, string right, CancellationToken cancellationToken)
+    public static async Task<Control> BinaryAsync(string left, string right, CancellationToken cancellationToken, bool leftReadOnly = false, bool rightReadOnly = false, Action<string>? guardOutput = null)
     {
         const int limit = 16 * 1024 * 1024;
         if (new FileInfo(left).Length > limit || new FileInfo(right).Length > limit) throw new InvalidOperationException("16進比較の上限は各16 MiBです。");
         var a = await ReadBinaryAsync(left, limit, cancellationToken);
         var b = await ReadBinaryAsync(right, limit, cancellationToken);
-        var root = new BinaryPanel();
+        var root = new BinaryPanel { LeftReadOnly = leftReadOnly, RightReadOnly = rightReadOnly };
         var actions = new WrapPanel();
         var offset = new NumericUpDown { Minimum = 0, Maximum = Math.Max(a.Length, b.Length), Increment = 4096, Value = 0, Width = 140 };
         var status = new TextBlock { Margin = new Thickness(8), TextWrapping = TextWrapping.Wrap };
         var leftEditor = HexEditor(); var rightEditor = HexEditor();
+        root.ApplyReadOnly = () => { leftEditor.IsReadOnly = root.LeftReadOnly; rightEditor.IsReadOnly = root.RightReadOnly; };
+        root.ApplyReadOnly();
         var differences = new ListBox { MaxHeight = 160, FontFamily = Mono };
         var pageStart = 0; var updating = false;
         var leftDirty = false; var rightDirty = false;
@@ -167,6 +169,7 @@ public static class SpecializedViews
         }
         void Apply(bool toRight)
         {
+            if (toRight ? root.RightReadOnly : root.LeftReadOnly) { status.Text = "この側はプロジェクトで読取り専用に指定されています。"; return; }
             var editor = toRight ? rightEditor : leftEditor;
             var bytes = toRight ? b : a;
             try
@@ -185,6 +188,7 @@ public static class SpecializedViews
         }
         void Merge(bool toRight)
         {
+            if (toRight ? root.RightReadOnly : root.LeftReadOnly) { status.Text = "この側はプロジェクトで読取り専用に指定されています。"; return; }
             if (PendingEdits()) { status.Text = "先に16進編集を適用してください。"; return; }
             if (differences.SelectedIndex < 0 || differences.SelectedIndex >= ranges.Count) return;
             var range = ranges[differences.SelectedIndex];
@@ -202,10 +206,22 @@ public static class SpecializedViews
         AddButton(actions, "右編集を適用", () => { Apply(true); return Task.CompletedTask; });
         AddButton(actions, "選択範囲 →", () => { Merge(true); return Task.CompletedTask; });
         AddButton(actions, "← 選択範囲", () => { Merge(false); return Task.CompletedTask; });
-        AddButton(actions, "左を別名保存", async () =>
-        { if (PendingEdits()) { status.Text = "先に16進編集を適用してください。"; return; } if (await SaveBytesAsync(root, a, Path.GetFileName(left), status)) leftDirty = false; });
-        AddButton(actions, "右を別名保存", async () =>
-        { if (PendingEdits()) { status.Text = "先に16進編集を適用してください。"; return; } if (await SaveBytesAsync(root, b, Path.GetFileName(right), status)) rightDirty = false; });
+        root.SaveContent = async (rightSide, path, token) =>
+        {
+            if (PendingEdits()) throw new InvalidOperationException("先に16進編集を適用してください。");
+            GuardOutput(path);
+            await WriteBinaryCopyAsync(path, rightSide ? b : a, token);
+            if (rightSide) rightDirty = false; else leftDirty = false;
+            status.Text = "バイナリを保存しました。";
+        };
+        AddButton(actions, "左を別名保存", () => PickBinaryOutputAsync(root, false, Path.GetFileName(left)));
+        AddButton(actions, "右を別名保存", () => PickBinaryOutputAsync(root, true, Path.GetFileName(right)));
+        void GuardOutput(string path)
+        {
+            guardOutput?.Invoke(path);
+            if ((root.LeftReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(left, path)) || (root.RightReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(right, path)))
+                throw new InvalidOperationException("読取り専用に指定された入力を上書きできません。");
+        }
         offset.ValueChanged += (_, _) =>
         {
             if (updating) return;
@@ -219,7 +235,7 @@ public static class SpecializedViews
         root.Children.Add(Pair(leftEditor, rightEditor)); Refresh(); return root;
     }
 
-    public static Control Structured(string leftText, string rightText, bool json)
+    public static Control Structured(string leftText, string rightText, bool json, char? delimiter = null, char? quote = null, bool? allowNewlinesInQuotes = null)
     {
         if (json)
         {
@@ -229,10 +245,10 @@ public static class SpecializedViews
             var x = HexEditor(); x.Text = a; x.IsReadOnly = true; var y = HexEditor(); y.Text = b; y.IsReadOnly = true;
             root.Children.Add(Pair(x, y)); return root;
         }
-        var separator = DetectSeparator(leftText, rightText);
-        var left = StructuredComparer.ParseDelimited(leftText, separator).Rows; var right = StructuredComparer.ParseDelimited(rightText, separator).Rows;
+        var separator = delimiter ?? DetectSeparator(leftText, rightText);
+        var left = StructuredComparer.ParseDelimited(leftText, separator, quote ?? '"', allowNewlinesInQuotes ?? true).Rows; var right = StructuredComparer.ParseDelimited(rightText, separator, quote ?? '"', allowNewlinesInQuotes ?? true).Rows;
         var panel = new DockPanel(); var count = Math.Max(left.Count, right.Count);
-        var caption = new TextBlock { Text = $"{(separator == '\t' ? "TSV" : "CSV")} · 左 {left.Count:N0}行 / 右 {right.Count:N0}行 · セル位置で比較（引用符内の改行に対応）。編集はテキスト編集タブで行えます。", Margin = new Thickness(8) };
+        var caption = new TextBlock { Text = $"{(separator == '\t' ? "TSV" : separator == ',' ? "CSV" : "区切りテキスト")} · 左 {left.Count:N0}行 / 右 {right.Count:N0}行 · セル位置で比較（引用符内の改行を{((allowNewlinesInQuotes ?? true) ? "許可" : "禁止")}）。編集はテキスト編集タブで行えます。", Margin = new Thickness(8) };
         DockPanel.SetDock(caption, Dock.Top); panel.Children.Add(caption);
         var rows = new ListBox { ItemsSource = Enumerable.Range(0, count).ToArray() };
         rows.ItemTemplate = new FuncDataTemplate<int>((index, _) =>
@@ -279,8 +295,13 @@ public static class SpecializedViews
             var release = ReleaseResources; ReleaseResources = null; release?.Invoke();
         }
     }
-    private sealed class BinaryPanel : DockPanel
+    public sealed class BinaryPanel : DockPanel
     {
+        public bool LeftReadOnly { get; set; }
+        public bool RightReadOnly { get; set; }
+        public Action? ApplyReadOnly { get; set; }
+        internal Func<bool, string, CancellationToken, Task>? SaveContent { get; set; }
+        public Task SaveToAsync(bool rightSide, string path, CancellationToken token = default) => SaveContent?.Invoke(rightSide, path, token) ?? throw new InvalidOperationException("バイナリを読み込んでいません。");
         public Func<bool>? IsDirty { get; set; }
         public Action? MarkClean { get; set; }
     }
@@ -298,6 +319,10 @@ public static class SpecializedViews
             total += count; if (total > limit) throw new InvalidDataException("ファイルの読込サイズが上限を超えました。");
             await output.WriteAsync(buffer.AsMemory(0, count), token);
         }
+    }
+    public static void SetProjectReadOnly(Control? control, bool left, bool right)
+    {
+        if (control is BinaryPanel panel) { panel.LeftReadOnly = left; panel.RightReadOnly = right; panel.ApplyReadOnly?.Invoke(); }
     }
     private static TextBox HexEditor() => new() { AcceptsReturn = true, AcceptsTab = true, FontFamily = Mono, TextWrapping = TextWrapping.NoWrap, HorizontalContentAlignment = HorizontalAlignment.Stretch };
     private static string Hex(ReadOnlySpan<byte> bytes)
@@ -320,11 +345,46 @@ public static class SpecializedViews
         };
         panel.Children.Add(button);
     }
-    private static async Task<bool> SaveBytesAsync(Control control, byte[] bytes, string name, TextBlock status)
+    private static async Task PickBinaryOutputAsync(BinaryPanel control, bool rightSide, string name)
     {
-        var top = TopLevel.GetTopLevel(control); if (top is null) return false;
+        var top = TopLevel.GetTopLevel(control); if (top is null) return;
         var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { SuggestedFileName = name, Title = "バイナリを別名保存" });
-        if (file is null) return false;
-        await using var stream = await file.OpenWriteAsync(); stream.SetLength(0); await stream.WriteAsync(bytes); status.Text = "バイナリを保存しました。"; return true;
+        if (file is null) return;
+        if (file.TryGetLocalPath() is not string path) throw new IOException("ローカルの保存先を選択してください。");
+        await control.SaveToAsync(rightSide, path);
+    }
+    private static async Task WriteBinaryCopyAsync(string path, byte[] bytes, CancellationToken token)
+    {
+        var fullPath = Path.GetFullPath(path);
+        void ValidateOutput()
+        {
+            for (var current = fullPath; current is not null; current = Path.GetDirectoryName(current))
+            {
+                try
+                {
+                    var attributes = File.GetAttributes(current);
+                    if ((attributes & FileAttributes.ReparsePoint) != 0) throw new IOException("リンクを経由して保存できません。");
+                    if (current == fullPath && (attributes & FileAttributes.ReadOnly) != 0) throw new UnauthorizedAccessException("読取り専用ファイルへ保存できません。");
+                }
+                catch (FileNotFoundException) { }
+                catch (DirectoryNotFoundException) { }
+            }
+        }
+        token.ThrowIfCancellationRequested(); ValidateOutput();
+        var exists = File.Exists(fullPath);
+        var attributes = exists ? File.GetAttributes(fullPath) : FileAttributes.Normal;
+        UnixFileMode? mode = exists && !OperatingSystem.IsWindows() ? File.GetUnixFileMode(fullPath) : null;
+        var temporary = Path.Combine(Path.GetDirectoryName(fullPath)!, ".diffbeacon-binary-" + Guid.NewGuid().ToString("N") + ".tmp");
+        try
+        {
+            await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 64 * 1024, FileOptions.Asynchronous))
+            { await stream.WriteAsync(bytes, token); await stream.FlushAsync(token); stream.Flush(true); }
+            if (mode.HasValue && !OperatingSystem.IsWindows()) File.SetUnixFileMode(temporary, mode.Value);
+            if (OperatingSystem.IsWindows() && exists)
+            { var preserved = attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Archive | FileAttributes.NotContentIndexed); File.SetAttributes(temporary, preserved == 0 ? FileAttributes.Normal : preserved); }
+            ValidateOutput(); token.ThrowIfCancellationRequested();
+            if (File.Exists(fullPath)) File.Replace(temporary, fullPath, null); else File.Move(temporary, fullPath);
+        }
+        finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 }
