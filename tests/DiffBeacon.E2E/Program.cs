@@ -368,9 +368,10 @@ async Task PackagingCases()
     {
         var target = Text("packaging/link-target/output.zip", "protected linked output\n"); var bytes = File.ReadAllBytes(target);
         var link = Path.Combine(fixtures, "packaging", "linked-output.zip"); File.CreateSymbolicLink(link, target);
-        links.Add(new(link, new FileInfo(link).LinkTarget!, false, IsDirectory: false));
+        var storedTarget = new FileInfo(link).LinkTarget!;
+        links.Add(new(link, storedTarget, false, IsDirectory: false));
         await Run("packaging-linked-output", 2, false, "--package-project", single, link);
-        Check("packaging linked output target preserved", File.ReadAllBytes(target).SequenceEqual(bytes) && new FileInfo(link).LinkTarget == target);
+        Check("packaging linked output target preserved", File.ReadAllBytes(target).SequenceEqual(bytes) && new FileInfo(link).LinkTarget == storedTarget);
         await Reject("linked-input", Project("linked-input", [Entry(link, right)]));
         var directoryLink = Path.Combine(fixtures, "packaging", "linked-parent"); Directory.CreateSymbolicLink(directoryLink, Path.GetDirectoryName(target)!);
         links.Add(new(directoryLink, new DirectoryInfo(directoryLink).LinkTarget!, false));
@@ -1160,6 +1161,8 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
         RedirectStandardError = true,
         RedirectStandardInput = standardInput is not null,
         StandardInputEncoding = standardInput is null ? null : new UTF8Encoding(false),
+        StandardOutputEncoding = new UTF8Encoding(false),
+        StandardErrorEncoding = new UTF8Encoding(false),
         UseShellExecute = false,
         CreateNoWindow = true
     };
