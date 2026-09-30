@@ -51,4 +51,6 @@ Windowsのシンボリックリンク検証は作成権限が必要。権限が�
 
 既知のローカル環境観測: SDK `10.0.401` の `dotnet --version` と MSBuild は起動する一方、`dotnet --info` は workload MSI の `InstallerBase` 初期化例外を表示した。原因は未確定で、グローバル設定やインストールを変更していない。この診断表示の失敗とプロジェクトのビルド成否は別々に確認する。
 
+比較文書・レポート・パッチ・プロジェクト包装の4構成検証は[GitHub Actions run 36790193652](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36790193652)で全ジョブ成功した。各Mac版の発行物は同runのArtifactsから取得できる。全構成の入力・出力・JSON・PNG・ログと集計は`artifacts/github/36790193652`、ローカル容量実測と清掃記録は`artifacts/e2e/packaging-capacity-probes`に保持する。
+
 機能の対応状況と保留事項は [MIGRATION.md](MIGRATION.md) を参照する。
