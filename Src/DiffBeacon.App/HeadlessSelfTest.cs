@@ -5,6 +5,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Interactivity;
+using Avalonia.Input.Platform;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -396,6 +398,76 @@ internal static class HeadlessSelfTest
             Pump(window.OpenWorkspaceAsync(multiXml, discardChanges: true));
             Check("legacy multi-project opens separate text and table tabs", window.SessionPanes.Count == 2 && window.SessionPanes[0].LeftEditor.IsReadOnly && window.SessionPanes[1].CaptureProject().Mode == "Table");
             window.SelectSession(1); Screenshot("workspace-legacy.png");
+            var packageDialog = window.CreatePackagingDialog(); packageDialog.Show(window); Dispatcher.UIThread.RunJobs();
+            var packageBoxes = packageDialog.GetVisualDescendants().OfType<CheckBox>().ToArray();
+            Check("packaging dialog selects active comparison and default documents/project", packageBoxes.Single(box => box.Name == "package-entry-1").IsChecked == true && packageBoxes.Single(box => box.Name == "package-entry-0").IsChecked == false
+                && packageBoxes.Single(box => box.Name == "package-documents").IsChecked == true && packageBoxes.Single(box => box.Name == "package-project").IsChecked == true);
+            packageBoxes.Single(box => box.Name == "package-entry-0").IsChecked = true;
+            packageBoxes.Single(box => box.Name == "package-report").IsChecked = true;
+            packageBoxes.Single(box => box.Name == "package-patch").IsChecked = true;
+            Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+            using (var frame = packageDialog.CaptureRenderedFrame()!) frame.Save(Path.Combine(artifactOutput, "package-dialog.png"), new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
+            var packageOutput = Path.Combine(output, "comparisons.zip"); Pump(window.PackageFromDialogAsync(packageDialog, packageOutput)); packageDialog.Close();
+            var packageArchive = new DiffBeacon.Providers.ManagedArchive(); var packageManifest = packageArchive.ReadManifest(packageOutput);
+            Check("packaging actual dialog settings includes report/patch/project and four source files", packageManifest.Entries.Count(entry => !entry.IsDirectory) == 9
+                && packageManifest.Entries.Any(entry => entry.Path == "report.files/2.html") && packageManifest.Entries.Any(entry => entry.Path == "patch.diff"));
+            var unpacked = Path.Combine(output, "package-unpacked"); packageArchive.ExtractAll(packageOutput, unpacked);
+            var unpackedProject = Path.Combine(unpacked, "project.json"); Pump(window.OpenWorkspaceAsync(unpackedProject, discardChanges: true));
+            Check("unpacked package reopens all actual tabs relative to extraction and active selection", window.SessionPanes.Count == 2 && window.ActivePane == window.SessionPanes[1]
+                && window.SessionPanes[0].LeftPath.Text!.StartsWith(unpacked, StringComparison.Ordinal) && window.SessionPanes[0].LeftEditor.IsReadOnly && window.SessionPanes[1].CaptureProject().TableQuote == '\'');
+            Screenshot("package-reopened.png");
+            var packageStartup = new MainWindow([unpackedProject]);
+            try
+            {
+                packageStartup.Show(); var startupWait = Stopwatch.StartNew();
+                while (true)
+                {
+                    Dispatcher.UIThread.RunJobs();
+                    if (packageStartup.SessionPanes.Count == 2)
+                    {
+                        try { packageStartup.SessionPanes[1].EnsureComparedForPackaging(); break; }
+                        catch (InvalidOperationException) { }
+                    }
+                    if (startupWait.Elapsed > TimeSpan.FromSeconds(30)) throw new TimeoutException("同梱プロジェクトの起動時読込みが完了しません。"); Thread.Sleep(5);
+                }
+                Check("GUI startup project argument opens packaged tabs and active selection", packageStartup.ActivePane == packageStartup.SessionPanes[1]
+                    && packageStartup.SessionPanes[0].LeftPath.Text!.StartsWith(unpacked, StringComparison.Ordinal));
+            }
+            finally { foreach (var startupPane in packageStartup.SessionPanes) startupPane.DiscardChanges(); packageStartup.Close(); }
+            var packageBefore = File.ReadAllBytes(packageOutput); window.SelectSession(0); window.ActivePane.RightEditor.Text += "unsaved package edit";
+            rejected = false; try { Pump(window.PackageWorkspaceAsync(packageOutput, [0])); } catch (InvalidOperationException) { rejected = true; }
+            Check("packaging unsaved rejection preserves original archive and edited content", rejected && File.ReadAllBytes(packageOutput).SequenceEqual(packageBefore) && window.ActivePane.HasUnsavedChanges);
+            window.ActivePane.DiscardChanges();
+            rejected = false; try { Pump(window.PackageWorkspaceAsync(window.ActivePane.LeftPath.Text!, [0])); } catch (InvalidOperationException) { rejected = true; }
+            Check("packaging cannot overwrite readonly comparison document", rejected);
+            var oldRightPath = window.ActivePane.RightPath.Text; window.ActivePane.RightPath.Text = right;
+            rejected = false; try { Pump(window.PackageWorkspaceAsync(packageOutput, [0])); } catch (InvalidOperationException) { rejected = true; }
+            Check("packaging rejects paths changed after comparison and preserves archive", rejected && File.ReadAllBytes(packageOutput).SequenceEqual(packageBefore));
+            window.ActivePane.RightPath.Text = oldRightPath;
+            var freshPackagePane = window.AddSession(); freshPackagePane.LeftPath.Text = left; freshPackagePane.RightPath.Text = right;
+            rejected = false; try { Pump(window.PackageWorkspaceAsync(packageOutput, [2])); } catch (InvalidOperationException) { rejected = true; }
+            Check("packaging rejects un-compared saved paths", rejected);
+            window.SelectSession(0);
+            Pump(window.CopyPackageToClipboardAsync(packageOutput));
+            var copiedPackages = window.Clipboard!.TryGetFilesAsync().GetAwaiter().GetResult();
+            Check("packaging uses actual file clipboard format", copiedPackages is { Length: 1 } && copiedPackages[0].TryGetLocalPath() == packageOutput);
+            var packageLargeLeft = Path.Combine(output, "package-large-left.bin"); var packageLargeRight = Path.Combine(output, "package-large-right.bin");
+            using (var file = File.Create(packageLargeLeft)) file.SetLength(16 * 1024 * 1024);
+            using (var file = File.Create(packageLargeRight)) file.SetLength(16 * 1024 * 1024);
+            window.ActivePane.ApplyProject(new() { LeftPath = packageLargeLeft, RightPath = packageLargeRight, Mode = "Binary" }); window.ActivePane.DiscardChanges();
+            Pump(window.ActivePane.CompareProjectAsync());
+            var packagingTask = window.PackageWorkspaceAsync(packageOutput, [0]); var packageWait = Stopwatch.StartNew(); var packageInProgress = false;
+            while (!packagingTask.IsCompleted && packageWait.Elapsed < TimeSpan.FromSeconds(10))
+            {
+                Dispatcher.UIThread.RunJobs();
+                packageInProgress = Directory.EnumerateDirectories(output, ".diffbeacon-package-*").Any(dir => Directory.EnumerateFiles(dir).Any());
+                if (packageInProgress) { window.CancelPackaging(); break; }
+                Thread.Sleep(1);
+            }
+            rejected = false; try { Pump(packagingTask); } catch (OperationCanceledException) { rejected = true; }
+            Check("canceling packaging after snapshot starts preserves old output and removes owned stage", packageInProgress && rejected && File.ReadAllBytes(packageOutput).SequenceEqual(packageBefore)
+                && !Directory.EnumerateDirectories(output, ".diffbeacon-package-*").Any());
+            window.ActivePane.DiscardChanges();
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }

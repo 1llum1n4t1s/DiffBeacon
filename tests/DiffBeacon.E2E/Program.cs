@@ -76,13 +76,334 @@ string Tar(string name, params (string Entry, string Content)[] entries)
 
 void Check(string name, bool passed, string detail = "") => assertions.Add(new(name, passed ? "passed" : "failed", detail));
 
+string ExpectedProjectPath(string path, string directory)
+{
+    if (string.IsNullOrWhiteSpace(path) || Path.IsPathRooted(path) || path.StartsWith('/')
+        || (path.Length > 1 && path[1] == ':') || path.StartsWith("\\\\", StringComparison.Ordinal)
+        || (Uri.TryCreate(path, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https")) return path;
+    return Path.GetFullPath(Path.Combine(directory, path.Replace('\\', Path.DirectorySeparatorChar)));
+}
+
+async Task PackagingCases()
+{
+    // 包装前に固定する失敗条件: 選択/active/全設定の欠落、相対名の誤変換、
+    // 同一原本の重複・別原本の衝突、URL取得、BOM/改行破損、拒否時の原本/出力破壊。
+    Dictionary<string, object?> Entry(string left, string right, string? ancestor = null, string mode = "Text") => new()
+    { ["leftPath"] = left, ["basePath"] = ancestor ?? "", ["rightPath"] = right, ["mode"] = mode };
+    string Project(string name, Dictionary<string, object?>[] entries, int active = 0) => Text("packaging/" + name + ".json",
+        JsonSerializer.Serialize(new { formatVersion = 1, entries, activeEntryIndex = active }));
+    Dictionary<string, byte[]> ReadZip(string name, string path)
+    {
+        Check(name + " archive exists", File.Exists(path), path);
+        if (!File.Exists(path)) return [];
+        try
+        {
+            using var archive = ZipFile.OpenRead(path);
+            var content = new Dictionary<string, byte[]>(StringComparer.Ordinal);
+            foreach (var entry in archive.Entries.Where(entry => !entry.FullName.EndsWith('/')))
+            {
+                using var stream = entry.Open(); using var bytes = new MemoryStream(); stream.CopyTo(bytes);
+                Check(name + " unique entry " + entry.FullName, content.TryAdd(entry.FullName, bytes.ToArray()));
+            }
+            Check(name + " safe relative ZIP names", content.Keys.All(key => !key.StartsWith('/') && !key.Contains('\\')
+                && !key.Split('/').Any(part => part is ".." or ".") && !(key.Length > 1 && key[1] == ':')));
+            return content;
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException)
+        { Check(name + " BCL ZIP decode", false, exception.Message); return []; }
+    }
+    void Bytes(string name, Dictionary<string, byte[]> content, string entry, string original) =>
+        Check(name + " bytes " + entry, content.TryGetValue(entry, out var bytes) && bytes.SequenceEqual(File.ReadAllBytes(original)));
+    async Task Reject(string name, string project, params string[] options)
+    {
+        var destination = Text("packaging/rejected/" + name + ".zip", "existing package output\n");
+        var bytes = File.ReadAllBytes(destination);
+        await Run("packaging-reject-" + name, 2, false, new[] { "--package-project", project, destination }.Concat(options).ToArray());
+        Check("packaging reject preserves " + name, File.Exists(destination) && File.ReadAllBytes(destination).SequenceEqual(bytes));
+    }
+    JsonElement[] Entries(JsonElement project) => project.TryGetProperty("entries", out var entries) ? entries.EnumerateArray().ToArray() : [project];
+    async Task<JsonDocument?> ExtractAndReopen(string name, string archive)
+    {
+        var extracted = Path.Combine(fixtures, "packaging", name + "-extracted");
+        await Run("packaging-extract-" + name, 0, true, "--archive-extract", archive, extracted);
+        var reopened = Path.Combine(fixtures, "packaging", name + "-reopened.json");
+        await Run("packaging-reopen-" + name, 0, true, "--project-copy", Path.Combine(extracted, "project.json"), reopened);
+        Check("packaging reopened project " + name, File.Exists(reopened));
+        return File.Exists(reopened) ? JsonDocument.Parse(File.ReadAllText(reopened)) : null;
+    }
+
+    var left = Text("packaging/input-left/左 & one.txt", "<script>left</script>\r\nanchor\r\nlast", new UTF8Encoding(true));
+    var right = Text("packaging/input-right/右 & one.txt", "<script>right</script>\r\nanchor\r\nlast", new UTF8Encoding(true));
+    var filter = Text("packaging/filters/example.flt", "name: Packaging fixture\ndef: include\nf: .*\\.txt$\n");
+    var detailed = Entry(left, right);
+    detailed["fileFilterPath"] = filter; detailed["leftDescription"] = "左 & <説明>"; detailed["baseDescription"] = "祖先";
+    detailed["rightDescription"] = "右"; detailed["leftReadOnly"] = true; detailed["baseReadOnly"] = true; detailed["rightReadOnly"] = true;
+    detailed["recursive"] = false; detailed["folderMode"] = "Hash"; detailed["excludedPaths"] = "cache;generated";
+    detailed["legacyFilter"] = "*.txt"; detailed["tableDelimiter"] = ";"; detailed["tableQuote"] = "\"";
+    detailed["tableAllowNewlinesInQuotes"] = true; detailed["ignoreCase"] = true; detailed["ignoreNumbers"] = true;
+    detailed["ignoreWhitespace"] = false; detailed["providerId"] = "external-do-not-execute";
+    detailed["ignoreBlankLines"] = true; detailed["ignoreLinePattern"] = "^generated$"; detailed["commentSyntax"] = 0;
+    detailed["whitespace"] = 1; detailed["substitutionRules"] = new[] { new { pattern = "[", replacement = "disabled", matchCase = false, useRegex = true, wholeWord = false, enabled = false } };
+    detailed["legacySettings"] = new Dictionary<string, string> { ["unpacker"] = "DO_NOT_EXECUTE.exe", ["prediffer"] = "DO_NOT_EXECUTE_TOO.exe" };
+    var single = Project("single", [detailed]);
+    var singleArchive = Path.Combine(fixtures, "packaging", "single.zip");
+    await Run("packaging-single-all-options", 0, true, "--package-project", single, singleArchive, "--report", "--patch");
+    var singleContent = ReadZip("packaging single", singleArchive);
+    var leftName = "original/" + Path.GetFileName(left); var rightName = "altered/" + Path.GetFileName(right);
+    Check("packaging single exact file names", singleContent.Keys.Order().SequenceEqual(new[]
+        { leftName, rightName, "filters/1-example.flt", "report.html", "report.files/1.html", "patch.diff", "project.json" }.Order()));
+    Bytes("packaging single", singleContent, leftName, left); Bytes("packaging single", singleContent, rightName, right);
+    Bytes("packaging single", singleContent, "filters/1-example.flt", filter);
+    if (singleContent.TryGetValue("report.files/1.html", out var htmlBytes))
+    {
+        var html = Encoding.UTF8.GetString(htmlBytes);
+        Check("packaging report escapes document markup", html.Contains("&lt;script&gt;", StringComparison.Ordinal) && !html.Contains("<script>", StringComparison.Ordinal));
+    }
+    if (singleContent.TryGetValue("patch.diff", out var patchBytes))
+    {
+        var patch = Encoding.UTF8.GetString(patchBytes);
+        Check("packaging patch relative header", patch.Contains(leftName, StringComparison.Ordinal) && patch.Contains(rightName, StringComparison.Ordinal)
+            && !patch.Contains(Path.GetDirectoryName(left)!, StringComparison.Ordinal) && !patch.Contains(Path.GetDirectoryName(right)!, StringComparison.Ordinal));
+    }
+    if (singleContent.TryGetValue("project.json", out var projectBytes))
+    {
+        using var embedded = JsonDocument.Parse(projectBytes);
+        var entry = embedded.RootElement.GetProperty("entries")[0];
+        Check("packaging project portable references", entry.GetProperty("leftPath").GetString() == leftName
+            && entry.GetProperty("rightPath").GetString() == rightName && entry.GetProperty("fileFilterPath").GetString() == "filters/1-example.flt");
+        using var expected = JsonDocument.Parse(JsonSerializer.Serialize(detailed));
+        Check("packaging project all settings preserved", expected.RootElement.EnumerateObject()
+            .Where(property => property.Name is not ("leftPath" or "basePath" or "rightPath" or "fileFilterPath"))
+            .All(property => entry.TryGetProperty(property.Name, out var value) && JsonElement.DeepEquals(property.Value, value)));
+    }
+    using (var reopened = await ExtractAndReopen("single", singleArchive))
+    {
+        if (reopened is not null)
+        {
+            var entry = Entries(reopened.RootElement)[0];
+            var extracted = Path.Combine(fixtures, "packaging", "single-extracted");
+            var extractedLeft = entry.GetProperty("leftPath").GetString()!; var extractedRight = entry.GetProperty("rightPath").GetString()!;
+            Check("packaging reopen resolves against extraction", extractedLeft == Path.Combine(extracted, "original", Path.GetFileName(left))
+                && extractedRight == Path.Combine(extracted, "altered", Path.GetFileName(right))
+                && entry.GetProperty("fileFilterPath").GetString() == Path.Combine(extracted, "filters", "1-example.flt"));
+            await Run("packaging-reopened-compare", 1, true, "--compare", extractedLeft, extractedRight);
+            var applied = Path.Combine(fixtures, "packaging", "single-applied.txt");
+            await Run("packaging-reopened-patch", 0, true, "--patch-apply", extractedLeft, Path.Combine(extracted, "patch.diff"), applied);
+            Check("packaging patch preserves BOM CRLF final newline", File.Exists(applied) && File.ReadAllBytes(applied).SequenceEqual(File.ReadAllBytes(right)));
+        }
+    }
+
+    var aLeft = Text("packaging/tree-left/a/same.txt", "a left\n"); var bLeft = Text("packaging/tree-left/b/same.txt", "b left\n");
+    var aRight = Text("packaging/tree-right/a/same.txt", "a right\n"); var bRight = Text("packaging/tree-right/b/same.txt", "b right\n");
+    var a = Entry(aLeft, aRight); a["leftDescription"] = "first";
+    var b = Entry(bLeft, bRight); b["leftDescription"] = "second";
+    var multi = Project("multiple", [a, b, a], 2);
+    var multiArchive = Path.Combine(fixtures, "packaging", "multiple.zip");
+    await Run("packaging-selection-order", 0, true, "--package-project", multi, multiArchive, "--entries", "2,1,3", "--report");
+    var multiContent = ReadZip("packaging multiple", multiArchive);
+    Check("packaging common parents and shared input dedupe", multiContent.Keys.Where(key => key.StartsWith("original/") || key.StartsWith("altered/"))
+        .Order().SequenceEqual(new[] { "original/a/same.txt", "original/b/same.txt", "altered/a/same.txt", "altered/b/same.txt" }.Order()));
+    Bytes("packaging multiple", multiContent, "original/a/same.txt", aLeft); Bytes("packaging multiple", multiContent, "original/b/same.txt", bLeft);
+    Bytes("packaging multiple", multiContent, "altered/a/same.txt", aRight); Bytes("packaging multiple", multiContent, "altered/b/same.txt", bRight);
+    Check("packaging selected reports", Enumerable.Range(1, 3).All(index => multiContent.ContainsKey($"report.files/{index}.html")));
+    if (multiContent.TryGetValue("report.html", out var indexHtml))
+    {
+        var text = Encoding.UTF8.GetString(indexHtml);
+        Check("packaging report index portable links", Enumerable.Range(1, 3).All(index => text.Contains($"report.files/{index}.html", StringComparison.Ordinal))
+            && !text.Contains(fixtures, StringComparison.Ordinal));
+    }
+    using (var reopened = await ExtractAndReopen("multiple", multiArchive))
+    {
+        if (reopened is not null)
+        {
+            var entries = Entries(reopened.RootElement);
+            Check("packaging selection order and active retained", entries.Length == 3 && reopened.RootElement.GetProperty("activeEntryIndex").GetInt32() == 2
+                && entries.Select(entry => entry.GetProperty("leftDescription").GetString()).SequenceEqual(new[] { "second", "first", "first" })
+                && entries[1].GetProperty("leftPath").GetString() == entries[2].GetProperty("leftPath").GetString());
+            foreach (var (entry, index) in entries.Select((entry, index) => (entry, index)))
+                await Run("packaging-multiple-compare-" + index, 1, true, "--compare", entry.GetProperty("leftPath").GetString()!, entry.GetProperty("rightPath").GetString()!);
+        }
+    }
+    var inactiveArchive = Path.Combine(fixtures, "packaging", "inactive-selection.zip");
+    await Run("packaging-active-not-selected", 0, true, "--package-project", multi, inactiveArchive, "--entries", "2,1");
+    var inactiveContent = ReadZip("packaging inactive selection", inactiveArchive);
+    if (inactiveContent.TryGetValue("project.json", out var inactiveProject))
+    {
+        using var document = JsonDocument.Parse(inactiveProject);
+        Check("packaging unselected active resets to zero", document.RootElement.GetProperty("activeEntryIndex").GetInt32() == 0);
+    }
+    var multiPatchArchive = Path.Combine(fixtures, "packaging", "multiple-patches.zip");
+    await Run("packaging-multiple-patches", 0, true, "--package-project", multi, multiPatchArchive, "--entries", "2,1", "--patch");
+    var multiPatchContent = ReadZip("packaging multiple patches", multiPatchArchive);
+    if (multiPatchContent.TryGetValue("patch.diff", out var multiplePatchBytes))
+    {
+        var patch = Encoding.UTF8.GetString(multiplePatchBytes);
+        var first = patch.IndexOf("--- original/b/same.txt", StringComparison.Ordinal);
+        var second = patch.IndexOf("--- original/a/same.txt", StringComparison.Ordinal);
+        Check("packaging patch sections follow selection order", first >= 0 && second > first && !patch.Contains(fixtures, StringComparison.Ordinal));
+    }
+
+    var ancestor = Text("packaging/three/base.txt", "base\n");
+    var triple = Project("three", [Entry(left, right, ancestor)]);
+    var tripleArchive = Path.Combine(fixtures, "packaging", "three.zip");
+    await Run("packaging-three-way", 0, true, "--package-project", triple, tripleArchive);
+    var tripleContent = ReadZip("packaging three", tripleArchive);
+    Bytes("packaging three", tripleContent, "1/" + Path.GetFileName(left), left);
+    Bytes("packaging three", tripleContent, "2/base.txt", ancestor);
+    Bytes("packaging three", tripleContent, "3/" + Path.GetFileName(right), right);
+    using (var reopened = await ExtractAndReopen("three", tripleArchive))
+    {
+        if (reopened is not null)
+        {
+            var entry = Entries(reopened.RootElement)[0];
+            Check("packaging three reopened ancestor bytes", File.Exists(entry.GetProperty("basePath").GetString())
+                && File.ReadAllBytes(entry.GetProperty("basePath").GetString()!).SequenceEqual(File.ReadAllBytes(ancestor)));
+            await Run("packaging-three-reopened-compare", 1, true, "--compare", entry.GetProperty("leftPath").GetString()!, entry.GetProperty("rightPath").GetString()!);
+        }
+    }
+
+    foreach (var (name, options, expectedNames) in new (string, string[], string[])[]
+    {
+        ("documents-only", ["--no-project"], [leftName, rightName]),
+        ("project-only", ["--no-documents"], ["project.json", "filters/1-example.flt"]),
+        ("report-only", ["--no-documents", "--no-project", "--report"], ["report.html", "report.files/1.html"]),
+        ("patch-only", ["--no-documents", "--no-project", "--patch"], ["patch.diff"])
+    })
+    {
+        var destination = Path.Combine(fixtures, "packaging", name + ".zip");
+        await Run("packaging-" + name, 0, true, new[] { "--package-project", single, destination }.Concat(options).ToArray());
+        var content = ReadZip("packaging " + name, destination);
+        Check("packaging options exact files " + name, content.Keys.Order().SequenceEqual(expectedNames.Order()));
+        if (name == "project-only" && content.TryGetValue("project.json", out var projectOnly))
+        {
+            using var document = JsonDocument.Parse(projectOnly); var entry = document.RootElement.GetProperty("entries")[0];
+            Check("packaging project only preserves original document references", entry.GetProperty("leftPath").GetString() == Path.GetFullPath(left)
+                && entry.GetProperty("rightPath").GetString() == Path.GetFullPath(right) && entry.GetProperty("fileFilterPath").GetString() == "filters/1-example.flt");
+            Bytes("packaging project only", content, "filters/1-example.flt", filter);
+        }
+    }
+    var tableLeft = Text("packaging/table/left.csv", "name,value\r\nalpha,1\r\n", new UnicodeEncoding(false, true));
+    var tableRight = Text("packaging/table/right.csv", "name,value\r\nalpha,2\r\n", new UnicodeEncoding(false, true));
+    var tableArchive = Path.Combine(fixtures, "packaging", "table.zip");
+    await Run("packaging-table-patch", 0, true, "--package-project", Project("table", [Entry(tableLeft, tableRight, mode: "Table")]), tableArchive, "--patch");
+    var tableContent = ReadZip("packaging table", tableArchive);
+    Bytes("packaging table", tableContent, "original/left.csv", tableLeft); Bytes("packaging table", tableContent, "altered/right.csv", tableRight);
+    using (var reopened = await ExtractAndReopen("table", tableArchive))
+    {
+        if (reopened is not null)
+        {
+            var entry = Entries(reopened.RootElement)[0];
+            await Run("packaging-table-reopened-compare", 1, true, "--table", entry.GetProperty("leftPath").GetString()!, entry.GetProperty("rightPath").GetString()!);
+            var applied = Path.Combine(fixtures, "packaging", "table-applied.csv");
+            await Run("packaging-table-reopened-patch", 0, true, "--patch-apply", entry.GetProperty("leftPath").GetString()!, Path.Combine(fixtures, "packaging", "table-extracted", "patch.diff"), applied);
+            Check("packaging table patch preserves UTF16 BOM and CRLF", File.Exists(applied) && File.ReadAllBytes(applied).SequenceEqual(File.ReadAllBytes(tableRight)));
+        }
+    }
+    var urls = Project("urls", [Entry("https://example.invalid/left?a=1&b=2", "http://example.invalid/right", mode: "Web")]);
+    var urlArchive = Path.Combine(fixtures, "packaging", "urls.zip");
+    await Run("packaging-url-reference-only", 0, true, "--package-project", urls, urlArchive);
+    var urlContent = ReadZip("packaging URL", urlArchive);
+    Check("packaging URLs create no fetched documents", urlContent.Count == 1 && urlContent.ContainsKey("project.json"));
+    if (urlContent.TryGetValue("project.json", out var urlProject))
+    {
+        using var document = JsonDocument.Parse(urlProject); var entry = document.RootElement.GetProperty("entries")[0];
+        Check("packaging URL references retained", entry.GetProperty("leftPath").GetString() == "https://example.invalid/left?a=1&b=2"
+            && entry.GetProperty("rightPath").GetString() == "http://example.invalid/right");
+    }
+    await Reject("url-patch", urls, "--patch");
+    await Reject("url-report", urls, "--report");
+    foreach (var indices in new[] { "", "0", "4", "-1", "abc", "2,2" }) await Reject("indices-" + (indices.Length == 0 ? "empty" : indices.Replace(',', '-')), multi, "--entries", indices);
+    await Reject("all-options-disabled", single, "--no-documents", "--no-project");
+    await Reject("missing-side", Project("missing-side", [Entry(Path.Combine(fixtures, "packaging", "missing.txt"), right)]));
+    await Reject("empty-side", Project("empty-side", [Entry("", right)]));
+    await Reject("folder-mode", Project("folder-mode", [Entry(Path.GetDirectoryName(left)!, Path.GetDirectoryName(right)!, mode: "Folder")]));
+    var binaryArchive = Path.Combine(fixtures, "packaging", "binary-empty-patch.zip");
+    await Run("packaging-binary-empty-patch", 0, true, "--package-project", Project("binary-patch", [Entry(left, right, mode: "Binary")]), binaryArchive, "--patch");
+    var binaryContent = ReadZip("packaging binary patch", binaryArchive);
+    Check("packaging no Text or Table comparison creates empty patch", binaryContent.TryGetValue("patch.diff", out var emptyPatch) && emptyPatch.Length == 0);
+    await Reject("invalid-project", Text("packaging/invalid.json", "{\"formatVersion\":99,\"entries\":[]}"));
+    var huge = Path.Combine(fixtures, "packaging", "too-large.txt");
+    using (var stream = File.Create(huge)) stream.SetLength(256L * 1024 * 1024 + 1);
+    await Reject("large-document", Project("large-document", [Entry(huge, right)]));
+    var escapedReport = Text("packaging/escaped-report.txt", new string('<', 4 * 1024 * 1024));
+    await Reject("generated-report-limit", Project("generated-report-limit", [Entry(escapedReport, escapedReport)]), "--report");
+    var autoTar = Tar("packaging/auto.tar", ("nested/value.txt", "archive bytes are not text\n"));
+    var autoPackage = Path.Combine(fixtures, "packaging", "auto-archive.zip");
+    await Run("packaging-auto-archive", 0, true, "--package-project", Project("auto-archive", [Entry(autoTar, autoTar, mode: "Auto")]), autoPackage, "--patch");
+    var autoContent = ReadZip("packaging auto archive", autoPackage);
+    Check("packaging Auto archive creates empty patch rather than decoding bytes", autoContent.TryGetValue("patch.diff", out var autoPatch) && autoPatch.Length == 0);
+    foreach (var extension in new[] { ".7z", ".tar.gz", ".tar.bz2" })
+    {
+        var formatArchive = Path.Combine(fixtures, "packaging", "format" + extension);
+        await Run("packaging-format" + extension, 0, true, "--package-project", single, formatArchive, "--report", "--patch");
+        using var reopened = await ExtractAndReopen("format" + extension.Replace('.', '-'), formatArchive);
+        if (reopened is null) continue;
+        var entry = Entries(reopened.RootElement).Single();
+        var restored = entry.GetProperty("leftPath").GetString()!;
+        Check("packaging alternate format preserves document bytes " + extension, File.ReadAllBytes(restored).SequenceEqual(File.ReadAllBytes(left)));
+    }
+    var unsupportedOutput = Text("packaging/rejected/unsupported.txt", "keep unsupported output\n");
+    var unsupportedBytes = File.ReadAllBytes(unsupportedOutput);
+    await Run("packaging-unsupported-output", 2, false, "--package-project", single, unsupportedOutput);
+    Check("packaging unsupported output preserved", File.ReadAllBytes(unsupportedOutput).SequenceEqual(unsupportedBytes));
+    var original = Text("packaging/original.zip", "original text input\n"); var originalBytes = File.ReadAllBytes(original);
+    await Run("packaging-original-output", 2, false, "--package-project", Project("original-output", [Entry(original, right)]), original);
+    Check("packaging original document preserved", File.ReadAllBytes(original).SequenceEqual(originalBytes));
+    await Run("packaging-unselected-original-output", 2, false, "--package-project", Project("unselected-original-output", [Entry(left, right), Entry(original, right)]), original, "--entries", "1");
+    Check("packaging unselected original document preserved", File.ReadAllBytes(original).SequenceEqual(originalBytes));
+    var projectOriginal = Text("packaging/project-original.zip", File.ReadAllText(single));
+    var projectOriginalBytes = File.ReadAllBytes(projectOriginal);
+    await Run("packaging-original-project-output", 2, false, "--package-project", projectOriginal, projectOriginal);
+    Check("packaging source project preserved", File.ReadAllBytes(projectOriginal).SequenceEqual(projectOriginalBytes));
+    var readOnly = Text("packaging/rejected/readonly.zip", "protected output\n"); var readOnlyBytes = File.ReadAllBytes(readOnly);
+    var readOnlyAttributes = File.GetAttributes(readOnly);
+    try
+    {
+        File.SetAttributes(readOnly, readOnlyAttributes | FileAttributes.ReadOnly);
+        await Run("packaging-readonly-output", 2, false, "--package-project", single, readOnly);
+        Check("packaging readonly output preserved", File.ReadAllBytes(readOnly).SequenceEqual(readOnlyBytes));
+    }
+    finally { File.SetAttributes(readOnly, readOnlyAttributes); }
+    try
+    {
+        var target = Text("packaging/link-target/output.zip", "protected linked output\n"); var bytes = File.ReadAllBytes(target);
+        var link = Path.Combine(fixtures, "packaging", "linked-output.zip"); File.CreateSymbolicLink(link, target);
+        links.Add(new(link, new FileInfo(link).LinkTarget!, false, IsDirectory: false));
+        await Run("packaging-linked-output", 2, false, "--package-project", single, link);
+        Check("packaging linked output target preserved", File.ReadAllBytes(target).SequenceEqual(bytes) && new FileInfo(link).LinkTarget == target);
+        await Reject("linked-input", Project("linked-input", [Entry(link, right)]));
+        var directoryLink = Path.Combine(fixtures, "packaging", "linked-parent"); Directory.CreateSymbolicLink(directoryLink, Path.GetDirectoryName(target)!);
+        links.Add(new(directoryLink, new DirectoryInfo(directoryLink).LinkTarget!, false));
+        await Run("packaging-linked-parent-output", 2, false, "--package-project", single, Path.Combine(directoryLink, "output.zip"));
+        Check("packaging linked parent target preserved", File.ReadAllBytes(target).SequenceEqual(bytes));
+    }
+    catch (Exception exception) when (exception is UnauthorizedAccessException or PlatformNotSupportedException or IOException)
+    { assertions.Add(new("packaging symlink protection", "skipped", exception.Message)); }
+    foreach (var (name, firstName, secondName) in new[] { ("case", "Same.txt", "same.txt"), ("nfc", "é.txt", "e\u0301.txt") })
+    {
+        var first = Text("packaging/collision-" + name + "/" + firstName, "first collision source\n");
+        var second = Text("packaging/collision-" + name + "/" + secondName, "second collision source\n");
+        if (File.ReadAllText(first) != "first collision source\n")
+        { assertions.Add(new("packaging " + name + " collision", "skipped", "ファイルシステムが二つの入力名を同じファイルへ解決します。")); continue; }
+        await Reject(name + "-collision", Project(name + "-collision", [Entry(first, aRight), Entry(second, bRight)]));
+        Check("packaging collision originals preserved " + name, File.ReadAllText(first) == "first collision source\n" && File.ReadAllText(second) == "second collision source\n");
+    }
+    Check("packaging original documents unchanged", File.ReadAllBytes(left).SequenceEqual(singleContent.GetValueOrDefault(leftName) ?? [])
+        && File.ReadAllBytes(right).SequenceEqual(singleContent.GetValueOrDefault(rightName) ?? []));
+    Check("packaging leaves no owned temporary output", !Directory.EnumerateFiles(Path.Combine(fixtures, "packaging"), "*.tmp", SearchOption.AllDirectories).Any());
+    Check("packaging removes owned snapshot stages", !Directory.EnumerateDirectories(Path.Combine(fixtures, "packaging"), ".diffbeacon-package-*", SearchOption.AllDirectories).Any());
+}
+
 async Task ProjectWorkspaceCases()
 {
     // 失敗条件: 比較組・順序・active・設定の欠落、旧単組形式の破壊、パスの誤変換、
     // 不正/過大入力の受入れ、旧プラグイン実行、拒否時の原本破壊、一時ファイル残留。
     bool ContainsFields(JsonElement expected, JsonElement actual) => expected.ValueKind switch
     {
-        JsonValueKind.Object => actual.ValueKind == JsonValueKind.Object && expected.EnumerateObject().All(p => actual.TryGetProperty(p.Name, out var value) && ContainsFields(p.Value, value)),
+        JsonValueKind.Object => actual.ValueKind == JsonValueKind.Object && expected.EnumerateObject().All(p => actual.TryGetProperty(p.Name, out var value)
+            && ((p.Name is "leftPath" or "basePath" or "rightPath" or "fileFilterPath") && p.Value.ValueKind == JsonValueKind.String
+                ? value.ValueKind == JsonValueKind.String && value.GetString() == ExpectedProjectPath(p.Value.GetString()!, fixtures)
+                : ContainsFields(p.Value, value))),
         JsonValueKind.Array => actual.ValueKind == JsonValueKind.Array && expected.GetArrayLength() == actual.GetArrayLength()
             && expected.EnumerateArray().Select((entry, index) => ContainsFields(entry, actual[index])).All(equal => equal),
         _ => JsonElement.DeepEquals(expected, actual)
@@ -145,7 +466,7 @@ async Task ProjectWorkspaceCases()
     var savedSingle = Path.Combine(fixtures, "workspace-old-single-saved.json");
     await Run("workspace-old-single", 0, true, "--project-copy", single, savedSingle);
     VerifyJson("workspace old single", savedSingle, actual => Check("workspace old single root retained",
-        !actual.TryGetProperty("entries", out _) && actual.GetProperty("leftPath").GetString() == "old-left.txt"));
+        !actual.TryGetProperty("entries", out _) && actual.GetProperty("leftPath").GetString() == Path.Combine(fixtures, "old-left.txt")));
     VerifyJson("workspace old single defaults", savedSingle, actual => Check("workspace omitted fields preserve constructor defaults",
         actual.GetProperty("basePath").GetString() == "" && actual.GetProperty("recursive").GetBoolean()
         && actual.GetProperty("folderMode").GetString() == "Content" && actual.GetProperty("substitutionRules").GetArrayLength() == 0
@@ -454,7 +775,10 @@ async Task WorkspaceAdvancedCases()
         using var expected = JsonDocument.Parse(File.ReadAllText(source));
         using var actual = JsonDocument.Parse(File.ReadAllText(saved));
         Check("advanced project fields and rule order preserved", expected.RootElement.EnumerateObject().All(property =>
-            actual.RootElement.TryGetProperty(property.Name, out var value) && JsonElement.DeepEquals(property.Value, value)));
+            actual.RootElement.TryGetProperty(property.Name, out var value)
+            && (property.Name is "leftPath" or "basePath" or "rightPath" or "fileFilterPath"
+                ? value.GetString() == ExpectedProjectPath(property.Value.GetString()!, Path.GetDirectoryName(source)!)
+                : JsonElement.DeepEquals(property.Value, value))));
     }
     else Check("advanced project fields and rule order preserved", false, "保存先が作成されませんでした。");
 
@@ -890,7 +1214,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--projects-only", StringComparer.Ordinal))
+    if (args.Contains("--packaging-only", StringComparer.Ordinal))
+    {
+        await PackagingCases();
+    }
+    else if (args.Contains("--projects-only", StringComparer.Ordinal))
     {
         await ProjectWorkspaceCases();
     }
@@ -915,6 +1243,7 @@ try
     await ArchiveCases();
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
+    await PackagingCases();
     var left = Text("left.txt", "alpha\nbeta\n");
     var equal = Text("equal.txt", "alpha\nbeta\n");
     var right = Text("right.txt", "alpha\nchanged\n");

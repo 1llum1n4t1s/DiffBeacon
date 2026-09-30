@@ -26,7 +26,7 @@ public sealed partial class MainWindow : Window
         MinHeight = 550;
         Background = new SolidColorBrush(Color.Parse("#171B24"));
         var root = new DockPanel();
-        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto,Auto"), Margin = new Thickness(20, 12) };
+        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto,Auto,Auto"), Margin = new Thickness(20, 12) };
         header.Children.Add(new TextBlock { Text = "DiffBeacon", FontSize = 23, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
         var add = new Button { Content = "+ 新しい比較", Margin = new Thickness(8, 0) };
         add.Click += async (_, _) => await AddSessionFromUiAsync();
@@ -37,11 +37,18 @@ public sealed partial class MainWindow : Window
             ? Avalonia.Styling.ThemeVariant.Light : Avalonia.Styling.ThemeVariant.Dark;
         Grid.SetColumn(theme, 2);
         header.Children.Add(theme);
+        var package = PackagingButton(); Grid.SetColumn(package, 3); header.Children.Add(package);
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
         root.Children.Add(_tabs);
         Content = root;
         AddSession(arguments);
+        if (arguments is { Length: 1 } && Path.GetExtension(arguments[0]).ToLowerInvariant() is ".json" or ".winmerge" or ".diffbeacon")
+            Opened += async (_, _) =>
+            {
+                try { await OpenWorkspaceAsync(arguments[0]); }
+                catch (Exception ex) { await Dialogs.MessageAsync(this, "プロジェクトを開けませんでした", ex.Message); }
+            };
         KeyDown += async (_, e) =>
         {
             if (e.Key == Key.F7) { ActivePane.NavigateDifference(e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? -1 : 1); e.Handled = true; }
@@ -246,6 +253,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         var token = _operation.Token;
         var left = LeftPath.Text ?? ""; var right = RightPath.Text ?? "";
+        _lastPackageComparison = null;
+        var comparisonForPackaging = (left, BasePath.Text ?? "", right, _mode.SelectedIndex, _provider.SelectedItem as string);
         if (string.IsNullOrWhiteSpace(left) && string.IsNullOrWhiteSpace(right)) { await CompareEditorsAsync(); return; }
         _status.Text = "比較しています…";
         CompareButton.IsEnabled = false;
@@ -263,23 +272,24 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
                 await CompareEditorsAsync();
                 _status.Text = result.Summary + " · 変換後の内容です。元のファイルへのテキスト保存はできません。";
+                _lastPackageComparison = comparisonForPackaging;
                 return;
             }
-            if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right))) { await CompareDirectoryAsync(left, right, token); return; }
+            if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right))) { await CompareDirectoryAsync(left, right, token); _lastPackageComparison = comparisonForPackaging; return; }
             if (mode == 4 || (mode == 0 && SpecializedViews.IsImage(left) && SpecializedViews.IsImage(right)))
             {
                 SetSpecialView(await SpecializedViews.ImagesAsync(left, right, token));
-                _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; return;
+                _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
             if (mode == 3)
             {
                 SetSpecialView(await SpecializedViews.BinaryAsync(left, right, token, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, EnsureProjectOutputWritable));
-                _views.SelectedItem = _specialTab; _status.Text = "バイナリを比較しました。"; return;
+                _views.SelectedItem = _specialTab; _status.Text = "バイナリを比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
             if (mode == 7 || (mode == 0 && ArchivePanel.Supports(left) && ArchivePanel.Supports(right)))
             {
                 SetSpecialView(await ArchivePanel.CreateAsync(left, right, token, EnsureProjectOutputWritable));
-                _views.SelectedItem = _specialTab; _status.Text = "アーカイブビューを開きました。"; return;
+                _views.SelectedItem = _specialTab; _status.Text = "アーカイブビューを開きました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
             _leftDocument = await TextDocument.LoadAsync(left, token);
             _rightDocument = await TextDocument.LoadAsync(right, token);
@@ -295,6 +305,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (mode is 5 or 6) { SetSpecialView(SpecializedViews.Structured(LeftEditor.Text, RightEditor.Text, mode == 5, _projectMetadata.TableDelimiter, _projectMetadata.TableQuote, _projectMetadata.TableAllowNewlinesInQuotes)); _views.SelectedItem = _specialTab; }
             else await CompareEditorsAsync();
             if (mode is 5 or 6) _status.Text = mode == 5 ? "JSONの構造を比較しました。" : "表の区切り・引用符設定で比較しました。";
+            _lastPackageComparison = comparisonForPackaging;
         }
         finally { CompareButton.IsEnabled = true; }
     }

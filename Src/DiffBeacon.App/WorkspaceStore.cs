@@ -114,9 +114,16 @@ public static class WorkspaceStore
 
     public static Task SaveWorkspaceAsync(string path, ComparisonWorkspace workspace, CancellationToken token = default)
     {
-        Validate(workspace);
         token.ThrowIfCancellationRequested();
-        return SaveBytesAsync(path, JsonSerializer.SerializeToUtf8Bytes(workspace, ProjectJsonContext.Default.ComparisonWorkspace), token);
+        return SaveBytesAsync(path, SerializeWorkspace(workspace), token);
+    }
+
+    internal static byte[] SerializeWorkspace(ComparisonWorkspace workspace)
+    {
+        Validate(workspace);
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(workspace, ProjectJsonContext.Default.ComparisonWorkspace);
+        if (bytes.Length > MaxFileBytes) throw new InvalidDataException("比較プロジェクトは 4 MiB 以下にしてください。");
+        return bytes;
     }
 
     private static async Task SaveBytesAsync(string path, byte[] bytes, CancellationToken token)
@@ -179,8 +186,28 @@ public static class WorkspaceStore
             ? root.Deserialize(ProjectJsonContext.Default.ComparisonWorkspace) ?? throw new InvalidDataException("比較ワークスペースが空です。")
             : new ComparisonWorkspace { Entries = [root.Deserialize(ProjectJsonContext.Default.ComparisonProject) ?? throw new InvalidDataException("比較プロジェクトが空です。")] };
         Validate(workspace);
+        var directory = Path.GetDirectoryName(Path.GetFullPath(path))!;
+        workspace = workspace with
+        {
+            Entries = workspace.Entries.Select(project => project with
+            {
+                LeftPath = ResolveJsonPath(project.LeftPath, directory)!,
+                BasePath = ResolveJsonPath(project.BasePath, directory)!,
+                RightPath = ResolveJsonPath(project.RightPath, directory)!,
+                FileFilterPath = ResolveJsonPath(project.FileFilterPath, directory)
+            }).ToArray()
+        };
         token.ThrowIfCancellationRequested();
         return workspace;
+    }
+
+    private static string? ResolveJsonPath(string? value, string directory)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return value;
+        if (Uri.TryCreate(value, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https") return value;
+        // JSON 内の参照はプロジェクト基準で解決し、別 OS の絶対表記は保持する。
+        if (Path.IsPathRooted(value) || value.StartsWith('/') || (value.Length > 1 && value[1] == ':') || value.StartsWith("\\\\", StringComparison.Ordinal)) return value;
+        return Path.GetFullPath(Path.Combine(directory, value.Replace('\\', Path.DirectorySeparatorChar)));
     }
 
     public static async Task<ComparisonProject> ImportLegacyAsync(string path, CancellationToken token = default)
@@ -367,18 +394,35 @@ public static class WorkspaceStore
 
 public static class HtmlReport
 {
-    public static string Create(DiffResult result, string leftName, string rightName)
+    public static string Create(DiffResult result, string leftName, string rightName, int maxCharacters = int.MaxValue,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(result);
-        string Escape(string? value) => WebUtility.HtmlEncode(value ?? "");
+        if (maxCharacters <= 0) throw new ArgumentOutOfRangeException(nameof(maxCharacters));
         var html = new StringBuilder("<!doctype html><html lang=\"ja\"><meta charset=\"utf-8\"><title>DiffBeacon 比較レポート</title><style>body{font-family:system-ui;margin:2rem}table{border-collapse:collapse;width:100%;table-layout:fixed}td,th{border:1px solid #aaa;padding:.4rem;vertical-align:top}pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}.Added{background:#dff5df}.Deleted{background:#f9dddd}.Modified{background:#fff0c5}</style><h1>DiffBeacon 比較レポート</h1>");
-        html.Append("<p>差分ブロック数: ").Append(result.Blocks.Count).Append("</p><table><thead><tr><th>").Append(Escape(leftName)).Append("</th><th>").Append(Escape(rightName)).Append("</th></tr></thead><tbody>");
+        void Append(string value)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (value.Length > maxCharacters - html.Length) throw new InvalidDataException("HTMLレポートのサイズ上限を超えました。");
+            html.Append(value);
+        }
+        void Escape(string? value)
+        {
+            value ??= "";
+            for (var start = 0; start < value.Length;)
+            {
+                var length = Math.Min(8192, value.Length - start);
+                if (start + length < value.Length && char.IsHighSurrogate(value[start + length - 1]) && char.IsLowSurrogate(value[start + length])) length--;
+                Append(WebUtility.HtmlEncode(value.Substring(start, length))); start += length;
+            }
+        }
+        Append("<p>差分ブロック数: " + result.Blocks.Count + "</p><table><thead><tr><th>"); Escape(leftName); Append("</th><th>"); Escape(rightName); Append("</th></tr></thead><tbody>");
         foreach (var row in result.Rows)
         {
-            html.Append("<tr class=\"").Append(row.Kind).Append("\"><td><pre>").Append(row.LeftLineNumber?.ToString() ?? "").Append("  ").Append(Escape(row.LeftText));
-            html.Append("</pre></td><td><pre>").Append(row.RightLineNumber?.ToString() ?? "").Append("  ").Append(Escape(row.RightText)).Append("</pre></td></tr>");
+            Append("<tr class=\"" + row.Kind + "\"><td><pre>" + (row.LeftLineNumber?.ToString() ?? "") + "  "); Escape(row.LeftText);
+            Append("</pre></td><td><pre>" + (row.RightLineNumber?.ToString() ?? "") + "  "); Escape(row.RightText); Append("</pre></td></tr>");
         }
-        return html.Append("</tbody></table></html>").ToString();
+        Append("</tbody></table></html>"); return html.ToString();
     }
 
     public static string CreateJson(DiffResult result, string leftName, string rightName)
