@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 var outputArgument = Option("--output") ?? "artifacts/e2e/local";
 var output = Path.GetFullPath(outputArgument);
@@ -82,6 +83,325 @@ string ExpectedProjectPath(string path, string directory)
         || (path.Length > 1 && path[1] == ':') || path.StartsWith("\\\\", StringComparison.Ordinal)
         || (Uri.TryCreate(path, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https")) return path;
     return Path.GetFullPath(Path.Combine(directory, path.Replace('\\', Path.DirectorySeparatorChar)));
+}
+
+async Task ReportCases()
+{
+    // 失敗条件は artifacts/verification/reports-contract/e2e-plan.md に実装前に固定。
+    Dictionary<string, object?> Entry(string left, string right, string mode = "Text", string? ancestor = null) => new()
+    { ["leftPath"] = left, ["rightPath"] = right, ["basePath"] = ancestor ?? "", ["mode"] = mode };
+    string Project(string name, Dictionary<string, object?>[] entries, int active = 0) => Text("reports/" + name + ".json",
+        JsonSerializer.Serialize(new { formatVersion = 1, entries, activeEntryIndex = active }));
+    bool Tag(string html, string tag, params (string Name, string Value)[] attributes) => Regex.IsMatch(html,
+        "<" + tag + @"\b" + string.Concat(attributes.Select(attribute => @"(?=[^>]*\b" + Regex.Escape(attribute.Name)
+            + "=[\"']" + Regex.Escape(attribute.Value) + "[\"'])")) + "[^>]*>", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    string Visible(string html) => WebUtility.HtmlDecode(Regex.Replace(html, "<[^>]*>", "", RegexOptions.CultureInvariant));
+    void Verify(string name, string html, string mode, bool different, bool three = false)
+    {
+        Check(name + " format and difference", Tag(html, "body", ("data-mode", mode), ("data-different", different ? "true" : "false")));
+        Check(name + " side columns", Tag(html, "th", ("data-side", "left")) && Tag(html, "th", ("data-side", "right"))
+            && (three ? Tag(html, "th", ("data-side", "base")) : !Tag(html, "th", ("data-side", "base"))));
+        Check(name + " standalone HTML", html.Contains("<!doctype html>", StringComparison.OrdinalIgnoreCase)
+            && !Regex.IsMatch(html, @"\b(?:src|href)\s*=\s*[""'](?!#)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)
+            && !html.Contains("@import", StringComparison.OrdinalIgnoreCase) && !html.Contains("url(", StringComparison.OrdinalIgnoreCase));
+    }
+    async Task<string> Render(string name, string project, params string[] options)
+    {
+        var destination = Path.Combine(fixtures, "reports", name + ".html");
+        var result = await Run("report-" + name, 0, true, new[] { "--report-project", project, destination }.Concat(options).ToArray());
+        Check("report " + name + " output exists", File.Exists(destination));
+        if (result.ExitCode == 0)
+        {
+            using var metadata = JsonDocument.Parse(result.Stdout);
+            using var source = JsonDocument.Parse(File.ReadAllText(project));
+            var explicitIndex = Array.IndexOf(options, "--entry");
+            var expectedEntry = explicitIndex >= 0 ? int.Parse(options[explicitIndex + 1], System.Globalization.CultureInfo.InvariantCulture)
+                : source.RootElement.GetProperty("activeEntryIndex").GetInt32() + 1;
+            Check("report " + name + " metadata", metadata.RootElement.GetProperty("output").GetString() == destination
+                && metadata.RootElement.GetProperty("entry").GetInt32() == expectedEntry);
+        }
+        return File.Exists(destination) ? File.ReadAllText(destination) : "";
+    }
+    async Task<string> Pack(string name, string project)
+    {
+        var destination = Path.Combine(fixtures, "reports", name + ".zip");
+        await Run("report-package-" + name, 0, true, "--package-project", project, destination, "--report");
+        Check("report package " + name + " ZIP exists", File.Exists(destination));
+        if (!File.Exists(destination)) return "";
+        using var archive = ZipFile.OpenRead(destination); var entry = archive.GetEntry("report.files/1.html");
+        Check("report package " + name + " HTML entry", entry is not null);
+        if (entry is null) return "";
+        using var stream = entry.Open(); using var reader = new StreamReader(stream, Encoding.UTF8);
+        var html = await reader.ReadToEndAsync();
+        Text("reports/" + name + "-bcl-zip.html", html);
+        return html;
+    }
+    async Task Reject(string name, string project, params string[] options)
+    {
+        var destination = Text("reports/rejected/" + name + ".html", "protected HTML output\n");
+        var bytes = File.ReadAllBytes(destination);
+        await Run("report-reject-" + name, 2, false, new[] { "--report-project", project, destination }.Concat(options).ToArray());
+        Check("report rejection preserves " + name, File.ReadAllBytes(destination).SequenceEqual(bytes));
+    }
+    async Task RejectPackage(string name, string project)
+    {
+        var destination = Text("reports/rejected/" + name + ".zip", "protected report package\n");
+        var bytes = File.ReadAllBytes(destination);
+        await Run("report-package-reject-" + name, 2, false, "--package-project", project, destination, "--report");
+        Check("report package rejection preserves " + name, File.ReadAllBytes(destination).SequenceEqual(bytes));
+    }
+    void VerifyThreeAlignment(string name, string html, string[] leftLines, string[] baseLines, string[] rightLines,
+        params (int Base, int? Left, int? Right)[] anchors)
+    {
+        var rows = new List<Dictionary<string, (string Side, int? Line, bool Missing, string Content)>>();
+        foreach (Match rowMatch in Regex.Matches(html, @"<tr\b[^>]*>(?<row>[\s\S]*?)</tr>", RegexOptions.CultureInvariant))
+        {
+            var row = new Dictionary<string, (string Side, int? Line, bool Missing, string Content)>(StringComparer.Ordinal);
+            foreach (Match cellMatch in Regex.Matches(rowMatch.Groups["row"].Value, @"<td\b(?<attributes>[^>]*)>(?<content>[\s\S]*?)</td>", RegexOptions.CultureInvariant))
+            {
+                string Attribute(string attribute) => WebUtility.HtmlDecode(Regex.Match(cellMatch.Groups["attributes"].Value,
+                    @"\b" + Regex.Escape(attribute) + "=[\"'](?<value>[^\"']*)[\"']", RegexOptions.CultureInvariant).Groups["value"].Value);
+                var side = Attribute("data-side");
+                var number = Attribute("data-line");
+                var validMissing = bool.TryParse(Attribute("data-missing"), out var missing);
+                int? line = int.TryParse(number, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var parsed) ? parsed : null;
+                var pre = Regex.Match(cellMatch.Groups["content"].Value, @"<pre\b[^>]*>(?<value>[\s\S]*?)</pre>", RegexOptions.CultureInvariant);
+                var content = Visible(pre.Groups["value"].Value);
+                Check(name + " parsed side cell", (side is "left" or "base" or "right") && validMissing && pre.Success
+                    && (missing ? number == "" && content == "" : line is > 0), $"side={side}; line={number}; missing={missing}");
+                Check(name + " unique side in row", row.TryAdd(side, (side, line, missing, content)), side);
+            }
+            // thだけの見出し行は比較行に含めない。
+            if (row.Count == 0) continue;
+            Check(name + " three cells per comparison row", row.Count == 3 && new[] { "left", "base", "right" }.All(row.ContainsKey));
+            rows.Add(row);
+        }
+        Text("reports/" + name + "-parsed-rows.json", JsonSerializer.Serialize(rows.Select((row, index) => new
+        { row = index + 1, cells = row.Values.Select(cell => new { cell.Side, cell.Line, cell.Missing, cell.Content }) }), new JsonSerializerOptions { WriteIndented = true }));
+        foreach (var (side, expected) in new[] { ("left", leftLines), ("base", baseLines), ("right", rightLines) })
+        {
+            var cells = rows.Where(row => row.ContainsKey(side)).Select(row => row[side]).Where(cell => !cell.Missing).ToArray();
+            Check(name + " " + side + " original line numbers retained", cells.Select(cell => cell.Line).SequenceEqual(Enumerable.Range(1, expected.Length).Select(line => (int?)line)));
+            Check(name + " " + side + " all original contents retained", cells.Select(cell => cell.Content).SequenceEqual(expected), $"expected-lines={expected.Length}; actual-lines={cells.Length}");
+        }
+        foreach (var anchor in anchors)
+        {
+            var matching = rows.Where(row => row.TryGetValue("base", out var cell) && !cell.Missing && cell.Line == anchor.Base).ToArray();
+            Check(name + " ancestor anchor " + anchor.Base + " aligned", matching.Length == 1
+                && matching[0].TryGetValue("left", out var leftCell) && leftCell.Line == anchor.Left && leftCell.Missing == (anchor.Left is null)
+                && matching[0].TryGetValue("right", out var rightCell) && rightCell.Line == anchor.Right && rightCell.Missing == (anchor.Right is null),
+                $"base={anchor.Base}; left={anchor.Left}; right={anchor.Right}");
+        }
+        if (baseLines.Length == 0) Check(name + " empty ancestor remains missing", rows.Count > 0
+            && rows.All(row => row.TryGetValue("base", out var cell) && cell.Missing && cell.Line is null));
+    }
+
+    var left = Text("reports/text-left.txt", "prefix LEFT suffix\n<script>left</script>\n", new UTF8Encoding(true));
+    var right = Text("reports/text-right.txt", "prefix RIGHT suffix\n<script>right</script>\n", new UTF8Encoding(true));
+    var ancestor = Text("reports/text-base.txt", "prefix ANCESTORONLY suffix\n<script>base</script>\n");
+    var textEntry = Entry(left, right);
+    textEntry["leftDescription"] = "左 & <label>"; textEntry["rightDescription"] = "右 <script>description</script>";
+    var textProject = Project("text-project", [textEntry]);
+    foreach (var (name, html) in new[] { ("text", await Render("text", textProject)), ("text-package", await Pack("text", textProject)) })
+    {
+        Verify("report " + name, html, "Text", true);
+        Check("report " + name + " escaped descriptions and content", html.Contains("&lt;label&gt;", StringComparison.Ordinal)
+            && html.Contains("&lt;script&gt;", StringComparison.Ordinal) && !html.Contains("<script>", StringComparison.Ordinal)
+            && Visible(html).Contains("左 & <label>", StringComparison.Ordinal));
+        Check("report " + name + " line numbers", Tag(html, "td", ("data-side", "left"), ("data-line", "1"))
+            && Tag(html, "td", ("data-side", "right"), ("data-line", "2")));
+        Check("report " + name + " inline spans", Regex.IsMatch(html, @"<span\b[^>]*class=[""'][^""']*\binline-diff\b", RegexOptions.CultureInvariant));
+    }
+    var threeEntry = Entry(left, right, ancestor: ancestor); threeEntry["baseDescription"] = "祖先 & <base-label>";
+    var threeProject = Project("three-text-project", [threeEntry]);
+    foreach (var (name, html) in new[] { ("three-text", await Render("three-text", threeProject)), ("three-text-package", await Pack("three-text", threeProject)) })
+    {
+        Verify("report " + name, html, "Text", true, true);
+        Check("report " + name + " ancestor content and description", Visible(html).Contains("ANCESTORONLY", StringComparison.Ordinal)
+            && html.Contains("&lt;base-label&gt;", StringComparison.Ordinal) && Tag(html, "td", ("data-side", "base"), ("data-line", "1")));
+    }
+    foreach (var (name, baseLines, leftLines, rightLines, anchors) in new (string, string[], string[], string[], (int Base, int? Left, int? Right)[])[]
+    {
+        ("ancestor-anchors", ["head", "anchor", "tail"], ["before", "head", "left-insert", "anchor", "tail", "left-end"],
+            ["head", "right-insert", "anchor", "right-tail", "right-end"], [(1, 2, 1), (2, 4, 3), (3, 5, 4)]),
+        ("consecutive-empty-lines", ["head", "", "", "anchor", "tail"], ["before", "head", "", "", "left-insert", "anchor", "tail"],
+            ["head", "", "", "anchor", "tail", "right-end"], [(1, 2, 1), (2, 3, 2), (3, 4, 3), (4, 6, 4), (5, 7, 5)]),
+        ("one-sided-deletion", ["head", "remove", "anchor", "tail"], ["head", "anchor", "tail"],
+            ["head", "remove", "anchor", "tail"], [(1, 1, 1), (2, null, 2), (3, 2, 3), (4, 3, 4)]),
+        ("empty-ancestor-insertions", [], ["left<&>", "", ""], ["right<&>", "", "right-end", ""], [])
+    })
+    {
+        string Document(string side, string[] lines) => Text("reports/alignment-" + name + "-" + side + ".txt", lines.Length == 0 ? "" : string.Join('\n', lines) + "\n");
+        var project = Project("alignment-" + name, [Entry(Document("left", leftLines), Document("right", rightLines), ancestor: Document("base", baseLines))]);
+        foreach (var (route, html) in new[] { ("standalone", await Render("alignment-" + name, project)), ("package", await Pack("alignment-" + name, project)) })
+        {
+            Verify("report alignment " + name + " " + route, html, "Text", true, true);
+            VerifyThreeAlignment("alignment-" + name + "-" + route, html, leftLines, baseLines, rightLines, anchors);
+        }
+    }
+    var same = Text("reports/same.txt", "same left and right\n");
+    var ancestorOnlyProject = Project("ancestor-only", [Entry(same, same, ancestor: ancestor)]);
+    Verify("report ancestor-only difference", await Render("ancestor-only", ancestorOnlyProject), "Text", true, true);
+    var normalizedLeft = Text("reports/normalized-left.txt", "alpha  123\n"); var normalizedRight = Text("reports/normalized-right.txt", "ALPHA 456\n");
+    var normalizedEntry = Entry(normalizedLeft, normalizedRight); normalizedEntry["ignoreCase"] = true; normalizedEntry["ignoreNumbers"] = true; normalizedEntry["whitespace"] = 2;
+    var normalizedProject = Project("normalized-text-project", [normalizedEntry]);
+    Verify("report text normalized equality", await Render("normalized-text", normalizedProject), "Text", false);
+    Verify("report packaged text normalized equality", await Pack("normalized-text", normalizedProject), "Text", false);
+    var legacyOutput = Path.Combine(fixtures, "reports", "legacy.html");
+    await Run("report-legacy-cli", 0, true, "--report", left, right, legacyOutput);
+    Check("report legacy CLI output", File.Exists(legacyOutput) && File.ReadAllText(legacyOutput).Contains("&lt;script&gt;", StringComparison.Ordinal));
+    if (File.Exists(legacyOutput)) Verify("report legacy shared renderer", File.ReadAllText(legacyOutput), "Text", true);
+    var originalLeftBytes = File.ReadAllBytes(left);
+    await Run("report-legacy-protected-source", 2, false, "--report", left, right, left);
+    Check("report legacy source output preserved", File.ReadAllBytes(left).SequenceEqual(originalLeftBytes));
+    var fallbackEntry = Entry(left, right); fallbackEntry["leftDescription"] = "  "; fallbackEntry["rightDescription"] = "";
+    var fallbackHtml = await Render("description-fallback", Project("description-fallback-project", [fallbackEntry]));
+    Check("report blank descriptions fall back to paths", Visible(fallbackHtml).Contains(Path.GetFileName(left), StringComparison.Ordinal)
+        && Visible(fallbackHtml).Contains(Path.GetFileName(right), StringComparison.Ordinal));
+
+    var tableLeft = Text("reports/table-left.txt", "id;value\r\none;'hello;world'\r\ntwo;'multi\nline'\r\n");
+    var tableRight = Text("reports/table-right.txt", "id;value\r\none;'hello;changed'\r\ntwo;'multi\nline'\r\n");
+    var tableEntry = Entry(tableLeft, tableRight, "Table");
+    tableEntry["tableDelimiter"] = ";"; tableEntry["tableQuote"] = "'"; tableEntry["tableAllowNewlinesInQuotes"] = true;
+    var tableProject = Project("table-project", [tableEntry]);
+    foreach (var (name, html) in new[] { ("table", await Render("table", tableProject)), ("table-package", await Pack("table", tableProject)) })
+    {
+        Verify("report " + name, html, "Table", true);
+        Check("report " + name + " real cell coordinates", Tag(html, "td", ("data-side", "left"), ("data-row", "2"), ("data-column", "2"), ("data-missing", "false"))
+            && Tag(html, "td", ("data-side", "right"), ("data-row", "3"), ("data-column", "2")));
+        Check("report " + name + " custom quoted content", Visible(html).Contains("hello;world", StringComparison.Ordinal)
+            && Visible(html).Contains("hello;changed", StringComparison.Ordinal) && Visible(html).Contains("multi\nline", StringComparison.Ordinal));
+    }
+    var missingLeft = Text("reports/empty-cell.csv", "id,value\none,\n"); var missingRight = Text("reports/missing-cell.csv", "id,value\none\n");
+    var missingProject = Project("missing-cell-project", [Entry(missingLeft, missingRight, "Table")]);
+    foreach (var (name, html) in new[] { ("missing-cell", await Render("missing-cell", missingProject)), ("missing-cell-package", await Pack("missing-cell", missingProject)) })
+    {
+        Verify("report " + name, html, "Table", true);
+        Check("report " + name + " missing differs from empty", Tag(html, "td", ("data-side", "left"), ("data-row", "2"), ("data-column", "2"), ("data-missing", "false"))
+            && Tag(html, "td", ("data-side", "right"), ("data-row", "2"), ("data-column", "2"), ("data-missing", "true")));
+    }
+    var optionLeft = Text("reports/table-options-left.csv", "name,value\nALPHA  X,build=123\n");
+    var optionRight = Text("reports/table-options-right.csv", "name,value\nalpha x,build=456\n");
+    var optionEntry = Entry(optionLeft, optionRight, "Table"); optionEntry["ignoreCase"] = true; optionEntry["ignoreNumbers"] = true; optionEntry["whitespace"] = 2;
+    var optionProject = Project("table-options-project", [optionEntry]);
+    Verify("report table normalized options", await Render("table-options", optionProject), "Table", false);
+    Verify("report table packaged normalized options", await Pack("table-options", optionProject), "Table", false);
+    var tabLeft = Text("reports/table-tab-left.txt", "id\tvalue\none\tleft\n"); var tabRight = Text("reports/table-tab-right.txt", "id\tvalue\none\tright\n");
+    var tabProject = Project("table-tab-project", [Entry(tabLeft, tabRight, "Table")]);
+    foreach (var (name, html) in new[] { ("table-tab", await Render("table-tab", tabProject)), ("table-tab-package", await Pack("table-tab", tabProject)) })
+    {
+        Verify("report " + name, html, "Table", true);
+        Check("report " + name + " inferred tab separator", Tag(html, "td", ("data-side", "right"), ("data-row", "2"), ("data-column", "2")));
+    }
+    var tableBase = Text("reports/table-base.txt", "id;value\r\none;'BASEONLY;cell'\r\ntwo;'multi\nline'\r\n");
+    var tableThree = new Dictionary<string, object?>(tableEntry) { ["basePath"] = tableBase, ["baseDescription"] = "祖先セル" };
+    var tableThreeProject = Project("table-three-project", [tableThree]);
+    foreach (var (name, html) in new[] { ("table-three", await Render("table-three", tableThreeProject)), ("table-three-package", await Pack("table-three", tableThreeProject)) })
+    {
+        Verify("report " + name, html, "Table", true, true);
+        Check("report " + name + " ancestor cell", Tag(html, "td", ("data-side", "base"), ("data-row", "2"), ("data-column", "2"))
+            && Visible(html).Contains("BASEONLY;cell", StringComparison.Ordinal));
+    }
+    var tableAncestorOnly = new Dictionary<string, object?>(tableThree) { ["rightPath"] = tableLeft };
+    var tableAncestorProject = Project("table-ancestor-only-project", [tableAncestorOnly]);
+    Verify("report table ancestor-only difference", await Render("table-ancestor-only", tableAncestorProject), "Table", true, true);
+    Verify("report packaged table ancestor-only difference", await Pack("table-ancestor-only", tableAncestorProject), "Table", true, true);
+
+    var jsonLeft = Text("reports/json-left.json", "{\"b\":2,\"a\":{\"x\":1,\"y\":\"<script>value</script>\"}}");
+    var jsonSame = Text("reports/json-same.json", "{\"a\":{\"y\":\"<script>value</script>\",\"x\":1},\"b\":2}");
+    var jsonChanged = Text("reports/json-changed.json", "{\"a\":{\"x\":9,\"y\":\"<script>value</script>\"},\"b\":2}");
+    foreach (var (name, other, different) in new[] { ("json-property-order", jsonSame, false), ("json-value-change", jsonChanged, true) })
+    {
+        var project = Project(name + "-project", [Entry(jsonLeft, other, "Json")]);
+        Verify("report " + name, await Render(name, project), "Json", different);
+        Verify("report packaged " + name, await Pack(name, project), "Json", different);
+    }
+    var jsonThreeProject = Project("json-three-project", [Entry(jsonLeft, jsonSame, "Json", jsonChanged)]);
+    Verify("report Json ancestor-only difference", await Render("json-three", jsonThreeProject), "Json", true, true);
+    Verify("report packaged Json ancestor-only difference", await Pack("json-three", jsonThreeProject), "Json", true, true);
+    var activeProject = Project("active-selection", [Entry(left, right), Entry(missingLeft, missingRight, "Table")], 1);
+    Verify("report default active selection", await Render("default-active", activeProject), "Table", true);
+    Verify("report explicit one-based selection", await Render("explicit-entry", activeProject, "--entry", "1"), "Text", true);
+    foreach (var entry in new[] { "0", "3", "-1", "abc" }) await Reject("entry-" + entry, activeProject, "--entry", entry);
+    await Reject("entry-value-missing", activeProject, "--entry"); await Reject("entry-duplicate", activeProject, "--entry", "1", "--entry", "2");
+    await Reject("unknown-option", activeProject, "--unknown");
+    var malformedQuote = Text("reports/bad-quote.csv", "id,value\nrow,\"unclosed\n");
+    var badQuoteProject = Project("bad-quote-project", [Entry(malformedQuote, missingRight, "Table")]);
+    await Reject("table-invalid-quote", badQuoteProject); await RejectPackage("table-invalid-quote", badQuoteProject);
+    var badTableAncestorProject = Project("bad-table-ancestor-project", [Entry(missingLeft, missingRight, "Table", malformedQuote)]);
+    await Reject("table-invalid-ancestor", badTableAncestorProject); await RejectPackage("table-invalid-ancestor", badTableAncestorProject);
+    var noNewlines = new Dictionary<string, object?>(tableEntry) { ["tableAllowNewlinesInQuotes"] = false };
+    await Reject("table-quoted-newline-disabled", Project("table-no-newline-project", [noNewlines]));
+    var badJson = Text("reports/bad.json", "{\"broken\":");
+    var badJsonAncestorProject = Project("bad-json-ancestor-project", [Entry(jsonLeft, jsonSame, "Json", badJson)]);
+    await Reject("json-invalid-ancestor", badJsonAncestorProject); await RejectPackage("json-invalid-ancestor", badJsonAncestorProject);
+    foreach (var mode in new[] { "Binary", "Image", "Archive", "Provider", "Folder" })
+    {
+        var project = Project("unsupported-" + mode, [Entry(left, right, mode)]);
+        await Reject("unsupported-" + mode.ToLowerInvariant(), project);
+        if (mode == "Folder") await RejectPackage("unsupported-folder", project);
+        else
+        {
+            var metadata = await Pack("metadata-" + mode.ToLowerInvariant(), project);
+            Check("report packaged " + mode + " explicitly marks metadata fallback", metadata.Contains("詳細な比較レポートは未対応", StringComparison.Ordinal)
+                && metadata.Contains("SHA-256", StringComparison.Ordinal));
+        }
+    }
+    await Reject("url-source", Project("url-source-project", [Entry("https://example.invalid/source", right)]));
+    var escaped = Text("reports/too-large-report.txt", new string('<', 4 * 1024 * 1024));
+    await Reject("generated-capacity", Project("generated-capacity-project", [Entry(escaped, escaped)]));
+    var largeInput = Path.Combine(fixtures, "reports", "too-large-input.txt"); using (var stream = File.Create(largeInput)) stream.SetLength(256L * 1024 * 1024 + 1);
+    await Reject("input-capacity", Project("input-capacity-project", [Entry(largeInput, right)]));
+    var readOnly = Text("reports/rejected/readonly.html", "protected readonly HTML\n"); var readOnlyBytes = File.ReadAllBytes(readOnly); var attributes = File.GetAttributes(readOnly);
+    try
+    {
+        File.SetAttributes(readOnly, attributes | FileAttributes.ReadOnly);
+        await Run("report-readonly-output", 2, false, "--report-project", textProject, readOnly);
+        Check("report readonly output preserved", File.ReadAllBytes(readOnly).SequenceEqual(readOnlyBytes));
+    }
+    finally { File.SetAttributes(readOnly, attributes); }
+    var protectedFilter = Text("reports/protected-filter.html", "name: filter\ndef: include\n");
+    var protectedEntry = Entry(left, right, ancestor: ancestor); protectedEntry["fileFilterPath"] = protectedFilter;
+    var protectedProject = Project("protected-project", [protectedEntry, Entry(jsonLeft, jsonSame, "Json")]);
+    foreach (var (name, path) in new[] { ("left", left), ("right", right), ("base", ancestor), ("unselected", jsonLeft), ("filter", protectedFilter), ("project", protectedProject) })
+    {
+        var bytes = File.ReadAllBytes(path);
+        await Run("report-protected-" + name, 2, false, "--report-project", protectedProject, path);
+        Check("report protected source preserved " + name, File.ReadAllBytes(path).SequenceEqual(bytes));
+    }
+    var readOnlyFolderLeft = Path.Combine(fixtures, "reports", "readonly-folder-left");
+    var readOnlyFolderRight = Path.Combine(fixtures, "reports", "readonly-folder-right");
+    Directory.CreateDirectory(readOnlyFolderLeft); Directory.CreateDirectory(readOnlyFolderRight);
+    var folderEntry = Entry(readOnlyFolderLeft, readOnlyFolderRight, "Folder"); folderEntry["leftReadOnly"] = true;
+    var readOnlyFolderProject = Project("unselected-readonly-folder-project", [Entry(left, right), folderEntry]);
+    var existingFolderHtml = Text("reports/readonly-folder-left/existing.html", "unselected readonly folder HTML\n");
+    var existingFolderHtmlBytes = File.ReadAllBytes(existingFolderHtml);
+    await Run("report-unselected-readonly-folder-existing", 2, false, "--report-project", readOnlyFolderProject, existingFolderHtml);
+    Check("report unselected readonly folder existing HTML preserved", File.ReadAllBytes(existingFolderHtml).SequenceEqual(existingFolderHtmlBytes));
+    var newFolderHtml = Path.Combine(readOnlyFolderLeft, "new.html");
+    await Run("report-unselected-readonly-folder-new", 2, false, "--report-project", readOnlyFolderProject, newFolderHtml);
+    Check("report unselected readonly folder creates no new HTML", !File.Exists(newFolderHtml));
+    var existingFolderZip = Text("reports/readonly-folder-left/existing.zip", "unselected readonly folder ZIP\n");
+    var existingFolderZipBytes = File.ReadAllBytes(existingFolderZip);
+    await Run("report-package-unselected-readonly-folder", 2, false, "--package-project", readOnlyFolderProject, existingFolderZip, "--entries", "1");
+    Check("report package unselected readonly folder existing ZIP preserved", File.ReadAllBytes(existingFolderZip).SequenceEqual(existingFolderZipBytes));
+    try
+    {
+        var target = Text("reports/link-target/output.html", "protected linked HTML\n"); var bytes = File.ReadAllBytes(target);
+        var fileLink = Path.Combine(fixtures, "reports", "linked-output.html"); File.CreateSymbolicLink(fileLink, target);
+        links.Add(new(fileLink, new FileInfo(fileLink).LinkTarget!, false, IsDirectory: false));
+        await Run("report-linked-output", 2, false, "--report-project", textProject, fileLink);
+        Check("report linked output preserves target", File.ReadAllBytes(target).SequenceEqual(bytes));
+        await Reject("linked-input", Project("linked-input-project", [Entry(fileLink, right)]));
+        var directoryLink = Path.Combine(fixtures, "reports", "linked-parent"); Directory.CreateSymbolicLink(directoryLink, Path.GetDirectoryName(target)!);
+        links.Add(new(directoryLink, new DirectoryInfo(directoryLink).LinkTarget!, false));
+        await Run("report-linked-parent-output", 2, false, "--report-project", textProject, Path.Combine(directoryLink, "output.html"));
+        Check("report linked parent preserves target", File.ReadAllBytes(target).SequenceEqual(bytes));
+    }
+    catch (Exception exception) when (exception is UnauthorizedAccessException or PlatformNotSupportedException or IOException)
+    { assertions.Add(new("report link protection", "skipped", exception.Message)); }
+    Check("report owned temporary output removed", !Directory.EnumerateFiles(Path.Combine(fixtures, "reports"), "*.tmp", SearchOption.AllDirectories).Any()
+        && !Directory.EnumerateDirectories(Path.Combine(fixtures, "reports"), ".diffbeacon-package-*", SearchOption.AllDirectories).Any());
 }
 
 async Task PackagingCases()
@@ -1217,7 +1537,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--packaging-only", StringComparer.Ordinal))
+    if (args.Contains("--reports-only", StringComparer.Ordinal))
+    {
+        await ReportCases();
+    }
+    else if (args.Contains("--packaging-only", StringComparer.Ordinal))
     {
         await PackagingCases();
     }
@@ -1247,6 +1571,7 @@ try
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
     await PackagingCases();
+    await ReportCases();
     var left = Text("left.txt", "alpha\nbeta\n");
     var equal = Text("equal.txt", "alpha\nbeta\n");
     var right = Text("right.txt", "alpha\nchanged\n");

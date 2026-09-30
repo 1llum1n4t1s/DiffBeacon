@@ -69,6 +69,8 @@ var comparison = TextDiffer.Compare(left.Text, right.Text, options, cancellation
 
 ## パッチ・構造化テキスト
 
+表解析・JSON正規化にも末尾の任意`CancellationToken`を渡せます。`ParseDelimited`は解析ループ、`NormalizeJson`は正規化ノードごとに取消を確認します。JSONの同期構文解析自体は途中取消に対応せず、入力16 MiB上限と解析前後の取消確認を使います。
+
 `UnifiedPatch.Create(leftText, rightText, leftPath, rightPath, contextLines = 3)` は一つのファイルの unified patch を作り、混在行末と最終改行なしマーカーを保持します。`Apply(text, patch)` は全 hunk の位置・行数・文脈を検証し、成功時だけ完成文字列を返します。不正／複数ファイルパッチは `FormatException`、文脈不一致は `InvalidOperationException`。`TryApply` は失敗時に元の文字列とエラーを返します。ファイルを直接書き換えないのでパッチ内パスを使ったファイルアクセスはありません。
 
 `StructuredComparer.ParseDelimited(text, delimiter, quote?, allowNewlinesInQuotes?)`と`CompareDelimited(left, right, delimiter, options?, cancellationToken, quote?, allowNewlinesInQuotes?)`は任意の1文字区切り・引用符、その引用符の二重エスケープ、引用セル内の改行を扱います。既定はカンマ・ダブルクォート・引用内改行許可です。改行禁止時の引用内改行、区切りと引用符の一致、NUL・改行・単独サロゲートの指定は拒否します。比較は位置による行・列単位で、`CellDifference`の番号は1始まりです。キー列による行再整列は行いません。

@@ -36,11 +36,14 @@ public static class ComparisonPackage
     {
         token.ThrowIfCancellationRequested();
         var target = ValidateLocal(output);
+        ProjectReport.EnsureReadOnlyDirectories(target, workspace.Entries);
         if (!ManagedArchive.SupportsOutput(target)) throw new InvalidDataException("包装先には対応するアーカイブ拡張子を指定してください。");
         var parent = Path.GetDirectoryName(target)!;
         if (!Directory.Exists(parent)) throw new DirectoryNotFoundException("包装先のディレクトリがありません。");
         if (sourceProject is not null && ArchivePaths.SameFile(target, sourceProject)) throw new IOException("元プロジェクトを包装先に指定できません。");
         var selected = indices.Select(index => workspace.Entries[index]).ToArray();
+        if (selected.Any(project => project.Mode.ToLowerInvariant() is "folder" or "2"))
+            throw new InvalidOperationException("フォルダー比較の包装は未対応です。フォルダーのアーカイブ作成を使用してください。");
         foreach (var project in workspace.Entries)
             foreach (var path in Paths(project).Append(project.FileFilterPath ?? "").Where(path => !string.IsNullOrWhiteSpace(path) && !IsUrl(path)))
                 if (ArchivePaths.SameFile(target, path)) throw new IOException("比較元を包装先に指定できません。");
@@ -150,7 +153,7 @@ public static class ComparisonPackage
             {
                 token.ThrowIfCancellationRequested(); var project = selected[i];
                 var left = pairInputs[i][0]; var right = pairInputs[i][2];
-                var textMode = IsText(project, left?.Source);
+                var textMode = ProjectReport.IsTextual(project);
                 string? a = null, b = null;
                 if (textMode && (options.IncludePatch || options.IncludeReport))
                 {
@@ -166,7 +169,9 @@ public static class ComparisonPackage
                 {
                     var title = project.LeftDescription ?? Path.GetFileName(project.LeftPath);
                     indexReport.Append("<li><a href=\"report.files/").Append(i + 1).Append(".html\">").Append(WebUtility.HtmlEncode(title)).Append("</a></li>");
-                    var report = textMode ? HtmlReport.Create(TextDiffer.Compare(a!, b!, Options(project), token), left!.Name, right!.Name, MaximumGeneratedBytes, token)
+                    var ancestor = textMode && pairInputs[i][1] is { } middle
+                        ? TextDocument.LoadAsync(middle.Snapshot, token).GetAwaiter().GetResult().Text : null;
+                    var report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left!.Name, pairInputs[i][1]?.Name, right!.Name)
                         : MetadataReport(project, pairInputs[i]);
                     Generated($"report.files/{i + 1}.html", report);
                 }
@@ -238,11 +243,6 @@ public static class ComparisonPackage
         var relative = common is null ? full.Replace(':', '_').TrimStart('/', '\\') : Path.GetRelativePath(common, full);
         return relative.Replace('\\', '/');
     }
-    private static bool IsText(ComparisonProject project, string? path) => project.Mode.ToLowerInvariant() is "text" or "table" or "json" or "1" or "5" or "6"
-        || project.Mode.ToLowerInvariant() is "auto" or "0" && path is not null && !ArchivePanel.Supports(path) && !SpecializedViews.IsImage(path);
-    private static ComparisonOptions Options(ComparisonProject p) => new()
-    { IgnoreCase = p.IgnoreCase, IgnoreWhitespace = p.IgnoreWhitespace, IgnoreBlankLines = p.IgnoreBlankLines, IgnoreLinePattern = p.IgnoreLinePattern,
-        IgnoreNumbers = p.IgnoreNumbers, CommentSyntax = p.CommentSyntax, Whitespace = p.Whitespace, SubstitutionRules = p.SubstitutionRules };
     private static string MetadataReport(ComparisonProject project, Input?[] inputs)
     {
         var report = new StringBuilder("<!doctype html><meta charset=\"utf-8\"><title>文書レポート</title><h1>文書レポート</h1><p>形式: ")

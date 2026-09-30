@@ -468,6 +468,56 @@ internal static class HeadlessSelfTest
             Check("canceling packaging after snapshot starts preserves old output and removes owned stage", packageInProgress && rejected && File.ReadAllBytes(packageOutput).SequenceEqual(packageBefore)
                 && !Directory.EnumerateDirectories(output, ".diffbeacon-package-*").Any());
             window.ActivePane.DiscardChanges();
+            var reportPane = window.ActivePane; var reportPath = Path.Combine(output, "pane-report.html");
+            File.WriteAllText(reportPath, "old report");
+            rejected = false; try { Pump(reportPane.SaveReportAsync(reportPath)); } catch (InvalidOperationException) { rejected = true; }
+            Check("binary pane rejects empty text report and preserves output", rejected && File.ReadAllText(reportPath) == "old report");
+            var reportBase = Path.Combine(output, "report-base.txt"); File.WriteAllText(reportBase, "title\nancestor only\ntail\n");
+            reportPane.ApplyProject(new() { LeftPath = left, BasePath = reportBase, RightPath = right, Mode = "Text",
+                LeftDescription = "左<script>", BaseDescription = "共通祖先", RightDescription = "右" });
+            Pump(reportPane.CompareProjectAsync()); reportPane.RightEditor.Text += "edited report content\n";
+            Pump(reportPane.SaveReportAsync(reportPath)); var reportText = File.ReadAllText(reportPath);
+            Check("GUI report uses all three panes and live unsaved edits with safe descriptions", reportText.Contains("data-side=\"base\"")
+                && reportText.Contains("ancestor only") && reportText.Contains("edited report content") && reportText.Contains("左&lt;script&gt;")
+                && !reportText.Contains("<script>") && !File.ReadAllText(right).Contains("edited report content"));
+            var reportViews = reportPane.GetVisualDescendants().OfType<TabControl>().First();
+            reportViews.SelectedIndex = 1; Dispatcher.UIThread.RunJobs(); Screenshot("report-three-pane.png");
+            reportViews.SelectedIndex = 0;
+            var oldReport = File.ReadAllBytes(reportPath); reportPane.RightPath.Text = left;
+            rejected = false; try { Pump(reportPane.SaveReportAsync(reportPath)); } catch (InvalidOperationException) { rejected = true; }
+            Check("GUI report rejects stale paths and preserves output", rejected && File.ReadAllBytes(reportPath).SequenceEqual(oldReport));
+            reportPane.RightPath.Text = right;
+            var sourceBeforeReport = File.ReadAllBytes(left);
+            rejected = false; try { Pump(reportPane.SaveReportAsync(left)); } catch (InvalidOperationException) { rejected = true; }
+            Check("GUI report protects writable input too", rejected && File.ReadAllBytes(left).SequenceEqual(sourceBeforeReport));
+            using (var canceledReport = new CancellationTokenSource())
+            {
+                canceledReport.Cancel(); rejected = false;
+                try { Pump(reportPane.SaveReportAsync(reportPath, canceledReport.Token)); } catch (OperationCanceledException) { rejected = true; }
+                Check("GUI canceled report keeps old output", rejected && File.ReadAllBytes(reportPath).SequenceEqual(oldReport)
+                    && !Directory.EnumerateFiles(output, ".pane-report.html.*.tmp").Any());
+            }
+            var smallEditorText = reportPane.RightEditor.Text; reportPane.RightEditor.Text = new string('<', 8 * 1024 * 1024);
+            var cancelFromUi = reportPane.SaveReportAsync(reportPath); var reportWasActive = !cancelFromUi.IsCompleted;
+            reportPane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中止")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            rejected = false; try { Pump(cancelFromUi); } catch (OperationCanceledException) { rejected = true; }
+            Check("actual stop button cancels active HTML report and preserves old output", reportWasActive && rejected
+                && File.ReadAllBytes(reportPath).SequenceEqual(oldReport) && !Directory.EnumerateFiles(output, ".pane-report.html.*.tmp").Any());
+            reportPane.RightEditor.Text = smallEditorText;
+            reportPane.DiscardChanges();
+            reportPane.ApplyProject(new() { LeftPath = multilineLeft, BasePath = multilineLeft, RightPath = multilineRight, Mode = "Table",
+                TableDelimiter = ';', TableQuote = '\'', TableAllowNewlinesInQuotes = true });
+            Pump(reportPane.CompareProjectAsync()); reportPane.RightEditor.Text = "id;value\n1;'new\nvalue'\n";
+            Pump(reportPane.SaveReportAsync(reportPath)); reportText = File.ReadAllText(reportPath);
+            Check("GUI table report uses parsed multiline cells and ancestor instead of raw text diff", reportText.Contains("data-mode=\"Table\"")
+                && reportText.Contains("data-side=\"base\"") && reportText.Contains("data-row=\"2\"") && reportText.Contains("data-column=\"2\"")
+                && reportText.Contains("two\nlines") && !reportText.Contains("'two"));
+            reportPane.DiscardChanges();
+            var reportJsonLeft = Path.Combine(output, "report-left.json"); var reportJsonRight = Path.Combine(output, "report-right.json");
+            File.WriteAllText(reportJsonLeft, "{\"a\":1,\"b\":2}"); File.WriteAllText(reportJsonRight, "{\"b\":2.0,\"a\":1.0}");
+            reportPane.ApplyProject(new() { LeftPath = reportJsonLeft, RightPath = reportJsonRight, Mode = "Json" });
+            Pump(reportPane.CompareProjectAsync()); Pump(reportPane.SaveReportAsync(reportPath)); reportText = File.ReadAllText(reportPath);
+            Check("GUI JSON report follows structural normalization", reportText.Contains("data-mode=\"Json\"") && reportText.Contains("data-different=\"false\""));
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }

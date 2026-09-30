@@ -127,6 +127,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly ListBox _directoryList = new();
     private TextDocument? _leftDocument, _rightDocument;
     private CancellationTokenSource? _operation;
+    private CancellationTokenSource? _reportOperation;
     private string? _baseText;
     private string _savedLeft = "", _savedRight = "", _savedResult = "";
     private string? _directoryLeft, _directoryRight;
@@ -164,7 +165,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "アーカイブ作成", CreateArchiveAsync);
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
-        AddAction(actions, "中止", () => { _operation?.Cancel(); return Task.CompletedTask; });
+        AddAction(actions, "中止", () => { _operation?.Cancel(); _reportOperation?.Cancel(); return Task.CompletedTask; });
         top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", OpenProjectAsync);
@@ -364,6 +365,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (_disposed) return; _disposed = true;
         _owner.Closed -= _ownerClosedHandler;
         _operation?.Cancel(); _operation?.Dispose();
+        _reportOperation?.Cancel();
         SpecializedViews.Release(_specialTab.Content as Control);
     }
     private void SetSpecialView(Control view)
@@ -415,9 +417,33 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private async Task ExportReportAsync()
     {
-        CompareEditors();
         var path = await SavePathAsync("HTMLレポートを保存", "comparison.html");
-        if (path is not null) { EnsureProjectOutputWritable(path); await File.WriteAllTextAsync(path, HtmlReport.Create(CurrentDiff!, LeftPath.Text ?? "左", RightPath.Text ?? "右")); }
+        if (path is not null) await SaveReportAsync(path);
+    }
+
+    public async Task SaveReportAsync(string path, CancellationToken token = default)
+    {
+        if (_reportOperation is not null) throw new InvalidOperationException("HTMLレポートを生成しています。");
+        var project = CaptureProject();
+        if (!string.IsNullOrWhiteSpace(project.LeftPath) || !string.IsNullOrWhiteSpace(project.RightPath)) EnsureComparedForPackaging();
+        var panes = _owner is MainWindow main ? main.SessionPanes : [this];
+        foreach (var pane in panes) pane.EnsureProjectOutputWritable(path);
+        var protectedEntries = panes.Select(pane => pane.CaptureProject()).ToArray();
+        var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var ancestor = _baseText;
+        using var operation = CancellationTokenSource.CreateLinkedTokenSource(token);
+        _reportOperation = operation;
+        _status.Text = "HTMLレポートを生成しています…（中止できます）";
+        try
+        {
+            var cancellation = operation.Token;
+            var html = await Task.Run(() => project.Mode is "Provider" or "Web"
+                ? HtmlReport.CreateText([new((project.LeftDescription ?? project.LeftPath) + "（変換後のテキスト）", left),
+                    new((project.RightDescription ?? project.RightPath) + "（変換後のテキスト）", right)], ProjectReport.Options(project), ProjectReport.MaximumBytes, cancellation)
+                : ProjectReport.Create(project, left, ancestor, right, cancellation), cancellation);
+            await ProjectReport.SaveAsync(path, html, protectedEntries.Concat(panes.Select(pane => pane.CaptureProject())), token: cancellation);
+            _status.Text = "HTMLレポートを保存しました。";
+        }
+        finally { _reportOperation = null; }
     }
     private void Find()
     {

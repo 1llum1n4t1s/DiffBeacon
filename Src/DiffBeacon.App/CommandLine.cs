@@ -18,7 +18,7 @@ internal static class CommandLine
                     + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT]\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
-                    + "--json LEFT RIGHT\n--table LEFT RIGHT\n--report LEFT RIGHT OUTPUT_HTML\n"
+                    + "--json LEFT RIGHT\n--table LEFT RIGHT\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]\n"
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--package-project INPUT_PROJECT OUTPUT_ARCHIVE [--entries 1,3] [--report] [--patch] [--no-documents] [--no-project]\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"
                     + "--archive-list ARCHIVE [--password-stdin]\n--archive-compare LEFT RIGHT [--password-stdin]\n--archive-entry ARCHIVE ENTRY OUTPUT [--password-stdin]\n--archive-repack INPUT OUTPUT [--password-stdin]\n--archive-extract INPUT NEW_DIRECTORY [--password-stdin]\n--archive-create SOURCE_DIRECTORY OUTPUT\n"
                     + "--merge BASE LEFT RIGHT OUTPUT\n--merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"
@@ -27,6 +27,7 @@ internal static class CommandLine
             }
             var command = args[0];
             if (command == "--package-project") return await PackageCommands.RunAsync(args);
+            if (command == "--report-project") return await ReportCommands.RunAsync(args);
             if (command.StartsWith("--archive-", StringComparison.Ordinal)) return await ArchiveCommands.RunAsync(args);
             var required = command switch { "--merge" => 5, "--merge-select" => 6, "--patch-create" or "--patch-apply" => 4, _ => 3 };
             if (args.Length < required) throw new ArgumentException("引数が不足しています。--help を参照してください。");
@@ -78,9 +79,8 @@ internal static class CommandLine
             if (command == "--report")
             {
                 if (args.Length != 4) throw new ArgumentException("--report LEFT RIGHT OUTPUT_HTML");
-                var left = await TextDocument.LoadAsync(args[1], token); var right = await TextDocument.LoadAsync(args[2], token);
-                var diff = TextDiffer.Compare(left.Text, right.Text);
-                await File.WriteAllTextAsync(args[3], HtmlReport.Create(diff, args[1], args[2]), new UTF8Encoding(false), token);
+                await ProjectReport.ExportAsync(new ComparisonWorkspace
+                { Entries = [new ComparisonProject { LeftPath = args[1], RightPath = args[2], Mode = "Text" }] }, 0, args[3], token: token);
                 WriteJson(w => w.WriteString("output", Path.GetFullPath(args[3]))); return 0;
             }
             if (command == "--folder-copy")

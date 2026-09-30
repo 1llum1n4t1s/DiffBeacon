@@ -18,8 +18,10 @@ public sealed record StructuredDiffResult(StructuredTable Left, StructuredTable 
 
 public static class StructuredComparer
 {
-    public static StructuredTable ParseDelimited(string text, char delimiter = ',', char quote = '"', bool allowNewlinesInQuotes = true)
+    public static StructuredTable ParseDelimited(string text, char delimiter = ',', char quote = '"', bool allowNewlinesInQuotes = true,
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (delimiter is '\r' or '\n' or '\0' || char.IsSurrogate(delimiter) || delimiter == quote) throw new ArgumentException("区切り文字が不正です。", nameof(delimiter));
         if (quote is '\r' or '\n' or '\0' || char.IsSurrogate(quote)) throw new ArgumentException("引用符が不正です。", nameof(quote));
         var rows = new List<IReadOnlyList<string>>();
@@ -32,6 +34,7 @@ public static class StructuredComparer
         var endedRow = false;
         for (var index = 0; index < text.Length; index++)
         {
+            if ((index & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
             var character = text[index];
             endedRow = false;
             if (quoted)
@@ -74,8 +77,8 @@ public static class StructuredComparer
         ComparisonOptions? options = null, CancellationToken cancellationToken = default, char quote = '"', bool allowNewlinesInQuotes = true)
     {
         options ??= new();
-        var a = ParseDelimited(left, delimiter, quote, allowNewlinesInQuotes);
-        var b = ParseDelimited(right, delimiter, quote, allowNewlinesInQuotes);
+        var a = ParseDelimited(left, delimiter, quote, allowNewlinesInQuotes, cancellationToken);
+        var b = ParseDelimited(right, delimiter, quote, allowNewlinesInQuotes, cancellationToken);
         var differences = new List<CellDifference>();
         for (var row = 0; row < Math.Max(a.RowCount, b.RowCount); row++)
         {
@@ -95,8 +98,9 @@ public static class StructuredComparer
     }
 
     // JsonDocument/Utf8JsonWriter のみを使い、反射によるシリアライズを避ける。
-    public static string NormalizeJson(string text, bool sortProperties = true)
+    public static string NormalizeJson(string text, bool sortProperties = true, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (text.Length > 16 * 1024 * 1024) throw new JsonException("JSON は 16,777,216 文字以下にしてください。");
         using var document = JsonDocument.Parse(text, new JsonDocumentOptions { MaxDepth = 128 });
         using var stream = new MemoryStream();
@@ -104,6 +108,7 @@ public static class StructuredComparer
         {
             void Write(JsonElement element)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 switch (element.ValueKind)
                 {
                     case JsonValueKind.Object:
@@ -129,8 +134,8 @@ public static class StructuredComparer
         return Encoding.UTF8.GetString(stream.ToArray());
     }
 
-    public static DiffResult CompareJson(string left, string right, ComparisonOptions? options = null) =>
-        TextDiffer.Compare(NormalizeJson(left), NormalizeJson(right), options);
+    public static DiffResult CompareJson(string left, string right, ComparisonOptions? options = null, CancellationToken cancellationToken = default) =>
+        TextDiffer.Compare(NormalizeJson(left, cancellationToken: cancellationToken), NormalizeJson(right, cancellationToken: cancellationToken), options, cancellationToken);
 
     // 浮動小数点へ変換せず、十進の係数と指数を正規化して精度を保つ。
     private static string CanonicalNumber(string raw)

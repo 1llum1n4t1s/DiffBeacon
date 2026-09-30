@@ -272,7 +272,7 @@ public static class SpecializedViews
         panel.Children.Add(rows); return panel;
     }
 
-    private static char DetectSeparator(string a, string b)
+    internal static char DetectSeparator(string a, string b)
     {
         // 引用符内のタブは区切りとして数えない。
         foreach (var text in new[] { a, b })
