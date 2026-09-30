@@ -14,7 +14,7 @@
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
 | 多言語 | 新 UI は日本語を中心に実装 | 旧翻訳カタログとローカライズ切替、RTL、全ダイアログの同等性は未完了 |
 | 詳細フィルター | 大文字小文字、4種の空白処理、空行、行正規表現、ASCII数字・CStyle/CSharp/Python/XMLコメントの除外、順序付き置換、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式 | 比較前処理は原文を保持し、GUI・CLI・フォルダーへ適用。同梱12 `.flt` の読込みを確認。内容検索、左右別属性、関数・算術、PCRE固有構文、全旧構文のコメント処理、複数行置換、全表示フィルターは未完了 |
-| プロジェクト / レポート | source-generated JSON保存、単一組`.WinMerge` XML読込み、HTML / JSONレポート | パス・対応オプション・プロバイダーID・ファイルフィルターパスを保持。外部実行ファイルは保存IDだけで自動登録・実行しない。旧複数組プロジェクトは拒否 |
+| プロジェクト / レポート | source-generated JSON保存、単一組`.WinMerge` XML読込み、HTML / JSONレポート | JSONはパス・対応オプション・プロバイダーID・ファイルフィルターパスを保持。旧XMLの複数組・説明・各readonly・filter・再帰・CSV設定等は未移植。外部実行ファイルは保存IDだけで自動登録・実行しない |
 | Native AOT Windows x64 / ARM64 | 対応 RID と同 OS 発行スクリプト、CI マトリクス | 両アーキテクチャのGitHub runnerで発行・UI自己検証・CLI E2E成功。実測結果は下表 |
 | Native AOT macOS x64 / ARM64 | 対応 RID、`.app` / tar、CI マトリクス | Intel / Apple SiliconのGitHub runnerで発行・UI自己検証・CLI E2E成功。署名・公証・公開は実施しない |
 
@@ -27,6 +27,23 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 アーカイブの旧互換範囲は実装根拠で区別する。`Src/7zCommon.cpp:391`の作成UIは7z・ZIP派生形式・TAR/TAR.Z/TAR.GZ/TAR.BZ2/TGZ/TBZ2を提供し、RAR/LZH/CAB作成はコメントアウトされている。`Src/ArchiveDlg.cpp:28`は選択文書・レポート・パッチ・プロジェクトを包装し、`ArchiveSupport/Merge7z/Merge7zCommon.cpp:243`は全件抽出、`Src/7zCommon.cpp:480`は多段アーカイブを再判定する。読込み形式は`ArchiveSupport/Merge7z/Merge7zCommon.cpp:721`以降の登録を参照する。暗号化出力・分割出力は調査した旧作成経路に指定がなく、既存機能の移植漏れとは断定しない。分割読込み・MSI・リンク保存の厳密な旧動作は未確定であり、追加実測が必要。
 
 ## 実行した検証
+
+2026-10-01 JST、ZIP派生・TAR/TAR.GZ/TAR.BZ2の作成・再梱包と全件展開を追加したコードコミット`96bdc45ab8f687fb2d2c33263229d5eca6109269`を[GitHub Actions run 36781192763](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36781192763)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、コンパイラーのCS/IL/MSB警告は0件。Mac Intel/ARM64の`.app`とtarを含む`DiffBeacon-<RID>`発行物を同runに保存した。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 931 | 0 / 2 | 69 | 発行・実行成功 |
+| `win-arm64` | 931 | 0 / 2 | 69 | 発行・実行成功 |
+| `osx-x64` | 943 | 0 / 0 | 69 | 発行・実行成功 |
+| `osx-arm64` | 943 | 0 / 0 | 69 | 発行・実行成功 |
+
+新規形式の日本語名・空ディレクトリ・内容ハッシュ、暗号化入力の全件展開、既存出力保持、TARチェックサム・リンク・親子衝突、gzipのCRC・欠落フッター・連結メンバー、深い暗黙親パスの上限、GUIで展開開始後のキャンセルと一時出力除去を検証した。Windowsの2スキップはUnix権限・Mac大小文字別名だけで、両Mac構成では成功した。Python 3.13.15の独立デコーダーでもTAR.BZ2の日本語名と全内容を確認した。PythonはE2E専用で発行アプリの依存ではない。各発行物のSharpCompressライセンス同梱も確認した。
+
+全構成の入力・出力・JSON・PNG、run情報・ログ・集計を`artifacts/github/36781192763`に保存し、Mac ARM64のTAR.GZ比較画面・暗号化ZIPのパスワードマスクを目視確認した。ローカルWindows x64 Native AOTは931 CLI＋69 UI成功、通常DLLは922成功・0失敗・4スキップ（リンク権限とOS固有項目）。UI自己検証は同じ保存先での連続実行も成功した。UI検証はheadless描画・操作で、通常のネイティブウィンドウ・ファイル選択・シェル統合の手動実測を含まない。
+
+先行run `36779758667`はWindows ARM64のOS標準tarによる独立検証で日本語名の失敗と作成プロセスのクラッシュが発生した。同runのアプリ経路とUI 69件は成功し、生成TAR.BZ2を別環境のPythonで読めることを確認したため、独立検証を全構成同じPython標準ライブラリに統一した。失敗の入力・ログと別デコーダーの結果は`artifacts/github/36779758667`に保持している。
+
+以下は暗号化・solidアーカイブ読込みと7z作成追加時点の記録。
 
 2026-10-01 JST、アーカイブ比較・暗号化/solid読込み・非暗号化7z作成/再梱包を追加したコードコミット`a27989e328d3850d3bfcdbc682a7b7e0395835b0`を[GitHub Actions run 36775611278](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36775611278)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、コンパイラーのCS/IL/MSB警告は0件。
 
