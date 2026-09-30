@@ -10,7 +10,7 @@
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
 | 画像 | 左右表示、重ね合わせ、倍率・閾値、ピクセル差分 | 各1600万ピクセル上限。複数ページは先頭だけ。ベクター、OCR、全画像形式・画像マージは未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
-| Archive / プラグイン | 7z/RAR/ZIPの内容比較・暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存、非暗号化7z作成/再梱包、TAR/TAR.GZ比較、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。暗号化出力・分割・CAB/LZH/ISO/MSI等の全旧形式・メタデータ/リンク保存・旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
+| Archive / プラグイン | 7z/RAR/ZIPの内容比較・暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存、非暗号化7z作成/再梱包、TAR/TAR.GZ比較、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。ZIP/TAR系作成、選択文書の包装、全件抽出・多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
 | 多言語 | 新 UI は日本語を中心に実装 | 旧翻訳カタログとローカライズ切替、RTL、全ダイアログの同等性は未完了 |
 | 詳細フィルター | 大文字小文字、4種の空白処理、空行、行正規表現、ASCII数字・CStyle/CSharp/Python/XMLコメントの除外、順序付き置換、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式 | 比較前処理は原文を保持し、GUI・CLI・フォルダーへ適用。同梱12 `.flt` の読込みを確認。内容検索、左右別属性、関数・算術、PCRE固有構文、全旧構文のコメント処理、複数行置換、全表示フィルターは未完了 |
@@ -24,7 +24,22 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 全機能移行完了の判定には、上の未完了項目の実装と、Windows / macOS の対象アーキテクチャ上で再現できる検証結果が必要。CI 定義の追加だけで、ビルド・起動・配布の成功を確認したことにはならない。
 
+アーカイブの旧互換範囲は実装根拠で区別する。`Src/7zCommon.cpp:391`の作成UIは7z・ZIP派生形式・TAR/TAR.Z/TAR.GZ/TAR.BZ2/TGZ/TBZ2を提供し、RAR/LZH/CAB作成はコメントアウトされている。`Src/ArchiveDlg.cpp:28`は選択文書・レポート・パッチ・プロジェクトを包装し、`ArchiveSupport/Merge7z/Merge7zCommon.cpp:243`は全件抽出、`Src/7zCommon.cpp:480`は多段アーカイブを再判定する。読込み形式は`ArchiveSupport/Merge7z/Merge7zCommon.cpp:721`以降の登録を参照する。暗号化出力・分割出力は調査した旧作成経路に指定がなく、既存機能の移植漏れとは断定しない。分割読込み・MSI・リンク保存の厳密な旧動作は未確定であり、追加実測が必要。
+
 ## 実行した検証
+
+2026-10-01 JST、アーカイブ比較・暗号化/solid読込み・非暗号化7z作成/再梱包を追加したコードコミット`a27989e328d3850d3bfcdbc682a7b7e0395835b0`を[GitHub Actions run 36775611278](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36775611278)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、コンパイラーのCS/IL/MSB警告は0件。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 687 | 0 / 2 | 64 | 発行・起動成功 |
+| `win-arm64` | 687 | 0 / 2 | 64 | 発行・起動成功 |
+| `osx-x64` | 699 | 0 / 0 | 64 | 発行・起動成功 |
+| `osx-arm64` | 699 | 0 / 0 | 64 | 発行・起動成功 |
+
+Windowsの2スキップはUnix権限・macOS大小文字別名の検証で、両Mac構成では実際に成功した。暗号化7z/RAR4/RAR5/WinZip AES、solid、CRC値0へ破損させたZIPの拒否、原本・既存出力保持、フォルダー内への再作成、17 MiBエントリのプレビュー・保存を検証した。各発行物へSharpCompressのMITライセンスを同梱した。全構成の入力・出力・JSON・PNG、run情報・ログ・集計を`artifacts/github/36775611278`に保存し、WindowsとMac ARM64のアーカイブ画面を目視確認した。ローカルWindows x64 Native AOTも687 CLI＋64 UI成功、通常DLLは678成功・0失敗・4スキップ（リンク権限とOS固有項目）。UIはheadless描画・操作で、通常ウィンドウ・ファイル選択・シェル統合の手動実測を含まない。
+
+以下はマージ結果セッション・詳細フィルター追加時点の記録。
 
 2026-10-01 JST、マージ結果セッション・詳細フィルターを追加したコードコミット`1d1e54d3b3db999a95bacdb71506f9bb4d2e8747`を[GitHub Actions run 36770239518](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36770239518)で実行し、4ジョブすべて成功した。
 

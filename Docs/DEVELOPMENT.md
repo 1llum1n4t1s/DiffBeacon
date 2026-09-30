@@ -41,6 +41,8 @@ dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-
 
 マージ結果セッション・詳細フィルターの4構成検証は[GitHub Actions run 36770239518](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36770239518)で全ジョブ成功した。対応するJSON・ログ・PNGは`artifacts/github/36770239518`に保持する。
 
+暗号化・solidアーカイブ比較と7z作成の4構成検証は[GitHub Actions run 36775611278](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36775611278)で全ジョブ成功した。対応するJSON・ログ・PNGと集計は`artifacts/github/36775611278`に保持する。Windows上で省略するUnix権限・Mac大小文字別名の検証は、両Mac runnerで成功した。
+
 Windowsのシンボリックリンク検証は作成権限が必要。権限がないプロセスでは理由を記録してスキップし、権限のある同一マシンで再実行する。Macではファイル保存後のUnix実行権限も検証する。対象OS上のAOT発行にはMicrosoftの[Native AOTの前提条件](https://learn.microsoft.com/dotnet/core/deploying/native-aot/)が適用される。macOS最低14.0は[Avaloniaの対応環境](https://docs.avaloniaui.net/docs/overview/supported-platforms)に合わせてInfo.plistへ記載する。
 
 既知のローカル環境観測: SDK `10.0.401` の `dotnet --version` と MSBuild は起動する一方、`dotnet --info` は workload MSI の `InstallerBase` 初期化例外を表示した。原因は未確定で、グローバル設定やインストールを変更していない。この診断表示の失敗とプロジェクトのビルド成否は別々に確認する。
