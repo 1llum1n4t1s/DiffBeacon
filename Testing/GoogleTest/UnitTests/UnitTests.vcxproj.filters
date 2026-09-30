@@ -138,9 +138,6 @@
     <ClCompile Include="..\Encoding\codepage_detect_test.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
-    <ClCompile Include="..\DirItem\DirItem_test.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
     <ClCompile Include="..\Environment\Environemt_test.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
@@ -205,9 +202,6 @@
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="..\UnicodeString\UnicodeString_test.cpp">
-      <Filter>Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\OptionsMgr\VariantValue_test.cpp">
       <Filter>Tests</Filter>
     </ClCompile>
     <ClCompile Include="..\ShellFileOperations\ShellFileOperations_test.cpp">

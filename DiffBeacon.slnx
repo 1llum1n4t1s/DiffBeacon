@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Src/">
+    <Project Path="Src/DiffBeacon.Core/DiffBeacon.Core.csproj" />
+    <Project Path="Src/DiffBeacon.App/DiffBeacon.App.csproj" />
+    <Project Path="Src/DiffBeacon.Providers/DiffBeacon.Providers.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj" />
+    <Project Path="tests/DiffBeacon.FakeProvider/DiffBeacon.FakeProvider.csproj" />
+  </Folder>
+</Solution>

@@ -1,167 +1,31 @@
-# WinMerge
+# DiffBeacon
 
-[![logo](Docs/Logos/WinMerge_logo_24bit.png)](https://github.com/WinMerge/winmerge)
+WinMerge を基にした、ファイル・フォルダー比較アプリです。C# / .NET 10 / Avalonia UI への移植を進めています。**WinMerge の全機能との互換性はまだ完成していません。** 対応状況は [移行一覧](Docs/MIGRATION.md) を参照してください。
 
-[WinMerge](https://winmerge.org/) is an open-source differencing and merging tool for Windows.  
-It compares files and folders and presents differences in a clear, visual format that is easy to understand and work with.  
-WinMerge has been actively developed since 2000.
+## 使い方
 
-[![Build status](https://ci.appveyor.com/api/projects/status/h3v3ap1kswi1tyyt?svg=true)](https://ci.appveyor.com/project/sdottaka/winmerge/build/artifacts)
-[![CI](https://github.com/WinMerge/winmerge/workflows/CI/badge.svg)](https://github.com/WinMerge/winmerge/actions)
-[![sourceforge.net downloads](https://img.shields.io/sourceforge/dt/winmerge)](https://sourceforge.net/projects/winmerge/files/)
-[![GitHub Releases](https://img.shields.io/github/downloads/winmerge/winmerge/total.svg)](https://github.com/WinMerge/winmerge/releases/latest)
-[![Translation status](https://img.shields.io/badge/translations-41-green)](https://github.com/WinMerge/winmerge/blob/master/Translations/TranslationsStatus.md)
+アプリを起動し、左と右のファイルまたはフォルダーを選んで「比較」を押します。共通の祖先ファイルを指定すると、3方向マージを実行できます。差分を選択し「選択差分 →」または「← 選択差分」でコピーし、編集した側を保存します。
 
----
+- テキスト：差分・行内強調、編集、差分移動、検索、空白・大文字小文字・空行・正規表現の除外。
+- フォルダー：再帰比較、内容・SHA-256・日時とサイズ、除外パス、選択項目のコピー。
+- バイナリ：16進表示・編集・差分範囲コピー・別名保存。
+- 画像：左右表示、重ね合わせ、倍率、閾値付きピクセル差分。
+- JSON / CSV / TSV：構造の正規化・セル単位の比較。
+- ZIP：エントリの内容ハッシュ比較、プレビュー、エントリ保存。
+- XML / HTML / Web応答 / Office / TAR：標準プロバイダーで比較用テキストへ変換。外部実行ファイルは明示登録したときだけ使用。
+- ファイルフィルター：旧 `.flt` の include / exclude、ファイル・ディレクトリ規則、名前・サイズ・日時の条件式。
+- 比較プロジェクトの保存・読込み、単一組の WinMerge プロジェクトの読込み、unified patch、HTMLレポート。
 
-## What Can WinMerge Do?
+複数の比較は「新しい比較」でタブを追加します。F7 / Shift+F7 で差分を移動できます。テキスト保存では読込み時の文字コードとBOMを保持します。画像・バイナリなどの保存は、それぞれの形式別ビューの操作を使ってください。
 
-WinMerge provides a rich set of features for comparing and merging files and folders:
+## 対応環境
 
-- **File Comparison**  
-  Compare two or three text files side by side, with differences highlighted line by line.  
-  Inline differences within a line can also be shown.
+Windows x64 / ARM64、macOS Intel / Apple Silicon 用の Native AOT 発行経路を用意しています。各プラットフォームの実測結果と未検証項目は [移行一覧](Docs/MIGRATION.md) に記載します。アーカイブ・画像・テキストには表示・処理上限があり、旧ActiveXプラグイン、Webブラウザー比較、Explorer / Finder 拡張などは未対応です。
 
-- **Folder Comparison**  
-  Compare the contents of two folders to see which files differ, are missing, or exist only on one side.  
-  Folder comparisons support **advanced filter expressions**, allowing you to include or exclude files and folders based on names, paths, sizes, timestamps, and other attributes.
+## 開発と検証
 
-- **Merging**  
-  Merge changes between files or folders by selectively applying differences from one side to the other.
+ビルド、E2E、Native AOT 発行は [開発手順](Docs/DEVELOPMENT.md) を参照してください。新しいビルドは `DiffBeacon.slnx` を使い、サブモジュールを必要としません。旧 C++ / MFC 実装は、未移植機能の調査用に残しています。
 
-- **Syntax Highlighting**  
-  Syntax highlighting for many programming languages and file formats helps make code and structured text easier to read and compare.
+## ライセンス
 
-- **Patch File Creation**  
-  Generate patch files in normal, context, or unified diff formats.
-
-- **Flexible Ignore Options**  
-  Ignore differences such as whitespace changes, case differences, or lines matching regular expressions.
-
-- **Shell Integration**  
-  Integrates with Windows Explorer, enabling direct comparison via the right-click context menu.
-
-- **Archive Support**  
-  Using 7-Zip, WinMerge can compare files inside many archive formats as if they were normal folders.
-
-In short, WinMerge is useful for anyone who needs to track changes, compare versions of files or directories, or merge modifications efficiently.
-
----
-
-## How to Contribute
-
-If you find a bug or would like to request a feature, please [submit an issue](https://github.com/WinMerge/winmerge/issues).
-
-To contribute code:
-
-1. [Fork the WinMerge repository](https://github.com/WinMerge/winmerge/fork)
-2. Create a feature branch on your fork
-3. Follow the existing coding style (use [Allman indentation](https://en.wikipedia.org/wiki/Indentation_style#Allman_style))
-4. Submit a [Pull Request](https://github.com/WinMerge/winmerge/pulls) describing your changes
-
----
-
-## Folder Structure
-
-The WinMerge repository is organized as follows:
-
-- `ArchiveSupport/Merge7z`  
-  Merge7z DLLs that connect WinMerge with 7-Zip. Required to build `WinMergeU.exe`.  
-  A standalone installer for these DLLs is also included.
-
-- `Build`  
-  Output directory created during compilation. Contains executables, libraries, manuals, etc.
-
-- `BuildTmp`  
-  Temporary files created during compilation. Safe to delete.
-
-- `ColorSchemes`  
-  Color schemes and themes.
-
-- `Docs`  
-  User and developer documentation. Open `Docs/index.html` to browse locally.
-
-- `Externals`  
-  Third-party libraries used by WinMerge (some customized).
-
-- `Filters`  
-  File and folder filter definitions.
-
-- `Installer`  
-  WinMerge installer sources.
-
-- `Plugins`  
-  Runtime plugin DLLs and scripts.
-
-- `ShellExtension`  
-  Windows Explorer shell extension that adds context menu entries.
-
-- `Src`  
-  Main WinMerge source code.
-
-- `Testing`  
-  Test files and scripts, including unit tests based on the  
-  [Google Test Framework](https://github.com/google/googletest).
-
-- `Tools/Scripts`  
-  Various development utilities.
-
-- `Translation`  
-  Language and translation files.
-
-The changelog is available at:  
-[Docs/Users/ChangeLog.md](https://github.com/WinMerge/winmerge/blob/master/Docs/Users/ChangeLog.md)
-
----
-
-## How to Run and Debug
-
-WinMerge provides multiple Visual Studio solution files (`.sln`) for building and debugging.
-
-After running one of the `BuildAll` scripts, you can launch WinMerge from:
-
-Build\X64\Release\WinMergeU.exe
-
-If you built for a different architecture, check the corresponding output folder.
-To debug, you can also start WinMerge normally and attach Visual Studio to the running process.
-
----
-
-## Build WinMerge
-
-### Visual Studio 2017
-
-- Community / Professional / Enterprise
-- VC++ 2017 (v141) toolset
-- Visual C++ MFC and ATL
-- Windows 10 SDK
-- Optional: Windows XP support for C++
-
-### Visual Studio 2022 or later
-
-- Community / Professional / Enterprise
-- MSVC v143 or newer
-- Visual C++ MFC and ATL
-- Windows 10 SDK
-
-### Additional Tools
-
-- git
-- Inno Setup 5.x and 6.x
-- 7-Zip
-- Python
-- Pandoc
-- MSYS2 (including `po4a` and `diffutils`)
-
-## How to Build
-
-```bash
-git clone --recurse-submodules https://github.com/WinMerge/winmerge
-cd winmerge
-DownloadDeps.cmd
-BuildAll.cmd [x86|x64|ARM64]
-# or
-BuildAll.vs2022.cmd [x86|x64|ARM64]
-# or
-BuildAll.vs2017.cmd [x86|x64|ARM|ARM64]
-```
+元となった [WinMerge](https://github.com/WinMerge/winmerge) と同じく [GNU GPL v2](LICENSE.md) に従います。元の著作権表記とライセンスを保持しています。依存ライブラリのライセンスはそれぞれのパッケージに従います。

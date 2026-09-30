@@ -6,37 +6,25 @@ on:
   schedule:
     - cron: '0 8 * * *'
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   analyze:
-    name: Analyze
-    runs-on: windows-latest
+    runs-on: windows-2025
     steps:
-      - name: Configure Git for long paths
-        run: git config --global core.longpaths true
-
-      - name: Checkout repository
-        id: checkout_repo
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
-          submodules: 'recursive'
-
-      - name: Initialize CodeQL
-        id: init_codeql
-        uses: github/codeql-action/init@v4
+          submodules: false
+      - uses: actions/setup-dotnet@v5
         with:
-          languages: cpp
+          dotnet-version: 10.0.x
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          build-mode: manual
           queries: security-and-quality
-          config-file: ./.github/codeql/codeql-config.yml
-
-      - name: Build project
-        id: build_project
-        shell: pwsh
-        run: |
-          .\DownloadDeps.cmd
-          .\BuildAll.cmd x64 -ci
-
-      - name: Perform CodeQL Analysis
-        id: analyze_codeql
-        uses: github/codeql-action/analyze@v4
-
-# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
+      - name: Build application
+        run: dotnet build DiffBeacon.slnx -c Release
+      - uses: github/codeql-action/analyze@v4

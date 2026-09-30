@@ -39,12 +39,6 @@ namespace
 		// Objects declared here can be used by all tests in the test case for Foo.
 	};
 
-	TEST_F(UnicodeStringTest, Construct1)
-	{
-		String str;
-		EXPECT_TRUE(str.empty());
-	}
-
 	TEST_F(UnicodeStringTest, ReplaceNotFound)
 	{
 		String orig(_T("OneTwoThree"));

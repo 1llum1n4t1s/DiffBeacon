@@ -29,6 +29,8 @@
 **/ipch
 **/BuildTmp
 **/Build
+!/build/
+!/build/Publish.ps1
 **/objARM64
 **/objARM
 **/obj64
@@ -128,6 +130,8 @@ Src/MergeAppLib_p.c
 Src/dlldata.c
 /Testing/PluginTests/result
 .idea/
+**/bin/
+artifacts/
 *.testdurations
 *.lastcodeanalysissucceeded
 *.lib

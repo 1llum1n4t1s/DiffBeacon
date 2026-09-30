@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Explicit external comparison provider contracts and process protocol.</Description>
+  </PropertyGroup>
+</Project>

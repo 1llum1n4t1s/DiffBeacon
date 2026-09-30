@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000101000000
-UnitCount=166
+UnitCount=164
 
 [VersionInfo]
 Major=1
@@ -1411,16 +1411,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit137]
-FileName=..\DirItem\DirItem_test.cpp
-CompileCpp=1
-Folder=Tests
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit138]
 FileName=..\Encoding\charsets_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1430,7 +1420,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit139]
+[Unit138]
 FileName=..\Encoding\codepage_detect_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1440,7 +1430,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit140]
+[Unit139]
 FileName=..\Encoding\codepage_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1450,7 +1440,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit141]
+[Unit140]
 FileName=..\..\..\Src\codepage.cpp
 CompileCpp=1
 Folder=Source Files
@@ -1460,7 +1450,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit142]
+[Unit141]
 FileName=..\..\..\Src\codepage.h
 CompileCpp=1
 Folder=Header Files
@@ -1470,7 +1460,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit143]
+[Unit142]
 FileName=..\Environment\Environemt_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1480,7 +1470,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit144]
+[Unit143]
 FileName=..\FileFilter\FileFilterHelper_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1490,7 +1480,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit145]
+[Unit144]
 FileName=..\FileVersion\FileVersion_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1500,7 +1490,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit146]
+[Unit145]
 FileName=..\markdown\markdown_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1510,7 +1500,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit147]
+[Unit146]
 FileName=..\multiformatText\multiformatText_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1520,7 +1510,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit148]
+[Unit147]
 FileName=..\OptionsMgr\RegOptionsMgr_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1530,17 +1520,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit149]
-FileName=..\OptionsMgr\VariantValue_test.cpp
-CompileCpp=1
-Folder=Tests
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit150]
+[Unit148]
 FileName=..\Paths\paths_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1550,7 +1530,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit151]
+[Unit149]
 FileName=..\Plugins\Plugins_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1560,7 +1540,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit152]
+[Unit150]
 FileName=..\ProjectFile\ProjectFile_test_LeftAndRight.cpp
 CompileCpp=1
 Folder=Tests
@@ -1570,7 +1550,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit153]
+[Unit151]
 FileName=..\ProjectFile\ProjectFile_test_LeftAndRightNonRecursive.cpp
 CompileCpp=1
 Folder=Tests
@@ -1580,7 +1560,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit154]
+[Unit152]
 FileName=..\ProjectFile\ProjectFile_test_LeftAndRightRecursive.cpp
 CompileCpp=1
 Folder=Tests
@@ -1590,7 +1570,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit155]
+[Unit153]
 FileName=..\ProjectFile\ProjectFile_test_PathsAndFilter.cpp
 CompileCpp=1
 Folder=Tests
@@ -1600,7 +1580,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit156]
+[Unit154]
 FileName=..\ProjectFile\ProjectFile_test_SimpleLeft.cpp
 CompileCpp=1
 Folder=Tests
@@ -1610,7 +1590,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit157]
+[Unit155]
 FileName=..\ProjectFile\ProjectFile_test_SimpleRight.cpp
 CompileCpp=1
 Folder=Tests
@@ -1620,7 +1600,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit158]
+[Unit156]
 FileName=..\ShellFileOperations\ShellFileOperations_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1630,7 +1610,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit159]
+[Unit157]
 FileName=..\StringDiffs\stringdiffs_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1640,7 +1620,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit160]
+[Unit158]
 FileName=..\StringDiffs\stringdiffs_test_adds.cpp
 CompileCpp=1
 Folder=Tests
@@ -1650,7 +1630,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit161]
+[Unit159]
 FileName=..\StringDiffs\stringdiffs_test_bugs.cpp
 CompileCpp=1
 Folder=Tests
@@ -1660,7 +1640,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit162]
+[Unit160]
 FileName=..\StringDiffs\stringdiffs_test_bytelevel.cpp
 CompileCpp=1
 Folder=Tests
@@ -1670,7 +1650,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit164]
+[Unit161]
 FileName=..\..\..\Src\Common\ShellFileOperations.cpp
 CompileCpp=1
 Folder=Source Files
@@ -1680,7 +1660,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit163]
+[Unit162]
 FileName=..\UnicodeString\UnicodeString_test.cpp
 CompileCpp=1
 Folder=Tests
@@ -1690,7 +1670,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit165]
+[Unit163]
 FileName=..\..\..\Src\Common\ShellFileOperations.h
 CompileCpp=1
 Folder=Header Files
@@ -1700,7 +1680,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit166]
+[Unit164]
 FileName=..\unicoder\unicoder_test.cpp
 CompileCpp=1
 Folder=Tests

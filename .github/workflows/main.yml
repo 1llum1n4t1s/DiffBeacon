@@ -1,44 +1,61 @@
-name: CI
+name: .NET CI
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-    
-    runs-on: windows-latest
-
-    steps:  
-    - name: Configure Git for long paths
-      run: git config --global core.longpaths true
-
-    - uses: actions/checkout@v6
-      with:
-        submodules: 'recursive'
-
-    - name: Cache
-      uses: actions/cache@v5
-      with:
-        path: Build/WinMergeDownloadDeps
-        key: WinMergeDownloadDeps
-
-    - name: Build
-      run: |
-        .\DownloadDeps.cmd
-        .\BuildAll.cmd x64 -ci
-
-    - name: Upload zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: WinMerge-x64.zip
-        path: Build/Releases/*.zip
-
-    - name: Upload installer
-      uses: actions/upload-artifact@v4
-      with:
-        name: WinMerge-x64-Setup-x64.exe
-        path: Build/Releases/*.exe
+  build-and-verify:
+    name: Native AOT / ${{ matrix.rid }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: win-x64
+            runner: windows-2025
+          - rid: win-arm64
+            runner: windows-11-arm
+          - rid: osx-x64
+            runner: macos-15-intel
+          - rid: osx-arm64
+            runner: macos-15
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      - name: Build managed projects
+        run: dotnet build DiffBeacon.slnx -c Release
+      - name: Publish and verify native application
+        run: ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}'
+      - name: Run end-to-end scenarios
+        run: |
+          $manifest = Get-Content 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
+          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output 'artifacts/e2e/${{ matrix.rid }}' --app $manifest.executable
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-${{ matrix.rid }}
+          path: |
+            artifacts/e2e/${{ matrix.rid }}/
+            artifacts/verification/${{ matrix.rid }}/
+            artifacts/publish/${{ matrix.rid }}/publish-manifest.json
+          if-no-files-found: warn
+      - name: Upload native application
+        uses: actions/upload-artifact@v4
+        with:
+          name: DiffBeacon-${{ matrix.rid }}
+          path: artifacts/publish/${{ matrix.rid }}/
+          if-no-files-found: error
