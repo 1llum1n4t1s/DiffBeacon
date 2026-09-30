@@ -37,7 +37,9 @@ dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-
 
 `.github/workflows/main.yml` は Windows x64 / ARM64、macOS Intel / ARM64 上でビルド、Native AOT 発行、自己検証、E2E を行い、検証成果物と発行物を保存する。CodeQL は C# の手動ビルドを解析する。ローカル結果と GitHub 上の実行結果は区別し、CI の完了は実際の run を確認する。
 
-初回の4構成検証は[GitHub Actions run 36759572632](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36759572632)で全ジョブ成功した。コードコミット・成功数・実測の範囲は[MIGRATION.md](MIGRATION.md#実行した検証)を参照する。ローカル取得した同runのJSON・ログ・PNGは`artifacts/github/36759572632`に保持する。成果物はGitへ登録しない。
+複数比較プロジェクト・読取り専用・表設定の4構成検証は[GitHub Actions run 36786270273](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36786270273)で全ジョブ成功した。コードコミット・成功数・実測の範囲は[MIGRATION.md](MIGRATION.md#実行した検証)を参照する。同runの入力・出力・JSON・ログ・PNGと集計を`artifacts/github/36786270273`に保持する。UIはheadless検証であり、ネイティブファイル選択などの手動実測を含まない。成果物はGitへ登録しない。
+
+初回の4構成検証は[GitHub Actions run 36759572632](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36759572632)で全ジョブ成功した。ローカル取得した同runのJSON・ログ・PNGは`artifacts/github/36759572632`に保持する。
 
 マージ結果セッション・詳細フィルターの4構成検証は[GitHub Actions run 36770239518](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36770239518)で全ジョブ成功した。対応するJSON・ログ・PNGは`artifacts/github/36770239518`に保持する。
 

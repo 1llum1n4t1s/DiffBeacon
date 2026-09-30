@@ -30,6 +30,23 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 ## 実行した検証
 
+2026-10-01 JST、複数比較プロジェクト・読取り専用・表の引用符設定を追加したコードコミット`a17ef62c24d134d6eb0d25ad7501c4d176e0c4ad`を[GitHub Actions run 36786270273](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36786270273)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、コンパイラーのCS/IL/MSB警告は0件。Mac Intel/ARM64の`.app`とtarを含む発行物を同runに保存した。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 1063 | 0 / 2 | 93 | 発行・起動成功 |
+| `win-arm64` | 1063 | 0 / 2 | 93 | 発行・起動成功 |
+| `osx-x64` | 1075 | 0 / 0 | 93 | 発行・起動成功 |
+| `osx-arm64` | 1075 | 0 / 0 | 93 | 発行・起動成功 |
+
+全タブの順序・選択位置・比較設定の保存／復元、旧単一JSONと複数`.WinMerge` XML、相対パス・URL・未対応設定の保持、256件／4 MiB上限、不正入力・DTD・リンクの拒否、既存ファイル属性とMac Unix権限の保持を実アプリ経路で検証した。省略された設定と置換ルールの既定値がsource-generated JSON読込みで消える問題を、setterを持つ保存DTOと明示的なAOT対応コンバーターで解消した。
+
+GUIでは全タブ復元・未保存確認のキャンセル・設定ダイアログ、表の区切り／引用符／引用内改行、readonly編集・コピー・テキスト／バイナリ／アーカイブの保存先保護を確認した。保存された外部ツールIDは自動登録・実行しない。Windowsの2スキップはUnix権限・Mac大小文字別名だけで、両Mac構成では成功した。全構成の入力・出力・JSON・PNG、run情報・ログ・集計を`artifacts/github/36786270273`に保持し、Mac ARM64の表・readonly・旧プロジェクト画面を目視確認した。
+
+ローカルWindows x64 Native AOTは1063 CLI＋93 UI成功。通常DLLは1048成功・0失敗・5スキップ（リンク作成権限とOS固有項目）。プロジェクト限定E2Eは127成功・0失敗・1スキップで、リンク拒否も権限のあるNative AOT実行で成功した。新規独立レビュアーの起動はagent thread limitで拒否されたため、新しい文脈での独立レビューは未実施。既存の別機能担当による読み取り専用確認と成立指摘の再現・修正記録を`artifacts/e2e/workspace-review`に保持する。検証側の配列比較が既定値補完を誤って拒否したケースも修正し、最終E2Eで成功を確認した。UI検証はheadless描画・操作であり、通常のネイティブウィンドウ・ファイル選択・シェル統合の手動実測を含まない。
+
+以下はZIP派生・TAR系追加時点の記録。
+
 2026-10-01 JST、ZIP派生・TAR/TAR.GZ/TAR.BZ2の作成・再梱包と全件展開を追加したコードコミット`96bdc45ab8f687fb2d2c33263229d5eca6109269`を[GitHub Actions run 36781192763](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36781192763)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、コンパイラーのCS/IL/MSB警告は0件。Mac Intel/ARM64の`.app`とtarを含む`DiffBeacon-<RID>`発行物を同runに保存した。
 
 | RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
