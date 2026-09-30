@@ -10,6 +10,7 @@ public static class Program
     public static int Main(string[] args)
     {
         Console.OutputEncoding = new System.Text.UTF8Encoding(false);
+        if (Console.IsInputRedirected) Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
         Arguments = args;
         if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);
         if (args.Length > 0 && args[0].StartsWith("--", StringComparison.Ordinal))

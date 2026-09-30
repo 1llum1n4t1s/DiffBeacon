@@ -5,6 +5,7 @@ using System.Formats.Tar;
 using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 
 var outputArgument = Option("--output") ?? "artifacts/e2e/local";
 var output = Path.GetFullPath(outputArgument);
@@ -229,12 +230,205 @@ async Task ProviderBoundaryCases()
     await Run("provider-pptx-presentation-order", 1, true, "--provider", "office", Presentation("slides-original.pptx", false), Presentation("slides-reversed.pptx", true));
 }
 
+async Task ArchiveCases()
+{
+    var officialRoot = Path.GetFullPath("tests/Fixtures/Archives");
+    var manifestPath = Path.Combine(officialRoot, "manifest.json");
+    using var provenance = JsonDocument.Parse(File.ReadAllText(manifestPath));
+    string Hash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
+    foreach (var fixture in provenance.RootElement.GetProperty("fixtures").EnumerateArray())
+    {
+        var path = Path.Combine(officialRoot, fixture.GetProperty("file").GetString()!);
+        Check("archive fixture provenance " + Path.GetFileName(path), File.Exists(path) && Hash(path).Equals(fixture.GetProperty("sha256").GetString(), StringComparison.OrdinalIgnoreCase));
+    }
+    var license = Path.Combine(officialRoot, "LICENSE.txt");
+    Check("archive fixture MIT license", File.Exists(license) && Hash(license).Equals(provenance.RootElement.GetProperty("licenseSha256").GetString(), StringComparison.OrdinalIgnoreCase));
+    Check("published SharpCompress license", File.Exists(Path.Combine(Path.GetDirectoryName(app)!, "SharpCompress.LICENSE.txt")));
+    var expected = provenance.RootElement.GetProperty("expectedEntries").EnumerateArray().ToDictionary(
+        e => e.GetProperty("path").GetString()!, e => (Size: e.GetProperty("size").GetInt64(), Sha: e.GetProperty("sha256").GetString()!), StringComparer.Ordinal);
+    IReadOnlyList<ArchiveFile> Entries(CommandResult command)
+    {
+        if (command.ExitCode != 0) return [];
+        try
+        {
+            using var document = JsonDocument.Parse(command.Stdout);
+            Check(command.Name + " format", !string.IsNullOrEmpty(document.RootElement.GetProperty("format").GetString()));
+            return document.RootElement.GetProperty("entries").EnumerateArray().Select(e => new ArchiveFile(
+                e.GetProperty("path").GetString()!.Replace('\\', '/').TrimEnd('/'),
+                e.GetProperty("directory").GetBoolean(), e.GetProperty("size").GetInt64(),
+                e.GetProperty("sha256").GetString() ?? "", e.GetProperty("encrypted").GetBoolean())).ToArray();
+        }
+        catch (Exception exception) when (exception is JsonException or KeyNotFoundException or InvalidOperationException)
+        { Check(command.Name + " manifest shape", false, exception.Message); return []; }
+    }
+    void VerifyOriginal(string name, IReadOnlyList<ArchiveFile> entries)
+    {
+        var files = entries.Where(e => !e.Directory).ToArray();
+        Check(name + " original file count", files.Length == expected.Count);
+        foreach (var (path, value) in expected)
+        {
+            var actual = files.SingleOrDefault(e => e.Path == path);
+            Check(name + " original bytes " + path, actual is not null && actual.Size == value.Size && actual.Sha256.Equals(value.Sha, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+    foreach (var filename in new[] { "7Zip.solid.7z", "Rar5.solid.rar" })
+    {
+        var result = await Run("archive-solid-" + filename, 0, true, "--archive-list", Path.Combine(officialRoot, filename));
+        VerifyOriginal(result.Name, Entries(result));
+    }
+    foreach (var (name, filename, password) in new[]
+    {
+        ("7z-aes", "7Zip.LZMA2.Aes.7z", "testpassword"),
+        ("rar4-header", "Rar.encrypted_filesAndHeader.rar", "test"),
+        ("rar5-header", "Rar5.encrypted_filesAndHeader.rar", "test"),
+        ("zip-aes", "Zip.deflate.WinzipAES.zip", "test")
+    })
+    {
+        var path = Path.Combine(officialRoot, filename);
+        var result = await RunWithInput("archive-encrypted-" + name, 0, true, password + "\n", "--archive-list", path, "--password-stdin");
+        var entries = Entries(result);
+        VerifyOriginal(result.Name, entries);
+        Check(result.Name + " encryption reported", entries.Any(e => !e.Directory && e.Encrypted));
+        await Run("archive-no-password-" + name, 2, false, "--archive-list", path);
+        await RunWithInput("archive-wrong-password-" + name, 2, false, "not-the-fixture-password\n", "--archive-list", path, "--password-stdin");
+    }
+    var solid = Path.Combine(officialRoot, "7Zip.solid.7z");
+    var crossFormat = await Run("archive-compare-cross-format", 1, true, "--archive-compare", solid, Path.Combine(officialRoot, "Rar5.solid.rar"));
+    if (crossFormat.ExitCode == 1)
+    {
+        using var comparison = JsonDocument.Parse(crossFormat.Stdout);
+        var differences = comparison.RootElement.GetProperty("entries").EnumerateArray().Where(e => e.GetProperty("status").GetString() != "Equal").ToArray();
+        Check("cross-format only extra empty directory differs", differences.Length == 1 && differences[0].GetProperty("path").GetString() == "Empty" && differences[0].GetProperty("status").GetString() == "OnlyRight");
+    }
+    var encrypted7z = Path.Combine(officialRoot, "7Zip.LZMA2.Aes.7z");
+    await RunWithInput("archive-compare-encrypted", 0, true, "testpassword\ntestpassword\n", "--archive-compare", encrypted7z, encrypted7z, "--password-stdin");
+    var exported = Path.Combine(fixtures, "archive-entry-original.exe");
+    await Run("archive-entry-export", 0, true, "--archive-entry", solid, "exe/test.exe", exported);
+    Check("archive entry export original bytes", File.Exists(exported) && Hash(exported).Equals(expected["exe/test.exe"].Sha, StringComparison.OrdinalIgnoreCase));
+    var repacked = Path.Combine(fixtures, "archive-repacked.7z");
+    await Run("archive-repack-solid", 0, true, "--archive-repack", solid, repacked);
+    VerifyOriginal("archive-repacked", Entries(await Run("archive-list-repacked", 0, true, "--archive-list", repacked)));
+    await Run("archive-compare-repacked", 0, true, "--archive-compare", solid, repacked);
+    var reexported = Path.Combine(fixtures, "archive-entry-repacked.exe");
+    await Run("archive-entry-repacked", 0, true, "--archive-entry", repacked, "exe/test.exe", reexported);
+    Check("archive repack entry bytes", File.Exists(exported) && File.Exists(reexported) && File.ReadAllBytes(exported).SequenceEqual(File.ReadAllBytes(reexported)));
+    var decrypted = Path.Combine(fixtures, "archive-rar-decrypted.7z");
+    await RunWithInput("archive-repack-encrypted-rar", 0, true, "test\n", "--archive-repack", Path.Combine(officialRoot, "Rar5.encrypted_filesAndHeader.rar"), decrypted, "--password-stdin");
+    var decryptedEntries = Entries(await Run("archive-list-decrypted-repack", 0, true, "--archive-list", decrypted));
+    VerifyOriginal("archive-decrypted-repack", decryptedEntries);
+    Check("repack is not encrypted", decryptedEntries.Count > 0 && decryptedEntries.All(e => !e.Encrypted));
+
+    var createRoot = Path.Combine(fixtures, "archive-create-source");
+    Text("archive-create-source/nested/text.txt", "created\r\nwithout final newline", new UnicodeEncoding(false, true));
+    var binary = Path.Combine(createRoot, "nested/binary.bin");
+    File.WriteAllBytes(binary, [0, 255, 1, 0, 127, 3]);
+    var created = Path.Combine(fixtures, "archive-created.7z");
+    await Run("archive-create", 0, true, "--archive-create", createRoot, created);
+    var createdEntries = Entries(await Run("archive-list-created", 0, true, "--archive-list", created));
+    Check("created archive binary hash", createdEntries.Any(e => e.Path == "nested/binary.bin" && e.Sha256.Equals(Hash(binary), StringComparison.OrdinalIgnoreCase)));
+    var createdExport = Path.Combine(fixtures, "archive-created-binary.bin");
+    await Run("archive-created-entry", 0, true, "--archive-entry", created, "nested/binary.bin", createdExport);
+    Check("created archive exported bytes", File.Exists(createdExport) && File.ReadAllBytes(binary).SequenceEqual(File.ReadAllBytes(createdExport)));
+    await Run("archive-compare-different", 1, true, "--archive-compare", solid, created);
+
+    var unsafeZip = Zip("archive-unsafe.zip", ("../archive-escape.txt", "unsafe"));
+    await Run("archive-unsafe-entry", 2, false, "--archive-list", unsafeZip);
+    Check("archive unsafe does not extract", !File.Exists(Path.Combine(fixtures, "archive-escape.txt")) && !File.Exists(Path.Combine(output, "archive-escape.txt")));
+    await Run("archive-duplicate-entry", 2, false, "--archive-list", Zip("archive-duplicates.zip", ("same.txt", "first"), ("same.txt", "second")));
+    var corrupt = Path.Combine(fixtures, "archive-corrupt.zip");
+    File.WriteAllBytes(corrupt, [0x50, 0x4b, 3, 4, 0, 0, 0]);
+    await Run("archive-corrupt-zip", 2, false, "--archive-list", corrupt);
+    // 実データを残したまま両方の ZIP ヘッダーの宣言 CRC だけをゼロにする。
+    var zeroCrc = Path.Combine(fixtures, "archive-invalid-crc-zero.zip");
+    using (var file = File.Create(zeroCrc))
+    using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+    using (var writer = new StreamWriter(zip.CreateEntry("data.txt", CompressionLevel.NoCompression).Open(), new UTF8Encoding(false)))
+        writer.Write("Archive CRC integrity sentinel");
+    var crcBytes = File.ReadAllBytes(zeroCrc);
+    for (var index = 0; index <= crcBytes.Length - 20; index++)
+    {
+        if (crcBytes[index] != 0x50 || crcBytes[index + 1] != 0x4b) continue;
+        var crcOffset = crcBytes[index + 2] == 3 && crcBytes[index + 3] == 4 ? 14 : crcBytes[index + 2] == 1 && crcBytes[index + 3] == 2 ? 16 : -1;
+        if (crcOffset >= 0) Array.Clear(crcBytes, index + crcOffset, 4);
+    }
+    File.WriteAllBytes(zeroCrc, crcBytes);
+    var zeroCrcHash = Hash(zeroCrc);
+    await Run("archive-invalid-crc-zero", 2, false, "--archive-list", zeroCrc);
+    var crcOutput = Text("archive-crc-existing-output.7z", "keep existing output bytes");
+    var crcOutputHash = Hash(crcOutput);
+    await Run("archive-invalid-crc-repack-preserves-output", 2, false, "--archive-repack", zeroCrc, crcOutput);
+    Check("CRC failure preserves repack input and output", Hash(zeroCrc) == zeroCrcHash && Hash(crcOutput) == crcOutputHash);
+    var crcExport = Text("archive-crc-existing-export.txt", "keep existing export bytes");
+    var crcExportHash = Hash(crcExport);
+    await Run("archive-invalid-crc-export-preserves-output", 2, false, "--archive-entry", zeroCrc, "data.txt", crcExport);
+    Check("CRC failure preserves export input and output", Hash(zeroCrc) == zeroCrcHash && Hash(crcExport) == crcExportHash);
+    await Run("archive-entry-invalid-name", 2, false, "--archive-entry", solid, "../exe/test.exe", Path.Combine(fixtures, "archive-invalid-export.bin"));
+    await Run("archive-invalid-parameters", 2, false, "--archive-entry", solid);
+
+    var protectedInput = Path.Combine(fixtures, "archive-protected-source.7z");
+    File.Copy(solid, protectedInput);
+    var originalHash = Hash(protectedInput);
+    await Run("archive-repack-input-output-same", 2, false, "--archive-repack", protectedInput, protectedInput);
+    Check("same archive output leaves original", Hash(protectedInput) == originalHash);
+    var readonlyOutput = Path.Combine(fixtures, "archive-readonly-output.7z");
+    File.Copy(solid, readonlyOutput);
+    var outputHash = Hash(readonlyOutput);
+    var attributes = File.GetAttributes(readonlyOutput);
+    try
+    {
+        File.SetAttributes(readonlyOutput, attributes | FileAttributes.ReadOnly);
+        await Run("archive-repack-readonly-output", 2, false, "--archive-repack", protectedInput, readonlyOutput);
+        Check("readonly archive output preserved", Hash(readonlyOutput) == outputHash && Hash(protectedInput) == originalHash);
+    }
+    finally { File.SetAttributes(readonlyOutput, attributes); }
+    if (!OperatingSystem.IsWindows())
+    {
+        var privateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+        var privateArchive = Text("archive-private-mode.7z", "existing private archive");
+        File.SetUnixFileMode(privateArchive, privateMode);
+        await Run("archive-repack-preserves-unix-mode", 0, true, "--archive-repack", solid, privateArchive);
+        Check("repack preserves Unix 0600", File.GetUnixFileMode(privateArchive) == privateMode);
+        var privateEntry = Text("archive-private-entry.bin", "existing private export");
+        File.SetUnixFileMode(privateEntry, privateMode);
+        await Run("archive-export-preserves-unix-mode", 0, true, "--archive-entry", solid, "exe/test.exe", privateEntry);
+        Check("export preserves Unix 0600 and bytes", File.GetUnixFileMode(privateEntry) == privateMode && Hash(privateEntry).Equals(expected["exe/test.exe"].Sha, StringComparison.OrdinalIgnoreCase));
+    }
+    else assertions.Add(new("archive Unix 0600 preservation", "skipped", "Windows does not expose UnixFileMode."));
+    if (OperatingSystem.IsMacOS())
+    {
+        var alias = Path.Combine(Path.GetDirectoryName(protectedInput)!, Path.GetFileName(protectedInput).ToUpperInvariant());
+        if (File.Exists(alias))
+        {
+            await Run("archive-mac-case-alias-export-rejected", 2, false, "--archive-entry", protectedInput, "exe/test.exe", alias);
+            Check("Mac alias export preserves original", Hash(protectedInput) == originalHash);
+            await Run("archive-mac-case-alias-repack-rejected", 2, false, "--archive-repack", protectedInput, alias);
+            Check("Mac alias repack preserves original", Hash(protectedInput) == originalHash);
+        }
+        else assertions.Add(new("archive Mac case alias preservation", "skipped", "The alternate casing does not resolve to the existing file on this case-sensitive filesystem."));
+    }
+    else assertions.Add(new("archive Mac case alias preservation", "skipped", "The current host is not macOS; actual APFS behavior requires the macOS CI runner."));
+    var insideOutput = Path.Combine(createRoot, "self.7z");
+    await Run("archive-create-output-inside-source", 0, true, "--archive-create", createRoot, insideOutput);
+    var insideEntries = Entries(await Run("archive-list-inside-source", 0, true, "--archive-list", insideOutput));
+    Check("archive inside output excludes itself and temporary files", insideEntries.Count > 0 && insideEntries.All(e => e.Path != "self.7z" && !e.Path.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)));
+    await Run("archive-inside-source-content", 0, true, "--archive-compare", created, insideOutput);
+    await Run("archive-recreate-output-inside-source", 0, true, "--archive-create", createRoot, insideOutput);
+    var recreatedEntries = Entries(await Run("archive-list-recreated-inside", 0, true, "--archive-list", insideOutput));
+    Check("archive recreate excludes existing output", recreatedEntries.Count > 0 && recreatedEntries.All(e => e.Path != "self.7z" && !e.Path.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)));
+    Check("archive create does not alter source", File.ReadAllBytes(binary).SequenceEqual(new byte[] { 0, 255, 1, 0, 127, 3 }));
+}
+
 async Task<CommandResult> Run(string name, int expectedExit, bool json, params string[] arguments)
+    => await RunWithInput(name, expectedExit, json, null, arguments);
+
+async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json, string? standardInput, params string[] arguments)
 {
     var start = new ProcessStartInfo(app.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ? "dotnet" : app)
     {
         RedirectStandardOutput = true,
         RedirectStandardError = true,
+        RedirectStandardInput = standardInput is not null,
+        StandardInputEncoding = standardInput is null ? null : new UTF8Encoding(false),
         UseShellExecute = false,
         CreateNoWindow = true
     };
@@ -251,6 +445,11 @@ async Task<CommandResult> Run(string name, int expectedExit, bool json, params s
         process.Start();
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
         var stderrTask = process.StandardError.ReadToEndAsync();
+        if (standardInput is not null)
+        {
+            await process.StandardInput.WriteAsync(standardInput);
+            process.StandardInput.Close();
+        }
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         try { await process.WaitForExitAsync(timeout.Token); }
         catch (OperationCanceledException)
@@ -284,7 +483,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--legacy-comments-only", StringComparer.Ordinal))
+    if (args.Contains("--archives-only", StringComparer.Ordinal))
+    {
+        await ArchiveCases();
+    }
+    else if (args.Contains("--legacy-comments-only", StringComparer.Ordinal))
     {
         await LegacyCommentCases();
     }
@@ -298,6 +501,7 @@ try
     }
     else
     {
+    await ArchiveCases();
     await TextAdvancedCases();
     var left = Text("left.txt", "alpha\nbeta\n");
     var equal = Text("equal.txt", "alpha\nbeta\n");
@@ -586,6 +790,7 @@ sealed record Assertion(string Name, string Status, string Detail);
 sealed record CommandResult(string Name, string[] Arguments, int ExitCode, string Stdout, string Stderr, long DurationMilliseconds);
 sealed record SeededCase(int Seed, string Source, string Target, string Patch, string Applied);
 sealed record LinkEvidence(string Path, string Target, bool Removed);
+sealed record ArchiveFile(string Path, bool Directory, long Size, string Sha256, bool Encrypted);
 
 sealed class LocalHttpSite : IAsyncDisposable
 {

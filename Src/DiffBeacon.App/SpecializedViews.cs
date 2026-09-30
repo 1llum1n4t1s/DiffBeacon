@@ -1,6 +1,4 @@
-using System.IO.Compression;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
 using Avalonia;
 using Avalonia.Controls;
@@ -219,82 +217,6 @@ public static class SpecializedViews
         DockPanel.SetDock(status, Dock.Bottom); root.Children.Add(status);
         DockPanel.SetDock(differences, Dock.Bottom); root.Children.Add(differences);
         root.Children.Add(Pair(leftEditor, rightEditor)); Refresh(); return root;
-    }
-
-    public static async Task<Control> ArchiveAsync(string left, string right, CancellationToken cancellationToken)
-    {
-        var a = await ReadArchiveAsync(left, cancellationToken); var b = await ReadArchiveAsync(right, cancellationToken);
-        var names = a.Keys.Concat(b.Keys).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
-        var rows = names.Select(name => new ArchiveRow(name, a.GetValueOrDefault(name), b.GetValueOrDefault(name))).ToArray();
-        var root = new DockPanel(); var status = new TextBlock { Margin = new Thickness(8), Text = "ZIP内のファイル名・非圧縮サイズ・SHA-256を比較します（10万エントリ、各256 MiB、合計1 GiBまで）。選択ファイルを別名保存できます。暗号化ZIP・7z・RAR・ZIPへの書き戻しは未対応です。", TextWrapping = TextWrapping.Wrap };
-        var list = new ListBox { ItemsSource = rows, ItemTemplate = new FuncDataTemplate<ArchiveRow>((row, _) => new TextBlock { Text = row is null ? "" : $"{row.State,-8} {row.Name}   左 {row.Left?.Size.ToString("N0") ?? "—"} / 右 {row.Right?.Size.ToString("N0") ?? "—"}", FontFamily = Mono, Margin = new Thickness(8, 4) }, false) };
-        var preview = HexEditor(); preview.IsReadOnly = true;
-        var buttons = new WrapPanel();
-        async Task Export(bool rightSide)
-        {
-            if (list.SelectedItem is not ArchiveRow row) return;
-            using var archive = ZipFile.OpenRead(rightSide ? right : left);
-            var entry = archive.GetEntry(row.Name); if (entry is null) { status.Text = "選択した側にはエントリがありません。"; return; }
-            var top = TopLevel.GetTopLevel(root); if (top is null) return;
-            var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { SuggestedFileName = Path.GetFileName(row.Name.Replace('\\', '/')), Title = "ZIPエントリを別名保存" });
-            if (file is null) return;
-            await using var input = entry.Open(); await using var output = await file.OpenWriteAsync(); output.SetLength(0);
-            await CopyBoundedAsync(input, output, 256L * 1024 * 1024, CancellationToken.None); status.Text = "エントリを保存しました。";
-        }
-        AddButton(buttons, "左エントリを書き出す", () => Export(false)); AddButton(buttons, "右エントリを書き出す", () => Export(true));
-        list.SelectionChanged += async (_, _) =>
-        {
-            if (list.SelectedItem is not ArchiveRow row) return;
-            try
-            {
-                var text = new StringBuilder();
-                foreach (var path in new[] { left, right })
-                {
-                    using var zip = ZipFile.OpenRead(path); var entry = zip.GetEntry(row.Name);
-                    text.AppendLine(path == left ? "左" : "右");
-                    if (entry is null) { text.AppendLine("エントリなし"); continue; }
-                    await using var stream = entry.Open(); var buffer = new byte[4096]; var count = await stream.ReadAtLeastAsync(buffer, buffer.Length, false);
-                    text.AppendLine(Hex(buffer.AsSpan(0, count))); text.AppendLine("先頭4096 bytesまでのプレビュー");
-                }
-                preview.Text = text.ToString();
-            }
-            catch (Exception ex) { status.Text = ex.Message; }
-        };
-        DockPanel.SetDock(buttons, Dock.Top); root.Children.Add(buttons); DockPanel.SetDock(status, Dock.Bottom); root.Children.Add(status);
-        root.Children.Add(Pair(list, preview)); return root;
-    }
-
-    private sealed record EntryInfo(long Size, string Hash);
-    private sealed record ArchiveRow(string Name, EntryInfo? Left, EntryInfo? Right)
-    { public string State => Left is null ? "右のみ" : Right is null ? "左のみ" : Left == Right ? "一致" : "変更"; }
-    private static async Task<Dictionary<string, EntryInfo>> ReadArchiveAsync(string path, CancellationToken token)
-    {
-        var result = new Dictionary<string, EntryInfo>(StringComparer.Ordinal);
-        using var archive = ZipFile.OpenRead(path);
-        if (archive.Entries.Count > 100_000) throw new InvalidOperationException("ZIP比較の上限は10万エントリです。");
-        long total = 0;
-        foreach (var entry in archive.Entries)
-        {
-            token.ThrowIfCancellationRequested();
-            if (entry.FullName.EndsWith('/')) continue;
-            if (entry.Length > 256L * 1024 * 1024 || total > 1024L * 1024 * 1024 - entry.Length)
-                throw new InvalidDataException("ZIP比較は1エントリ256 MiB、非圧縮合計1 GiBまでです。");
-            total += entry.Length;
-            if (result.ContainsKey(entry.FullName)) throw new InvalidDataException($"同名エントリを含むZIPは比較できません: {entry.FullName}");
-            await using var stream = entry.Open();
-            using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-            var buffer = new byte[64 * 1024]; long read = 0;
-            while (true)
-            {
-                var bytes = await stream.ReadAsync(buffer, token); if (bytes == 0) break;
-                read += bytes;
-                if (read > entry.Length || read > 256L * 1024 * 1024) throw new InvalidDataException("ZIPエントリの非圧縮サイズが宣言値または上限を超えました。");
-                hash.AppendData(buffer.AsSpan(0, bytes));
-            }
-            if (read != entry.Length) throw new InvalidDataException("ZIPエントリの非圧縮サイズが宣言値と一致しません。");
-            result.Add(entry.FullName, new EntryInfo(read, Convert.ToHexString(hash.GetHashAndReset())));
-        }
-        return result;
     }
 
     public static Control Structured(string leftText, string rightText, bool json)

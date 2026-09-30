@@ -192,6 +192,47 @@ internal static class HeadlessSelfTest
                 Check("read-only text save preserves original bytes", rejected && leftBeforeSave.SequenceEqual(File.ReadAllBytes(left)));
             }
             finally { File.SetAttributes(left, attributes); pane.DiscardChanges(); }
+            var archiveInput = Path.Combine(output, "archive-source"); Directory.CreateDirectory(Path.Combine(archiveInput, "folder"));
+            var archiveValue = Path.Combine(archiveInput, "folder/value.txt"); File.WriteAllText(archiveValue, "RIGHT\n", new UTF8Encoding(false));
+            var zipPath = Path.Combine(output, "left.zip"); var sevenPath = Path.Combine(output, "right.7z");
+            using (var zip = System.IO.Compression.ZipFile.Open(zipPath, System.IO.Compression.ZipArchiveMode.Create))
+            {
+                zip.CreateEntry("folder/");
+                using (var writer = new StreamWriter(zip.CreateEntry("folder/value.txt").Open(), new UTF8Encoding(false))) writer.Write("LEFT\n");
+                using var large = zip.CreateEntry("large.bin", System.IO.Compression.CompressionLevel.Fastest).Open();
+                var chunk = Enumerable.Repeat((byte)0x61, 64 * 1024).ToArray();
+                for (var index = 0; index < 272; index++) large.Write(chunk);
+            }
+            Pump(ArchiveActions.CreateAsync(archiveInput, sevenPath, CancellationToken.None));
+            pane.BasePath.Text = ""; pane.LeftPath.Text = zipPath; pane.RightPath.Text = sevenPath; pane.SelectMode(0);
+            Pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var archivePanel = pane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+            Check("automatic archive view compares ZIP and 7z by contents", archivePanel.Rows.Any(row => row.Path == "folder/value.txt" && row.Status == "Modified") && archivePanel.Rows.Any(row => row.Path == "folder" && row.Status == "Equal"));
+            var archiveRow = archivePanel.Rows.Single(row => row.Path == "folder/value.txt"); Pump(archivePanel.PreviewAsync(archiveRow));
+            Check("archive preview displays decoded entry bytes from both sides", archivePanel.PreviewText.Contains("4C 45 46 54", StringComparison.Ordinal) && archivePanel.PreviewText.Contains("52 49 47 48 54", StringComparison.Ordinal));
+            Pump(archivePanel.PreviewAsync(archivePanel.Rows.Single(row => row.Path == "large.bin")));
+            Check("archive preview captures only prefix of entry larger than preview buffer", archivePanel.PreviewText.Contains("61 61 61", StringComparison.Ordinal) && archivePanel.PreviewText.Length < 20_000);
+            var largeExport = Path.Combine(output, "large-archive-export.bin"); Pump(archivePanel.ExportToAsync(false, "large.bin", largeExport));
+            Check("archive export supports entries larger than preview limit", new FileInfo(largeExport).Length == 17L * 1024 * 1024 && File.ReadAllBytes(largeExport).All(value => value == 0x61));
+            var exportedEntry = Path.Combine(output, "archive-export.txt"); Pump(archivePanel.ExportToAsync(true, archiveRow.Path, exportedEntry));
+            Check("archive entry export preserves exact file contents", File.ReadAllBytes(exportedEntry).SequenceEqual(File.ReadAllBytes(archiveValue)));
+            var archiveOriginal = File.ReadAllBytes(zipPath); rejected = false;
+            try { Pump(archivePanel.ExportToAsync(true, archiveRow.Path, zipPath)); } catch (IOException) { rejected = true; }
+            Check("archive export cannot overwrite either compared archive", rejected && archiveOriginal.SequenceEqual(File.ReadAllBytes(zipPath)));
+            var repackedArchive = Path.Combine(output, "repacked.7z"); Pump(archivePanel.RepackToAsync(false, repackedArchive));
+            var archiveService = new DiffBeacon.Providers.ManagedArchive();
+            Check("GUI archive repack preserves all names types and hashes", DiffBeacon.Providers.ArchiveComparison.Compare(archiveService.ReadManifest(zipPath), archiveService.ReadManifest(repackedArchive)).All(row => row.Status == "Equal"));
+            Screenshot("archives.png");
+            var encryptedPath = Path.Combine(output, "encrypted.zip");
+            using (var resource = typeof(HeadlessSelfTest).Assembly.GetManifestResourceStream("DiffBeacon.SelfTest.Encrypted.zip") ?? throw new InvalidOperationException("暗号化検証用入力がありません。"))
+            using (var encryptedFile = File.Create(encryptedPath)) resource.CopyTo(encryptedFile);
+            pane.LeftPath.Text = pane.RightPath.Text = encryptedPath; Pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var encryptedPanel = pane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+            Check("encrypted archive shows error rather than false equality without password", encryptedPanel.Rows.Count == 0 && !string.IsNullOrEmpty(encryptedPanel.StatusText));
+            encryptedPanel.LeftPassword.Text = encryptedPanel.RightPassword.Text = "test"; Pump(encryptedPanel.RefreshAsync());
+            Check("masked GUI passwords unlock encrypted archive contents", encryptedPanel.Rows.Count > 0 && encryptedPanel.Rows.All(row => row.Status == "Equal") && encryptedPanel.LeftPassword.PasswordChar == '●');
+            Screenshot("encrypted-archives.png");
+            pane.DiscardChanges();
             var directoryLeft = Path.Combine(output, "directory-left"); var directoryRight = Path.Combine(output, "directory-right");
             Directory.CreateDirectory(directoryLeft); Directory.CreateDirectory(directoryRight);
             File.WriteAllText(Path.Combine(directoryLeft, "normal.txt"), "same"); File.WriteAllText(Path.Combine(directoryRight, "normal.txt"), "same");

@@ -15,5 +15,6 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.3" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.3" />
     <PackageReference Include="Avalonia.Headless" Version="12.1.3" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Zip.deflate.WinzipAES.zip" LogicalName="DiffBeacon.SelfTest.Encrypted.zip" />
   </ItemGroup>
 </Project>

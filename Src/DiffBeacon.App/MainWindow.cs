@@ -104,7 +104,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly CheckBox _ignoreBlank = new() { Content = "空行を無視" };
     private readonly TextBox _ignoreRegex = new() { PlaceholderText = "除外行の正規表現", Width = 210 };
     private readonly TextBox _find = new() { PlaceholderText = "検索", Width = 180 };
-    private readonly ComboBox _mode = new() { ItemsSource = new[] { "自動", "テキスト", "フォルダー", "バイナリ", "画像", "JSON", "CSV / TSV", "ZIP", "拡張形式" }, SelectedIndex = 0, Width = 130 };
+    private readonly ComboBox _mode = new() { ItemsSource = new[] { "自動", "テキスト", "フォルダー", "バイナリ", "画像", "JSON", "CSV / TSV", "アーカイブ", "拡張形式" }, SelectedIndex = 0, Width = 130 };
     private readonly ComparisonProviderRegistry _providers = BuiltinComparisonProviders.CreateDefault();
     private readonly ComboBox _provider = new() { Width = 130, Margin = new Thickness(4) };
     private readonly TextBox _fileFilter = new() { PlaceholderText = "ファイルフィルター (.flt)", Width = 220 };
@@ -157,6 +157,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "パッチ出力", ExportPatchAsync);
         AddAction(actions, "自動マージ", MergeThreeWayAsync);
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
+        AddAction(actions, "7z作成", CreateArchiveAsync);
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
         AddAction(actions, "中止", () => { _operation?.Cancel(); return Task.CompletedTask; });
@@ -277,10 +278,10 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 SetSpecialView(await SpecializedViews.BinaryAsync(left, right, token));
                 _views.SelectedItem = _specialTab; _status.Text = "バイナリを比較しました。"; return;
             }
-            if (mode == 7 || (mode == 0 && Path.GetExtension(left).Equals(".zip", StringComparison.OrdinalIgnoreCase) && Path.GetExtension(right).Equals(".zip", StringComparison.OrdinalIgnoreCase)))
+            if (mode == 7 || (mode == 0 && ArchivePanel.Supports(left) && ArchivePanel.Supports(right)))
             {
-                SetSpecialView(await SpecializedViews.ArchiveAsync(left, right, token));
-                _views.SelectedItem = _specialTab; _status.Text = "ZIPエントリを比較しました。"; return;
+                SetSpecialView(await ArchivePanel.CreateAsync(left, right, token));
+                _views.SelectedItem = _specialTab; _status.Text = "アーカイブビューを開きました。"; return;
             }
             _leftDocument = await TextDocument.LoadAsync(left, token);
             _rightDocument = await TextDocument.LoadAsync(right, token);

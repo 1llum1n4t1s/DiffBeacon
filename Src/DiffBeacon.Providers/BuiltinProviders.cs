@@ -17,6 +17,7 @@ public static class BuiltinComparisonProviders
         var registry = new ComparisonProviderRegistry();
         foreach (var id in new[] { "xml", "html-source", "html-text", "web-source", "web-text", "office", "tar", "tar-metadata" })
             registry.Register(new BuiltinProvider(id));
+        registry.Register(new ArchiveComparisonProvider());
         return registry;
     }
 
