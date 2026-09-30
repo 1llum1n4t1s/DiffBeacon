@@ -8,7 +8,7 @@
 
 ## 必須の検証
 
-.NET 10 SDK（`global.json`）と PowerShell 7 を使う。コード変更後はリポジトリルートで次を実行する。
+.NET 10 SDK（`global.json`）と PowerShell 7 を使う。E2E のアーカイブ独立検証には Python 3 も必要。実行ファイルの指定方法は [E2E の手順](tests/DiffBeacon.E2E/README.md) を参照する。コード変更後はリポジトリルートで次を実行する。
 
 ```powershell
 dotnet build DiffBeacon.slnx -c Release

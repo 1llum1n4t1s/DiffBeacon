@@ -9,7 +9,7 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 | コンポーネント | 責務 |
 | --- | --- |
 | `Src/DiffBeacon.Core` | テキストの読込み・保存、二者比較・三者マージ、バイナリ・再帰フォルダー比較、JSON・表形式比較、ファイルフィルター、unified patch。UI と外部パッケージに依存しない |
-| `Src/DiffBeacon.Providers` | XML・HTML・Web応答・Office・TAR の比較用テキスト変換、7z／RAR／ZIP／TAR系の読込み・作成・全件抽出、明示登録された外部実行ファイルの契約。GUI に依存しない |
+| `Src/DiffBeacon.Providers` | XML・HTML・Web応答・Office・TAR の比較用テキスト変換、7z／RAR／ZIP／TAR系の読込み・全件抽出、非暗号化7z／ZIP派生／TAR系の作成・再梱包、明示登録された外部実行ファイルの契約。GUI に依存しない |
 | `Src/DiffBeacon.App` | Avalonia のタブと比較ペイン、形式別ビュー、CLI、プロジェクト永続化、レポート、フォルダーコピー。Core と Providers を呼び出す |
 | `tests/DiffBeacon.E2E` / `DiffBeacon.FakeProvider` | 実アプリの CLI とファイル入出力、外部プロセス契約の検証。FakeProvider は検証専用 |
 | `build/Publish.ps1` / `.github/workflows/` | 同 OS での AOT 発行、macOS バンドル生成、対象構成での検証と成果物保存 |
@@ -25,6 +25,8 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 比較プロジェクトはパス・モード・対応オプション・プロバイダー ID・フィルターパスを source-generated JSON で保存する。マージ結果の本文・採用状態・履歴は永続化せず、結果文書の保存とは分離する。旧 `.WinMerge` XML は一組の `paths` だけを読み込み、他 OS の絶対パスは保持する。保存した ID は実行ファイルの登録情報ではない。HTML レポートは入力を HTML エスケープし、パッチ処理はパッチ中のパスによるファイルアクセスを行わない。
 
 アーカイブGUI・CLI・標準`archive`プロバイダーは共通の`ManagedArchive`を呼ぶ。SharpCompressを静的参照し、旧7z DLL・COM・submoduleは使わない。比較は名前・型・実測サイズ・SHA-256で行い、空ディレクトリも対象にする。圧縮方式・更新日時・暗号化状態は差分にせず、異なる格納形式でも内容を比較できる。GUIは先頭4096バイトのプレビューでも全内容を検証し、エントリ保存は別の上限付き経路を使う。パスワードはGUIセッションまたはCLIのリダイレクトされたUTF-8標準入力だけで受け取り、プロジェクト・引数・ログには保存しない。標準`archive`プロバイダーの要求契約にはパスワードを含めず、暗号化入力は専用GUIまたはアーカイブCLIで扱う。
+
+TARの読書きは `System.Formats.Tar`、ZIP出力は `System.IO.Compression` を使う。TAR入力には独自の検証ストリームを挟み、ヘッダー・補助メタデータ・終端を検証し、圧縮ラッパーのメタデータを含む復号量も制限する。gzipはBCLの読込みだけではフッター欠損を検出できないため、メンバーごとのCRC・サイズ・境界を明示検証する。
 
 ## 不変条件と採用済み判断
 
