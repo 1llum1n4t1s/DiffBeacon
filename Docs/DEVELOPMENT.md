@@ -1,6 +1,6 @@
 # 開発と検証
 
-必要環境は .NET 10 SDK と PowerShell 7。正規のソースディレクトリ名は `Src` であり、macOS でもこの大文字小文字を維持する。通常のビルドは旧 C++ プロジェクトや submodule に依存しない。
+必要環境は.NET 10 SDKとPowerShell 7。アーカイブE2Eの独立検証にはPython 3（CIは3.13）も使い、pipパッケージは不要。Pythonはアプリの実行・発行依存ではない。正規のソースディレクトリ名は`Src`であり、macOSでもこの大文字小文字を維持する。通常ビルドは旧C++プロジェクトやsubmoduleに依存しない。
 
 ```powershell
 dotnet build DiffBeacon.slnx -c Release

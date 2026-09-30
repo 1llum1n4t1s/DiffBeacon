@@ -461,25 +461,16 @@ async Task ArchiveFormatCases()
         else
         {
             Check("BZip2 container signature " + extension, File.ReadAllBytes(archive).AsSpan(0, 3).SequenceEqual("BZh"u8));
-            await VerifyBzipWithSystemTar(extension, archive, expected);
+            await VerifyBzipWithPython(extension, archive, expected);
         }
     }
     var originalHashes = expected.ToDictionary(p => p.Key, p => Convert.ToHexString(SHA256.HashData(p.Value)));
     Check("format creation preserves input", originalHashes.All(p => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Path.Combine(root, p.Key)))) == p.Value));
-    var systemTar = OperatingSystem.IsWindows() ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "System32/tar.exe") : "/usr/bin/tar";
-    if (File.Exists(systemTar))
-    {
-        var rootTar = Path.Combine(fixtures, "formats-system-root.tar");
-        var info = new ProcessStartInfo(systemTar) { RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
-        foreach (var argument in new[] { "-cf", rootTar, "-C", root, "." }) info.ArgumentList.Add(argument);
-        using var process = Process.Start(info)!; var errors = process.StandardError.ReadToEndAsync(); await process.WaitForExitAsync(); var diagnostic = await errors;
-        File.AppendAllText(Path.Combine(output, "system-tar.log"), $"{systemTar} -cf {rootTar} -C {root} .\nexit={process.ExitCode}\n{diagnostic}", utf8);
-        Check("independent system TAR creation", process.ExitCode == 0, diagnostic);
-        await Run("formats-system-root-compare", 0, true, "--archive-compare", baseline, rootTar);
-        var rootExtracted = Path.Combine(fixtures, "formats-system-root-extracted");
-        await Run("formats-system-root-extract", 0, true, "--archive-extract", rootTar, rootExtracted); CheckExtracted("system TAR root extraction", rootExtracted, expected);
-    }
-    else assertions.Add(new("system TAR relative root compatibility", "skipped", "System tar is unavailable."));
+    var rootTar = Path.Combine(fixtures, "formats-independent-root.tar");
+    using (var verifier = await RunArchiveVerifier("create-root", rootTar, root)) { }
+    await Run("formats-independent-root-compare", 0, true, "--archive-compare", baseline, rootTar);
+    var rootExtracted = Path.Combine(fixtures, "formats-independent-root-extracted");
+    await Run("formats-independent-root-extract", 0, true, "--archive-extract", rootTar, rootExtracted); CheckExtracted("independent TAR root extraction", rootExtracted, expected);
     var concatenated = Path.Combine(fixtures, "formats-concatenated.tar.gz"); var tarBytes = File.ReadAllBytes(Path.Combine(fixtures, "formats.tar"));
     using (var outputStream = File.Create(concatenated))
     {
@@ -543,22 +534,29 @@ async Task ArchiveFormatCases()
         => Check(name, Directory.Exists(Path.Combine(directory, "empty")) && Directory.Exists(Path.Combine(directory, "folder")) && Directory.GetFiles(directory, "*", SearchOption.AllDirectories).Length == contents.Count && contents.All(p => File.Exists(Path.Combine(directory, p.Key)) && File.ReadAllBytes(Path.Combine(directory, p.Key)).SequenceEqual(p.Value)));
 }
 
-async Task VerifyBzipWithSystemTar(string label, string archive, Dictionary<string, byte[]> expected)
+async Task VerifyBzipWithPython(string label, string archive, Dictionary<string, byte[]> expected)
 {
-    var tool = OperatingSystem.IsWindows() ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "System32/tar.exe") : "/usr/bin/tar";
-    if (!File.Exists(tool)) { assertions.Add(new("independent BZip2 decode " + label, "skipped", "System tar is unavailable.")); return; }
-    foreach (var pair in expected)
-    {
-        var info = new ProcessStartInfo(tool) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
-        foreach (var argument in new[] { "-xOf", archive, pair.Key }) info.ArgumentList.Add(argument);
-        using var process = Process.Start(info)!; using var data = new MemoryStream();
-        var stderr = process.StandardError.ReadToEndAsync(); var bytes = process.StandardOutput.BaseStream.CopyToAsync(data);
-        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-        try { await process.WaitForExitAsync(timeout.Token); await bytes; } catch (OperationCanceledException) { process.Kill(entireProcessTree: true); throw; }
-        var diagnostic = await stderr;
-        File.AppendAllText(Path.Combine(output, "system-tar.log"), $"{tool} -xOf {archive} {pair.Key}\nexit={process.ExitCode}\n{diagnostic}", utf8);
-        Check("independent BZip2 bytes " + label + " " + pair.Key, process.ExitCode == 0 && data.ToArray().SequenceEqual(pair.Value), diagnostic);
-    }
+    using var result = await RunArchiveVerifier("read", archive);
+    var entries = result.RootElement.GetProperty("entries").EnumerateArray().ToArray();
+    Check("independent BZip2 exact contents " + label, entries.Length == expected.Count + 2
+        && entries.Where(e => e.GetProperty("directory").GetBoolean()).Select(e => e.GetProperty("path").GetString()).Order().SequenceEqual(new[] { "empty", "folder" }.Order())
+        && expected.All(p => entries.Any(e => e.GetProperty("path").GetString() == p.Key && !e.GetProperty("directory").GetBoolean() && e.GetProperty("size").GetInt64() == p.Value.Length && e.GetProperty("sha256").GetString() == Convert.ToHexString(SHA256.HashData(p.Value)))));
+}
+
+async Task<JsonDocument> RunArchiveVerifier(string operation, string archive, string? source = null)
+{
+    var python = Option("--python") ?? "python";
+    var script = Path.GetFullPath("tests/DiffBeacon.E2E/archive_verifier.py");
+    var info = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
+    foreach (var argument in new[] { script, operation, archive }) info.ArgumentList.Add(argument);
+    if (source is not null) info.ArgumentList.Add(source);
+    using var process = Process.Start(info)!; var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
+    using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+    try { await process.WaitForExitAsync(timeout.Token); } catch (OperationCanceledException) { process.Kill(entireProcessTree: true); throw; }
+    var response = await stdout; var diagnostic = await stderr;
+    File.AppendAllText(Path.Combine(output, "independent-archive.log"), $"{python} {script} {operation} {archive}\nexit={process.ExitCode}\n{response}\n{diagnostic}", utf8);
+    Check("independent archive verifier " + operation + " " + Path.GetFileName(archive), process.ExitCode == 0, diagnostic);
+    return JsonDocument.Parse(response);
 }
 
 async Task<CommandResult> Run(string name, int expectedExit, bool json, params string[] arguments)

@@ -34,6 +34,9 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
       - name: Build managed projects
         run: dotnet build DiffBeacon.slnx -c Release
       - name: Publish and verify native application
