@@ -15,14 +15,27 @@
 | 多言語 | 新 UI は日本語を中心に実装 | 旧翻訳カタログとローカライズ切替、RTL、全ダイアログの同等性は未完了 |
 | 詳細フィルター | 大文字小文字、空白、空行、行正規表現、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式 | 同梱12 `.flt` の読込みを確認。内容検索、左右別属性、関数・算術、PCRE固有構文、置換、数値・コメント除外、全表示フィルターは未完了 |
 | プロジェクト / レポート | source-generated JSON保存、単一組`.WinMerge` XML読込み、HTML / JSONレポート | パス・対応オプション・プロバイダーID・ファイルフィルターパスを保持。外部実行ファイルは保存IDだけで自動登録・実行しない。旧複数組プロジェクトは拒否 |
-| Native AOT Windows x64 / ARM64 | 対応 RID と同 OS 発行スクリプト、CI マトリクス | ローカルの実測結果は検証成果物を参照。ARM64 ホストでの起動は対応 CI 実行まで保留 |
-| Native AOT macOS x64 / ARM64 | 対応 RID、`.app` / tar、CI マトリクス | Windows からの発行不可。macOS 上のビルド・起動・画像生成は CI 実行まで未検証。署名・公証・公開は実施しない |
+| Native AOT Windows x64 / ARM64 | 対応 RID と同 OS 発行スクリプト、CI マトリクス | 両アーキテクチャのGitHub runnerで発行・UI自己検証・CLI E2E成功。実測結果は下表 |
+| Native AOT macOS x64 / ARM64 | 対応 RID、`.app` / tar、CI マトリクス | Intel / Apple SiliconのGitHub runnerで発行・UI自己検証・CLI E2E成功。署名・公証・公開は実施しない |
 
 WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/MergeCmdLineInfo.h` を参照した。`left` / `middle` / `right`、`ignore-case`、`ignore-blank-lines`、`white-spaces` を読み込む。`white-spaces` の旧モード 1 と 2 は新モデルの空白無視へまとめるため、旧モードの区別は保持しない。旧 `filter` はファイルフィルターであり、新しい行正規表現へ置き換えない。旧 OS の絶対パスは保持し、移行先で利用者が選び直す。
 
 コピー処理はルート外のパス、`.` / `..`、既存の symlink / junction を拒否し、ファイルを一時ファイルへ書いた後に置き換える。途中のキャンセルでは、既に完了したファイルや作成したディレクトリが残る。検査とファイル操作の間に別プロセスがパスを差し替える敵対的な状況まで防ぐ OS ハンドル単位の保護は未実装。
 
 全機能移行完了の判定には、上の未完了項目の実装と、Windows / macOS の対象アーキテクチャ上で再現できる検証結果が必要。CI 定義の追加だけで、ビルド・起動・配布の成功を確認したことにはならない。
+
+## 実行した検証
+
+2026-10-01 JST、コードコミット`adde5eccfd2dea91a3c485eceb03e5335ca72bfc`を[GitHub Actions run 36759572632](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36759572632)で実行し、4ジョブすべて成功した。SDKはすべて`10.0.401`。通常ビルド・AOT発行のコンパイラー警告は0件。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 446 | 0 / 0 | 17 | 発行・起動成功 |
+| `win-arm64` | 446 | 0 / 0 | 17 | 発行・起動成功 |
+| `osx-x64` | 448 | 0 / 0 | 17 | 発行・起動成功 |
+| `osx-arm64` | 448 | 0 / 0 | 17 | 発行・起動成功 |
+
+runには`DiffBeacon-<RID>`発行物と`verification-<RID>`の入力・ログ・JSON・PNGを保存している。UI検証はSkiaで実際のアプリ画面を描画するheadless実行であり、Explorer/Finder起動・ネイティブファイル選択・署名・公証を実測したものではない。Windows x64 / Mac ARM64の4ペインPNGを目視し、文字とレイアウトを確認した。ローカルのWindows x64でも同じ446 E2E＋17 UIが成功した。
 
 ## 既存ブランチと旧ソース
 
