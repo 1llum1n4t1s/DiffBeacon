@@ -26,6 +26,19 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 ## 実行した検証
 
+2026-10-01 JST、マージ結果セッション・詳細フィルターを追加したコードコミット`1d1e54d3b3db999a95bacdb71506f9bb4d2e8747`を[GitHub Actions run 36770239518](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36770239518)で実行し、4ジョブすべて成功した。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 552 | 0 / 0 | 55 | 発行・起動成功 |
+| `win-arm64` | 552 | 0 / 0 | 55 | 発行・起動成功 |
+| `osx-x64` | 554 | 0 / 0 | 55 | 発行・起動成功 |
+| `osx-arm64` | 554 | 0 / 0 | 55 | 発行・起動成功 |
+
+同runの全構成のJSON・入力・出力・PNG、run情報とログを`artifacts/github/36770239518`に保存した。ローカルWindows x64のNative AOTでも552 CLI＋55 UI成功。通常DLLでのE2Eは543成功・0失敗・2スキップで、リンク作成権限がないプロセスのスキップ理由を残し、権限のあるNative AOT実行でその経路も確認した。独立レビューの成立指摘は修正後に再現ケース・連続編集・Undo/Redoで解消を確認した。今回のUI操作もheadless描画であり、ネイティブウィンドウ・ファイル選択・シェル拡張の手動検証は含まない。
+
+以下は初回の基盤移植時点の記録。
+
 2026-10-01 JST、コードコミット`adde5eccfd2dea91a3c485eceb03e5335ca72bfc`を[GitHub Actions run 36759572632](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36759572632)で実行し、4ジョブすべて成功した。SDKはすべて`10.0.401`。通常ビルド・AOT発行のコンパイラー警告は0件。
 
 | RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
