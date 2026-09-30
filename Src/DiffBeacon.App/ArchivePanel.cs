@@ -22,6 +22,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     public ListBox EntryList { get; } = new() { Name = "archive-entries" };
     public TextBox LeftPassword { get; } = new() { Name = "archive-left-password", PasswordChar = '●', PlaceholderText = "左のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
     public TextBox RightPassword { get; } = new() { Name = "archive-right-password", PasswordChar = '●', PlaceholderText = "右のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
+    public TextBox ExtractionName { get; } = new() { Name = "archive-extraction-name", Text = "extracted", PlaceholderText = "新しい展開フォルダー名", Width = 200, Margin = new Thickness(4) };
     public IReadOnlyList<ArchiveEntryDifference> Rows { get; private set; } = [];
     public string PreviewText => _preview.Text ?? "";
     public string StatusText => _status.Text ?? "";
@@ -32,7 +33,9 @@ public sealed class ArchivePanel : UserControl, IDisposable
         var panel = new DockPanel(); var actions = new WrapPanel(); actions.Children.Add(LeftPassword); actions.Children.Add(RightPassword);
         Button("アーカイブを再比較", RefreshAsync);
         Button("左エントリを書き出す", () => ExportAsync(false)); Button("右エントリを書き出す", () => ExportAsync(true));
-        Button("左を7zへ再梱包", () => RepackAsync(false)); Button("右を7zへ再梱包", () => RepackAsync(true));
+        Button("左を再梱包", () => RepackAsync(false)); Button("右を再梱包", () => RepackAsync(true));
+        actions.Children.Add(ExtractionName);
+        Button("左をすべて展開", () => ExtractAsync(false)); Button("右をすべて展開", () => ExtractAsync(true));
         EntryList.ItemTemplate = new FuncDataTemplate<ArchiveEntryDifference>((row, _) => new TextBlock
         {
             Text = row is null ? "" : $"{Label(row.Status),-7} {row.Path}   左 {row.Left?.Size.ToString("N0") ?? "—"} / 右 {row.Right?.Size.ToString("N0") ?? "—"}",
@@ -53,7 +56,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
             button.Click += async (_, _) => await GuardAsync(action); actions.Children.Add(button);
         }
     }
-    public static bool Supports(string path) => Path.GetExtension(path).ToLowerInvariant() is ".zip" or ".7z" or ".rar" or ".jar" or ".war" or ".ear" or ".xpi";
+    public static bool Supports(string path) => ManagedArchive.SupportsOutput(path) || Path.GetExtension(path).Equals(".rar", StringComparison.OrdinalIgnoreCase);
     public static async Task<ArchivePanel> CreateAsync(string left, string right, CancellationToken token)
     {
         var panel = new ArchivePanel(left, right, token); await panel.GuardAsync(panel.RefreshAsync); return panel;
@@ -70,7 +73,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
             var right = await Task.Run(() => service.ReadManifest(_rightPath, rightPassword, token), token);
             token.ThrowIfCancellationRequested(); if (_disposed) return;
             Rows = ArchiveComparison.Compare(left, right); EntryList.ItemsSource = Rows;
-            _status.Text = $"{left.Format} / {right.Format}: {Rows.Count} 項目、差分 {Rows.Count(row => row.Status != "Equal")} 件。格納名・型・サイズ・SHA-256で比較します。暗号化アーカイブはパスワードを入力して再比較してください。7z再梱包の出力は暗号化されません。";
+            _status.Text = $"{left.Format} / {right.Format}: {Rows.Count} 項目、差分 {Rows.Count(row => row.Status != "Equal")} 件。格納名・型・サイズ・SHA-256で比較します。暗号化アーカイブはパスワードを入力して再比較してください。再梱包の出力は暗号化されません。全件展開は選択した親フォルダー内の新しいフォルダーへ保存します。";
         }
         catch (Exception) when (version != _refreshVersion) { }
         catch { Rows = []; EntryList.ItemsSource = null; throw; }
@@ -104,7 +107,12 @@ public sealed class ArchivePanel : UserControl, IDisposable
     {
         EnsureNewOutput(output);
         var input = rightSide ? _rightPath : _leftPath; var password = Password(rightSide);
-        return Task.Run(() => new ManagedArchive().RepackToSevenZip(input, output, password, token), token);
+        return Task.Run(() => new ManagedArchive().Repack(input, output, password, token), token);
+    }
+    public Task ExtractToAsync(bool rightSide, string directory, CancellationToken token = default)
+    {
+        var input = rightSide ? _rightPath : _leftPath; var password = Password(rightSide);
+        return Task.Run(() => new ManagedArchive().ExtractAll(input, directory, password, token), token);
     }
     private async Task ExportAsync(bool rightSide)
     {
@@ -118,9 +126,20 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private async Task RepackAsync(bool rightSide)
     {
         var top = TopLevel.GetTopLevel(this); if (top is null) return;
-        var output = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = "非暗号化7zへ再梱包", SuggestedFileName = "repacked.7z", ShowOverwritePrompt = true });
+        var output = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = "非暗号化アーカイブへ再梱包", SuggestedFileName = "repacked.7z", ShowOverwritePrompt = true, FileTypeChoices = ArchivePickers.FileTypes });
         if (output?.TryGetLocalPath() is not string path) return;
-        await RepackToAsync(rightSide, path, _lifetime.Token); _status.Text = "非暗号化7zを保存しました。";
+        await RepackToAsync(rightSide, path, _lifetime.Token); _status.Text = $"非暗号化アーカイブを保存しました: {path}";
+    }
+    private async Task ExtractAsync(bool rightSide)
+    {
+        var name = ExtractionName.Text?.Trim();
+        if (string.IsNullOrEmpty(name) || name is "." or ".." || name.IndexOfAny(['/', '\\']) >= 0 || Path.IsPathRooted(name))
+            throw new ArgumentException("展開フォルダー名には一つの名前を指定してください。");
+        var top = TopLevel.GetTopLevel(this); if (top is null) return;
+        var parents = await top.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions { Title = "新しい展開フォルダーを作る親フォルダーを選択" });
+        if (parents.Count == 0 || parents[0].TryGetLocalPath() is not string parent) return;
+        var output = Path.Combine(parent, name);
+        await ExtractToAsync(rightSide, output, _lifetime.Token); _status.Text = $"すべてのエントリを展開しました: {output}";
     }
     private string? Password(bool rightSide) => string.IsNullOrEmpty(rightSide ? RightPassword.Text : LeftPassword.Text) ? null : rightSide ? RightPassword.Text : LeftPassword.Text;
     private void EnsureNewOutput(string output)

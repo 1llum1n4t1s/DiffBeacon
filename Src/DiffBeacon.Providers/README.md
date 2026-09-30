@@ -14,7 +14,7 @@
 | `office` | DOCX・PPTX・XLSX | ZIP内のOffice Open XMLから本文・セル・数式を抽出。コンテナーをディスクへ展開しない。 |
 | `tar` | tar・tar.gz・tgz | 名前・エントリ型・リンク先・非圧縮サイズ・内容SHA-256を名前順に比較。格納順・時刻・権限・所有者を無視。 |
 | `tar-metadata` | tar・tar.gz・tgz | `tar` に加え、権限・所有者uid/gid・UTC更新日時を比較。 |
-| `archive` | 7z・RAR・ZIP | 名前・型・実測サイズ・内容SHA-256を比較。コンテナー形式・格納順・時刻・暗号化の違いは無視し、空ディレクトリは保持。パスワード指定はGUI/専用CLIを使う。 |
+| `archive` | 7z・RAR・ZIP・TAR・TAR.GZ・TAR.BZ2 | 名前・型・実測サイズ・内容SHA-256を比較。コンテナー形式・格納順・時刻・暗号化の違いは無視し、空ディレクトリは保持。パスワード指定はGUI/専用CLIを使う。 |
 
 XMLはW3C C14Nの実装ではありません。DTDと外部エンティティを禁止し、入力は16 MiB、深さは128まで、正規化結果は64 Mi文字までです。DTDを使わないXMLでは要素内の空白を無意味と判断できないため、インデント変更も差分になります。`xml:space` がなくても本文の空白を保持します。`xsi:type`、XML Schemaのtype/ref/base/itemType/substitutionGroup/refer/memberTypes、および明示的にxs:QName/xs:NOTATIONと指定された本文は、その位置の名前空間束縛からURIとローカル名へ正規化します。同じURIのprefix変更を無視し、URI変更は差分にします。不正・未定義prefixの既知QNameは拒否します。未知の属性値・本文はQNameと断定せず、字面と検出したprefixの束縛を併記します。この保守的な扱いではprefixだけの変更も差分になり得ます。未宣言prefixの未知の字面や、スキーマなしでunprefixed値がQNameかどうかの判別は行いません。
 
@@ -39,19 +39,23 @@ tarは10万エントリ、各内容256 MiB、ヘッダーとパディングを�
 | エントリ数、入力サイズ、単一・合計展開サイズ、プレビュー・出力サイズ上限 | 宣言値と実測値の両方で拒否し、既存出力を保持する。 |
 | 重複名、ルート外パス、絶対パス、リンク、分割アーカイブ | 拒否し、格納名からファイルシステムへ自動展開しない。 |
 | キャンセル、読み取り専用出力、出力先リンク、入出力同一 | 原本と既存出力を保持し、今回作った途中出力だけを削除する。 |
-| 7z 再梱包 | 一時出力を閉じてから置換。RAR 作成・暗号化出力は未対応として明示する。 |
+| 作成・再梱包・全件展開 | 一時出力を閉じてから置換。全件展開は未存在のディレクトリへ全検証後に公開。RAR作成・暗号化出力は未対応として明示する。 |
 
-`ManagedArchive` は SharpCompress 0.50.4（MIT）を使う純 managed サービスです。`ReadManifest(path, password, cancellationToken)` は `Format`（`7z`・`rar`・`zip`）と、正規化した相対パス、ディレクトリ種別、実測サイズ、内容 SHA-256（大文字16進数）、暗号化フラグ、記録された更新日時を返します。エントリはパスの ordinal 順です。ディレクトリのサイズは0、ハッシュは空文字です。全内容を順次復号して検証するため、solid でも内容を読み落としません。
+`ManagedArchive` は SharpCompress 0.50.4（MIT）と.NET標準APIを使う純managedサービスです。`ReadManifest(path, password, cancellationToken)`は`Format`（`7z`・`rar`・`zip`・`tar`・`tar.gz`・`tar.bz2`）と、正規化した相対パス、ディレクトリ種別、実測サイズ、内容SHA-256、暗号化フラグ、更新日時を返します。エントリはパスのordinal順、ディレクトリはサイズ0・ハッシュ空文字です。全内容を順次復号するためsolidでも読み落としません。TARの安全な先頭`./`は除去し、ルートディレクトリ自身は比較一覧に含めません。
 
-`ReadEntry(path, entryPath, password, cancellationToken)` は全エントリの検証後に選択したファイルのバイト列を返します。`RepackToSevenZip(sourcePath, destinationPath, password, cancellationToken)` は元内容を非 solid LZMA2 7z に再梱包します。`WriteSevenZip(destinationPath, entries, cancellationToken)` は明示した `ManagedArchiveWriteEntry(Path, Content, LastModifiedTime)` から7zを作ります。`Content` は `ReadOnlyMemory<byte>?` で、null はディレクトリです。日時は意味を変えずライブラリへ渡しますが、元形式の精度・タイムゾーン情報の完全保存は保証しません。属性・ACL・圧縮方式・solid 設定・元暗号化は保存しません。
+`ReadEntry`は全検証後に選択したバイト列を返します。`WriteArchive(destinationPath, entries, cancellationToken)`と`Repack(sourcePath, destinationPath, password, cancellationToken)`は出力拡張子から7z・zip/jar/ear/war/xpi・tar・tar.gz/tgz・tar.bz2/tbz2/tbzを選びます。`ManagedArchiveWriteEntry(Path, Content, LastModifiedTime)`の`Content`は`ReadOnlyMemory<byte>?`、nullはディレクトリです。既存の`WriteSevenZip`/`RepackToSevenZip`は同じ処理の7z指定APIです。7zは非solid LZMA2、全出力は非暗号化です。更新日時を伝達しますがZIPは1980〜2107年・2秒精度へ制約し、元形式の精度・タイムゾーンの完全保存は保証しません。属性・ACL・圧縮方式・solid設定・元暗号化は保存しません。
+
+`ExtractAll(sourcePath, destinationDirectory, password, cancellationToken)`は未存在のディレクトリへ全件を保存します。兄弟の一時ディレクトリへ読み出し、全件の検証後に移動して公開します。既存ディレクトリ（空でも）・ファイル・リンクを拒否し、失敗やキャンセルで今回の途中出力を除去します。安全な格納名だけを保存し、実行ファイルを起動せず、リンクを作成しません。更新日時を反映しますが属性・全メタデータは保持しません。
+
+暗黙の親を含む10万パスノードと、NFC辞書キー＋元表記の合計16 Mi文字も制限します。TAR補助メタデータは各1 MiB、復号したヘッダー・パディングを含む総量は1 GiBまでです。全ヘッダーのchecksum、PAXのsize指定、2ブロック終端を検証します。GZipは各連結メンバーのヘッダー・CRC・ISIZE・フッターの存在を検証し、途中欠損を拒否します。TAR本文は形式上CRCを持たず、意味的な内容改変を検出するものではありません。
 
 既定上限は10万エントリ、入力1 GiB、各内容256 MiB、展開合計1 GiB、プレビュー16 MiB、出力1 GiBです。`ManagedArchiveLimits` で指定できます。プレビューは選択したファイルだけ、再梱包は一度に1ファイルだけをメモリへ保持します。入力も出力もリンクを含むパスを拒否します。格納名の絶対・親参照・空セグメント・制御文字・Windows予約名・末尾空白/点・重複（大文字小文字も区別しない）、リンク属性とRARリダイレクト、分割ボリュームを拒否します。`ReadManifest` は格納先を作成せず、再梱包の途中出力は指定した出力先ディレクトリに作成し、完了後に置換します。読み取り専用出力は拒否します。上限超過・失敗・キャンセルでは原本・既存出力を保持し、途中出力を削除します。
 
 ZIPはライブラリの`CheckCrc`付き抽出でCRC値0とWinZip AESの認証も検証します。他の形式は公開CRCが0以外なら実測CRCと照合します。暗号化RARのCRCは秘密鍵で変換されるため比較しません。7zのCRC省略と値0の区別は公開APIでは未確認で、暗号化RARとともに完全性は復号器の検証範囲に依存します。あらゆる破損の検出を保証しません。パスワード指定時のライブラリ例外は本文とinner exceptionを残さない定型診断へ置き換えます。CPUを使う同期APIなのでUIからはバックグラウンドで呼び、CancellationTokenを渡します。ライブラリの内部処理からI/Oへ戻るまではキャンセルが遅れる場合があります。
 
-GUIは左右のマスク付きパスワード欄と再比較、先頭4096バイトのプレビュー、エントリ書出し、非暗号化7z再梱包を提供します。`ReadEntryPreview`は保存する先頭だけを制限し、全エントリを検証します。`ReadEntryForExport`は既定256 MiBまでの保存用読込みです。フォルダーからの7z作成は出力ファイルを入力一覧から除外し、同じ出力先での再作成にも対応します。GUI保存は左右の原本を上書きしません。
+GUIはマスク付きパスワード、再比較、先頭4096バイトのプレビュー、エントリ書出し、全件展開、形式を選ぶ非暗号化再梱包を提供します。`ReadEntryPreview`は保持する先頭だけを制限し全内容を検証、`ReadEntryForExport`は既定256 MiBまでです。フォルダーからの作成は出力ファイルを入力一覧から除外し、同じ出力先での再作成にも対応します。GUI保存は左右の原本を上書きしません。
 
-CLIは`--archive-list ARCHIVE`、`--archive-compare LEFT RIGHT`、`--archive-entry ARCHIVE ENTRY OUTPUT`、`--archive-repack INPUT OUTPUT`、`--archive-create SOURCE_DIRECTORY OUTPUT`です。暗号化読込みには末尾の`--password-stdin`を使い、リダイレクトされたUTF-8標準入力へ1アーカイブにつき1行を送ります（比較は左・右の2行）。各行は4096文字までで、引数・環境変数・設定・ログにパスワードを渡しません。比較の終了コードは一致0・差分1・エラー2です。作成はパスワード指定を受け付けず、再梱包も出力は暗号化しません。
+CLIは`--archive-list ARCHIVE`、`--archive-compare LEFT RIGHT`、`--archive-entry ARCHIVE ENTRY OUTPUT`、`--archive-repack INPUT OUTPUT`、`--archive-create SOURCE_DIRECTORY OUTPUT`、`--archive-extract INPUT NEW_DIRECTORY`です。暗号化読込みには末尾の`--password-stdin`を使い、リダイレクトされたUTF-8標準入力へ1アーカイブにつき1行を送ります（比較は左・右の2行）。各行は4096文字までで、引数・環境変数・設定・ログにパスワードを渡しません。比較の終了コードは一致0・差分1・エラー2です。作成はパスワード指定を受け付けず、再梱包も出力は暗号化しません。単一GZip/BZip2ファイル、Z/compress、TAR.Zは未対応です。
 
 RAR作成、暗号化出力、分割、CAB/LZH/ISO/MSI等の全旧形式、属性・リンクの保存は未対応です。4 RIDの実測状況は[移行対応表](../../Docs/MIGRATION.md)を参照してください。SharpCompress のライセンスは `SharpCompress.LICENSE.txt` としてビルド・発行先へコピーします。上流の [形式表](https://github.com/adamhathcock/sharpcompress/blob/0.50.4/docs/FORMATS.md)、[使用方法](https://github.com/adamhathcock/sharpcompress/blob/0.50.4/USAGE.md)、[パッケージ](https://www.nuget.org/packages/SharpCompress/0.50.4) を参照してください。
 

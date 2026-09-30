@@ -157,7 +157,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "パッチ出力", ExportPatchAsync);
         AddAction(actions, "自動マージ", MergeThreeWayAsync);
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
-        AddAction(actions, "7z作成", CreateArchiveAsync);
+        AddAction(actions, "アーカイブ作成", CreateArchiveAsync);
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
         AddAction(actions, "中止", () => { _operation?.Cancel(); return Task.CompletedTask; });

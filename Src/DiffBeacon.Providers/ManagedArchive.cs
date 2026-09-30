@@ -13,7 +13,8 @@ public sealed record ManagedArchiveLimits(
     long MaximumEntryBytes = 256L * 1024 * 1024,
     long MaximumDecodedBytes = 1024L * 1024 * 1024,
     int MaximumPreviewBytes = 16 * 1024 * 1024,
-    long MaximumOutputBytes = 1024L * 1024 * 1024);
+    long MaximumOutputBytes = 1024L * 1024 * 1024,
+    int MaximumPathCharacters = 16 * 1024 * 1024);
 
 public sealed record ManagedArchiveEntry(string Path, bool IsDirectory, long Size,
     string Sha256, bool IsEncrypted, DateTime? LastModifiedTime);
@@ -24,8 +25,8 @@ public sealed record ManagedArchiveManifest(string Format, IReadOnlyList<Managed
 public sealed record ManagedArchiveWriteEntry(string Path, ReadOnlyMemory<byte>? Content,
     DateTime? LastModifiedTime = null);
 
-/// <summary>7z・RAR・ZIP をディスクへ展開せずに読み、非暗号化 7z を保存する。</summary>
-public sealed class ManagedArchive
+/// <summary>管理されたアーカイブを検証し、安全な保存と展開を提供する。</summary>
+public sealed partial class ManagedArchive
 {
     private readonly ManagedArchiveLimits _limits;
 
@@ -35,6 +36,7 @@ public sealed class ManagedArchive
         if (_limits.MaximumEntries <= 0 || _limits.MaximumInputBytes <= 0 ||
             _limits.MaximumEntryBytes <= 0 || _limits.MaximumDecodedBytes <= 0 ||
             _limits.MaximumPreviewBytes <= 0 || _limits.MaximumOutputBytes <= 0 ||
+            _limits.MaximumPathCharacters <= 0 ||
             _limits.MaximumEntryBytes > int.MaxValue)
             throw new ArgumentOutOfRangeException(nameof(limits));
     }
@@ -78,56 +80,12 @@ public sealed class ManagedArchive
     /// <summary>元アーカイブを順次検証し、各ファイルを非 solid の LZMA2 7z に再梱包する。</summary>
     public void RepackToSevenZip(string sourcePath, string destinationPath, string? password = null,
         CancellationToken cancellationToken = default)
-    {
-        var source = ValidateLocalPath(sourcePath, mustExist: true);
-        var destination = ValidateLocalPath(destinationPath, mustExist: false);
-        if (ArchivePaths.SameFile(source, destination))
-            throw new IOException("元アーカイブと出力先には別のパスが必要です。");
-        Save(destination, cancellationToken, writer =>
-            Read(source, password, cancellationToken, entry => !entry.IsDirectory,
-                (entry, content) =>
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    if (entry.IsDirectory) writer.WriteDirectory(entry.Path, entry.LastModifiedTime);
-                    else
-                    {
-                        content!.Position = 0;
-                        using var bounded = new CheckedStream(content, _limits.MaximumEntryBytes, cancellationToken);
-                        writer.Write(entry.Path, bounded, entry.LastModifiedTime);
-                    }
-                }));
-    }
+        => RepackCore(sourcePath, destinationPath, "7z", password, cancellationToken);
 
     /// <summary>呼び出し元が明示した内容から、非暗号化 LZMA2 7z を保存する。</summary>
     public void WriteSevenZip(string destinationPath, IEnumerable<ManagedArchiveWriteEntry> entries,
         CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(entries);
-        Save(ValidateLocalPath(destinationPath, mustExist: false), cancellationToken, writer =>
-        {
-            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var count = 0;
-            long total = 0;
-            foreach (var entry in entries)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                ArgumentNullException.ThrowIfNull(entry);
-                var name = ValidateEntryPath(entry.Path);
-                if (++count > _limits.MaximumEntries || !names.Add(name))
-                    throw new InvalidDataException("エントリ数の上限超過、または重複した格納名です。");
-                if (entry.Content is not { } bytes) writer.WriteDirectory(name, entry.LastModifiedTime);
-                else
-                {
-                    if (bytes.Length > _limits.MaximumEntryBytes || bytes.Length > _limits.MaximumDecodedBytes - total)
-                        throw new InvalidDataException("アーカイブ内容のサイズ上限を超えました。");
-                    total += bytes.Length;
-                    using var stream = new MemoryStream(bytes.ToArray(), writable: false);
-                    using var bounded = new CheckedStream(stream, _limits.MaximumEntryBytes, cancellationToken);
-                    writer.Write(name, bounded, entry.LastModifiedTime);
-                }
-            }
-        });
-    }
+        => WriteArchiveCore(destinationPath, entries, "7z", cancellationToken);
 
     private ManagedArchiveManifest Read(string path, string? password, CancellationToken token,
         Func<ManagedArchiveEntry, bool>? capture,
@@ -141,11 +99,14 @@ public sealed class ManagedArchive
         using var input = new CheckedStream(file, _limits.MaximumInputBytes, token);
         try
         {
+            var tarFormat = DetectTarFormat(input, path);
+            if (tarFormat is not null)
+                return ReadTar(input, tarFormat, token, capture, consume, captureLimit, prefixOnly);
             // Stream API で隣接ボリュームの暗黙の探索・読み取りを防ぐ。
             using var archive = ArchiveFactory.OpenArchive(input, ReaderOptions.ForExternalStream.WithPassword(password));
             if (archive.Type is not (ArchiveType.SevenZip or ArchiveType.Rar or ArchiveType.Zip))
                 throw new InvalidDataException("このサービスの読み取り対象は 7z・RAR・ZIP です。");
-            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var names = new EntryNames(_limits.MaximumEntries, _limits.MaximumPathCharacters);
             var result = new List<ManagedArchiveEntry>();
             long total = 0;
             if (archive.Type == ArchiveType.Rar)
@@ -175,8 +136,7 @@ public sealed class ManagedArchive
             {
                 token.ThrowIfCancellationRequested();
                 var name = ValidateEntryPath(entry.Key);
-                if (result.Count >= _limits.MaximumEntries || !names.Add(name))
-                    throw new InvalidDataException("エントリ数の上限超過、または重複した格納名です。");
+                names.Add(name, entry.IsDirectory);
                 // 7z の実装は VolumeIndex にエントリ順序を格納するため、分割判定に使わない。
                 if (IsLink(entry) || entry.IsSplitAfter || archive.Type != ArchiveType.SevenZip && (entry.VolumeIndexFirst > 0 || entry.VolumeIndexLast > 0))
                     throw new InvalidDataException("リンク・分割エントリは読み取れません。");
@@ -221,36 +181,6 @@ public sealed class ManagedArchive
         {
             // 依存ライブラリの例外文や inner exception に認証情報を残さない。
             throw new InvalidDataException("アーカイブを読み取れません。パスワード、破損、圧縮方式を確認してください。");
-        }
-    }
-
-    private void Save(string destination, CancellationToken token, Action<SevenZipWriter> write)
-    {
-        token.ThrowIfCancellationRequested();
-        ValidateOutput(destination);
-        var temporary = Path.Combine(Path.GetDirectoryName(destination)!, $".diffbeacon-{Guid.NewGuid():N}.7z.tmp");
-        var created = false;
-        try
-        {
-            using (var file = new FileStream(temporary, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
-            {
-                created = true;
-                using var output = new CheckedStream(file, _limits.MaximumOutputBytes, token);
-                using (var writer = new SevenZipWriter(output, new SevenZipWriterOptions(CompressionType.LZMA2)))
-                    write(writer);
-                token.ThrowIfCancellationRequested();
-                file.Flush(flushToDisk: true);
-            }
-            token.ThrowIfCancellationRequested();
-            ValidateOutput(destination);
-            if (!OperatingSystem.IsWindows() && File.Exists(destination)) File.SetUnixFileMode(temporary, File.GetUnixFileMode(destination));
-            if (File.Exists(destination)) File.Replace(temporary, destination, null);
-            else File.Move(temporary, destination);
-            created = false;
-        }
-        finally
-        {
-            if (created) File.Delete(temporary);
         }
     }
 
@@ -324,7 +254,7 @@ public sealed class ManagedArchive
 
     private sealed class DecodedSink(MemoryStream? content, long limit, CancellationToken token) : Stream
     {
-        private static readonly uint[] CrcTable = CreateCrcTable();
+        internal static readonly uint[] CrcTable = CreateCrcTable();
         private readonly IncrementalHash _hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         private long _length;
         private uint _crc = uint.MaxValue;

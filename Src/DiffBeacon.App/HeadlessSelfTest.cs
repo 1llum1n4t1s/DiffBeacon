@@ -15,7 +15,10 @@ internal static class HeadlessSelfTest
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
     internal static int Run(string output)
     {
-        output = Path.GetFullPath(output); Directory.CreateDirectory(output);
+        var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
+        // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
+        output = Path.Combine(artifactOutput, "fixtures", DateTime.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(output);
         var assertions = new List<(string Name, bool Passed, string Detail)>();
         MainWindow? window = null;
         try
@@ -151,7 +154,7 @@ internal static class HeadlessSelfTest
             try { Pump(pane.SaveAsync(false)); } catch (InvalidOperationException) { rejected = true; }
             Check("changed path cannot overwrite unrelated file", rejected && original.SequenceEqual(File.ReadAllBytes(left)));
             var imageLeft = Path.Combine(output, "image-left.png"); var imageRight = Path.Combine(output, "image-right.png");
-            File.Copy(Path.Combine(output, "comparison.png"), imageLeft, true); File.Copy(imageLeft, imageRight, true);
+            File.Copy(Path.Combine(artifactOutput, "comparison.png"), imageLeft, true); File.Copy(imageLeft, imageRight, true);
             pane.LeftPath.Text = imageLeft; pane.RightPath.Text = imageRight; pane.SelectMode(4);
             Pump(pane.ComparePathsAsync());
             var imageBytes = File.ReadAllBytes(imageLeft);
@@ -222,7 +225,35 @@ internal static class HeadlessSelfTest
             var repackedArchive = Path.Combine(output, "repacked.7z"); Pump(archivePanel.RepackToAsync(false, repackedArchive));
             var archiveService = new DiffBeacon.Providers.ManagedArchive();
             Check("GUI archive repack preserves all names types and hashes", DiffBeacon.Providers.ArchiveComparison.Compare(archiveService.ReadManifest(zipPath), archiveService.ReadManifest(repackedArchive)).All(row => row.Status == "Equal"));
+            var guiZip = Path.Combine(output, "gui-repacked.zip"); Pump(archivePanel.RepackToAsync(true, guiZip));
+            Check("GUI archive repack selects ZIP from output extension", archiveService.ReadManifest(guiZip).Format == "zip" && DiffBeacon.Providers.ArchiveComparison.Compare(archiveService.ReadManifest(sevenPath), archiveService.ReadManifest(guiZip)).All(row => row.Status == "Equal"));
+            var guiExtracted = Path.Combine(output, "gui-extracted"); Pump(archivePanel.ExtractToAsync(true, guiExtracted));
+            Check("GUI archive full extraction preserves content", Directory.Exists(Path.Combine(guiExtracted, "folder")) && File.ReadAllText(Path.Combine(guiExtracted, "folder/value.txt")) == "RIGHT\n");
+            rejected = false; try { Pump(archivePanel.ExtractToAsync(true, guiExtracted)); } catch (IOException) { rejected = true; }
+            Check("GUI archive extraction refuses existing destination", rejected && File.ReadAllText(Path.Combine(guiExtracted, "folder/value.txt")) == "RIGHT\n");
+            var cancelledExtraction = Path.Combine(output, "gui-cancelled-extraction");
+            using (var extractionCancellation = new CancellationTokenSource())
+            {
+                var extracting = archivePanel.ExtractToAsync(false, cancelledExtraction, extractionCancellation.Token);
+                var started = false; var cancelled = false;
+                Pump(Task.Run(async () =>
+                {
+                    for (var attempt = 0; attempt < 2000 && !extracting.IsCompleted; attempt++)
+                    {
+                        if (Directory.EnumerateDirectories(output, ".diffbeacon-*.extract.tmp").Any()) { started = true; break; }
+                        await Task.Delay(1);
+                    }
+                    extractionCancellation.Cancel();
+                    try { await extracting; } catch (OperationCanceledException) { cancelled = true; }
+                }));
+                Check("GUI archive cancellation during extraction removes staging output", started && cancelled && !Directory.Exists(cancelledExtraction) && !Directory.EnumerateDirectories(output, ".diffbeacon-*.extract.tmp").Any());
+            }
             Screenshot("archives.png");
+            var guiTar = Path.Combine(output, "gui-repacked.tar.gz"); Pump(archivePanel.RepackToAsync(true, guiTar));
+            pane.LeftPath.Text = sevenPath; pane.RightPath.Text = guiTar; Pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var formatsPanel = pane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+            Check("GUI automatically compares 7z with compressed TAR", formatsPanel.Rows.Count > 0 && formatsPanel.Rows.All(row => row.Status == "Equal"));
+            Screenshot("archives-formats.png");
             var encryptedPath = Path.Combine(output, "encrypted.zip");
             using (var resource = typeof(HeadlessSelfTest).Assembly.GetManifestResourceStream("DiffBeacon.SelfTest.Encrypted.zip") ?? throw new InvalidOperationException("暗号化検証用入力がありません。"))
             using (var encryptedFile = File.Create(encryptedPath)) resource.CopyTo(encryptedFile);
@@ -269,9 +300,9 @@ internal static class HeadlessSelfTest
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }
         finally
         {
-            using var stream = File.Create(Path.Combine(output, "ui-report.json"));
+            using var stream = File.Create(Path.Combine(artifactOutput, "ui-report.json"));
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
-            writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier);
+            writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -298,7 +329,7 @@ internal static class HeadlessSelfTest
             Dispatcher.UIThread.RunJobs();
             AvaloniaHeadlessPlatform.ForceRenderTimerTick();
             using var frame = window!.CaptureRenderedFrame() ?? throw new InvalidOperationException("描画フレームがありません。");
-            frame.Save(Path.Combine(output, name), new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
+            frame.Save(Path.Combine(artifactOutput, name), new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
         }
     }
 

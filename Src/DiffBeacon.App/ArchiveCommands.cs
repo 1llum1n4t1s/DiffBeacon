@@ -6,7 +6,7 @@ internal static class ArchiveCommands
 {
     internal static async Task<int> RunAsync(string[] args)
     {
-        var required = args[0] switch { "--archive-list" => 2, "--archive-entry" => 4, "--archive-compare" or "--archive-repack" or "--archive-create" => 3, _ => throw new ArgumentException("不明なアーカイブコマンドです。") };
+        var required = args[0] switch { "--archive-list" => 2, "--archive-entry" => 4, "--archive-compare" or "--archive-repack" or "--archive-create" or "--archive-extract" => 3, _ => throw new ArgumentException("不明なアーカイブコマンドです。") };
         var passwordInput = args.Length == required + 1 && args[^1] == "--password-stdin" && args[0] != "--archive-create";
         if (args.Length != required && !passwordInput) throw new ArgumentException("アーカイブコマンドの引数が不正です。--help を参照してください。");
         using var cancel = new CancellationTokenSource();
@@ -25,7 +25,9 @@ internal static class ArchiveCommands
         else if (args[0] == "--archive-entry")
             await ArchiveActions.ExportAsync(args[1], args[2], args[3], password, token);
         else if (args[0] == "--archive-repack")
-            await Task.Run(() => service.RepackToSevenZip(args[1], args[2], password, token), token);
+            await Task.Run(() => service.Repack(args[1], args[2], password, token), token);
+        else if (args[0] == "--archive-extract")
+            await Task.Run(() => service.ExtractAll(args[1], args[2], password, token), token);
         else
         {
             var left = await Task.Run(() => service.ReadManifest(args[1], password, token), token);
@@ -107,7 +109,7 @@ internal static class ArchiveActions
                 if (isDirectory) pending.Push(path);
             }
         }
-        await Task.Run(() => new ManagedArchive().WriteSevenZip(target, Content(), token), token);
+        await Task.Run(() => new ManagedArchive().WriteArchive(target, Content(), token), token);
         IEnumerable<ManagedArchiveWriteEntry> Content()
         {
             foreach (var entry in entries)

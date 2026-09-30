@@ -416,6 +416,149 @@ async Task ArchiveCases()
     var recreatedEntries = Entries(await Run("archive-list-recreated-inside", 0, true, "--archive-list", insideOutput));
     Check("archive recreate excludes existing output", recreatedEntries.Count > 0 && recreatedEntries.All(e => e.Path != "self.7z" && !e.Path.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)));
     Check("archive create does not alter source", File.ReadAllBytes(binary).SequenceEqual(new byte[] { 0, 255, 1, 0, 127, 3 }));
+    await ArchiveFormatCases();
+}
+
+async Task ArchiveFormatCases()
+{
+    var root = Path.Combine(fixtures, "formats-source"); Directory.CreateDirectory(Path.Combine(root, "empty")); Directory.CreateDirectory(Path.Combine(root, "folder"));
+    var expected = new Dictionary<string, byte[]>(StringComparer.Ordinal) { ["folder/data.bin"] = [0, 255, 10, 13, 128, 0], ["日本語.txt"] = utf8.GetBytes("本文\r\nfinal") };
+    foreach (var pair in expected) File.WriteAllBytes(Path.Combine(root, pair.Key), pair.Value);
+    var baseline = Path.Combine(fixtures, "formats-baseline.7z");
+    await Run("formats-baseline", 0, true, "--archive-create", root, baseline);
+    foreach (var extension in new[] { "zip", "jar", "ear", "war", "xpi", "tar", "tar.gz", "tgz", "tar.bz2", "tbz2", "tbz" })
+    {
+        var archive = Path.Combine(fixtures, "formats." + extension);
+        await Run("formats-create-" + extension, 0, true, "--archive-create", root, archive);
+        await Run("formats-compare-" + extension, 0, true, "--archive-compare", baseline, archive);
+        var entry = Path.Combine(fixtures, "formats-entry-" + extension + ".bin");
+        await Run("formats-entry-" + extension, 0, true, "--archive-entry", archive, "folder/data.bin", entry);
+        Check("formats entry bytes " + extension, File.Exists(entry) && File.ReadAllBytes(entry).SequenceEqual(expected["folder/data.bin"]));
+        var repacked = Path.Combine(fixtures, "formats-repacked." + extension);
+        await Run("formats-repack-" + extension, 0, true, "--archive-repack", baseline, repacked);
+        await Run("formats-repack-compare-" + extension, 0, true, "--archive-compare", baseline, repacked);
+        var extracted = Path.Combine(fixtures, "formats-extracted-" + extension);
+        await Run("formats-extract-" + extension, 0, true, "--archive-extract", archive, extracted);
+        CheckExtracted("formats extract " + extension, extracted, expected);
+        if (extension is "zip" or "jar" or "ear" or "war" or "xpi")
+        {
+            using var zip = ZipFile.OpenRead(archive);
+            Check("independent ZIP names " + extension, zip.Entries.Select(e => e.FullName.TrimEnd('/')).Order().SequenceEqual(new[] { "empty", "folder", "folder/data.bin", "日本語.txt" }.Order()));
+            foreach (var pair in expected) { using var stream = zip.GetEntry(pair.Key)!.Open(); using var data = new MemoryStream(); stream.CopyTo(data); Check("independent ZIP bytes " + extension + " " + pair.Key, data.ToArray().SequenceEqual(pair.Value)); }
+        }
+        else if (extension is "tar" or "tar.gz" or "tgz")
+        {
+            using var input = File.OpenRead(archive);
+            using Stream decoded = extension == "tar" ? input : new GZipStream(input, CompressionMode.Decompress);
+            using var tar = new TarReader(decoded); var found = new Dictionary<string, byte[]>(); var directories = new HashSet<string>();
+            while (tar.GetNextEntry() is { } item)
+            {
+                if (item.EntryType == TarEntryType.Directory) directories.Add(item.Name.TrimEnd('/'));
+                else { using var bytes = new MemoryStream(); item.DataStream!.CopyTo(bytes); found.Add(item.Name, bytes.ToArray()); }
+            }
+            Check("independent TAR contents " + extension, directories.SetEquals(["empty", "folder"]) && found.Count == expected.Count && expected.All(p => found.TryGetValue(p.Key, out var bytes) && bytes.SequenceEqual(p.Value)));
+        }
+        else
+        {
+            Check("BZip2 container signature " + extension, File.ReadAllBytes(archive).AsSpan(0, 3).SequenceEqual("BZh"u8));
+            await VerifyBzipWithSystemTar(extension, archive, expected);
+        }
+    }
+    var originalHashes = expected.ToDictionary(p => p.Key, p => Convert.ToHexString(SHA256.HashData(p.Value)));
+    Check("format creation preserves input", originalHashes.All(p => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Path.Combine(root, p.Key)))) == p.Value));
+    var systemTar = OperatingSystem.IsWindows() ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "System32/tar.exe") : "/usr/bin/tar";
+    if (File.Exists(systemTar))
+    {
+        var rootTar = Path.Combine(fixtures, "formats-system-root.tar");
+        var info = new ProcessStartInfo(systemTar) { RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
+        foreach (var argument in new[] { "-cf", rootTar, "-C", root, "." }) info.ArgumentList.Add(argument);
+        using var process = Process.Start(info)!; var errors = process.StandardError.ReadToEndAsync(); await process.WaitForExitAsync(); var diagnostic = await errors;
+        File.AppendAllText(Path.Combine(output, "system-tar.log"), $"{systemTar} -cf {rootTar} -C {root} .\nexit={process.ExitCode}\n{diagnostic}", utf8);
+        Check("independent system TAR creation", process.ExitCode == 0, diagnostic);
+        await Run("formats-system-root-compare", 0, true, "--archive-compare", baseline, rootTar);
+        var rootExtracted = Path.Combine(fixtures, "formats-system-root-extracted");
+        await Run("formats-system-root-extract", 0, true, "--archive-extract", rootTar, rootExtracted); CheckExtracted("system TAR root extraction", rootExtracted, expected);
+    }
+    else assertions.Add(new("system TAR relative root compatibility", "skipped", "System tar is unavailable."));
+    var concatenated = Path.Combine(fixtures, "formats-concatenated.tar.gz"); var tarBytes = File.ReadAllBytes(Path.Combine(fixtures, "formats.tar"));
+    using (var outputStream = File.Create(concatenated))
+    {
+        using (var first = new GZipStream(outputStream, CompressionLevel.Optimal, leaveOpen: true)) first.Write(tarBytes.AsSpan(0, tarBytes.Length / 2));
+        using (var second = new GZipStream(outputStream, CompressionLevel.Optimal, leaveOpen: true)) second.Write(tarBytes.AsSpan(tarBytes.Length / 2));
+    }
+    await Run("formats-concatenated-gzip-compare", 0, true, "--archive-compare", baseline, concatenated);
+    var existingDirectory = Path.Combine(fixtures, "formats-existing-directory"); Directory.CreateDirectory(existingDirectory); var marker = Path.Combine(existingDirectory, "keep.txt"); File.WriteAllText(marker, "keep");
+    await Run("formats-extract-existing-directory", 2, false, "--archive-extract", baseline, existingDirectory);
+    Check("extract preserves existing directory", File.ReadAllText(marker) == "keep" && Directory.GetFileSystemEntries(existingDirectory).Length == 1);
+    var existingFile = Text("formats-existing-output", "keep existing bytes");
+    await Run("formats-extract-existing-file", 2, false, "--archive-extract", baseline, existingFile);
+    Check("extract preserves existing file", File.ReadAllText(existingFile) == "keep existing bytes");
+    await Run("formats-create-unknown-output", 2, false, "--archive-create", root, existingFile);
+    await Run("formats-repack-unknown-output", 2, false, "--archive-repack", baseline, existingFile);
+    Check("unknown output format preserves existing file", File.ReadAllText(existingFile) == "keep existing bytes");
+    foreach (var name in new[] { "7Zip.LZMA2.Aes.7z", "Rar.encrypted_filesAndHeader.rar", "Rar5.encrypted_filesAndHeader.rar", "Zip.deflate.WinzipAES.zip" })
+    {
+        var password = name.EndsWith(".7z") ? "testpassword\n" : "test\n";
+        var destination = Path.Combine(fixtures, "formats-encrypted-extracted-" + name);
+        var source = Path.GetFullPath(Path.Combine("tests/Fixtures/Archives", name));
+        await RunWithInput("formats-extract-encrypted-" + name, 0, true, password, "--archive-extract", source, destination, "--password-stdin");
+        var originalManifest = JsonDocument.Parse(File.ReadAllText("tests/Fixtures/Archives/manifest.json"));
+        using (originalManifest)
+        {
+            var originals = originalManifest.RootElement.GetProperty("expectedEntries").EnumerateArray().ToArray();
+            Check("encrypted extract exact files " + name, originals.All(p => File.Exists(Path.Combine(destination, p.GetProperty("path").GetString()!)) && Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Path.Combine(destination, p.GetProperty("path").GetString()!)))) == p.GetProperty("sha256").GetString()));
+        }
+    }
+    var badTar = Tar("formats-bad-checksum.tar", ("good.txt", "content"));
+    var badTarBytes = File.ReadAllBytes(badTar); badTarBytes[0] ^= 1; File.WriteAllBytes(badTar, badTarBytes);
+    var linkedTar = Path.Combine(fixtures, "formats-link.tar");
+    using (var stream = File.Create(linkedTar)) using (var tar = new TarWriter(stream)) tar.WriteEntry(new PaxTarEntry(TarEntryType.SymbolicLink, "link") { LinkName = "../outside" });
+    foreach (var bad in new[] { Zip("formats-parent-collision.zip", ("file", "one"), ("file/child", "two")), Zip("formats-case-collision.zip", ("A.txt", "one"), ("a.txt", "two")), Zip("formats-unsafe.zip", ("../escape", "bad")), Path.Combine(fixtures, "archive-invalid-crc-zero.zip"), badTar, linkedTar, Tar("formats-parent-collision.tar", ("file", "one"), ("file/child", "two")) })
+    {
+        var destination = Path.Combine(fixtures, "formats-invalid-" + Path.GetFileName(bad)); var hash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(bad)));
+        await Run("formats-extract-reject-" + Path.GetFileName(bad), 2, false, "--archive-extract", bad, destination);
+        Check("invalid extraction rollback " + Path.GetFileName(bad), !Directory.Exists(destination) && !File.Exists(destination) && Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(bad))) == hash);
+    }
+    foreach (var missing in new[] { 1, 4, 8 })
+    {
+        var truncated = Path.Combine(fixtures, $"formats-truncated-{missing}.tar.gz");
+        var full = File.ReadAllBytes(Path.Combine(fixtures, "formats.tar.gz")); File.WriteAllBytes(truncated, full[..^missing]);
+        await Run("formats-truncated-gzip-list-" + missing, 2, false, "--archive-list", truncated);
+        var destination = Path.Combine(fixtures, "formats-truncated-extract-" + missing);
+        await Run("formats-truncated-gzip-extract-" + missing, 2, false, "--archive-extract", truncated, destination);
+        Check("truncated gzip leaves no extraction " + missing, !Directory.Exists(destination));
+        var keep = Text($"formats-truncated-keep-{missing}.zip", "keep output");
+        await Run("formats-truncated-gzip-repack-" + missing, 2, false, "--archive-repack", truncated, keep);
+        Check("truncated gzip preserves repack output " + missing, File.ReadAllText(keep) == "keep output");
+    }
+    Check("extract removes staging directories", !Directory.GetDirectories(fixtures).Any(path => Path.GetFileName(path).StartsWith(".diffbeacon-", StringComparison.Ordinal)));
+    var parentAmplification = Path.Combine(fixtures, "formats-implicit-parent-limit.zip");
+    using (var stream = File.Create(parentAmplification)) using (var zip = new ZipArchive(stream, ZipArchiveMode.Create))
+        for (var branch = 0; branch < 64; branch++) zip.CreateEntry($"branch-{branch}/" + string.Concat(Enumerable.Repeat("d/", 1600)) + "file");
+    await Run("formats-implicit-parent-limit", 2, false, "--archive-list", parentAmplification);
+    var boundedRepack = Text("formats-parent-limit-keep.zip", "keep original output");
+    await Run("formats-implicit-parent-repack", 2, false, "--archive-repack", parentAmplification, boundedRepack);
+    Check("parent limit preserves repack output", File.ReadAllText(boundedRepack) == "keep original output");
+    void CheckExtracted(string name, string directory, Dictionary<string, byte[]> contents)
+        => Check(name, Directory.Exists(Path.Combine(directory, "empty")) && Directory.Exists(Path.Combine(directory, "folder")) && Directory.GetFiles(directory, "*", SearchOption.AllDirectories).Length == contents.Count && contents.All(p => File.Exists(Path.Combine(directory, p.Key)) && File.ReadAllBytes(Path.Combine(directory, p.Key)).SequenceEqual(p.Value)));
+}
+
+async Task VerifyBzipWithSystemTar(string label, string archive, Dictionary<string, byte[]> expected)
+{
+    var tool = OperatingSystem.IsWindows() ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "System32/tar.exe") : "/usr/bin/tar";
+    if (!File.Exists(tool)) { assertions.Add(new("independent BZip2 decode " + label, "skipped", "System tar is unavailable.")); return; }
+    foreach (var pair in expected)
+    {
+        var info = new ProcessStartInfo(tool) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
+        foreach (var argument in new[] { "-xOf", archive, pair.Key }) info.ArgumentList.Add(argument);
+        using var process = Process.Start(info)!; using var data = new MemoryStream();
+        var stderr = process.StandardError.ReadToEndAsync(); var bytes = process.StandardOutput.BaseStream.CopyToAsync(data);
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        try { await process.WaitForExitAsync(timeout.Token); await bytes; } catch (OperationCanceledException) { process.Kill(entireProcessTree: true); throw; }
+        var diagnostic = await stderr;
+        File.AppendAllText(Path.Combine(output, "system-tar.log"), $"{tool} -xOf {archive} {pair.Key}\nexit={process.ExitCode}\n{diagnostic}", utf8);
+        Check("independent BZip2 bytes " + label + " " + pair.Key, process.ExitCode == 0 && data.ToArray().SequenceEqual(pair.Value), diagnostic);
+    }
 }
 
 async Task<CommandResult> Run(string name, int expectedExit, bool json, params string[] arguments)
