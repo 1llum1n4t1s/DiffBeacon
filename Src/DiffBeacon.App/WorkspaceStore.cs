@@ -20,6 +20,10 @@ public sealed record ComparisonProject
     public bool IgnoreWhitespace { get; init; }
     public bool IgnoreBlankLines { get; init; }
     public string? IgnoreLinePattern { get; init; }
+    public bool IgnoreNumbers { get; init; }
+    public CommentSyntax CommentSyntax { get; init; }
+    public WhitespaceMode Whitespace { get; init; }
+    public SubstitutionRule[] SubstitutionRules { get; init; } = [];
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true)]
@@ -65,6 +69,7 @@ public static class WorkspaceStore
         var entry = entries[0];
         string Value(string name) => entry.Element(name)?.Value ?? "";
         bool Flag(string name) => Value(name).Trim() is "1" or "true";
+        var ignoreComments = entry.Element("ignore-comment-diff") is not null ? Flag("ignore-comment-diff") : Flag("ignore-comments");
         var directory = Path.GetDirectoryName(Path.GetFullPath(path))!;
         string Resolve(string name)
         {
@@ -78,9 +83,30 @@ public static class WorkspaceStore
         {
             LeftPath = Resolve("left"), BasePath = Resolve("middle"), RightPath = Resolve("right"),
             Mode = Value("window-type").Trim() switch { "2" => "Table", "3" => "Binary", "4" => "Image", "5" => "Web", "6" => "Folder", _ => "Text" },
-            IgnoreCase = Flag("ignore-case"), IgnoreWhitespace = Value("white-spaces").Trim() is "1" or "2",
+            IgnoreCase = Flag("ignore-case"), IgnoreWhitespace = Value("white-spaces").Trim() == "2",
+            Whitespace = Value("white-spaces").Trim() switch { "1" => WhitespaceMode.IgnoreChanges, "2" => WhitespaceMode.IgnoreAll, _ => WhitespaceMode.None },
+            IgnoreNumbers = Flag("ignore-numbers"),
+            CommentSyntax = ignoreComments ? InferCommentSyntax(Value("left"), Value("middle"), Value("right")) : CommentSyntax.None,
             IgnoreBlankLines = Flag("ignore-blank-lines")
         };
+    }
+
+    private static CommentSyntax InferCommentSyntax(params string[] paths)
+    {
+        // 旧経路と同様に既知の構文を共有し、未知の形式では本文を除去しない。
+        foreach (var path in paths)
+        {
+            var syntax = Path.GetExtension(path).ToLowerInvariant() switch
+            {
+                ".py" or ".pyw" => CommentSyntax.Python,
+                ".cs" => CommentSyntax.CSharp,
+                ".xml" or ".xaml" or ".axaml" or ".svg" or ".html" or ".htm" => CommentSyntax.Xml,
+                ".c" or ".cc" or ".cpp" or ".cxx" or ".c++" or ".h" or ".hh" or ".hpp" or ".hxx" or ".h++" or ".m" or ".mm" => CommentSyntax.CStyle,
+                _ => CommentSyntax.None
+            };
+            if (syntax != CommentSyntax.None) return syntax;
+        }
+        return CommentSyntax.None;
     }
 }
 

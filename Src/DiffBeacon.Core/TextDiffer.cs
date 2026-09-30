@@ -7,21 +7,36 @@ public static class TextDiffer
     {
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
+        cancellationToken.ThrowIfCancellationRequested();
         options ??= new();
-        var a = TextLines.Parse(left);
-        var b = TextLines.Parse(right);
+        var a = TextLines.Parse(left, cancellationToken);
+        var b = TextLines.Parse(right, cancellationToken);
+        var preprocessor = new TextPreprocessor(options, cancellationToken);
+        var filteredA = preprocessor.Process(a);
+        var filteredB = preprocessor.Process(b);
         var ignoredPattern = options.CreateIgnoredLineRegex();
-        bool IsIgnored(TextLine line) => (options.IgnoreBlankLines && string.IsNullOrWhiteSpace(line.Content)) ||
-            (ignoredPattern?.IsMatch(line.Content) ?? false);
-        var ignoredA = a.Select(IsIgnored).ToArray();
-        var ignoredB = b.Select(IsIgnored).ToArray();
+        bool[] Ignored(IReadOnlyList<TextLine> lines, bool[] commentOnly)
+        {
+            var result = new bool[lines.Count];
+            for (var index = 0; index < lines.Count; index++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var content = lines[index].Content;
+                if (ignoredPattern is not null) TextPreprocessor.CheckRegexInput(content);
+                result[index] = commentOnly[index] || (options.IgnoreBlankLines && string.IsNullOrWhiteSpace(content)) ||
+                    (ignoredPattern?.IsMatch(content) ?? false);
+            }
+            return result;
+        }
+        var ignoredA = Ignored(a, filteredA.CommentOnly);
+        var ignoredB = Ignored(b, filteredB.CommentOnly);
         var activeA = Enumerable.Range(0, a.Count).Where(index => !ignoredA[index]).ToArray();
         var activeB = Enumerable.Range(0, b.Count).Where(index => !ignoredB[index]).ToArray();
-        string Key(TextLine line, bool last) => options.Normalize(line.Content) +
+        string Key(string content, TextLine line, bool last) => content +
             (options.CompareLineEndings ? "\0ending:" + line.Ending : "") +
             (!options.IgnoreFinalNewLine && last && line.Ending.Length == 0 ? "\0no-final-newline" : "");
-        var keysA = activeA.Select(index => Key(a[index], index == a.Count - 1)).ToArray();
-        var keysB = activeB.Select(index => Key(b[index], index == b.Count - 1)).ToArray();
+        var keysA = activeA.Select(index => Key(filteredA.Keys[index], a[index], index == a.Count - 1)).ToArray();
+        var keysB = activeB.Select(index => Key(filteredB.Keys[index], b[index], index == b.Count - 1)).ToArray();
         var matches = Match(keysA, keysB, Math.Max(0, options.MaxFallbackComparisons), cancellationToken);
         var rows = new List<DiffRow>();
         var nextA = 0;

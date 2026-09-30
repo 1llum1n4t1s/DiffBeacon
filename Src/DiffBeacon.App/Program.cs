@@ -9,6 +9,7 @@ public static class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        Console.OutputEncoding = new System.Text.UTF8Encoding(false);
         Arguments = args;
         if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);
         if (args.Length > 0 && args[0].StartsWith("--", StringComparison.Ordinal))

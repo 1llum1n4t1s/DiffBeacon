@@ -75,6 +75,137 @@ string Tar(string name, params (string Entry, string Content)[] entries)
 
 void Check(string name, bool passed, string detail = "") => assertions.Add(new(name, passed ? "passed" : "failed", detail));
 
+async Task TextAdvancedCases()
+{
+    async Task Compare(string name, int exit, string left, string right, params string[] options)
+    {
+        var leftPath = Text(name + "-left.txt", left);
+        var rightPath = Text(name + "-right.txt", right);
+        await Run(name, exit, exit != 2, new[] { "--compare", leftPath, rightPath }.Concat(options).ToArray());
+    }
+    await Compare("advanced-numbers-only", 0, "version=123; amount=4.56\n", "version=789; amount=9.10\n", "--ignore-numbers");
+    await Compare("advanced-numbers-preserve-letters", 1, "alpha123\n", "beta456\n", "--ignore-numbers");
+    await Compare("advanced-cstyle-multiline", 0, "int x=1; /* first comment\nfirst body */ int y=2;\n", "int x=1; /* other comment\nother body */ int y=2;\n", "--comments", "CStyle");
+    await Compare("advanced-cstyle-quoted-markers", 1, "var s=\"/* LEFT */ // literal\";\n", "var s=\"/* RIGHT */ // literal\";\n", "--comments", "CStyle");
+    foreach (var prefix in new[] { "u8R", "uR", "UR", "LR", "R" })
+        await Compare("advanced-cstyle-raw-" + prefix, 1, $"auto s = {prefix}\"tag(\" // LEFT)tag\";\n", $"auto s = {prefix}\"tag(\" // RIGHT)tag\";\n", "--comments", "CStyle");
+    await Compare("advanced-python-comments", 0, "x = 1 # first\nprint(x) # original\n", "x = 1 # second\nprint(x) # changed\n", "--comments", "Python");
+    await Compare("advanced-python-quoted-marker", 1, "value = \"# LEFT\"\n", "value = \"# RIGHT\"\n", "--comments", "Python");
+    await Compare("advanced-xml-multiline", 0, "<a><!-- first\nfirst body --><b>same</b></a>\n", "<a><!-- changed\nother body --><b>same</b></a>\n", "--comments", "Xml");
+    await Compare("advanced-substitution-ignore-case-regex", 0, "id=ABC\n", "id=def\n", "--substitute", "(?i)(abc|def)", "VALUE");
+    await Compare("advanced-substitution-repeated", 0, "env=prod;build=111\n", "env=dev;build=222\n", "--substitute", "(prod|dev)", "ENV", "--substitute", "[0-9]+", "NUMBER");
+    await Compare("advanced-substitution-invalid-regex", 2, "left\n", "right\n", "--substitute", "[", "value");
+    await Compare("advanced-whitespace-trim", 0, "  alpha beta  \n", "alpha beta\n", "--whitespace", "trim");
+    await Compare("advanced-whitespace-changes", 0, "alpha  beta\n", "alpha beta\n", "--whitespace", "changes");
+    await Compare("advanced-whitespace-all", 0, "a l p h a\tb e t a\n", "alphabeta\n", "--whitespace", "all");
+    await Compare("advanced-whitespace-none", 1, "alpha  beta\n", "alpha beta\n", "--whitespace", "none");
+
+    foreach (var (label, encoding) in new (string, Encoding)[] { ("utf16-bom", new UnicodeEncoding(false, true)), ("utf8-bom", new UTF8Encoding(true)) })
+    {
+        var ancestorText = "left-old\r\nanchor-a\r\nconflict-old\r\nanchor-b\r\nright-old";
+        var leftText = "left-NEW\r\nanchor-a\r\nconflict-LEFT\r\nanchor-b\r\nright-old";
+        var rightText = "left-old\r\nanchor-a\r\nconflict-RIGHT\r\nanchor-b\r\nright-NEW";
+        var ancestor = Text("advanced-merge-" + label + "-base.txt", ancestorText, encoding);
+        var left = Text("advanced-merge-" + label + "-left.txt", leftText, encoding);
+        var right = Text("advanced-merge-" + label + "-right.txt", rightText, encoding);
+        foreach (var choice in new[] { "LEFT", "BASE", "RIGHT" })
+        {
+            var name = "advanced-merge-select-" + label + "-" + choice.ToLowerInvariant();
+            var merged = Path.Combine(fixtures, name + ".txt");
+            var conflictValue = choice switch { "LEFT" => "conflict-LEFT", "RIGHT" => "conflict-RIGHT", _ => "conflict-old" };
+            var expected = Text(name + "-expected.txt", "left-NEW\r\nanchor-a\r\n" + conflictValue + "\r\nanchor-b\r\nright-NEW", encoding);
+            await Run(name, 0, true, "--merge-select", ancestor, left, right, merged, choice);
+            Check(name + " byte preservation and independent changes", File.Exists(merged) && File.ReadAllBytes(merged).SequenceEqual(File.ReadAllBytes(expected)), $"expected={expected}; actual={merged}");
+        }
+    }
+    var crlfAncestor = Text("advanced-merge-fast-base.txt", "one\r\ntwo\r\n");
+    var changedLf = Text("advanced-merge-fast-changed-lf.txt", "one\nTHREE\n");
+    var unchangedLf = Text("advanced-merge-fast-unchanged-lf.txt", "one\ntwo\n");
+    foreach (var (name, left, right, expected) in new[]
+    {
+        ("advanced-merge-identical-changed-lf", changedLf, changedLf, changedLf),
+        ("advanced-merge-identical-unchanged-lf", unchangedLf, unchangedLf, unchangedLf),
+        ("advanced-merge-left-change-lf", changedLf, crlfAncestor, changedLf),
+        ("advanced-merge-right-change-lf", crlfAncestor, changedLf, changedLf)
+    })
+    {
+        var merged = Path.Combine(fixtures, name + ".txt");
+        await Run(name, 0, true, "--merge", crlfAncestor, left, right, merged);
+        Check(name + " exact selected bytes", File.Exists(merged) && File.ReadAllBytes(merged).SequenceEqual(File.ReadAllBytes(expected)), $"expected={expected}; actual={merged}");
+    }
+    await WorkspaceAdvancedCases();
+    await LegacyCommentCases();
+}
+
+async Task LegacyCommentCases()
+{
+    foreach (var (name, left, middle, right, enabled, expected) in new (string, string, string, string, bool, int)[]
+    {
+        ("python", "left.py", "", "right.py", true, 3),
+        ("official-tag", "left.py", "", "right.py", true, 3),
+        ("csharp", "left.cs", "", "right.cs", true, 2),
+        ("xml", "left.xml", "", "right.xml", true, 4),
+        ("cpp", "left.cpp", "", "right.cpp", true, 1),
+        ("middle-pyw", "left.unknown", "ancestor.pyw", "right.unknown", true, 3),
+        ("right-axaml", "left.unknown", "", "right.AXAML", true, 4),
+        ("unknown", "left.txt", "ancestor.unknown", "right.txt", true, 0),
+        ("disabled", "left.py", "", "right.py", false, 0),
+        ("left-precedence", "left.cpp", "ancestor.cs", "right.py", true, 1)
+    })
+    {
+        var tag = name == "official-tag" ? "ignore-comment-diff" : "ignore-comments";
+        var legacy = Text("legacy-comments-" + name + ".WinMerge", $"<project><paths><left>{left}</left><middle>{middle}</middle><right>{right}</right><{tag}>{(enabled ? 1 : 0)}</{tag}></paths></project>");
+        var saved = Path.Combine(fixtures, "legacy-comments-" + name + ".json");
+        await Run("legacy-comments-" + name, 0, true, "--project-copy", legacy, saved);
+        if (File.Exists(saved))
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(saved));
+            Check("legacy comments inferred " + name, document.RootElement.GetProperty("commentSyntax").GetInt32() == expected, $"expected enum={expected}; saved={saved}");
+        }
+        else Check("legacy comments inferred " + name, false, "保存先が作成されませんでした。");
+    }
+}
+
+async Task WorkspaceAdvancedCases()
+{
+    var source = Text("advanced-project-all-fields.json", """
+        {
+          "leftPath":"left.txt", "basePath":"base.txt", "rightPath":"right.txt", "mode":"Text",
+          "providerId":"html-text", "fileFilterPath":"filters/example.flt",
+          "ignoreCase":true, "ignoreWhitespace":false, "ignoreBlankLines":true, "ignoreLinePattern":"^generated$",
+          "ignoreNumbers":true, "commentSyntax":3, "whitespace":1,
+          "substitutionRules":[
+            {"pattern":"foo", "replacement":"bar", "matchCase":false, "useRegex":false, "wholeWord":true, "enabled":true},
+            {"pattern":"[", "replacement":"disabled invalid expression", "matchCase":true, "useRegex":true, "wholeWord":false, "enabled":false},
+            {"pattern":"[0-9]+", "replacement":"NUMBER", "matchCase":true, "useRegex":true, "wholeWord":false, "enabled":true}
+          ]
+        }
+        """);
+    var saved = Path.Combine(fixtures, "advanced-project-all-fields-saved.json");
+    await Run("advanced-project-all-fields", 0, true, "--project-copy", source, saved);
+    if (File.Exists(saved))
+    {
+        using var expected = JsonDocument.Parse(File.ReadAllText(source));
+        using var actual = JsonDocument.Parse(File.ReadAllText(saved));
+        Check("advanced project fields and rule order preserved", JsonElement.DeepEquals(expected.RootElement, actual.RootElement));
+    }
+    else Check("advanced project fields and rule order preserved", false, "保存先が作成されませんでした。");
+
+    foreach (var legacyMode in new[] { 1, 2 })
+    {
+        var legacy = Text($"advanced-white-spaces-{legacyMode}.WinMerge", $"<project><paths><left>left.txt</left><right>right.txt</right><white-spaces>{legacyMode}</white-spaces></paths></project>");
+        var migrated = Path.Combine(fixtures, $"advanced-white-spaces-{legacyMode}.json");
+        await Run($"advanced-project-legacy-whitespace-{legacyMode}", 0, true, "--project-copy", legacy, migrated);
+        if (File.Exists(migrated))
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(migrated));
+            var values = document.RootElement;
+            Check($"legacy whitespace {legacyMode} remains distinct", values.GetProperty("ignoreWhitespace").GetBoolean() == (legacyMode == 2) && values.GetProperty("whitespace").GetInt32() == (legacyMode == 1 ? 2 : 3));
+        }
+        else Check($"legacy whitespace {legacyMode} remains distinct", false, "保存先が作成されませんでした。");
+    }
+}
+
 async Task ProviderBoundaryCases()
 {
     const string xsi = "http://www.w3.org/2001/XMLSchema-instance";
@@ -153,12 +284,21 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--provider-boundaries-only", StringComparer.Ordinal))
+    if (args.Contains("--legacy-comments-only", StringComparer.Ordinal))
+    {
+        await LegacyCommentCases();
+    }
+    else if (args.Contains("--text-advanced-only", StringComparer.Ordinal))
+    {
+        await TextAdvancedCases();
+    }
+    else if (args.Contains("--provider-boundaries-only", StringComparer.Ordinal))
     {
         await ProviderBoundaryCases();
     }
     else
     {
+    await TextAdvancedCases();
     var left = Text("left.txt", "alpha\nbeta\n");
     var equal = Text("equal.txt", "alpha\nbeta\n");
     var right = Text("right.txt", "alpha\nchanged\n");

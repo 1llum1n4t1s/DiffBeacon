@@ -85,7 +85,7 @@ public sealed class MainWindow : Window
     }
 }
 
-public sealed class ComparisonPane : UserControl, IDisposable
+public sealed partial class ComparisonPane : UserControl, IDisposable
 {
     private readonly Window _owner;
     public TextBox LeftPath { get; } = new() { PlaceholderText = "左のファイル / フォルダー" };
@@ -156,6 +156,7 @@ public sealed class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "右を保存", () => SaveAsync(true));
         AddAction(actions, "パッチ出力", ExportPatchAsync);
         AddAction(actions, "自動マージ", MergeThreeWayAsync);
+        AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
         AddAction(actions, "中止", () => { _operation?.Cancel(); return Task.CompletedTask; });
@@ -172,6 +173,8 @@ public sealed class ComparisonPane : UserControl, IDisposable
         foreach (var control in new Control[] { _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex, _find }) { control.Margin = new Thickness(8, 4); options.Children.Add(control); }
         AddAction(options, "検索", () => { Find(); return Task.CompletedTask; });
         top.Children.Add(options);
+        top.Children.Add(CreateAdvancedFilters());
+        top.Children.Add(CreateMergeToolbar());
         DockPanel.SetDock(top, Dock.Top); root.Children.Add(top);
         DockPanel.SetDock(_status, Dock.Bottom); root.Children.Add(_status);
         DiffList.ItemTemplate = new FuncDataTemplate<DiffRow>((row, _) => BuildRow(row), false);
@@ -185,7 +188,7 @@ public sealed class ComparisonPane : UserControl, IDisposable
         ResultEditor.TextChanged += (_, _) => { if (_resultPreview.Text != ResultEditor.Text) _resultPreview.Text = ResultEditor.Text; };
         _resultPreview.TextChanged += (_, _) => { if (ResultEditor.Text != _resultPreview.Text) ResultEditor.Text = _resultPreview.Text; };
         UpdateEditorLayout(false);
-        _resultTab = new TabItem { Header = "マージ結果", Content = ResultEditor };
+        _resultTab = new TabItem { Header = "マージ結果", Content = CreateMergeResultView() };
         _views.ItemsSource = new[] { _diffTab, new TabItem { Header = "編集 / 4ペイン", Content = _editGrid }, _resultTab, _specialTab };
         _views.SelectedItem = _diffTab;
         root.Children.Add(_views);
@@ -235,11 +238,12 @@ public sealed class ComparisonPane : UserControl, IDisposable
         catch (OperationCanceledException) { _status.Text = "比較を中止しました。"; }
         catch (Exception ex) { _status.Text = ex.Message; await Dialogs.MessageAsync(_owner, "操作を完了できませんでした", ex.Message); }
     }
-    private ComparisonOptions Options() => new() { IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true, IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = string.IsNullOrWhiteSpace(_ignoreRegex.Text) ? null : _ignoreRegex.Text };
+    private ComparisonOptions Options() => new() { IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true, IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex, Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions, IgnoreLinePattern = string.IsNullOrWhiteSpace(_ignoreRegex.Text) ? null : _ignoreRegex.Text };
 
     public async Task ComparePathsAsync()
     {
         if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
+        ResetMergeSession();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         var token = _operation.Token;
         var left = LeftPath.Text ?? ""; var right = RightPath.Text ?? "";
@@ -283,7 +287,8 @@ public sealed class ComparisonPane : UserControl, IDisposable
             LeftEditor.IsReadOnly = RightEditor.IsReadOnly = false;
             LeftEditor.Text = _savedLeft = _leftDocument.Text;
             RightEditor.Text = _savedRight = _rightDocument.Text;
-            _baseText = !string.IsNullOrWhiteSpace(BasePath.Text) ? (await TextDocument.LoadAsync(BasePath.Text, token)).Text : null;
+            _baseDocument = !string.IsNullOrWhiteSpace(BasePath.Text) ? await TextDocument.LoadAsync(BasePath.Text, token) : null;
+            _baseText = _baseDocument?.Text;
             _ancestorEditor.Text = _baseText ?? "";
             UpdateEditorLayout(_baseText is not null);
             _textSaveAllowed = true;
@@ -367,7 +372,7 @@ public sealed class ComparisonPane : UserControl, IDisposable
     {
         var path = await SavePathAsync("比較プロジェクトを保存", "comparison.diffbeacon.json");
         if (path is null) return;
-        await WorkspaceStore.SaveAsync(path, new ComparisonProject { LeftPath = LeftPath.Text ?? "", BasePath = BasePath.Text ?? "", RightPath = RightPath.Text ?? "", Mode = _mode.SelectedIndex.ToString(), ProviderId = _provider.SelectedItem as string, FileFilterPath = _fileFilter.Text, IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true, IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = _ignoreRegex.Text });
+        await WorkspaceStore.SaveAsync(path, new ComparisonProject { LeftPath = LeftPath.Text ?? "", BasePath = BasePath.Text ?? "", RightPath = RightPath.Text ?? "", Mode = _mode.SelectedIndex.ToString(), ProviderId = _provider.SelectedItem as string, FileFilterPath = _fileFilter.Text, IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true, IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = _ignoreRegex.Text, IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex, Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions });
         _status.Text = "プロジェクトを保存しました。";
     }
     private async Task OpenProjectAsync()
@@ -382,6 +387,7 @@ public sealed class ComparisonPane : UserControl, IDisposable
         else if (project.Mode == "Web") _provider.SelectedItem = "web-text";
         _fileFilter.Text = project.FileFilterPath;
         _ignoreCase.IsChecked = project.IgnoreCase; _ignoreSpace.IsChecked = project.IgnoreWhitespace; _ignoreBlank.IsChecked = project.IgnoreBlankLines; _ignoreRegex.Text = project.IgnoreLinePattern;
+        SetAdvancedFilters(project.IgnoreNumbers, project.CommentSyntax, project.Whitespace, project.SubstitutionRules);
         DiscardChanges(); await ComparePathsAsync();
     }
     private async Task AddExternalProviderAsync()
@@ -440,15 +446,7 @@ public sealed class ComparisonPane : UserControl, IDisposable
         await File.WriteAllTextAsync(path, UnifiedPatch.Create(LeftEditor.Text ?? "", RightEditor.Text ?? "", LeftPath.Text ?? "left", RightPath.Text ?? "right"));
         _status.Text = "パッチを保存しました。";
     }
-    private Task MergeThreeWayAsync()
-    {
-        if (_baseText is null) throw new InvalidOperationException("共通の祖先ファイルを選択して比較してください。");
-        var merge = ThreeWayMerger.Merge(_baseText, LeftEditor.Text ?? "", RightEditor.Text ?? "", Options());
-        ResultEditor.Text = merge.Text;
-        _views.SelectedItem = _resultTab;
-        _status.Text = $"3方向マージ: {merge.Conflicts.Count} 個の競合。競合マーカーを編集してから保存してください。";
-        return Task.CompletedTask;
-    }
+    private Task MergeThreeWayAsync() => RestartMergeAsync(true);
     private void UpdateEditorLayout(bool fourPanes)
     {
         foreach (var oldPane in _editGrid.Children.OfType<DockPanel>()) oldPane.Children.Clear();
@@ -469,6 +467,16 @@ public sealed class ComparisonPane : UserControl, IDisposable
     }
     private void NavigateConflict()
     {
+        if (CurrentMergeSession is { } session)
+        {
+            var pending = session.Sections.Where(range => range.Section.IsPending).ToArray();
+            if (pending.Length == 0) { _status.Text = "未解決の差分はありません。"; return; }
+            var currentId = (_mergeSections.SelectedItem as SectionChoice)?.Id;
+            var current = Array.FindIndex(pending, range => range.Section.Id == currentId);
+            var range = pending[(current + 1) % pending.Length];
+            _mergeSections.SelectedItem = _mergeSections.Items.OfType<SectionChoice>().Single(item => item.Id == range.Section.Id);
+            _views.SelectedItem = _resultTab; SelectMergeRange(range); ResultEditor.Focus(); return;
+        }
         var text = ResultEditor.Text ?? "";
         var position = text.IndexOf("<<<<<<<", Math.Min(text.Length, ResultEditor.SelectionEnd + 1), StringComparison.Ordinal);
         if (position < 0) position = text.IndexOf("<<<<<<<", StringComparison.Ordinal);
@@ -479,17 +487,18 @@ public sealed class ComparisonPane : UserControl, IDisposable
     }
     private async Task SaveResultAsync()
     {
-        if ((ResultEditor.Text ?? "").Contains("<<<<<<<", StringComparison.Ordinal) && !await Dialogs.ConfirmAsync(_owner, "競合が残っています", "競合マーカーを含む結果を保存しますか？")) return;
+        var unresolved = CurrentMergeSession?.UnresolvedCount ?? ((ResultEditor.Text ?? "").Contains("<<<<<<<", StringComparison.Ordinal) ? 1 : 0);
+        if (unresolved > 0 && !await Dialogs.ConfirmAsync(_owner, "競合が残っています", "未解決の差分を含む結果を保存しますか？")) return;
         var path = await SavePathAsync("マージ結果を保存", "merged.txt");
         if (path is null) return;
-        await File.WriteAllTextAsync(path, ResultEditor.Text ?? "", new System.Text.UTF8Encoding(false));
-        _savedResult = ResultEditor.Text ?? ""; _status.Text = $"保存しました: {path}";
+        await SaveMergeResultToAsync(path, allowUnresolved: true);
     }
 
     private async Task CompareDirectoryAsync(string left, string right, CancellationToken token)
     {
         var textOptions = Options();
-        var filtered = textOptions.IgnoreCase || textOptions.IgnoreWhitespace || textOptions.IgnoreBlankLines || textOptions.IgnoreLinePattern is not null;
+        var filtered = textOptions.IgnoreCase || textOptions.IgnoreWhitespace || textOptions.IgnoreBlankLines || textOptions.IgnoreLinePattern is not null
+            || textOptions.IgnoreNumbers || textOptions.CommentSyntax != CommentSyntax.None || textOptions.Whitespace != WhitespaceMode.None || textOptions.SubstitutionRules.Any(rule => rule.Enabled);
         var filter = string.IsNullOrWhiteSpace(_fileFilter.Text) ? null : FileFilter.Load(_fileFilter.Text);
         var result = await DirectoryComparer.CompareAsync(left, right, new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter }, token);
         _directoryLeft = left; _directoryRight = right;

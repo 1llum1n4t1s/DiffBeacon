@@ -5,10 +5,21 @@ namespace DiffBeacon.Core;
 
 public enum DiffKind { Equal, Added, Deleted, Modified }
 public enum WhitespaceMode { None, Trim, IgnoreChanges, IgnoreAll }
+public enum CommentSyntax { None, CStyle, CSharp, Python, Xml }
+
+public sealed record SubstitutionRule(string Pattern, string Replacement, bool MatchCase = true)
+{
+    public bool UseRegex { get; init; } = true;
+    public bool WholeWord { get; init; }
+    public bool Enabled { get; init; } = true;
+}
 
 public sealed record ComparisonOptions
 {
     public bool IgnoreCase { get; init; }
+    public bool IgnoreNumbers { get; init; }
+    public CommentSyntax CommentSyntax { get; init; }
+    public IReadOnlyList<SubstitutionRule> SubstitutionRules { get; init; } = [];
     public bool IgnoreWhitespace { get; init; }
     public WhitespaceMode Whitespace { get; init; }
     public bool IgnoreBlankLines { get; init; }
@@ -17,7 +28,13 @@ public sealed record ComparisonOptions
     public bool CompareLineEndings { get; init; }
     public int MaxFallbackComparisons { get; init; } = 4_000_000;
 
-    public string Normalize(string text)
+    public string Normalize(string text, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        return new TextPreprocessor(this, cancellationToken).NormalizeStandalone(text);
+    }
+
+    internal string NormalizeKey(string text, CancellationToken cancellationToken)
     {
         var mode = IgnoreWhitespace ? WhitespaceMode.IgnoreAll : Whitespace;
         if (mode == WhitespaceMode.Trim) text = text.Trim();
@@ -27,6 +44,7 @@ public sealed record ComparisonOptions
             var space = false;
             foreach (var character in text)
             {
+                if ((builder.Length & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
                 if (char.IsWhiteSpace(character))
                 {
                     if (mode == WhitespaceMode.IgnoreChanges) space = true;
@@ -38,11 +56,21 @@ public sealed record ComparisonOptions
             }
             text = builder.ToString();
         }
+        if (IgnoreNumbers)
+        {
+            var builder = new StringBuilder(text.Length);
+            for (var index = 0; index < text.Length; index++)
+            {
+                if ((index & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
+                if (text[index] is not (>= '0' and <= '9')) builder.Append(text[index]);
+            }
+            text = builder.ToString();
+        }
         return IgnoreCase ? text.ToUpperInvariant() : text;
     }
 
     internal Regex? CreateIgnoredLineRegex() => string.IsNullOrEmpty(IgnoreLinePattern) ? null :
-        new Regex(IgnoreLinePattern, RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(250));
+        TextPreprocessor.CreateRegex(IgnoreLinePattern, true);
 }
 
 public sealed record InlineSpan(int Start, int Length);
@@ -68,12 +96,13 @@ internal readonly record struct TextLine(string Content, string Ending)
 internal static class TextLines
 {
     // 最後の改行は空行へ置き換えず、各行の終端として保持する。
-    internal static List<TextLine> Parse(string text)
+    internal static List<TextLine> Parse(string text, CancellationToken cancellationToken = default)
     {
         var result = new List<TextLine>();
         var start = 0;
         for (var index = 0; index < text.Length; index++)
         {
+            if ((index & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
             if (text[index] is not ('\r' or '\n')) continue;
             var end = index;
             if (text[index] == '\r' && index + 1 < text.Length && text[index + 1] == '\n') index++;

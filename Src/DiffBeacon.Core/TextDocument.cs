@@ -30,6 +30,12 @@ public sealed class TextDocument
     public static Task<TextDocument> LoadAsync(string path, CancellationToken cancellationToken = default) =>
         LoadAsync(path, new TextLoadOptions(), cancellationToken);
 
+    public static TextDocument Create(string text = "") => new("", text, new UTF8Encoding(false, true), []);
+
+    // 別文書の出力で読込み元のPath/Textを変更しない。
+    public Task SaveCopyAsync(string path, string text, CancellationToken cancellationToken = default) =>
+        new TextDocument(Path, Text, encoding, preamble).SaveAsync(path, text, cancellationToken);
+
     public static async Task<TextDocument> LoadAsync(string path, TextLoadOptions options,
         CancellationToken cancellationToken = default)
     {

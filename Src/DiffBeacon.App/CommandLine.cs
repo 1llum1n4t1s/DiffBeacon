@@ -15,17 +15,17 @@ internal static class CommandLine
             {
                 Console.WriteLine("DiffBeacon · .NET 10 / Avalonia\n"
                     + "GUI: DiffBeacon LEFT [BASE] RIGHT\n"
-                    + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN]\n"
+                    + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT]\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
                     + "--json LEFT RIGHT\n--table LEFT RIGHT\n--report LEFT RIGHT OUTPUT_HTML\n"
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"
-                    + "--merge BASE LEFT RIGHT OUTPUT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"
+                    + "--merge BASE LEFT RIGHT OUTPUT\n--merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"
                     + "--self-test OUTPUT_DIRECTORY\nExit: 0 equal/success, 1 differences/conflicts, 2 error");
                 return 0;
             }
             var command = args[0];
-            var required = command switch { "--merge" => 5, "--patch-create" or "--patch-apply" => 4, _ => 3 };
+            var required = command switch { "--merge" => 5, "--merge-select" => 6, "--patch-create" or "--patch-apply" => 4, _ => 3 };
             if (args.Length < required) throw new ArgumentException("引数が不足しています。--help を参照してください。");
             using var cancel = new CancellationTokenSource();
             Console.CancelKeyPress += (_, e) => { e.Cancel = true; cancel.Cancel(); };
@@ -98,15 +98,21 @@ internal static class CommandLine
                 WriteJson(w => { w.WriteBoolean("different", table.HasDifferences); w.WriteNumber("rows", Math.Max(table.Left.Rows.Count, table.Right.Rows.Count)); w.WriteNumber("cols", Math.Max(table.Left.ColumnCount, table.Right.ColumnCount)); });
                 return table.HasDifferences ? 1 : 0;
             }
-            if (command == "--merge")
+            if (command is "--merge" or "--merge-select")
             {
+                if (args.Length != (command == "--merge-select" ? 6 : 5)) throw new ArgumentException("--merge BASE LEFT RIGHT OUTPUT または --merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT");
                 var ancestor = await TextDocument.LoadAsync(args[1], token);
                 var left = await TextDocument.LoadAsync(args[2], token);
                 var right = await TextDocument.LoadAsync(args[3], token);
-                var result = ThreeWayMerger.Merge(ancestor.Text, left.Text, right.Text);
-                await ancestor.SaveAsync(args[4], result.Text, token);
-                WriteJson(w => { w.WriteNumber("conflicts", result.Conflicts.Count); w.WriteString("output", Path.GetFullPath(args[4])); });
-                return result.HasConflicts ? 1 : 0;
+                var session = MergeSession.CreateThreeWay(ancestor.Text, left.Text, right.Text, token: token);
+                if (command == "--merge-select")
+                {
+                    if (!Enum.TryParse<MergeSource>(args[5], true, out var source) || !Enum.IsDefined(source)) throw new ArgumentException("採用元はLEFT、BASE、RIGHTです。");
+                    session.ChooseAll(source);
+                }
+                await ancestor.SaveAsync(args[4], session.Text, token);
+                WriteJson(w => { w.WriteNumber("conflicts", session.ConflictCount); w.WriteNumber("unresolved", session.UnresolvedCount); w.WriteString("output", Path.GetFullPath(args[4])); });
+                return session.UnresolvedCount != 0 ? 1 : 0;
             }
             if (command == "--patch-create")
             {
@@ -179,12 +185,24 @@ internal static class CommandLine
                 "--ignore-case" => options with { IgnoreCase = true },
                 "--ignore-space" => options with { IgnoreWhitespace = true },
                 "--ignore-blank" => options with { IgnoreBlankLines = true },
+                "--ignore-numbers" => options with { IgnoreNumbers = true },
+                "--comments" when index + 1 < args.Length => options with { CommentSyntax = ParseCommentSyntax(args[++index]) },
+                "--whitespace" when index + 1 < args.Length => options with { Whitespace = ParseWhitespace(args[++index]), IgnoreWhitespace = false },
+                "--substitute" when index + 2 < args.Length => options with { SubstitutionRules = [.. options.SubstitutionRules, new SubstitutionRule(args[++index], args[++index])] },
                 "--ignore-regex" when index + 1 < args.Length => options with { IgnoreLinePattern = args[++index] },
                 _ => throw new ArgumentException($"不明な比較オプション: {args[index]}")
             };
         }
         return options;
     }
+
+    private static CommentSyntax ParseCommentSyntax(string value) => Enum.TryParse<CommentSyntax>(value, true, out var syntax) && Enum.IsDefined(syntax)
+        ? syntax : throw new ArgumentException("コメント構文はnone、cstyle、csharp、python、xmlです。");
+    private static WhitespaceMode ParseWhitespace(string value) => value.ToLowerInvariant() switch
+    {
+        "none" => WhitespaceMode.None, "trim" => WhitespaceMode.Trim, "changes" => WhitespaceMode.IgnoreChanges, "all" => WhitespaceMode.IgnoreAll,
+        _ => throw new ArgumentException("空白モードはnone、trim、changes、allです。")
+    };
 
     internal static void WriteJson(Action<Utf8JsonWriter> content)
     {
