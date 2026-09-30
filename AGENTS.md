@@ -31,4 +31,5 @@ dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifac
 - 保存時の文字コード・BOM・改行・既存ファイル属性、比較の処理上限、キャンセル、リンクとルート外パスの拒否を保つ。詳細な不変条件は DESIGN.md と各コンポーネントの README に従う。
 - プロバイダー変換結果を元ファイルにテキスト保存しない。外部実行ファイルは明示登録・選択したものだけを使い、保存したプロジェクトの ID から自動探索・実行しない。
 - アーカイブ経路の変更は [Providers README](Src/DiffBeacon.Providers/README.md#managed-アーカイブサービスの検証契約) の失敗条件と検証契約を確認し、GUI・CLI・標準プロバイダーの呼び出し元を照合する。SharpCompress のライセンス同梱と、E2E fixture の出典・ライセンス・SHA-256 の記録を維持する。
+- プロジェクト・包装経路の変更は `WorkspaceStore`、GUI の保存・復元・包装、CLI の `--project-copy`・`--package-project` を照合する。[DESIGN.md](DESIGN.md#データフロー) の相対参照・スナップショット・出力保護の境界を維持し、[包装 E2E](tests/DiffBeacon.E2E/README.md) の展開・再読込み・パッチ適用まで確認する。クリップボードの OS 操作は headless 検証と区別する。
 - 機能を変えたら利用者向け説明と移行対応表を更新する。設計変更は DESIGN.md、開発手順は Docs/DEVELOPMENT.md に記載し、同じ説明を複製しない。
