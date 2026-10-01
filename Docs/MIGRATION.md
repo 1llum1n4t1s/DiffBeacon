@@ -71,6 +71,21 @@ Macの700px画面では一覧高21・セルY15で文字の下端が切れてお�
 
 ## 実行した検証
 
+2026-10-01 JST、WordDiffと変更ブロックの行内強調を移植したコード `760900e5a4efec5c5175f446036b3eda91c03e2c` は、[GitHub run 36811104557](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36811104557) の4構成でNative AOT発行・headless UI・CLI E2Eに成功した。[同SHAのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36811104538) も成功。SDKは全構成10.0.401、CS/IL/MSBコンパイラー警告0件。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 3862 | 0 / 3 | 224 | 発行・起動成功 |
+| `win-arm64` | 3862 | 0 / 3 | 224 | 発行・起動成功 |
+| `osx-x64` | 3871 | 0 / 2 | 224 | 発行・起動成功 |
+| `osx-arm64` | 3871 | 0 / 2 | 224 | 発行・起動成功 |
+
+今回追加した135代表goldenの終了コード・全区間・文字コード・入力保持、fallback・引数拒否・NUL拒否、ブロック投影・共有予算・HTMLを全構成で実行した。Windows x64では別途、有効5,832旧ソースケースをすべてNative AOTと照合した。全構成のJSON・入力・出力・PNG・manifest・ログ・run情報は `artifacts/github/36811104557`、全件照合は `artifacts/verification/table-worddiff/native-golden-profile-all` に保持した。両MacのWordDiff PNGを実際に目視し、一致文字と離れた変更の表示を確認した。
+
+WindowsのスキップはUnix権限・Mac大小文字別名・包装の大小文字衝突用入力、Macの2スキップは包装の大小文字/NFC衝突用入力を別ファイルとして作れない実ファイルシステムによるもの。リンク拒否経路はローカルの管理者プロセスとGitHubの全対象で実行した。8成果物を確認し、両Macの `.app` とtarを含む `DiffBeacon-osx-x64` / `DiffBeacon-osx-arm64` は同runから取得できる。署名・公証・公開・通常デスクトップの手動操作は実施していない。runnerのupload-artifact Node20廃止通知とMac ARMの容量通知はコンパイラー警告と区別する。
+
+以下は前工程の検証記録。
+
 2026-10-01 JST、テキスト・表・JSONの二者／三者共通HTMLレポート、単体プロジェクトCLI、GUI中止・保存保護を追加したコード`c005d377c4748657b262a91c85570406b7724de6`を[GitHub Actions run 36793389828](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389828)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、CS/IL/MSBコンパイラー警告0件。[CodeQL workflow](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389800)も同コードで成功した。これはworkflow完了の記録であり、全機能の同等性を証明するものではない。
 
 | RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
