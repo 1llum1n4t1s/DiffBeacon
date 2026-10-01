@@ -36,9 +36,21 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 表の変更ブロックはraw WordDiffの共通文字量・best-pair・4096本文上限・三者20写像へ接続した。全ブロック共有予算と不変条件による安全なzipを追加し、CLI三者指定と単語/EOL/予算設定を接続した。三者の統合区間でも復号一致アンカーを保持し、引用表記の違いだけで無変更側の行が追加・削除になる回帰を修正した。初期ブロック分割はdecodedアンカーのままで旧GNU diffとは未同値。旧callerの全設定、フィルター後の座標、全Unicode/パーサー分岐とプロジェクトの追加設定は引き続き未完了。元関数goldenの出典は[表行対応fixture](../tests/Fixtures/LineAlignment/README.md)。
 
-再開後の通常DLL全E2Eは5,778成功・0失敗・8スキップ、表行対応の限定E2Eは1,948成功・0失敗、headless UIは230成功・0失敗。Windows x64 Native AOTは5,809 E2E成功・0失敗・3スキップ、230 UI成功。SDK10.0.401、buildとAOT発行のCS/IL/MSB警告0。独立レビューの成立した三者一致回帰を修正し、実CLI/HTMLとGUIで照合した。入力・対応JSON・PNG・ログは `artifacts/verification/table-line-alignment` に保持する。この変更の4構成CIは検証中で、既載のCI結果に含めない。
+再開後の通常DLL全E2Eは5,778成功・0失敗・8スキップ、表行対応の限定E2Eは1,948成功・0失敗、headless UIは230成功・0失敗。Windows x64 Native AOTは5,809 E2E成功・0失敗・3スキップ、230 UI成功。SDK10.0.401、buildとAOT発行のCS/IL/MSB警告0。独立レビューの成立した三者一致回帰を修正し、実CLI/HTMLとGUIで照合した。入力・対応JSON・PNG・ログは `artifacts/verification/table-line-alignment` に保持する。
+
+この表行対応を含む `118f76461e58f45e4894512c71d9fcd14ed095b5` は [GitHub run 36820491881](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36820491881) の4構成すべてでNative AOT発行・headless UI・E2Eに成功した。[同SHAのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36820491875)も成功。Windows x64/ARM64は各5,809 E2E成功・0失敗・3スキップ、Mac Intel/ARM64は各5,818成功・0失敗・2スキップ。UIは全構成230成功、SDK10.0.401、CS/IL/MSB警告0。先行の `af6ee107d` は両Macで失敗し、ARM64成果物で3goldenの改行変換によるSHA不一致を確認した。採取bytesを保持する `.gitattributes` を追加し、ハッシュ検査を維持したまま解消した。JSON・PNG・ログ・発行物は `artifacts/github/36820491881` に保持する。通常デスクトップ起動・Explorer/Finder操作・署名と公証は実測していない。
 
 ローカル Windows x64 の Native AOT では元ソースの有効5,832ケースを全件実行し、区間・終了コード・入力バイト保持が一致した。孤立surrogate216ケースはUTF-8文書経路の直接照合から除外する。Native CLI E2Eは3,862成功・0失敗・3スキップ、実描画UIは224成功。WindowsのUnix権限・Mac大小文字別名・大小文字を区別する包装入力は対象外として理由を保持した。SDK10.0.401、ビルドとAOTのCS/IL/MSB警告0。補助確認を再利用したsource確認に加え、PNGを目視して一致文字のForeground=nullによる不可視も修正した。通常デスクトップ操作・全旧字素規則・旧配布GUIは未実測。成果物は `artifacts/verification/table-worddiff`、`artifacts/e2e/word-diff-native-full`、`artifacts/verification/win-x64` に保持する。
+
+## 通常テキストへ接続した GNU 行算法
+
+原本の `analyze.c` と `io.c` を変更せず実行して279ケースの入力同値クラス・変更scriptを採取し、Coreへ行算法を移植した。開発用CLI `--gnu-line-script` と実プロセスE2Eで、原本が作った同値クラス配列を入力し277ケースのscript一致を確認した。逆順4,095／4,097行の2ケースは共有8M予算の上限に達するため、全入力を一変更ブロックへ退避する契約を確認する。出典・再生成手順は [GNU行fixture](../tests/Fixtures/GnuLines/README.md)、開発用CLIは [開発手順](DEVELOPMENT.md) を参照する。
+
+通常 `TextDiffer` のpatience/HirschbergをGNU行算法へ置換した。原文の共通端と文書状態を反映した比較キーを照合して本文を切り出し、本文・EOL・最終改行の構造キーを共有同値クラスへ分類する。ハッシュの文字走査・衝突比較・配列確保も行算法と同じ予算へ計上し、上限では未解決本文をまとめて変更扱いにする。共通端と全文同値の線形確認は予算0でも行い、全元行とフィルター前の行番号を保持する。GUIは上限時に行対応の省略を表示し、CLIは使用量・退避理由を返す。
+
+原本default 273ケースの元bytesから通常CLIへ接続し271 script完全一致、逆順4095/4097の2件だけ8M予算退避を確認した。通常GNU限定E2Eは3399成功・0失敗、通常DLLの全体E2Eは12367成功・0失敗・8skip。独立レビューでP1/P2なし、新しい文脈の120追加入力も原本script・元行順序・本文・span境界など1442検証すべて成功。headless UIは233成功・0失敗で、反復行の原本対応と4097行の全行保持・上限表示を確認した。SDK10.0.401、最終Rebuildの警告0。成果物は `artifacts/verification/gnu-text` と `artifacts/verification/gnu-review`。最初の限定実行は更新前の検証器が従来の全体検証を走ったため採用せず、全solution Rebuild後に対象ケース選択とコード／程序集SHAを照合して再実行した。
+
+Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成功・0失敗、コンパイラーのCS/IL/MSB警告0。リンク拒否の経路も管理者実行で検証し、実行主体・アプリSHA・Python実体・終了コードを保存した。通常DLLの8skipと区別する。表の初期ブロック分割は復号セルアンカーのままで旧GNUと未同値。旧callerのUTF-8一時文書・引用内改行escape・全Unicodeとフィルター設定の厳密な互換は残る。GNU追加分の残る3構成はGitHubで検証する。上記4構成CIは `118f76461` の表行対応までであり、このGNU追加分を含まない。
 
 ## 表のセル内検索・置換
 

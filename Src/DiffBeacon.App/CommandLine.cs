@@ -17,6 +17,7 @@ internal static class CommandLine
                     + "GUI: DiffBeacon LEFT [BASE] RIGHT\n"
                     + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT] [--max-work N]\n"
                     + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
+                    + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
                     + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]\n"
@@ -28,6 +29,7 @@ internal static class CommandLine
             }
             var command = args[0];
             if (command == "--word-diff") return await WordDiffCommands.RunAsync(args);
+            if (command == "--gnu-line-script") return await GnuLineCommands.RunAsync(args);
             if (command == "--package-project") return await PackageCommands.RunAsync(args);
             if (command == "--report-project") return await ReportCommands.RunAsync(args);
             if (command.StartsWith("--archive-", StringComparison.Ordinal)) return await ArchiveCommands.RunAsync(args);
@@ -51,13 +53,16 @@ internal static class CommandLine
                 var options = ParseOptions(args.Skip(3).ToArray());
                 var left = await TextDocument.LoadAsync(args[1], token);
                 var right = await TextDocument.LoadAsync(args[2], token);
-                var result = TextDiffer.Compare(left.Text, right.Text, options);
+                var result = TextDiffer.Compare(left.Text, right.Text, options, token);
                 WriteJson(writer =>
                 {
                     writer.WriteBoolean("different", result.HasDifferences);
                     writer.WriteNumber("blocks", result.Blocks.Count);
                     writer.WriteNumber("inlineWorkUsed", result.InlineWorkUsed);
                     writer.WriteNumber("inlineFallbackCount", result.InlineFallbackCount);
+                    writer.WriteNumber("lineWorkUsed", result.LineWorkUsed);
+                    writer.WriteBoolean("lineFallback", result.LineFallback);
+                    writer.WriteString("lineFallbackReason", result.LineFallbackReason);
                     writer.WriteString("leftEncoding", left.EncodingName);
                     writer.WriteString("rightEncoding", right.EncodingName);
                     writer.WriteStartArray("rows");

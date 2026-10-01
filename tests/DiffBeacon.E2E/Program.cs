@@ -1705,7 +1705,15 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--line-alignment-only", StringComparer.Ordinal))
+    if (args.Contains("--gnu-text-only", StringComparer.Ordinal))
+    {
+        await GnuTextScenarios.RunAsync(output, Run, Check);
+    }
+    else if (args.Contains("--gnu-line-only", StringComparer.Ordinal))
+    {
+        await GnuLineScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-alignment-only", StringComparer.Ordinal))
     {
         await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1746,6 +1754,8 @@ try
     await ArchiveCases();
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);
+    await GnuLineScenarios.RunAsync(output, fixtures, Run, Check);
+    await GnuTextScenarios.RunAsync(output, Run, Check);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
     await PackagingCases();

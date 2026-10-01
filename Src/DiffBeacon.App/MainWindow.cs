@@ -341,6 +341,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _diffIndex = -1;
         _status.Text = $"{CurrentDiff.Blocks.Count} 個の差分  ·  左 {_leftDocument?.EncodingName ?? "UTF-8"}  /  右 {_rightDocument?.EncodingName ?? "UTF-8"}";
         if (diff.InlineFallbackCount > 0) _status.Text += $"  ·  詳細比較を省略した {diff.InlineFallbackCount} 行は行全体を強調";
+        if (diff.LineFallback) _status.Text += "  ·  行対応の処理上限に達したため、未確定区間をまとめて表示";
         _views.SelectedItem = _diffTab;
     }
 

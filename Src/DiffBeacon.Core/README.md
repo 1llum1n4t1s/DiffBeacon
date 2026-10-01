@@ -25,7 +25,7 @@ if (comparison.Blocks.Count > 0)
 - `WordDiffer.Compare` は原文の UTF-16 区間を保持し、単語の O(NP) 対応を文字区間へ絞り込みます。`WordDiffOptions` は文字／単語、大文字小文字、数字、空白、EOL、区切り文字を指定します。文字分類は元ソースで採取した Windows CTYPE1 / CRT C の固定値、大文字小文字の折畳みは ASCII です。旧 GUI の全設定・全 ICU 字素規則との完全互換は未確認です。外部 DLL は呼びません。
 - WordDiff の既定予算は4,000,000、最大8,000,000、入力は各64 Mi文字、token vectorは20,480未満、traceは32 MiB以下です。上限超過と不正UTF-16は全原文を変更区間とし、`Fallback`・`FallbackReason` を返します。`WorkUsed` は実行した処理の予算消費です。キャンセルは例外で伝播します。TextDifferでは詳細比較予算を全ブロックで共有し、行対応の予算と分けます。原文を省略・変更しません。
 - `DiffBlock`: `Index`, `RowStart`, `RowCount`, `LeftStart`, `LeftCount`, `RightStart`, `RightCount`。開始位置はすべて 0 始まり。コピー後は再比較し、更新前のブロックを再利用しないでください。除外行は `Equal` の表示行として残ります。改行なしの最終行を保持行の前後へ移す場合は、対象文書の改行を境界へ補い、行の連結を防ぎます。
-- 一意な行を patience アンカーにし、残りは線形メモリの Hirschberg LCS で比較します。`MaxFallbackComparisons` (既定 4,000,000) を超える未解決区間は大きな変更ブロックになります。巨大な無関連文書でも N×M のテーブルは作りません。このフォールバックでは最小編集列を保証しません。
+- 行対応は同梱GNU diffのdiscard・diagonal探索・境界調整をmanagedへ移植した算法を使います。原文の共通端と比較キーを照合し、本文だけを共有同値クラスへ分類します。`MaxFallbackComparisons` は既定4,000,000・最大8,000,000で、分類の文字ハッシュ・衝突比較・配列確保・算法に共有します。本文が片側262,144行を超える場合も未解決本文を変更扱いにし、共通端と全元行を保持します。線形の共通端走査と全文同値の確認は予算0でも行い、文字ごとに取消を確認します。N×Mのテーブルは作りません。退避時の最小編集列は保証しません。`DiffResult.LineWorkUsed`・`LineFallback`・`LineFallbackReason` とCLI `--compare` の同名camelCase項目で使用量・退避を確認できます。行内WordDiffの予算とは独立しています。原本照合の範囲は [GNU fixture](../../tests/Fixtures/GnuLines/README.md) に記載します。
 
 ### 数字・コメント・置換フィルター
 

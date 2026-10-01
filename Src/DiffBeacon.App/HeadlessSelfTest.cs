@@ -58,6 +58,20 @@ internal static class HeadlessSelfTest
                 && System.Text.RegularExpressions.Regex.Matches(wordHtml, "<span class=\"inline-diff\">new</span>").Count == 2);
             Check("word diff preview and report retain original source files", File.ReadAllText(left) == "title\r\nleft value\r\ntail\r\n"
                 && File.ReadAllText(right) == "title\r\nright value\r\ntail\r\n");
+            pane.LeftEditor.Text = "a\nb\na\n"; pane.RightEditor.Text = "b\na\nb\n";
+            pane.CompareEditors(); Screenshot("gnu-line-repeated.png");
+            Check("GNU repeated lines retain original script in GUI", pane.CurrentDiff is { LineFallback: false, Blocks.Count: 2 }
+                && pane.CurrentDiff.Rows.Select(row => (row.LeftLineNumber, row.RightLineNumber)).SequenceEqual(
+                    new (int?, int?)[] { (1, null), (2, 1), (3, 2), (null, 3) }));
+            var reversed = Enumerable.Range(0, 4097).Select(index => "line" + index.ToString(System.Globalization.CultureInfo.InvariantCulture)).ToArray();
+            pane.LeftEditor.Text = string.Join('\n', reversed) + "\n";
+            pane.RightEditor.Text = string.Join('\n', reversed.Reverse()) + "\n";
+            pane.CompareEditors(); Screenshot("gnu-line-budget.png");
+            Check("GNU budget fallback retains every GUI source row", pane.CurrentDiff is { LineFallback: true, LineWorkUsed: 4_000_000 }
+                && pane.CurrentDiff.Rows.Select(row => row.LeftLineNumber).SequenceEqual(Enumerable.Range(1, 4097).Select(index => (int?)index))
+                && pane.CurrentDiff.Rows.Select(row => row.RightLineNumber).SequenceEqual(Enumerable.Range(1, 4097).Select(index => (int?)index)));
+            Check("GNU budget fallback is visible in GUI", pane.GetVisualDescendants().OfType<TextBlock>()
+                .Any(block => block.Text?.Contains("行対応の処理上限に達した", StringComparison.Ordinal) == true));
             pane.DiscardChanges(); Pump(pane.ComparePathsAsync()); pane.NavigateDifference(1);
             pane.CopyRightButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check("merge button copies selected block", pane.LeftEditor.Text == pane.RightEditor.Text && pane.CurrentDiff is { HasDifferences: false });

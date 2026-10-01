@@ -6,3 +6,4 @@ Testing/Data/Compare/**/ignore_eof_*.txt -text
 tests/Fixtures/LineAlignment/legacy-line-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/LineAlignment/legacy-line-pair-dummy-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/LineAlignment/legacy-line-expanded-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/GnuLines/legacy-gnu-golden.json -text whitespace=cr-at-eol
