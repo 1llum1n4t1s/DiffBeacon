@@ -264,6 +264,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         var token = _operation.Token;
         var left = LeftPath.Text ?? ""; var right = RightPath.Text ?? "";
+        var imageSettings = CaptureImageSettings();
         _lastPackageComparison = null;
         var comparisonForPackaging = (left, BasePath.Text ?? "", right, _mode.SelectedIndex, _provider.SelectedItem as string);
         if (string.IsNullOrWhiteSpace(left) && string.IsNullOrWhiteSpace(right)) { await CompareEditorsAsync(); return; }
@@ -289,7 +290,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right))) { await CompareDirectoryAsync(left, right, token); _lastPackageComparison = comparisonForPackaging; return; }
             if (mode == 4 || (mode == 0 && SpecializedViews.IsImage(left) && SpecializedViews.IsImage(right)))
             {
-                var imageView = await SpecializedViews.ImagesAsync(left, right, token, BasePath.Text);
+                var imageView = await SpecializedViews.ImagesAsync(left, right, token, BasePath.Text, imageSettings);
                 if (token.IsCancellationRequested)
                 {
                     SpecializedViews.Release(imageView);

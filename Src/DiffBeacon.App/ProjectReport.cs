@@ -55,7 +55,7 @@ public static class ProjectReport
         _ = WorkspaceStore.SerializeWorkspace(workspace);
         if ((uint)entryIndex >= (uint)workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entryIndex), "比較の番号が範囲外です。");
         var entries = workspace.Entries.Select(entry => entry with
-        { SubstitutionRules = entry.SubstitutionRules.ToArray(), LegacySettings = new(entry.LegacySettings) }).ToArray();
+        { SubstitutionRules = entry.SubstitutionRules.ToArray(), LegacySettings = new(entry.LegacySettings), ImageSettings = entry.ImageSettings with { } }).ToArray();
         var target = ValidateTarget(output, entries, sourceProject);
         var project = entries[entryIndex];
         if (IsImage(project))
@@ -69,9 +69,12 @@ public static class ProjectReport
                 throw new ArgumentException("選択フレームは画像の全入力分を指定してください。");
             ImageComparisonEngine.Snapshot[] images = middleImage is null ? [leftImage, rightImage] : [leftImage, middleImage, rightImage];
             int[]? numbers = selected ? middleImage is null ? [leftFrame!.Value, rightFrame!.Value] : [leftFrame!.Value, middleFrame!.Value, rightFrame!.Value] : null;
+            var settings = project.ImageSettings;
+            if (!selected && !settings.ReportAllFrames) numbers = settings.FrameNumbers(middleImage is not null);
             string[] titles = middleImage is null ? [project.LeftDescription ?? project.LeftPath, project.RightDescription ?? project.RightPath]
                 : [project.LeftDescription ?? project.LeftPath, project.BaseDescription ?? project.BasePath, project.RightDescription ?? project.RightPath];
-            var imageHtml = await Task.Run(() => ImageReport.Create(new(images, imageThreshold ?? 0, numbers), titles, token), token).ConfigureAwait(false);
+            var imageHtml = await Task.Run(() => ImageReport.Create(new(images, imageThreshold ?? settings.Threshold, numbers,
+                ShowDifferences: settings.ShowDifferences), titles, token), token).ConfigureAwait(false);
             await SaveAsync(target, imageHtml, entries, sourceProject, token).ConfigureAwait(false);
             return;
         }

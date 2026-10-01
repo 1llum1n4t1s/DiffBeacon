@@ -10,7 +10,7 @@
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
 | 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
-| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、ページ設定の永続化は未完了 |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、旧全体設定の永続化は未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
@@ -89,7 +89,15 @@ APNG最終SHA `892f362d1327e85268a9486991ef302b84a27edc` の[四RID CI](https://
 
 [自作31入力](../tests/Fixtures/Images/Tiff/README.md)は正常17・拒否14。正常入力のBGRAはliteral期待値であり、デコーダーから逆算しない。managed限定E2Eは1079成功・0失敗・0skip、headless UIは1089成功・0失敗（TIFF162項目）。ページ寸法・全画素、圧縮と色の代表構成、全／選択・三者・短い側の反復、HTML原画と包装展開、取消・古い完了・入力と既存出力の保持を照合した。scanのないJPEGが旧実装で成功していた不具合を実CLIで再現し、拒否へ修正した。旧JPEGのtable数と参照範囲も確保前に検査する。証拠は `E:/DiffBeacon-artifacts/local/tiff-port/managed-limited-rebuilt` と `managed-ui-final`。
 
-ローカルWindows x64の全体managed E2Eは28255成功・0失敗・10skip、Native AOTは28300成功・0失敗・3skip、headless UIは双方1089成功・0失敗。TIFF原画46件とobservationsはmanaged／nativeで全bytes一致し、3画面も確認した。Release buildとAOT発行は警告・エラー0、発行manifest12件のSHA・サイズも一致。Native全体E2Eは管理者実行とPython指定を記録する。証拠は `E:/DiffBeacon-artifacts/local/tiff-port`。四RID CIとIntel Macの180秒上限は未検証。正常旧JPEG6、全JPEG entropy、LZW dictionary幅切替／predictor、planar、SubIFD、色管理と方向補正、旧FreeImageの全構成との互換性は未検証。複数ページ編集・元TIFF保存・ページ設定の永続化も未完了。詳細な上限と対応構成は[画像の契約](IMAGE-VIEWER.md)へ集約する。
+ローカルWindows x64の全体managed E2Eは28255成功・0失敗・10skip、Native AOTは28300成功・0失敗・3skip、headless UIは双方1089成功・0失敗。TIFF原画46件とobservationsはmanaged／nativeで全bytes一致し、3画面も確認した。Release buildとAOT発行は警告・エラー0、発行manifest12件のSHA・サイズも一致。Native全体E2Eは管理者実行とPython指定を記録する。証拠は `E:/DiffBeacon-artifacts/local/tiff-port`。四RID CIとIntel Macの180秒上限は未検証。正常旧JPEG6、全JPEG entropy、LZW dictionary幅切替／predictor、planar、SubIFD、色管理と方向補正、旧FreeImageの全構成との互換性は未検証。複数ページ編集・元TIFF保存・旧全体設定の永続化も未完了。詳細な上限と対応構成は[画像の契約](IMAGE-VIEWER.md)へ集約する。
+
+## 画像プロジェクトの表示設定
+
+画像プロジェクトを開き直すと先頭・閾値0へ戻り、CLI project-copyで設定が消失する経路を修正した。新しいJSONの`imageSettings`がページ、閾値、倍率、重ね合わせ不透明度、強調、全／選択レポートと表示方式を保持する。GUIで復号を完了した状態を保存し、CLI・包装レポートも同じ設定を使う。既存の設定省略プロジェクトは従来の既定値を維持し、CLIの明示指定を優先する。包装の相対参照と保存設定を展開・再読込み後も保持する。
+
+変更前の実CLIでは設定が消失し、選択組のHTMLが2ページになった。追加の限定E2Eは614成功・0失敗。最終Release buildは警告0・エラー0、全体E2Eはmanaged 28868成功・0失敗・10skip、Windows x64 Native AOT 28913成功・0失敗・3skip、headless UIは両方式1103成功・0失敗。2／3入力の全値・既定値・境界・CLI上書き、独立PNG復号による全BGRA、包装展開、不正設定・実ページ範囲外の拒否と入力／既存出力の属性保持、再比較・workspace復元・取消・古い完了を確認した。記録は `E:/DiffBeacon-artifacts/local/image-project-settings`。差分閾値360.62445840513925がGUIで丸められる不具合も実測して修正し、ページ切替時と最小正double値を含め判定値の保持を確認した。発行manifest12ファイルのサイズ・SHAと実行中の製品ソース857ファイルを照合した。全体E2Eの証拠は全entry SHA照合済みZIPとして保持し、GUIのJSON・PNGと再現記録は展開した状態で残す。この設定変更の四RID CIは未実行。
+
+旧`ImgMergeFrm.cpp`のLoadOptions／SaveOptionsは倍率・閾値等をOptionsMgrの全体設定へ保存する。今回のJSONプロジェクト保存は、その全体設定の移行完了を意味しない。旧全体設定と全表示オプション、未保存原画・Undo履歴・選択領域のセッション保存は未完了。利用手順と上限は[画像の契約](IMAGE-VIEWER.md)を参照する。
 
 ## 原本の画像差分領域処理
 

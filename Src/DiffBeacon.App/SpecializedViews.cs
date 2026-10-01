@@ -21,7 +21,8 @@ public static partial class SpecializedViews
     public static void DiscardChanges(Control? control) { if (control is BinaryPanel binary) binary.MarkClean?.Invoke(); if (control is TablePanel table) table.DiscardCellDraft(); if (control is ImagePanel image) image.DiscardChanges(); }
     public static bool IsImage(string path) => Path.GetExtension(path).ToLowerInvariant() is ".png" or ".apng" or ".jpg" or ".jpeg" or ".bmp" or ".gif" or ".tif" or ".tiff" or ".webp";
 
-    public static async Task<Control> ImagesAsync(string left, string right, CancellationToken cancellationToken, string? middle = null)
+    public static async Task<Control> ImagesAsync(string left, string right, CancellationToken cancellationToken, string? middle = null,
+        ImageViewSettings? settings = null)
     {
         var leftSnapshot = await ImageComparisonEngine.OpenAsync(left, cancellationToken);
         var rightSnapshot = await ImageComparisonEngine.OpenAsync(right, cancellationToken);
@@ -32,7 +33,7 @@ public static partial class SpecializedViews
             new bool[middleSnapshot is null ? 2 : 3]);
         try
         {
-            await panel.SetFramesAsync(1, 1, cancellationToken);
+            await panel.ApplySettingsAsync(settings ?? new(), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             return panel;
         }

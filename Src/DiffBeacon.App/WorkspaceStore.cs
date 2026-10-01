@@ -39,6 +39,7 @@ public sealed record ComparisonProject
     public char? TableDelimiter { get; set; }
     public char? TableQuote { get; set; }
     public bool? TableAllowNewlinesInQuotes { get; set; }
+    public ImageViewSettings ImageSettings { get; set; } = new();
     public Dictionary<string, string> LegacySettings { get; set; } = [];
 }
 
@@ -246,6 +247,9 @@ public static class WorkspaceStore
                 throw new InvalidDataException("置換ルールの必須項目が null です。");
             if (project.LegacySettings.Values.Any(value => value is null))
                 throw new InvalidDataException("旧プロジェクト設定の値が null です。");
+            ImageViewSettings.Validate(project.ImageSettings);
+            if (string.IsNullOrWhiteSpace(project.BasePath) && project.ImageSettings.MiddleFrame != 1)
+                throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1にしてください。");
         }
     }
 

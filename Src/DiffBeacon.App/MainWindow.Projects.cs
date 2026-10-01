@@ -95,14 +95,19 @@ public sealed partial class ComparisonPane
         ExcludedPaths = _excludes.Text, IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true,
         IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = _ignoreRegex.Text,
         IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex,
-        Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions.ToArray()
+        Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions.ToArray(),
+        ImageSettings = CaptureImageSettings()
     };
 
     public void ApplyProject(ComparisonProject project)
     {
         ArgumentNullException.ThrowIfNull(project);
+        ImageViewSettings.Validate(project.ImageSettings);
+        if (string.IsNullOrWhiteSpace(project.BasePath) && project.ImageSettings.MiddleFrame != 1)
+            throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1にしてください。");
         _tableSyntax = null;
-        _projectMetadata = project with { LegacySettings = new(project.LegacySettings), SubstitutionRules = project.SubstitutionRules.ToArray() };
+        _projectMetadata = project with { LegacySettings = new(project.LegacySettings), SubstitutionRules = project.SubstitutionRules.ToArray(),
+            ImageSettings = project.ImageSettings with { } };
         LeftPath.Text = project.LeftPath; BasePath.Text = project.BasePath; RightPath.Text = project.RightPath;
         var mode = Array.FindIndex(ModeNames, name => name.Equals(project.Mode, StringComparison.OrdinalIgnoreCase));
         if (project.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase)) mode = 8;
@@ -123,6 +128,18 @@ public sealed partial class ComparisonPane
         _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
         ToolTip.SetTip(LeftPath, ProjectCaption(false)); ToolTip.SetTip(RightPath, ProjectCaption(true));
         UpdateEditorLayout(!string.IsNullOrWhiteSpace(project.BasePath));
+    }
+
+    private ImageViewSettings CaptureImageSettings()
+    {
+        var current = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
+        if (_lastPackageComparison == current && _specialTab.Content is SpecializedViews.ImagePanel image) return image.CaptureSettings();
+        var settings = _projectMetadata.ImageSettings with { };
+        // 別の入力へ切り替えた側は先頭から開き、元プロジェクトのページ番号を流用しない。
+        if (current.Item1 != _projectMetadata.LeftPath) settings.LeftFrame = 1;
+        if (current.Item2 != _projectMetadata.BasePath || string.IsNullOrWhiteSpace(current.Item2)) settings.MiddleFrame = 1;
+        if (current.Item3 != _projectMetadata.RightPath) settings.RightFrame = 1;
+        return settings;
     }
 
     public async Task CompareProjectAsync()

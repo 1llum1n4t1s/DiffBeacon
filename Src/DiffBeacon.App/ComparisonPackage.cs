@@ -22,7 +22,7 @@ public static class ComparisonPackage
         // UI の値を await 前に確定し、編集中の配列・辞書をバックグラウンドで共有しない。
         WorkspaceStore.SerializeWorkspace(workspace);
         var clone = workspace with { Entries = workspace.Entries.Select(project => project with
-        { SubstitutionRules = project.SubstitutionRules.ToArray(), LegacySettings = new(project.LegacySettings) }).ToArray() };
+        { SubstitutionRules = project.SubstitutionRules.ToArray(), LegacySettings = new(project.LegacySettings), ImageSettings = project.ImageSettings with { } }).ToArray() };
         var indices = selectedIndices?.ToArray() ?? Enumerable.Range(0, clone.Entries.Length).ToArray();
         if (indices.Length == 0 || indices.Distinct().Count() != indices.Length || indices.Any(index => index < 0 || index >= clone.Entries.Length))
             throw new ArgumentException("包装する比較を重複なく1件以上選択してください。");
@@ -179,7 +179,10 @@ public static class ComparisonPackage
                         var rightImage = ImageComparisonEngine.OpenAsync(right!.Snapshot, token).GetAwaiter().GetResult();
                         var middleInput = pairInputs[i][1];
                         var middleImage = middleInput is null ? null : ImageComparisonEngine.OpenAsync(middleInput.Snapshot, token).GetAwaiter().GetResult();
-                        report = ImageReport.Create(new(middleImage is null ? [leftImage, rightImage] : [leftImage, middleImage, rightImage], 0, null),
+                        var settings = project.ImageSettings;
+                        report = ImageReport.Create(new(middleImage is null ? [leftImage, rightImage] : [leftImage, middleImage, rightImage],
+                            settings.Threshold, settings.ReportAllFrames ? null : settings.FrameNumbers(middleImage is not null),
+                            ShowDifferences: settings.ShowDifferences),
                             middleImage is null ? [project.LeftDescription ?? left.Name, project.RightDescription ?? right.Name]
                                 : [project.LeftDescription ?? left.Name, project.BaseDescription ?? middleInput!.Name, project.RightDescription ?? right.Name], token);
                     }

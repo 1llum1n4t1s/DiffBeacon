@@ -31,14 +31,16 @@ public static partial class SpecializedViews
         private bool _disposed, _updatingSelectors;
         private Window? _owner;
         private double _displayThreshold;
+        private double _requestedThreshold;
         private bool _displayShowDifferences = true;
         private int _selectedDiffIndex = -1;
         private readonly NumericUpDown _threshold = new() { Name = "ImageThreshold", Minimum = 0, Maximum = 510, Value = 0, Increment = 1, Width = 120 };
         private readonly CheckBox _reportAllFrames = new() { Name = "ImageReportAllFrames", Content = "レポートは全フレーム", IsChecked = true };
         private readonly CheckBox _showDifferences = new() { Name = "ImageShowDifferences", Content = "差分を強調", IsChecked = true };
-        private readonly Slider _zoom = new() { Name = "ImageZoom", Minimum = .1, Maximum = 4, Value = 1, Width = 130 };
+        private readonly Slider _zoom = new() { Name = "ImageZoom", Minimum = .1, Maximum = 8, Value = 1, Width = 130 };
         private readonly Slider _opacity = new() { Name = "ImageOpacity", Minimum = 0, Maximum = 1, Value = .3, Width = 130 };
         private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
+        private readonly TabControl _imageViews = new() { Name = "ImageDisplayMode" };
 
         internal int LeftFrame => _numbers[0];
         internal int RightFrame => _numbers[^1];
@@ -125,11 +127,18 @@ public static partial class SpecializedViews
                 }
                 var scroll = Scroll(grid); Grid.SetColumn(scroll, pane); overlays.Children.Add(scroll);
             }
-            Children.Add(new TabControl { ItemsSource = new[] { new TabItem { Header = _counts.Length == 3 ? "左・中央・右" : "左右", Content = side },
-                new TabItem { Header = "重ね合わせ", Content = overlays }, new TabItem { Header = "左右の画素差", Content = Scroll(_difference) } } });
+            _imageViews.ItemsSource = new[] { new TabItem { Header = _counts.Length == 3 ? "左・中央・右" : "左右", Content = side },
+                new TabItem { Header = "重ね合わせ", Content = overlays }, new TabItem { Header = "左右の画素差", Content = Scroll(_difference) } };
+            _imageViews.SelectedIndex = 0;
+            Children.Add(_imageViews);
             _zoom.ValueChanged += (_, _) => UpdateZoom();
             _opacity.ValueChanged += (_, _) => { for (var i = 1; i < _overlays.Count; i += 2) _overlays[i].Image.Opacity = _opacity.Value; };
-            _threshold.ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
+            _threshold.ValueChanged += async (_, _) =>
+            {
+                if (_updatingSelectors || _disposed) return;
+                _requestedThreshold = (double)(_threshold.Value ?? 0);
+                await SelectFromControlsAsync();
+            };
             _showDifferences.IsCheckedChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
             AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; } };
             UpdateNavigation();
@@ -181,7 +190,7 @@ public static partial class SpecializedViews
             ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
-            CurrentFrameOperation = LoadFramesAsync(numbers, (double)(_threshold.Value ?? 0), _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
+            CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
             UpdateEditControls();
             return CurrentFrameOperation;
         }
@@ -253,7 +262,7 @@ public static partial class SpecializedViews
                     {
                         if (reset) _resetEditing = _discarded = false;
                         _updatingSelectors = true;
-                        try { _threshold.Value = (decimal)_displayThreshold; _showDifferences.IsChecked = _displayShowDifferences; }
+                        try { _threshold.Value = ThresholdControlValue(_displayThreshold); _showDifferences.IsChecked = _displayShowDifferences; }
                         finally { _updatingSelectors = false; }
                         RestoreSelectors();
                     }
@@ -285,7 +294,8 @@ public static partial class SpecializedViews
             try
             {
                 for (var i = 0; i < _numbers.Length; i++) _selectors[i].Value = _numbers[i];
-                _threshold.Value = (decimal)_displayThreshold; _showDifferences.IsChecked = _displayShowDifferences;
+                _requestedThreshold = _displayThreshold;
+                _threshold.Value = ThresholdControlValue(_displayThreshold); _showDifferences.IsChecked = _displayShowDifferences;
             }
             finally { _updatingSelectors = false; }
             UpdateNavigation();
