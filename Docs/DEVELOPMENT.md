@@ -53,4 +53,6 @@ Windowsのシンボリックリンク検証は作成権限が必要。権限が�
 
 比較文書・レポート・パッチ・プロジェクト包装の4構成検証は[GitHub Actions run 36790193652](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36790193652)で全ジョブ成功した。各Mac版の発行物は同runのArtifactsから取得できる。全構成の入力・出力・JSON・PNG・ログと集計は`artifacts/github/36790193652`、ローカル容量実測と清掃記録は`artifacts/e2e/packaging-capacity-probes`に保持する。
 
+二者／三者のテキスト・表・JSONレポートの4構成検証は[GitHub Actions run 36793389828](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389828)、同コードの[CodeQL workflow](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389800)で成功した。各Mac発行物を同runから取得でき、検証成果物と集計は`artifacts/github/36793389828`に保持する。レポート限定CLI検証はE2Eへ`--reports-only`を渡す。単体レポートは`--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]`で生成できる。
+
 機能の対応状況と保留事項は [MIGRATION.md](MIGRATION.md) を参照する。

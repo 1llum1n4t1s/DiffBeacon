@@ -30,6 +30,25 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 ## 実行した検証
 
+2026-10-01 JST、テキスト・表・JSONの二者／三者共通HTMLレポート、単体プロジェクトCLI、GUI中止・保存保護を追加したコード`c005d377c4748657b262a91c85570406b7724de6`を[GitHub Actions run 36793389828](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389828)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、CS/IL/MSBコンパイラー警告0件。[CodeQL workflow](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389800)も同コードで成功した。これはworkflow完了の記録であり、全機能の同等性を証明するものではない。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 2070 | 0 / 3 | 111 | 発行・実行成功 |
+| `win-arm64` | 2070 | 0 / 3 | 111 | 発行・実行成功 |
+| `osx-x64` | 2079 | 0 / 2 | 111 | 発行・実行成功 |
+| `osx-arm64` | 2079 | 0 / 2 | 111 | 発行・実行成功 |
+
+単体HTMLと包装内HTMLを実CLI・独立BCL ZIP読込みで検証した。三者では祖先アンカー、異なる位置への挿入、連続空行、片側削除、空祖先を含む全側の本文・元行番号の順序と完全保持を確認した。表は各セル・行列座標、欠落と空セル、引用符・引用内改行、比較設定を検証し、Python標準CSVでも行数・列数と生成HTMLグリッドを照合した。JSONは正規化後の内容・祖先だけの変更・キー順の同等性を確認した。
+
+未選択タブのreadonlyフォルダー配下を含む全入力・フィルター・プロジェクトの保存保護、readonly属性・リンク・不正解析・32 MiB上限による既存出力保持も確認した。GUIは現在の未保存本文と三者・表・JSONを出力し、実際の中止ボタンで未完了レポートを取り消せる。取消テストは処理未完了と既存出力保持の実測であり、描画の特定ループ内や原子的保存の途中で取消した証拠ではない。Windowsの3スキップ、Macの2スキップは前の包装工程と同じOS・ファイルシステム固有項目で、各検証JSONへ理由を保存した。
+
+ローカル通常DLLは2039成功・0失敗・8スキップ、リンク作成権限のあるWindows x64 Native AOTは2070成功・0失敗・3スキップ、画面111成功。初回の限定検証では修正前の期待値を取り込んだテストアセンブリとGUIの入力固定値で失敗したため、原本の直前バイト列を確認する検証へ直し、全体を再ビルドした。フォルダーモードはファイルパスが指定されていても包装対象から明示拒否する。失敗記録は`artifacts/e2e/reports-managed`・`artifacts/verification/reports-managed`、最終結果は`artifacts/e2e/reports-full`・`artifacts/e2e/reports-native-win-x64`・`artifacts/verification/reports-contract`へ保持する。
+
+4構成の入力・出力・JSON・PNG・manifest・ログ・集計を`artifacts/github/36793389828`に保持する。UIはheadless描画・操作で、HTML自体のブラウザー描画やネイティブファイル選択は未実測。agent thread limitのため新規文脈の独立レビューは未実施で、既存担当の補足確認と成立指摘の修正記録を同契約ディレクトリに残す。表レポートは行列座標の対応であり、旧表エディターの行位置合わせ・編集・検索は引き続き未完了。
+
+以下は比較文書の包装追加時点の記録。
+
 2026-10-01 JST、比較文書とHTMLレポート・パッチ・プロジェクトの包装を追加したコード`ef1e44df438e602560eb0578ff5316d9c0bf7546`と検証修正`9f5e92d0f6c3465c0b64c244a716d5c00c59a408`を[GitHub Actions run 36790193652](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36790193652)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、コンパイラーのCS/IL/MSB警告は0件。Mac Intel/ARM64の`.app`とtarを含む発行物も同runに保存した。
 
 | RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
