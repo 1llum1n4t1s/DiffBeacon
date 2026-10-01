@@ -199,6 +199,69 @@ internal static class HeadlessSelfTest
             try { Pump(pane.SaveAsync(false)); } catch (InvalidOperationException) { rejected = true; }
             Check("image comparison cannot be saved as text", rejected && imageBytes.SequenceEqual(File.ReadAllBytes(imageLeft)));
             Screenshot("images.png");
+            string ImageFixture(string name)
+            {
+                var path = Path.Combine(output, name);
+                using var resource = typeof(HeadlessSelfTest).Assembly.GetManifestResourceStream("DiffBeacon.SelfTest.Images." + name)
+                    ?? throw new InvalidOperationException("画像検証fixtureがありません: " + name);
+                using var file = File.Create(path); resource.CopyTo(file); return path;
+            }
+            var animatedLeft = ImageFixture("same-first-left.gif");
+            var animatedRight = ImageFixture("same-first-right.gif");
+            var animatedLeftBytes = File.ReadAllBytes(animatedLeft); var animatedRightBytes = File.ReadAllBytes(animatedRight);
+            pane.LeftPath.Text = animatedLeft; pane.RightPath.Text = animatedRight;
+            Pump(pane.ComparePathsAsync());
+            var imagePanel = pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+            Check("image frames initially show identical first pages", imagePanel.LeftFrameCount == 2 && imagePanel.RightFrameCount == 2
+                && imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 1 && imagePanel.DifferentPixels == 0 && imagePanel.TotalPixels == 6);
+            imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImageNextBoth")
+                .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            Pump(imagePanel.CurrentFrameOperation);
+            Check("image frames compare later pages", imagePanel.LeftFrame == 2 && imagePanel.RightFrame == 2
+                && imagePanel.DifferentPixels == 6 && imagePanel.TotalPixels == 6);
+            Screenshot("image-frames-second.png");
+            imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImagePreviousLeft")
+                .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            Pump(imagePanel.CurrentFrameOperation);
+            Check("image frame panes select independently", imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 2 && imagePanel.DifferentPixels == 0);
+            imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImagePreviousBoth")
+                .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            Pump(imagePanel.CurrentFrameOperation);
+            Check("synchronized image navigation uses maximum selected position", imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 1 && imagePanel.DifferentPixels == 0);
+            Pump(imagePanel.SetFramesAsync(1, 2));
+            rejected = false; try { Pump(imagePanel.SetFramesAsync(3, 2)); } catch (ArgumentOutOfRangeException) { rejected = true; }
+            Check("invalid image frame retains current display", rejected && imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 2 && imagePanel.DifferentPixels == 0);
+            using (var imageCancelled = new CancellationTokenSource())
+            {
+                imageCancelled.Cancel(); rejected = false;
+                try { Pump(imagePanel.SetFramesAsync(2, 2, imageCancelled.Token)); } catch (OperationCanceledException) { rejected = true; }
+                Check("cancelled image frame retains current display", rejected && imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 2);
+            }
+            var previousFrame = imagePanel.SetFramesAsync(1, 1); var newestFrame = imagePanel.SetFramesAsync(2, 2);
+            Pump(newestFrame); try { Pump(previousFrame); } catch (OperationCanceledException) { }
+            Check("latest image frame selection wins", imagePanel.LeftFrame == 2 && imagePanel.RightFrame == 2 && imagePanel.DifferentPixels == 6);
+            var disposalImage = ImageFixture("disposal.gif"); var disposalExpected = ImageFixture("disposal-2.png");
+            pane.LeftPath.Text = disposalImage; pane.RightPath.Text = disposalExpected; Pump(pane.ComparePathsAsync());
+            rejected = false; try { Pump(imagePanel.SetFramesAsync(1, 1)); } catch (ObjectDisposedException) { rejected = true; }
+            Check("replaced image panel rejects further selection", rejected);
+            imagePanel = pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+            Pump(imagePanel.SetFramesAsync(2, 1));
+            Check("image frame partial update matches independent complete PNG", imagePanel.LeftFrameCount == 4 && imagePanel.RightFrameCount == 1
+                && imagePanel.LeftFrame == 2 && imagePanel.RightFrame == 1 && imagePanel.DifferentPixels == 0 && imagePanel.TotalPixels == 6);
+            Screenshot("image-frames-composite.png");
+            pane.LeftPath.Text = animatedLeft; pane.RightPath.Text = ImageFixture("short.gif"); Pump(pane.ComparePathsAsync());
+            imagePanel = pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+            imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImageNextBoth")
+                .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            Pump(imagePanel.CurrentFrameOperation);
+            Check("synchronized image navigation handles unequal page counts", imagePanel.LeftFrame == 2 && imagePanel.RightFrame == 1
+                && imagePanel.DifferentPixels == 6 && !imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImageNextRight").IsEnabled);
+            imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImagePreviousBoth")
+                .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            Pump(imagePanel.CurrentFrameOperation);
+            Check("synchronized image navigation returns to shared first page", imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 1 && imagePanel.DifferentPixels == 0);
+            Check("image frame selection preserves original files", animatedLeftBytes.SequenceEqual(File.ReadAllBytes(animatedLeft))
+                && animatedRightBytes.SequenceEqual(File.ReadAllBytes(animatedRight)));
             pane.DiscardChanges();
             var xmlLeft = Path.Combine(output, "left.xml"); var xmlRight = Path.Combine(output, "right.xml");
             File.WriteAllText(xmlLeft, "<root a=\"1\" b=\"2\">text</root>");

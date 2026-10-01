@@ -284,7 +284,13 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right))) { await CompareDirectoryAsync(left, right, token); _lastPackageComparison = comparisonForPackaging; return; }
             if (mode == 4 || (mode == 0 && SpecializedViews.IsImage(left) && SpecializedViews.IsImage(right)))
             {
-                SetSpecialView(await SpecializedViews.ImagesAsync(left, right, token));
+                var imageView = await SpecializedViews.ImagesAsync(left, right, token);
+                if (token.IsCancellationRequested)
+                {
+                    SpecializedViews.Release(imageView);
+                    token.ThrowIfCancellationRequested();
+                }
+                SetSpecialView(imageView);
                 _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
             if (mode == 3)

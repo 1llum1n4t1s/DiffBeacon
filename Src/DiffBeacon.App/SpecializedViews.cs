@@ -22,104 +22,18 @@ public static class SpecializedViews
 
     public static async Task<Control> ImagesAsync(string left, string right, CancellationToken cancellationToken)
     {
-        var pair = await Task.Run(() =>
+        var leftSnapshot = await ImageComparisonEngine.OpenAsync(left, cancellationToken);
+        var rightSnapshot = await ImageComparisonEngine.OpenAsync(right, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        var panel = new ImagePanel(leftSnapshot, rightSnapshot);
+        try
         {
-            Bitmap? a = null;
-            Bitmap? b = null;
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                a = new Bitmap(left);
-                b = new Bitmap(right);
-                if (Math.Max((long)a.PixelSize.Width * a.PixelSize.Height, (long)b.PixelSize.Width * b.PixelSize.Height) > 16_000_000)
-                    throw new InvalidOperationException("画像比較の上限は各画像1600万ピクセルです。");
-                return (a, b, ReadPixels(a), ReadPixels(b));
-            }
-            catch { a?.Dispose(); b?.Dispose(); throw; }
-        }, cancellationToken);
-        var (leftBitmap, rightBitmap, leftPixels, rightPixels) = pair;
-        var width = Math.Max(leftBitmap.PixelSize.Width, rightBitmap.PixelSize.Width);
-        var height = Math.Max(leftBitmap.PixelSize.Height, rightBitmap.PixelSize.Height);
-        if ((long)width * height > 16_000_000)
-        { leftBitmap.Dispose(); rightBitmap.Dispose(); throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。"); }
-        var root = new ImagePanel();
-        var controls = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12, Margin = new Thickness(8) };
-        var zoom = new Slider { Minimum = 0.1, Maximum = 4, Value = 1, Width = 150 };
-        var opacity = new Slider { Minimum = 0, Maximum = 1, Value = 0.5, Width = 150 };
-        var threshold = new NumericUpDown { Minimum = 0, Maximum = 255, Value = 0, Width = 90 };
-        var status = new TextBlock { VerticalAlignment = VerticalAlignment.Center };
-        controls.Children.Add(new TextBlock { Text = "倍率" }); controls.Children.Add(zoom);
-        controls.Children.Add(new TextBlock { Text = "右の不透明度" }); controls.Children.Add(opacity);
-        controls.Children.Add(new TextBlock { Text = "差分閾値" }); controls.Children.Add(threshold);
-        DockPanel.SetDock(controls, Dock.Top); root.Children.Add(controls);
-        var footer = new StackPanel { Margin = new Thickness(8), Spacing = 4 };
-        footer.Children.Add(status);
-        footer.Children.Add(new TextBlock { Text = "各チャンネルの最大差を比較します。サイズ外は差分です。アニメーション・複数ページは先頭画像、色管理・位置合わせ・画像マージは対象外です。", TextWrapping = TextWrapping.Wrap });
-        DockPanel.SetDock(footer, Dock.Bottom); root.Children.Add(footer);
-        var leftImage = new Image { Source = leftBitmap, Stretch = Stretch.Fill };
-        var rightImage = new Image { Source = rightBitmap, Stretch = Stretch.Fill };
-        var overlayLeft = new Image { Source = leftBitmap, Stretch = Stretch.None, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
-        var overlayRight = new Image { Source = rightBitmap, Stretch = Stretch.None, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, Opacity = 0.5 };
-        var overlay = new Grid { Width = width, Height = height };
-        overlay.Children.Add(overlayLeft); overlay.Children.Add(overlayRight);
-        var difference = new Image { Stretch = Stretch.Fill };
-        WriteableBitmap? differenceBitmap = null;
-        void UpdateDifference()
-        {
-            var pixels = new byte[checked(width * height * 4)];
-            long changed = 0;
-            var limit = (int)(threshold.Value ?? 0);
-            for (var y = 0; y < height; y++)
-            for (var x = 0; x < width; x++)
-            {
-                var ia = (y * leftBitmap.PixelSize.Width + x) * 4;
-                var ib = (y * rightBitmap.PixelSize.Width + x) * 4;
-                var outside = x >= leftBitmap.PixelSize.Width || y >= leftBitmap.PixelSize.Height || x >= rightBitmap.PixelSize.Width || y >= rightBitmap.PixelSize.Height;
-                var delta = outside ? 255 : Math.Max(Math.Max(Math.Abs(leftPixels[ia] - rightPixels[ib]), Math.Abs(leftPixels[ia + 1] - rightPixels[ib + 1])), Math.Max(Math.Abs(leftPixels[ia + 2] - rightPixels[ib + 2]), Math.Abs(leftPixels[ia + 3] - rightPixels[ib + 3])));
-                var isDifferent = outside || delta > limit;
-                var index = (y * width + x) * 4;
-                pixels[index] = isDifferent ? (byte)80 : (byte)28;
-                pixels[index + 1] = isDifferent ? (byte)80 : (byte)28;
-                pixels[index + 2] = isDifferent ? (byte)255 : (byte)28;
-                pixels[index + 3] = 255;
-                if (isDifferent) changed++;
-            }
-            var next = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-            using (var buffer = next.Lock())
-                for (var y = 0; y < height; y++) Marshal.Copy(pixels, y * width * 4, IntPtr.Add(buffer.Address, y * buffer.RowBytes), width * 4);
-            difference.Source = next;
-            differenceBitmap?.Dispose(); differenceBitmap = next;
-            status.Text = $"左 {leftBitmap.PixelSize} / 右 {rightBitmap.PixelSize} · 差分 {changed:N0} / {(long)width * height:N0} px";
+            await panel.SetFramesAsync(1, 1, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+            return panel;
         }
-        void UpdateZoom()
-        {
-            leftImage.Width = leftBitmap.PixelSize.Width * zoom.Value; leftImage.Height = leftBitmap.PixelSize.Height * zoom.Value;
-            rightImage.Width = rightBitmap.PixelSize.Width * zoom.Value; rightImage.Height = rightBitmap.PixelSize.Height * zoom.Value;
-            difference.Width = width * zoom.Value; difference.Height = height * zoom.Value;
-            overlay.Width = width * zoom.Value; overlay.Height = height * zoom.Value;
-            overlayLeft.Stretch = Stretch.Fill; overlayLeft.Width = leftImage.Width; overlayLeft.Height = leftImage.Height;
-            overlayRight.Stretch = Stretch.Fill; overlayRight.Width = rightImage.Width; overlayRight.Height = rightImage.Height;
-        }
-        zoom.ValueChanged += (_, _) => UpdateZoom();
-        opacity.ValueChanged += (_, _) => overlayRight.Opacity = opacity.Value;
-        threshold.ValueChanged += (_, _) => UpdateDifference();
-        var side = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*"), ColumnSpacing = 8 };
-        side.Children.Add(Scroll(leftImage)); var r = Scroll(rightImage); Grid.SetColumn(r, 1); side.Children.Add(r);
-        root.Children.Add(new TabControl { ItemsSource = new[] { new TabItem { Header = "左右", Content = side }, new TabItem { Header = "重ね合わせ", Content = Scroll(overlay) }, new TabItem { Header = "ピクセル差分", Content = Scroll(difference) } } });
-        UpdateDifference(); UpdateZoom();
-        root.ReleaseResources = () => { leftBitmap.Dispose(); rightBitmap.Dispose(); differenceBitmap?.Dispose(); };
-        return root;
+        catch { panel.Dispose(); throw; }
     }
-
-    private static byte[] ReadPixels(Bitmap bitmap)
-    {
-        using var converted = new WriteableBitmap(bitmap.PixelSize, new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
-        using var buffer = converted.Lock(); bitmap.CopyPixels(buffer);
-        var pixels = new byte[checked(bitmap.PixelSize.Width * bitmap.PixelSize.Height * 4)];
-        for (var y = 0; y < bitmap.PixelSize.Height; y++) Marshal.Copy(IntPtr.Add(buffer.Address, y * buffer.RowBytes), pixels, y * bitmap.PixelSize.Width * 4, bitmap.PixelSize.Width * 4);
-        return pixels;
-    }
-
     public static async Task<Control> BinaryAsync(string left, string right, CancellationToken cancellationToken, bool leftReadOnly = false, bool rightReadOnly = false, Action<string>? guardOutput = null)
     {
         const int limit = 16 * 1024 * 1024;
@@ -251,20 +165,268 @@ public static class SpecializedViews
         { var quoted = false; foreach (var c in text) { if (c == '"') quoted = !quoted; if (!quoted && c == '\t') return '\t'; if (!quoted && c is '\r' or '\n') break; } }
         return ',';
     }
-    private sealed class ImagePanel : DockPanel, IDisposable
+    public sealed class ImagePanel : DockPanel, IDisposable
     {
-        public Action? ReleaseResources { get; set; }
+        private ImageComparisonEngine.Snapshot? _leftSnapshot, _rightSnapshot;
+        private ImageComparisonEngine.DecodedFrame? _leftDecoded, _rightDecoded;
+        private readonly CancellationTokenSource _lifetime = new();
+        private CancellationTokenSource? _operationCancellation;
+        private long _generation;
+        private bool _disposed, _updatingSelectors;
         private Window? _owner;
-        public ImagePanel()
+        private WriteableBitmap? _leftBitmap, _rightBitmap, _differenceBitmap;
+        private readonly NumericUpDown _leftSelector, _rightSelector;
+        private readonly NumericUpDown _threshold = new() { Name = "ImageThreshold", Minimum = 0, Maximum = 255, Value = 0, Increment = 1, Width = 140 };
+        private readonly Slider _zoom = new() { Name = "ImageZoom", Minimum = 0.1, Maximum = 4, Value = 1, Width = 150 };
+        private readonly Slider _opacity = new() { Name = "ImageOpacity", Minimum = 0, Maximum = 1, Value = 0.5, Width = 150 };
+        private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
+        private readonly TextBlock _leftPosition = new(), _rightPosition = new();
+        private readonly Image _leftImage = new() { Stretch = Stretch.Fill };
+        private readonly Image _rightImage = new() { Stretch = Stretch.Fill };
+        private readonly Image _overlayLeft = new() { Stretch = Stretch.Fill, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
+        private readonly Image _overlayRight = new() { Stretch = Stretch.Fill, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top, Opacity = 0.5 };
+        private readonly Image _difference = new() { Stretch = Stretch.Fill };
+        private readonly Grid _overlay = new();
+        private readonly Button _previousLeft, _nextLeft, _previousRight, _nextRight, _previousBoth, _nextBoth;
+
+        internal int LeftFrame { get; private set; } = 1;
+        internal int RightFrame { get; private set; } = 1;
+        internal int LeftFrameCount { get; }
+        internal int RightFrameCount { get; }
+        internal long DifferentPixels { get; private set; }
+        internal long TotalPixels { get; private set; }
+        internal Task CurrentFrameOperation { get; private set; } = Task.CompletedTask;
+
+        internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right)
         {
+            _leftSnapshot = left; _rightSnapshot = right;
+            LeftFrameCount = left.FrameCount; RightFrameCount = right.FrameCount;
+            _leftSelector = new() { Name = "ImageLeftFrame", Minimum = 1, Maximum = LeftFrameCount, Value = 1, Increment = 1, Width = 140 };
+            _rightSelector = new() { Name = "ImageRightFrame", Minimum = 1, Maximum = RightFrameCount, Value = 1, Increment = 1, Width = 140 };
+            _previousLeft = FrameButton("ImagePreviousLeft", "左 ◀", -1, true, false);
+            _nextLeft = FrameButton("ImageNextLeft", "左 ▶", 1, true, false);
+            _previousRight = FrameButton("ImagePreviousRight", "右 ◀", -1, false, true);
+            _nextRight = FrameButton("ImageNextRight", "右 ▶", 1, false, true);
+            _previousBoth = FrameButton("ImagePreviousBoth", "同期 ◀", -1, true, true);
+            _nextBoth = FrameButton("ImageNextBoth", "同期 ▶", 1, true, true);
+            var toolbar = new StackPanel { Spacing = 6, Margin = new Thickness(8) };
+            var frames = new WrapPanel { Orientation = Orientation.Horizontal };
+            foreach (var control in new Control[] { _previousLeft, _leftSelector, _nextLeft, _leftPosition,
+                _previousRight, _rightSelector, _nextRight, _rightPosition, _previousBoth, _nextBoth })
+            { control.Margin = new Thickness(0, 0, 8, 0); frames.Children.Add(control); }
+            toolbar.Children.Add(frames);
+            var settings = new WrapPanel { Orientation = Orientation.Horizontal };
+            foreach (var control in new Control[] { new TextBlock { Text = "倍率" }, _zoom,
+                new TextBlock { Text = "右の不透明度" }, _opacity, new TextBlock { Text = "差分閾値" }, _threshold })
+            { control.Margin = new Thickness(0, 0, 12, 0); settings.Children.Add(control); }
+            toolbar.Children.Add(settings); DockPanel.SetDock(toolbar, Dock.Top); Children.Add(toolbar);
+            var footer = new StackPanel { Margin = new Thickness(8), Spacing = 4 };
+            footer.Children.Add(_status);
+            footer.Children.Add(new TextBlock { Text = "選択したフレームの各チャンネルの最大差を比較します。サイズ外は差分です。色管理・位置合わせ・画像マージは対象外です。", TextWrapping = TextWrapping.Wrap });
+            DockPanel.SetDock(footer, Dock.Bottom); Children.Add(footer);
+            _overlay.Children.Add(_overlayLeft); _overlay.Children.Add(_overlayRight);
+            var side = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*"), ColumnSpacing = 8 };
+            side.Children.Add(Scroll(_leftImage)); var rightScroll = Scroll(_rightImage); Grid.SetColumn(rightScroll, 1); side.Children.Add(rightScroll);
+            Children.Add(new TabControl { ItemsSource = new[] {
+                new TabItem { Header = "左右", Content = side },
+                new TabItem { Header = "重ね合わせ", Content = Scroll(_overlay) },
+                new TabItem { Header = "ピクセル差分", Content = Scroll(_difference) } } });
+            _zoom.ValueChanged += (_, _) => UpdateZoom();
+            _opacity.ValueChanged += (_, _) => { if (!_disposed) _overlayRight.Opacity = _opacity.Value; };
+            _threshold.ValueChanged += async (_, _) =>
+            { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
+            _leftSelector.ValueChanged += async (_, _) =>
+            { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
+            _rightSelector.ValueChanged += async (_, _) =>
+            { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
             AttachedToVisualTree += (_, _) =>
-            { if (_owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; } };
+            { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; } };
+            UpdateNavigation();
         }
+
+        private Button FrameButton(string name, string content, int direction, bool moveLeft, bool moveRight)
+        {
+            var button = new Button { Name = name, Content = content };
+            button.Click += async (_, _) =>
+            {
+                if (_disposed) return;
+                try
+                {
+                    // 未完了の選択も起点にし、連続クリックを失わない。
+                    var left = ReadFrame(_leftSelector, LeftFrameCount);
+                    var right = ReadFrame(_rightSelector, RightFrameCount);
+                    if (moveLeft && moveRight)
+                    {
+                        // 旧同期操作は最大の選択位置を共通起点にし、短い側は末尾に留める。
+                        var target = Math.Max(left, right) + direction;
+                        if (target < 1 || target > Math.Max(LeftFrameCount, RightFrameCount)) return;
+                        left = Math.Min(target, LeftFrameCount); right = Math.Min(target, RightFrameCount);
+                    }
+                    else if (moveLeft) left += direction;
+                    else if (moveRight) right += direction;
+                    if (left < 1 || left > LeftFrameCount || right < 1 || right > RightFrameCount) return;
+                    _updatingSelectors = true;
+                    try { _leftSelector.Value = left; _rightSelector.Value = right; }
+                    finally { _updatingSelectors = false; }
+                    await SelectFromControlsAsync();
+                }
+                catch (ArgumentException error)
+                { RestoreSelectors(); _status.Text = $"画像フレームを表示できません: {error.Message}"; }
+            };
+            return button;
+        }
+
+        private static int ReadFrame(NumericUpDown selector, int count)
+        {
+            var value = selector.Value;
+            if (!value.HasValue || value.Value != decimal.Truncate(value.Value) || value.Value < 1 || value.Value > count)
+                throw new ArgumentException($"画像フレームは1..{count}の整数を指定してください。");
+            return (int)value.Value;
+        }
+
+        private async Task SelectFromControlsAsync()
+        {
+            var generation = _generation;
+            try
+            {
+                var left = ReadFrame(_leftSelector, LeftFrameCount);
+                var right = ReadFrame(_rightSelector, RightFrameCount);
+                var operation = SetFramesAsync(left, right);
+                generation = _generation;
+                UpdateNavigation();
+                await operation;
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception error)
+            {
+                if (!_disposed && generation == _generation)
+                { RestoreSelectors(); _status.Text = $"画像フレームを表示できません: {error.Message}"; }
+            }
+        }
+
+        internal Task SetFramesAsync(int leftFrame, int rightFrame, CancellationToken token = default)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            var left = _leftSnapshot!; var right = _rightSnapshot!;
+            ImageComparisonEngine.ValidateSelection(left, right, leftFrame, rightFrame);
+            token.ThrowIfCancellationRequested();
+            _operationCancellation?.Cancel();
+            var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token);
+            _operationCancellation = cancel;
+            var generation = ++_generation;
+            var threshold = (int)(_threshold.Value ?? 0);
+            var cachedLeft = _leftDecoded?.Number == leftFrame ? _leftDecoded : null;
+            var cachedRight = _rightDecoded?.Number == rightFrame ? _rightDecoded : null;
+            var operation = LoadFramesAsync(left, right, leftFrame, rightFrame, threshold, cachedLeft, cachedRight, generation, cancel);
+            CurrentFrameOperation = operation;
+            return operation;
+        }
+
+        private async Task LoadFramesAsync(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right,
+            int leftFrame, int rightFrame, int threshold, ImageComparisonEngine.DecodedFrame? cachedLeft,
+            ImageComparisonEngine.DecodedFrame? cachedRight, long generation, CancellationTokenSource cancel)
+        {
+            var token = cancel.Token;
+            WriteableBitmap? nextLeft = null, nextRight = null, nextDifference = null;
+            try
+            {
+                var decoded = await Task.Run(() =>
+                {
+                    token.ThrowIfCancellationRequested();
+                    var a = cachedLeft ?? left.Decode(leftFrame, token);
+                    var b = cachedRight ?? right.Decode(rightFrame, token);
+                    var comparison = ImageComparisonEngine.ComparePixels(a, b, threshold, true, token);
+                    return (Left: a, Right: b, Comparison: comparison);
+                }, token);
+                token.ThrowIfCancellationRequested();
+                if (_disposed || generation != _generation) throw new OperationCanceledException(token);
+                nextLeft = CreateBitmap(decoded.Left.Width, decoded.Left.Height, decoded.Left.Pixels, token);
+                nextRight = CreateBitmap(decoded.Right.Width, decoded.Right.Height, decoded.Right.Pixels, token);
+                nextDifference = CreateBitmap(decoded.Comparison.Width, decoded.Comparison.Height, decoded.Comparison.DifferencePixels!, token);
+                token.ThrowIfCancellationRequested();
+                if (_disposed || generation != _generation) throw new OperationCanceledException(token);
+                var oldLeft = _leftBitmap; var oldRight = _rightBitmap; var oldDifference = _differenceBitmap;
+                _leftBitmap = nextLeft; _rightBitmap = nextRight; _differenceBitmap = nextDifference;
+                _leftImage.Source = _overlayLeft.Source = nextLeft;
+                _rightImage.Source = _overlayRight.Source = nextRight;
+                _difference.Source = nextDifference;
+                nextLeft = nextRight = nextDifference = null;
+                _leftDecoded = decoded.Left; _rightDecoded = decoded.Right;
+                LeftFrame = leftFrame; RightFrame = rightFrame;
+                DifferentPixels = decoded.Comparison.DifferentPixels; TotalPixels = decoded.Comparison.TotalPixels;
+                RestoreSelectors(); UpdateZoom();
+                _status.Text = $"左 {decoded.Left.Width}×{decoded.Left.Height} / 右 {decoded.Right.Width}×{decoded.Right.Height} · 差分 {DifferentPixels:N0} / {TotalPixels:N0} px";
+                oldLeft?.Dispose(); oldRight?.Dispose(); oldDifference?.Dispose();
+            }
+            finally
+            {
+                nextLeft?.Dispose(); nextRight?.Dispose(); nextDifference?.Dispose();
+                if (ReferenceEquals(_operationCancellation, cancel)) _operationCancellation = null;
+                cancel.Dispose();
+            }
+        }
+
+        private static WriteableBitmap CreateBitmap(int width, int height, byte[] pixels, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Unpremul);
+            try
+            {
+                using var buffer = bitmap.Lock();
+                for (var y = 0; y < height; y++)
+                {
+                    token.ThrowIfCancellationRequested();
+                    Marshal.Copy(pixels, y * width * 4, IntPtr.Add(buffer.Address, y * buffer.RowBytes), width * 4);
+                }
+                token.ThrowIfCancellationRequested();
+                return bitmap;
+            }
+            catch { bitmap.Dispose(); throw; }
+        }
+
+        private void RestoreSelectors()
+        {
+            _updatingSelectors = true;
+            try { _leftSelector.Value = LeftFrame; _rightSelector.Value = RightFrame; }
+            finally { _updatingSelectors = false; }
+            UpdateNavigation();
+        }
+
+        private void UpdateNavigation()
+        {
+            var left = (int)Math.Clamp(_leftSelector.Value ?? LeftFrame, 1, LeftFrameCount);
+            var right = (int)Math.Clamp(_rightSelector.Value ?? RightFrame, 1, RightFrameCount);
+            _leftPosition.Text = $"左 {LeftFrame}/{LeftFrameCount}"; _rightPosition.Text = $"右 {RightFrame}/{RightFrameCount}";
+            _previousLeft.IsEnabled = left > 1; _nextLeft.IsEnabled = left < LeftFrameCount;
+            _previousRight.IsEnabled = right > 1; _nextRight.IsEnabled = right < RightFrameCount;
+            _previousBoth.IsEnabled = Math.Max(left, right) > 1;
+            _nextBoth.IsEnabled = Math.Max(left, right) < Math.Max(LeftFrameCount, RightFrameCount);
+        }
+
+        private void UpdateZoom()
+        {
+            if (_disposed || _leftDecoded is null || _rightDecoded is null) return;
+            _leftImage.Width = _overlayLeft.Width = _leftDecoded.Width * _zoom.Value;
+            _leftImage.Height = _overlayLeft.Height = _leftDecoded.Height * _zoom.Value;
+            _rightImage.Width = _overlayRight.Width = _rightDecoded.Width * _zoom.Value;
+            _rightImage.Height = _overlayRight.Height = _rightDecoded.Height * _zoom.Value;
+            _overlay.Width = _difference.Width = Math.Max(_leftDecoded.Width, _rightDecoded.Width) * _zoom.Value;
+            _overlay.Height = _difference.Height = Math.Max(_leftDecoded.Height, _rightDecoded.Height) * _zoom.Value;
+        }
+
         private void OwnerClosed(object? sender, EventArgs e) => Dispose();
         public void Dispose()
         {
+            if (_disposed) return;
+            _disposed = true; _generation++;
+            _lifetime.Cancel(); _operationCancellation?.Cancel();
             if (_owner is not null) { _owner.Closed -= OwnerClosed; _owner = null; }
-            var release = ReleaseResources; ReleaseResources = null; release?.Invoke();
+            _leftImage.Source = _rightImage.Source = _overlayLeft.Source = _overlayRight.Source = _difference.Source = null;
+            _leftBitmap?.Dispose(); _rightBitmap?.Dispose(); _differenceBitmap?.Dispose();
+            _leftBitmap = _rightBitmap = _differenceBitmap = null;
+            _leftDecoded = _rightDecoded = null;
+            _leftSnapshot = _rightSnapshot = null;
+            _lifetime.Dispose();
         }
     }
     public sealed class BinaryPanel : DockPanel

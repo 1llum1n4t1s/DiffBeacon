@@ -1705,7 +1705,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--gnu-table-only", StringComparer.Ordinal))
+    if (args.Contains("--image-only", StringComparer.Ordinal))
+    {
+        await ImageFrameScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--gnu-table-only", StringComparer.Ordinal))
     {
         await GnuTableScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1761,6 +1765,7 @@ try
     await GnuLineScenarios.RunAsync(output, fixtures, Run, Check);
     await GnuTextScenarios.RunAsync(output, Run, Check);
     await GnuTableScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageFrameScenarios.RunAsync(output, fixtures, Run, Check);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
     await PackagingCases();

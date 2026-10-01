@@ -16,5 +16,10 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.3" />
     <PackageReference Include="Avalonia.Headless" Version="12.1.3" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/Zip.deflate.WinzipAES.zip" LogicalName="DiffBeacon.SelfTest.Encrypted.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/same-first-left.gif" LogicalName="DiffBeacon.SelfTest.Images.same-first-left.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/same-first-right.gif" LogicalName="DiffBeacon.SelfTest.Images.same-first-right.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/short.gif" LogicalName="DiffBeacon.SelfTest.Images.short.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/disposal.gif" LogicalName="DiffBeacon.SelfTest.Images.disposal.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/disposal-2.png" LogicalName="DiffBeacon.SelfTest.Images.disposal-2.png" />
   </ItemGroup>
 </Project>
