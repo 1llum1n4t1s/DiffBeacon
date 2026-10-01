@@ -99,3 +99,5 @@ var comparison = TextDiffer.Compare(left.Text, right.Text, options, cancellation
 ## 表文書とセル編集
 
 `StructuredComparer.ParseTable` は原文区間付き文書、`CompareTables` は二者／三者の共有行対応とセル判定、`ReplaceCell` は原文の単一区間を置換する編集を返します。旧 `ParseDelimited`・`CompareDelimited` は同じモデルのadapterです。行対応・容量・取消・比較設定の詳細は[表エディターの契約](../../Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
+
+変更ブロック内はraw WordDiffの一致文字量でbest-pairを選び、三者は01/12/20のmapを合成します。全ブロックで予算と候補数を共有し、`AlignmentWorkUsed`・`AlignmentFallbackReason` を返します。`ComparisonOptions.InlineCharacterLevel=false` は文字絞込みを省略し、テキスト行内区間と表行対応で単語区間を使います。外側の表行末は `CompareLineEndings=true` のとき差分になります。初期decodedアンカー分割と旧GNU diffの同値性は未確認です。

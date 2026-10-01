@@ -19,7 +19,7 @@ internal static class CommandLine
                     + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
-                    + "--json LEFT RIGHT\n--table LEFT RIGHT\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]\n"
+                    + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]\n"
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--package-project INPUT_PROJECT OUTPUT_ARCHIVE [--entries 1,3] [--report] [--patch] [--no-documents] [--no-project]\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"
                     + "--archive-list ARCHIVE [--password-stdin]\n--archive-compare LEFT RIGHT [--password-stdin]\n--archive-entry ARCHIVE ENTRY OUTPUT [--password-stdin]\n--archive-repack INPUT OUTPUT [--password-stdin]\n--archive-extract INPUT NEW_DIRECTORY [--password-stdin]\n--archive-create SOURCE_DIRECTORY OUTPUT\n"
                     + "--merge BASE LEFT RIGHT OUTPUT\n--merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"
@@ -113,16 +113,46 @@ internal static class CommandLine
                     WriteJson(w => w.WriteBoolean("different", different)); return different ? 1 : 0;
                 }
                 var delimiter = Path.GetExtension(args[1]).Equals(".tsv", StringComparison.OrdinalIgnoreCase) ? '\t' : ',';
-                var table = StructuredComparer.CompareTables([left.Text, right.Text], new(delimiter), cancellationToken: token);
+                string? basePath = null;
+                var tableFlags = new List<string>();
+                for (var index = 3; index < args.Length; index++)
+                {
+                    if (args[index] == "--base")
+                    {
+                        if (basePath is not null || ++index >= args.Length) throw new ArgumentException("--baseには一つの基準ファイルが必要です。");
+                        basePath = args[index];
+                    }
+                    else
+                    {
+                        var values = args[index] switch
+                        {
+                            "--substitute" => 2,
+                            "--comments" or "--whitespace" or "--ignore-regex" or "--max-work" or "--eol" => 1,
+                            _ => 0
+                        };
+                        tableFlags.Add(args[index]);
+                        while (values-- > 0)
+                        {
+                            if (++index >= args.Length) throw new ArgumentException("比較オプションの値が不足しています。");
+                            tableFlags.Add(args[index]);
+                        }
+                    }
+                }
+                var tableOptions = ParseOptions(tableFlags.ToArray());
+                var ancestor = basePath is null ? null : await TextDocument.LoadAsync(basePath, token);
+                var table = StructuredComparer.CompareTables(ancestor is null ? [left.Text, right.Text] : [left.Text, ancestor.Text, right.Text],
+                    new(delimiter), tableOptions, token);
                 WriteJson(w =>
                 {
                     w.WriteBoolean("different", table.HasDifferences); w.WriteNumber("rows", table.Documents.Max(document => document.Rows.Count));
                     w.WriteNumber("cols", table.ColumnCount); w.WriteNumber("alignedRows", table.Rows.Count); w.WriteBoolean("alignmentFallback", table.AlignmentFallback);
+                    w.WriteNumber("alignmentWorkUsed", table.AlignmentWorkUsed); w.WriteString("alignmentFallbackReason", table.AlignmentFallbackReason);
                     w.WriteStartArray("mapping");
                     foreach (var row in table.Rows)
                     {
                         w.WriteStartObject();
                         if (row.LeftRow is int l) w.WriteNumber("left", l); else w.WriteNull("left");
+                        if (ancestor is not null) { if (row.BaseRow is int b) w.WriteNumber("base", b); else w.WriteNull("base"); }
                         if (row.RightRow is int r) w.WriteNumber("right", r); else w.WriteNull("right");
                         w.WriteEndObject();
                     }
@@ -218,6 +248,11 @@ internal static class CommandLine
                 "--ignore-space" => options with { IgnoreWhitespace = true },
                 "--ignore-blank" => options with { IgnoreBlankLines = true },
                 "--ignore-numbers" => options with { IgnoreNumbers = true },
+                "--word-level" => options with { InlineCharacterLevel = false },
+                "--eol" when index + 1 < args.Length => options with { CompareLineEndings = args[++index] switch
+                {
+                    "strict" => true, "ignore" => false, _ => throw new ArgumentException("改行モードはstrict、ignoreです。")
+                } },
                 "--comments" when index + 1 < args.Length => options with { CommentSyntax = ParseCommentSyntax(args[++index]) },
                 "--whitespace" when index + 1 < args.Length => options with { Whitespace = ParseWhitespace(args[++index]), IgnoreWhitespace = false },
                 "--substitute" when index + 2 < args.Length => options with { SubstitutionRules = [.. options.SubstitutionRules, new SubstitutionRule(args[++index], args[++index])] },

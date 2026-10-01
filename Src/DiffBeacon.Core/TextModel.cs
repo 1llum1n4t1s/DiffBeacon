@@ -26,6 +26,7 @@ public sealed record ComparisonOptions
     public string? IgnoreLinePattern { get; init; }
     public bool IgnoreFinalNewLine { get; init; }
     public bool CompareLineEndings { get; init; }
+    public bool InlineCharacterLevel { get; init; } = true;
     public int MaxFallbackComparisons { get; init; } = 4_000_000;
 
     public string Normalize(string text, CancellationToken cancellationToken = default)

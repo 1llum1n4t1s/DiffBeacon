@@ -2,6 +2,8 @@
 
 必要環境は.NET 10 SDKとPowerShell 7。アーカイブE2Eの独立検証にはPython 3（CIは3.13）も使い、pipパッケージは不要。Pythonはアプリの実行・発行依存ではない。正規のソースディレクトリ名は`Src`であり、macOSでもこの大文字小文字を維持する。通常ビルドは旧C++プロジェクトやsubmoduleに依存しない。
 
+表行対応の元関数fixtureを再採取する場合だけ、WindowsのMSVC・SDK・ICUを使う `pwsh -NoProfile -File build/Generate-LegacyLineReference.ps1` を実行する。出力は`artifacts/verification/table-line-alignment/reproduced`。元関数の抽出・buffer adapter・固定コンパイラパスと採取範囲は[fixtureの出典](../tests/Fixtures/LineAlignment/README.md)を参照する。これらはアプリの通常buildや実行依存に含めない。
+
 ```powershell
 dotnet build DiffBeacon.slnx -c Release
 dotnet run --project Src/DiffBeacon.App/DiffBeacon.App.csproj -c Release --no-build

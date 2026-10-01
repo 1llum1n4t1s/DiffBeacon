@@ -411,7 +411,7 @@ async Task ReportCases()
             }
         }
     }
-    // 600×600の全変更区間は262144のgap上限を超え、決定的fallbackへ入る。
+    // この全変更区間は旧4096本文文字上限を超え、元順序のfallbackへ入る。
     var fallbackLeft = Text("reports/table-fallback-left.csv", string.Concat(Enumerable.Repeat("left-only\n", 600)));
     var fallbackRight = Text("reports/table-fallback-right.csv", string.Concat(Enumerable.Repeat("right-only\n", 600)));
     var fallbackHashes = new[] { fallbackLeft, fallbackRight }.ToDictionary(path => path,
@@ -1705,7 +1705,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--word-diff-only", StringComparer.Ordinal))
+    if (args.Contains("--line-alignment-only", StringComparer.Ordinal))
+    {
+        await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--word-diff-only", StringComparer.Ordinal))
     {
         await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1741,6 +1745,7 @@ try
     {
     await ArchiveCases();
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
+    await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
     await PackagingCases();

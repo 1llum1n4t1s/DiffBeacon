@@ -551,6 +551,57 @@ internal static class HeadlessSelfTest
             Pump(reportPane.CompareProjectAsync()); Pump(reportPane.SaveReportAsync(reportPath)); reportText = File.ReadAllText(reportPath);
             Check("GUI JSON report follows structural normalization", reportText.Contains("data-mode=\"Json\"") && reportText.Contains("data-different=\"false\""));
 
+            var scoreLeft = Path.Combine(output, "table-word-score-left.csv");
+            var scoreRight = Path.Combine(output, "table-word-score-right.csv");
+            const string scoreSource = "A one two three four B\n";
+            File.WriteAllText(scoreLeft, scoreSource);
+            File.WriteAllText(scoreRight, "A xxxxxxxxxxxxxxxxxx B\nC one two three four D\n");
+            reportPane.DiscardChanges(); reportPane.ApplyProject(new() { LeftPath = scoreLeft, RightPath = scoreRight, Mode = "Table" });
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            var scoreTable = reportPane.GetVisualDescendants().OfType<TablePanel>().Single();
+            Check("table raw word score matches central common words instead of prefix ratio", scoreTable.Comparison.Rows.Count == 2
+                && scoreTable.Comparison.Rows[0] is { LeftRow: null, RightRow: 1 }
+                && scoreTable.Comparison.Rows[1] is { LeftRow: 1, RightRow: 2 } && !scoreTable.Comparison.AlignmentFallback);
+            Check("table raw score keeps full original cell and rejects ghost editing", scoreTable.Comparison.GetCell(0, 1, 0)?.Value == scoreSource.TrimEnd('\n')
+                && !scoreTable.SelectCell(0, 0, 0) && scoreTable.CellEditor.IsReadOnly);
+            Screenshot("table-word-score-two.png");
+            reportPane.ApplyProject(new() { LeftPath = scoreLeft, BasePath = scoreLeft, RightPath = scoreRight, Mode = "Table" });
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            scoreTable = reportPane.GetVisualDescendants().OfType<TablePanel>().Single();
+            Check("table raw word score three panes uses shared source map", scoreTable.Comparison.Rows.Count == 2
+                && scoreTable.Comparison.Rows[0] is { LeftRow: null, BaseRow: null, RightRow: 1 }
+                && scoreTable.Comparison.Rows[1] is { LeftRow: 1, BaseRow: 1, RightRow: 2 });
+            var scoreReport = Path.Combine(output, "table-word-score-three.html"); Pump(reportPane.SaveReportAsync(scoreReport));
+            var scoreHtml = File.ReadAllText(scoreReport);
+            Check("table raw score GUI report retains central alignment and all cell texts", scoreHtml.Contains("A one two three four B", StringComparison.Ordinal)
+                && scoreHtml.Contains("C one two three four D", StringComparison.Ordinal)
+                && System.Text.RegularExpressions.Regex.IsMatch(scoreHtml, "data-side=\"left\" data-row=\"1\" data-aligned-row=\"2\""));
+            Screenshot("table-word-score-three.png");
+            var decodedLeft = Path.Combine(output, "table-decoded-left.csv");
+            var decodedBase = Path.Combine(output, "table-decoded-base.csv");
+            var decodedRight = Path.Combine(output, "table-decoded-right.csv");
+            const string decodedLeftText = "a\n\"a\"\n";
+            const string decodedBaseText = "\"a\"\na\n";
+            File.WriteAllText(decodedLeft, decodedLeftText);
+            File.WriteAllText(decodedBase, decodedBaseText);
+            File.WriteAllText(decodedRight, "z\n");
+            reportPane.ApplyProject(new() { LeftPath = decodedLeft, BasePath = decodedBase, RightPath = decodedRight, Mode = "Table" });
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            var decodedTable = reportPane.GetVisualDescendants().OfType<TablePanel>().Single();
+            Check("table three-way keeps decoded equal left/base anchors despite raw quote differences", !decodedTable.Comparison.AlignmentFallback
+                && decodedTable.Comparison.Rows.Count == 2
+                && decodedTable.Comparison.Rows[0] is { LeftRow: 1, BaseRow: 1 }
+                && decodedTable.Comparison.Rows[1] is { LeftRow: 2, BaseRow: 2 }
+                && decodedTable.Comparison.GetKind(0, 0, 0) == DiffBeacon.Core.DiffKind.Equal
+                && decodedTable.Comparison.GetKind(0, 1, 0) == DiffBeacon.Core.DiffKind.Equal);
+            var decodedReport = Path.Combine(output, "table-decoded-anchors.html"); Pump(reportPane.SaveReportAsync(decodedReport));
+            var decodedHtml = File.ReadAllText(decodedReport);
+            Check("table GUI decoded-anchor report retains equal cells and input bytes", System.Text.RegularExpressions.Regex.IsMatch(decodedHtml,
+                "<td data-side=\"left\" data-row=\"1\" data-aligned-row=\"1\"[^>]*class=\"Equal\"")
+                && System.Text.RegularExpressions.Regex.IsMatch(decodedHtml,
+                "<td data-side=\"left\" data-row=\"2\" data-aligned-row=\"2\"[^>]*class=\"Equal\"")
+                && File.ReadAllText(decodedLeft) == decodedLeftText && File.ReadAllText(decodedBase) == decodedBaseText);
+            Screenshot("table-decoded-anchors.png");
             var alignedLeft = Path.Combine(output, "table-edit-left.csv"); var alignedRight = Path.Combine(output, "table-edit-right.csv");
             var alignedBase = Path.Combine(output, "table-edit-base.csv");
             const string rawTable = "id;value;keep\r\n1;'two\r\nlines';'raw''quote'\r\n2;tail;\r\n";

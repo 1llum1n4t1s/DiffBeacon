@@ -105,6 +105,7 @@ public static class TextDiffer
         }
         var wordOptions = new WordDiffOptions
         {
+            CharacterLevel = options.InlineCharacterLevel,
             MatchCase = !options.IgnoreCase, IgnoreNumbers = options.IgnoreNumbers,
             Whitespace = (options.IgnoreWhitespace ? WhitespaceMode.IgnoreAll : options.Whitespace) switch
             {

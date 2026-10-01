@@ -12,15 +12,19 @@ public sealed class TableComparisonResult
     public IReadOnlyList<AlignedTableRow> Rows { get; }
     public bool HasDifferences { get; }
     public bool AlignmentFallback { get; }
+    public int AlignmentWorkUsed { get; }
+    public string? AlignmentFallbackReason { get; }
     public int ColumnCount { get; }
 
     internal TableComparisonResult(IReadOnlyList<TableDocument> documents, IReadOnlyList<AlignedTableRow> rows,
-        IReadOnlyDictionary<(int Row, int Column, int Side), DiffKind> differences, bool alignmentFallback, bool hasDifferences)
+        IReadOnlyDictionary<(int Row, int Column, int Side), DiffKind> differences, WordLineAlignment alignment, bool hasDifferences)
     {
         Documents = documents;
         Rows = rows;
         this.differences = differences;
-        AlignmentFallback = alignmentFallback;
+        AlignmentFallback = alignment.Fallback;
+        AlignmentWorkUsed = alignment.WorkUsed;
+        AlignmentFallbackReason = alignment.FallbackReason;
         HasDifferences = hasDifferences;
         ColumnCount = documents.Max(document => document.ColumnCount);
     }
@@ -52,26 +56,24 @@ public sealed class TableComparisonResult
     }
 }
 
-// 完全一致アンカーの間だけ類似行を探索する。旧共通文字量方式の完全再現ではない。
+// 初期ブロックはセルの一致アンカーで区切り、変更ブロック内は旧raw一致量で対応する。
 internal sealed class TableAlignment
 {
     internal const int MaxTextLength = 64 * 1024 * 1024;
     internal const int MaxRows = 262_144;
     internal const int MaxCells = 1_048_576;
-    private const int MaxGapComparisons = 262_144;
     private readonly ComparisonOptions options;
     private readonly CancellationToken token;
     private readonly TextPreprocessor preprocessor;
     private readonly System.Text.RegularExpressions.Regex? ignoredPattern;
     private readonly Dictionary<string, string> cellKeys = new(StringComparer.Ordinal);
-    private long budget;
-    private bool fallback;
+    private readonly WordLineAlignment alignment;
 
     private TableAlignment(ComparisonOptions options, CancellationToken token)
     {
         this.options = options;
         this.token = token;
-        budget = Math.Clamp(options.MaxFallbackComparisons, 0, 8_000_000);
+        alignment = new(options, token);
         preprocessor = new(options, token);
         ignoredPattern = options.CreateIgnoredLineRegex();
     }
@@ -94,6 +96,7 @@ internal sealed class TableAlignment
                     token.ThrowIfCancellationRequested();
                     AppendPart(key, CellKey(cell.Value));
                 }
+                if (options.CompareLineEndings) AppendPart(key, documents[side].Rows[row].Ending);
                 keys[side][row] = key.ToString();
             }
         }
@@ -101,13 +104,19 @@ internal sealed class TableAlignment
         if (documents.Length == 2)
         {
             rows = [];
-            foreach (var pair in Align(keys[0], 0, keys[0].Length, keys[1], 0, keys[1].Length))
+            var aStart = 0;
+            var bStart = 0;
+            foreach (var (a, b) in ExactMatches(keys[0], keys[1]))
             {
                 token.ThrowIfCancellationRequested();
-                rows.Add(new(pair.A + 1, null, pair.B + 1));
+                AppendBlock(documents, [aStart, bStart], [a, b], rows);
+                rows.Add(new(a + 1, null, b + 1));
+                aStart = a + 1;
+                bStart = b + 1;
             }
+            AppendBlock(documents, [aStart, bStart], [keys[0].Length, keys[1].Length], rows);
         }
-        else rows = AlignThree(keys);
+        else rows = AlignThree(documents, keys);
         var differences = new Dictionary<(int Row, int Column, int Side), DiffKind>();
         var different = false;
         for (var row = 0; row < rows.Count; row++)
@@ -123,7 +132,7 @@ internal sealed class TableAlignment
                 if ((column & 255) == 0) token.ThrowIfCancellationRequested();
                 var l = column < left.Count ? left[column] : null;
                 var r = column < right.Count ? right[column] : null;
-                var lr = Kind(l, r);
+                var lr = RowKind(l, r, 0, aligned.LeftRow, documents.Length - 1, aligned.RightRow);
                 different |= lr != DiffKind.Equal;
                 if (documents.Length == 2)
                 {
@@ -133,8 +142,8 @@ internal sealed class TableAlignment
                 else
                 {
                     var b = column < ancestor.Count ? ancestor[column] : null;
-                    var bl = Kind(b, l);
-                    var br = Kind(b, r);
+                    var bl = RowKind(b, l, 1, aligned.BaseRow, 0, aligned.LeftRow);
+                    var br = RowKind(b, r, 1, aligned.BaseRow, 2, aligned.RightRow);
                     different |= bl != DiffKind.Equal || br != DiffKind.Equal;
                     Store(0, bl);
                     Store(1, Combine(bl, br));
@@ -144,10 +153,17 @@ internal sealed class TableAlignment
                 {
                     if (kind != DiffKind.Equal) differences.Add((row, column, side), kind);
                 }
+                DiffKind RowKind(TableCell? a, TableCell? b, int sideA, int? sourceA, int sideB, int? sourceB)
+                {
+                    var kind = Kind(a, b);
+                    return kind == DiffKind.Equal && a is not null && b is not null && options.CompareLineEndings &&
+                        sourceA is int sa && sourceB is int sb && documents[sideA].Rows[sa - 1].Ending != documents[sideB].Rows[sb - 1].Ending
+                        ? DiffKind.Modified : kind;
+                }
             }
         }
         token.ThrowIfCancellationRequested();
-        return new(Array.AsReadOnly(documents), rows.AsReadOnly(), differences, fallback, different);
+        return new(Array.AsReadOnly(documents), rows.AsReadOnly(), differences, alignment, different);
     }
 
     private static IReadOnlyList<TableCell> Cells(TableDocument document, int? row)
@@ -192,48 +208,109 @@ internal sealed class TableAlignment
         return result;
     }
 
-    private List<AlignedTableRow> AlignThree(string[][] keys)
+    private void AppendBlock(TableDocument[] documents, int[] starts, int[] ends, List<AlignedTableRow> result)
     {
-        var left = Align(keys[1], 0, keys[1].Length, keys[0], 0, keys[0].Length);
-        var right = Align(keys[1], 0, keys[1].Length, keys[2], 0, keys[2].Length);
-        var result = new List<AlignedTableRow>();
-        var li = 0;
-        var ri = 0;
-        for (var ancestor = 0; ancestor <= keys[1].Length; ancestor++)
-        {
-            token.ThrowIfCancellationRequested();
-            var leftStart = li;
-            var rightStart = ri;
-            while (li < left.Count && left[li].A is null) { token.ThrowIfCancellationRequested(); li++; }
-            while (ri < right.Count && right[ri].A is null) { token.ThrowIfCancellationRequested(); ri++; }
-            if (li > leftStart || ri > rightStart)
-            {
-                var lStart = li > leftStart ? left[leftStart].B!.Value : 0;
-                var rStart = ri > rightStart ? right[rightStart].B!.Value : 0;
-                foreach (var insertion in Align(keys[0], lStart, lStart + li - leftStart,
-                    keys[2], rStart, rStart + ri - rightStart))
-                {
-                    token.ThrowIfCancellationRequested();
-                    result.Add(new(insertion.A + 1, null, insertion.B + 1));
-                }
-            }
-            if (ancestor < keys[1].Length)
-            {
-                result.Add(new(left[li++].B + 1, ancestor + 1, right[ri++].B + 1));
-            }
-        }
-        return result;
+        token.ThrowIfCancellationRequested();
+        if (starts.Where((value, side) => value != ends[side]).Any())
+            result.AddRange(alignment.Align(documents, starts, ends));
     }
 
-    private readonly record struct Pair(int? A, int? B);
+    private readonly record struct Edit(int Side, int Begin, int End, int OtherCount);
 
-    private List<Pair> Align(string[] a, int aStart, int aEnd, string[] b, int bStart, int bEnd)
+    private List<AlignedTableRow> AlignThree(TableDocument[] documents, string[][] keys)
     {
-        var result = new List<Pair>();
+        // Base上の変更区間を統合し、その区間ごとに01/12/20を作る。20の無効化を次blockへ持ち越さない。
+        var edits = new List<Edit>();
+        var matches = new List<(int A, int B)>[3];
+        var matchPositions = new int[3];
+        foreach (var side in new[] { 0, 2 })
+        {
+            var baseStart = 0;
+            var otherStart = 0;
+            matches[side] = ExactMatches(keys[1], keys[side]);
+            foreach (var (a, b) in matches[side])
+            {
+                if (a != baseStart || b != otherStart) edits.Add(new(side, baseStart, a, b - otherStart));
+                baseStart = a + 1;
+                otherStart = b + 1;
+            }
+            if (baseStart != keys[1].Length || otherStart != keys[side].Length)
+                edits.Add(new(side, baseStart, keys[1].Length, keys[side].Length - otherStart));
+        }
+        token.ThrowIfCancellationRequested();
+        edits.Sort((a, b) => a.Begin != b.Begin ? a.Begin.CompareTo(b.Begin) : a.End.CompareTo(b.End));
+        var result = new List<AlignedTableRow>();
+        var positions = new int[3];
+        for (var index = 0; index < edits.Count;)
+        {
+            token.ThrowIfCancellationRequested();
+            var begin = edits[index].Begin;
+            var end = edits[index].End;
+            var delta = new int[3];
+            do
+            {
+                token.ThrowIfCancellationRequested();
+                var edit = edits[index++];
+                end = Math.Max(end, edit.End);
+                delta[edit.Side] += edit.OtherCount - (edit.End - edit.Begin);
+            } while (index < edits.Count && edits[index].Begin <= end);
+            EqualUntil(begin);
+            var ends = new[] { positions[0] + end - begin + delta[0], end, positions[2] + end - begin + delta[2] };
+            // 他側の変更に合流しただけの同値行はraw引用表記などで再対応しない。
+            IReadOnlyList<(int A, int B)>[] blockMatches =
+            [
+                BaseMatches(0, true), BaseMatches(2, false),
+                ExactMatches(keys[2], positions[2], ends[2], keys[0], positions[0], ends[0])
+                    .Select(pair => (pair.A - positions[2], pair.B - positions[0])).ToArray()
+            ];
+            result.AddRange(alignment.Align(documents, positions, ends, blockMatches));
+            positions = ends;
+
+            List<(int A, int B)> BaseMatches(int side, bool reverse)
+            {
+                var found = new List<(int A, int B)>();
+                var sideMatches = matches[side];
+                while (matchPositions[side] < sideMatches.Count && sideMatches[matchPositions[side]].A < begin)
+                {
+                    token.ThrowIfCancellationRequested();
+                    matchPositions[side]++;
+                }
+                while (matchPositions[side] < sideMatches.Count && sideMatches[matchPositions[side]].A < end)
+                {
+                    token.ThrowIfCancellationRequested();
+                    var pair = sideMatches[matchPositions[side]++];
+                    var ancestor = pair.A - begin;
+                    var other = pair.B - positions[side];
+                    found.Add(reverse ? (other, ancestor) : (ancestor, other));
+                }
+                return found;
+            }
+        }
+        EqualUntil(keys[1].Length);
+        if (positions[0] != keys[0].Length || positions[2] != keys[2].Length)
+            throw new InvalidOperationException("三者表比較の変更区間が元行を消費していません。");
+        return result;
+
+        void EqualUntil(int ancestor)
+        {
+            while (positions[1] < ancestor)
+            {
+                token.ThrowIfCancellationRequested();
+                result.Add(new(++positions[0], ++positions[1], ++positions[2]));
+            }
+        }
+    }
+
+    private List<(int A, int B)> ExactMatches(string[] a, string[] b)
+        => ExactMatches(a, 0, a.Length, b, 0, b.Length);
+
+    private List<(int A, int B)> ExactMatches(string[] a, int aStart, int aEnd, string[] b, int bStart, int bEnd)
+    {
+        var result = new List<(int A, int B)>();
         while (aStart < aEnd && bStart < bEnd && a[aStart] == b[bStart])
         {
             token.ThrowIfCancellationRequested();
-            result.Add(new(aStart++, bStart++));
+            result.Add((aStart++, bStart++));
         }
         var suffix = 0;
         while (aStart < aEnd - suffix && bStart < bEnd - suffix && a[aEnd - suffix - 1] == b[bEnd - suffix - 1])
@@ -243,20 +320,11 @@ internal sealed class TableAlignment
         }
         aEnd -= suffix;
         bEnd -= suffix;
-        var anchors = Anchors(a, aStart, aEnd, b, bStart, bEnd);
-        foreach (var (ai, bi) in anchors)
-        {
-            token.ThrowIfCancellationRequested();
-            Gap(a, aStart, ai, b, bStart, bi, result);
-            result.Add(new(ai, bi));
-            aStart = ai + 1;
-            bStart = bi + 1;
-        }
-        Gap(a, aStart, aEnd, b, bStart, bEnd, result);
+        result.AddRange(Anchors(a, aStart, aEnd, b, bStart, bEnd));
         for (var index = 0; index < suffix; index++)
         {
             token.ThrowIfCancellationRequested();
-            result.Add(new(aEnd + index, bEnd + index));
+            result.Add((aEnd + index, bEnd + index));
         }
         return result;
     }
@@ -309,96 +377,4 @@ internal sealed class TableAlignment
         return result;
     }
 
-    private void Gap(string[] a, int aStart, int aEnd, string[] b, int bStart, int bEnd, List<Pair> result)
-    {
-        var ac = aEnd - aStart;
-        var bc = bEnd - bStart;
-        if (ac == 0 || bc == 0) { Zip(); return; }
-        var comparisons = (long)ac * bc;
-        if (comparisons > MaxGapComparisons || comparisons > budget)
-        {
-            fallback = true;
-            Zip();
-            return;
-        }
-        // 配列は候補数から上限が決まる。行数の二乗に比例する無制限確保をしない。
-        var width = bc + 1;
-        var costs = new int[(ac + 1) * width];
-        var steps = new byte[costs.Length];
-        for (var ai = 1; ai <= ac; ai++) { token.ThrowIfCancellationRequested(); costs[ai * width] = ai * 1000; }
-        for (var bi = 1; bi <= bc; bi++) { token.ThrowIfCancellationRequested(); costs[bi] = bi * 1000; }
-        for (var ai = 1; ai <= ac; ai++)
-        {
-            token.ThrowIfCancellationRequested();
-            for (var bi = 1; bi <= bc; bi++)
-            {
-                if (!TryCost(a[aStart + ai - 1], b[bStart + bi - 1], out var matchCost))
-                {
-                    fallback = true;
-                    Zip();
-                    return;
-                }
-                var at = ai * width + bi;
-                var diagonal = costs[at - width - 1] + matchCost;
-                var deletion = costs[at - width] + 1000;
-                var insertion = costs[at - 1] + 1000;
-                costs[at] = Math.Min(diagonal, Math.Min(deletion, insertion));
-                steps[at] = costs[at] == diagonal ? (byte)0 : costs[at] == deletion ? (byte)1 : (byte)2;
-            }
-        }
-        var reverse = new List<Pair>(Math.Max(ac, bc));
-        var x = ac;
-        var y = bc;
-        while (x > 0 || y > 0)
-        {
-            token.ThrowIfCancellationRequested();
-            if (x > 0 && y > 0 && steps[x * width + y] == 0) reverse.Add(new(aStart + --x, bStart + --y));
-            else if (x > 0 && (y == 0 || steps[x * width + y] == 1)) reverse.Add(new(aStart + --x, null));
-            else reverse.Add(new(null, bStart + --y));
-        }
-        reverse.Reverse();
-        result.AddRange(reverse);
-        void Zip()
-        {
-            for (var index = 0; index < Math.Max(ac, bc); index++)
-            {
-                token.ThrowIfCancellationRequested();
-                result.Add(new(index < ac ? aStart + index : null, index < bc ? bStart + index : null));
-            }
-        }
-    }
-
-    private bool TryCost(string a, string b, out int cost)
-    {
-        token.ThrowIfCancellationRequested();
-        cost = 1000;
-        if (budget-- <= 0) return false;
-        if (ReferenceEquals(a, b)) { cost = 0; return true; }
-        if (a.Length == b.Length)
-        {
-            if (budget < a.Length) return false;
-            budget -= a.Length;
-            if (a == b) { cost = 0; return true; }
-        }
-        var common = 0;
-        var length = Math.Min(a.Length, b.Length);
-        // prefix/suffix の共通文字量も同じ全体予算へ課金する。
-        while (common < length)
-        {
-            if ((common & 4095) == 0) token.ThrowIfCancellationRequested();
-            if (budget-- <= 0) return false;
-            if (a[common] != b[common]) break;
-            common++;
-        }
-        var suffix = 0;
-        while (suffix < length - common)
-        {
-            if ((suffix & 4095) == 0) token.ThrowIfCancellationRequested();
-            if (budget-- <= 0) return false;
-            if (a[a.Length - suffix - 1] != b[b.Length - suffix - 1]) break;
-            suffix++;
-        }
-        cost = 1500 - (int)(1500L * (common + suffix) / Math.Max(1, Math.Max(a.Length, b.Length)));
-        return true;
-    }
 }
