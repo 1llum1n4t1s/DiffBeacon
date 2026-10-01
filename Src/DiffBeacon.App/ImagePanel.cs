@@ -37,6 +37,7 @@ public static partial class SpecializedViews
         private bool _displayShowDifferences = true;
         private ImageOrientation[] _requestedOrientations = [];
         private ImageOrientation[] _displayOrientations = [];
+        private ImageOffset[] _requestedOffsets = [], _displayOffsets = [];
         private ImageComparisonEngine.DecodedFrame[]? _rawDecoded;
         private int _selectedDiffIndex = -1;
         private readonly NumericUpDown _threshold = new() { Name = "ImageThreshold", Minimum = 0, Maximum = 510, Value = 0, Increment = 1, Width = 120 };
@@ -69,7 +70,7 @@ public static partial class SpecializedViews
             if (_operationCancellation is not null || _saving || _decoded is null)
                 throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
             return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences,
-                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize);
+                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray());
         }
 
         internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null)
@@ -78,6 +79,7 @@ public static partial class SpecializedViews
             _counts = _snapshots.Select(image => image.FrameCount).ToArray();
             _requestedOrientations = _counts.Select(_ => new ImageOrientation()).ToArray();
             _displayOrientations = _requestedOrientations.ToArray();
+            _requestedOffsets = new ImageOffset[_counts.Length]; _displayOffsets = _requestedOffsets.ToArray();
             _readOnly = new bool[_counts.Length];
             _numbers = Enumerable.Repeat(1, _counts.Length).ToArray();
             _selectors = new NumericUpDown[_counts.Length]; _positions = new TextBlock[_counts.Length]; _images = new Image[_counts.Length];
@@ -201,7 +203,7 @@ public static partial class SpecializedViews
 
         private Task SetNumbersAsync(int[] numbers, CancellationToken token, int? requestedSelection = null)
         {
-            ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations); token.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations, _requestedOffsets); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
             CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
@@ -214,6 +216,7 @@ public static partial class SpecializedViews
         {
             var token = cancel.Token; var snapshots = _snapshots!; var cached = _rawDecoded; var selected = requestedSelection ?? _selectedDiffIndex;
             var orientations = _requestedOrientations.ToArray();
+            var offsets = _requestedOffsets.ToArray();
             var blockSize = _requestedBlockSize;
             var candidateSession = _resetEditing ? null : _editSession?.Fork();
             var readOnly = _readOnly.ToArray(); var reset = _resetEditing; var adopted = false;
@@ -233,16 +236,17 @@ public static partial class SpecializedViews
                         }
                         else if (candidateSession.Threshold != threshold) candidateSession.SetThreshold(threshold, token);
                         candidateSession.SetBlockSize(blockSize, token);
-                        for (var pane = 0; pane < orientations.Length; pane++) candidateSession.SetOrientation(pane, orientations[pane], token);
+                        candidateSession.SetViewTransforms(orientations, offsets, token);
                         edit?.Invoke(candidateSession, token);
+                        offsets = candidateSession.CaptureOffsets().ToArray();
                         frames = candidateSession.CaptureViewFrames().ToArray();
-                        comparison = new(frames, candidateSession.Regions, ImageComparisonEngine.ComparePixels(frames[0], frames[^1], threshold, true, token), candidateSession.CaptureFrames());
+                        comparison = new(frames, candidateSession.Regions, ImageComparisonEngine.ComparePixels(frames[0], frames[^1], threshold, true, token, offsets[0], offsets[^1]), candidateSession.CaptureFrames());
                     }
                     else
                     {
                         if (edit is not null) throw new InvalidOperationException("画像コピーとPNG保存は静止画の比較で使用してください。");
                         for (var i = 0; i < frames.Length; i++) { token.ThrowIfCancellationRequested(); frames[i] = cached is not null && cached[i].Number == numbers[i] ? cached[i] : snapshots[i].Decode(numbers[i], token); }
-                        comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token, orientations, blockSize);
+                        comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token, orientations, blockSize, offsets);
                         frames = comparison.Frames.ToArray();
                     }
                     var selection = Math.Min(selected, comparison.Regions.Regions.Count - 1);
@@ -263,6 +267,7 @@ public static partial class SpecializedViews
                 _difference.Source = nextDifference; Array.Fill(next, null); nextDifference = null;
                 _decoded = result.comparison.Frames.ToArray(); _regions = result.comparison.Regions; _rendered = result.rendered; _selectedDiffIndex = result.selection;
                 _rawDecoded = (result.comparison.OriginalFrames ?? result.comparison.Frames).ToArray(); _displayOrientations = orientations; _displayBlockSize = blockSize;
+                _displayOffsets = offsets;
                 _editSession = candidateSession; _resetEditing = _discarded = false; adopted = true;
                 _displayThreshold = threshold; _displayShowDifferences = show;
                 numbers.CopyTo(_numbers, 0); DifferentPixels = pixels.DifferentPixels; TotalPixels = pixels.TotalPixels;
@@ -317,6 +322,7 @@ public static partial class SpecializedViews
                 _requestedThreshold = _displayThreshold;
                 _requestedBlockSize = _displayBlockSize; _blockSizeControl.Value = _displayBlockSize;
                 _requestedOrientations = _displayOrientations.ToArray();
+                _requestedOffsets = _displayOffsets.ToArray();
                 _threshold.Value = ThresholdControlValue(_displayThreshold); _showDifferences.IsChecked = _displayShowDifferences;
             }
             finally { _updatingSelectors = false; }

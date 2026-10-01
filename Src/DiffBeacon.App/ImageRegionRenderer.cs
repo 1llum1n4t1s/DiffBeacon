@@ -3,7 +3,7 @@ namespace DiffBeacon.App;
 // WinIMerge v1.0.54 (da639cdfaeca87aaad0eaceec509afa11ad61421)
 // ImgDiffBuffer.hpp 1888–1964 の GetDiffColorFromPosition / MarkDiff を移植。
 // GPL version 2 or later。原本・ライセンス: tests/Fixtures/ImageRegions、採取: ImageHighlight。
-// offset=0、挿入削除NONE、overlay/wipeなし。色は原本constructorの通常色／選択色。
+// 挿入削除NONE、overlay/wipeなし。色は原本constructorの通常色／選択色。
 internal static class ImageRegionRenderer
 {
     internal static IReadOnlyList<ImageComparisonEngine.DecodedFrame> Render(
@@ -31,8 +31,8 @@ internal static class ImageRegionRenderer
                 throw new ArgumentException("画像フレームの寸法またはBGRAバッファ長が不正です。", nameof(frames));
             width = Math.Max(width, frame.Width); height = Math.Max(height, frame.Height);
         }
-        if ((long)width * height > ImageComparisonEngine.MaximumPixels)
-            throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。");
+        var offsets = ImageOffset.Validate(regions.Offsets, frames.Count);
+        (width, height) = ImageOffset.Canvas(frames, offsets);
         var columns = (width + blockSize - 1) / blockSize;
         var rows = (height + blockSize - 1) / blockSize;
         var length = checked(columns * rows);
@@ -83,7 +83,7 @@ internal static class ImageRegionRenderer
             {
                 token.ThrowIfCancellationRequested();
                 original.Pixels.AsSpan(y * original.Width * 4, original.Width * 4)
-                    .CopyTo(pixels.AsSpan(y * width * 4, original.Width * 4));
+                    .CopyTo(pixels.AsSpan(((y + offsets[pane].Y) * width + offsets[pane].X) * 4, original.Width * 4));
             }
             for (var by = 0; by < rows; by++)
             for (var bx = 0; bx < columns; bx++)

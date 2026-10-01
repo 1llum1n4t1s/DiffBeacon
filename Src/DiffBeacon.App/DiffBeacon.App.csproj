@@ -33,5 +33,6 @@
     <EmbeddedResource Include="../../tests/Fixtures/Images/Tiff/expectations.json" LogicalName="DiffBeacon.SelfTest.Tiff.expectations.json" />
     <EmbeddedResource Include="../../tests/Fixtures/ImageTransforms/input.png" LogicalName="DiffBeacon.SelfTest.ImageTransforms.input.png" />
     <EmbeddedResource Include="../../tests/Fixtures/ImageTransforms/ui-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageTransforms.json.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageOffsets/winimerge-offsets-golden.json" LogicalName="DiffBeacon.SelfTest.ImageOffsets.json" />
   </ItemGroup>
 </Project>

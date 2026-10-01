@@ -248,7 +248,7 @@ public static class WorkspaceStore
             if (project.LegacySettings.Values.Any(value => value is null))
                 throw new InvalidDataException("旧プロジェクト設定の値が null です。");
             ImageViewSettings.Validate(project.ImageSettings);
-            if (string.IsNullOrWhiteSpace(project.BasePath) && (project.ImageSettings.MiddleFrame != 1 || !project.ImageSettings.MiddleOrientation.IsIdentity))
+            if (string.IsNullOrWhiteSpace(project.BasePath) && (project.ImageSettings.MiddleFrame != 1 || !project.ImageSettings.MiddleOrientation.IsIdentity || project.ImageSettings.MiddleOffset != default))
                 throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
         }
     }

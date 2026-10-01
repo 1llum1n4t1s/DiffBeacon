@@ -32,7 +32,8 @@ internal static class ImageCopyCommands
             var token = cancel.Token;
             using var script = await ReadScriptAsync(scriptPath, token);
             var root = script.RootElement;
-            ValidateObject(root, ["blockSize", "threshold", "readOnly", "actions"]);
+            ValidateObject(root, ["blockSize", "threshold", "readOnly", "actions", "includeOffsets"]);
+            var includeOffsets = root.TryGetProperty("includeOffsets", out var include) && include.GetBoolean();
             var blockSize = root.TryGetProperty("blockSize", out var block) ? Integer(block) : 8;
             if (blockSize is < 1 or > 256) throw new ArgumentException("ブロックサイズは1..256です。");
             var threshold = root.TryGetProperty("threshold", out var thresholdJson) ? thresholdJson.GetDouble() : 0;
@@ -54,7 +55,7 @@ internal static class ImageCopyCommands
                 if (!value.TryGetProperty("kind", out var kindJson) || kindJson.ValueKind != JsonValueKind.String)
                     throw new ArgumentException("画像操作kindが必要です。");
                 var kind = kindJson.GetString()!;
-                if (kind is not ("copy" or "all" or "auto" or "undo" or "redo" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy"))
+                if (kind is not ("copy" or "all" or "auto" or "undo" or "redo" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy" or "offset"))
                     throw new ArgumentException("未知の画像操作kindです。");
                 int Read(string field, bool required)
                 {
@@ -62,9 +63,14 @@ internal static class ImageCopyCommands
                     if (required) throw new ArgumentException($"画像操作に {field} が必要です。");
                     return 0;
                 }
-                var source = Read("src", kind is "copy" or "all");
-                var destination = Read("dst", kind is "copy" or "all" or "auto" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy");
-                var index = Read("index", kind is "copy" or "set-savepoint" or "rotate" or "flipx" or "flipy");
+                var source = Read("src", kind is "copy" or "all" or "offset");
+                var destination = Read("dst", kind is "copy" or "all" or "auto" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy" or "offset");
+                var index = Read("index", kind is "copy" or "set-savepoint" or "rotate" or "flipx" or "flipy" or "offset");
+                if (kind == "offset")
+                {
+                    if (destination < 0 || destination >= paths.Count) throw new ArgumentException("位置を変える画像paneが範囲外です。");
+                    includeOffsets = true;
+                }
                 if (kind is "rotate" or "flipx" or "flipy")
                 {
                     if (destination < 0 || destination >= paths.Count)
@@ -100,7 +106,7 @@ internal static class ImageCopyCommands
                 var frames = snapshots.Select(snapshot => snapshot.Decode(1, token)).ToArray();
                 var session = new ImageEditSession(frames, readOnly, blockSize, threshold, token);
                 using var writer = new Utf8JsonWriter(content);
-                writer.WriteStartObject(); writer.WriteStartArray("states"); WriteState(writer, session, hashesOnly, token);
+                writer.WriteStartObject(); writer.WriteStartArray("states"); WriteState(writer, session, hashesOnly, token, includeOffsets);
                 long exportBytes = 0;
                 foreach (var action in actions)
                 {
@@ -115,6 +121,7 @@ internal static class ImageCopyCommands
                         case "redo": result = session.Redo(token) ? 1 : 0; break;
                         case "save": session.MarkSaved(action.Destination); break;
                         case "set-savepoint": session.SetSavePoint(action.Destination, action.Index); break;
+                        case "offset": session.AddOffset(action.Destination, action.Source, action.Index, token); break;
                         case "rotate":
                         case "flipx":
                         case "flipy":
@@ -133,7 +140,7 @@ internal static class ImageCopyCommands
                             exports.Add((action.Path!, frame)); session.MarkSaved(action.Destination); result = 1; break;
                     }
                     writer.WriteStartObject(); writer.WriteNumber("actionResult", result); writer.WritePropertyName("state");
-                    WriteState(writer, session, hashesOnly, token); writer.WriteEndObject();
+                    WriteState(writer, session, hashesOnly, token, includeOffsets); writer.WriteEndObject();
                     writer.Flush();
                 }
                 writer.WriteEndArray(); writer.WriteEndObject(); writer.Flush();
@@ -174,7 +181,7 @@ internal static class ImageCopyCommands
                 throw new ArgumentException("画像操作scriptに未知または重複したpropertyがあります。");
     }
 
-    private static void WriteState(Utf8JsonWriter writer, ImageEditSession session, bool hashesOnly, CancellationToken token)
+    private static void WriteState(Utf8JsonWriter writer, ImageEditSession session, bool hashesOnly, CancellationToken token, bool includeOffsets)
     {
         writer.WriteStartObject(); writer.WriteStartArray("frames");
         foreach (var frame in session.CaptureViewFrames())
@@ -197,7 +204,15 @@ internal static class ImageCopyCommands
             writer.WriteBoolean("flipHorizontal", value.FlipHorizontal); writer.WriteBoolean("flipVertical", value.FlipVertical);
             writer.WriteEndObject();
         }
-        writer.WriteEndArray(); var result = session.Regions;
+        writer.WriteEndArray();
+        if (includeOffsets)
+        {
+            writer.WriteStartArray("offsets");
+            foreach (var value in session.CaptureOffsets())
+            { writer.WriteStartObject(); writer.WriteNumber("x", value.X); writer.WriteNumber("y", value.Y); writer.WriteEndObject(); }
+            writer.WriteEndArray();
+        }
+        var result = session.Regions;
         if ((long)result.Columns * result.Rows > 262_144) throw new InvalidOperationException("画像編集の診断JSONは262,144ブロックまでです。");
         writer.WriteStartArray("regionIds");
         for (var y = 0; y < result.Rows; y++)

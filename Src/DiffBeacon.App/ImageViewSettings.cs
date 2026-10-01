@@ -15,16 +15,24 @@ public sealed record ImageViewSettings
     public ImageOrientation LeftOrientation { get; set; } = new();
     public ImageOrientation MiddleOrientation { get; set; } = new();
     public ImageOrientation RightOrientation { get; set; } = new();
+    public ImageOffset LeftOffset { get; set; }
+    public ImageOffset MiddleOffset { get; set; }
+    public ImageOffset RightOffset { get; set; }
 
     internal int[] FrameNumbers(bool three) => three ? [LeftFrame, MiddleFrame, RightFrame] : [LeftFrame, RightFrame];
     internal ImageOrientation[] Orientations(bool three) => three
         ? [LeftOrientation, MiddleOrientation, RightOrientation] : [LeftOrientation, RightOrientation];
+    internal ImageOffset[] Offsets(bool three) => three
+        ? [LeftOffset, MiddleOffset, RightOffset] : [LeftOffset, RightOffset];
 
     internal static void Validate(ImageViewSettings? settings)
     {
         if (settings is null) throw new InvalidDataException("画像設定が null です。");
         ImageOrientation.Validate(settings.LeftOrientation); ImageOrientation.Validate(settings.MiddleOrientation);
         ImageOrientation.Validate(settings.RightOrientation);
+        foreach (var offset in settings.Offsets(true))
+            if (offset.X < 0 || offset.Y < 0 || offset.X > ImageComparisonEngine.MaximumPixels || offset.Y > ImageComparisonEngine.MaximumPixels)
+                throw new InvalidDataException("保存する画像位置は非負の比較キャンバス範囲内です。");
         if (settings.BlockSize is < 1 or > 256) throw new InvalidDataException("画像差分のブロックサイズは1～256です。");
         if (settings.LeftFrame is < 1 or > 1024 || settings.MiddleFrame is < 1 or > 1024 || settings.RightFrame is < 1 or > 1024)
             throw new InvalidDataException("保存する画像ページ番号は1～1024です。");

@@ -7,14 +7,17 @@ internal static class ImageRegionDiffer
 {
     internal readonly record struct Region(int Id, int Op, int Left, int Top, int Right, int Bottom);
     internal sealed record Result(int Width, int Height, int Columns, int Rows, byte[] Pair01,
-        byte[]? Pair21, byte[]? Pair02, int[] RegionIds, IReadOnlyList<Region> Regions, int ConflictCount);
+        byte[]? Pair21, byte[]? Pair02, int[] RegionIds, IReadOnlyList<Region> Regions, int ConflictCount,
+        IReadOnlyList<ImageOffset>? Offsets = null);
 
     internal static Result Compare(IReadOnlyList<ImageComparisonEngine.DecodedFrame> frames,
-        int blockSize = 8, double threshold = 0, CancellationToken token = default)
+        int blockSize = 8, double threshold = 0, CancellationToken token = default,
+        IReadOnlyList<ImageOffset>? offsets = null)
     {
         if (frames.Count is not (2 or 3)) throw new ArgumentException("画像は二者または三者です。");
         if (blockSize is < 1 or > 256) throw new ArgumentOutOfRangeException(nameof(blockSize));
         if (!double.IsFinite(threshold) || threshold < 0) throw new ArgumentOutOfRangeException(nameof(threshold));
+        var positions = ImageOffset.Validate(offsets, frames.Count);
         var width = 0; var height = 0;
         foreach (var frame in frames)
         {
@@ -24,14 +27,13 @@ internal static class ImageRegionDiffer
                 throw new ArgumentException("画像フレームの寸法またはBGRAバッファ長が不正です。");
             width = Math.Max(width, frame.Width); height = Math.Max(height, frame.Height);
         }
-        if ((long)width * height > ImageComparisonEngine.MaximumPixels)
-            throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。");
+        (width, height) = ImageOffset.Canvas(frames, positions);
         var columns = (width + blockSize - 1) / blockSize;
         var rows = (height + blockSize - 1) / blockSize;
         var length = checked(columns * rows);
-        var pair01 = ComparePair(frames[0], frames[1]);
-        var pair21 = frames.Count == 3 ? ComparePair(frames[2], frames[1]) : null;
-        var pair02 = frames.Count == 3 ? ComparePair(frames[0], frames[2]) : null;
+        var pair01 = ComparePair(0, 1);
+        var pair21 = frames.Count == 3 ? ComparePair(2, 1) : null;
+        var pair02 = frames.Count == 3 ? ComparePair(0, 2) : null;
         var ids = new int[length];
         var regions = new List<Region>();
         var pending = new Queue<int>();
@@ -66,14 +68,17 @@ internal static class ImageRegionDiffer
             regions.Add(new(id, op, left, top, right, bottom));
         }
         token.ThrowIfCancellationRequested();
-        return new(width, height, columns, rows, pair01, pair21, pair02, ids, regions, conflicts);
+        return new(width, height, columns, rows, pair01, pair21, pair02, ids, regions, conflicts, positions);
 
         bool Candidate(int index) => pair01[index] != 0 || pair21 is not null && pair21[index] != 0;
 
-        byte[] ComparePair(ImageComparisonEngine.DecodedFrame a, ImageComparisonEngine.DecodedFrame b)
+        byte[] ComparePair(int first, int second)
         {
+            var a = frames[first]; var b = frames[second];
+            var ao = positions[first]; var bo = positions[second];
             var grid = new byte[length];
-            var pairWidth = Math.Max(a.Width, b.Width); var pairHeight = Math.Max(a.Height, b.Height);
+            var pairWidth = Math.Max(a.Width + ao.X, b.Width + bo.X);
+            var pairHeight = Math.Max(a.Height + ao.Y, b.Height + bo.Y);
             var squaredThreshold = threshold * threshold;
             for (var by = 0; by < rows; by++)
             {
@@ -86,18 +91,21 @@ internal static class ImageRegionDiffer
                 {
                     var y = by * blockSize + i;
                     token.ThrowIfCancellationRequested();
-                    if (y >= a.Height || y >= b.Height)
+                    var ay = y - ao.Y; var byPixel = y - bo.Y;
+                    if (ay < 0 || ay >= a.Height || byPixel < 0 || byPixel >= b.Height)
                     {
                         grid.AsSpan(by * columns, columns).Fill(1);
                         continue;
                     }
-                    var aRow = y * a.Width * 4; var bRow = y * b.Width * 4;
-                    if (a.Width == b.Width && threshold == 0
+                    var aRow = ay * a.Width * 4; var bRow = byPixel * b.Width * 4;
+                    if (ao.X == bo.X && a.Width == b.Width && threshold == 0
                         && a.Pixels.AsSpan(aRow, a.Width * 4).SequenceEqual(b.Pixels.AsSpan(bRow, b.Width * 4))) continue;
                     for (var x = 0; x < pairWidth; x++)
                     {
                         if ((x & 4095) == 0) token.ThrowIfCancellationRequested();
-                        if (x >= a.Width || x >= b.Width || Different(a.Pixels, aRow + x * 4, b.Pixels, bRow + x * 4, squaredThreshold))
+                        var ax = x - ao.X; var bxPixel = x - bo.X;
+                        if (ax < 0 || ax >= a.Width || bxPixel < 0 || bxPixel >= b.Width
+                            || Different(a.Pixels, aRow + ax * 4, b.Pixels, bRow + bxPixel * 4, squaredThreshold))
                             grid[by * columns + x / blockSize] = 1;
                     }
                 }

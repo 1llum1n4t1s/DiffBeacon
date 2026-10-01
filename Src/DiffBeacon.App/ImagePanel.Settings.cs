@@ -14,6 +14,8 @@ public static partial class SpecializedViews
             Zoom = _zoom.Value, OverlayOpacity = _opacity.Value, ReportAllFrames = ReportAllFrames,
             View = _imageViews.SelectedIndex switch { 1 => "Overlay", 2 => "PixelDifference", _ => "SideBySide" },
             LeftOrientation = _displayOrientations[0], RightOrientation = _displayOrientations[^1],
+            LeftOffset = _displayOffsets[0], RightOffset = _displayOffsets[^1],
+            MiddleOffset = _displayOffsets.Length == 3 ? _displayOffsets[1] : default,
             BlockSize = _displayBlockSize,
             MiddleOrientation = _displayOrientations.Length == 3 ? _displayOrientations[1] : new()
         };
@@ -23,10 +25,10 @@ public static partial class SpecializedViews
             ObjectDisposedException.ThrowIf(_disposed, this);
             var requested = settings with { };
             ImageViewSettings.Validate(requested);
-            if (_counts.Length == 2 && (requested.MiddleFrame != 1 || !requested.MiddleOrientation.IsIdentity))
+            if (_counts.Length == 2 && (requested.MiddleFrame != 1 || !requested.MiddleOrientation.IsIdentity || requested.MiddleOffset != default))
                 throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
             var numbers = requested.FrameNumbers(_counts.Length == 3);
-            ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, requested.Orientations(_counts.Length == 3));
+            ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, requested.Orientations(_counts.Length == 3), requested.Offsets(_counts.Length == 3));
             token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
             var previous = CaptureSettings();
@@ -56,6 +58,7 @@ public static partial class SpecializedViews
                 // decimal表示の丸めを復号・保存・レポートのDouble閾値へ戻さない。
                 _requestedThreshold = settings.Threshold;
                 _requestedOrientations = settings.Orientations(_counts.Length == 3);
+                _requestedOffsets = settings.Offsets(_counts.Length == 3);
                 _requestedBlockSize = settings.BlockSize; _blockSizeControl.Value = settings.BlockSize;
                 _showDifferences.IsChecked = settings.ShowDifferences;
                 _zoom.Value = settings.Zoom; _opacity.Value = settings.OverlayOpacity;
@@ -74,9 +77,25 @@ public static partial class SpecializedViews
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
             if (pane < 0 || pane >= _counts.Length) throw new ArgumentOutOfRangeException(nameof(pane));
             var next = _requestedOrientations.ToArray(); next[pane] = orientation;
-            ImageComparisonEngine.ValidateSelection(_snapshots!, _numbers, next);
+            ImageComparisonEngine.ValidateSelection(_snapshots!, _numbers, next, _requestedOffsets);
             _requestedOrientations = next;
             return SetNumbersAsync(_numbers.ToArray(), token);
+        }
+
+        internal Task AddOffsetAsync(int pane, int dx, int dy, CancellationToken token = default)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this); token.ThrowIfCancellationRequested();
+            if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
+            var next = ImageOffset.Move(_requestedOffsets, pane, dx, dy);
+            ImageComparisonEngine.ValidateSelection(_snapshots!, _numbers, _requestedOrientations, next);
+            _requestedOffsets = next;
+            return SetNumbersAsync(_numbers.ToArray(), token);
+        }
+
+        private Task MoveChosenAsync(int dx, int dy)
+        {
+            var pane = _editPane.SelectedIndex;
+            return pane < 0 || pane >= _counts.Length ? Task.CompletedTask : AddOffsetAsync(pane, dx, dy);
         }
 
         private Task RotateChosenAsync(int degrees)

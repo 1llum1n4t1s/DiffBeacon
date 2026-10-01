@@ -1706,7 +1706,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-transforms-only", StringComparer.Ordinal))
+    if (args.Contains("--image-offsets-only", StringComparer.Ordinal))
+    {
+        await ImageOffsetScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--image-transforms-only", StringComparer.Ordinal))
     {
         await ImageTransformScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1806,6 +1810,7 @@ try
     await ImageProjectScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageTransformScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageHighlightScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageOffsetScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageCopyScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();

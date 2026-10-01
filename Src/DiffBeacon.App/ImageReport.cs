@@ -23,7 +23,8 @@ internal static class ImageReport
         token.ThrowIfCancellationRequested();
         var images = input.Images;
         var orientations = input.Orientations?.ToArray();
-        ImageComparisonEngine.ValidateComparison(images, input.FrameNumbers, input.Threshold, orientations);
+        var offsets = input.Offsets?.ToArray();
+        ImageComparisonEngine.ValidateComparison(images, input.FrameNumbers, input.Threshold, orientations, offsets);
         if (input.EditedFrames is { } edited && (edited.Count != images.Count || images.Any(image => image.FrameCount != 1)
             || edited.Any(frame => frame.Number != 1))) throw new ArgumentException("編集済みレポートは静止画の全入力が必要です。");
         if (titles.Count != images.Count) throw new ArgumentException("全画像の見出しが必要です。");
@@ -55,8 +56,8 @@ internal static class ImageReport
             token.ThrowIfCancellationRequested();
             var numbers = input.FrameNumbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
             var set = input.EditedFrames is { } raw
-                ? ImageComparisonEngine.CompareDecoded(raw, input.Threshold, true, token, orientations, input.BlockSize)
-                : ImageComparisonEngine.DecodeSelection(images, numbers, input.Threshold, true, token, orientations, input.BlockSize);
+                ? ImageComparisonEngine.CompareDecoded(raw, input.Threshold, true, token, orientations, input.BlockSize, offsets)
+                : ImageComparisonEngine.DecodeSelection(images, numbers, input.Threshold, true, token, orientations, input.BlockSize, offsets);
             var a = set.Frames[0]; var b = set.Frames[^1];
             token.ThrowIfCancellationRequested();
             var comparison = set.Pixels;

@@ -74,6 +74,10 @@ public static partial class SpecializedViews
             AddEditButton(panel, "ImageRotateRight", "右90°", "orientation", () => RotateChosenAsync(-90));
             AddEditButton(panel, "ImageFlipHorizontal", "左右反転", "orientation", () => FlipChosenAsync(true));
             AddEditButton(panel, "ImageFlipVertical", "上下反転", "orientation", () => FlipChosenAsync(false));
+            AddEditButton(panel, "ImageOffsetLeft", "位置 ←", "orientation", () => MoveChosenAsync(-1, 0));
+            AddEditButton(panel, "ImageOffsetRight", "位置 →", "orientation", () => MoveChosenAsync(1, 0));
+            AddEditButton(panel, "ImageOffsetUp", "位置 ↑", "orientation", () => MoveChosenAsync(0, -1));
+            AddEditButton(panel, "ImageOffsetDown", "位置 ↓", "orientation", () => MoveChosenAsync(0, 1));
             AddEditButton(panel, "ImageAutoMerge", "競合以外を自動コピー", "auto", () => AutoMergeAsync(_editPane.SelectedIndex));
             AddEditButton(panel, "ImageUndo", "元に戻す", "undo", () => UndoEditAsync());
             AddEditButton(panel, "ImageRedo", "やり直す", "redo", () => RedoEditAsync());

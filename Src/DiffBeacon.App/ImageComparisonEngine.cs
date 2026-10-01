@@ -76,7 +76,7 @@ internal static class ImageComparisonEngine
         PixelComparison Pixels, IReadOnlyList<DecodedFrame>? OriginalFrames = null);
     internal sealed record ReportInput(IReadOnlyList<Snapshot> Images, double Threshold, IReadOnlyList<int>? FrameNumbers,
         int SelectedDiffIndex = -1, bool ShowDifferences = true, IReadOnlyList<DecodedFrame>? EditedFrames = null,
-        IReadOnlyList<ImageOrientation>? Orientations = null, int BlockSize = 8);
+        IReadOnlyList<ImageOrientation>? Orientations = null, int BlockSize = 8, IReadOnlyList<ImageOffset>? Offsets = null);
 
     internal static async Task<Snapshot> OpenAsync(string path, CancellationToken token)
     {
@@ -117,7 +117,7 @@ internal static class ImageComparisonEngine
         => ValidateSelection([left, right], [leftFrame, rightFrame]);
 
     internal static void ValidateSelection(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers,
-        IReadOnlyList<ImageOrientation>? orientations = null)
+        IReadOnlyList<ImageOrientation>? orientations = null, IReadOnlyList<ImageOffset>? offsets = null)
     {
         ValidateImages(images);
         if (numbers.Count != images.Count) throw new ArgumentException("全入力のフレーム番号が必要です。");
@@ -125,7 +125,7 @@ internal static class ImageComparisonEngine
         long work = 0;
         for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(numbers[i]) + TransformWork(images[i], numbers[i], orientations?[i]));
         ValidateWork(work);
-        ValidateCanvas(images, numbers, orientations);
+        ValidateCanvas(images, numbers, orientations, offsets);
     }
 
     internal static void ValidateComparison(Snapshot left, Snapshot right, int? leftFrame, int? rightFrame,
@@ -136,11 +136,11 @@ internal static class ImageComparisonEngine
     }
 
     internal static void ValidateComparison(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers, double threshold,
-        IReadOnlyList<ImageOrientation>? orientations = null)
+        IReadOnlyList<ImageOrientation>? orientations = null, IReadOnlyList<ImageOffset>? offsets = null)
     {
         ValidateThreshold(threshold); ValidateImages(images);
         ValidateOrientations(orientations, images.Count);
-        if (numbers is not null) { ValidateSelection(images, numbers, orientations); return; }
+        if (numbers is not null) { ValidateSelection(images, numbers, orientations, offsets); return; }
         // 短い入力は最後に選ばれたページを保持し、全ページ出力にもその復号費用を含める。
         var pages = images.Max(image => image.FrameCount);
         long work = 0;
@@ -149,7 +149,7 @@ internal static class ImageComparisonEngine
         {
             var current = images.Select(image => Math.Min(page, image.FrameCount)).ToArray();
             for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(current[i]) + TransformWork(images[i], current[i], orientations?[i]));
-            canvasWork = checked(canvasWork + ValidateCanvas(images, current, orientations) * (images.Count + 1));
+            canvasWork = checked(canvasWork + ValidateCanvas(images, current, orientations, offsets) * (images.Count + 1));
         }
         ValidateWork(work);
         if (canvasWork > MaximumDecodeWork) throw new InvalidOperationException("画像の描画作業量が256Mピクセルを超えます。");
@@ -172,13 +172,15 @@ internal static class ImageComparisonEngine
     }
 
     private static long ValidateCanvas(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers,
-        IReadOnlyList<ImageOrientation>? orientations = null)
+        IReadOnlyList<ImageOrientation>? orientations = null, IReadOnlyList<ImageOffset>? offsets = null)
     {
+        var positions = ImageOffset.Validate(offsets, images.Count);
         var width = 0; var height = 0;
         for (var i = 0; i < images.Count; i++)
         {
             var size = images[i].GetDimensions(numbers[i]); var swap = orientations?[i].SwapsDimensions == true;
-            width = Math.Max(width, swap ? size.Height : size.Width); height = Math.Max(height, swap ? size.Width : size.Height);
+            width = Math.Max(width, checked((swap ? size.Height : size.Width) + positions[i].X));
+            height = Math.Max(height, checked((swap ? size.Width : size.Height) + positions[i].Y));
         }
         var pixels = (long)width * height;
         if (pixels > MaximumPixels) throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。");
@@ -189,29 +191,33 @@ internal static class ImageComparisonEngine
     { if (!double.IsFinite(threshold) || threshold < 0) throw new ArgumentOutOfRangeException(nameof(threshold), "差分閾値は有限の非負数です。"); }
 
     internal static FrameComparison CompareDecoded(IReadOnlyList<DecodedFrame> frames, double threshold,
-        bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8)
+        bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
+        IReadOnlyList<ImageOffset>? offsets = null)
     {
         ValidateThreshold(threshold);
         ValidateOrientations(orientations, frames.Count);
         var views = orientations is null ? frames : frames.Select((frame, index) => orientations[index].Apply(frame, token)).ToArray();
-        var regions = ImageRegionDiffer.Compare(views, blockSize, threshold, token);
-        var pixels = ComparePixels(views[0], views[^1], threshold, includeDifferencePixels, token);
+        var positions = ImageOffset.Validate(offsets, frames.Count);
+        var regions = ImageRegionDiffer.Compare(views, blockSize, threshold, token, positions);
+        var pixels = ComparePixels(views[0], views[^1], threshold, includeDifferencePixels, token, positions[0], positions[^1]);
         return new(views, regions, pixels, frames);
     }
 
     internal static FrameComparison DecodeSelection(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers,
-        double threshold, bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8)
+        double threshold, bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
+        IReadOnlyList<ImageOffset>? offsets = null)
     {
-        ValidateSelection(images, numbers, orientations); ValidateThreshold(threshold);
+        ValidateSelection(images, numbers, orientations, offsets); ValidateThreshold(threshold);
         var frames = new DecodedFrame[images.Count];
         for (var i = 0; i < images.Count; i++) frames[i] = images[i].Decode(numbers[i], token);
-        return CompareDecoded(frames, threshold, includeDifferencePixels, token, orientations, blockSize);
+        return CompareDecoded(frames, threshold, includeDifferencePixels, token, orientations, blockSize, offsets);
     }
 
     internal static ComparisonResult Compare(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers,
-        double threshold, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8)
+        double threshold, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
+        IReadOnlyList<ImageOffset>? offsets = null)
     {
-        ValidateComparison(images, numbers, threshold, orientations);
+        ValidateComparison(images, numbers, threshold, orientations, offsets);
         var selected = numbers is not null;
         token.ThrowIfCancellationRequested();
         var frames = new List<FrameResult>();
@@ -221,7 +227,7 @@ internal static class ImageComparisonEngine
         {
             token.ThrowIfCancellationRequested();
             var currentNumbers = numbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
-            var comparison = DecodeSelection(images, currentNumbers, threshold, false, token, orientations, blockSize);
+            var comparison = DecodeSelection(images, currentNumbers, threshold, false, token, orientations, blockSize, offsets);
             var a = comparison.Frames[0]; var b = comparison.Frames[^1];
             var middle = images.Count == 3 ? comparison.Frames[1] : null;
             var rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, blockSize: blockSize, token: token);
@@ -237,12 +243,13 @@ internal static class ImageComparisonEngine
     }
 
     internal static PixelComparison ComparePixels(DecodedFrame? left, DecodedFrame? right, double threshold,
-        bool includeDifferencePixels, CancellationToken token)
+        bool includeDifferencePixels, CancellationToken token, ImageOffset leftOffset = default, ImageOffset rightOffset = default)
     {
         ValidateThreshold(threshold);
         var squaredThreshold = threshold * threshold;
-        var width = Math.Max(left?.Width ?? 0, right?.Width ?? 0);
-        var height = Math.Max(left?.Height ?? 0, right?.Height ?? 0);
+        ImageOffset.Validate([leftOffset, rightOffset], 2);
+        var width = Math.Max(checked((left?.Width ?? 0) + leftOffset.X), checked((right?.Width ?? 0) + rightOffset.X));
+        var height = Math.Max(checked((left?.Height ?? 0) + leftOffset.Y), checked((right?.Height ?? 0) + rightOffset.Y));
         ValidateDimensions(width, height);
         var difference = includeDifferencePixels ? new byte[checked(width * height * 4)] : null;
         long changed = 0;
@@ -252,12 +259,15 @@ internal static class ImageComparisonEngine
             for (var x = 0; x < width; x++)
             {
                 if ((x & 4095) == 0) token.ThrowIfCancellationRequested();
-                var outside = left is null || right is null || x >= left.Width || y >= left.Height || x >= right.Width || y >= right.Height;
+                var lx = x - leftOffset.X; var ly = y - leftOffset.Y;
+                var rx = x - rightOffset.X; var ry = y - rightOffset.Y;
+                var outside = left is null || right is null || lx < 0 || ly < 0 || rx < 0 || ry < 0
+                    || lx >= left.Width || ly >= left.Height || rx >= right.Width || ry >= right.Height;
                 var isDifferent = outside;
                 if (!outside)
                 {
-                    var ia = (y * left!.Width + x) * 4;
-                    var ib = (y * right!.Width + x) * 4;
+                    var ia = (ly * left!.Width + lx) * 4;
+                    var ib = (ry * right!.Width + rx) * 4;
                     isDifferent = ImageRegionDiffer.Different(left.Pixels, ia, right.Pixels, ib, squaredThreshold);
                 }
                 if (isDifferent) changed++;

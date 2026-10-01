@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+位置ずらしの比較・コピー核は `--image-offsets-only` と全体E2Eに含む。[原本fixture](../Fixtures/ImageOffsets/README.md)の12ケース43状態を実`--image-copy`の全BGRA・寸法・変換・位置・dirty/savepoint・Undo/Redoへ照合する。raw PNGは独立BCL復号で確認する。不正pane、整数極値、巨大canvasの拒否では先行exportを含め既存出力・入力・scriptを保護する。代表6状態で通常CLI・source-generated JSONの二回往復・単体／包装／展開再読込みHTMLの原画と位置canvas全BGRAを照合する。不正座標・型・整数overflow・巨大canvas・中央なし・重複引数で入力と既存出力を保護する。UI自己検証は全12ケース43状態の全canvas BGRA・位置・方向・dirty・履歴、readonly矢印実ボタン、取消・古い完了・多ページと設定保存復元をPNG／NDJSONに記録する。
+
 回転・反転は `--image-transforms-only` と全体E2Eで検証する。[原本fixture](../Fixtures/ImageTransforms/README.md)の288ケース・2,816状態を実`--image-copy`別プロセスの全BGRA・寸法・変換・領域・共有Undo／Redo・保存点へ照合する。PNG出力は表示変換を焼き込まない原画へ独立復号して比較する。通常`--image`、プロジェクト保存・復元、単体／包装／再読込みHTML、不正設定と出力保護も同じ限定実行に含む。GUI自己検証は代表14操作列、読取り専用の実回転ボタン、取消・古い完了、TIFFページ切替・再読込み・レポートを検査し、4枚の画面PNGとJSONを保持する。限定実行とheadless操作は通常デスクトップの操作確認とは区別する。
 
 画像設定の保存・復元は `--image-project-only` と全体E2Eで検証する。実CLIの`--project-copy`・`--report-project`・`--package-project`へ保存設定を渡し、source-generated JSONの全値・既定値・境界・CLI上書き、単体／包装HTMLの原画PNG全BGRA、包装の相対入力・展開再読込みを照合する。不正型・null・範囲外・中央なし指定・存在しないページでは、入力と既存出力のbytes・属性を保持し終了2を確認する。GUI自己検証の`HeadlessImageProjectChecks`は再比較・workspace再読込み、取消・古い完了・表示保持を操作し、PNG・設定JSON・選択HTMLを保持する。

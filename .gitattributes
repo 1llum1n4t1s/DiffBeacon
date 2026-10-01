@@ -32,3 +32,5 @@ tests/Fixtures/ImageTransforms/input.png -text
 tests/Fixtures/ImageTransforms/extract.py -text
 tests/Fixtures/ImageTransforms/LICENSE.txt -text
 tests/Fixtures/ImageTransforms/ui-golden.json.gz -text
+tests/Fixtures/ImageOffsets/winimerge-offsets-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageOffsets/extract.py -text
