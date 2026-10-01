@@ -34,7 +34,7 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 通常DLLの全E2Eは2954成功・0失敗・8スキップ、headless UIは139成功・0失敗。ローカルWindows x64 Native AOTの発行と139 UI成功を確認した。入力・出力・行対応JSON・実テキスト入力/ボタン操作・UTF16BE BOM保存後のbytes・PNGを`artifacts/e2e/table-full`・`artifacts/verification/table-repaired`へ保存する。疎な表は各側2万実セル/1万列/10001行で、表示コントロール数を制限し、従来2億座標相当の検索を実セルのみで完了した（ローカル通常DLLの1実測25 ms、比較用benchmarkではない）。
 
-ローカルWindows x64 Native AOT全E2Eは2985成功・0失敗・3スキップ。GitHub4構成は確認中。新規文脈のレビューはagent thread limitで未実施。既存担当の補足確認でクリック例外・疎な表示/検索の膨張を修正し、記録を`artifacts/verification/table-next`に保持する。headless操作と通常デスクトップの実測は区別する。
+ローカルWindows x64 Native AOT全E2Eは2985成功・0失敗・3スキップ。[GitHub .NET CI 36796867483](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36796867483)は実装SHA `d14a9a9932c771a53e7bb8840b9dc4a84e32ea46` の4構成で成功。Windows x64/ARM64は各2985成功・0失敗・3スキップ、Mac Intel/ARM64は各2994成功・0失敗・2スキップ、UIは各139成功。SDK10.0.401、CS/IL/MSB警告0をログ・manifestで確認。同SHAの[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36796867472)もワークフロー成功。全構成の入力・出力・PNG・JSON・ログを`artifacts/github/36796867483`へ保存した。WindowsのUnixモードとMac固有経路、ファイルシステムのcase/NFC alias作成可否によるスキップを集計へ保持する。GUIでUTF16BE BOM付き保存した表を別のNative AOTプロセスで再読込みし、Python標準CSVパーサーで三者の全セル値・順序を照合して一致した（`external-reload-oracle.json`）。新規文脈のレビューはagent thread limitで未実施。既存担当の補足確認でクリック例外・疎な表示/検索の膨張を修正し、記録を`artifacts/verification/table-next`に保持する。headless操作と通常デスクトップの実測は区別する。
 
 ## 実行した検証
 
