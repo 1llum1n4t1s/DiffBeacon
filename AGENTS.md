@@ -15,7 +15,7 @@ dotnet build DiffBeacon.slnx -c Release
 dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/local
 ```
 
-UI の変更は次の描画・操作検証も実行し、出力された PNG と JSON を確認する。
+UI の変更は次の描画・操作検証も実行し、出力された PNG と JSON を確認する。レイアウト変更では `HeadlessImageCopyChecks` の通常／最小ウィンドウでの三者画像viewportと、スクロール後のPNG保存ボタンへの到達も確認する。
 
 ```powershell
 dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifacts/verification/managed
