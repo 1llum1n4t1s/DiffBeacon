@@ -19,7 +19,7 @@ WinMerge を基にした、ファイル・フォルダー比較アプリです�
 - ファイルフィルター：旧 `.flt` の include / exclude、ファイル・ディレクトリ規則、名前・サイズ・日時の条件式。
 - 比較プロジェクトの保存・読込み、WinMerge プロジェクトの読込み、unified patch、HTMLレポート。
 
-テキストの強調は変更ブロック内の単語を対応させ、離れた変更範囲をそれぞれ示します。詳細比較の上限に達した行は行全体を強調し、状態欄に件数を表示します。CLIの `--word-diff LEFT RIGHT` は原文のUTF-16変更区間をJSONで返します。`--word-level`、`--eol strict|ignore|space`、`--separators TEXT` などの指定は `--help` で確認できます。
+テキストの強調は変更ブロック内の単語を対応させ、離れた変更範囲をそれぞれ示します。詳細比較の上限に達した行は行全体を強調し、状態欄に件数を表示します。
 
 表ビューではセルを選択して上部の編集欄を変更し、「セルを変更」で本文へ反映します。同セル内の前後検索、固定した文字選択範囲、一件・選択ペインの全置換が使えます。未反映のセル編集は先に反映・破棄してください。行・列・ペインを指定して選択し、列の多い表は「前の列」「次の列」で移動できます。詳しくは[表の操作と制限](Docs/TABLE-EDITOR.md)を参照してください。
 
@@ -53,6 +53,8 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 - macOS：`osx-x64`（Intel）または `osx-arm64`（Apple Silicon）の成果物内の `DiffBeacon.app.tar.gz` を展開します。tar は実行権限を保持するため、展開した `DiffBeacon.app` を使ってください。署名・公証は発行工程に含まれていません。
 
 コマンドラインでも比較できます。`DiffBeacon --help` で一覧を表示し、`DiffBeacon --compare LEFT RIGHT` でテキストを比較します。Windows では `DiffBeacon.exe`、macOS では `DiffBeacon.app/Contents/MacOS/DiffBeacon` が実行ファイルです。終了コードは0が一致・成功、1が差分・競合、2がエラーです。
+
+`DiffBeacon --word-diff LEFT RIGHT` は原文の変更区間を JSON で返します。`ranges` の各要素は `[左の開始位置, 左の長さ, 右の開始位置, 右の長さ]` で、位置は0始まりの UTF-16 単位です。既定では文字単位まで絞り込み、`--word-level` で単語単位にできます。`--eol strict|ignore|space`、`--separators TEXT` などの指定は `--help` で確認できます。詳細比較を省略した場合は `fallback` と `fallbackReason` に示し、両原文全体を変更区間として返します。
 
 保存した比較プロジェクトを包装するには、`DiffBeacon --package-project project.json comparison.zip --report --patch` を使います。`--entries 1,3` で包装する比較を番号で選択でき、`--no-documents`・`--no-project` で文書・プロジェクトを除外できます。
 

@@ -30,6 +30,7 @@ dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifac
 - 共通設定は `Directory.Build.props`。nullable・AOT 互換性解析を維持し、既存 `packages.lock.json` とパッケージ参照を整合させる。Core は外部パッケージや実行時 DLL 探索に依存させない。
 - 保存時の文字コード・BOM・改行・既存ファイル属性、比較の処理上限、キャンセル、リンクとルート外パスの拒否を保つ。詳細な不変条件は DESIGN.md と各コンポーネントの README に従う。
 - プロバイダー変換結果を元ファイルにテキスト保存しない。外部実行ファイルは明示登録・選択したものだけを使い、保存したプロジェクトの ID から自動探索・実行しない。
+- 行内差分の変更は Core の `WordDiffer`・`TextDiffer`、GUI の強調と省略件数、CLI の `--word-diff`・`--compare`、単体・包装 HTML を照合する。[DESIGN.md](DESIGN.md#データフロー) の原文区間・ブロック投影・共有予算を維持し、[WordDiff E2E](tests/DiffBeacon.E2E/README.md) と UI 自己検証で離れた変更・改行横断・上限時の表示を確認する。生成済み `WordCharacterProfile.cs` の分類表は直接編集せず、[fixture の出典と再生成手順](tests/Fixtures/WordDiffs/README.md) に従う。
 - アーカイブ経路の変更は [Providers README](Src/DiffBeacon.Providers/README.md#managed-アーカイブサービスの検証契約) の失敗条件と検証契約を確認し、GUI・CLI・標準プロバイダーの呼び出し元を照合する。SharpCompress のライセンス同梱と、E2E fixture の出典・ライセンス・SHA-256 の記録を維持する。
 - プロジェクト・包装経路の変更は `WorkspaceStore`、GUI の保存・復元・包装、CLI の `--project-copy`・`--package-project` を照合する。[DESIGN.md](DESIGN.md#データフロー) の相対参照・スナップショット・出力保護の境界を維持し、[包装 E2E](tests/DiffBeacon.E2E/README.md) の展開・再読込み・パッチ適用まで確認する。クリップボードの OS 操作は headless 検証と区別する。
 - レポート経路の変更は GUI の `SaveReportAsync`、CLI の `--report`・`--report-project`、包装の `--report` を照合する。[DESIGN.md](DESIGN.md#データフロー) の本文確定・出力保護・上限・キャンセルの境界を維持し、[レポート E2E](tests/DiffBeacon.E2E/README.md#形式別-html-レポートの実行経路) と UI 自己検証で確認する。
