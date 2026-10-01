@@ -316,6 +316,16 @@ internal static class HeadlessSelfTest
             ], ActiveEntryIndex = 1 };
             Pump(WorkspaceStore.SaveWorkspaceAsync(projectPath, project)); Pump(window.OpenWorkspaceAsync(projectPath, discardChanges: true));
             Check("workspace opens all comparisons in order and restores active tab", window.SessionPanes.Count == 3 && window.ActivePane == window.SessionPanes[1] && window.SessionPanes.Select(x => x.LeftPath.Text).SequenceEqual(project.Entries.Select(x => x.LeftPath)));
+            window.Height = 700; Dispatcher.UIThread.RunJobs();
+            var compactTable = window.ActivePane.GetVisualDescendants().OfType<TablePanel>().Single();
+            compactTable.SelectCell(0, 1, 1); Screenshot("workspace-table-compact.png");
+            var compactList = compactTable.GetVisualDescendants().OfType<ListBox>().Single();
+            var compactCell = compactTable.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault(block => block.Text == "semi;colon");
+            var compactPosition = compactCell?.TranslatePoint(new Point(0, 0), compactList);
+            Check("compact table retains rendered cells below scrollable toolbar", compactList.Bounds.Height > 0 && compactPosition is { } position
+                && position.Y < compactList.Bounds.Height && position.Y + compactCell!.Bounds.Height > 0,
+                $"tableHeight={compactTable.Bounds.Height};listHeight={compactList.Bounds.Height};cellY={compactPosition?.Y};windowHeight={window.Bounds.Height}");
+            window.Height = 850; Dispatcher.UIThread.RunJobs();
             Check("workspace table applies custom separator and quote", window.ActivePane.GetVisualDescendants().OfType<TextBlock>().Any(block => block.Text == "semi;colon"));
             Screenshot("workspace-table.png");
             window.SelectSession(2); Dispatcher.UIThread.RunJobs();

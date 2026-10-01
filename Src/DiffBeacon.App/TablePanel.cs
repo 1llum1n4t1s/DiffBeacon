@@ -64,8 +64,14 @@ public sealed partial class TablePanel : DockPanel
         foreach (var control in new Control[] { SearchText, _case, _regex, _word, _wrap, _allSides })
         { control.Margin = new Thickness(4); searching.Children.Add(control); }
         Button(searching, "前の一致", () => FindAsync(-1)); Button(searching, "次の一致", () => FindAsync(1));
-        top.Children.Add(searching); AddSearchActions(top); top.Children.Add(_status);
-        DockPanel.SetDock(top, Dock.Top); Children.Add(top);
+        top.Children.Add(searching); AddSearchActions(top);
+        var toolbar = new ScrollViewer { Content = top, MaxHeight = 240,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
+        // 短いウィンドウや大きいフォントでも、一覧へ表示領域を残す。
+        SizeChanged += (_, args) => toolbar.MaxHeight = Math.Clamp(args.NewSize.Height * .5, 40, 240);
+        DockPanel.SetDock(toolbar, Dock.Top); Children.Add(toolbar);
+        DockPanel.SetDock(_status, Dock.Bottom); Children.Add(_status);
         _rows.ItemTemplate = new FuncDataTemplate<int>((index, _) => RenderRow(index), false);
         Children.Add(_rows);
         UpdateRows();
