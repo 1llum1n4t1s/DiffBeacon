@@ -17,3 +17,7 @@ tests/Fixtures/ImageHighlight/probe-adapter.cpp -text whitespace=cr-at-eol
 tests/Fixtures/ImageCopy/winimerge-image-copy-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/ImageCopy/reference-source/ImgMergeBuffer.hpp -text -whitespace
 tests/Fixtures/ImageCopy/probe-adapter.cpp -text whitespace=cr-at-eol
+# APNGの期待値・再生成器・ライセンスの固定SHAをOSの改行変換から保護する。
+tests/Fixtures/Images/Apng/expectations.json -text whitespace=cr-at-eol
+tests/Fixtures/Images/Apng/generate.py -text
+tests/Fixtures/Images/Apng/LICENSE.txt -text
