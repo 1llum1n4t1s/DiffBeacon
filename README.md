@@ -54,6 +54,10 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 コマンドラインでも比較できます。`DiffBeacon --help` で一覧を表示し、`DiffBeacon --compare LEFT RIGHT` でテキストを比較します。Windows では `DiffBeacon.exe`、macOS では `DiffBeacon.app/Contents/MacOS/DiffBeacon` が実行ファイルです。終了コードは0が一致・成功、1が差分・競合、2がエラーです。
 
+テキスト比較の `--max-work N` は行対応と行内差分それぞれの処理予算を指定します。行対応を省略した場合は JSON の `lineFallback`・`lineFallbackReason` に示し、元の全行を保持して未確定部分を変更扱いにします。
+
+画像は `DiffBeacon --image LEFT RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N --right-frame N` を両方指定します。番号は1始まり、`--threshold N` は0～255（既定0）です。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
+
 表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
 
 `DiffBeacon --word-diff LEFT RIGHT` は原文の変更区間を JSON で返します。`ranges` の各要素は `[左の開始位置, 左の長さ, 右の開始位置, 右の長さ]` で、位置は0始まりの UTF-16 単位です。既定では文字単位まで絞り込み、`--word-level` で単語単位にできます。`--eol strict|ignore|space`、`--separators TEXT` などの指定は `--help` で確認できます。詳細比較を省略した場合は `fallback` と `fallbackReason` に示し、両原文全体を変更区間として返します。
@@ -66,7 +70,7 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 WinMerge の旧ActiveXプラグイン、ブラウザーのDOM・JavaScript・画面比較、Explorer / Finder 拡張、インストーラー登録は未対応です。プロバイダーで変換した内容は読取り専用で、元ファイルへのテキスト保存はできません。
 
-- 上限エラー：テキスト読込みは既定64 MiB、画像は各1600万ピクセル、バイナリビューの表示・編集は各16 MiBが上限です。変換形式の範囲と制限は [プロバイダーの説明](Src/DiffBeacon.Providers/README.md) を参照してください。
+- 上限エラー：テキスト読込みは既定64 MiB、バイナリビューの表示・編集は各16 MiBが上限です。画像は入力各64 MiB・1600万ピクセルまでで、比較キャンバス・フレーム数・復号作業量にも上限があります。詳しくは [画像の操作](Docs/IMAGE-VIEWER.md)、変換形式の範囲と制限は [プロバイダーの説明](Src/DiffBeacon.Providers/README.md) を参照してください。
 - 保存できない：読取り専用属性や書込み権限を確認してください。読込み後に入力パスを変えた場合は、比較して開き直してから保存します。
 - 文字化け：BOMなしの文字コード推定は完全ではありません。読込み・保存の対応とフォールバックは [テキスト処理の説明](Src/DiffBeacon.Core/README.md#テキスト比較と保存) を参照してください。
 - アーカイブを開けない：暗号化入力はアーカイブビューでパスワードを入力してください。標準プロバイダーの `archive` にはパスワードを指定できません。分割アーカイブ、リンクや危険・重複した格納名は拒否します。RAR作成と暗号化出力は未対応です。
