@@ -182,7 +182,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         top.Children.Add(options);
         top.Children.Add(CreateAdvancedFilters());
         top.Children.Add(CreateMergeToolbar());
-        DockPanel.SetDock(top, Dock.Top); root.Children.Add(top);
+        var toolbar = new ScrollViewer { Content = top, MaxHeight = 400,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
+        // 設定・操作欄が折り返しても、比較本文に領域を残す。
+        SizeChanged += (_, args) => toolbar.MaxHeight = Math.Clamp(args.NewSize.Height * .5, 80, 400);
+        DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
         DockPanel.SetDock(_status, Dock.Bottom); root.Children.Add(_status);
         DiffList.ItemTemplate = new FuncDataTemplate<DiffRow>((row, _) => BuildRow(row), false);
         var diffRoot = new DockPanel();

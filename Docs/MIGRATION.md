@@ -38,6 +38,8 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 追加の実画面検証で、原文反映後に読取り専用へ変更して中止すると、通常writerが原文復元も拒否することを確認した。反映した原文がそのままである場合に限る復元callbackを使い、原文とモデル、元ファイル、変更後の読取り専用状態を保持する。通常DLLとWindows x64 Native AOTの220 UI成功にこのケースを含める。失敗と修正後の記録は `artifacts/verification/table-search-readonly-before`・`table-search-readonly-final`、契約・ログは `artifacts/verification/table-search` に保持する。
 
+Macの700px画面では一覧高21・セルY15で文字の下端が切れており、セルが少しでもviewport内にある旧確認では見逃していた。共通の設定・操作欄もスクロール可能にし、960×700でセルの高さ全体が一覧内にある確認へ変更した。最新のローカル通常DLLとWindows x64 Native AOTは220 UI成功、通常DLLの全E2Eは2954成功・0失敗・8スキップ。Windowsで一覧高63・セルY28・文字高17を観測した。結果は `artifacts/verification/table-search-full-viewport-final`・`artifacts/e2e/table-search-full-viewport-final`、ビルド・発行ログは同契約ディレクトリに保持する。
+
 ## 表の行合わせ・セル編集
 
 原文区間付き文書と共有行対応モデルを導入し、GUI・`--table`・単体/包装HTMLの判定を統一した。完全一致アンカーの間で上限付き類似対応、三者では祖先対応と左右挿入対応を統合する。セル編集は一つの原文区間だけを変更し、Undo/Redo、readonly・祖先・ghost・古い座標の拒否、既存保存へ接続した。検索は前後・折返し・case・regex・word・ペイン指定、画面は32列ページと行仮想化。同セル内検索、固定文字範囲、一件/選択ペイン全置換と一括Undoへ拡張した。旧方式の全スコア・矩形文字編集・raw横断検索は未完了。[表の契約](TABLE-EDITOR.md)を参照する。
