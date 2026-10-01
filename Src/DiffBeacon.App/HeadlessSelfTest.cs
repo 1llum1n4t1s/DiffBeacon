@@ -38,6 +38,27 @@ internal static class HeadlessSelfTest
             pane.NavigateDifference(1);
             Check("next difference selects changed row", pane.DiffList.SelectedIndex == pane.CurrentDiff!.Blocks[0].RowStart);
             Screenshot("comparison.png");
+            pane.LeftEditor.Text = "alpha old omega old end\n"; pane.RightEditor.Text = "alpha new omega new end\n";
+            pane.CompareEditors(); Screenshot("word-diff-inline.png");
+            var highlightedWords = pane.DiffList.GetVisualDescendants().OfType<TextBlock>()
+                .SelectMany(block => block.Inlines?.OfType<Avalonia.Controls.Documents.Run>() ?? [])
+                .Where(run => Equals(run.Foreground, Avalonia.Media.Brushes.Gold)).Select(run => run.Text).ToArray();
+            Check("word diff renders separate changed words and retains equal middle", highlightedWords.Count(word => word == "old") == 2
+                && highlightedWords.Count(word => word == "new") == 2 && highlightedWords.Length == 4,
+                string.Join("|", highlightedWords));
+            var inlineTextBlocks = pane.DiffList.GetVisualDescendants().OfType<TextBlock>()
+                .Where(block => block.Inlines?.OfType<Avalonia.Controls.Documents.Run>().Any() == true).ToArray();
+            Check("word diff keeps full text visible with inherited foreground", inlineTextBlocks.Length == 2
+                && inlineTextBlocks.All(block => block.Foreground is not null)
+                && inlineTextBlocks.Select(block => string.Concat(block.Inlines!.OfType<Avalonia.Controls.Documents.Run>().Select(run => run.Text)))
+                    .Order().SequenceEqual(new[] { "alpha new omega new end", "alpha old omega old end" }.Order()));
+            var wordReport = Path.Combine(output, "word-diff-inline.html"); Pump(pane.SaveReportAsync(wordReport));
+            var wordHtml = File.ReadAllText(wordReport);
+            Check("word diff GUI report shares all four inline spans", System.Text.RegularExpressions.Regex.Matches(wordHtml, "<span class=\"inline-diff\">old</span>").Count == 2
+                && System.Text.RegularExpressions.Regex.Matches(wordHtml, "<span class=\"inline-diff\">new</span>").Count == 2);
+            Check("word diff preview and report retain original source files", File.ReadAllText(left) == "title\r\nleft value\r\ntail\r\n"
+                && File.ReadAllText(right) == "title\r\nright value\r\ntail\r\n");
+            pane.DiscardChanges(); Pump(pane.ComparePathsAsync()); pane.NavigateDifference(1);
             pane.CopyRightButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check("merge button copies selected block", pane.LeftEditor.Text == pane.RightEditor.Text && pane.CurrentDiff is { HasDifferences: false });
             Check("merge is marked unsaved", pane.HasUnsavedChanges);
@@ -487,8 +508,9 @@ internal static class HeadlessSelfTest
                 LeftDescription = "左<script>", BaseDescription = "共通祖先", RightDescription = "右" });
             Pump(reportPane.CompareProjectAsync()); reportPane.RightEditor.Text += "edited report content\n";
             Pump(reportPane.SaveReportAsync(reportPath)); var reportText = File.ReadAllText(reportPath);
+            var reportVisibleText = System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(reportText, "<[^>]*>", ""));
             Check("GUI report uses all three panes and live unsaved edits with safe descriptions", reportText.Contains("data-side=\"base\"")
-                && reportText.Contains("ancestor only") && reportText.Contains("edited report content") && reportText.Contains("左&lt;script&gt;")
+                && reportVisibleText.Contains("ancestor only") && reportVisibleText.Contains("edited report content") && reportText.Contains("左&lt;script&gt;")
                 && !reportText.Contains("<script>") && !File.ReadAllText(right).Contains("edited report content"));
             var reportViews = reportPane.GetVisualDescendants().OfType<TabControl>().First();
             reportViews.SelectedIndex = 1; Dispatcher.UIThread.RunJobs(); Screenshot("report-three-pane.png");

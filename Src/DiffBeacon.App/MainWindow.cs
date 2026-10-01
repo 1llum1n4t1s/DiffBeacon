@@ -340,6 +340,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         DiffList.ItemsSource = CurrentDiff.Rows;
         _diffIndex = -1;
         _status.Text = $"{CurrentDiff.Blocks.Count} 個の差分  ·  左 {_leftDocument?.EncodingName ?? "UTF-8"}  /  右 {_rightDocument?.EncodingName ?? "UTF-8"}";
+        if (diff.InlineFallbackCount > 0) _status.Text += $"  ·  詳細比較を省略した {diff.InlineFallbackCount} 行は行全体を強調";
         _views.SelectedItem = _diffTab;
     }
 
@@ -567,7 +568,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var values = new[] { row.LeftLineNumber?.ToString() ?? "", row.LeftText ?? "", row.RightLineNumber?.ToString() ?? "", row.RightText ?? "" };
         for (var i = 0; i < values.Length; i++)
         {
-            var text = new TextBlock { FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 13, Margin = new Thickness(6, 2), TextTrimming = TextTrimming.CharacterEllipsis, Foreground = i % 2 == 0 ? Brushes.Gray : null };
+            var text = new TextBlock { FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 13, Margin = new Thickness(6, 2), TextTrimming = TextTrimming.CharacterEllipsis };
+            if (i % 2 == 0) text.Foreground = Brushes.Gray;
             var spans = i == 1 ? row.LeftSpans : i == 3 ? row.RightSpans : [];
             if (spans.Count == 0) text.Text = values[i];
             else

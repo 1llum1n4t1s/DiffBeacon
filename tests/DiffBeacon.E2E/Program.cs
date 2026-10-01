@@ -1705,7 +1705,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--reports-only", StringComparer.Ordinal))
+    if (args.Contains("--word-diff-only", StringComparer.Ordinal))
+    {
+        await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--reports-only", StringComparer.Ordinal))
     {
         await ReportCases();
     }
@@ -1736,6 +1740,7 @@ try
     else
     {
     await ArchiveCases();
+    await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
     await PackagingCases();

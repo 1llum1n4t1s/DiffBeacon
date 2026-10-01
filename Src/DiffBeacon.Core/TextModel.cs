@@ -86,6 +86,8 @@ public sealed record DiffResult(string LeftText, string RightText, IReadOnlyList
     IReadOnlyList<DiffBlock> Blocks)
 {
     public bool HasDifferences => Blocks.Count != 0;
+    public int InlineWorkUsed { get; init; }
+    public int InlineFallbackCount { get; init; }
 }
 
 internal readonly record struct TextLine(string Content, string Ending)

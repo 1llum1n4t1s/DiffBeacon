@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace DiffBeacon.Core;
 
 public static class TextDiffer
@@ -41,15 +43,13 @@ public static class TextDiffer
         var rows = new List<DiffRow>();
         var nextA = 0;
         var nextB = 0;
+        var inlineBudget = Math.Clamp(options.MaxFallbackComparisons, 0, 8_000_000);
+        var inlineInitialBudget = inlineBudget;
+        var inlineFallbackCount = 0;
         void AddRow(int? ai, int? bi, DiffKind kind)
         {
             var row = new DiffRow(ai + 1, bi + 1, ai.HasValue ? a[ai.Value].Content : null,
                 bi.HasValue ? b[bi.Value].Content : null, kind);
-            if (kind == DiffKind.Modified)
-            {
-                var (ls, rs) = Inline(row.LeftText!, row.RightText!);
-                row = row with { LeftSpans = ls, RightSpans = rs };
-            }
             rows.Add(row);
         }
         void AddSegment(int stopA, int stopB)
@@ -84,6 +84,7 @@ public static class TextDiffer
         var consumedB = 0;
         for (var index = 0; index < rows.Count;)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (rows[index].Kind == DiffKind.Equal)
             {
                 if (rows[index].LeftLineNumber.HasValue) consumedA++;
@@ -95,25 +96,112 @@ public static class TextDiffer
             var beginB = consumedB;
             while (index < rows.Count && rows[index].Kind != DiffKind.Equal)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (rows[index].LeftLineNumber.HasValue) consumedA++;
                 if (rows[index++].RightLineNumber.HasValue) consumedB++;
             }
             blocks.Add(new(blocks.Count, start, index - start, beginA, consumedA - beginA,
                 beginB, consumedB - beginB));
         }
-        return new(left, right, rows, blocks);
-    }
+        var wordOptions = new WordDiffOptions
+        {
+            MatchCase = !options.IgnoreCase, IgnoreNumbers = options.IgnoreNumbers,
+            Whitespace = (options.IgnoreWhitespace ? WhitespaceMode.IgnoreAll : options.Whitespace) switch
+            {
+                WhitespaceMode.IgnoreAll => WordWhitespaceMode.IgnoreAll,
+                WhitespaceMode.IgnoreChanges => WordWhitespaceMode.IgnoreChanges,
+                _ => WordWhitespaceMode.CompareAll
+            },
+            Eol = options.CompareLineEndings ? WordEolMode.Strict : WordEolMode.Ignore
+        };
+        foreach (var block in blocks)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var leftBlock = JoinBlock(block, true);
+            var rightBlock = JoinBlock(block, false);
+            var words = WordDiffer.Compare(leftBlock.Text, rightBlock.Text, wordOptions,
+                inlineBudget, cancellationToken);
+            inlineBudget -= words.WorkUsed;
+            if (words.Fallback)
+                for (var row = block.RowStart; row < block.RowStart + block.RowCount; row++)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    if (rows[row].Kind == DiffKind.Modified) inlineFallbackCount++;
+                }
+            Project(leftBlock.Lines, words, true);
+            Project(rightBlock.Lines, words, false);
+        }
 
-    private static (IReadOnlyList<InlineSpan>, IReadOnlyList<InlineSpan>) Inline(string a, string b)
-    {
-        var prefix = 0;
-        while (prefix < a.Length && prefix < b.Length && a[prefix] == b[prefix]) prefix++;
-        if (prefix > 0 && prefix < a.Length && char.IsLowSurrogate(a[prefix])) prefix--;
-        var suffix = 0;
-        while (suffix < a.Length - prefix && suffix < b.Length - prefix && a[^(suffix + 1)] == b[^(suffix + 1)]) suffix++;
-        if (suffix > 0 && suffix < a.Length && char.IsLowSurrogate(a[a.Length - suffix])) suffix--;
-        return (a.Length - prefix - suffix > 0 ? [new(prefix, a.Length - prefix - suffix)] : [],
-            b.Length - prefix - suffix > 0 ? [new(prefix, b.Length - prefix - suffix)] : []);
+        // 各側の実在する行を原文終端ごと連結する。ghost は文字も offset も持たない。
+        (string Text, List<(int Row, int Start, int Length)> Lines) JoinBlock(DiffBlock block, bool leftSide)
+        {
+            var text = new StringBuilder();
+            var lines = new List<(int Row, int Start, int Length)>();
+            for (var row = block.RowStart; row < block.RowStart + block.RowCount; row++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var sourceRow = leftSide ? rows[row].LeftLineNumber : rows[row].RightLineNumber;
+                if (sourceRow is null) continue;
+                var line = (leftSide ? a : b)[sourceRow.Value - 1];
+                lines.Add((row, text.Length, line.Content.Length));
+                Append(line.Content);
+                Append(line.Ending);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            return (text.ToString(), lines);
+
+            void Append(string value)
+            {
+                for (var start = 0; start < value.Length; start += 4096)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    text.Append(value, start, Math.Min(4096, value.Length - start));
+                }
+            }
+        }
+
+        // 単調な原文区間を前向きに走査し、改行を除く Content との交差だけを投影する。
+        void Project(List<(int Row, int Start, int Length)> lines, WordDiffResult words, bool leftSide)
+        {
+            var ranges = new List<WordRange>();
+            foreach (var difference in words.Differences)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var range = leftSide ? difference.Left : difference.Right;
+                if (range.Length > 0) ranges.Add(range);
+            }
+            var rangeIndex = 0;
+            foreach (var line in lines)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                while (rangeIndex < ranges.Count && ranges[rangeIndex].Start + ranges[rangeIndex].Length <= line.Start)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    rangeIndex++;
+                }
+                if (rows[line.Row].Kind != DiffKind.Modified) continue;
+                var spans = new List<InlineSpan>();
+                var end = line.Start + line.Length;
+                while (rangeIndex < ranges.Count && ranges[rangeIndex].Start < end)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var range = ranges[rangeIndex];
+                    var rangeEnd = range.Start + range.Length;
+                    var start = Math.Max(line.Start, range.Start);
+                    var stop = Math.Min(end, rangeEnd);
+                    if (stop > start) spans.Add(new(start - line.Start, stop - start));
+                    if (rangeEnd > end) break;
+                    rangeIndex++;
+                }
+                rows[line.Row] = leftSide ? rows[line.Row] with { LeftSpans = spans.AsReadOnly() }
+                    : rows[line.Row] with { RightSpans = spans.AsReadOnly() };
+            }
+        }
+        cancellationToken.ThrowIfCancellationRequested();
+        return new(left, right, rows, blocks)
+        {
+            InlineWorkUsed = inlineInitialBudget - inlineBudget, InlineFallbackCount = inlineFallbackCount
+        };
     }
 
     // 一意な行をアンカーにし、アンカーのない区間だけ線形メモリの LCS で比較する。

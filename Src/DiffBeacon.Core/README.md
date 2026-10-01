@@ -21,7 +21,9 @@ if (comparison.Blocks.Count > 0)
 - 既存ファイルの Unix モード (実行権限を含む)、Windows の Hidden/System/Archive/NotContentIndexed 属性を保持し、読み取り専用ファイルへの保存は拒否します。
 - CRLF/LF/CR、混在する行末、最終改行の有無を文字列のまま保持します。`NewLine` は最初に現れる行末、行末がなければ OS の既定値です。
 - `ComparisonOptions`: `IgnoreCase`, `IgnoreNumbers`, `CommentSyntax`, `SubstitutionRules`, `IgnoreWhitespace`, `Whitespace` (`None`, `Trim`, `IgnoreChanges`, `IgnoreAll`), `IgnoreBlankLines`, `IgnoreLinePattern`, `IgnoreFinalNewLine`, `CompareLineEndings`。`Normalize(string, cancellationToken = default)` は公開ヘルパーです。文書全体のコメント状態を共有し、以前と同じく空白無視を改行にも適用します。`TextDiffer` は改行を保持した行ごとのキーを使います。
-- `DiffResult`: `Rows`, `Blocks`, `HasDifferences`, `LeftText`, `RightText`。`DiffRow` の左右行番号は 1 始まり・欠落側は null、`LeftText`/`RightText` は行末を含みません。`Kind` は `Equal`, `Added`, `Deleted`, `Modified`。変更行の `LeftSpans`/`RightSpans` は UTF-16 インデックスで、共通接頭辞・接尾辞を除いた変更範囲です。
+- `DiffResult`: `Rows`, `Blocks`, `HasDifferences`, `LeftText`, `RightText`。`DiffRow` の左右行番号は 1 始まり・欠落側は null、`LeftText`/`RightText` は行末を含みません。`Kind` は `Equal`, `Added`, `Deleted`, `Modified`。変更行の `LeftSpans`/`RightSpans` は UTF-16 インデックスで、変更ブロック全体の WordDiff 区間を各行本文へ投影した複数の範囲です。中央の一致文字は強調しません。`InlineWorkUsed` と `InlineFallbackCount` は全ブロックで共有する詳細比較予算の使用量と詳細比較を省略した変更行数を示します。
+- `WordDiffer.Compare` は原文の UTF-16 区間を保持し、単語の O(NP) 対応を文字区間へ絞り込みます。`WordDiffOptions` は文字／単語、大文字小文字、数字、空白、EOL、区切り文字を指定します。文字分類は元ソースで採取した Windows CTYPE1 / CRT C の固定値、大文字小文字の折畳みは ASCII です。旧 GUI の全設定・全 ICU 字素規則との完全互換は未確認です。外部 DLL は呼びません。
+- WordDiff の既定予算は4,000,000、最大8,000,000、入力は各64 Mi文字、token vectorは20,480未満、traceは32 MiB以下です。上限超過と不正UTF-16は全原文を変更区間とし、`Fallback`・`FallbackReason` を返します。`WorkUsed` は実行した処理の予算消費です。キャンセルは例外で伝播します。TextDifferでは詳細比較予算を全ブロックで共有し、行対応の予算と分けます。原文を省略・変更しません。
 - `DiffBlock`: `Index`, `RowStart`, `RowCount`, `LeftStart`, `LeftCount`, `RightStart`, `RightCount`。開始位置はすべて 0 始まり。コピー後は再比較し、更新前のブロックを再利用しないでください。除外行は `Equal` の表示行として残ります。改行なしの最終行を保持行の前後へ移す場合は、対象文書の改行を境界へ補い、行の連結を防ぎます。
 - 一意な行を patience アンカーにし、残りは線形メモリの Hirschberg LCS で比較します。`MaxFallbackComparisons` (既定 4,000,000) を超える未解決区間は大きな変更ブロックになります。巨大な無関連文書でも N×M のテーブルは作りません。このフォールバックでは最小編集列を保証しません。
 

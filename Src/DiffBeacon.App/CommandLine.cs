@@ -15,7 +15,8 @@ internal static class CommandLine
             {
                 Console.WriteLine("DiffBeacon · .NET 10 / Avalonia\n"
                     + "GUI: DiffBeacon LEFT [BASE] RIGHT\n"
-                    + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT]\n"
+                    + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT] [--max-work N]\n"
+                    + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
                     + "--json LEFT RIGHT\n--table LEFT RIGHT\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]\n"
@@ -26,6 +27,7 @@ internal static class CommandLine
                 return 0;
             }
             var command = args[0];
+            if (command == "--word-diff") return await WordDiffCommands.RunAsync(args);
             if (command == "--package-project") return await PackageCommands.RunAsync(args);
             if (command == "--report-project") return await ReportCommands.RunAsync(args);
             if (command.StartsWith("--archive-", StringComparison.Ordinal)) return await ArchiveCommands.RunAsync(args);
@@ -54,6 +56,8 @@ internal static class CommandLine
                 {
                     writer.WriteBoolean("different", result.HasDifferences);
                     writer.WriteNumber("blocks", result.Blocks.Count);
+                    writer.WriteNumber("inlineWorkUsed", result.InlineWorkUsed);
+                    writer.WriteNumber("inlineFallbackCount", result.InlineFallbackCount);
                     writer.WriteString("leftEncoding", left.EncodingName);
                     writer.WriteString("rightEncoding", right.EncodingName);
                     writer.WriteStartArray("rows");
@@ -63,6 +67,17 @@ internal static class CommandLine
                         writer.WriteString("left", row.LeftText); writer.WriteString("right", row.RightText);
                         if (row.LeftLineNumber is int ln) writer.WriteNumber("leftLine", ln);
                         if (row.RightLineNumber is int rn) writer.WriteNumber("rightLine", rn);
+                        void Spans(string name, IReadOnlyList<InlineSpan> spans)
+                        {
+                            writer.WriteStartArray(name);
+                            foreach (var span in spans)
+                            {
+                                writer.WriteStartArray(); writer.WriteNumberValue(span.Start); writer.WriteNumberValue(span.Length);
+                                writer.WriteEndArray();
+                            }
+                            writer.WriteEndArray();
+                        }
+                        Spans("leftSpans", row.LeftSpans); Spans("rightSpans", row.RightSpans);
                         writer.WriteEndObject();
                     }
                     writer.WriteEndArray();
@@ -207,6 +222,7 @@ internal static class CommandLine
                 "--whitespace" when index + 1 < args.Length => options with { Whitespace = ParseWhitespace(args[++index]), IgnoreWhitespace = false },
                 "--substitute" when index + 2 < args.Length => options with { SubstitutionRules = [.. options.SubstitutionRules, new SubstitutionRule(args[++index], args[++index])] },
                 "--ignore-regex" when index + 1 < args.Length => options with { IgnoreLinePattern = args[++index] },
+                "--max-work" when index + 1 < args.Length => options with { MaxFallbackComparisons = ParseMaxWork(args[++index]) },
                 _ => throw new ArgumentException($"不明な比較オプション: {args[index]}")
             };
         }
@@ -215,6 +231,9 @@ internal static class CommandLine
 
     private static CommentSyntax ParseCommentSyntax(string value) => Enum.TryParse<CommentSyntax>(value, true, out var syntax) && Enum.IsDefined(syntax)
         ? syntax : throw new ArgumentException("コメント構文はnone、cstyle、csharp、python、xmlです。");
+    private static int ParseMaxWork(string value) => int.TryParse(value, System.Globalization.NumberStyles.Integer,
+        System.Globalization.CultureInfo.InvariantCulture, out var result) && result is >= 0 and <= 8_000_000
+        ? result : throw new ArgumentException("比較予算は0から8000000です。");
     private static WhitespaceMode ParseWhitespace(string value) => value.ToLowerInvariant() switch
     {
         "none" => WhitespaceMode.None, "trim" => WhitespaceMode.Trim, "changes" => WhitespaceMode.IgnoreChanges, "all" => WhitespaceMode.IgnoreAll,
