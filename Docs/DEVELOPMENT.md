@@ -2,7 +2,9 @@
 
 画像領域の原本参照は `uv run --no-project python tests/Fixtures/ImageRegions/generate-reference.py --output artifacts/verification/image-regions-reference/reproduced` で再採取する。通常buildやE2EにはMSVCを追加せず固定goldenを使う。製品を別プロセスで照合する限定実行は `--image-regions-only`。原本抽出・ライセンス・SHAは[fixture説明](../tests/Fixtures/ImageRegions/README.md)、診断CLIの契約は[画像の説明](IMAGE-VIEWER.md#原本の差分領域処理の照合)を参照する。
 
-画像HTMLは `--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N --right-frame N] [--threshold N]` で生成する。番号・閾値は画像比較にだけ指定でき、既定は全同番号フレームと閾値0。限定E2Eは `--image-reports-only`、契約は [画像の説明](IMAGE-VIEWER.md) と [E2Eの手順](../tests/DiffBeacon.E2E/README.md) を参照する。
+画像強調の再採取は `uv run --no-project python tests/Fixtures/ImageHighlight/generate-reference.py --output artifacts/verification/image-highlight-reference/reproduced`。固定72件は限定E2E `--image-highlight-only` と全体へ接続する。通常GUI・CLI・単体／包装HTMLの描画画素を照合し、UI自己検証は実Bitmap・選択・強調解除・三者ページ操作を保存する。[fixture](../tests/Fixtures/ImageHighlight/README.md)の出典・SHA・GPLを保持する。
+
+画像HTMLは `--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]` で生成する。番号・閾値は画像比較にだけ指定でき、既定は全同番号フレームと閾値0。限定E2Eは `--image-reports-only`、契約は [画像の説明](IMAGE-VIEWER.md) と [E2Eの手順](../tests/DiffBeacon.E2E/README.md) を参照する。
 
 GNU既定算法の原本参照は `pwsh -NoProfile -File build/Generate-LegacyGnuReference.ps1` で採取する。[原本とadapterの境界](../build/LegacyGnuReference/README.md)を確認する。`--gnu-line-script INPUT_JSON [--max-work N]` は入力 `{ "left": [同値クラスID], "right": [同値クラスID], "classCount": ID上限 }` から変更scriptを返す開発用CLI。原本の入力変換と算法を分けて照合する限定E2Eは `--gnu-line-only`、通常文書比較の元bytesからの接続検証は `--gnu-text-only` を使う。表の復号キーへの接続は `--gnu-table-only` で原本143ケースのCLI/HTMLと共有予算を照合する。これらは全体E2Eにも含める。通常 `--compare` は `lineWorkUsed`・`lineFallback`・`lineFallbackReason` と全元行を返す。予算契約は [Core README](../Src/DiffBeacon.Core/README.md#テキスト比較と保存) を参照する。
 

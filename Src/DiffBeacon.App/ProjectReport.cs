@@ -50,7 +50,7 @@ public static class ProjectReport
 
     public static async Task ExportAsync(ComparisonWorkspace workspace, int entryIndex, string output,
         string? sourceProject = null, CancellationToken token = default,
-        int? leftFrame = null, int? rightFrame = null, int? imageThreshold = null)
+        int? leftFrame = null, int? rightFrame = null, double? imageThreshold = null, int? middleFrame = null)
     {
         _ = WorkspaceStore.SerializeWorkspace(workspace);
         if ((uint)entryIndex >= (uint)workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entryIndex), "比較の番号が範囲外です。");
@@ -60,17 +60,22 @@ public static class ProjectReport
         var project = entries[entryIndex];
         if (IsImage(project))
         {
-            if (!string.IsNullOrWhiteSpace(project.BasePath)) throw new InvalidOperationException("三者画像の詳細HTMLレポートは未対応です。");
             var leftImagePath = ValidateLocal(project.LeftPath); var rightImagePath = ValidateLocal(project.RightPath);
             var leftImage = await ImageComparisonEngine.OpenAsync(leftImagePath, token).ConfigureAwait(false);
             var rightImage = await ImageComparisonEngine.OpenAsync(rightImagePath, token).ConfigureAwait(false);
-            var imageHtml = await Task.Run(() => ImageReport.Create(leftImage, rightImage,
-                project.LeftDescription ?? project.LeftPath, project.RightDescription ?? project.RightPath,
-                imageThreshold ?? 0, leftFrame, rightFrame, token), token).ConfigureAwait(false);
+            var middleImage = string.IsNullOrWhiteSpace(project.BasePath) ? null : await ImageComparisonEngine.OpenAsync(ValidateLocal(project.BasePath), token).ConfigureAwait(false);
+            var selected = leftFrame.HasValue || middleFrame.HasValue || rightFrame.HasValue;
+            if (middleImage is null && middleFrame.HasValue || selected && (!leftFrame.HasValue || !rightFrame.HasValue || middleImage is not null && !middleFrame.HasValue))
+                throw new ArgumentException("選択フレームは画像の全入力分を指定してください。");
+            ImageComparisonEngine.Snapshot[] images = middleImage is null ? [leftImage, rightImage] : [leftImage, middleImage, rightImage];
+            int[]? numbers = selected ? middleImage is null ? [leftFrame!.Value, rightFrame!.Value] : [leftFrame!.Value, middleFrame!.Value, rightFrame!.Value] : null;
+            string[] titles = middleImage is null ? [project.LeftDescription ?? project.LeftPath, project.RightDescription ?? project.RightPath]
+                : [project.LeftDescription ?? project.LeftPath, project.BaseDescription ?? project.BasePath, project.RightDescription ?? project.RightPath];
+            var imageHtml = await Task.Run(() => ImageReport.Create(new(images, imageThreshold ?? 0, numbers), titles, token), token).ConfigureAwait(false);
             await SaveAsync(target, imageHtml, entries, sourceProject, token).ConfigureAwait(false);
             return;
         }
-        if (leftFrame.HasValue || rightFrame.HasValue || imageThreshold.HasValue)
+        if (leftFrame.HasValue || rightFrame.HasValue || imageThreshold.HasValue || middleFrame.HasValue)
             throw new ArgumentException("フレーム・閾値のレポート指定は画像比較にだけ使用できます。");
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         async Task<string> Read(string path)

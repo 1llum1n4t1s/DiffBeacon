@@ -62,7 +62,7 @@ internal static class ImageFrameScenarios
             await Reject("left-frame-" + value, ["--image", left, right, "--left-frame", value, "--right-frame", "1"]);
             await Reject("right-frame-" + value, ["--image", left, right, "--left-frame", "1", "--right-frame", value]);
         }
-        foreach (var value in new[] { "-1", "256", "abc", "1.5", "2147483648" })
+        foreach (var value in new[] { "-1", "NaN", "Infinity", "abc", "1e9999" })
             await Reject("threshold-" + value, ["--image", left, right, "--threshold", value]);
         await Reject("unknown-option", ["--image", left, right, "--not-an-image-option"]);
         await Reject("duplicate-threshold", ["--image", left, right, "--threshold", "0", "--threshold", "1"]);
@@ -71,7 +71,7 @@ internal static class ImageFrameScenarios
         await Reject("missing-threshold-value", ["--image", left, right, "--threshold"]);
         await Reject("missing-frame-value", ["--image", left, right, "--left-frame"]);
         await Reject("missing-right-input", ["--image", left]);
-        await Reject("extra-input", ["--image", left, right, left]);
+        await Reject("extra-input", ["--image", left, right, left, right]);
         await Reject("missing-file", ["--image", PathOf("nonexistent.gif"), right]);
         foreach (var name in new[] { "broken.gif", "truncated.gif", "over-pixel-limit.gif", "over-frame-limit.gif", "over-work-limit.gif" })
         {
@@ -81,6 +81,27 @@ internal static class ImageFrameScenarios
         }
         await Reject("canvas-limit", ["--image", PathOf("canvas-wide.gif"), PathOf("canvas-tall.gif")], "比較キャンバス");
         await Reject("selected-canvas-limit", ["--image", PathOf("canvas-wide.gif"), PathOf("canvas-tall.gif"), "--left-frame", "1", "--right-frame", "1"], "比較キャンバス");
+        var wide = PathOf("render-wide.gif"); var tall = PathOf("render-tall.gif");
+        WriteSolidGif(wide, 2048, 1, 64); WriteSolidGif(tall, 1, 2048, 64);
+        baseline[wide] = Hash(wide); baseline[tall] = Hash(tall);
+        await Reject("render-work", ["--image", wide, tall], "描画作業量");
+        var selectedRender = await run("image-selected-render-work", 1, true, ["--image", wide, tall, "--left-frame", "1", "--right-frame", "1"]);
+        using (var selectedJson = JsonDocument.Parse(selectedRender.Stdout))
+            check("image-selected-render-work-counts", selectedJson.RootElement.GetProperty("leftFrames").GetInt32() == 64
+                && selectedJson.RootElement.GetProperty("rightFrames").GetInt32() == 64
+                && selectedJson.RootElement.GetProperty("frames").GetArrayLength() == 1, selectedRender.Stdout);
+        var renderProject = PathOf("render-work.json");
+        await File.WriteAllTextAsync(renderProject, JsonSerializer.Serialize(new { formatVersion = 1, entries = new[] {
+            new { leftPath = wide, rightPath = tall, mode = "Image" } }, activeEntryIndex = 0 }));
+        foreach (var package in new[] { false, true })
+        {
+            var destination = PathOf(package ? "render-work.zip" : "render-work.html"); File.WriteAllText(destination, "protected output");
+            var before = Hash(destination);
+            var refused = await run("image-render-work-" + (package ? "package" : "report"), 2, false,
+                [package ? "--package-project" : "--report-project", renderProject, destination, .. (package ? new[] { "--report" } : Array.Empty<string>())]);
+            check("image-render-work-diagnostic-" + package, refused.Stderr.Contains("描画作業量", StringComparison.Ordinal), refused.Stderr);
+            check("image-render-work-output-preserved-" + package, before == Hash(destination), destination);
+        }
         // 大きい実画像を生成せず、入力サイズ上限を実ファイルで確認する。
         var oversized = PathOf("over-file-limit.gif");
         using (var stream = File.Create(oversized))
@@ -101,10 +122,10 @@ internal static class ImageFrameScenarios
             var selected = leftFrame.HasValue;
             var pairs = selected ? new[] { (Left: leftFrame, Right: rightFrame) }
                 : Enumerable.Range(1, Math.Max(leftFrames.Length, rightFrames.Length))
-                    .Select(i => (Left: i <= leftFrames.Length ? (int?)i : null, Right: i <= rightFrames.Length ? (int?)i : null)).ToArray();
+                    .Select(i => (Left: (int?)Math.Min(i, leftFrames.Length), Right: (int?)Math.Min(i, rightFrames.Length))).ToArray();
             var expected = pairs.Select(pair => Expected(pair.Left.HasValue ? leftFrames[pair.Left.Value - 1] : (JsonElement?)null,
                 pair.Right.HasValue ? rightFrames[pair.Right.Value - 1] : (JsonElement?)null, threshold)).ToArray();
-            var different = expected.Any(frame => frame.Different);
+            var different = expected.Any(frame => frame.Different) || !selected && leftFrames.Length != rightFrames.Length;
             var arguments = new List<string> { "--image", PathOf(leftName), PathOf(rightName) };
             if (selected) arguments.AddRange(["--left-frame", leftFrame!.Value.ToString(CultureInfo.InvariantCulture),
                 "--right-frame", rightFrame!.Value.ToString(CultureInfo.InvariantCulture)]);
@@ -176,7 +197,8 @@ internal static class ImageFrameScenarios
         {
             if (x >= (lw ?? 0) || y >= (lh ?? 0) || x >= (rw ?? 0) || y >= (rh ?? 0)) { differences++; continue; }
             var li = (y * lw!.Value + x) * 4; var ri = (y * rw!.Value + x) * 4;
-            if (Enumerable.Range(0, 4).Any(c => Math.Abs(lb[li + c] - rb[ri + c]) > threshold)) differences++;
+            var squared = Enumerable.Range(0, 4).Sum(c => (lb[li + c] - rb[ri + c]) * (lb[li + c] - rb[ri + c]));
+            if (squared > (double)threshold * threshold) differences++;
         }
         return new(lw, lh, rw, rh, left?.GetProperty("pixelSha256").GetString(), right?.GetProperty("pixelSha256").GetString(),
             differences, (long)width * height, differences != 0 || lw != rw || lh != rh);
@@ -188,6 +210,24 @@ internal static class ImageFrameScenarios
         => expected is null ? element.GetProperty(property).ValueKind == JsonValueKind.Null
             : string.Equals(element.GetProperty(property).GetString(), expected, StringComparison.OrdinalIgnoreCase);
     private static string Hash(string path) { using var input = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(input)); }
+    // clear-codeを各画素の前へ置き、辞書の成長に依存しない単色の完全GIFを作る。
+    private static void WriteSolidGif(string path, int width, int height, int frames)
+    {
+        using var file = File.Create(path); using var writer = new BinaryWriter(file);
+        writer.Write(System.Text.Encoding.ASCII.GetBytes("GIF89a")); writer.Write((ushort)width); writer.Write((ushort)height);
+        writer.Write(new byte[] { 0x80, 0, 0, 20, 40, 60, 255, 255, 255 });
+        var data = new List<byte>(); var bits = 0; var pending = 0;
+        void Code(int value) { pending |= value << bits; bits += 3; while (bits >= 8) { data.Add((byte)pending); pending >>= 8; bits -= 8; } }
+        for (var pixel = 0; pixel < width * height; pixel++) { Code(4); Code(0); } Code(5); if (bits > 0) data.Add((byte)pending);
+        for (var frame = 0; frame < frames; frame++)
+        {
+            writer.Write(new byte[] { 0x21, 0xf9, 4, 4, 1, 0, 0, 0, 0x2c });
+            writer.Write((ushort)0); writer.Write((ushort)0); writer.Write((ushort)width); writer.Write((ushort)height); writer.Write((byte)0); writer.Write((byte)2);
+            for (var p = 0; p < data.Count; p += 255) { var length = Math.Min(255, data.Count - p); writer.Write((byte)length); writer.Write(data.GetRange(p, length).ToArray()); }
+            writer.Write((byte)0);
+        }
+        writer.Write((byte)0x3b);
+    }
     private static string FindFixtures()
     {
         foreach (var start in new[] { Environment.CurrentDirectory, AppContext.BaseDirectory })

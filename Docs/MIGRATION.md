@@ -10,13 +10,13 @@
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
 | 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
-| 画像 | 左右表示、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebPのフレーム選択・前後移動・同期移動、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFF/APNGを含む全旧画像形式、ベクター、OCR、画像マージ、三者の詳細レポート、ページ設定の永続化は未完了 |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebPのフレーム選択・前後移動・同期移動、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFF/APNGを含む全旧画像形式、ベクター、OCR、画像マージ、ページ設定の永続化は未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
 | 多言語 | 新 UI は日本語を中心に実装 | 旧翻訳カタログとローカライズ切替、RTL、全ダイアログの同等性は未完了 |
 | 詳細フィルター | 大文字小文字、4種の空白処理、空行、行正規表現、ASCII数字・CStyle/CSharp/Python/XMLコメントの除外、順序付き置換、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式 | 比較前処理は原文を保持し、GUI・CLI・フォルダーへ適用。同梱12 `.flt` の読込みを確認。内容検索、左右別属性、関数・算術、PCRE固有構文、全旧構文のコメント処理、複数行置換、全表示フィルターは未完了 |
-| プロジェクト / レポート | source-generated JSONの全タブ保存・復元、複数組`.WinMerge` XML読込み、HTML / JSONレポート、相対JSON参照とGUI起動時プロジェクト読込み、テキスト・表・JSONの二者／三者HTML、画像の二者全／選択HTML | 順序・選択位置、説明・各readonly・再帰・フォルダー方式・除外・表設定を保持し適用。HTMLは祖先アンカー整列・行内差分・表セル・JSON正規化・画像画素を単体GUI／CLI／包装へ適用。旧filterは対応範囲以外を明示拒否。未対応オプション・プラグイン名は保持・警告し実行しない。旧middleの第三比較ペインと祖先マージの厳密な対応、画像の全旧形式・三者とWeb描画レポート、全旧オプション、結果本文・採用状態の永続化は未完了 |
+| プロジェクト / レポート | source-generated JSONの全タブ保存・復元、複数組`.WinMerge` XML読込み、HTML / JSONレポート、相対JSON参照とGUI起動時プロジェクト読込み、テキスト・表・JSONの二者／三者HTML、画像の二者／三者全／選択HTML | 順序・選択位置、説明・各readonly・再帰・フォルダー方式・除外・表設定を保持し適用。HTMLは祖先アンカー整列・行内差分・表セル・JSON正規化・画像画素を単体GUI／CLI／包装へ適用。旧filterは対応範囲以外を明示拒否。未対応オプション・プラグイン名は保持・警告し実行しない。旧middleの第三比較ペインと祖先マージの厳密な対応、画像の全旧形式とWeb描画レポート、全旧オプション、結果本文・採用状態の永続化は未完了 |
 | Native AOT Windows x64 / ARM64 | 対応 RID と同 OS 発行スクリプト、CI マトリクス | 両アーキテクチャのGitHub runnerで発行・UI自己検証・CLI E2E成功。実測結果は下表 |
 | Native AOT macOS x64 / ARM64 | 対応 RID、`.app` / tar、CI マトリクス | Intel / Apple SiliconのGitHub runnerで発行・UI自己検証・CLI E2E成功。署名・公証・公開は実施しない |
 
@@ -79,17 +79,24 @@ Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成�
 
 WinIMerge v1.0.54の原本関数を無改変で採取し、二／三者のblock比較・8近傍の連結領域・行順ID・block矩形・LeftOnly/MiddleOnly/RightOnly/Conflict分類をC#へ移植した。`ImageRegionDiffer` と開発用 `--image-regions` が対象。固定164件のraw BGRAをPNGへ包装し、実アプリの復号から全pair grid・領域ID・矩形・分類・個数を原本と完全一致照合する。通常buildへC++、FreeImage、submoduleを追加しない。原本・GPL・入力・期待値・SHA・再生成手順は[fixture](../tests/Fixtures/ImageRegions/README.md)、診断コマンドは[画像の契約](IMAGE-VIEWER.md#原本の差分領域処理の照合)に集約する。
 
-原本はBGRAユークリッド距離と01∨21候補を用いる。現行の通常GUI・`--image`・HTMLは最大成分差と二者の画素マスクであり、この核の接続は次の統合工程である。旧同期ページの範囲外入力据え置きと現行末尾clamp、旧HTMLの加工済み各paneと現行原本＋独立maskにも差がある。通常の三者画像・表示強調・差分移動・画像コピー／保存・マージへまとめて接続し、対応する旧方式を置換するまでは画像移植完了と判断しない。位置合わせ、変換、挿入削除、ベクター、OCR、全旧復号形式も引き続き未完了。取消チェックは存在するが、OSシグナルによるこの核の中断は未実測。
+原本はBGRAユークリッド距離と01∨21候補を用いる。後続の通常GUI・`--image`・HTMLへの接続は次節に記載する。位置合わせ、変換、挿入削除、ベクター、OCR、画像コピー／保存・マージと全旧復号形式は引き続き未完了。取消チェックは存在するが、OSシグナルによるこの核の中断は未実測。
 
-原本採取と再採取は164件・bytes一致・523検証成功。通常DLLの核限定E2Eは1902成功・0失敗・0skip、全体E2Eは19029成功・0失敗・9skip。Windows x64 Native AOT全体E2Eは19069成功・0失敗・3skip、headless UIは260成功・0失敗、Release／AOTコンパイラー警告0。Native版は管理者実行でリンク拒否も確認し、入力・出力・終了コード・原本全grid・ソース／程序集／発行物のSHAを `artifacts/verification/image-regions/Verify-LocalEvidence.ps1` の96項目で照合した。採取証拠は `artifacts/verification/image-regions-reference`。以前の原本調査担当による追加読取り確認では成立P1/P2なし、新しい文脈の独立レビューとは区別する。4RIDの同コード検証はGitHubで行う。
+原本採取と再採取は164件・bytes一致・523検証成功。通常DLLの核限定E2Eは1902成功・0失敗・0skip、全体E2Eは19029成功・0失敗・9skip。Windows x64 Native AOT全体E2Eは19069成功・0失敗・3skip、headless UIは260成功・0失敗、Release／AOTコンパイラー警告0。Native版は管理者実行でリンク拒否も確認し、入力・出力・終了コード・原本全grid・ソース／程序集／発行物のSHAを `artifacts/verification/image-regions/Verify-LocalEvidence.ps1` の96項目で照合した。採取証拠は `artifacts/verification/image-regions-reference`。以前の原本調査担当による追加読取り確認では成立P1/P2なし、新しい文脈の独立レビューとは区別する。この核の `5eae173c2817632e22468b50775f25d7ce148d12` は [GitHub run 36865234830](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36865234830) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36865234885) に成功した。Windows両構成は19069成功・0失敗・3skip、Mac両構成は19078成功・0失敗・2skip、UIは全構成260成功。8成果物のmanifest64ファイルのSHA・サイズが全一致、SDK10.0.401・コンパイラー警告0。証拠は `E:/DiffBeacon-artifacts/github/36865234830` と `artifacts/verification/image-regions/ci-36865234830-summary.json`。旧maintenance 459aのwin-x64自己検証60秒timeoutは新runで再発していないが、原因・恒久対策は未確定。
 
+## 通常画像へ接続した原本強調と三者分類
+
+原本MarkDiff/GetDiffColorFromPositionをC#へ移植し、二者・三者の通常GUI、`--image`、単体HTML、包装HTMLへ同じ領域分類と強調を接続した。中央入力は保存形式の `BasePath` を第三画像へマッピングし、祖先として扱わない。最大成分差をBGRAユークリッド距離へ置換し、同期移動は対象ページがない入力の直前選択を保持する。全ページCLI／HTMLは短い入力の最後のページを繰り返し、枚数差を別に検出する。元画素は共通canvasへ複製して保持し、強調・選択色・透明度・paneごとのonly除外を原本どおり計算する。通常の全ページ描画量にも256M上限を設け、細長い入力同士の共通canvas増幅を拒否する。
+
+無改変原本から72件の強調BGRAを採取・再採取し、bytes一致・745検証成功。golden SHAは `853A08102656CD1F726E39647D98AF47CF4C8918C7F3EB051D078FEA87BC057A`。[強調fixture](../tests/Fixtures/ImageHighlight/README.md)が出典・ライセンス・限定範囲を記録する。新しい依存パッケージ、C++、FreeImage、submoduleは通常buildへ追加していない。
+
+ローカルRelease buildは警告0。原本強調限定E2Eは2956成功・0失敗、旧画像HTMLの原画／左右mask検証は1325成功・0失敗・リンク1skip、描画予算を含むフレーム限定は517成功・0失敗。headless UIは469成功・0失敗、alpha0.7の24件を実Bitmapの全BGRAへ照合し、領域・競合移動、強調解除、HTML、三者の個別／同期選択・取消・古い完了破棄、原本保持を確認した。PNGの目視で三者の選択色とページ位置を確認した。最初のUI失敗は期待SHAが大文字、HTMLが小文字なのに大小文字を区別した検証器の不備であり、全画素照合は通っていた。検証器を修正して再実行し、初回証拠も保持した。成果物は `artifacts/verification/image-three-way`。通常DLLの全体E2Eは22007成功・0失敗・9skip。Windows x64 Native AOTは22047 E2E成功・0失敗・3skip、469 UI成功・0失敗、コンパイラー警告0。Native実行は管理者・Python3.14・実行ファイルSHAを記録し、リンク拒否も検証した。`Verify-LocalEvidence.ps1` の244項目でソース・程序集・原本SHA・全体結果・24件66paneのGUI画素・発行manifest10ファイルを照合し全成功。4RIDの同コード検証はGitHubで継続中で、この限定結果だけで画像の全機能移植完了とは判断しない。
 ## 画像の全フレームHTML
 
 画像HTMLのコミット `675e61255d1cfbcbb64c29763bcee40821e533de` は [GitHub run 36859703730](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36859703730) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36859703759) が成功した。Windows両構成は17168成功・0失敗・3skip、Mac両構成は17177成功・0失敗・2skip、4構成とも260 UI成功・SDK10.0.401・コンパイラー警告0。画像HTML固有項目は各構成196成功。取得した8成果物のmanifest列挙64ファイルのSHA・サイズがすべて一致した。証拠は `E:/DiffBeacon-artifacts/github/36859703730`。全体取得時のデバイスエラーはWindows成果物の個別再取得で解消し、最初の失敗ログも保持する。これはCI実行失敗とは区別する。upload-artifactのNode非推奨annotation4件はコンパイラー警告に含めない。以下のローカル記録と同じコードを4RIDで検証した結果である。
 
 このSHAは後から追加した原本ブロック・三者領域処理を含まない。通常デスクトップのOS操作はheadless UIと区別する。
 
-二者画像の全同番号フレームまたは表示中の選択組を、左右・ピクセル差分PNGを埋め込む自己完結HTMLへ出力する。GUIは表示中の原本スナップショットと確定閾値を使い、選択位置を変えない。CLIの `--report-project` は画像にだけフレーム組と閾値を指定でき、包装は同梱原本の確定内容から同じ生成器を呼ぶ。base64増幅を含むUTF-8本文32 MiBと、既存の入力・画素・枚数・復号量・包装合計上限を維持する。三者画像の詳細は明示拒否する。操作は [画像の契約](IMAGE-VIEWER.md) に集約する。
+以下はSHA 675e時点の二者HTML検証記録であり、後続の三者／原本強調接続は上記を参照する。二者画像の全同番号フレームまたは表示中の選択組を、左右・ピクセル差分PNGを埋め込む自己完結HTMLへ出力した。GUIは表示中の原本スナップショットと確定閾値を使い、選択位置を変えない。CLIの `--report-project` は画像にだけフレーム組と閾値を指定でき、包装は同梱原本の確定内容から同じ生成器を呼ぶ。base64増幅を含むUTF-8本文32 MiBと、既存の入力・画素・枚数・復号量・包装合計上限を維持する。この時点では三者画像の詳細を明示拒否していた。操作は [画像の契約](IMAGE-VIEWER.md) に集約する。
 
 単体とZIP包装の埋込みPNGを独立したBCL PNG復号で全画素・SHA・CRCまで照合する。既存26画像・30フレームの固定期待値、後続差分・枚数差・寸法・透明合成・閾値、選択組、説明escape、包装展開と相対プロジェクト再読込み、32 MiB超過と既存出力保持を確認する。新しい文脈の独立レビューでは別に作ったPNG/GIFと実CLI30呼出しの243項目成功・0失敗・リンク1skipを確認した。
 

@@ -122,7 +122,7 @@ internal static class ImageReportScenarios
             foreach (var value in new[] { "0", "-1", "2", "abc", "1.5", "2147483648" })
                 await Reject(option + "-" + value, valid, ["--left-frame", option == "--left-frame" ? value : "1", "--right-frame", option == "--right-frame" ? value : "1"]);
         }
-        foreach (var value in new[] { "-1", "256", "abc", "1.5", "2147483648" }) await Reject("threshold-" + value, valid, ["--threshold", value]);
+        foreach (var value in new[] { "-1", "NaN", "Infinity", "abc", "1e9999" }) await Reject("threshold-" + value, valid, ["--threshold", value]);
         await Reject("duplicate-threshold", valid, ["--threshold", "0", "--threshold", "1"]);
         await Reject("missing-threshold", valid, ["--threshold"]);
         await Reject("duplicate-frame", valid, ["--left-frame", "1", "--left-frame", "1", "--right-frame", "1"]);
@@ -139,7 +139,8 @@ internal static class ImageReportScenarios
         using (var stream = File.Create(oversized)) { stream.Write(File.ReadAllBytes(PathOf("short.gif"))); stream.SetLength(64L * 1024 * 1024 + 1); }
         await Reject("input-capacity", Project("input-capacity", Entry("oversized.gif", "red.png")));
         var triple = Project("three", Entry("red.png", "green.png", ancestor: "red.png"));
-        await Reject("three", triple); await Reject("three-package", triple, package: true);
+        await Reject("three-incomplete-selection", triple, ["--left-frame", "1", "--right-frame", "1"]);
+        await Reject("two-middle-selection", valid, ["--left-frame", "1", "--middle-frame", "1", "--right-frame", "1"]);
         var filter = PathOf("protected-filter.html"); File.WriteAllText(filter, "name: protected\ndef: include\n");
         var protectedEntry = Entry("red.png", "green.png"); protectedEntry["fileFilterPath"] = filter;
         var protectedProject = Project("protected", protectedEntry, Entry("alpha-half.png", "red.png", ancestor: "disposal-1.png"));
@@ -192,10 +193,10 @@ internal static class ImageReportScenarios
                 .Cast<Match>().Where(m => Attribute(m.Groups["attrs"].Value, "data-left-frame") != "").ToArray();
             var count = lf.HasValue ? 1 : Math.Max(lframes.GetArrayLength(), rframes.GetArrayLength());
             check(name + " frame rows", rows.Length == count, $"expected={count}; actual={rows.Length}");
-            var anyDifferent = false;
+            var anyDifferent = !lf.HasValue && lframes.GetArrayLength() != rframes.GetArrayLength();
             for (var i = 0; i < Math.Min(rows.Length, count); i++)
             {
-                var ln = lf ?? i + 1; var rn = rf ?? i + 1;
+                var ln = lf ?? Math.Min(i + 1, lframes.GetArrayLength()); var rn = rf ?? Math.Min(i + 1, rframes.GetArrayLength());
                 JsonElement? l = ln <= lframes.GetArrayLength() ? lframes[ln - 1] : null;
                 JsonElement? r = rn <= rframes.GetArrayLength() ? rframes[rn - 1] : null;
                 var (mask, width, height, changed) = Mask(l, r, threshold); anyDifferent |= changed != 0;
@@ -205,10 +206,10 @@ internal static class ImageReportScenarios
                     && Attribute(attrs, "data-different-pixels") == changed.ToString(CultureInfo.InvariantCulture)
                     && Attribute(attrs, "data-total-pixels") == ((long)width * height).ToString(CultureInfo.InvariantCulture), attrs);
                 var images = Regex.Matches(rows[i].Groups["content"].Value, @"<img\b(?<attrs>[^>]*)>", RegexOptions.CultureInvariant).Cast<Match>().ToArray();
-                check(prefix + " image count", images.Length == 1 + (l.HasValue ? 1 : 0) + (r.HasValue ? 1 : 0), images.Length.ToString(CultureInfo.InvariantCulture));
-                foreach (var side in new[] { "left", "right", "difference" })
+                check(prefix + " image count", images.Length == 5, images.Length.ToString(CultureInfo.InvariantCulture));
+                foreach (var side in new[] { "left-original", "right-original", "difference" })
                 {
-                    var frame = side == "left" ? l : r;
+                    var frame = side == "left-original" ? l : r;
                     var expected = side == "difference" ? mask : frame.HasValue ? Convert.FromHexString(frame.Value.GetProperty("bgraHex").GetString()!) : null;
                     var matches = images.Where(m => Attribute(m.Groups["attrs"].Value, "data-side") == side).ToArray();
                     check(prefix + " " + side + " presence", matches.Length == (expected is null ? 0 : 1), "");
@@ -225,7 +226,7 @@ internal static class ImageReportScenarios
                         check(prefix + " " + side + " image metadata", Attribute(a, "data-width") == ew.ToString(CultureInfo.InvariantCulture)
                             && Attribute(a, "data-height") == eh.ToString(CultureInfo.InvariantCulture)
                             && Attribute(a, "data-pixel-sha256").Equals(Convert.ToHexString(SHA256.HashData(expected)), StringComparison.OrdinalIgnoreCase)
-                            && (side == "difference" || Attribute(a, "data-frame") == (side == "left" ? ln : rn).ToString(CultureInfo.InvariantCulture)), a);
+                            && (side == "difference" || Attribute(a, "data-frame") == (side == "left-original" ? ln : rn).ToString(CultureInfo.InvariantCulture)), a);
                         File.WriteAllBytes(Path.Combine(evidence, prefix + "-" + side + ".png"), png);
                         File.WriteAllBytes(Path.Combine(evidence, prefix + "-" + side + ".bgra"), decoded.Bgra);
                     }
@@ -262,7 +263,8 @@ internal static class ImageReportScenarios
             if (!different)
             {
                 var l = left!.Value.GetProperty("rgba")[y * lw + x]; var r = right!.Value.GetProperty("rgba")[y * rw + x];
-                for (var c = 0; c < 4; c++) different |= Math.Abs(l[c].GetInt32() - r[c].GetInt32()) > threshold;
+                var squared = Enumerable.Range(0, 4).Sum(c => (l[c].GetInt32() - r[c].GetInt32()) * (l[c].GetInt32() - r[c].GetInt32()));
+                different = squared > (double)threshold * threshold;
             }
             if (different) changed++;
             var p = (y * width + x) * 4; result[p] = result[p + 1] = different ? (byte)80 : (byte)28;
@@ -272,7 +274,7 @@ internal static class ImageReportScenarios
     }
 
     // 独立BCL decoder。PNG CRC/各行filterを確認し、非interlace 8bitの標準色形式を復号する。
-    private static (int Width, int Height, byte[] Bgra) DecodePng(byte[] png)
+    internal static (int Width, int Height, byte[] Bgra) DecodePng(byte[] png)
     {
         if (!png.AsSpan(0, Math.Min(8, png.Length)).SequenceEqual(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 })) throw new InvalidDataException("PNG signature");
         int width = 0, height = 0, color = -1; byte[] palette = [], transparency = []; using var idat = new MemoryStream();

@@ -4,6 +4,8 @@
 
 画像HTMLの限定実行は `--image-reports-only`、`--reports-only` と全体E2Eにも含む。既存画像fixtureの全画素期待値を、単体・ZIP包装から取り出した埋込みPNGへ独立BCL PNG復号で照合する。全／選択、後続差分・欠落・透明合成・閾値・寸法、説明のescape、原本保持、包装展開と相対プロジェクト再読込み、入力・本文サイズ・出力保護・取消を確認する。画像UIは全／選択の設定と表示原本スナップショットの保持も自己検証する。
 
+画像強調の限定実行は `--image-highlight-only`、全体E2Eにも含む。無改変C++原本の72件でalpha・選択色・透明度・三者paneの分類除外を開発用CLIへ照合する。既定強調の入力は通常CLI・単体HTML・包装へ接続し、埋込みPNGを独立BCL復号で全BGRA照合する。UI自己検証はalpha0.7の24件を実Bitmapへ照合し、領域選択・強調解除・レポート・原本保持も検証する。[強調fixture](../Fixtures/ImageHighlight/README.md)を参照する。限定検証は全体や通常デスクトップの実測の代替にしない。
+
 画像フレームの限定実行は `--image-only`。自作GIF/PNGと独立Pillow生成lossless WebPの固定全BGRA/SHAを実CLIへ照合する。先頭一致・後続変更、全ページと選択、ページ数差・欠落、透明部分更新・disposal、寸法・閾値、入力/キャンバス/フレーム数/復号作業量の上限、不正引数・入力保持を検証する。上限の診断も照合し、別の上限で拒否されただけの結果を合格にしない。[fixtureの契約](../Fixtures/Images/README.md)を参照する。全体E2Eにも含み、通常デスクトップの実測と区別する。
 
 GNU算法の限定実行は `--gnu-line-only`。原本の同値クラスと変更scriptを開発用CLIの別プロセスで照合し、予算上限・境界・入力拒否と原行保持を確認する。[採取範囲](../Fixtures/GnuLines/README.md)に原本入力変換と算法の境界を記載する。

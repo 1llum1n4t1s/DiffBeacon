@@ -1,0 +1,59 @@
+[
+  {
+    "file": "original-types.inc",
+    "lineRanges": [
+      [
+        33,
+        161
+      ]
+    ],
+    "sha256": "D25AA2C4DA9EEEADC2F6DC4CD47B5D107E1793E2D2E7A1ACCBD499E2BC25D0B5",
+    "unaltered": true
+  },
+  {
+    "file": "original-functions.inc",
+    "lineRanges": [
+      [
+        1663,
+        1693
+      ],
+      [
+        1702,
+        1886
+      ],
+      [
+        1888,
+        1916
+      ],
+      [
+        1918,
+        1964
+      ]
+    ],
+    "sha256": "46791C23F1F339E5FFF780B1152F33E8256D59E54BEA897176445CAC799A69FB",
+    "unaltered": true
+  },
+  {
+    "file": "original-mode.inc",
+    "lineRanges": [
+      [
+        479,
+        481
+      ]
+    ],
+    "sha256": "5D009C2F9D45EC7B14D59D4362C778676EA0F0A72E0BFEB4756C6514B9EB7950",
+    "unaltered": true
+  },
+  {
+    "file": "original-color.inc",
+    "source": "image.hpp",
+    "lineRanges": [
+      [
+        384,
+        395
+      ]
+    ],
+    "sha256": "2C6A2F6ADD291118033865BA6413D1A13EB1EE1404E3CC503270D466C42361A5",
+    "unaltered": true
+  }
+]

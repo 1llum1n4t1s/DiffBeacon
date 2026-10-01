@@ -6,25 +6,31 @@ internal static class ReportCommands
 {
     internal static async Task<int> RunAsync(string[] args)
     {
-        const string usage = "--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N --right-frame N] [--threshold N]";
+        const string usage = "--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]";
         if (args.Length < 3) throw new ArgumentException(usage);
         int? index = null;
-        int? leftFrame = null, rightFrame = null, threshold = null;
+        int? leftFrame = null, middleFrame = null, rightFrame = null;
+        double? threshold = null;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var optionIndex = 3; optionIndex < args.Length; optionIndex += 2)
         {
             var option = args[optionIndex];
-            if (option is not ("--entry" or "--left-frame" or "--right-frame" or "--threshold") || !seen.Add(option)
-                || optionIndex + 1 >= args.Length
-                || !int.TryParse(args[optionIndex + 1], NumberStyles.None, CultureInfo.InvariantCulture, out var value))
+            if (option is not ("--entry" or "--left-frame" or "--middle-frame" or "--right-frame" or "--threshold") || !seen.Add(option)
+                || optionIndex + 1 >= args.Length)
                 throw new ArgumentException(usage);
+            if (option == "--threshold")
+            {
+                if (!double.TryParse(args[optionIndex + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var distance)) throw new ArgumentException("閾値は有限の非負数です。");
+                ImageComparisonEngine.ValidateThreshold(distance); threshold = distance; continue;
+            }
+            if (!int.TryParse(args[optionIndex + 1], NumberStyles.None, CultureInfo.InvariantCulture, out var value)) throw new ArgumentException(usage);
             switch (option)
             {
                 case "--entry" when value is >= 1 and <= 256: index = value - 1; break;
                 case "--left-frame" when value >= 1: leftFrame = value; break;
                 case "--right-frame" when value >= 1: rightFrame = value; break;
-                case "--threshold" when value is >= 0 and <= 255: threshold = value; break;
-                default: throw new ArgumentException("比較番号は1〜256、フレームは1以上、閾値は0〜255です。");
+                case "--middle-frame" when value >= 1: middleFrame = value; break;
+                default: throw new ArgumentException("比較番号は1〜256、フレームは1以上です。");
             }
         }
         if (leftFrame.HasValue != rightFrame.HasValue) throw new ArgumentException("--left-frame と --right-frame は両方指定してください。");
@@ -35,7 +41,7 @@ internal static class ReportCommands
         {
             var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], cancellation.Token);
             var entry = index ?? workspace.ActiveEntryIndex;
-            await ProjectReport.ExportAsync(workspace, entry, args[2], args[1], cancellation.Token, leftFrame, rightFrame, threshold);
+            await ProjectReport.ExportAsync(workspace, entry, args[2], args[1], cancellation.Token, leftFrame, rightFrame, threshold, middleFrame);
             CommandLine.WriteJson(writer => { writer.WriteString("output", Path.GetFullPath(args[2])); writer.WriteNumber("entry", entry + 1); });
             return 0;
         }

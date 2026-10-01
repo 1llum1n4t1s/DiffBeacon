@@ -350,6 +350,8 @@ internal static class HeadlessSelfTest
             Check("synchronized image navigation returns to shared first page", imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 1 && imagePanel.DifferentPixels == 0);
             Check("image frame selection preserves original files", animatedLeftBytes.SequenceEqual(File.ReadAllBytes(animatedLeft))
                 && animatedRightBytes.SequenceEqual(File.ReadAllBytes(animatedRight)));
+            HeadlessImageHighlightChecks.Run(pane, output, Pump, Check, Screenshot);
+            pane.BasePath.Text = "";
             pane.DiscardChanges();
             var xmlLeft = Path.Combine(output, "left.xml"); var xmlRight = Path.Combine(output, "right.xml");
             File.WriteAllText(xmlLeft, "<root a=\"1\" b=\"2\">text</root>");

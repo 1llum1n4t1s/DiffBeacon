@@ -12,3 +12,5 @@ tests/Fixtures/ImageRegions/winimerge-image-regions-golden.json -text whitespace
 tests/Fixtures/ImageRegions/reference-source/ImgDiffBuffer.hpp -text -whitespace
 tests/Fixtures/ImageRegions/reference-source/image.hpp -text -whitespace
 tests/Fixtures/ImageRegions/LICENSE.txt -text whitespace=cr-at-eol
+tests/Fixtures/ImageHighlight/winimerge-image-highlight-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageHighlight/probe-adapter.cpp -text whitespace=cr-at-eol

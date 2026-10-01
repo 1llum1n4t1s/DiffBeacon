@@ -12,13 +12,15 @@ internal static class ImageRegionCommands
         while (optionStart < args.Length && !args[optionStart].StartsWith("--", StringComparison.Ordinal)) optionStart++;
         var count = optionStart - 1;
         if (count is not (2 or 3)) throw new ArgumentException("--image-regions LEFT [MIDDLE] RIGHT を指定してください。");
-        var blockSize = 8; double threshold = 0;
+        var blockSize = 8; double threshold = 0; double highlightAlpha = .7;
+        var selectedDiffIndex = -1; var render = false;
         int? leftFrame = null, middleFrame = null, rightFrame = null;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var index = optionStart; index < args.Length; index += 2)
         {
             var option = args[index];
-            if (option is not ("--block-size" or "--threshold" or "--left-frame" or "--middle-frame" or "--right-frame")
+            if (option is not ("--block-size" or "--threshold" or "--left-frame" or "--middle-frame" or "--right-frame"
+                or "--highlight-alpha" or "--selected-region")
                 || !seen.Add(option) || index + 1 >= args.Length)
                 throw new ArgumentException($"未知・重複または値が不足した画像領域オプションです: {option}");
             if (option == "--threshold")
@@ -26,6 +28,21 @@ internal static class ImageRegionCommands
                 if (!double.TryParse(args[index + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out threshold)
                     || !double.IsFinite(threshold) || threshold < 0)
                     throw new ArgumentException("差分閾値は有限の非負数です（小数点は .）。");
+                continue;
+            }
+            if (option == "--highlight-alpha")
+            {
+                if (!double.TryParse(args[index + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out highlightAlpha)
+                    || !double.IsFinite(highlightAlpha) || highlightAlpha is < 0 or > 1)
+                    throw new ArgumentException("強調alphaは有限の0..1です（小数点は .）。");
+                render = true;
+                continue;
+            }
+            if (option == "--selected-region")
+            {
+                if (!int.TryParse(args[index + 1], NumberStyles.None, CultureInfo.InvariantCulture, out var regionNumber))
+                    throw new ArgumentException("選択領域は0（未選択）または1以上の整数です。");
+                selectedDiffIndex = regionNumber - 1; render = true;
                 continue;
             }
             if (!int.TryParse(args[index + 1], NumberStyles.None, CultureInfo.InvariantCulture, out var value) || value < 1)
@@ -66,12 +83,15 @@ internal static class ImageRegionCommands
             var rows = (height + blockSize - 1) / blockSize;
             // 診断JSONの全grid出力だけを制限。通常比較へこの出力制約を持ち込まない。
             if ((long)columns * rows > 262_144) throw new InvalidOperationException("開発用の領域JSONは262,144ブロックまでです。");
-            var result = await Task.Run(() =>
+            var comparison = await Task.Run(() =>
             {
                 var frames = new ImageComparisonEngine.DecodedFrame[count];
                 for (var index = 0; index < count; index++) frames[index] = snapshots[index].Decode(numbers[index], token);
-                return ImageRegionDiffer.Compare(frames, blockSize, threshold, token);
+                var regionResult = ImageRegionDiffer.Compare(frames, blockSize, threshold, token);
+                var rendered = render ? ImageRegionRenderer.Render(frames, regionResult, blockSize, highlightAlpha, selectedDiffIndex, token) : null;
+                return (Result: regionResult, Rendered: rendered);
             }, token);
+            var result = comparison.Result;
             using var content = new MemoryStream();
             using (var writer = new Utf8JsonWriter(content))
             {
@@ -91,7 +111,19 @@ internal static class ImageRegionCommands
                     writer.WriteNumber("left", region.Left); writer.WriteNumber("top", region.Top);
                     writer.WriteNumber("right", region.Right); writer.WriteNumber("bottom", region.Bottom); writer.WriteEndObject();
                 }
-                writer.WriteEndArray(); writer.WriteNumber("conflictCount", result.ConflictCount); writer.WriteEndObject(); writer.Flush();
+                writer.WriteEndArray(); writer.WriteNumber("conflictCount", result.ConflictCount);
+                if (comparison.Rendered is not null)
+                {
+                    writer.WriteStartArray("renderedFrames");
+                    foreach (var frame in comparison.Rendered)
+                    {
+                        token.ThrowIfCancellationRequested(); writer.WriteStartObject();
+                        writer.WriteNumber("frame", frame.Number); writer.WriteNumber("width", frame.Width); writer.WriteNumber("height", frame.Height);
+                        writer.WriteString("pixelSha256", ImageComparisonEngine.PixelHash(frame.Pixels, token)); writer.WriteEndObject();
+                    }
+                    writer.WriteEndArray();
+                }
+                writer.WriteEndObject(); writer.Flush();
 
                 void WriteGrid(string name, byte[]? pair, int[]? ids)
                 {

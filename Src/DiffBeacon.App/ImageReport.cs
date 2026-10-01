@@ -5,58 +5,82 @@ using SkiaSharp;
 
 namespace DiffBeacon.App;
 
-// 確定済みの画像から、元画素と既存の差分マスクを自己完結 HTML にする。
+// 確定済みの画像・原本領域強調・原画を自己完結HTMLへ出力する。
 internal static class ImageReport
 {
     internal static string Create(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right,
-        string leftTitle, string rightTitle, int threshold = 0, int? leftFrame = null, int? rightFrame = null,
+        string leftTitle, string rightTitle, double threshold = 0, int? leftFrame = null, int? rightFrame = null,
+        CancellationToken token = default, int maximumBytes = ProjectReport.MaximumBytes)
+    {
+        ImageComparisonEngine.ValidateComparison(left, right, leftFrame, rightFrame, threshold);
+        return Create(new([left, right], threshold, leftFrame.HasValue ? [leftFrame.Value, rightFrame!.Value] : null),
+            [leftTitle, rightTitle], token, maximumBytes);
+    }
+
+    internal static string Create(ImageComparisonEngine.ReportInput input, IReadOnlyList<string> titles,
         CancellationToken token = default, int maximumBytes = ProjectReport.MaximumBytes)
     {
         token.ThrowIfCancellationRequested();
-        ImageComparisonEngine.ValidateComparison(left, right, leftFrame, rightFrame, threshold);
+        var images = input.Images;
+        ImageComparisonEngine.ValidateComparison(images, input.FrameNumbers, input.Threshold);
+        if (titles.Count != images.Count) throw new ArgumentException("全画像の見出しが必要です。");
         var html = new BoundedHtml(Math.Min(maximumBytes, ProjectReport.MaximumBytes), token);
-        var selected = leftFrame.HasValue;
+        var selected = input.FrameNumbers is not null;
         html.Append("<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><title>画像比較</title>"
             + "<style>body{font-family:system-ui,sans-serif}table{border-collapse:collapse;width:100%}"
             + "th,td{border:1px solid #888;padding:.5rem;vertical-align:top}img{max-width:100%;height:auto;"
             + "background:repeating-conic-gradient(#ddd 0% 25%,#fff 0% 50%) 0 0/16px 16px}"
-            + "td{width:33%}caption{text-align:left;padding:.5rem}</style></head>"
+            + "caption{text-align:left;padding:.5rem}</style></head>"
             + "<body data-mode=\"Image\" data-different=\"");
         var differentPosition = html.Length;
         html.Append("true\" data-frame-mode=\"");
         html.Append(selected ? "selected" : "all");
-        html.Append("\" data-left-frames=\""); html.Number(left.FrameCount);
-        html.Append("\" data-right-frames=\""); html.Number(right.FrameCount);
-        html.Append("\" data-threshold=\""); html.Number(threshold);
-        html.Append("\"><h1>画像比較</h1><table><caption>閾値: "); html.Number(threshold);
+        html.Append("\" data-left-frames=\""); html.Number(images[0].FrameCount);
+        html.Append("\" data-right-frames=\""); html.Number(images[^1].FrameCount);
+        if (images.Count == 3) { html.Append("\" data-middle-frames=\""); html.Number(images[1].FrameCount); }
+        html.Append("\" data-threshold=\""); html.Append(input.Threshold.ToString("R", CultureInfo.InvariantCulture));
+        html.Append("\"><h1>画像比較</h1><table><caption>閾値: "); html.Append(input.Threshold.ToString("R", CultureInfo.InvariantCulture));
         html.Append(" / フレーム: "); html.Append(selected ? "選択した組" : "全同番号フレーム");
-        html.Append("</caption><thead><tr><th>"); html.Escape(leftTitle);
-        html.Append("</th><th>"); html.Escape(rightTitle);
-        html.Append("</th><th>ピクセル差分</th></tr></thead><tbody>");
-        var different = !selected && left.FrameCount != right.FrameCount;
-        var count = selected ? 1 : Math.Max(left.FrameCount, right.FrameCount);
+        html.Append("</caption><thead><tr>");
+        var sides = images.Count == 3 ? new[] { "left", "middle", "right" } : ["left", "right"];
+        for (var i = 0; i < titles.Count; i++) { html.Append("<th data-side=\""); html.Append(sides[i]); html.Append("\">"); html.Escape(titles[i]); html.Append("</th>"); }
+        html.Append("<th>左右の画素差・領域</th></tr></thead><tbody>");
+        var different = !selected && images.Select(image => image.FrameCount).Distinct().Count() != 1;
+        var count = selected ? 1 : images.Max(image => image.FrameCount);
         for (var index = 1; index <= count; index++)
         {
             token.ThrowIfCancellationRequested();
-            var aNumber = selected ? leftFrame!.Value : index;
-            var bNumber = selected ? rightFrame!.Value : index;
-            var a = aNumber <= left.FrameCount ? left.Decode(aNumber, token) : null;
-            var b = bNumber <= right.FrameCount ? right.Decode(bNumber, token) : null;
+            var numbers = input.FrameNumbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
+            var set = ImageComparisonEngine.DecodeSelection(images, numbers, input.Threshold, true, token);
+            var a = set.Frames[0]; var b = set.Frames[^1];
             token.ThrowIfCancellationRequested();
-            var comparison = ImageComparisonEngine.ComparePixels(a, b, threshold, true, token);
-            different |= a is null || b is null || comparison.DifferentPixels > 0;
+            var comparison = set.Pixels;
+            var rendered = ImageRegionRenderer.Render(set.Frames, set.Regions,
+                selectedDiffIndex: Math.Min(input.SelectedDiffIndex, set.Regions.Regions.Count - 1), token: token, showDifferences: input.ShowDifferences);
+            different |= set.Regions.Regions.Count > 0;
             html.Append("<tr data-left-frame=\""); html.Frame(a?.Number);
             html.Append("\" data-right-frame=\""); html.Frame(b?.Number);
             html.Append("\" data-different-pixels=\""); html.Number(comparison.DifferentPixels);
             html.Append("\" data-total-pixels=\""); html.Number(comparison.TotalPixels);
-            html.Append("\"><td>");
-            AppendSource(html, a, "left", leftTitle, token);
-            html.Append("</td><td>");
-            AppendSource(html, b, "right", rightTitle, token);
-            html.Append("</td><td><p>差分画素: "); html.Number(comparison.DifferentPixels);
+            if (images.Count == 3) { html.Append("\" data-middle-frame=\""); html.Number(set.Frames[1].Number); }
+            html.Append("\" data-difference-count=\""); html.Number(set.Regions.Regions.Count);
+            html.Append("\" data-conflict-count=\""); html.Number(set.Regions.ConflictCount); html.Append("\">");
+            for (var i = 0; i < rendered.Count; i++)
+            {
+                html.Append("<td>"); AppendSource(html, rendered[i], sides[i], titles[i], token);
+                html.Append("<details><summary>原画</summary>"); AppendSource(html, set.Frames[i], sides[i] + "-original", titles[i], token); html.Append("</details></td>");
+            }
+            html.Append("<td><p>左右の差分画素: "); html.Number(comparison.DifferentPixels);
             html.Append(" / "); html.Number(comparison.TotalPixels); html.Append("</p>");
             AppendImage(html, comparison.DifferencePixels!, comparison.Width, comparison.Height,
                 "difference", null, "ピクセル差分", token);
+            html.Append("<p>領域 "); html.Number(set.Regions.Regions.Count); html.Append(" / 競合 "); html.Number(images.Count == 3 ? set.Regions.ConflictCount : 0); html.Append("</p><ol>");
+            foreach (var region in set.Regions.Regions)
+            {
+                token.ThrowIfCancellationRequested(); html.Append("<li data-region=\""); html.Number(region.Id); html.Append("\" data-op=\""); html.Number(region.Op); html.Append("\">");
+                html.Append(images.Count == 2 ? "差分" : region.Op switch { 1 => "左だけ", 2 => "中央だけ", 3 => "右だけ", _ => "競合" }); html.Append("</li>");
+            }
+            html.Append("</ol>");
             html.Append("</td></tr>");
         }
         html.Append("</tbody></table></body></html>");

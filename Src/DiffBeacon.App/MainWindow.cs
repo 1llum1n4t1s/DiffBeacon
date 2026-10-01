@@ -91,7 +91,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 {
     private readonly Window _owner;
     public TextBox LeftPath { get; } = new() { PlaceholderText = "左のファイル / フォルダー" };
-    public TextBox BasePath { get; } = new() { PlaceholderText = "共通の祖先（3方向比較）" };
+    public TextBox BasePath { get; } = new() { PlaceholderText = "共通の祖先 / 中央画像（3方向比較）" };
     public TextBox RightPath { get; } = new() { PlaceholderText = "右のファイル / フォルダー" };
     public TextBox LeftEditor { get; } = Editor();
     public TextBox RightEditor { get; } = Editor();
@@ -284,7 +284,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right))) { await CompareDirectoryAsync(left, right, token); _lastPackageComparison = comparisonForPackaging; return; }
             if (mode == 4 || (mode == 0 && SpecializedViews.IsImage(left) && SpecializedViews.IsImage(right)))
             {
-                var imageView = await SpecializedViews.ImagesAsync(left, right, token);
+                var imageView = await SpecializedViews.ImagesAsync(left, right, token, BasePath.Text);
                 if (token.IsCancellationRequested)
                 {
                     SpecializedViews.Release(imageView);
@@ -353,6 +353,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public void NavigateDifference(int direction)
     {
+        if (_specialTab.Content is SpecializedViews.ImagePanel image) { _ = image.NavigateRegionAsync(direction); return; }
         if (CurrentDiff is not { Blocks.Count: > 0 }) return;
         _diffIndex = (_diffIndex + direction + CurrentDiff.Blocks.Count) % CurrentDiff.Blocks.Count;
         DiffList.SelectedIndex = CurrentDiff.Blocks[_diffIndex].RowStart;
@@ -448,10 +449,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         foreach (var pane in panes) pane.EnsureProjectOutputWritable(path);
         var protectedEntries = panes.Select(pane => pane.CaptureProject()).ToArray();
         var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var ancestor = _baseText;
-        (ImageComparisonEngine.Snapshot Left, ImageComparisonEngine.Snapshot Right, int Threshold, int? LeftFrame, int? RightFrame)? imageInput = null;
+        ImageComparisonEngine.ReportInput? imageInput = null;
         if (ProjectReport.IsImage(project))
         {
-            if (!string.IsNullOrWhiteSpace(project.BasePath)) throw new InvalidOperationException("三者画像の詳細HTMLレポートは未対応です。");
             imageInput = (_specialTab.Content as SpecializedViews.ImagePanel
                 ?? throw new InvalidOperationException("画像を比較してからレポートを生成してください。")).CaptureReport();
         }
@@ -462,8 +462,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         {
             var cancellation = operation.Token;
             var html = await Task.Run(() => imageInput is { } image
-                ? ImageReport.Create(image.Left, image.Right, project.LeftDescription ?? project.LeftPath,
-                    project.RightDescription ?? project.RightPath, image.Threshold, image.LeftFrame, image.RightFrame, cancellation)
+                ? ImageReport.Create(image, string.IsNullOrWhiteSpace(project.BasePath)
+                    ? [project.LeftDescription ?? project.LeftPath, project.RightDescription ?? project.RightPath]
+                    : [project.LeftDescription ?? project.LeftPath, project.BaseDescription ?? project.BasePath, project.RightDescription ?? project.RightPath], cancellation)
                 : project.Mode is "Provider" or "Web"
                 ? HtmlReport.CreateText([new((project.LeftDescription ?? project.LeftPath) + "（変換後のテキスト）", left),
                     new((project.RightDescription ?? project.RightPath) + "（変換後のテキスト）", right)], ProjectReport.Options(project), ProjectReport.MaximumBytes, cancellation)
@@ -541,6 +542,10 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private void NavigateConflict()
     {
+        if (_specialTab.Content is SpecializedViews.ImagePanel image)
+        {
+            _ = image.NavigateRegionAsync(1, conflictsOnly: true); return;
+        }
         if (CurrentMergeSession is { } session)
         {
             var pending = session.Sections.Where(range => range.Section.IsPending).ToArray();
