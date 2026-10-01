@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+画像コピーの限定実行は `--image-copy-only`、全体E2Eにも含む。原本143ケース・935状態をBCL PNGへ戻し、実CLI `--image-copy` の原画全BGRA・寸法・region grid／分類・全pane共有履歴／dirty／savepointへ照合する。PNG別名保存を独立復号・通常画像CLI再読込みで照合し、無効入力・読取り専用・出力保護とscript／作業／履歴／JSON上限を検証する。入力・script・stdout／stderr・終了コード・observations・assertionsを保持する。[コピーfixtureの境界](../Fixtures/ImageCopy/README.md)を参照する。GUI編集・処理中のOSシグナル取消・元形式／多ページ保存はこの限定検証に含めない。
+
 画像領域の限定実行は `--image-regions-only`、全体E2Eにも含む。無改変WinIMerge v1.0.54 C++関数から採取した164件のraw BGRAをBCLのPNGに包装し、実アプリの復号・開発用CLIを通して全pair grid・領域ID・分類・矩形・個数を完全一致照合する。通常buildにC++やFreeImageを追加しない。固定goldenのSHA、入力保持、不正引数、選択組、入力／共通canvas／合計復号量／診断grid上限も確認し、PNG・成功／拒否出力・終了コード・`image-region-observations.json`・`assertions.json`を保存する。[出典と再生成](../Fixtures/ImageRegions/README.md)。通常GUI・HTMLへの統合やOSシグナル取消の実測はこの限定E2Eに含めない。
 
 画像HTMLの限定実行は `--image-reports-only`、`--reports-only` と全体E2Eにも含む。既存画像fixtureの全画素期待値を、単体・ZIP包装から取り出した埋込みPNGへ独立BCL PNG復号で照合する。全／選択、後続差分・欠落・透明合成・閾値・寸法、説明のescape、原本保持、包装展開と相対プロジェクト再読込み、入力・本文サイズ・出力保護・取消を確認する。画像UIは全／選択の設定と表示原本スナップショットの保持も自己検証する。

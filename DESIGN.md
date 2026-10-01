@@ -30,6 +30,8 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 画像領域はWinIMerge v1.0.54のblock比較・8近傍領域・01∨21候補と01/21/02分類を保持し、三者共通gridと原本のunsigned高さ減算も再現する。原本のMarkDiffは0.7の色合成・透明画素・paneごとの分類除外・選択色を保つ。三者の中央は第三画像であり祖先ではない。通常の差分有無は領域数、左右画素差は補助値として区別する。診断CLI `--image-regions` は全gridも返すため262,144blockに制限し、選択的に強調SHAを追加する。通常呼び出し元と同じ計算を、[領域fixture](tests/Fixtures/ImageRegions/README.md)・[強調fixture](tests/Fixtures/ImageHighlight/README.md)の無改変C++期待値へ照合する。採取用C++ / FreeImageは通常buildに含めない。
 
+静止画像のコピー核はAppの `ImageEditSession` が比較時の寸法・領域ID maskを固定して原画だけをコピーする。全／三者autoをUndo一件とし、原画・再比較・共有履歴を仮状態からまとめて確定する。`ImagePngStore` は透明RGBを保持したPNG別名保存、`ImageCopyCommands` は全scriptのシミュレーションとbounded JSON完了後にexportを公開する。GUI・HTMLの編集済み原画への接続と元形式保存は未完了。操作・上限・adapter境界は[画像の契約](Docs/IMAGE-VIEWER.md#静止画像コピー核の診断)へ集約する。
+
 プロバイダーは `ComparisonRequest` を受け、`ProviderResult` の左右の比較用テキストと概要を返す。そのテキストを通常の差分処理に渡すが、元文書への書戻しには使わない。外部プロバイダーはシェルを介さず別プロセスで起動し、標準入力・出力の版付き JSON で通信する。登録は呼び出し元が明示的に行う。
 
 比較プロジェクトは `ComparisonWorkspace` として全タブの順序・選択位置と、各比較のパス・説明・読取り専用指定・モード・対応オプション・プロバイダー ID・フィルター設定を source-generated JSON で保存する。`WorkspaceStore` は最大256組・4 MiBに制限し、従来の単一JSONと複数の `paths` を持つ旧 `.WinMerge` XMLを同じワークスペースへ正規化する。他 OS の絶対パスと未対応の旧設定は保持し、未適用設定はGUIで警告する。編集本文・マージの採用状態・履歴は永続化せず、文書の保存とは分離する。保存した ID やプラグイン名は実行ファイルの登録情報ではなく、自動登録・実行には使わない。HTML レポートは入力を HTML エスケープし、パッチ処理はパッチ中のパスによるファイルアクセスを行わない。

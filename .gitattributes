@@ -14,3 +14,6 @@ tests/Fixtures/ImageRegions/reference-source/image.hpp -text -whitespace
 tests/Fixtures/ImageRegions/LICENSE.txt -text whitespace=cr-at-eol
 tests/Fixtures/ImageHighlight/winimerge-image-highlight-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/ImageHighlight/probe-adapter.cpp -text whitespace=cr-at-eol
+tests/Fixtures/ImageCopy/winimerge-image-copy-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageCopy/reference-source/ImgMergeBuffer.hpp -text -whitespace
+tests/Fixtures/ImageCopy/probe-adapter.cpp -text whitespace=cr-at-eol

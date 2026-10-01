@@ -31,3 +31,25 @@ HTMLはbase64と本文を含むUTF-8で32 MiBまで。包装はさらに入力�
 開発用 `DiffBeacon --image-regions LEFT [MIDDLE] RIGHT` は通常操作と同じWinIMerge v1.0.54の領域処理を呼び、全pair grid・領域ID・矩形をJSONで出す。既定は先頭、block size=8、threshold=0。`--block-size N` は1..256。全grid出力は262,144blockまで。フレームと閾値の指定は通常CLIと同じ。`--highlight-alpha X`（0..1）または `--selected-region N`（1始まり、0は未選択）の指定時だけ強調後の各paneの寸法・SHAを追加する。位置合わせ・回転・挿入削除検出・画像マージ・原本overlay/wipeはこの照合に含めない。
 
 原本の無改変関数・SHA・ライセンス・採取範囲は[領域fixture](../tests/Fixtures/ImageRegions/README.md)と[強調fixture](../tests/Fixtures/ImageHighlight/README.md)を参照する。復号用の独立した全RGBA/BGRA期待値は[画像fixture](../tests/Fixtures/Images/README.md)、実測範囲は[移行一覧](MIGRATION.md)へ記載する。
+
+## 静止画像コピー核の診断
+
+開発用 `DiffBeacon --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]` は単一フレームの二／三者画像を復号し、原画の領域コピーと全pane共有のUndo／Redoを実行する。GUIの画像コピー操作はまだ接続していない。offset・回転・挿入削除は使わない。拡張canvasの初期値はzero-filled BGRAで、FreeImageの新規画素・paste処理の完全互換は未確認。[コピーfixture](../tests/Fixtures/ImageCopy/README.md)の無改変原本143ケース・935状態を期待値とする。
+
+scriptは `blockSize`（1..256、既定8）、`threshold`（有限の非負数、既定0）、`readOnly`（入力数と同じbool配列、既定全false）、`actions` を持つJSON object。操作のpane・領域indexは0始まり。未知・重複property、未知kind、必要値の欠落を拒否する。
+
+| kind | 必須値 | 処理 |
+| --- | --- | --- |
+| `copy` | `src`, `dst`, `index` | 選択領域のIDに属するblockの全原画BGRAをコピー |
+| `all` | `src`, `dst` | 全領域をコピーし、Undo一件として再比較 |
+| `auto` | `dst` | 中央には左右only、外側には中央onlyをコピー。競合は保持 |
+| `undo` / `redo` | なし | 全pane共有履歴を移動して再比較 |
+| `save` | `dst` | 診断用のsavepoint mark。ファイルを保存しない |
+| `set-savepoint` | `dst`, `index` | 診断用のsavepoint復元 |
+| `export` | `dst`, `path` | 原画を32bit PNGへ別名保存し、成功状態へsavepointを進める |
+
+例えば `{"actions":[{"kind":"all","src":0,"dst":1},{"kind":"export","dst":1,"path":"result.png"}]}` は左の全差分を右へコピーしてPNGへ保存する。領域の矩形内に別の領域があれば触らない。コピー元は強調画面ではない。原本に合わせ、差分0の全コピーや採用0のautoも一件の履歴となりdirtyにする。コピー／再比較は仮状態で完了させてから確定し、Undo後の新編集は旧Redoを破棄する。
+
+PNGはUnpremulの原画から生成し、透明RGB・alphaを保持する。入力全画像と操作scriptへの上書き、読取り専用pane・既存出力、リンク経由の入出力を拒否する。同じディレクトリの一時ファイルから原子的に置換し、既存属性とUnix modeを保持する。元形式・BPP／palette・アニメーション／多ページcontainerの保存ではない。
+
+scriptは1 MiB・64操作、履歴は128件・256 MiB、コピーblock走査と再比較の累積作業は256Mピクセルまで。診断の全gridは262,144block、JSONは32 MiBまでで、原画base64の増幅も変換前に確認する。`--hashes-only` は原画base64だけ省略する。全操作と全stateのシミュレーション・JSON出力検査を完了してからexportを保存するため、その前の構文・予算エラーでは既存出力を保持する。複数exportは各ファイルを順次保存し、途中のOS保存失敗時に先行ファイルまで巻き戻す契約ではない。成功は差分の有無によらず終了コード0、失敗2。JSONは初期状態と各操作後の原画・領域・履歴／dirty／savepointを返す。

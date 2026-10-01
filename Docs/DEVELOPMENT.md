@@ -1,8 +1,10 @@
 # 開発と検証
 
-画像領域の原本参照は `uv run --no-project python tests/Fixtures/ImageRegions/generate-reference.py --output artifacts/verification/image-regions-reference/reproduced` で再採取する。通常buildやE2EにはMSVCを追加せず固定goldenを使う。製品を別プロセスで照合する限定実行は `--image-regions-only`。原本抽出・ライセンス・SHAは[fixture説明](../tests/Fixtures/ImageRegions/README.md)、診断CLIの契約は[画像の説明](IMAGE-VIEWER.md#原本の差分領域処理の照合)を参照する。
+画像領域の原本参照は `uv run --no-project python tests/Fixtures/ImageRegions/generate-reference.py --output artifacts/verification/image-regions-reference/reproduced` で再採取する。通常buildやE2EにはMSVCを追加せず固定goldenを使う。製品を別プロセスで照合する限定実行は `--image-regions-only`。原本抽出・ライセンス・SHAは[fixture説明](../tests/Fixtures/ImageRegions/README.md)、診断CLIの契約は[画像の説明](IMAGE-VIEWER.md#原本照合の入口)を参照する。
 
 画像強調の再採取は `uv run --no-project python tests/Fixtures/ImageHighlight/generate-reference.py --output artifacts/verification/image-highlight-reference/reproduced`。固定72件は限定E2E `--image-highlight-only` と全体へ接続する。通常GUI・CLI・単体／包装HTMLの描画画素を照合し、UI自己検証は実Bitmap・選択・強調解除・三者ページ操作を保存する。[fixture](../tests/Fixtures/ImageHighlight/README.md)の出典・SHA・GPLを保持する。
+
+静止画像コピー核の再採取は `uv run --no-project python tests/Fixtures/ImageCopy/generate-reference.py --output artifacts/verification/image-copy-reference/reproduced`。固定143ケース・935状態を実画像の限定 `--image-copy-only` と全体 E2Eへ照合する。[fixture](../tests/Fixtures/ImageCopy/README.md)のFreeImage未実測のadapter境界を維持し、[診断CLI](IMAGE-VIEWER.md#静止画像コピー核の診断)を使う。GUI編集・元形式／多ページ保存はまだ接続していない。
 
 画像HTMLは `--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]` で生成する。番号・閾値は画像比較にだけ指定でき、既定は全同番号フレームと閾値0。限定E2Eは `--image-reports-only`、契約は [画像の説明](IMAGE-VIEWER.md) と [E2Eの手順](../tests/DiffBeacon.E2E/README.md) を参照する。
 

@@ -1706,7 +1706,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-highlight-only", StringComparer.Ordinal))
+    if (args.Contains("--image-copy-only", StringComparer.Ordinal))
+    {
+        await ImageCopyScenarios.RunAsync(output, fixtures, Run, Check, Skip);
+    }
+    else if (args.Contains("--image-highlight-only", StringComparer.Ordinal))
     {
         await ImageHighlightScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1782,6 +1786,7 @@ try
     await ImageFrameScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageRegionScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageHighlightScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageCopyScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
     await PackagingCases();

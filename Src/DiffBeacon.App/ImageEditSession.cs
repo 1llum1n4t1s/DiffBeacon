@@ -1,0 +1,201 @@
+namespace DiffBeacon.App;
+
+// WinIMerge v1.0.54 ImgMergeBuffer.hpp の領域コピー・共有履歴を移植。
+// GPL-2.0-or-later。原本・採取境界は tests/Fixtures/ImageCopy を参照。
+// offset0・変換なし・静止画専用。拡張の初期値は明示したzero-filled BGRA契約。
+internal sealed class ImageEditSession
+{
+    internal const int MaximumHistoryRecords = 128;
+    internal const long MaximumHistoryBytes = 256L * 1024 * 1024;
+    internal const long MaximumWork = 256_000_000;
+    private sealed record Edit(int Pane, ImageComparisonEngine.DecodedFrame Before,
+        ImageComparisonEngine.DecodedFrame After, int[] Counts);
+    private readonly bool[] _readOnly;
+    private readonly int _blockSize;
+    private readonly double _threshold;
+    private readonly List<Edit> _history = [];
+    private readonly int[] _counts;
+    private readonly int[] _savePoints;
+    private ImageComparisonEngine.DecodedFrame[] _frames;
+    private int _index = -1;
+    private long _historyBytes;
+    private long _work;
+    internal ImageRegionDiffer.Result Regions { get; private set; }
+    internal int PaneCount => _frames.Length;
+    internal int HistoryIndex => _index;
+    internal int HistoryCount => _history.Count;
+    internal bool CanUndo => _index >= 0;
+    internal bool CanRedo => _index < _history.Count - 1;
+
+    internal ImageEditSession(IReadOnlyList<ImageComparisonEngine.DecodedFrame> frames,
+        IReadOnlyList<bool>? readOnly = null, int blockSize = 8, double threshold = 0,
+        CancellationToken token = default)
+    {
+        if (readOnly is not null && readOnly.Count != frames.Count) throw new ArgumentException("読取り専用の指定数が入力数と一致しません。");
+        Regions = ImageRegionDiffer.Compare(frames, blockSize, threshold, token);
+        _frames = frames.Select(Clone).ToArray();
+        _readOnly = readOnly?.ToArray() ?? new bool[frames.Count];
+        _counts = new int[frames.Count]; _savePoints = new int[frames.Count];
+        _blockSize = blockSize; _threshold = threshold;
+        _work = ComparisonWork(_frames);
+    }
+
+    internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> CaptureFrames() => _frames.Select(Clone).ToArray();
+    internal ImageComparisonEngine.DecodedFrame CaptureFrame(int pane)
+        => ValidPane(pane) ? Clone(_frames[pane]) : throw new ArgumentOutOfRangeException(nameof(pane));
+    internal bool IsReadOnly(int pane) => ValidPane(pane) && _readOnly[pane];
+    internal bool IsModified(int pane) => ValidPane(pane) && _savePoints[pane] != (_index < 0 ? 0 : _history[_index].Counts[pane]);
+    internal int ModCount(int pane) => _counts[pane];
+    internal int SavePoint(int pane) => ValidPane(pane) ? _savePoints[pane] : 0;
+    internal void MarkSaved(int pane) { if (ValidPane(pane)) _savePoints[pane] = _index < 0 ? 0 : _history[_index].Counts[pane]; }
+    internal void SetSavePoint(int pane, int point) { if (ValidPane(pane)) _savePoints[pane] = point; }
+    private bool ValidPane(int pane) => pane >= 0 && pane < _frames.Length;
+    private bool CanCopy(int source, int destination) => ValidPane(source) && ValidPane(destination)
+        && source != destination && !_readOnly[destination];
+
+    internal void Copy(int regionIndex, int source, int destination, CancellationToken token = default)
+    {
+        token.ThrowIfCancellationRequested();
+        if (!CanCopy(source, destination) || regionIndex < 0 || regionIndex >= Regions.Regions.Count) return;
+        Apply(destination, [(regionIndex, source)], token);
+    }
+
+    internal void CopyAll(int source, int destination, CancellationToken token = default)
+    {
+        token.ThrowIfCancellationRequested();
+        if (!CanCopy(source, destination)) return;
+        Apply(destination, Enumerable.Range(0, Regions.Regions.Count).Select(index => (index, source)).ToArray(), token);
+    }
+
+    internal int AutoMerge(int destination, CancellationToken token = default)
+    {
+        token.ThrowIfCancellationRequested();
+        if (!ValidPane(destination) || _readOnly[destination]) return 0;
+        var copies = new List<(int Index, int Source)>();
+        for (var index = 0; index < Regions.Regions.Count; index++)
+        {
+            var source = Regions.Regions[index].Op switch
+            {
+                1 when destination == 1 => 0,
+                2 when destination != 1 => 1,
+                3 when destination == 1 && _frames.Length == 3 => 2,
+                _ => -1
+            };
+            if (source >= 0) copies.Add((index, source));
+        }
+        Apply(destination, copies, token);
+        return copies.Count;
+    }
+
+    private void Apply(int destination, IReadOnlyList<(int Index, int Source)> copies, CancellationToken token)
+    {
+        // 全領域を同じ比較時寸法で処理し、一件の履歴と再比較を確定する。
+        var before = _frames[destination];
+        var width = before.Width; var height = before.Height;
+        long scanWork = 0;
+        foreach (var (index, source) in copies)
+        {
+            token.ThrowIfCancellationRequested();
+            var rc = Regions.Regions[index];
+            var input = _frames[source];
+            var xmax = Math.Min(checked(rc.Right * _blockSize - 1), input.Width - 1);
+            var ymax = Math.Min(checked(rc.Bottom * _blockSize - 1), input.Height - 1);
+            width = checked(width + Math.Max(0, xmax - before.Width + 1));
+            height = checked(height + Math.Max(0, ymax - before.Height + 1));
+            scanWork = checked(scanWork + (long)(rc.Right - rc.Left) * (rc.Bottom - rc.Top) * _blockSize * _blockSize);
+        }
+        ValidateCanvas(width, height, _frames);
+        var bytes = checked((long)width * height * 4);
+        var retainedBytes = _historyBytes;
+        for (var i = _history.Count - 1; i > _index; i--) retainedBytes -= RecordBytes(_history[i]);
+        if (_index + 2 > MaximumHistoryRecords || retainedBytes + before.Pixels.LongLength + bytes > MaximumHistoryBytes)
+            throw new InvalidOperationException("画像編集の履歴上限（128件・256 MiB）を超えます。");
+        var comparisonWork = checked((long)Math.Max(width, Regions.Width) * Math.Max(height, Regions.Height) * _frames.Length);
+        CheckWork(checked(scanWork + comparisonWork));
+        var next = Clone(before);
+        foreach (var (index, source) in copies) next = CopyRegion(index, source, before, next, token);
+        var candidate = (ImageComparisonEngine.DecodedFrame[])_frames.Clone(); candidate[destination] = next;
+        var compared = ImageRegionDiffer.Compare(candidate, _blockSize, _threshold, token);
+        var counters = (int[])_counts.Clone();
+        for (var i = _history.Count - 1; i > _index; i--) --counters[_history[i].Pane];
+        ++counters[destination];
+        var edit = new Edit(destination, before, next, counters);
+        token.ThrowIfCancellationRequested();
+        if (_history.Count > _index + 1) _history.RemoveRange(_index + 1, _history.Count - _index - 1);
+        _history.Add(edit); ++_index;
+        Array.Copy(counters, _counts, counters.Length);
+        _historyBytes = retainedBytes + RecordBytes(edit); _work += scanWork + comparisonWork;
+        _frames = candidate; Regions = compared;
+    }
+
+    private ImageComparisonEngine.DecodedFrame CopyRegion(int index, int source,
+        ImageComparisonEngine.DecodedFrame originalDestination, ImageComparisonEngine.DecodedFrame target,
+        CancellationToken token)
+    {
+        var rc = Regions.Regions[index]; var input = _frames[source];
+        var xmax = Math.Min(rc.Right * _blockSize - 1, input.Width - 1);
+        var ymax = Math.Min(rc.Bottom * _blockSize - 1, input.Height - 1);
+        var width = target.Width + Math.Max(0, xmax - originalDestination.Width + 1);
+        var height = target.Height + Math.Max(0, ymax - originalDestination.Height + 1);
+        if (width != target.Width || height != target.Height)
+        {
+            var expanded = new byte[checked(width * height * 4)];
+            for (var y = 0; y < target.Height; y++)
+            {
+                token.ThrowIfCancellationRequested();
+                target.Pixels.AsSpan(y * target.Width * 4, target.Width * 4).CopyTo(expanded.AsSpan(y * width * 4));
+            }
+            target = new(target.Number, width, height, expanded);
+        }
+        for (var by = rc.Top; by < rc.Bottom; by++)
+        {
+            token.ThrowIfCancellationRequested();
+            for (var bx = rc.Left; bx < rc.Right; bx++)
+            {
+                if (Regions.RegionIds[by * Regions.Columns + bx] != index + 1) continue;
+                for (var dy = 0; dy < _blockSize; dy++)
+                {
+                    var y = by * _blockSize + dy;
+                    if (y >= input.Height || y >= originalDestination.Height) continue;
+                    var x = bx * _blockSize;
+                    var count = Math.Min(_blockSize, Math.Min(input.Width, originalDestination.Width) - x);
+                    // ConvertToRealPosは拡張前の前処理寸法を参照する。
+                    if (count > 0) input.Pixels.AsSpan((y * input.Width + x) * 4, count * 4)
+                        .CopyTo(target.Pixels.AsSpan((y * target.Width + x) * 4, count * 4));
+                }
+            }
+        }
+        return target;
+    }
+
+    internal bool Undo(CancellationToken token = default) => MoveHistory(false, token);
+    internal bool Redo(CancellationToken token = default) => MoveHistory(true, token);
+    private bool MoveHistory(bool redo, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        if (redo ? !CanRedo : !CanUndo) return false;
+        var edit = _history[redo ? _index + 1 : _index];
+        var candidate = (ImageComparisonEngine.DecodedFrame[])_frames.Clone();
+        candidate[edit.Pane] = redo ? edit.After : edit.Before;
+        var work = ComparisonWork(candidate); CheckWork(work);
+        var compared = ImageRegionDiffer.Compare(candidate, _blockSize, _threshold, token);
+        token.ThrowIfCancellationRequested();
+        _frames = candidate; Regions = compared; _index += redo ? 1 : -1; _work += work;
+        return true;
+    }
+
+    private void CheckWork(long work)
+    {
+        if (work > MaximumWork - _work) throw new InvalidOperationException("画像編集の累積作業量が256Mピクセルを超えます。");
+    }
+    private static long ComparisonWork(IReadOnlyList<ImageComparisonEngine.DecodedFrame> frames)
+        => checked((long)frames.Max(frame => frame.Width) * frames.Max(frame => frame.Height) * frames.Count);
+    private static void ValidateCanvas(int width, int height, IReadOnlyList<ImageComparisonEngine.DecodedFrame> frames)
+    {
+        if ((long)Math.Max(width, frames.Max(frame => frame.Width)) * Math.Max(height, frames.Max(frame => frame.Height)) > ImageComparisonEngine.MaximumPixels)
+            throw new InvalidOperationException("編集キャンバスが1600万ピクセルを超えます。");
+    }
+    private static long RecordBytes(Edit edit) => edit.Before.Pixels.LongLength + edit.After.Pixels.LongLength;
+    private static ImageComparisonEngine.DecodedFrame Clone(ImageComparisonEngine.DecodedFrame frame)
+        => new(frame.Number, frame.Width, frame.Height, (byte[])frame.Pixels.Clone());
+}

@@ -58,6 +58,8 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
 
+静止画像の領域コピー・Undo／Redo・PNG別名保存は、開発用 `--image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON` で原本照合できます。GUIの編集操作は接続前です。[操作と保存の範囲](Docs/IMAGE-VIEWER.md#静止画像コピー核の診断)を参照してください。
+
 表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
 
 `DiffBeacon --word-diff LEFT RIGHT` は原文の変更区間を JSON で返します。`ranges` の各要素は `[左の開始位置, 左の長さ, 右の開始位置, 右の長さ]` で、位置は0始まりの UTF-16 単位です。既定では文字単位まで絞り込み、`--word-level` で単語単位にできます。`--eol strict|ignore|space`、`--separators TEXT` などの指定は `--help` で確認できます。詳細比較を省略した場合は `fallback` と `fallbackReason` に示し、両原文全体を変更区間として返します。

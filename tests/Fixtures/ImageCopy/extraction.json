@@ -1,0 +1,93 @@
+[
+  {
+    "file": "original-types.inc",
+    "lineRanges": [
+      [
+        33,
+        161
+      ]
+    ],
+    "sha256": "D25AA2C4DA9EEEADC2F6DC4CD47B5D107E1793E2D2E7A1ACCBD499E2BC25D0B5",
+    "unaltered": true
+  },
+  {
+    "file": "original-comparison.inc",
+    "lineRanges": [
+      [
+        1663,
+        1693
+      ],
+      [
+        1702,
+        1886
+      ]
+    ],
+    "sha256": "7D6BD3067765E75F2690F641A2DADC8ACB6D015183BF871F2B658836D456745B",
+    "unaltered": true
+  },
+  {
+    "file": "original-mode.inc",
+    "lineRanges": [
+      [
+        479,
+        481
+      ]
+    ],
+    "sha256": "5D009C2F9D45EC7B14D59D4362C778676EA0F0A72E0BFEB4756C6514B9EB7950",
+    "unaltered": true
+  },
+  {
+    "file": "original-convert.inc",
+    "lineRanges": [
+      [
+        1440,
+        1562
+      ]
+    ],
+    "sha256": "9193F89973377337643E8903E1F7AD37B23272A1DD99864B3BB24F03D4366FAD",
+    "unaltered": true
+  },
+  {
+    "file": "original-transformation.inc",
+    "lineRanges": [
+      [
+        2264,
+        2279
+      ]
+    ],
+    "sha256": "7FDA0C5779BC8784491FAA61F9F91668C0FD6D820E659EEF542254E86DDC0ACB",
+    "unaltered": true
+  },
+  {
+    "file": "original-history.inc",
+    "source": "ImgMergeBuffer.hpp",
+    "lineRanges": [
+      [
+        22,
+        135
+      ]
+    ],
+    "sha256": "BBF04FBB15DC35C81F3D9950E07F40E06B5B85E1FDA0B1FE8640DC3EEA3AF0AD",
+    "unaltered": true
+  },
+  {
+    "file": "original-copy.inc",
+    "source": "ImgMergeBuffer.hpp",
+    "lineRanges": [
+      [
+        216,
+        317
+      ],
+      [
+        342,
+        389
+      ],
+      [
+        566,
+        689
+      ]
+    ],
+    "sha256": "8373832985AB0AF0F6F5CA430FDB383983DE9F45F52F550A370EA069184737D3",
+    "unaltered": true
+  }
+]
