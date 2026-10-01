@@ -18,6 +18,7 @@ internal static class CommandLine
                     + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT] [--max-work N]\n"
                     + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
                     + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
+                    + "開発用: --image-regions LEFT [MIDDLE] RIGHT [--block-size N] [--threshold X] [--left-frame N [--middle-frame N] --right-frame N]\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n--image LEFT RIGHT [--left-frame N --right-frame N] [--threshold N]\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
                     + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N --right-frame N] [--threshold N]\n"
@@ -30,6 +31,7 @@ internal static class CommandLine
             var command = args[0];
             if (command == "--word-diff") return await WordDiffCommands.RunAsync(args);
             if (command == "--gnu-line-script") return await GnuLineCommands.RunAsync(args);
+            if (command == "--image-regions") return await ImageRegionCommands.RunAsync(args);
             if (command == "--image") return await ImageCommands.RunAsync(args);
             if (command == "--package-project") return await PackageCommands.RunAsync(args);
             if (command == "--report-project") return await ReportCommands.RunAsync(args);

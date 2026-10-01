@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+画像領域の限定実行は `--image-regions-only`、全体E2Eにも含む。無改変WinIMerge v1.0.54 C++関数から採取した164件のraw BGRAをBCLのPNGに包装し、実アプリの復号・開発用CLIを通して全pair grid・領域ID・分類・矩形・個数を完全一致照合する。通常buildにC++やFreeImageを追加しない。固定goldenのSHA、入力保持、不正引数、選択組、入力／共通canvas／合計復号量／診断grid上限も確認し、PNG・成功／拒否出力・終了コード・`image-region-observations.json`・`assertions.json`を保存する。[出典と再生成](../Fixtures/ImageRegions/README.md)。通常GUI・HTMLへの統合やOSシグナル取消の実測はこの限定E2Eに含めない。
+
 画像HTMLの限定実行は `--image-reports-only`、`--reports-only` と全体E2Eにも含む。既存画像fixtureの全画素期待値を、単体・ZIP包装から取り出した埋込みPNGへ独立BCL PNG復号で照合する。全／選択、後続差分・欠落・透明合成・閾値・寸法、説明のescape、原本保持、包装展開と相対プロジェクト再読込み、入力・本文サイズ・出力保護・取消を確認する。画像UIは全／選択の設定と表示原本スナップショットの保持も自己検証する。
 
 画像フレームの限定実行は `--image-only`。自作GIF/PNGと独立Pillow生成lossless WebPの固定全BGRA/SHAを実CLIへ照合する。先頭一致・後続変更、全ページと選択、ページ数差・欠落、透明部分更新・disposal、寸法・閾値、入力/キャンバス/フレーム数/復号作業量の上限、不正引数・入力保持を検証する。上限の診断も照合し、別の上限で拒否されただけの結果を合格にしない。[fixtureの契約](../Fixtures/Images/README.md)を参照する。全体E2Eにも含み、通常デスクトップの実測と区別する。

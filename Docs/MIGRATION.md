@@ -75,7 +75,19 @@ Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成�
 
 入力欄調整後の初回AOT自己検証は画像項目の後、アーカイブ展開の一時ディレクトリ移動でアクセス拒否になった。親ACLには実行ユーザーのFullControlがあり、同じnative実行ファイルで別出力への247項目と、その後の同じ発行スクリプトの247項目は成功した。原因は未確定で、失敗結果と再実行記録を保持し、恒久的な解消とは扱わない。
 
+## 原本の画像差分領域処理
+
+WinIMerge v1.0.54の原本関数を無改変で採取し、二／三者のblock比較・8近傍の連結領域・行順ID・block矩形・LeftOnly/MiddleOnly/RightOnly/Conflict分類をC#へ移植した。`ImageRegionDiffer` と開発用 `--image-regions` が対象。固定164件のraw BGRAをPNGへ包装し、実アプリの復号から全pair grid・領域ID・矩形・分類・個数を原本と完全一致照合する。通常buildへC++、FreeImage、submoduleを追加しない。原本・GPL・入力・期待値・SHA・再生成手順は[fixture](../tests/Fixtures/ImageRegions/README.md)、診断コマンドは[画像の契約](IMAGE-VIEWER.md#原本の差分領域処理の照合)に集約する。
+
+原本はBGRAユークリッド距離と01∨21候補を用いる。現行の通常GUI・`--image`・HTMLは最大成分差と二者の画素マスクであり、この核の接続は次の統合工程である。旧同期ページの範囲外入力据え置きと現行末尾clamp、旧HTMLの加工済み各paneと現行原本＋独立maskにも差がある。通常の三者画像・表示強調・差分移動・画像コピー／保存・マージへまとめて接続し、対応する旧方式を置換するまでは画像移植完了と判断しない。位置合わせ、変換、挿入削除、ベクター、OCR、全旧復号形式も引き続き未完了。取消チェックは存在するが、OSシグナルによるこの核の中断は未実測。
+
+原本採取と再採取は164件・bytes一致・523検証成功。通常DLLの核限定E2Eは1902成功・0失敗・0skip、全体E2Eは19029成功・0失敗・9skip。Windows x64 Native AOT全体E2Eは19069成功・0失敗・3skip、headless UIは260成功・0失敗、Release／AOTコンパイラー警告0。Native版は管理者実行でリンク拒否も確認し、入力・出力・終了コード・原本全grid・ソース／程序集／発行物のSHAを `artifacts/verification/image-regions/Verify-LocalEvidence.ps1` の96項目で照合した。採取証拠は `artifacts/verification/image-regions-reference`。以前の原本調査担当による追加読取り確認では成立P1/P2なし、新しい文脈の独立レビューとは区別する。4RIDの同コード検証はGitHubで行う。
+
 ## 画像の全フレームHTML
+
+画像HTMLのコミット `675e61255d1cfbcbb64c29763bcee40821e533de` は [GitHub run 36859703730](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36859703730) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36859703759) が成功した。Windows両構成は17168成功・0失敗・3skip、Mac両構成は17177成功・0失敗・2skip、4構成とも260 UI成功・SDK10.0.401・コンパイラー警告0。画像HTML固有項目は各構成196成功。取得した8成果物のmanifest列挙64ファイルのSHA・サイズがすべて一致した。証拠は `E:/DiffBeacon-artifacts/github/36859703730`。全体取得時のデバイスエラーはWindows成果物の個別再取得で解消し、最初の失敗ログも保持する。これはCI実行失敗とは区別する。upload-artifactのNode非推奨annotation4件はコンパイラー警告に含めない。以下のローカル記録と同じコードを4RIDで検証した結果である。
+
+このSHAは後から追加した原本ブロック・三者領域処理を含まない。通常デスクトップのOS操作はheadless UIと区別する。
 
 二者画像の全同番号フレームまたは表示中の選択組を、左右・ピクセル差分PNGを埋め込む自己完結HTMLへ出力する。GUIは表示中の原本スナップショットと確定閾値を使い、選択位置を変えない。CLIの `--report-project` は画像にだけフレーム組と閾値を指定でき、包装は同梱原本の確定内容から同じ生成器を呼ぶ。base64増幅を含むUTF-8本文32 MiBと、既存の入力・画素・枚数・復号量・包装合計上限を維持する。三者画像の詳細は明示拒否する。操作は [画像の契約](IMAGE-VIEWER.md) に集約する。
 

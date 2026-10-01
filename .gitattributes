@@ -7,3 +7,8 @@ tests/Fixtures/LineAlignment/legacy-line-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/LineAlignment/legacy-line-pair-dummy-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/LineAlignment/legacy-line-expanded-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/GnuLines/legacy-gnu-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageRegions/winimerge-image-regions-golden.json -text whitespace=cr-at-eol
+# 原本bytesのSHAを固定するため、上流の空白も変更しない。
+tests/Fixtures/ImageRegions/reference-source/ImgDiffBuffer.hpp -text -whitespace
+tests/Fixtures/ImageRegions/reference-source/image.hpp -text -whitespace
+tests/Fixtures/ImageRegions/LICENSE.txt -text whitespace=cr-at-eol

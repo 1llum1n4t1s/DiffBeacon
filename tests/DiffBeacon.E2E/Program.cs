@@ -1706,7 +1706,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-reports-only", StringComparer.Ordinal))
+    if (args.Contains("--image-regions-only", StringComparer.Ordinal))
+    {
+        await ImageRegionScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--image-reports-only", StringComparer.Ordinal))
     {
         await ImageReportScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     }
@@ -1772,6 +1776,7 @@ try
     await GnuTextScenarios.RunAsync(output, Run, Check);
     await GnuTableScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageFrameScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageRegionScenarios.RunAsync(output, fixtures, Run, Check);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();
     await PackagingCases();

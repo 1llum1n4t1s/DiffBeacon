@@ -1,0 +1,25 @@
+{
+  "sources": [
+    {
+      "path": "src/WinIMergeLib/ImgDiffBuffer.hpp",
+      "gitBlob": "34d82abc42e5686bf94d419dbab176c64e7c8d58",
+      "sha256": "7071EDFA31CCC138685CA7B9FD3D41EE5E84B942FB3D8028C7E3A31C76F93F28"
+    },
+    {
+      "path": "src/WinIMergeLib/image.hpp",
+      "gitBlob": "52c4c00a059dcdbb1d8ead64788b10713ae62d32",
+      "sha256": "173CE00FE65187D34A6C7D2B10C0B45443EA6CFFBAA50FE1263BCE5840149609"
+    },
+    {
+      "path": "GPL.txt",
+      "gitBlob": "36488d58658d63f9d7a8d5e0637c530df987c4e5",
+      "sha256": "D3533C10B656BEC2782600B05B471ABE3AC916E228B27929CDA1F83C49D7E7A5"
+    }
+  ],
+  "revision": "da639cdfaeca87aaad0eaceec509afa11ad61421",
+  "tag": "v1.0.54",
+  "acquiredVia": "Toolport GitHub gateway github__get_file_contents, immutable sha",
+  "license": "GPL-2.0-or-later",
+  "repository": "WinMerge/winimerge",
+  "goldenSha256": "07BF82D5179A748A568A0B6EB0AAA37B171F04FBF4228920A38698DDD8C05965"
+}
