@@ -13,6 +13,7 @@ public sealed partial class TablePanel : DockPanel
     private readonly Func<int, string> _source;
     private readonly Func<int, bool> _readOnly;
     private readonly Action<int, string> _write;
+    private readonly Action<int, string> _rollback;
     private readonly Func<Task<TableComparisonResult>> _compare;
     private readonly Func<CancellationToken> _cancellation;
     private readonly ListBox _rows = new();
@@ -38,9 +39,9 @@ public sealed partial class TablePanel : DockPanel
     public TableComparisonResult Comparison { get; private set; }
 
     internal TablePanel(TableComparisonResult comparison, Func<int, string> source, Func<int, bool> readOnly,
-        Action<int, string> write, Func<Task<TableComparisonResult>> compare, IReadOnlyList<string> names, Func<CancellationToken> cancellation)
+        Action<int, string> write, Action<int, string> rollback, Func<Task<TableComparisonResult>> compare, IReadOnlyList<string> names, Func<CancellationToken> cancellation)
     {
-        Comparison = comparison; _source = source; _readOnly = readOnly; _write = write; _compare = compare; _cancellation = cancellation;
+        Comparison = comparison; _source = source; _readOnly = readOnly; _write = write; _rollback = rollback; _compare = compare; _cancellation = cancellation;
         _side.ItemsSource = names; _side.SelectedIndex = 0;
         var top = new StackPanel { Spacing = 4 };
         var headings = new Grid { ColumnDefinitions = new ColumnDefinitions(string.Join(',', names.Select(_ => "*"))) };
@@ -242,8 +243,9 @@ public sealed partial class TablePanel : DockPanel
         try { await RefreshAfterWriteAsync(); }
         catch
         {
-            if (_source(side) == after) _write(side, before);
+            if (_source(side) == after) _rollback(side, before);
             Comparison = comparison; UpdateRows(); RestoreScope(scope);
+            CellEditor.IsReadOnly = _selectedRow < 0 || Comparison.GetCell(_selectedSide, _selectedRow, _selectedColumn) is null || _readOnly(_selectedSide);
             if (CellEditor.Text == draft) { CellEditor.SelectionStart = start; CellEditor.SelectionEnd = end; }
             throw;
         }

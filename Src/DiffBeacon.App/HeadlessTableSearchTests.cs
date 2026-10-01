@@ -169,6 +169,26 @@ internal static class HeadlessTableSearchTests
             finally { pane.LeftEditor.PropertyChanged -= ObserveWrite; }
             Click(panel, "セル編集を戻す"); Verify("rolled-back replacement adds no undo item", pane.LeftEditor.Text == "a;a;a;a\n");
 
+            panel = Load("readonly-post-write-cancel", "a;a\n"); Select(panel); panel.SearchText.Text = "a"; panel.ReplacementText.Text = "b";
+            var readOnlyWritten = false;
+            var readOnlyStop = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中止"));
+            void ObserveReadOnlyWrite(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs args)
+            {
+                if (!readOnlyWritten && args.Property == TextBox.TextProperty && pane.LeftEditor.Text == "b;b\n")
+                {
+                    readOnlyWritten = true; pane.LeftEditor.IsReadOnly = true;
+                    readOnlyStop.RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
+                }
+            }
+            pane.LeftEditor.PropertyChanged += ObserveReadOnlyWrite;
+            try
+            {
+                Verify("readonly change after owned write still permits cancellation rollback", Refused(panel.ReplaceAllAsync) && readOnlyWritten
+                    && pane.LeftEditor.Text == "a;a\n" && panel.Comparison.Documents[0].SourceText == "a;a\n" && pane.LeftEditor.IsReadOnly && panel.CellEditor.IsReadOnly
+                    && File.ReadAllText(leftPath) == "a;a\n");
+            }
+            finally { pane.LeftEditor.PropertyChanged -= ObserveReadOnlyWrite; }
+
             panel = Load("zero-length", "'A😀\r\nB'"); Select(panel); Box(panel, "正規表現").IsChecked = true; Box(panel, "折返し").IsChecked = false;
             var positions = new List<int>();
             for (var step = 0; step < 8; step++) positions.Add(Find(panel, "(?=)"));

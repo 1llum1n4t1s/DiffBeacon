@@ -32,9 +32,11 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 同セル内の前後一致と折返し、固定した文字選択範囲、一件・選択ペイン内の全置換と一括Undoを追加した。decoded値で一致を計画し、既存の `ReplaceCell` を通して必要なセルだけを再引用する。capture展開を制限し、未反映セル編集・古い選択・計画中の対象変更を拒否する。原文反映後に再比較を取消した場合も原文とモデルを復元する。長い一覧セルは512文字・高さ64までのプレビューとし、編集・検索・保存・HTMLの全文を保持する。詳細は[表の操作](TABLE-EDITOR.md)を参照する。
 
-通常DLLの全E2Eは2954成功・0失敗・8スキップ、headless UIは218成功・0失敗。ローカルWindows x64 Native AOTは2985 E2E成功・0失敗・3スキップ、218 UI成功。最終の単独ビルド・Native AOTコンパイラー警告0を確認した。UTF16BE BOM付きの一括置換保存を別Native AOTプロセスでレポート化し、Python標準CSVの独立期待値・全18 HTMLセルと一致した。入力・出力・失敗時のJSON・PNG・再現契約・ログは `artifacts/verification/table-search`、`artifacts/verification/table-search-layout-final`、`artifacts/e2e/table-search-layout-fixed`、`artifacts/e2e/table-search-native-win-x64` に保持する。初回は10万文字セルの全文描画でUI比較がtimeoutし、描画を制限した後に同入力の成功を確認した。実デスクトップ・旧raw buffer横断検索・PCRE/Rx完全互換・矩形文字編集は未検証または未移植。新規文脈のレビュー枠はagent thread limitで未取得、既存担当の補助確認を独立レビューと称さない。
+通常DLLの全E2Eは2954成功・0失敗・8スキップ、headless UIは220成功・0失敗。ローカルWindows x64 Native AOTは2985 E2E成功・0失敗・3スキップ、220 UI成功。最終の単独ビルド・Native AOTコンパイラー警告0を確認した。UTF16BE BOM付きの一括置換保存を別Native AOTプロセスでレポート化し、Python標準CSVの独立期待値・全18 HTMLセルと一致した。入力・出力・失敗時のJSON・PNG・再現契約・ログは `artifacts/verification/table-search`、`artifacts/verification/table-search-readonly-final`、`artifacts/e2e/table-search-readonly-final`、`artifacts/e2e/table-search-native-win-x64` に保持する。初回は10万文字セルの全文描画でUI比較がtimeoutし、描画を制限した後に同入力の成功を確認した。実デスクトップ・旧raw buffer横断検索・PCRE/Rx完全互換・矩形文字編集は未検証または未移植。新規文脈のレビュー枠はagent thread limitで未取得、既存担当の補助確認を独立レビューと称さない。
 
 初回の[GitHub run 36800893396](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36800893396)（`1a20d97470444fc22d46f2d2cf7581985bc46528`）はWindows両構成で成功したが、両MacはNative AOT後の表セル描画のUI確認で失敗した。同SHAの[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36800893386)は成功。操作欄を縦スクロールし、ビューの半分以下に収めて一覧領域を確保した。UI検証では描画を確定し、700px高のウィンドウで行へ移動後のセル座標が実viewport内にあることも確認する。旧操作欄では一覧高0、修正後58/セルY23をローカルで観測した。単なるTextBlockの存在確認だけでは、この表示不具合を検出できない。失敗と修正後のPNG/JSONは同契約ディレクトリに保持する。
+
+追加の実画面検証で、原文反映後に読取り専用へ変更して中止すると、通常writerが原文復元も拒否することを確認した。反映した原文がそのままである場合に限る復元callbackを使い、原文とモデル、元ファイル、変更後の読取り専用状態を保持する。通常DLLとWindows x64 Native AOTの220 UI成功にこのケースを含める。失敗と修正後の記録は `artifacts/verification/table-search-readonly-before`・`table-search-readonly-final`、契約・ログは `artifacts/verification/table-search` に保持する。
 
 ## 表の行合わせ・セル編集
 

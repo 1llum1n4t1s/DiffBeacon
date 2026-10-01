@@ -18,6 +18,13 @@ public sealed partial class ComparisonPane
         if (side == 0) LeftEditor.Text = text; else RightEditor.Text = text;
     }
 
+    // 直前に操作自身が書いた内容との一致を TablePanel が確認してから呼ぶ。
+    // 途中の readonly 切替は新規編集を拒否するが、取消による原文復元は妨げない。
+    private void RestoreTableSource(int side, string text)
+    {
+        if (side == 0) LeftEditor.Text = text; else RightEditor.Text = text;
+    }
+
     private void EnsureNoPendingTableEdit()
     {
         if (_specialTab.Content is TablePanel table) table.EnsureNoPendingCellEdit();
@@ -50,7 +57,7 @@ public sealed partial class ComparisonPane
             var names = _baseText is null
                 ? new[] { Caption(_projectMetadata.LeftDescription, "左"), Caption(_projectMetadata.RightDescription, "右") }
                 : new[] { Caption(_projectMetadata.LeftDescription, "左"), Caption(_projectMetadata.BaseDescription, "祖先（読取り専用）"), Caption(_projectMetadata.RightDescription, "右") };
-            SetSpecialView(new TablePanel(comparison, TableSource, TableReadOnly, WriteTableSource, CompareTableAsync, names,
+            SetSpecialView(new TablePanel(comparison, TableSource, TableReadOnly, WriteTableSource, RestoreTableSource, CompareTableAsync, names,
                 () => _operation?.Token ?? CancellationToken.None));
         }
         catch (FormatException exception)
