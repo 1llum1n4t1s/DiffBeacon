@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | テキストの二者比較・三者マージ | 差分行・行内強調、差分移動、両方向コピー、編集、保存、競合表示、CLI、左・祖先・右・結果の4ペイン、差分単位の順序付き採用・Undo/Redo・未解決状態・行の由来 | [マージ結果セッション](MERGE-SESSION.md)を実装。旧エディターの構文強調、矩形選択、同期点、移動行、全ショートカット、由来の行番号マージン表示・セッション永続化は未完了 |
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
-| 表形式 | CSV / TSV の解析とセル差分、区切り文字・引用符・引用内改行指定 | 設定をプロジェクト・GUIへ接続。旧 table の編集・検索、全パーサー分岐・位置合わせの同等性は未完了 |
+| 表形式 | 原文区間付き解析、二者・三者の行合わせ、セル編集・Undo/Redo・前後検索、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧WordDiffスコアの完全一致、全置換・選択範囲検索・列操作・キー列・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
 | 画像 | 左右表示、重ね合わせ、倍率・閾値、ピクセル差分 | 各1600万ピクセル上限。複数ページは先頭だけ。ベクター、OCR、全画像形式・画像マージは未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
@@ -28,6 +28,14 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 アーカイブの旧互換範囲は実装根拠で区別する。`Src/7zCommon.cpp:391`の作成UIは7z・ZIP派生形式・TAR/TAR.Z/TAR.GZ/TAR.BZ2/TGZ/TBZ2を提供し、RAR/LZH/CAB作成はコメントアウトされている。`Src/ArchiveDlg.cpp:28`は選択文書・レポート・パッチ・プロジェクトを包装し、`ArchiveSupport/Merge7z/Merge7zCommon.cpp:243`は全件抽出、`Src/7zCommon.cpp:480`は多段アーカイブを再判定する。読込み形式は`ArchiveSupport/Merge7z/Merge7zCommon.cpp:721`以降の登録を参照する。暗号化出力・分割出力は調査した旧作成経路に指定がなく、既存機能の移植漏れとは断定しない。分割読込み・MSI・リンク保存の厳密な旧動作は未確定であり、追加実測が必要。
 
+## 表の行合わせ・セル編集
+
+原文区間付き文書と共有行対応モデルを導入し、GUI・`--table`・単体/包装HTMLの判定を統一した。完全一致アンカーの間で上限付き類似対応、三者では祖先対応と左右挿入対応を統合する。セル編集は一つの原文区間だけを変更し、Undo/Redo、readonly・祖先・ghost・古い座標の拒否、既存保存へ接続した。検索は前後・折返し・case・regex・word・ペイン指定、画面は32列ページと行仮想化。旧方式の全スコア・列操作・全置換は未完了。[表の契約](TABLE-EDITOR.md)を参照する。
+
+通常DLLの全E2Eは2954成功・0失敗・8スキップ、headless UIは139成功・0失敗。ローカルWindows x64 Native AOTの発行と139 UI成功を確認した。入力・出力・行対応JSON・実テキスト入力/ボタン操作・UTF16BE BOM保存後のbytes・PNGを`artifacts/e2e/table-full`・`artifacts/verification/table-repaired`へ保存する。疎な表は各側2万実セル/1万列/10001行で、表示コントロール数を制限し、従来2億座標相当の検索を実セルのみで完了した（ローカル通常DLLの1実測25 ms、比較用benchmarkではない）。
+
+ローカルWindows x64 Native AOT全E2Eは2985成功・0失敗・3スキップ。GitHub4構成は確認中。新規文脈のレビューはagent thread limitで未実施。既存担当の補足確認でクリック例外・疎な表示/検索の膨張を修正し、記録を`artifacts/verification/table-next`に保持する。headless操作と通常デスクトップの実測は区別する。
+
 ## 実行した検証
 
 2026-10-01 JST、テキスト・表・JSONの二者／三者共通HTMLレポート、単体プロジェクトCLI、GUI中止・保存保護を追加したコード`c005d377c4748657b262a91c85570406b7724de6`を[GitHub Actions run 36793389828](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389828)で実行し、4ジョブすべて成功した。全構成SDKは`10.0.401`、CS/IL/MSBコンパイラー警告0件。[CodeQL workflow](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36793389800)も同コードで成功した。これはworkflow完了の記録であり、全機能の同等性を証明するものではない。
@@ -45,7 +53,7 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 ローカル通常DLLは2039成功・0失敗・8スキップ、リンク作成権限のあるWindows x64 Native AOTは2070成功・0失敗・3スキップ、画面111成功。初回の限定検証では修正前の期待値を取り込んだテストアセンブリとGUIの入力固定値で失敗したため、原本の直前バイト列を確認する検証へ直し、全体を再ビルドした。フォルダーモードはファイルパスが指定されていても包装対象から明示拒否する。失敗記録は`artifacts/e2e/reports-managed`・`artifacts/verification/reports-managed`、最終結果は`artifacts/e2e/reports-full`・`artifacts/e2e/reports-native-win-x64`・`artifacts/verification/reports-contract`へ保持する。
 
-4構成の入力・出力・JSON・PNG・manifest・ログ・集計を`artifacts/github/36793389828`に保持する。UIはheadless描画・操作で、HTML自体のブラウザー描画やネイティブファイル選択は未実測。agent thread limitのため新規文脈の独立レビューは未実施で、既存担当の補足確認と成立指摘の修正記録を同契約ディレクトリに残す。表レポートは行列座標の対応であり、旧表エディターの行位置合わせ・編集・検索は引き続き未完了。
+4構成の入力・出力・JSON・PNG・manifest・ログ・集計を`artifacts/github/36793389828`に保持する。UIはheadless描画・操作で、HTML自体のブラウザー描画やネイティブファイル選択は未実測。agent thread limitのため新規文脈の独立レビューは未実施で、既存担当の補足確認と成立指摘の修正記録を同契約ディレクトリに残す。このrun時点の表レポートは行列座標の対応。後続の表エディター移植は下記に区別する。
 
 以下は比較文書の包装追加時点の記録。
 

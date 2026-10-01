@@ -20,21 +20,41 @@ public static class StructuredComparer
 {
     public static StructuredTable ParseDelimited(string text, char delimiter = ',', char quote = '"', bool allowNewlinesInQuotes = true,
         CancellationToken cancellationToken = default)
+        => AsStructured(ParseTable(text, new(delimiter, quote, allowNewlinesInQuotes), cancellationToken), cancellationToken);
+
+    public static TableDocument ParseTable(string text, DelimitedSyntax? syntax = null, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(text);
         cancellationToken.ThrowIfCancellationRequested();
-        if (delimiter is '\r' or '\n' or '\0' || char.IsSurrogate(delimiter) || delimiter == quote) throw new ArgumentException("区切り文字が不正です。", nameof(delimiter));
-        if (quote is '\r' or '\n' or '\0' || char.IsSurrogate(quote)) throw new ArgumentException("引用符が不正です。", nameof(quote));
-        var rows = new List<IReadOnlyList<string>>();
-        if (text.Length == 0) return new(rows);
-        var row = new List<string>();
+        syntax ??= new();
+        ValidateSyntax(syntax);
+        if (text.Length > TableAlignment.MaxTextLength) throw new ArgumentException("表は 67,108,864 文字以下にしてください。", nameof(text));
+        var delimiter = syntax.Delimiter;
+        var quote = syntax.Quote;
+        var rows = new List<TableRow>();
+        if (text.Length == 0) return new(text, syntax, rows.AsReadOnly());
+        var row = new List<TableCell>();
         var cell = new StringBuilder();
+        var cellStart = 0;
+        var rowStart = 0;
+        var cellCount = 0;
+        void AddCell(int end)
+        {
+            if (++cellCount > TableAlignment.MaxCells) throw new ArgumentException("表のセルは 1,048,576 個までです。", nameof(text));
+            row.Add(new(cell.ToString(), cellStart, end - cellStart));
+        }
+        void AddRow(int end, string ending)
+        {
+            if (rows.Count >= TableAlignment.MaxRows) throw new ArgumentException("表の論理行は 262,144 行までです。", nameof(text));
+            rows.Add(new(rows.Count + 1, rowStart, end - rowStart, ending, row.AsReadOnly()));
+        }
         var quoted = false;
         var quoteClosed = false;
         var atStart = true;
         var endedRow = false;
         for (var index = 0; index < text.Length; index++)
         {
-            if ((index & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
+            if ((index & 4095) <= 1) cancellationToken.ThrowIfCancellationRequested();
             var character = text[index];
             endedRow = false;
             if (quoted)
@@ -44,24 +64,27 @@ public static class StructuredComparer
                     if (index + 1 < text.Length && text[index + 1] == quote) { cell.Append(quote); index++; }
                     else { quoted = false; quoteClosed = true; }
                 }
-                else if (!allowNewlinesInQuotes && character is '\r' or '\n') throw new FormatException("引用符内の改行は許可されていません。");
+                else if (!syntax.AllowNewlinesInQuotes && character is '\r' or '\n') throw new FormatException("引用符内の改行は許可されていません。");
                 else cell.Append(character);
                 continue;
             }
             if (character == quote && atStart) { quoted = true; atStart = false; continue; }
             if (character == delimiter || character is '\r' or '\n')
             {
-                row.Add(cell.ToString());
+                AddCell(index);
                 cell.Clear();
                 atStart = true;
                 quoteClosed = false;
                 if (character != delimiter)
                 {
+                    var endingStart = index;
                     if (character == '\r' && index + 1 < text.Length && text[index + 1] == '\n') index++;
-                    rows.Add(row);
+                    AddRow(endingStart, text[endingStart..(index + 1)]);
                     row = [];
+                    rowStart = index + 1;
                     endedRow = true;
                 }
+                cellStart = index + 1;
                 continue;
             }
             if (quoteClosed || character == quote) throw new FormatException($"区切りテキストの {index + 1} 文字目に不正な引用符があります。");
@@ -69,29 +92,130 @@ public static class StructuredComparer
             atStart = false;
         }
         if (quoted) throw new FormatException("区切りテキストの引用符が閉じられていません。");
-        if (!endedRow) { row.Add(cell.ToString()); rows.Add(row); }
-        return new(rows);
+        if (!endedRow)
+        {
+            AddCell(text.Length);
+            AddRow(text.Length, "");
+        }
+        cancellationToken.ThrowIfCancellationRequested();
+        return new(text, syntax, rows.AsReadOnly());
+    }
+
+    private static void ValidateSyntax(DelimitedSyntax syntax)
+    {
+        if (syntax.Delimiter is '\r' or '\n' or '\0' || char.IsSurrogate(syntax.Delimiter) || syntax.Delimiter == syntax.Quote)
+            throw new ArgumentException("区切り文字が不正です。", nameof(syntax));
+        if (syntax.Quote is '\r' or '\n' or '\0' || char.IsSurrogate(syntax.Quote))
+            throw new ArgumentException("引用符が不正です。", nameof(syntax));
+    }
+
+    private static StructuredTable AsStructured(TableDocument document, CancellationToken token)
+    {
+        var rows = new IReadOnlyList<string>[document.Rows.Count];
+        for (var row = 0; row < rows.Length; row++)
+        {
+            token.ThrowIfCancellationRequested();
+            var cells = document.Rows[row].Cells;
+            var values = new string[cells.Count];
+            for (var column = 0; column < values.Length; column++)
+            {
+                if ((column & 255) == 0) token.ThrowIfCancellationRequested();
+                values[column] = cells[column].Value;
+            }
+            rows[row] = Array.AsReadOnly(values);
+        }
+        return new(Array.AsReadOnly(rows));
+    }
+
+    public static TableTextEdit ReplaceCell(TableDocument document, int sourceRow, int column, string value,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        ArgumentNullException.ThrowIfNull(value);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (value.Length > TableAlignment.MaxTextLength) throw new ArgumentException("セル値が長すぎます。", nameof(value));
+        ValidateSyntax(document.Syntax);
+        ArgumentOutOfRangeException.ThrowIfLessThan(sourceRow, 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(sourceRow, document.Rows.Count);
+        var row = document.Rows[sourceRow - 1];
+        ArgumentOutOfRangeException.ThrowIfLessThan(column, 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(column, row.Cells.Count);
+        var cell = row.Cells[column - 1];
+        if (cell.RawStart < 0 || cell.RawLength < 0 || cell.RawStart > document.SourceText.Length - cell.RawLength)
+            throw new ArgumentException("セルの原文区間が不正です。", nameof(document));
+        var syntax = document.Syntax;
+        // 終端なしの一セル行を空文字へ変えても、論理行自体を消さない。
+        var quoted = cell.RawLength > 0 && document.SourceText[cell.RawStart] == syntax.Quote ||
+            value.Length == 0 && row.Cells.Count == 1 && row.Ending.Length == 0;
+        for (var index = 0; index < value.Length; index++)
+        {
+            if ((index & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
+            var character = value[index];
+            if (character is '\r' or '\n' && !syntax.AllowNewlinesInQuotes)
+                throw new FormatException("引用符内の改行は許可されていません。");
+            quoted |= character == syntax.Delimiter || character == syntax.Quote || character is '\r' or '\n';
+        }
+        var replacement = new StringBuilder();
+        if (quoted) replacement.Append(syntax.Quote);
+        for (var index = 0; index < value.Length; index++)
+        {
+            if ((index & 4095) == 0) cancellationToken.ThrowIfCancellationRequested();
+            var character = value[index];
+            if (character == syntax.Quote) replacement.Append(syntax.Quote);
+            replacement.Append(character);
+            if (replacement.Length > TableAlignment.MaxTextLength) throw new ArgumentException("引用符の展開後のセル値が長すぎます。", nameof(value));
+        }
+        if (quoted) replacement.Append(syntax.Quote);
+        if ((long)document.SourceText.Length - cell.RawLength + replacement.Length > TableAlignment.MaxTextLength)
+            throw new ArgumentException("編集後の表が文字数上限を超えます。", nameof(value));
+        cancellationToken.ThrowIfCancellationRequested();
+        return new(cell.RawStart, cell.RawLength, replacement.ToString());
+    }
+
+    public static TableComparisonResult CompareTables(IReadOnlyList<string> texts, DelimitedSyntax? syntax = null,
+        ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(texts);
+        if (texts.Count is not (2 or 3)) throw new ArgumentException("表比較には二つまたは三つの文書が必要です。", nameof(texts));
+        cancellationToken.ThrowIfCancellationRequested();
+        options ??= new();
+        ArgumentNullException.ThrowIfNull(options.SubstitutionRules);
+        if (options.SubstitutionRules.Count > 256) throw new ArgumentException("置換規則は 256 個までです。", nameof(options));
+        if (!Enum.IsDefined(options.Whitespace)) throw new ArgumentOutOfRangeException(nameof(options.Whitespace));
+        var rules = new SubstitutionRule[options.SubstitutionRules.Count];
+        for (var index = 0; index < rules.Length; index++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var rule = options.SubstitutionRules[index];
+            ArgumentNullException.ThrowIfNull(rule);
+            rules[index] = rule with { };
+        }
+        var snapshot = options with { SubstitutionRules = Array.AsReadOnly(rules) };
+        var documents = new TableDocument[texts.Count];
+        for (var side = 0; side < texts.Count; side++) documents[side] = ParseTable(texts[side], syntax, cancellationToken);
+        return TableAlignment.Compare(documents, snapshot, cancellationToken);
     }
 
     public static StructuredDiffResult CompareDelimited(string left, string right, char delimiter = ',',
         ComparisonOptions? options = null, CancellationToken cancellationToken = default, char quote = '"', bool allowNewlinesInQuotes = true)
     {
-        options ??= new();
-        var a = ParseDelimited(left, delimiter, quote, allowNewlinesInQuotes, cancellationToken);
-        var b = ParseDelimited(right, delimiter, quote, allowNewlinesInQuotes, cancellationToken);
+        var comparison = CompareTables([left, right], new(delimiter, quote, allowNewlinesInQuotes), options, cancellationToken);
+        var a = AsStructured(comparison.Documents[0], cancellationToken);
+        var b = AsStructured(comparison.Documents[1], cancellationToken);
         var differences = new List<CellDifference>();
-        for (var row = 0; row < Math.Max(a.RowCount, b.RowCount); row++)
+        for (var row = 0; row < comparison.Rows.Count; row++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var ar = row < a.RowCount ? a.Rows[row] : [];
-            var br = row < b.RowCount ? b.Rows[row] : [];
-            for (var column = 0; column < Math.Max(ar.Count, br.Count); column++)
+            var ar = comparison.GetSourceRow(0, row);
+            var br = comparison.GetSourceRow(1, row);
+            var columns = Math.Max(ar is null ? 0 : a.Rows[ar.Value - 1].Count, br is null ? 0 : b.Rows[br.Value - 1].Count);
+            for (var column = 0; column < columns; column++)
             {
-                var av = column < ar.Count ? ar[column] : null;
-                var bv = column < br.Count ? br[column] : null;
-                if (av is not null && bv is not null && options.Normalize(av) == options.Normalize(bv)) continue;
-                differences.Add(new(row + 1, column + 1, av, bv,
-                    av is null ? DiffKind.Added : bv is null ? DiffKind.Deleted : DiffKind.Modified));
+                if ((column & 255) == 0) cancellationToken.ThrowIfCancellationRequested();
+                var kind = comparison.GetKind(0, row, column);
+                if (kind == DiffKind.Equal) continue;
+                differences.Add(new(row + 1, column + 1, comparison.GetCell(0, row, column)?.Value,
+                    comparison.GetCell(1, row, column)?.Value, kind));
             }
         }
         return new(a, b, differences);

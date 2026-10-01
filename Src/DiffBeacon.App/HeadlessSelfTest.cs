@@ -518,6 +518,128 @@ internal static class HeadlessSelfTest
             reportPane.ApplyProject(new() { LeftPath = reportJsonLeft, RightPath = reportJsonRight, Mode = "Json" });
             Pump(reportPane.CompareProjectAsync()); Pump(reportPane.SaveReportAsync(reportPath)); reportText = File.ReadAllText(reportPath);
             Check("GUI JSON report follows structural normalization", reportText.Contains("data-mode=\"Json\"") && reportText.Contains("data-different=\"false\""));
+
+            var alignedLeft = Path.Combine(output, "table-edit-left.csv"); var alignedRight = Path.Combine(output, "table-edit-right.csv");
+            var alignedBase = Path.Combine(output, "table-edit-base.csv");
+            const string rawTable = "id;value;keep\r\n1;'two\r\nlines';'raw''quote'\r\n2;tail;\r\n";
+            var tableEncoding = new UnicodeEncoding(bigEndian: true, byteOrderMark: true);
+            File.WriteAllText(alignedLeft, rawTable, tableEncoding); File.WriteAllText(alignedBase, rawTable, tableEncoding);
+            File.WriteAllText(alignedRight, rawTable.Replace("1;", "0;insert;\r\n1;", StringComparison.Ordinal), tableEncoding);
+            var originalRightBytes = File.ReadAllBytes(alignedRight); var originalBaseBytes = File.ReadAllBytes(alignedBase);
+            var originalTableAttributes = File.GetAttributes(alignedLeft);
+            window.Height = 1100;
+            reportPane.DiscardChanges(); reportPane.ApplyProject(new() { LeftPath = alignedLeft, BasePath = alignedBase, RightPath = alignedRight,
+                Mode = "Table", TableDelimiter = ';', TableQuote = '\'', TableAllowNewlinesInQuotes = true, RightReadOnly = true });
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            var tablePanel = reportPane.GetVisualDescendants().OfType<TablePanel>().Single();
+            Check("table GUI three panes align insertion and retain original logical rows", tablePanel.Comparison.Documents.Count == 3
+                && tablePanel.Comparison.Rows.Count == 4 && tablePanel.Comparison.Rows[1] is { LeftRow: null, BaseRow: null, RightRow: 2 }
+                && tablePanel.Comparison.Rows[2] is { LeftRow: 2, BaseRow: 2, RightRow: 3 });
+            Check("table GUI keeps quote multiline in one logical cell", tablePanel.Comparison.GetCell(0, 2, 1)?.Value == "two\r\nlines"
+                && tablePanel.Comparison.Documents[0].Rows.Count == 3);
+            Screenshot("table-three-aligned.png");
+            Check("table GUI ghost cannot become editable empty cell", !tablePanel.SelectCell(0, 1, 1) && tablePanel.CellEditor.IsReadOnly);
+            rejected = false; try { Pump(tablePanel.CommitCellAsync()); } catch (InvalidOperationException) { rejected = true; }
+            Check("table ghost edit is refused without changing source", rejected && reportPane.LeftEditor.Text == rawTable);
+            tablePanel.SelectCell(1, 2, 1); rejected = false;
+            try { Pump(tablePanel.CommitCellAsync()); } catch (InvalidOperationException) { rejected = true; }
+            Check("table ancestor stays readonly regardless project base flag", rejected && tablePanel.CellEditor.IsReadOnly && File.ReadAllBytes(alignedBase).SequenceEqual(originalBaseBytes));
+            tablePanel.SelectCell(2, 2, 1); rejected = false;
+            try { Pump(tablePanel.CommitCellAsync()); } catch (InvalidOperationException) { rejected = true; }
+            Check("table readonly reaches decoded editor and commit", rejected && tablePanel.CellEditor.IsReadOnly && File.ReadAllBytes(alignedRight).SequenceEqual(originalRightBytes));
+            tablePanel.SelectCell(0, 0, 0); tablePanel.SearchText.Text = "raw'quote";
+            Pump(tablePanel.FindAsync(1));
+            Check("table search finds decoded escaped quote and selects its text", tablePanel.CellEditor.Text == "raw'quote"
+                && tablePanel.CellEditor.SelectionEnd - tablePanel.CellEditor.SelectionStart == "raw'quote".Length);
+            Pump(tablePanel.FindAsync(1));
+            Check("table next search includes readonly ancestor", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single().SelectedIndex == 1 && tablePanel.CellEditor.IsReadOnly);
+            Pump(tablePanel.FindAsync(-1));
+            Check("table previous search returns to writable left cell", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single().SelectedIndex == 0 && !tablePanel.CellEditor.IsReadOnly);
+            tablePanel.SelectCell(2, 3, 2); Pump(tablePanel.FindAsync(1));
+            Check("table wrap search preserves display side column order", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single().SelectedIndex == 0 && tablePanel.CellEditor.Text == "raw'quote");
+            tablePanel.SelectCell(0, 0, 0); tablePanel.SearchText.Text = "RAW'QUOTE";
+            tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "大小文字を区別")).IsChecked = true;
+            Pump(tablePanel.FindAsync(1));
+            Check("table case-sensitive search leaves selection on no match", tablePanel.CellEditor.Text == "id");
+            tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "大小文字を区別")).IsChecked = false;
+            tablePanel.SearchText.Text = "raw.*quote";
+            tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "正規表現")).IsChecked = true;
+            tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "単語単位")).IsChecked = true;
+            Pump(tablePanel.FindAsync(1));
+            Check("table successful regex whole-word search selects decoded match", tablePanel.CellEditor.Text == "raw'quote" && tablePanel.CellEditor.SelectionStart == 0);
+            tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "正規表現")).IsChecked = false;
+            tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "単語単位")).IsChecked = false;
+            tablePanel.SelectCell(0, 2, 1);
+            tablePanel.GetVisualDescendants().OfType<TextBox>().Single(box => box.Name == "table-source-column").Text = "3";
+            rejected = false; try { Pump(tablePanel.CommitCellAsync()); } catch (InvalidOperationException) { rejected = true; }
+            Check("table changed coordinate fields cannot edit previous cell", rejected && reportPane.LeftEditor.Text == rawTable);
+            tablePanel.SelectCell(0, 2, 1);
+            const string editedCell = "new;value 'quoted'\r\nnext";
+            tablePanel.CellEditor.Focus(); tablePanel.CellEditor.SelectAll(); window.KeyTextInput(editedCell); Dispatcher.UIThread.RunJobs();
+            Check("table decoded cell accepts actual headless text input", tablePanel.CellEditor.Text == editedCell);
+            tablePanel.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "セルを変更")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump(tablePanel.PendingOperation!); Dispatcher.UIThread.RunJobs();
+            var editedRaw = rawTable.Replace("'two\r\nlines'", "'new;value ''quoted''\r\nnext'", StringComparison.Ordinal);
+            Check("table real commit quotes one raw interval and preserves remaining text", reportPane.LeftEditor.Text == editedRaw && reportPane.HasUnsavedChanges
+                && tablePanel.Comparison.Documents[0].SourceText == editedRaw && tablePanel.Comparison.GetCell(0, 2, 1)?.Value == editedCell);
+            tablePanel.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "セル編集を戻す")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump(tablePanel.PendingOperation!); Dispatcher.UIThread.RunJobs();
+            Check("table real undo restores full raw source and shared model", reportPane.LeftEditor.Text == rawTable && tablePanel.Comparison.Documents[0].SourceText == rawTable);
+            tablePanel.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "セル編集をやり直す")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump(tablePanel.PendingOperation!); Dispatcher.UIThread.RunJobs();
+            Check("table real redo restores decoded and raw edit", reportPane.LeftEditor.Text == editedRaw && tablePanel.CellEditor.Text == editedCell);
+            Pump(reportPane.SaveAsync(false));
+            var expectedSavedBytes = tableEncoding.GetPreamble().Concat(tableEncoding.GetBytes(editedRaw)).ToArray();
+            Check("table save preserves UTF16BE BOM CRLF untouched bytes and attributes", File.ReadAllBytes(alignedLeft).SequenceEqual(expectedSavedBytes)
+                && File.GetAttributes(alignedLeft) == originalTableAttributes && File.ReadAllBytes(alignedRight).SequenceEqual(originalRightBytes)
+                && File.ReadAllBytes(alignedBase).SequenceEqual(originalBaseBytes));
+            Pump(reportPane.SaveReportAsync(reportPath)); reportText = File.ReadAllText(reportPath);
+            Check("table GUI report uses same source alignment after cell edit", reportText.Contains("data-aligned-row=\"3\"")
+                && reportText.Contains("new;value &#39;quoted&#39;\r\nnext") && reportText.Contains("raw&#39;quote"));
+            Screenshot("table-edited.png");
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            tablePanel = reportPane.GetVisualDescendants().OfType<TablePanel>().Single();
+            Check("table save reload uses original encoding and new decoded cell", reportPane.LeftEditor.Text == editedRaw
+                && tablePanel.Comparison.GetCell(0, 2, 1)?.Value == editedCell);
+            tablePanel.SelectCell(0, 2, 1); reportPane.LeftEditor.Text += "9;external;\r\n";
+            var externallyEdited = reportPane.LeftEditor.Text; rejected = false;
+            try { Pump(tablePanel.CommitCellAsync()); } catch (InvalidOperationException) { rejected = true; }
+            Check("table stale cell interval cannot overwrite text editor changes", rejected && reportPane.LeftEditor.Text == externallyEdited);
+            Pump(tablePanel.RefreshAsync());
+            Check("table explicit refresh picks up external text edits", tablePanel.Comparison.Documents[0].SourceText == externallyEdited
+                && tablePanel.Comparison.Documents[0].Rows.Count == 4);
+            tablePanel.SelectCell(0, 0, 0); tablePanel.SearchText.Text = "[";
+            tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "正規表現")).IsChecked = true;
+            rejected = false; try { Pump(tablePanel.FindAsync(1)); } catch (ArgumentException) { rejected = true; }
+            Check("table malformed regex is refused without changing original source", rejected && reportPane.LeftEditor.Text == externallyEdited);
+            reportPane.DiscardChanges();
+            var flatTable = Path.Combine(output, "table-flat.csv"); File.WriteAllText(flatTable, "a");
+            reportPane.ApplyProject(new() { LeftPath = flatTable, RightPath = flatTable, Mode = "Table", TableAllowNewlinesInQuotes = false });
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            tablePanel = reportPane.GetVisualDescendants().OfType<TablePanel>().Single(); tablePanel.SelectCell(0, 0, 0);
+            tablePanel.CellEditor.Text = "forbidden\nnewline"; rejected = false;
+            try { Pump(tablePanel.CommitCellAsync()); } catch (FormatException) { rejected = true; }
+            Check("table edit refuses newline disabled by syntax without changing raw text", rejected && reportPane.LeftEditor.Text == "a" && File.ReadAllText(flatTable) == "a");
+            tablePanel.CellEditor.Text = ""; Pump(tablePanel.CommitCellAsync());
+            Check("table empty edit keeps final single logical row instead of deleting it", reportPane.LeftEditor.Text == "\"\""
+                && tablePanel.Comparison.Documents[0].Rows.Count == 1 && tablePanel.Comparison.GetCell(0, 0, 0)?.Value == "");
+            reportPane.DiscardChanges();
+            var sparsePath = Path.Combine(output, "table-sparse.csv");
+            File.WriteAllText(sparsePath, string.Join(',', Enumerable.Repeat("x", 10_000)) + "\n" + string.Concat(Enumerable.Repeat("x\n", 10_000)));
+            reportPane.ApplyProject(new() { LeftPath = sparsePath, RightPath = sparsePath, Mode = "Table" });
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            tablePanel = reportPane.GetVisualDescendants().OfType<TablePanel>().Single();
+            Check("table sparse wide rows render bounded column page", tablePanel.Comparison.ColumnCount == 10_000
+                && tablePanel.Comparison.Rows.Count == 10_001 && tablePanel.GetVisualDescendants().OfType<Border>().Count() < 2_000);
+            tablePanel.SelectCell(0, 0, 9_999); Dispatcher.UIThread.RunJobs();
+            Check("table column paging keeps final source column accessible", tablePanel.CellEditor.Text == "x"
+                && tablePanel.GetVisualDescendants().OfType<TextBox>().Single(box => box.Name == "table-source-column").Text == "10000"
+                && tablePanel.GetVisualDescendants().OfType<Border>().Count() < 2_000);
+            tablePanel.SearchText.Text = "absent-sparse-value";
+            var sparseTimer = Stopwatch.StartNew(); Pump(tablePanel.FindAsync(1)); sparseTimer.Stop();
+            Check("table sparse search visits actual cells and keeps source intact", tablePanel.Comparison.Documents[0].SourceText == File.ReadAllText(sparsePath),
+                $"elapsedMilliseconds={sparseTimer.ElapsedMilliseconds};actualCellsPerPane=20000;rectangularCoordinates=200020000");
+            Screenshot("table-sparse-paged.png");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }

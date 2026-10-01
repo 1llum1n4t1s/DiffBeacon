@@ -195,6 +195,67 @@ async Task ReportCases()
         if (baseLines.Length == 0) Check(name + " empty ancestor remains missing", rows.Count > 0
             && rows.All(row => row.TryGetValue("base", out var cell) && cell.Missing && cell.Line is null));
     }
+    string VerifyTableAlignment(string name, string html, string[][] leftRows, string[][]? baseRows, string[][] rightRows, string[] expectedMap)
+    {
+        var mapped = new List<List<(string Side, int? Original, int Aligned, int Column, bool Missing, string? Value)>>();
+        string Attribute(string attributes, string name) => WebUtility.HtmlDecode(Regex.Match(attributes,
+            @"\b" + Regex.Escape(name) + "=[\"'](?<value>[^\"']*)[\"']", RegexOptions.CultureInvariant).Groups["value"].Value);
+        foreach (Match rowMatch in Regex.Matches(html, @"<tr\b[^>]*>(?<row>[\s\S]*?)</tr>", RegexOptions.CultureInvariant))
+        {
+            var cells = new List<(string Side, int? Original, int Aligned, int Column, bool Missing, string? Value)>();
+            foreach (Match cell in Regex.Matches(rowMatch.Groups["row"].Value, @"<td\b(?<attributes>[^>]*)>(?<content>[\s\S]*?)</td>", RegexOptions.CultureInvariant))
+            {
+                var attributes = cell.Groups["attributes"].Value; var side = Attribute(attributes, "data-side");
+                var originalAttribute = Attribute(attributes, "data-row");
+                int? original = int.TryParse(originalAttribute, out var parsedRow) ? parsedRow : null;
+                var validAligned = int.TryParse(Attribute(attributes, "data-aligned-row"), out var aligned);
+                var validColumn = int.TryParse(Attribute(attributes, "data-column"), out var column);
+                var validMissing = bool.TryParse(Attribute(attributes, "data-missing"), out var missing);
+                var pre = Regex.Match(cell.Groups["content"].Value, @"<pre\b[^>]*>(?<value>[\s\S]*?)</pre>", RegexOptions.CultureInvariant);
+                Check(name + " table coordinate attributes", (side is "left" or "base" or "right") && validAligned && aligned > 0
+                    && validColumn && column > 0 && validMissing && pre.Success && (original is > 0 || originalAttribute == ""));
+                cells.Add((side, original, aligned, column, missing, missing ? null : Visible(pre.Groups["value"].Value)));
+            }
+            if (cells.Count == 0) continue;
+            var display = mapped.Count + 1;
+            var sides = baseRows is null ? new[] { "left", "right" } : new[] { "left", "base", "right" };
+            Check(name + " table row display index", cells.All(cell => cell.Aligned == display));
+            foreach (var side in sides)
+            {
+                var sideCells = cells.Where(cell => cell.Side == side).OrderBy(cell => cell.Column).ToArray();
+                Check(name + " " + side + " column order", sideCells.Length > 0
+                    && sideCells.Select(cell => cell.Column).SequenceEqual(Enumerable.Range(1, sideCells.Length))
+                    && sideCells.Select(cell => cell.Original).Distinct().Count() == 1);
+                var original = sideCells.FirstOrDefault().Original;
+                Check(name + " " + side + " row header mapping", Tag(rowMatch.Value, "th", ("data-side", side),
+                    ("data-row", original?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? ""),
+                    ("data-aligned-row", display.ToString(System.Globalization.CultureInfo.InvariantCulture))));
+                if (original is null) Check(name + " " + side + " ghost cells missing", sideCells.All(cell => cell.Missing));
+            }
+            mapped.Add(cells);
+        }
+        foreach (var (side, expectedRows) in new[] { ("left", leftRows), ("base", baseRows), ("right", rightRows) })
+        {
+            if (expectedRows is null) continue;
+            var originals = mapped.Select(row => row.Where(cell => cell.Side == side).OrderBy(cell => cell.Column).ToArray())
+                .Where(cells => cells.Length > 0 && cells[0].Original is not null).ToArray();
+            Check(name + " " + side + " every original row once in order", originals.Select(cells => cells[0].Original)
+                .SequenceEqual(Enumerable.Range(1, expectedRows.Length).Select(row => (int?)row)));
+            Check(name + " " + side + " full decoded cells preserved", originals.Length == expectedRows.Length
+                && originals.Select((cells, row) => cells.Length >= expectedRows[row].Length
+                    && cells.Take(expectedRows[row].Length).All(cell => !cell.Missing)
+                    && cells.Take(expectedRows[row].Length).Select(cell => cell.Value).SequenceEqual(expectedRows[row])
+                    && cells.Skip(expectedRows[row].Length).All(cell => cell.Missing && cell.Value is null)).All(passed => passed));
+        }
+        string Original(List<(string Side, int? Original, int Aligned, int Column, bool Missing, string? Value)> cells, string side)
+            => cells.FirstOrDefault(cell => cell.Side == side).Original?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "-";
+        Check(name + " table matched anchors and ghosts", mapped.Select(row => Original(row, "left") + "/" + Original(row, "base") + "/" + Original(row, "right")).SequenceEqual(expectedMap));
+        var signature = JsonSerializer.Serialize(mapped.Select((row, index) => new { aligned = index + 1,
+            cells = row.OrderBy(cell => cell.Side, StringComparer.Ordinal).ThenBy(cell => cell.Column)
+                .Select(cell => new { cell.Side, cell.Original, cell.Aligned, cell.Column, cell.Missing, cell.Value }) }));
+        Text("reports/" + name + "-mapped-table.json", signature);
+        return signature;
+    }
 
     var left = Text("reports/text-left.txt", "prefix LEFT suffix\n<script>left</script>\n", new UTF8Encoding(true));
     var right = Text("reports/text-right.txt", "prefix RIGHT suffix\n<script>right</script>\n", new UTF8Encoding(true));
@@ -306,6 +367,113 @@ async Task ReportCases()
     var tableAncestorProject = Project("table-ancestor-only-project", [tableAncestorOnly]);
     Verify("report table ancestor-only difference", await Render("table-ancestor-only", tableAncestorProject), "Table", true, true);
     Verify("report packaged table ancestor-only difference", await Pack("table-ancestor-only", tableAncestorProject), "Table", true, true);
+    foreach (var (name, leftRows, baseRows, rightRows, expectedMap) in new (string, string[][], string[][]?, string[][], string[])[]
+    {
+        ("two-middle-insert", [["id", "value"], ["head", "H"], ["insert", "L"], ["anchor", "A"], ["tail", "T"]], null,
+            [["id", "value"], ["head", "H"], ["anchor", "A"], ["tail", "T"]], ["1/-/1", "2/-/2", "3/-/-", "4/-/3", "5/-/4"]),
+        ("two-middle-delete", [["id", "value"], ["head", "H"], ["anchor", "A"], ["tail", "T"]], null,
+            [["id", "value"], ["head", "H"], ["remove", "R"], ["anchor", "A"], ["tail", "T"]], ["1/-/1", "2/-/2", "-/-/3", "3/-/4", "4/-/5"]),
+        ("three-independent-insertions", [["id", "value"], ["head", "H"], ["left-only", "L"], ["anchor", "A"], ["tail", "T"]],
+            [["id", "value"], ["head", "H"], ["anchor", "A"], ["tail", "T"]],
+            [["id", "value"], ["head", "H"], ["anchor", "A"], ["right-only", "R"], ["tail", "T"]], ["1/1/1", "2/2/2", "3/-/-", "4/3/3", "-/-/4", "5/4/5"]),
+        ("three-same-insertion", [["id", "value"], ["head", "H"], ["shared", "S"], ["anchor", "A"]],
+            [["id", "value"], ["head", "H"], ["anchor", "A"]],
+            [["id", "value"], ["head", "H"], ["shared", "S"], ["anchor", "A"]], ["1/1/1", "2/2/2", "3/-/3", "4/3/4"]),
+        ("three-ancestor-only-change", [["id", "value"], ["head", "H"], ["anchor", "NEW"]],
+            [["id", "value"], ["head", "H"], ["anchor", "OLD"]],
+            [["id", "value"], ["head", "H"], ["anchor", "NEW"]], ["1/1/1", "2/2/2", "3/3/3"])
+    })
+    {
+        string Document(string side, string[][] rows) => Text("reports/aligned-table-" + name + "-" + side + ".csv", string.Join('\n', rows.Select(row => string.Join(',', row))) + "\n");
+        var leftPath = Document("left", leftRows); var rightPath = Document("right", rightRows);
+        var project = Project("aligned-table-" + name, [Entry(leftPath, rightPath, "Table", baseRows is null ? null : Document("base", baseRows))]);
+        var html = await Render("aligned-table-" + name, project); var packedHtml = await Pack("aligned-table-" + name, project);
+        Verify("report aligned table " + name, html, "Table", true, baseRows is not null);
+        Verify("report packaged aligned table " + name, packedHtml, "Table", true, baseRows is not null);
+        var standaloneMap = VerifyTableAlignment("aligned-table-" + name + "-standalone", html, leftRows, baseRows, rightRows, expectedMap);
+        var packageMap = VerifyTableAlignment("aligned-table-" + name + "-package", packedHtml, leftRows, baseRows, rightRows, expectedMap);
+        Check("report table standalone and package maps identical " + name, standaloneMap == packageMap);
+        if (baseRows is null)
+        {
+            var result = await Run("table-aligned-cli-" + name, 1, true, "--table", leftPath, rightPath);
+            if (result.ExitCode == 1)
+            {
+                using var data = JsonDocument.Parse(result.Stdout);
+                Check("table CLI original and aligned row counts " + name, data.RootElement.GetProperty("rows").GetInt32() == Math.Max(leftRows.Length, rightRows.Length)
+                    && data.RootElement.GetProperty("alignedRows").GetInt32() == expectedMap.Length
+                    && data.RootElement.GetProperty("cols").GetInt32() == 2 && data.RootElement.GetProperty("different").GetBoolean()
+                    && !data.RootElement.GetProperty("alignmentFallback").GetBoolean());
+                string SourceRow(JsonElement row, string side) => row.GetProperty(side).ValueKind == JsonValueKind.Null ? "-"
+                    : row.GetProperty(side).GetInt32().ToString(System.Globalization.CultureInfo.InvariantCulture);
+                Check("table CLI source mapping matches report " + name, data.RootElement.GetProperty("mapping").EnumerateArray()
+                    .Select(row => SourceRow(row, "left") + "/" + SourceRow(row, "right"))
+                    .SequenceEqual(expectedMap.Select(row => row.Split('/')[0] + "/" + row.Split('/')[2])));
+            }
+        }
+    }
+    // 600×600の全変更区間は262144のgap上限を超え、決定的fallbackへ入る。
+    var fallbackLeft = Text("reports/table-fallback-left.csv", string.Concat(Enumerable.Repeat("left-only\n", 600)));
+    var fallbackRight = Text("reports/table-fallback-right.csv", string.Concat(Enumerable.Repeat("right-only\n", 600)));
+    var fallbackHashes = new[] { fallbackLeft, fallbackRight }.ToDictionary(path => path,
+        path => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))), StringComparer.Ordinal);
+    var fallback = await Run("table-gap-capacity-fallback", 1, true, "--table", fallbackLeft, fallbackRight);
+    if (fallback.ExitCode == 1)
+    {
+        using var data = JsonDocument.Parse(fallback.Stdout); var root = data.RootElement;
+        Check("table bounded gap fallback reported", root.GetProperty("alignmentFallback").GetBoolean()
+            && root.GetProperty("different").GetBoolean() && root.GetProperty("rows").GetInt32() == 600
+            && root.GetProperty("alignedRows").GetInt32() == 600 && root.GetProperty("cols").GetInt32() == 1);
+        var mapping = root.GetProperty("mapping").EnumerateArray().ToArray();
+        foreach (var side in new[] { "left", "right" })
+            Check("table fallback every " + side + " original row once in order", mapping.Select(row => row.GetProperty(side).ValueKind == JsonValueKind.Number
+                ? row.GetProperty(side).GetInt32() : -1).SequenceEqual(Enumerable.Range(1, 600)));
+    }
+    var rowLimitInput = Text("reports/table-over-row-limit.csv", string.Concat(Enumerable.Repeat("x\n", 262145)));
+    var cellLimitInput = Text("reports/table-over-cell-limit.csv", string.Join(',', Enumerable.Repeat("x", 1048577)) + "\n");
+    var tableCapacityInputs = new List<object>();
+    foreach (var (name, path, logicalRows, cells) in new[]
+        { ("row-limit", rowLimitInput, 262145, 262145), ("cell-limit", cellLimitInput, 1, 1048577) })
+    {
+        var before = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
+        tableCapacityInputs.Add(new { name, path, logicalRows, cells, length = new FileInfo(path).Length, sha256 = before });
+        // 同じ入力でも解析上限は省略せず検査する。
+        var result = await Run("table-reject-" + name, 2, false, "--table", path, path);
+        Check("table " + name + " emits no success JSON", string.IsNullOrWhiteSpace(result.Stdout));
+        Check("table " + name + " diagnostic retained", !string.IsNullOrWhiteSpace(result.Stderr));
+        Check("table " + name + " original input unchanged", Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))) == before);
+    }
+    foreach (var path in new[] { fallbackLeft, fallbackRight })
+    {
+        Check("table fallback original input unchanged " + Path.GetFileName(path), Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))) == fallbackHashes[path]);
+        tableCapacityInputs.Add(new { name = "gap-fallback", path, logicalRows = 600, cells = 600, length = new FileInfo(path).Length, sha256 = fallbackHashes[path] });
+    }
+    Text("reports/table-capacity-inputs.json", JsonSerializer.Serialize(tableCapacityInputs, new JsonSerializerOptions { WriteIndented = true }));
+    var quotedLeft = Text("reports/aligned-quoted-left.txt", "id;value;extra\r\nhead;H;\r\n'line\r\none';'say ''same''; <tag>'\r\nanchor;A;\r\n");
+    var quotedRight = Text("reports/aligned-quoted-right.txt", "id;value;extra\r\nhead;H;\r\ninsert;I;\r\n'line\r\none';'say ''same''; <tag>';\r\nanchor;A;\r\n");
+    var quotedEntry = Entry(quotedLeft, quotedRight, "Table"); quotedEntry["tableDelimiter"] = ";"; quotedEntry["tableQuote"] = "'"; quotedEntry["tableAllowNewlinesInQuotes"] = true;
+    var quotedProject = Project("aligned-quoted-project", [quotedEntry]);
+    string[][] quotedLeftRows = [["id", "value", "extra"], ["head", "H", ""], ["line\r\none", "say 'same'; <tag>"], ["anchor", "A", ""]];
+    string[][] quotedRightRows = [["id", "value", "extra"], ["head", "H", ""], ["insert", "I", ""], ["line\r\none", "say 'same'; <tag>", ""], ["anchor", "A", ""]];
+    var quotedMap = new[] { "1/-/1", "2/-/2", "-/-/3", "3/-/4", "4/-/5" };
+    var quotedHtml = await Render("aligned-quoted", quotedProject); var quotedPackedHtml = await Pack("aligned-quoted", quotedProject);
+    var quotedSignature = VerifyTableAlignment("aligned-quoted-standalone", quotedHtml, quotedLeftRows, null, quotedRightRows, quotedMap);
+    var quotedPackedSignature = VerifyTableAlignment("aligned-quoted-package", quotedPackedHtml, quotedLeftRows, null, quotedRightRows, quotedMap);
+    Check("report quoted logical rows standalone and package maps identical", quotedSignature == quotedPackedSignature);
+    Check("report quoted trailing empty differs from missing", Tag(quotedHtml, "td", ("data-side", "left"), ("data-row", "3"), ("data-aligned-row", "4"), ("data-column", "3"), ("data-missing", "true"))
+        && Tag(quotedHtml, "td", ("data-side", "right"), ("data-row", "4"), ("data-aligned-row", "4"), ("data-column", "3"), ("data-missing", "false")));
+    var fullOptionLeft = Text("reports/table-full-options-left.csv", "id,value,environment\nGENERATED-alpha,build=123,prod\nanchor,value  X,prod\n");
+    var fullOptionRight = Text("reports/table-full-options-right.csv", "id,value,environment\ngenerated-beta,build=456,dev\nANCHOR,VALUE X,dev\n");
+    var fullOptionEntry = Entry(fullOptionLeft, fullOptionRight, "Table"); fullOptionEntry["ignoreCase"] = true; fullOptionEntry["ignoreNumbers"] = true;
+    fullOptionEntry["whitespace"] = 2; fullOptionEntry["ignoreLinePattern"] = "(?i)^generated-";
+    fullOptionEntry["substitutionRules"] = new[] { new { pattern = "prod|dev", replacement = "ENV", matchCase = false, useRegex = true, wholeWord = true, enabled = true } };
+    var fullOptionProject = Project("table-full-options-project", [fullOptionEntry]);
+    var fullOptionHtml = await Render("table-full-options", fullOptionProject); var fullOptionPack = await Pack("table-full-options", fullOptionProject);
+    Verify("report table full options", fullOptionHtml, "Table", false); Verify("report packaged table full options", fullOptionPack, "Table", false);
+    string[][] fullLeftRows = [["id", "value", "environment"], ["GENERATED-alpha", "build=123", "prod"], ["anchor", "value  X", "prod"]];
+    string[][] fullRightRows = [["id", "value", "environment"], ["generated-beta", "build=456", "dev"], ["ANCHOR", "VALUE X", "dev"]];
+    var fullMap = new[] { "1/-/1", "2/-/2", "3/-/3" };
+    Check("report normalized table retains raw original cells and package mapping", VerifyTableAlignment("table-full-options-standalone", fullOptionHtml, fullLeftRows, null, fullRightRows, fullMap)
+        == VerifyTableAlignment("table-full-options-package", fullOptionPack, fullLeftRows, null, fullRightRows, fullMap));
 
     var jsonLeft = Text("reports/json-left.json", "{\"b\":2,\"a\":{\"x\":1,\"y\":\"<script>value</script>\"}}");
     var jsonSame = Text("reports/json-same.json", "{\"a\":{\"y\":\"<script>value</script>\",\"x\":1},\"b\":2}");

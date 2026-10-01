@@ -98,8 +98,21 @@ internal static class CommandLine
                     WriteJson(w => w.WriteBoolean("different", different)); return different ? 1 : 0;
                 }
                 var delimiter = Path.GetExtension(args[1]).Equals(".tsv", StringComparison.OrdinalIgnoreCase) ? '\t' : ',';
-                var table = StructuredComparer.CompareDelimited(left.Text, right.Text, delimiter);
-                WriteJson(w => { w.WriteBoolean("different", table.HasDifferences); w.WriteNumber("rows", Math.Max(table.Left.Rows.Count, table.Right.Rows.Count)); w.WriteNumber("cols", Math.Max(table.Left.ColumnCount, table.Right.ColumnCount)); });
+                var table = StructuredComparer.CompareTables([left.Text, right.Text], new(delimiter), cancellationToken: token);
+                WriteJson(w =>
+                {
+                    w.WriteBoolean("different", table.HasDifferences); w.WriteNumber("rows", table.Documents.Max(document => document.Rows.Count));
+                    w.WriteNumber("cols", table.ColumnCount); w.WriteNumber("alignedRows", table.Rows.Count); w.WriteBoolean("alignmentFallback", table.AlignmentFallback);
+                    w.WriteStartArray("mapping");
+                    foreach (var row in table.Rows)
+                    {
+                        w.WriteStartObject();
+                        if (row.LeftRow is int l) w.WriteNumber("left", l); else w.WriteNull("left");
+                        if (row.RightRow is int r) w.WriteNumber("right", r); else w.WriteNull("right");
+                        w.WriteEndObject();
+                    }
+                    w.WriteEndArray();
+                });
                 return table.HasDifferences ? 1 : 0;
             }
             if (command is "--merge" or "--merge-select")

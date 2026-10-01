@@ -93,3 +93,7 @@ var comparison = TextDiffer.Compare(left.Text, right.Text, options, cancellation
 ## ファイルフィルター
 
 `FileFilter.Load(path)` / `Parse(text, name)` / `ParseExpression(expression)`で旧`.flt`または式を読み、`DirectoryComparisonOptions.FileFilter`へ渡します。既定include/exclude、ファイル・ディレクトリ正規表現、名前・拡張子・サイズ・日時などの条件に対応します。各規則は入力上限・式の深さ上限・正規表現タイムアウトを持ちます。内容検索・関数・算術・左右の属性別評価やPCRE固有構文を含む旧エンジン全体との互換性は未完了です。
+
+## 表文書とセル編集
+
+`StructuredComparer.ParseTable` は原文区間付き文書、`CompareTables` は二者／三者の共有行対応とセル判定、`ReplaceCell` は原文の単一区間を置換する編集を返します。旧 `ParseDelimited`・`CompareDelimited` は同じモデルのadapterです。行対応・容量・取消・比較設定の詳細は[表エディターの契約](../../Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。

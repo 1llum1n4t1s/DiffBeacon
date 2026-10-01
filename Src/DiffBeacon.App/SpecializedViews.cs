@@ -235,41 +235,13 @@ public static class SpecializedViews
         root.Children.Add(Pair(leftEditor, rightEditor)); Refresh(); return root;
     }
 
-    public static Control Structured(string leftText, string rightText, bool json, char? delimiter = null, char? quote = null, bool? allowNewlinesInQuotes = null)
+    public static Control StructuredJson(string leftText, string rightText)
     {
-        if (json)
-        {
-            var a = StructuredComparer.NormalizeJson(leftText); var b = StructuredComparer.NormalizeJson(rightText);
-            var root = new DockPanel(); var status = new TextBlock { Text = a == b ? "JSONの構造と値は一致しています（キー順と同値な数値表現は無視）。" : "JSONの構造または値が異なります。オブジェクトキー順と同値な数値表現は無視し、配列順は保持します。", Margin = new Thickness(8) };
-            DockPanel.SetDock(status, Dock.Top); root.Children.Add(status);
-            var x = HexEditor(); x.Text = a; x.IsReadOnly = true; var y = HexEditor(); y.Text = b; y.IsReadOnly = true;
-            root.Children.Add(Pair(x, y)); return root;
-        }
-        var separator = delimiter ?? DetectSeparator(leftText, rightText);
-        var left = StructuredComparer.ParseDelimited(leftText, separator, quote ?? '"', allowNewlinesInQuotes ?? true).Rows; var right = StructuredComparer.ParseDelimited(rightText, separator, quote ?? '"', allowNewlinesInQuotes ?? true).Rows;
-        var panel = new DockPanel(); var count = Math.Max(left.Count, right.Count);
-        var caption = new TextBlock { Text = $"{(separator == '\t' ? "TSV" : separator == ',' ? "CSV" : "区切りテキスト")} · 左 {left.Count:N0}行 / 右 {right.Count:N0}行 · セル位置で比較（引用符内の改行を{((allowNewlinesInQuotes ?? true) ? "許可" : "禁止")}）。編集はテキスト編集タブで行えます。", Margin = new Thickness(8) };
-        DockPanel.SetDock(caption, Dock.Top); panel.Children.Add(caption);
-        var rows = new ListBox { ItemsSource = Enumerable.Range(0, count).ToArray() };
-        rows.ItemTemplate = new FuncDataTemplate<int>((index, _) =>
-        {
-            var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*,*"), ColumnSpacing = 8 };
-            grid.Children.Add(new TextBlock { Text = (index + 1).ToString(), Width = 45, Margin = new Thickness(4) });
-            var l = index < left.Count ? left[index] : []; var r = index < right.Count ? right[index] : [];
-            for (var side = 0; side < 2; side++)
-            {
-                var cells = side == 0 ? l : r; var cellsGrid = new Grid { ColumnDefinitions = new ColumnDefinitions(string.Join(',', Enumerable.Repeat("*", Math.Max(l.Count, r.Count)))), MinWidth = Math.Max(l.Count, r.Count) * 100 };
-                for (var c = 0; c < Math.Max(l.Count, r.Count); c++)
-                {
-                    var same = c < l.Count && c < r.Count && l[c] == r[c];
-                    var border = new Border { Padding = new Thickness(6), BorderThickness = new Thickness(0.5), BorderBrush = Brushes.Gray, Background = same ? Brushes.Transparent : new SolidColorBrush(Color.Parse("#553D2847")), Child = new TextBlock { Text = c < cells.Count ? cells[c] : "（セルなし）", TextWrapping = TextWrapping.Wrap } };
-                    Grid.SetColumn(border, c); cellsGrid.Children.Add(border);
-                }
-                Grid.SetColumn(cellsGrid, side + 1); grid.Children.Add(cellsGrid);
-            }
-            return grid;
-        }, false);
-        panel.Children.Add(rows); return panel;
+        var a = StructuredComparer.NormalizeJson(leftText); var b = StructuredComparer.NormalizeJson(rightText);
+        var root = new DockPanel(); var status = new TextBlock { Text = a == b ? "JSONの構造と値は一致しています（キー順と同値な数値表現は無視）。" : "JSONの構造または値が異なります。オブジェクトキー順と同値な数値表現は無視し、配列順は保持します。", Margin = new Thickness(8) };
+        DockPanel.SetDock(status, Dock.Top); root.Children.Add(status);
+        var x = HexEditor(); x.Text = a; x.IsReadOnly = true; var y = HexEditor(); y.Text = b; y.IsReadOnly = true;
+        root.Children.Add(Pair(x, y)); return root;
     }
 
     internal static char DetectSeparator(string a, string b)

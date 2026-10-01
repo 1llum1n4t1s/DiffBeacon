@@ -84,84 +84,49 @@ public static class HtmlReport
     {
         ValidateDocuments(documents, cancellationToken);
         var html = new BoundedHtml(maxCharacters, cancellationToken);
+        // 上限が極小の場合は解析・比較する前に拒否する。
         var differencePosition = Begin(html, "Table", true);
-        options ??= new();
-        ValidateOptions(options);
-        // 空表でも比較設定の不正値を検証する。
-        _ = TextDiffer.Compare("", "", options, cancellationToken);
-        var tables = new StructuredTable[documents.Count];
-        var rowCount = 0;
-        var columnCount = 0;
-        for (var index = 0; index < tables.Length; index++)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            tables[index] = StructuredComparer.ParseDelimited(documents[index].Text, delimiter, quote, allowNewlinesInQuotes, cancellationToken);
-            rowCount = Math.Max(rowCount, tables[index].RowCount);
-            foreach (var row in tables[index].Rows)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                columnCount = Math.Max(columnCount, row.Count);
-            }
-        }
+        options ??= new(); ValidateOptions(options);
+        var comparison = StructuredComparer.CompareTables(documents.Select(document => document.Text).ToArray(),
+            new(delimiter, quote, allowNewlinesInQuotes), options, cancellationToken);
+        html.SetDifferent(differencePosition, comparison.HasDifferences);
         RenderOptions(html, options);
         html.Append("<dl class=\"table-options\"><dt>Delimiter</dt><dd>"); html.Escape(delimiter.ToString());
         html.Append("</dd><dt>Quote</dt><dd>"); html.Escape(quote.ToString());
-        html.Append("</dd><dt>AllowNewlinesInQuotes</dt><dd>"); html.Boolean(allowNewlinesInQuotes); html.Append("</dd></dl>");
-        DelimitedHeader(html, documents, columnCount);
+        html.Append("</dd><dt>AllowNewlinesInQuotes</dt><dd>"); html.Boolean(allowNewlinesInQuotes);
+        html.Append("</dd><dt>AlignmentFallback</dt><dd>"); html.Boolean(comparison.AlignmentFallback); html.Append("</dd></dl>");
+        DelimitedHeader(html, documents, comparison.ColumnCount);
         var sides = documents.Count == 2 ? TwoSides : ThreeSides;
-        var different = false;
-        for (var row = 0; row < rowCount; row++)
+        for (var row = 0; row < comparison.Rows.Count; row++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            html.Append("<tr>");
-            for (var side = 0; side < tables.Length; side++)
+            html.Append("<tr data-aligned-row=\""); html.Number(row + 1); html.Append("\">");
+            for (var side = 0; side < comparison.Documents.Count; side++)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                var rowMissing = row >= tables[side].RowCount;
+                var sourceRow = comparison.GetSourceRow(side, row);
                 html.Append("<th class=\"row-number\" scope=\"row\" data-side=\""); html.Append(sides[side]);
-                html.Append("\" data-row=\""); html.Number(row + 1); html.Append("\" data-missing=\""); html.Boolean(rowMissing); html.Append("\">");
-                if (!rowMissing) html.Number(row + 1);
+                html.Append("\" data-row=\""); if (sourceRow is int number) html.Number(number);
+                html.Append("\" data-aligned-row=\""); html.Number(row + 1);
+                html.Append("\" data-missing=\""); html.Boolean(sourceRow is null); html.Append("\">");
+                if (sourceRow is int visible) html.Number(visible);
                 html.Append("</th>");
-                for (var column = 0; column < columnCount; column++)
+                for (var column = 0; column < comparison.ColumnCount; column++)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    string? Cell(int index) => row < tables[index].RowCount && column < tables[index].Rows[row].Count
-                        ? tables[index].Rows[row][column] : null;
-                    var left = Cell(0);
-                    var right = Cell(tables.Length - 1);
-                    var value = Cell(side);
-                    DiffKind kind;
-                    if (tables.Length == 2) kind = CellKind(left, right, options, cancellationToken);
-                    else
-                    {
-                        var ancestor = Cell(1);
-                        kind = side switch
-                        {
-                            0 => CellKind(ancestor, left, options, cancellationToken),
-                            1 => CombineKinds(CellKind(ancestor, left, options, cancellationToken), CellKind(ancestor, right, options, cancellationToken)),
-                            _ => CellKind(ancestor, right, options, cancellationToken)
-                        };
-                        // 三者とも同じ座標へ置き、左右同士の差も文書全体の判定へ含める。
-                        if (side == 0) different |= CellKind(left, right, options, cancellationToken) != DiffKind.Equal;
-                    }
-                    different |= kind != DiffKind.Equal;
-                    html.Append("<td data-side=\""); html.Append(sides[side]); html.Append("\" data-row=\""); html.Number(row + 1);
-                    html.Append("\" data-column=\""); html.Number(column + 1); html.Append("\" data-missing=\""); html.Boolean(value is null);
-                    html.Append("\" class=\""); html.Append(kind.ToString()); if (value is null) html.Append(" missing"); html.Append("\"><pre>");
-                    if (value is null) html.Append("欠落");
-                    else
-                    {
-                        if (kind != DiffKind.Equal) html.Append("<span class=\"inline-diff\">");
-                        html.Escape(value);
-                        if (kind != DiffKind.Equal) html.Append("</span>");
-                    }
+                    var cell = comparison.GetCell(side, row, column);
+                    var kind = comparison.GetKind(side, row, column);
+                    html.Append("<td data-side=\""); html.Append(sides[side]); html.Append("\" data-row=\"");
+                    if (sourceRow is int source) html.Number(source);
+                    html.Append("\" data-aligned-row=\""); html.Number(row + 1);
+                    html.Append("\" data-column=\""); html.Number(column + 1); html.Append("\" data-missing=\""); html.Boolean(cell is null);
+                    html.Append("\" class=\""); html.Append(kind.ToString()); if (cell is null) html.Append(" missing"); html.Append("\"><pre>");
+                    if (cell is not null) html.Escape(cell.Value);
                     html.Append("</pre></td>");
                 }
             }
             html.Append("</tr>");
         }
         html.Append("</tbody></table></div>");
-        html.SetDifferent(differencePosition, different);
         return Finish(html);
     }
 
@@ -184,13 +149,6 @@ public static class HtmlReport
             }
         }
         html.Append("</tr></thead><tbody>");
-    }
-
-    private static DiffKind CellKind(string? left, string? right, ComparisonOptions options, CancellationToken token)
-    {
-        if (left is null) return right is null ? DiffKind.Equal : DiffKind.Added;
-        if (right is null) return DiffKind.Deleted;
-        return TextDiffer.Compare(left, right, options, token).HasDifferences ? DiffKind.Modified : DiffKind.Equal;
     }
 
     private static void ValidateDocuments(IReadOnlyList<ReportDocument> documents, CancellationToken token)

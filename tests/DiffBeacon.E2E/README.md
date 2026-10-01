@@ -87,9 +87,13 @@ GUI の未保存内容・非同期の選択変更・キャンセル・OS のフ�
 `--reports-only` は実アプリの `--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]` と包装の `--package-project --report` を通す。同じケースは全体実行にも含める。単体 HTML と BCL `ZipArchive` から読み出した `report.files/1.html` を保存し、入力、コマンド、終了コード、標準出力・標準エラー、`assertions.json` とともに再現可能な成果物にする。差分がある場合もレポート生成の成功は終了コード0とし、既定activeと1始まりの明示選択を確認する。従来の `--report LEFT RIGHT OUTPUT_HTML` の Text 経路も維持する。
 
 - Text の二者・三者に左右・祖先の本文と description、行番号、行内変更 span を含める。本文・description のタグはエスケープする。左右が同じでも祖先だけ異なれば三者全体を差分ありとする。
-- Table は独自の delimiter / quote / 引用符内改行設定でセルを比較し、行・列座標と各側のセルを表示する。empty と missing は異なり、大文字小文字・空白・数字などの比較オプションをセルへ適用する。不正 quote、許可されない引用符内改行、祖先だけの不正パースは既存出力保持で拒否する。
+- Table は独自の delimiter / quote / 引用符内改行設定でセルを比較し、行・列座標と各側のセルを表示する。empty と missing は異なり、大文字小文字・空白・数字・無視する行パターン・置換ルールなどの比較オプションをセルへ適用する。不正 quote、許可されない引用符内改行、祖先だけの不正パースは既存出力保持で拒否する。
 - Json はプロパティ順を正規化して同値とし、値変更を差分とする。不正な祖先 JSON は拒否する。単体 HTML は外部リソースや相対リンクを必要としない。
-- `body` の `data-mode` / `data-different`、各側の `data-side`、Text の `data-line` と `inline-diff` span、Table の `data-row` / `data-column` / `data-missing` を検証する。
+- `body` の `data-mode` / `data-different`、各側の `data-side`、Text の `data-line` と `inline-diff` span、Table の `data-row` / `data-aligned-row` / `data-column` / `data-missing` を検証する。Table の `data-row` は各側の元論理行番号、`data-aligned-row` は表示行番号であり、ghost の元論理行番号は空とする。
 - 無効な entry、未知・重複オプション、未対応の Binary / Image / Archive / Provider / Folder、URL入力、容量超過、readonly・リンク・原本・祖先・非選択文書・フィルター・元プロジェクトへの出力を終了コード2で拒否し、既存出力と原本を保持する。所有一時出力と包装 stage を残さない。リンク作成不能は理由付きで省略する。
 
 CLIへのOS signal注入はこの限定実行に追加していない。キャンセルはUI自己検証のtoken取消経路で別途扱い、通常デスクトップでのCtrl+Cや外部リソースのブラウザー通信はこのHTML構造確認から実測済みと推定しない。
+
+表の行整列は二者の中間挿入・削除、三者の独立挿入・同じ挿入・祖先だけの変更を通す。単体と包装内の HTML の各比較行を解析し、各側の全元行が一度だけ元順序で現れること、後続の一致アンカーが同じ表示行へ対応すること、各セルの元値が失われないことを照合する。quoted CRLF を一つの論理行として扱い、独自引用符・二重引用符によるエスケープ・末尾空セルとmissingの区別も確認する。正規化で差分を無視したセルも元の値を表示する。解析した対応表を `*-mapped-table.json` に保存し、単体 HTML と BCL で読み出した包装 HTML の対応表を完全一致で確認する。旧 `--table LEFT RIGHT` の二者 CLI は従来の `rows`（元文書の最大行数）を維持し、追加の `alignedRows` / `mapping` が HTML の表示行数・元行対応と一致し、小さなケースでは `alignmentFallback=false` となることを確認する。取消・GUIのセル編集と保存は親の別検証へ引き継ぐ。
+
+表の解析上限は論理行 262,144、セル 1,048,576、本文 64 Mi 文字。行合わせの変更区間で左右行数の積が262,144を超えると、決定的なfallbackを使う。600行ずつの完全一致アンカーがない反復値入力で `alignmentFallback=true`、表示600行、左右の元行1～600が一度ずつ順番どおりに対応することを実CLIで確認する。262,145単セル行と1行1,048,577セルは、同じパスを左右へ指定しても終了コード2で拒否し、成功JSONを出力せず原本を保持する。入力は約0.5 MiB・2 MiBで、stderrと入力の長さ・論理行数・セル数・SHA-256を `table-capacity-inputs.json` と既存コマンド成果物へ保持する。本文64 Mi文字と上限ちょうどの高コスト境界はこの追加E2Eでは実行しない。

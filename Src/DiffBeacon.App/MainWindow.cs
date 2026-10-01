@@ -303,7 +303,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             _ancestorEditor.Text = _baseText ?? "";
             UpdateEditorLayout(_baseText is not null);
             _textSaveAllowed = true;
-            if (mode is 5 or 6) { SetSpecialView(SpecializedViews.Structured(LeftEditor.Text, RightEditor.Text, mode == 5, _projectMetadata.TableDelimiter, _projectMetadata.TableQuote, _projectMetadata.TableAllowNewlinesInQuotes)); _views.SelectedItem = _specialTab; }
+            if (mode == 6) await OpenTableAsync();
+            else if (mode == 5) { SetSpecialView(SpecializedViews.StructuredJson(LeftEditor.Text, RightEditor.Text)); _views.SelectedItem = _specialTab; }
             else await CompareEditorsAsync();
             if (mode is 5 or 6) _status.Text = mode == 5 ? "JSONの構造を比較しました。" : "表の区切り・引用符設定で比較しました。";
             _lastPackageComparison = comparisonForPackaging;
@@ -325,6 +326,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private Task RefreshEditorsAsync()
     {
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
+        if (_mode.SelectedIndex == 6 && _specialTab.Content is TablePanel table) return table.RefreshAsync();
         return CompareEditorsAsync();
     }
     private void ApplyDiff(DiffResult diff)
