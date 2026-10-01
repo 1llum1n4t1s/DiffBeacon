@@ -54,7 +54,7 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 コマンドラインでも比較できます。`DiffBeacon --help` で一覧を表示し、`DiffBeacon --compare LEFT RIGHT` でテキストを比較します。Windows では `DiffBeacon.exe`、macOS では `DiffBeacon.app/Contents/MacOS/DiffBeacon` が実行ファイルです。終了コードは0が一致・成功、1が差分・競合、2がエラーです。
 
-表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
+表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
 
 `DiffBeacon --word-diff LEFT RIGHT` は原文の変更区間を JSON で返します。`ranges` の各要素は `[左の開始位置, 左の長さ, 右の開始位置, 右の長さ]` で、位置は0始まりの UTF-16 単位です。既定では文字単位まで絞り込み、`--word-level` で単語単位にできます。`--eol strict|ignore|space`、`--separators TEXT` などの指定は `--help` で確認できます。詳細比較を省略した場合は `fallback` と `fallbackReason` に示し、両原文全体を変更区間として返します。
 
