@@ -12,7 +12,7 @@ WinMerge を基にした、ファイル・フォルダー比較アプリです�
 - マージ結果：差分ごとに左・右（三者では祖先も）を選択し、複数の採用順序を指定。手編集と採用のUndo/Redo、未解決数、行の採用元を表示。
 - フォルダー：再帰比較、内容・SHA-256・日時とサイズ、除外パス、選択項目のコピー。
 - バイナリ：16進表示・編集・差分範囲コピー・別名保存。
-- 画像：二者・三者表示、領域の強調と移動、重ね合わせ、倍率、閾値付きピクセル差分、GIF／WebPの手動フレーム選択・同期移動。全フレームまたは表示中の組をHTMLへ保存できます。[画像の操作](Docs/IMAGE-VIEWER.md)を参照してください。
+- 画像：二者・三者表示、領域の強調と移動、重ね合わせ、倍率、閾値付きピクセル差分、GIF／WebPの手動フレーム選択・同期移動。全フレームまたは表示中の組をHTMLへ保存できます。GUIでの画像編集・領域コピー・画像ファイル保存は未対応です。[画像の操作](Docs/IMAGE-VIEWER.md)を参照してください。
 - JSON：構造の正規化。CSV / TSV：二者・三者の行合わせ、セル編集・Undo/Redo・検索。
 - アーカイブ：7z／RAR／ZIP／TAR系の内容比較、暗号化・solidの読込み、プレビュー、エントリ保存・全件展開、非暗号化7z／ZIP派生／TAR系の作成・再梱包。
 - XML / HTML / Web応答 / Office / TAR：標準プロバイダーで比較用テキストへ変換。外部実行ファイルは明示登録したときだけ使用。
@@ -57,8 +57,6 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 テキスト比較の `--max-work N` は行対応と行内差分それぞれの処理予算を指定します。行対応を省略した場合は JSON の `lineFallback`・`lineFallbackReason` に示し、元の全行を保持して未確定部分を変更扱いにします。
 
 画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
-
-静止画像の領域コピー・Undo／Redo・PNG別名保存は、開発用 `--image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON` で原本照合できます。GUIの編集操作は接続前です。[操作と保存の範囲](Docs/IMAGE-VIEWER.md#静止画像コピー核の診断)を参照してください。
 
 表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
 

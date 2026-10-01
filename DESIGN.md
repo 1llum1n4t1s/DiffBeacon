@@ -30,7 +30,9 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 画像領域はWinIMerge v1.0.54のblock比較・8近傍領域・01∨21候補と01/21/02分類を保持し、三者共通gridと原本のunsigned高さ減算も再現する。原本のMarkDiffは0.7の色合成・透明画素・paneごとの分類除外・選択色を保つ。三者の中央は第三画像であり祖先ではない。通常の差分有無は領域数、左右画素差は補助値として区別する。診断CLI `--image-regions` は全gridも返すため262,144blockに制限し、選択的に強調SHAを追加する。通常呼び出し元と同じ計算を、[領域fixture](tests/Fixtures/ImageRegions/README.md)・[強調fixture](tests/Fixtures/ImageHighlight/README.md)の無改変C++期待値へ照合する。採取用C++ / FreeImageは通常buildに含めない。
 
-静止画像のコピー核はAppの `ImageEditSession` が比較時の寸法・領域ID maskを固定して原画だけをコピーする。全／三者autoをUndo一件とし、原画・再比較・共有履歴を仮状態からまとめて確定する。`ImagePngStore` は透明RGBを保持したPNG別名保存、`ImageCopyCommands` は全scriptのシミュレーションとbounded JSON完了後にexportを公開する。GUI・HTMLの編集済み原画への接続と元形式保存は未完了。操作・上限・adapter境界は[画像の契約](Docs/IMAGE-VIEWER.md#静止画像コピー核の診断)へ集約する。
+静止画像のコピー核はAppの `ImageEditSession` が原画のコピーと共有履歴を管理する。一操作の間は比較時の寸法・領域ID maskを固定してコピーし、操作ごとに領域の再比較結果も更新する。全領域コピー／三者autoをUndo一件とし、原画・再比較・全ペイン共有の履歴を仮状態からまとめて確定する。dirtyは履歴上のペインごとの変更回数と保存点から判定する。
+
+`ImagePngStore` は透明RGBを保持したPNG別名保存を担当し、入力画像・操作script・リンク・読取り専用出力を保護して、同一ディレクトリの一時ファイルから既存属性を保持して置換する。`ImageCopyCommands` は全scriptのシミュレーションと上限付きJSONの生成完了後にexportを順次公開する。公開はファイル単位であり、後続の保存失敗や取消で先に保存した出力を巻き戻さない。GUI・HTMLの編集済み原画への接続と元形式保存は未完了。操作・上限・adapter境界は[画像の契約](Docs/IMAGE-VIEWER.md#静止画像コピー核の診断)へ集約する。
 
 プロバイダーは `ComparisonRequest` を受け、`ProviderResult` の左右の比較用テキストと概要を返す。そのテキストを通常の差分処理に渡すが、元文書への書戻しには使わない。外部プロバイダーはシェルを介さず別プロセスで起動し、標準入力・出力の版付き JSON で通信する。登録は呼び出し元が明示的に行う。
 
