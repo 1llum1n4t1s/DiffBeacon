@@ -428,7 +428,7 @@ internal static class HeadlessImageCopyChecks
         }
     }
 
-    private static ImageComparisonEngine.DecodedFrame ReadPng(string path)
+    internal static ImageComparisonEngine.DecodedFrame ReadPng(string path)
     {
         var bytes = File.ReadAllBytes(path); var signature = new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 };
         if (bytes.Length < 33 || !bytes.AsSpan(0, 8).SequenceEqual(signature)) throw new InvalidDataException("PNG signature");

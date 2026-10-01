@@ -11,12 +11,21 @@ public sealed record ImageViewSettings
     public bool ShowDifferences { get; set; } = true;
     public bool ReportAllFrames { get; set; } = true;
     public string View { get; set; } = "SideBySide";
+    public int BlockSize { get; set; } = 8;
+    public ImageOrientation LeftOrientation { get; set; } = new();
+    public ImageOrientation MiddleOrientation { get; set; } = new();
+    public ImageOrientation RightOrientation { get; set; } = new();
 
     internal int[] FrameNumbers(bool three) => three ? [LeftFrame, MiddleFrame, RightFrame] : [LeftFrame, RightFrame];
+    internal ImageOrientation[] Orientations(bool three) => three
+        ? [LeftOrientation, MiddleOrientation, RightOrientation] : [LeftOrientation, RightOrientation];
 
     internal static void Validate(ImageViewSettings? settings)
     {
         if (settings is null) throw new InvalidDataException("画像設定が null です。");
+        ImageOrientation.Validate(settings.LeftOrientation); ImageOrientation.Validate(settings.MiddleOrientation);
+        ImageOrientation.Validate(settings.RightOrientation);
+        if (settings.BlockSize is < 1 or > 256) throw new InvalidDataException("画像差分のブロックサイズは1～256です。");
         if (settings.LeftFrame is < 1 or > 1024 || settings.MiddleFrame is < 1 or > 1024 || settings.RightFrame is < 1 or > 1024)
             throw new InvalidDataException("保存する画像ページ番号は1～1024です。");
         if (!double.IsFinite(settings.Threshold) || settings.Threshold is < 0 or > 510)

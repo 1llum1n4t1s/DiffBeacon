@@ -12,7 +12,10 @@ public static partial class SpecializedViews
             LeftFrame = LeftFrame, MiddleFrame = MiddleFrame ?? 1, RightFrame = RightFrame,
             Threshold = _displayThreshold, ShowDifferences = _displayShowDifferences,
             Zoom = _zoom.Value, OverlayOpacity = _opacity.Value, ReportAllFrames = ReportAllFrames,
-            View = _imageViews.SelectedIndex switch { 1 => "Overlay", 2 => "PixelDifference", _ => "SideBySide" }
+            View = _imageViews.SelectedIndex switch { 1 => "Overlay", 2 => "PixelDifference", _ => "SideBySide" },
+            LeftOrientation = _displayOrientations[0], RightOrientation = _displayOrientations[^1],
+            BlockSize = _displayBlockSize,
+            MiddleOrientation = _displayOrientations.Length == 3 ? _displayOrientations[1] : new()
         };
 
         internal async Task ApplySettingsAsync(ImageViewSettings settings, CancellationToken token = default)
@@ -20,10 +23,10 @@ public static partial class SpecializedViews
             ObjectDisposedException.ThrowIf(_disposed, this);
             var requested = settings with { };
             ImageViewSettings.Validate(requested);
-            if (_counts.Length == 2 && requested.MiddleFrame != 1)
-                throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1にしてください。");
+            if (_counts.Length == 2 && (requested.MiddleFrame != 1 || !requested.MiddleOrientation.IsIdentity))
+                throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
             var numbers = requested.FrameNumbers(_counts.Length == 3);
-            ImageComparisonEngine.ValidateSelection(_snapshots!, numbers);
+            ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, requested.Orientations(_counts.Length == 3));
             token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
             var previous = CaptureSettings();
@@ -52,6 +55,8 @@ public static partial class SpecializedViews
                 _threshold.Value = ThresholdControlValue(settings.Threshold);
                 // decimal表示の丸めを復号・保存・レポートのDouble閾値へ戻さない。
                 _requestedThreshold = settings.Threshold;
+                _requestedOrientations = settings.Orientations(_counts.Length == 3);
+                _requestedBlockSize = settings.BlockSize; _blockSizeControl.Value = settings.BlockSize;
                 _showDifferences.IsChecked = settings.ShowDifferences;
                 _zoom.Value = settings.Zoom; _opacity.Value = settings.OverlayOpacity;
                 _reportAllFrames.IsChecked = settings.ReportAllFrames;
@@ -62,5 +67,33 @@ public static partial class SpecializedViews
 
         private static decimal ThresholdControlValue(double value)
             => decimal.Parse(value.ToString("R", CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture);
+
+        internal Task SetOrientationAsync(int pane, ImageOrientation orientation, CancellationToken token = default)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this); ImageOrientation.Validate(orientation); token.ThrowIfCancellationRequested();
+            if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
+            if (pane < 0 || pane >= _counts.Length) throw new ArgumentOutOfRangeException(nameof(pane));
+            var next = _requestedOrientations.ToArray(); next[pane] = orientation;
+            ImageComparisonEngine.ValidateSelection(_snapshots!, _numbers, next);
+            _requestedOrientations = next;
+            return SetNumbersAsync(_numbers.ToArray(), token);
+        }
+
+        private Task RotateChosenAsync(int degrees)
+        {
+            var pane = _editPane.SelectedIndex;
+            if (pane < 0 || pane >= _counts.Length) return Task.CompletedTask;
+            var current = _requestedOrientations[pane];
+            return SetOrientationAsync(pane, current with { Rotation = (current.Rotation + degrees + 360) % 360 });
+        }
+
+        private Task FlipChosenAsync(bool horizontal)
+        {
+            var pane = _editPane.SelectedIndex;
+            if (pane < 0 || pane >= _counts.Length) return Task.CompletedTask;
+            var current = _requestedOrientations[pane];
+            return SetOrientationAsync(pane, horizontal ? current with { FlipHorizontal = !current.FlipHorizontal }
+                : current with { FlipVertical = !current.FlipVertical });
+        }
     }
 }

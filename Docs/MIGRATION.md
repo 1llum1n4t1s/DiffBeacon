@@ -10,7 +10,7 @@
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
 | 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
-| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、旧全体設定の永続化は未完了 |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、回転・反転の表示／コピー／設定保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ・矩形編集、旧全体設定の永続化は未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
@@ -98,6 +98,14 @@ APNG最終SHA `892f362d1327e85268a9486991ef302b84a27edc` の[四RID CI](https://
 変更前の実CLIでは設定が消失し、選択組のHTMLが2ページになった。追加の限定E2Eは614成功・0失敗。最終Release buildは警告0・エラー0、全体E2Eはmanaged 28868成功・0失敗・10skip、Windows x64 Native AOT 28913成功・0失敗・3skip、headless UIは両方式1103成功・0失敗。2／3入力の全値・既定値・境界・CLI上書き、独立PNG復号による全BGRA、包装展開、不正設定・実ページ範囲外の拒否と入力／既存出力の属性保持、再比較・workspace復元・取消・古い完了を確認した。記録は `E:/DiffBeacon-artifacts/local/image-project-settings`。差分閾値360.62445840513925がGUIで丸められる不具合も実測して修正し、ページ切替時と最小正double値を含め判定値の保持を確認した。発行manifest12ファイルのサイズ・SHAと実行中の製品ソース857ファイルを照合した。全体E2Eの証拠は全entry SHA照合済みZIPとして保持し、GUIのJSON・PNGと再現記録は展開した状態で残す。この設定変更の四RID CIは未実行。
 
 旧`ImgMergeFrm.cpp`のLoadOptions／SaveOptionsは倍率・閾値等をOptionsMgrの全体設定へ保存する。今回のJSONプロジェクト保存は、その全体設定の移行完了を意味しない。旧全体設定と全表示オプション、未保存原画・Undo履歴・選択領域のセッション保存は未完了。利用手順と上限は[画像の契約](IMAGE-VIEWER.md)を参照する。
+
+## 画像の回転・反転
+
+GUI・通常CLI・HTML・包装へ表示変換を接続する。水平反転・垂直反転・反時計回り回転の順と、原画保存・共有履歴を保つ。静止画のコピーは表示座標で行い、確定した画素を逆写像して原画へ戻す。回転だけではdirty・Undoを変更せず、読取り専用画像と複数ページの表示にも適用できる。プロジェクトには各入力の角度・水平／垂直反転・ブロックサイズを保存する。位置合わせ・挿入削除・矩形編集・多ページ編集・元形式保存は未完了。
+
+WinIMerge v1.0.54の公式DLLから32表示ケース・256コピーケース、計2,816状態を採取した。alpha0のhidden RGBも含む全BGRA、寸法、領域、共有Undo／Redo、保存点とPNG原画を固定期待値とし、実アプリ別プロセスへ照合する。GUIは代表14操作列と実ボタン・ページ切替・取消・古い完了を操作する。強調画面の共通canvasへ追加する透明paddingと、PNG保存・HTML原画の寸法は別に照合する。正本・SHA・再生成は[変換fixture](../tests/Fixtures/ImageTransforms/README.md)、操作は[画像の契約](IMAGE-VIEWER.md#回転反転)を参照する。最終Release buildとWindows x64 Native AOT発行は警告0・エラー0。限定変換E2Eは46391成功・0失敗・0skip、設定限定は614成功・0失敗。全体は通常版75258成功・0失敗・10skip、Native版75303成功・0失敗・3skip、headless UIは両版2429成功・0失敗。代表14ケースの124状態・346画面画素、各28原画PNGとGUI HTML4PNGを独立Python復号へ照合し、両版の観測JSONは全bytes一致した。発行12ファイルのSHA／サイズと248ソースの不変を確認し、画面PNG各4枚も目視した。証拠は `E:/DiffBeacon-artifacts/local/image-transforms/final-local-verification.json` と容量索引の照合済みZIP。旧935状態の比較では新しい表示設定だけをidentityと検査し、元の全property照合を維持する。通常desktopとOSの保存ダイアログ、offset、矩形編集、多ページ編集はこの検証に含めない。今回の変更のMac・Windows ARM64はGitHubで検証する。
+
+画像設定の前段SHA `6d21a11607224d6e49bba717f3f8148e7610b533` は[4 RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36925383370)と[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36925383199)が成功。Windows E2E各28913成功・0失敗・3skip、Mac各28922成功・0失敗・2skip、headless UI各1103成功・0失敗。Native76ファイル・Mac tar26ファイルのSHA／サイズ、MITライセンス12コピーを取得後に照合した。これは今回の回転・反転変更を含まない前段の検証であり、通常desktop・OS clipboardの実測とも区別する。
 
 ## 原本の画像差分領域処理
 

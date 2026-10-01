@@ -54,7 +54,7 @@ internal static class ImageCopyCommands
                 if (!value.TryGetProperty("kind", out var kindJson) || kindJson.ValueKind != JsonValueKind.String)
                     throw new ArgumentException("画像操作kindが必要です。");
                 var kind = kindJson.GetString()!;
-                if (kind is not ("copy" or "all" or "auto" or "undo" or "redo" or "save" or "set-savepoint" or "export"))
+                if (kind is not ("copy" or "all" or "auto" or "undo" or "redo" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy"))
                     throw new ArgumentException("未知の画像操作kindです。");
                 int Read(string field, bool required)
                 {
@@ -63,8 +63,15 @@ internal static class ImageCopyCommands
                     return 0;
                 }
                 var source = Read("src", kind is "copy" or "all");
-                var destination = Read("dst", kind is "copy" or "all" or "auto" or "save" or "set-savepoint" or "export");
-                var index = Read("index", kind is "copy" or "set-savepoint");
+                var destination = Read("dst", kind is "copy" or "all" or "auto" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy");
+                var index = Read("index", kind is "copy" or "set-savepoint" or "rotate" or "flipx" or "flipy");
+                if (kind is "rotate" or "flipx" or "flipy")
+                {
+                    if (destination < 0 || destination >= paths.Count)
+                        throw new ArgumentException("表示を変換する画像paneが範囲外です。");
+                    if (kind == "rotate" ? index is not (0 or 90 or 180 or 270) : index is not (0 or 1))
+                        throw new ArgumentException("画像回転は0・90・180・270度、反転は0・1です。");
+                }
                 string? output = null;
                 if (kind == "export")
                 {
@@ -108,6 +115,17 @@ internal static class ImageCopyCommands
                         case "redo": result = session.Redo(token) ? 1 : 0; break;
                         case "save": session.MarkSaved(action.Destination); break;
                         case "set-savepoint": session.SetSavePoint(action.Destination, action.Index); break;
+                        case "rotate":
+                        case "flipx":
+                        case "flipy":
+                            var orientation = session.CaptureOrientations()[action.Destination];
+                            orientation = action.Kind switch
+                            {
+                                "rotate" => orientation with { Rotation = action.Index },
+                                "flipx" => orientation with { FlipHorizontal = action.Index != 0 },
+                                _ => orientation with { FlipVertical = action.Index != 0 }
+                            };
+                            session.SetOrientation(action.Destination, orientation, token); break;
                         case "export":
                             var frame = session.CaptureFrame(action.Destination);
                             exportBytes = checked(exportBytes + frame.Pixels.LongLength);
@@ -159,7 +177,7 @@ internal static class ImageCopyCommands
     private static void WriteState(Utf8JsonWriter writer, ImageEditSession session, bool hashesOnly, CancellationToken token)
     {
         writer.WriteStartObject(); writer.WriteStartArray("frames");
-        foreach (var frame in session.CaptureFrames())
+        foreach (var frame in session.CaptureViewFrames())
         {
             token.ThrowIfCancellationRequested(); writer.WriteStartObject();
             writer.WriteNumber("width", frame.Width); writer.WriteNumber("height", frame.Height);
@@ -171,6 +189,13 @@ internal static class ImageCopyCommands
                 writer.WriteBase64String("bgraBase64", frame.Pixels);
             }
             writer.WriteString("sha256", ImageComparisonEngine.PixelHash(frame.Pixels, token)); writer.WriteEndObject();
+        }
+        writer.WriteEndArray(); writer.WriteStartArray("orientations");
+        foreach (var value in session.CaptureOrientations())
+        {
+            writer.WriteStartObject(); writer.WriteNumber("rotation", value.Rotation);
+            writer.WriteBoolean("flipHorizontal", value.FlipHorizontal); writer.WriteBoolean("flipVertical", value.FlipVertical);
+            writer.WriteEndObject();
         }
         writer.WriteEndArray(); var result = session.Regions;
         if ((long)result.Columns * result.Rows > 262_144) throw new InvalidOperationException("画像編集の診断JSONは262,144ブロックまでです。");

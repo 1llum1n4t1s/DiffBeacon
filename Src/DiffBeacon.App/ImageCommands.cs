@@ -13,14 +13,33 @@ internal static class ImageCommands
         if (inputCount is not (2 or 3)) throw new ArgumentException("--image LEFT [MIDDLE] RIGHT を指定してください。");
         int? leftFrame = null, middleFrame = null, rightFrame = null;
         double threshold = 0;
+        var blockSize = 8;
+        var orientations = Enumerable.Range(0, inputCount).Select(_ => new ImageOrientation()).ToArray();
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var index = optionStart; index < args.Length; index += 2)
         {
             var option = args[index];
-            if (option is not ("--left-frame" or "--middle-frame" or "--right-frame" or "--threshold") || !seen.Add(option))
+            if (option is not ("--left-frame" or "--middle-frame" or "--right-frame" or "--threshold"
+                or "--left-orientation" or "--middle-orientation" or "--right-orientation" or "--block-size") || !seen.Add(option))
                 throw new ArgumentException($"未知または重複する画像オプションです: {option}");
             if (index + 1 >= args.Length) throw new ArgumentException($"{option} に値を指定してください。");
-            if (option == "--threshold")
+            if (option == "--block-size")
+            {
+                if (!int.TryParse(args[index + 1], NumberStyles.None, CultureInfo.InvariantCulture, out blockSize) || blockSize is < 1 or > 256)
+                    throw new ArgumentException("画像差分のブロックサイズは1～256です。");
+            }
+            else if (option.EndsWith("-orientation", StringComparison.Ordinal))
+            {
+                if (option == "--middle-orientation" && inputCount != 3) throw new ArgumentException("中央の画像変換は三者比較だけです。");
+                var parts = args[index + 1].Split(',');
+                if (parts.Length != 3 || !int.TryParse(parts[0], NumberStyles.None, CultureInfo.InvariantCulture, out var rotation)
+                    || parts[1] is not ("0" or "1") || parts[2] is not ("0" or "1"))
+                    throw new ArgumentException("画像変換は回転度,水平反転0/1,垂直反転0/1です（例:90,1,0）。");
+                var value = new ImageOrientation { Rotation = rotation, FlipHorizontal = parts[1] == "1", FlipVertical = parts[2] == "1" };
+                ImageOrientation.Validate(value);
+                orientations[option == "--left-orientation" ? 0 : option == "--middle-orientation" ? 1 : inputCount - 1] = value;
+            }
+            else if (option == "--threshold")
             {
                 if (!double.TryParse(args[index + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out threshold))
                     throw new ArgumentException("差分閾値は有限の非負数です（小数点は .）。");
@@ -47,7 +66,7 @@ internal static class ImageCommands
             var token = cancel.Token;
             var images = new ImageComparisonEngine.Snapshot[inputCount];
             for (var i = 0; i < inputCount; i++) images[i] = await ImageComparisonEngine.OpenAsync(args[i + 1], token);
-            var result = await Task.Run(() => ImageComparisonEngine.Compare(images, numbers, threshold, token), token);
+            var result = await Task.Run(() => ImageComparisonEngine.Compare(images, numbers, threshold, token, orientations, blockSize), token);
             // 完了した結果だけ標準出力へ渡し、失敗・取消時に成功JSONを残さない。
             using var content = new MemoryStream();
             using (var writer = new Utf8JsonWriter(content))

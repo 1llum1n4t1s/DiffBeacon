@@ -74,7 +74,7 @@ public static class ProjectReport
             string[] titles = middleImage is null ? [project.LeftDescription ?? project.LeftPath, project.RightDescription ?? project.RightPath]
                 : [project.LeftDescription ?? project.LeftPath, project.BaseDescription ?? project.BasePath, project.RightDescription ?? project.RightPath];
             var imageHtml = await Task.Run(() => ImageReport.Create(new(images, imageThreshold ?? settings.Threshold, numbers,
-                ShowDifferences: settings.ShowDifferences), titles, token), token).ConfigureAwait(false);
+                ShowDifferences: settings.ShowDifferences, Orientations: settings.Orientations(middleImage is not null), BlockSize: settings.BlockSize), titles, token), token).ConfigureAwait(false);
             await SaveAsync(target, imageHtml, entries, sourceProject, token).ConfigureAwait(false);
             return;
         }

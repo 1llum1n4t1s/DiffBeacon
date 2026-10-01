@@ -2,7 +2,7 @@ namespace DiffBeacon.App;
 
 // WinIMerge v1.0.54 ImgMergeBuffer.hpp の領域コピー・共有履歴を移植。
 // GPL-2.0-or-later。原本・採取境界は tests/Fixtures/ImageCopy を参照。
-// offset0・変換なし・静止画専用。拡張の初期値は明示したzero-filled BGRA契約。
+// offset0・静止画専用。拡張の初期値は明示したzero-filled BGRA契約。
 internal sealed class ImageEditSession
 {
     internal const int MaximumHistoryRecords = 128;
@@ -11,18 +11,21 @@ internal sealed class ImageEditSession
     private sealed record Edit(int Pane, ImageComparisonEngine.DecodedFrame Before,
         ImageComparisonEngine.DecodedFrame After, int[] Counts);
     private readonly bool[] _readOnly;
-    private readonly int _blockSize;
+    private int _blockSize;
     private double _threshold;
     private readonly List<Edit> _history = [];
     private readonly int[] _counts;
     private readonly int[] _savePoints;
     private ImageComparisonEngine.DecodedFrame[] _frames;
+    private ImageComparisonEngine.DecodedFrame[] _viewFrames;
+    private ImageOrientation[] _orientations;
     private int _index = -1;
     private long _historyBytes;
     private long _work;
     internal ImageRegionDiffer.Result Regions { get; private set; }
     internal int PaneCount => _frames.Length;
     internal double Threshold => _threshold;
+    internal int BlockSize => _blockSize;
     internal int HistoryIndex => _index;
     internal int HistoryCount => _history.Count;
     internal bool CanUndo => _index >= 0;
@@ -35,6 +38,8 @@ internal sealed class ImageEditSession
         if (readOnly is not null && readOnly.Count != frames.Count) throw new ArgumentException("読取り専用の指定数が入力数と一致しません。");
         Regions = ImageRegionDiffer.Compare(frames, blockSize, threshold, token);
         _frames = frames.Select(Clone).ToArray();
+        _viewFrames = (ImageComparisonEngine.DecodedFrame[])_frames.Clone();
+        _orientations = frames.Select(_ => new ImageOrientation()).ToArray();
         _readOnly = readOnly?.ToArray() ?? new bool[frames.Count];
         _counts = new int[frames.Count]; _savePoints = new int[frames.Count];
         _blockSize = blockSize; _threshold = threshold;
@@ -45,6 +50,8 @@ internal sealed class ImageEditSession
     {
         // raw画素/Edit/Regionsは書き換えず候補へ置換する。変更可能な容器だけ分離する。
         _frames = (ImageComparisonEngine.DecodedFrame[])source._frames.Clone();
+        _viewFrames = (ImageComparisonEngine.DecodedFrame[])source._viewFrames.Clone();
+        _orientations = source._orientations.Select(value => value with { }).ToArray();
         _history = new List<Edit>(source._history);
         _readOnly = (bool[])source._readOnly.Clone();
         _counts = (int[])source._counts.Clone();
@@ -56,12 +63,23 @@ internal sealed class ImageEditSession
 
     internal ImageEditSession Fork() => new(this);
 
+    internal void SetBlockSize(int blockSize, CancellationToken token = default)
+    {
+        if (blockSize is < 1 or > 256) throw new ArgumentOutOfRangeException(nameof(blockSize));
+        token.ThrowIfCancellationRequested();
+        if (_blockSize == blockSize) return;
+        var work = ComparisonWork(_viewFrames); CheckWork(work);
+        var compared = ImageRegionDiffer.Compare(_viewFrames, blockSize, _threshold, token);
+        token.ThrowIfCancellationRequested();
+        _blockSize = blockSize; Regions = compared; _work += work;
+    }
+
     internal void SetThreshold(double threshold, CancellationToken token = default)
     {
         if (!double.IsFinite(threshold) || threshold < 0) throw new ArgumentOutOfRangeException(nameof(threshold));
         token.ThrowIfCancellationRequested();
-        var work = ComparisonWork(_frames); CheckWork(work);
-        var compared = ImageRegionDiffer.Compare(_frames, _blockSize, threshold, token);
+        var work = ComparisonWork(_viewFrames); CheckWork(work);
+        var compared = ImageRegionDiffer.Compare(_viewFrames, _blockSize, threshold, token);
         token.ThrowIfCancellationRequested();
         _threshold = threshold; Regions = compared; _work += work;
     }
@@ -73,6 +91,26 @@ internal sealed class ImageEditSession
     }
 
     internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> CaptureFrames() => _frames.Select(Clone).ToArray();
+    internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> CaptureViewFrames() => _viewFrames.Select(Clone).ToArray();
+    internal IReadOnlyList<ImageOrientation> CaptureOrientations() => _orientations.Select(value => value with { }).ToArray();
+    internal void SetOrientation(int pane, ImageOrientation orientation, CancellationToken token = default)
+    {
+        if (!ValidPane(pane)) throw new ArgumentOutOfRangeException(nameof(pane));
+        ImageOrientation.Validate(orientation); token.ThrowIfCancellationRequested();
+        var requested = orientation with { };
+        if (_orientations[pane] == requested) return;
+        var orientations = _orientations.Select(value => value with { }).ToArray(); orientations[pane] = requested;
+        var dims = _frames.Select((frame, index) => orientations[index].SwapsDimensions
+            ? (Width: frame.Height, Height: frame.Width) : (frame.Width, frame.Height)).ToArray();
+        var work = checked((long)dims.Max(value => value.Width) * dims.Max(value => value.Height) * _frames.Length
+            + (long)_frames[pane].Width * _frames[pane].Height);
+        CheckWork(work);
+        var views = (ImageComparisonEngine.DecodedFrame[])_viewFrames.Clone();
+        views[pane] = requested.Apply(_frames[pane], token);
+        var compared = ImageRegionDiffer.Compare(views, _blockSize, _threshold, token);
+        token.ThrowIfCancellationRequested();
+        _orientations = orientations; _viewFrames = views; Regions = compared; _work += work;
+    }
     internal ImageComparisonEngine.DecodedFrame CaptureFrame(int pane)
         => ValidPane(pane) ? Clone(_frames[pane]) : throw new ArgumentOutOfRangeException(nameof(pane));
     internal bool IsReadOnly(int pane) => ValidPane(pane) && _readOnly[pane];
@@ -122,49 +160,53 @@ internal sealed class ImageEditSession
     private void Apply(int destination, IReadOnlyList<(int Index, int Source)> copies, CancellationToken token)
     {
         // 全領域を同じ比較時寸法で処理し、一件の履歴と再比較を確定する。
-        var before = _frames[destination];
+        var rawBefore = _frames[destination];
+        var before = _viewFrames[destination];
         var width = before.Width; var height = before.Height;
         long scanWork = 0;
         foreach (var (index, source) in copies)
         {
             token.ThrowIfCancellationRequested();
             var rc = Regions.Regions[index];
-            var input = _frames[source];
+            var input = _viewFrames[source];
             var xmax = Math.Min(checked(rc.Right * _blockSize - 1), input.Width - 1);
             var ymax = Math.Min(checked(rc.Bottom * _blockSize - 1), input.Height - 1);
             width = checked(width + Math.Max(0, xmax - before.Width + 1));
             height = checked(height + Math.Max(0, ymax - before.Height + 1));
             scanWork = checked(scanWork + (long)(rc.Right - rc.Left) * (rc.Bottom - rc.Top) * _blockSize * _blockSize);
         }
-        ValidateCanvas(width, height, _frames);
+        ValidateCanvas(width, height, _viewFrames);
         var bytes = checked((long)width * height * 4);
         var retainedBytes = _historyBytes;
         for (var i = _history.Count - 1; i > _index; i--) retainedBytes -= RecordBytes(_history[i]);
         if (_index + 2 > MaximumHistoryRecords || retainedBytes + before.Pixels.LongLength + bytes > MaximumHistoryBytes)
             throw new InvalidOperationException("画像編集の履歴上限（128件・256 MiB）を超えます。");
         var comparisonWork = checked((long)Math.Max(width, Regions.Width) * Math.Max(height, Regions.Height) * _frames.Length);
-        CheckWork(checked(scanWork + comparisonWork));
+        var transformationWork = _orientations[destination].IsIdentity ? 0 : checked((long)width * height);
+        CheckWork(checked(scanWork + comparisonWork + transformationWork));
         var next = Clone(before);
         foreach (var (index, source) in copies) next = CopyRegion(index, source, before, next, token);
-        var candidate = (ImageComparisonEngine.DecodedFrame[])_frames.Clone(); candidate[destination] = next;
+        var candidate = (ImageComparisonEngine.DecodedFrame[])_viewFrames.Clone(); candidate[destination] = next;
         var compared = ImageRegionDiffer.Compare(candidate, _blockSize, _threshold, token);
         var counters = (int[])_counts.Clone();
         for (var i = _history.Count - 1; i > _index; i--) --counters[_history[i].Pane];
         ++counters[destination];
-        var edit = new Edit(destination, before, next, counters);
+        var rawNext = _orientations[destination].Apply(next, token, inverse: true);
+        var rawCandidate = (ImageComparisonEngine.DecodedFrame[])_frames.Clone(); rawCandidate[destination] = rawNext;
+        var edit = new Edit(destination, rawBefore, rawNext, counters);
         token.ThrowIfCancellationRequested();
         if (_history.Count > _index + 1) _history.RemoveRange(_index + 1, _history.Count - _index - 1);
         _history.Add(edit); ++_index;
         Array.Copy(counters, _counts, counters.Length);
-        _historyBytes = retainedBytes + RecordBytes(edit); _work += scanWork + comparisonWork;
-        _frames = candidate; Regions = compared;
+        _historyBytes = retainedBytes + RecordBytes(edit); _work += scanWork + comparisonWork + transformationWork;
+        _frames = rawCandidate; _viewFrames = candidate; Regions = compared;
     }
 
     private ImageComparisonEngine.DecodedFrame CopyRegion(int index, int source,
         ImageComparisonEngine.DecodedFrame originalDestination, ImageComparisonEngine.DecodedFrame target,
         CancellationToken token)
     {
-        var rc = Regions.Regions[index]; var input = _frames[source];
+        var rc = Regions.Regions[index]; var input = _viewFrames[source];
         var xmax = Math.Min(rc.Right * _blockSize - 1, input.Width - 1);
         var ymax = Math.Min(rc.Bottom * _blockSize - 1, input.Height - 1);
         var width = target.Width + Math.Max(0, xmax - originalDestination.Width + 1);
@@ -209,10 +251,18 @@ internal sealed class ImageEditSession
         var edit = _history[redo ? _index + 1 : _index];
         var candidate = (ImageComparisonEngine.DecodedFrame[])_frames.Clone();
         candidate[edit.Pane] = redo ? edit.After : edit.Before;
-        var work = ComparisonWork(candidate); CheckWork(work);
-        var compared = ImageRegionDiffer.Compare(candidate, _blockSize, _threshold, token);
+        var views = (ImageComparisonEngine.DecodedFrame[])_viewFrames.Clone();
+        var nextRaw = candidate[edit.Pane];
+        var nextWidth = _orientations[edit.Pane].SwapsDimensions ? nextRaw.Height : nextRaw.Width;
+        var nextHeight = _orientations[edit.Pane].SwapsDimensions ? nextRaw.Width : nextRaw.Height;
+        var work = checked((long)Math.Max(nextWidth, views.Where((_, index) => index != edit.Pane).Max(frame => frame.Width))
+            * Math.Max(nextHeight, views.Where((_, index) => index != edit.Pane).Max(frame => frame.Height)) * views.Length
+            + (_orientations[edit.Pane].IsIdentity ? 0 : (long)nextRaw.Width * nextRaw.Height));
+        CheckWork(work);
+        views[edit.Pane] = _orientations[edit.Pane].Apply(nextRaw, token);
+        var compared = ImageRegionDiffer.Compare(views, _blockSize, _threshold, token);
         token.ThrowIfCancellationRequested();
-        _frames = candidate; Regions = compared; _index += redo ? 1 : -1; _work += work;
+        _frames = candidate; _viewFrames = views; Regions = compared; _index += redo ? 1 : -1; _work += work;
         return true;
     }
 

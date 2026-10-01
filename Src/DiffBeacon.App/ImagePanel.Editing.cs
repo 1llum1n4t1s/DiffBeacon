@@ -69,6 +69,11 @@ public static partial class SpecializedViews
             AddEditButton(panel, "ImageCopyRegion", "選択領域をコピー", "copy", () => CopyChosenAsync(false));
             AddEditButton(panel, "ImageCopyAll", "全領域をコピー", "all", () => CopyChosenAsync(true));
             Add(panel, _editPane);
+            Add(panel, new TextBlock { Text = "差分ブロック" }); Add(panel, _blockSizeControl);
+            AddEditButton(panel, "ImageRotateLeft", "左90°", "orientation", () => RotateChosenAsync(90));
+            AddEditButton(panel, "ImageRotateRight", "右90°", "orientation", () => RotateChosenAsync(-90));
+            AddEditButton(panel, "ImageFlipHorizontal", "左右反転", "orientation", () => FlipChosenAsync(true));
+            AddEditButton(panel, "ImageFlipVertical", "上下反転", "orientation", () => FlipChosenAsync(false));
             AddEditButton(panel, "ImageAutoMerge", "競合以外を自動コピー", "auto", () => AutoMergeAsync(_editPane.SelectedIndex));
             AddEditButton(panel, "ImageUndo", "元に戻す", "undo", () => UndoEditAsync());
             AddEditButton(panel, "ImageRedo", "やり直す", "redo", () => RedoEditAsync());
@@ -198,6 +203,7 @@ public static partial class SpecializedViews
                 button.IsEnabled = kind switch
                 {
                     "cancel" => _saving || _operationCancellation is not null,
+                    "orientation" => !_disposed && !_saving,
                     "copy" => ready && copyWritable && _selectedDiffIndex >= 0,
                     "all" => ready && copyWritable,
                     "auto" => ready && canWrite && _counts.Length == 3,

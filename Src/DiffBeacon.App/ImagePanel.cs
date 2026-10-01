@@ -32,7 +32,12 @@ public static partial class SpecializedViews
         private Window? _owner;
         private double _displayThreshold;
         private double _requestedThreshold;
+        private int _requestedBlockSize = 8, _displayBlockSize = 8;
+        private readonly NumericUpDown _blockSizeControl = new() { Name = "ImageBlockSize", Minimum = 1, Maximum = 256, Value = 8, Increment = 1, Width = 90 };
         private bool _displayShowDifferences = true;
+        private ImageOrientation[] _requestedOrientations = [];
+        private ImageOrientation[] _displayOrientations = [];
+        private ImageComparisonEngine.DecodedFrame[]? _rawDecoded;
         private int _selectedDiffIndex = -1;
         private readonly NumericUpDown _threshold = new() { Name = "ImageThreshold", Minimum = 0, Maximum = 510, Value = 0, Increment = 1, Width = 120 };
         private readonly CheckBox _reportAllFrames = new() { Name = "ImageReportAllFrames", Content = "レポートは全フレーム", IsChecked = true };
@@ -64,13 +69,15 @@ public static partial class SpecializedViews
             if (_operationCancellation is not null || _saving || _decoded is null)
                 throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
             return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences,
-                _editSession?.CaptureFrames());
+                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize);
         }
 
         internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null)
         {
             _snapshots = middle is null ? [left, right] : [left, middle, right];
             _counts = _snapshots.Select(image => image.FrameCount).ToArray();
+            _requestedOrientations = _counts.Select(_ => new ImageOrientation()).ToArray();
+            _displayOrientations = _requestedOrientations.ToArray();
             _readOnly = new bool[_counts.Length];
             _numbers = Enumerable.Repeat(1, _counts.Length).ToArray();
             _selectors = new NumericUpDown[_counts.Length]; _positions = new TextBlock[_counts.Length]; _images = new Image[_counts.Length];
@@ -139,6 +146,13 @@ public static partial class SpecializedViews
                 _requestedThreshold = (double)(_threshold.Value ?? 0);
                 await SelectFromControlsAsync();
             };
+            _blockSizeControl.ValueChanged += async (_, _) =>
+            {
+                if (_updatingSelectors || _disposed) return;
+                var value = _blockSizeControl.Value ?? 8;
+                if (decimal.Truncate(value) != value) { RestoreSelectors(); return; }
+                _requestedBlockSize = (int)value; await SelectFromControlsAsync();
+            };
             _showDifferences.IsCheckedChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
             AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; } };
             UpdateNavigation();
@@ -187,7 +201,7 @@ public static partial class SpecializedViews
 
         private Task SetNumbersAsync(int[] numbers, CancellationToken token, int? requestedSelection = null)
         {
-            ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers); token.ThrowIfCancellationRequested();
+            ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
             CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
@@ -198,7 +212,9 @@ public static partial class SpecializedViews
         private async Task LoadFramesAsync(int[] numbers, double threshold, bool show, long generation, CancellationTokenSource cancel,
             Action<ImageEditSession, CancellationToken>? edit = null, int writablePane = -1, int? requestedSelection = null)
         {
-            var token = cancel.Token; var snapshots = _snapshots!; var cached = _decoded; var selected = requestedSelection ?? _selectedDiffIndex;
+            var token = cancel.Token; var snapshots = _snapshots!; var cached = _rawDecoded; var selected = requestedSelection ?? _selectedDiffIndex;
+            var orientations = _requestedOrientations.ToArray();
+            var blockSize = _requestedBlockSize;
             var candidateSession = _resetEditing ? null : _editSession?.Fork();
             var readOnly = _readOnly.ToArray(); var reset = _resetEditing; var adopted = false;
             var next = new WriteableBitmap?[numbers.Length]; WriteableBitmap? nextDifference = null;
@@ -213,21 +229,24 @@ public static partial class SpecializedViews
                         if (candidateSession is null)
                         {
                             for (var i = 0; i < frames.Length; i++) { token.ThrowIfCancellationRequested(); frames[i] = !reset && cached is not null ? cached[i] : snapshots[i].Decode(1, token); }
-                            candidateSession = new ImageEditSession(frames, readOnly, threshold: threshold, token: token);
+                            candidateSession = new ImageEditSession(frames, readOnly, blockSize, threshold, token);
                         }
                         else if (candidateSession.Threshold != threshold) candidateSession.SetThreshold(threshold, token);
+                        candidateSession.SetBlockSize(blockSize, token);
+                        for (var pane = 0; pane < orientations.Length; pane++) candidateSession.SetOrientation(pane, orientations[pane], token);
                         edit?.Invoke(candidateSession, token);
-                        frames = candidateSession.CaptureFrames().ToArray();
-                        comparison = new(frames, candidateSession.Regions, ImageComparisonEngine.ComparePixels(frames[0], frames[^1], threshold, true, token));
+                        frames = candidateSession.CaptureViewFrames().ToArray();
+                        comparison = new(frames, candidateSession.Regions, ImageComparisonEngine.ComparePixels(frames[0], frames[^1], threshold, true, token), candidateSession.CaptureFrames());
                     }
                     else
                     {
                         if (edit is not null) throw new InvalidOperationException("画像コピーとPNG保存は静止画の比較で使用してください。");
                         for (var i = 0; i < frames.Length; i++) { token.ThrowIfCancellationRequested(); frames[i] = cached is not null && cached[i].Number == numbers[i] ? cached[i] : snapshots[i].Decode(numbers[i], token); }
-                        comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token);
+                        comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token, orientations, blockSize);
+                        frames = comparison.Frames.ToArray();
                     }
                     var selection = Math.Min(selected, comparison.Regions.Regions.Count - 1);
-                    var rendered = ImageRegionRenderer.Render(frames, comparison.Regions, selectedDiffIndex: selection, token: token, showDifferences: show).ToArray();
+                    var rendered = ImageRegionRenderer.Render(frames, comparison.Regions, blockSize: blockSize, selectedDiffIndex: selection, token: token, showDifferences: show).ToArray();
                     return (comparison, rendered, selection);
                 }, token);
                 token.ThrowIfCancellationRequested(); if (_disposed || generation != _generation) throw new OperationCanceledException(token);
@@ -243,6 +262,7 @@ public static partial class SpecializedViews
                 foreach (var overlay in _overlays) overlay.Image.Source = next[overlay.Pane];
                 _difference.Source = nextDifference; Array.Fill(next, null); nextDifference = null;
                 _decoded = result.comparison.Frames.ToArray(); _regions = result.comparison.Regions; _rendered = result.rendered; _selectedDiffIndex = result.selection;
+                _rawDecoded = (result.comparison.OriginalFrames ?? result.comparison.Frames).ToArray(); _displayOrientations = orientations; _displayBlockSize = blockSize;
                 _editSession = candidateSession; _resetEditing = _discarded = false; adopted = true;
                 _displayThreshold = threshold; _displayShowDifferences = show;
                 numbers.CopyTo(_numbers, 0); DifferentPixels = pixels.DifferentPixels; TotalPixels = pixels.TotalPixels;
@@ -295,6 +315,8 @@ public static partial class SpecializedViews
             {
                 for (var i = 0; i < _numbers.Length; i++) _selectors[i].Value = _numbers[i];
                 _requestedThreshold = _displayThreshold;
+                _requestedBlockSize = _displayBlockSize; _blockSizeControl.Value = _displayBlockSize;
+                _requestedOrientations = _displayOrientations.ToArray();
                 _threshold.Value = ThresholdControlValue(_displayThreshold); _showDifferences.IsChecked = _displayShowDifferences;
             }
             finally { _updatingSelectors = false; }
@@ -310,6 +332,7 @@ public static partial class SpecializedViews
             if (_saving) foreach (var (button, _, _) in _frameButtons) button.IsEnabled = false;
             foreach (var selector in _selectors) selector.IsEnabled = !_saving;
             _threshold.IsEnabled = _showDifferences.IsEnabled = !_saving;
+            _blockSizeControl.IsEnabled = !_saving;
             UpdateEditControls();
         }
         private void UpdateZoom()
@@ -328,7 +351,7 @@ public static partial class SpecializedViews
             if (_owner is not null) { _owner.Closed -= OwnerClosed; _owner = null; }
             foreach (var image in _images) image.Source = null; foreach (var overlay in _overlays) overlay.Image.Source = null; _difference.Source = null;
             if (_bitmaps is not null) foreach (var bitmap in _bitmaps) bitmap.Dispose(); _differenceBitmap?.Dispose();
-            _bitmaps = null; _differenceBitmap = null; _decoded = _rendered = null; _regions = null; _snapshots = null; _lifetime.Dispose();
+            _bitmaps = null; _differenceBitmap = null; _decoded = _rendered = _rawDecoded = null; _regions = null; _snapshots = null; _lifetime.Dispose();
         }
     }
 }

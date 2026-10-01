@@ -103,8 +103,8 @@ public sealed partial class ComparisonPane
     {
         ArgumentNullException.ThrowIfNull(project);
         ImageViewSettings.Validate(project.ImageSettings);
-        if (string.IsNullOrWhiteSpace(project.BasePath) && project.ImageSettings.MiddleFrame != 1)
-            throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1にしてください。");
+        if (string.IsNullOrWhiteSpace(project.BasePath) && (project.ImageSettings.MiddleFrame != 1 || !project.ImageSettings.MiddleOrientation.IsIdentity))
+            throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
         _tableSyntax = null;
         _projectMetadata = project with { LegacySettings = new(project.LegacySettings), SubstitutionRules = project.SubstitutionRules.ToArray(),
             ImageSettings = project.ImageSettings with { } };
@@ -136,9 +136,9 @@ public sealed partial class ComparisonPane
         if (_lastPackageComparison == current && _specialTab.Content is SpecializedViews.ImagePanel image) return image.CaptureSettings();
         var settings = _projectMetadata.ImageSettings with { };
         // 別の入力へ切り替えた側は先頭から開き、元プロジェクトのページ番号を流用しない。
-        if (current.Item1 != _projectMetadata.LeftPath) settings.LeftFrame = 1;
-        if (current.Item2 != _projectMetadata.BasePath || string.IsNullOrWhiteSpace(current.Item2)) settings.MiddleFrame = 1;
-        if (current.Item3 != _projectMetadata.RightPath) settings.RightFrame = 1;
+        if (current.Item1 != _projectMetadata.LeftPath) { settings.LeftFrame = 1; settings.LeftOrientation = new(); }
+        if (current.Item2 != _projectMetadata.BasePath || string.IsNullOrWhiteSpace(current.Item2)) { settings.MiddleFrame = 1; settings.MiddleOrientation = new(); }
+        if (current.Item3 != _projectMetadata.RightPath) { settings.RightFrame = 1; settings.RightOrientation = new(); }
         return settings;
     }
 

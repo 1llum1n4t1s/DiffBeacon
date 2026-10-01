@@ -60,6 +60,8 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 テキスト比較の `--max-work N` は行対応と行内差分それぞれの処理予算を指定します。行対応を省略した場合は JSON の `lineFallback`・`lineFallbackReason` に示し、元の全行を保持して未確定部分を変更扱いにします。
 
+画像の回転・反転は対象ペインを選んで操作し、読取り専用や複数ページの表示にも使えます。静止画のコピーは変換後の座標で行い、PNG保存は表示変換を焼き込まない原画を保存します。変換と差分ブロックサイズは比較プロジェクトに保持します。詳しくは[回転・反転の操作](Docs/IMAGE-VIEWER.md#回転反転)をご覧ください。
+
 画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
 
 表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。

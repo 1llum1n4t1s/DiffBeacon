@@ -2,6 +2,8 @@
 
 ## 検証成果物の容量管理
 
+画像変換のGUI自己検証では固定goldenをgzipで同梱し、約2.46 MBのJSONを約71 KBへ圧縮する。`python build/Generate-ImageTransformUiFixture.py`で再生成し、展開後の全bytesと正本SHAを照合する。E2Eは同じ正本をそのまま読み、通常の画像処理にはgoldenを使わない。
+
 ローカルで展開保持するのは最新のCLI／UI検証と、次の実装に必要な原本採取に限る。E2Eの`--output`には空き容量のあるドライブを指定し、次の実行前に前回の完了済み出力を整理する。ビルドの`bin/obj`は通常の増分ビルドで再利用し、毎回コピーしない。GitHubの4RID検証は維持し、必要な成果物を一度だけ取得・照合した後、古いrunを圧縮する。
 
 Windowsでは[Compact-Evidence.ps1](../build/Compact-Evidence.ps1)とPython 3.11以降の標準ライブラリの[CompactEvidence.py](../build/CompactEvidence.py)で過去の検証ディレクトリをZIP64へ格納できる。ZIPは入力とは別の場所へ置く。各entryのSHA・サイズと入力の一覧・更新日時・属性が不変であることを確認し、ZIP全体のSHAも照合してから、同じPowerShellセッションで展開元を除去する。リンクと許可root外の操作は拒否する。失敗ログ・入力・出力・PNG・発行物も省略しない。

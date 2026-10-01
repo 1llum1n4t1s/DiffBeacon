@@ -2,7 +2,7 @@
 
 ## 通常画像の操作
 
-画像モードは二者または三者を並べ、重ね合わせ・左右のピクセル差分を表示する。三者の中央は第三の比較画像であり、テキストの祖先として解釈しない。倍率、重ね合わせの不透明度、差分閾値、強調の表示を変更できる。8×8 blockの差分を8近傍の連結領域へまとめ、前後の領域・三者の競合へ移動できる。通常色は黄、選択領域は赤。不透明な画素はRGBへ0.7で重ねて元のalphaを保持し、透明画素は原本の色とalphaを使う。左には右だけの変更、右には左だけの変更を強調しない。
+画像モードは二者または三者を並べ、重ね合わせ・左右のピクセル差分を表示する。三者の中央は第三の比較画像であり、テキストの祖先として解釈しない。倍率、重ね合わせの不透明度、差分閾値、強調の表示を変更できる。指定サイズ（既定8×8）のblockの差分を8近傍の連結領域へまとめ、前後の領域・三者の競合へ移動できる。通常色は黄、選択領域は赤。不透明な画素はRGBへ0.7で重ねて元のalphaを保持し、透明画素は原本の色とalphaを使う。左には右だけの変更、右には左だけの変更を強調しない。
 
 各入力のフレーム番号は1から始まり、個別の番号指定・前後移動と同期移動を使える。同期移動は現在の最大番号を共通起点とし、対象ページが存在しない入力は直前の選択を保持する。初期表示は各入力の先頭。比較プロジェクトには各入力のページ、閾値、倍率、重ね合わせ不透明度、強調の有無、レポートの全／選択、左右／重ね合わせ／画素差の表示方式を保存する。保存設定を省略した既存プロジェクトは先頭・閾値0・倍率1・全ページレポートから開く。GIF、lossless WebP、APNG、TIFFの主ページを実画像で検証する。自動再生、旧WinMergeの全体設定・全表示設定の保存、色管理・EXIF方向・位置合わせは未確認または未移植。
 
@@ -11,6 +11,14 @@
 APNGは`.png`と`.apng`から認識し、表示・比較・HTMLへ合成済みの全キャンバスを使う。既定の静止画像をアニメーションに含めない入力では、その静止画像をフレーム番号に数えない。位置・SOURCE/OVER・NONE/BACKGROUND/PREVIOUSを適用し、先頭PREVIOUSは背景の消去として扱う。SOURCEでは透明画素の色成分も保持する。遅延時間・繰返し回数を差分判定や自動再生へは使わず、複数フレームの編集・元形式保存は未対応。仕様と自作入力の範囲は[APNG fixture](../tests/Fixtures/Images/Apng/README.md)を参照する。
 
 TIFFは`.tif`／`.tiff`のclassic TIFFとBigTIFF、両byte orderの主IFDをページとして扱う。ページごとの寸法でGUI・CLI・単体／包装HTMLへ接続し、短い入力はCLIの全ページ比較で最後のページを反復する。復号はApp内のTiffLibraryとJpegLibraryを使い、両MITライセンスを発行物へ同梱する。自作入力で非圧縮RGBA、associated alpha、PackBits、Deflate、限定LZW、palette、1bit WhiteIsZero、16bit RGB、tile、JPEG7を照合する。[TIFF fixture](../tests/Fixtures/Images/Tiff/README.md)に正確な構成と期待画素を記録する。全圧縮設定・色空間・旧JPEG6・SubIFD・方向補正・FreeImage全形式互換は検証済み扱いにしない。多ページの編集・元TIFFへの保存は未対応。
+
+## 回転・反転
+
+ペイン選択欄で対象を選び、「左90°」「右90°」「左右反転」「上下反転」を使う。読取り専用の画像と多ページ画像でも表示を変換できる。変換は水平反転・垂直反転・反時計回り回転の順に適用し、ページを切り替えても保持する。表示の変換だけでは未保存状態やUndo履歴を変更しない。各入力の変換と差分ブロックサイズ（1～256、既定8）は比較プロジェクトに保存する。
+
+静止画像の領域コピーは変換後の表示座標で行い、結果を保存用の原画へ逆写像する。Undo／Redoは原画の変更を復元し、現在の表示変換を保つ。PNG別名保存では回転・反転を焼き込まず、編集済みの原画を保存する。HTMLの主画像は変換後の表示、原画の詳細は変換前の画素を使う。位置合わせ、挿入・削除検出、矩形編集、多ページ編集は未対応。
+
+通常CLIの `--image` では `--left-orientation 90,1,0` のように角度・水平反転・垂直反転を指定する。角度は0・90・180・270、反転は0または1。中央・右は `--middle-orientation`・`--right-orientation`、ブロックサイズは `--block-size N`。出力する寸法・画素SHA・比較結果は変換後の表示に対応する。中央入力なしの中央変換は拒否する。
 
 ## 静止画像の編集とPNG保存
 
@@ -56,7 +64,7 @@ TIFFは復号前に全主IFDの範囲・循環・型・タグ順と重複、stri
 
 ## 静止画像コピー核の診断
 
-開発用 `DiffBeacon --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]` は単一フレームの二／三者画像を復号し、GUIと同じ原画の領域コピーと全pane共有のUndo／Redoを実行する。offset・回転・挿入削除は使わない。拡張canvasの初期値はzero-filled BGRAで、FreeImageの新規画素・paste処理の完全互換は未確認。[コピーfixture](../tests/Fixtures/ImageCopy/README.md)の無改変原本143ケース・935状態を期待値とする。
+開発用 `DiffBeacon --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]` は単一フレームの二／三者画像を復号し、GUIと同じ表示変換・領域コピー・全pane共有のUndo／Redoを実行する。offset・挿入削除は使わない。拡張canvasの初期値はzero-filled BGRAで、FreeImageの新規画素・paste処理の完全互換は未確認。[コピーfixture](../tests/Fixtures/ImageCopy/README.md)の無改変原本143ケース・935状態と、[変換fixture](../tests/Fixtures/ImageTransforms/README.md)の288ケース・2,816状態を期待値とする。
 
 scriptは `blockSize`（1..256、既定8）、`threshold`（有限の非負数、既定0）、`readOnly`（入力数と同じbool配列、既定全false）、`actions` を持つJSON object。操作のpane・領域indexは0始まり。未知・重複property、未知kind、必要値の欠落を拒否する。
 
@@ -69,9 +77,11 @@ scriptは `blockSize`（1..256、既定8）、`threshold`（有限の非負数�
 | `save` | `dst` | 診断用のsavepoint mark。ファイルを保存しない |
 | `set-savepoint` | `dst`, `index` | 診断用のsavepoint復元 |
 | `export` | `dst`, `path` | 原画を32bit PNGへ別名保存し、成功状態へsavepointを進める |
+| `rotate` | `dst`, `index` | 表示角度を0・90・180・270度に設定（反時計回り） |
+| `flipx` / `flipy` | `dst`, `index` | 水平／垂直の表示反転を0（無効）または1（有効）に設定 |
 
 例えば `{"actions":[{"kind":"all","src":0,"dst":1},{"kind":"export","dst":1,"path":"result.png"}]}` は左の全差分を右へコピーしてPNGへ保存する。領域の矩形内に別の領域があれば触らない。コピー元は強調画面ではない。原本に合わせ、差分0の全コピーや採用0のautoも一件の履歴となりdirtyにする。コピー／再比較は仮状態で完了させてから確定し、Undo後の新編集は旧Redoを破棄する。
 
 PNGはUnpremulの原画から生成し、透明RGB・alphaを保持する。入力全画像と操作scriptへの上書き、読取り専用pane・既存出力、リンク経由の入出力を拒否する。同じディレクトリの一時ファイルから原子的に置換し、既存属性とUnix modeを保持する。元形式・BPP／palette・アニメーション／多ページcontainerの保存ではない。
 
-scriptは1 MiB・64操作、履歴は128件・256 MiB、コピーblock走査と再比較の累積作業は256Mピクセルまで。診断の全gridは262,144block、JSONは32 MiBまでで、原画base64の増幅も変換前に確認する。`--hashes-only` は原画base64だけ省略する。全操作と全stateのシミュレーション・JSON出力検査を完了してからexportを保存するため、その前の構文・予算エラーでは既存出力を保持する。複数exportは各ファイルを順次保存し、途中のOS保存失敗時に先行ファイルまで巻き戻す契約ではない。成功は差分の有無によらず終了コード0、失敗2。JSONは初期状態と各操作後の原画・領域・履歴／dirty／savepointを返す。
+scriptは1 MiB・64操作、履歴は128件・256 MiB、コピーblock走査と再比較の累積作業は256Mピクセルまで。診断の全gridは262,144block、JSONは32 MiBまでで、原画base64の増幅も変換前に確認する。`--hashes-only` は表示画素のbase64だけ省略する。全操作と全stateのシミュレーション・JSON出力検査を完了してからexportを保存するため、その前の構文・予算エラーでは既存出力を保持する。複数exportは各ファイルを順次保存し、途中のOS保存失敗時に先行ファイルまで巻き戻す契約ではない。成功は差分の有無によらず終了コード0、失敗2。JSONは初期状態と各操作後の表示画素・変換・領域・履歴／dirty／savepointを返す。

@@ -20,7 +20,7 @@ internal static class CommandLine
                     + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
                     + "開発用: --image-regions LEFT [MIDDLE] RIGHT [--block-size N] [--threshold X] [--left-frame N [--middle-frame N] --right-frame N] [--highlight-alpha X] [--selected-region N]\n"
                     + "開発用: --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]\n"
-                    + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n--image LEFT [MIDDLE] RIGHT [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]\n"
+                    + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n--image LEFT [MIDDLE] RIGHT [--left-frame N [--middle-frame N] --right-frame N] [--threshold X] [--block-size N] [--left-orientation ANGLE,HORIZONTAL,VERTICAL] [--middle-orientation ANGLE,HORIZONTAL,VERTICAL] [--right-orientation ANGLE,HORIZONTAL,VERTICAL]\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
                     + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]\n"
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--package-project INPUT_PROJECT OUTPUT_ARCHIVE [--entries 1,3] [--report] [--patch] [--no-documents] [--no-project]\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"

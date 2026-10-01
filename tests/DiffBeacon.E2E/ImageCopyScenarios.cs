@@ -44,7 +44,7 @@ internal static class ImageCopyScenarios
             for (var index = 0; index < expectedStates.GetArrayLength(); index++)
             {
                 if (index >= actualStates.GetArrayLength()) break;
-                check($"image-copy-{name}-state{index}-original", Same(expectedStates[index], actualStates[index]),
+                check($"image-copy-{name}-state{index}-original", SameLegacyState(expectedStates[index], actualStates[index]),
                     "原本の全原画BGRA/寸法/SHA/分類/grid/履歴/dirty/savepointと照合");
                 ValidatePixels(name + "-state" + index, index == 0 ? actualStates[index] : actualStates[index].GetProperty("state"));
                 statesChecked++;
@@ -253,6 +253,22 @@ internal static class ImageCopyScenarios
             }
         }
     }
+    private static bool SameLegacyState(JsonElement expected, JsonElement actual)
+    {
+        if (expected.ValueKind != JsonValueKind.Object || actual.ValueKind != JsonValueKind.Object) return false;
+        if (expected.TryGetProperty("state", out _))
+            return expected.EnumerateObject().Count() == actual.EnumerateObject().Count()
+                && expected.EnumerateObject().All(property => actual.TryGetProperty(property.Name, out var value)
+                    && (property.Name == "state" ? SameLegacyState(property.Value, value) : Same(property.Value, value, property.Name)));
+        // 旧原本にない表示設定だけを独立に検査し、既存の全property比較を維持する。
+        if (!actual.TryGetProperty("orientations", out var orientations) || orientations.ValueKind != JsonValueKind.Array
+            || orientations.GetArrayLength() != expected.GetProperty("frames").GetArrayLength()
+            || orientations.EnumerateArray().Any(value => value.ValueKind != JsonValueKind.Object || value.EnumerateObject().Count() != 3
+                || value.GetProperty("rotation").GetInt32() != 0 || value.GetProperty("flipHorizontal").GetBoolean() || value.GetProperty("flipVertical").GetBoolean())) return false;
+        return expected.EnumerateObject().Count() + 1 == actual.EnumerateObject().Count()
+            && expected.EnumerateObject().All(property => actual.TryGetProperty(property.Name, out var value) && Same(property.Value, value, property.Name));
+    }
+
     private static bool Same(JsonElement expected, JsonElement actual, string field = "")
     {
         if (expected.ValueKind != actual.ValueKind) return false;

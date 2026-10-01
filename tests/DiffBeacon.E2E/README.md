@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+回転・反転は `--image-transforms-only` と全体E2Eで検証する。[原本fixture](../Fixtures/ImageTransforms/README.md)の288ケース・2,816状態を実`--image-copy`別プロセスの全BGRA・寸法・変換・領域・共有Undo／Redo・保存点へ照合する。PNG出力は表示変換を焼き込まない原画へ独立復号して比較する。通常`--image`、プロジェクト保存・復元、単体／包装／再読込みHTML、不正設定と出力保護も同じ限定実行に含む。GUI自己検証は代表14操作列、読取り専用の実回転ボタン、取消・古い完了、TIFFページ切替・再読込み・レポートを検査し、4枚の画面PNGとJSONを保持する。限定実行とheadless操作は通常デスクトップの操作確認とは区別する。
+
 画像設定の保存・復元は `--image-project-only` と全体E2Eで検証する。実CLIの`--project-copy`・`--report-project`・`--package-project`へ保存設定を渡し、source-generated JSONの全値・既定値・境界・CLI上書き、単体／包装HTMLの原画PNG全BGRA、包装の相対入力・展開再読込みを照合する。不正型・null・範囲外・中央なし指定・存在しないページでは、入力と既存出力のbytes・属性を保持し終了2を確認する。GUI自己検証の`HeadlessImageProjectChecks`は再比較・workspace再読込み、取消・古い完了・表示保持を操作し、PNG・設定JSON・選択HTMLを保持する。
 
 TIFFの限定実行は `--tiff-only`。ビルド完了後、`dotnet tests/DiffBeacon.E2E/bin/Release/net10.0/DiffBeacon.E2E.dll --tiff-only --output E:/DiffBeacon-artifacts/local/tiff-limited` でも実行できる。[自作TIFF入力](../Fixtures/Images/Tiff/README.md)のページ寸法・全BGRA／SHA、byte order、圧縮・色の代表構成、全／選択・三者・短い側の反復、領域・単体／包装HTMLの独立PNG復号を照合する。不正IFD・切詰め・巨大宣言・旧JPEG参照・scan欠損の拒否、既存出力と入力保持を確認する。GUI自己検証は全ページの実bitmap、取消・古い完了、snapshot HTMLをBGRA・PNG・JSONへ記録する。限定実行は全体E2Eの代替にしない。

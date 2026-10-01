@@ -138,3 +138,6 @@ artifacts/
 unittest-cppcheck-build-dir/
 Src/FilterEngine/FilterLexer.cpp
 Src/FilterEngine/FilterParser.c
+# fixture再生成・検証で生じるPythonキャッシュは成果物へ含めない。
+**/__pycache__/
+*.pyc

@@ -73,9 +73,10 @@ internal static class ImageComparisonEngine
     internal sealed record ComparisonResult(bool Different, int LeftFrames, int RightFrames, double Threshold,
         string Mode, IReadOnlyList<FrameResult> Frames, int? MiddleFrames);
     internal sealed record FrameComparison(IReadOnlyList<DecodedFrame> Frames, ImageRegionDiffer.Result Regions,
-        PixelComparison Pixels);
+        PixelComparison Pixels, IReadOnlyList<DecodedFrame>? OriginalFrames = null);
     internal sealed record ReportInput(IReadOnlyList<Snapshot> Images, double Threshold, IReadOnlyList<int>? FrameNumbers,
-        int SelectedDiffIndex = -1, bool ShowDifferences = true, IReadOnlyList<DecodedFrame>? EditedFrames = null);
+        int SelectedDiffIndex = -1, bool ShowDifferences = true, IReadOnlyList<DecodedFrame>? EditedFrames = null,
+        IReadOnlyList<ImageOrientation>? Orientations = null, int BlockSize = 8);
 
     internal static async Task<Snapshot> OpenAsync(string path, CancellationToken token)
     {
@@ -115,14 +116,16 @@ internal static class ImageComparisonEngine
     internal static void ValidateSelection(Snapshot left, Snapshot right, int leftFrame, int rightFrame)
         => ValidateSelection([left, right], [leftFrame, rightFrame]);
 
-    internal static void ValidateSelection(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers)
+    internal static void ValidateSelection(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers,
+        IReadOnlyList<ImageOrientation>? orientations = null)
     {
         ValidateImages(images);
         if (numbers.Count != images.Count) throw new ArgumentException("全入力のフレーム番号が必要です。");
+        ValidateOrientations(orientations, images.Count);
         long work = 0;
-        for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(numbers[i]));
+        for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(numbers[i]) + TransformWork(images[i], numbers[i], orientations?[i]));
         ValidateWork(work);
-        ValidateCanvas(images, numbers);
+        ValidateCanvas(images, numbers, orientations);
     }
 
     internal static void ValidateComparison(Snapshot left, Snapshot right, int? leftFrame, int? rightFrame,
@@ -132,10 +135,12 @@ internal static class ImageComparisonEngine
         ValidateComparison([left, right], leftFrame.HasValue ? [leftFrame.Value, rightFrame!.Value] : null, threshold);
     }
 
-    internal static void ValidateComparison(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers, double threshold)
+    internal static void ValidateComparison(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers, double threshold,
+        IReadOnlyList<ImageOrientation>? orientations = null)
     {
         ValidateThreshold(threshold); ValidateImages(images);
-        if (numbers is not null) { ValidateSelection(images, numbers); return; }
+        ValidateOrientations(orientations, images.Count);
+        if (numbers is not null) { ValidateSelection(images, numbers, orientations); return; }
         // 短い入力は最後に選ばれたページを保持し、全ページ出力にもその復号費用を含める。
         var pages = images.Max(image => image.FrameCount);
         long work = 0;
@@ -143,8 +148,8 @@ internal static class ImageComparisonEngine
         for (var page = 1; page <= pages; page++)
         {
             var current = images.Select(image => Math.Min(page, image.FrameCount)).ToArray();
-            for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(current[i]));
-            canvasWork = checked(canvasWork + ValidateCanvas(images, current) * (images.Count + 1));
+            for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(current[i]) + TransformWork(images[i], current[i], orientations?[i]));
+            canvasWork = checked(canvasWork + ValidateCanvas(images, current, orientations) * (images.Count + 1));
         }
         ValidateWork(work);
         if (canvasWork > MaximumDecodeWork) throw new InvalidOperationException("画像の描画作業量が256Mピクセルを超えます。");
@@ -156,11 +161,25 @@ internal static class ImageComparisonEngine
         foreach (var image in images) ValidateDimensions(image.Width, image.Height);
     }
 
-    private static long ValidateCanvas(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers)
+    private static long TransformWork(Snapshot image, int frame, ImageOrientation? orientation)
+    { var size = image.GetDimensions(frame); return orientation is null || orientation.IsIdentity ? 0 : (long)size.Width * size.Height; }
+
+    internal static void ValidateOrientations(IReadOnlyList<ImageOrientation>? orientations, int count)
+    {
+        if (orientations is null) return;
+        if (orientations.Count != count) throw new ArgumentException("全入力の画像変換が必要です。");
+        foreach (var value in orientations) ImageOrientation.Validate(value);
+    }
+
+    private static long ValidateCanvas(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers,
+        IReadOnlyList<ImageOrientation>? orientations = null)
     {
         var width = 0; var height = 0;
         for (var i = 0; i < images.Count; i++)
-        { var size = images[i].GetDimensions(numbers[i]); width = Math.Max(width, size.Width); height = Math.Max(height, size.Height); }
+        {
+            var size = images[i].GetDimensions(numbers[i]); var swap = orientations?[i].SwapsDimensions == true;
+            width = Math.Max(width, swap ? size.Height : size.Width); height = Math.Max(height, swap ? size.Width : size.Height);
+        }
         var pixels = (long)width * height;
         if (pixels > MaximumPixels) throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。");
         return pixels;
@@ -170,27 +189,29 @@ internal static class ImageComparisonEngine
     { if (!double.IsFinite(threshold) || threshold < 0) throw new ArgumentOutOfRangeException(nameof(threshold), "差分閾値は有限の非負数です。"); }
 
     internal static FrameComparison CompareDecoded(IReadOnlyList<DecodedFrame> frames, double threshold,
-        bool includeDifferencePixels, CancellationToken token)
+        bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8)
     {
         ValidateThreshold(threshold);
-        var regions = ImageRegionDiffer.Compare(frames, threshold: threshold, token: token);
-        var pixels = ComparePixels(frames[0], frames[^1], threshold, includeDifferencePixels, token);
-        return new(frames, regions, pixels);
+        ValidateOrientations(orientations, frames.Count);
+        var views = orientations is null ? frames : frames.Select((frame, index) => orientations[index].Apply(frame, token)).ToArray();
+        var regions = ImageRegionDiffer.Compare(views, blockSize, threshold, token);
+        var pixels = ComparePixels(views[0], views[^1], threshold, includeDifferencePixels, token);
+        return new(views, regions, pixels, frames);
     }
 
     internal static FrameComparison DecodeSelection(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers,
-        double threshold, bool includeDifferencePixels, CancellationToken token)
+        double threshold, bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8)
     {
-        ValidateSelection(images, numbers); ValidateThreshold(threshold);
+        ValidateSelection(images, numbers, orientations); ValidateThreshold(threshold);
         var frames = new DecodedFrame[images.Count];
         for (var i = 0; i < images.Count; i++) frames[i] = images[i].Decode(numbers[i], token);
-        return CompareDecoded(frames, threshold, includeDifferencePixels, token);
+        return CompareDecoded(frames, threshold, includeDifferencePixels, token, orientations, blockSize);
     }
 
     internal static ComparisonResult Compare(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers,
-        double threshold, CancellationToken token)
+        double threshold, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8)
     {
-        ValidateComparison(images, numbers, threshold);
+        ValidateComparison(images, numbers, threshold, orientations);
         var selected = numbers is not null;
         token.ThrowIfCancellationRequested();
         var frames = new List<FrameResult>();
@@ -200,10 +221,10 @@ internal static class ImageComparisonEngine
         {
             token.ThrowIfCancellationRequested();
             var currentNumbers = numbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
-            var comparison = DecodeSelection(images, currentNumbers, threshold, false, token);
+            var comparison = DecodeSelection(images, currentNumbers, threshold, false, token, orientations, blockSize);
             var a = comparison.Frames[0]; var b = comparison.Frames[^1];
             var middle = images.Count == 3 ? comparison.Frames[1] : null;
-            var rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, token: token);
+            var rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, blockSize: blockSize, token: token);
             frames.Add(new(a.Number, b.Number, a.Width, a.Height, b.Width, b.Height,
                 comparison.Pixels.DifferentPixels, comparison.Pixels.TotalPixels, PixelHash(a.Pixels, token), PixelHash(b.Pixels, token),
                 middle?.Number, middle?.Width, middle?.Height, middle is null ? null : PixelHash(middle.Pixels, token),
