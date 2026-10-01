@@ -19,7 +19,7 @@ public static partial class SpecializedViews
     public static bool HasUnsavedChanges(Control? control) => control is BinaryPanel binary && binary.IsDirty?.Invoke() == true || control is TablePanel table && table.HasPendingCellEdit
         || control is ImagePanel image && image.HasUnsavedChanges;
     public static void DiscardChanges(Control? control) { if (control is BinaryPanel binary) binary.MarkClean?.Invoke(); if (control is TablePanel table) table.DiscardCellDraft(); if (control is ImagePanel image) image.DiscardChanges(); }
-    public static bool IsImage(string path) => Path.GetExtension(path).ToLowerInvariant() is ".png" or ".jpg" or ".jpeg" or ".bmp" or ".gif" or ".tif" or ".tiff" or ".webp";
+    public static bool IsImage(string path) => Path.GetExtension(path).ToLowerInvariant() is ".png" or ".apng" or ".jpg" or ".jpeg" or ".bmp" or ".gif" or ".tif" or ".tiff" or ".webp";
 
     public static async Task<Control> ImagesAsync(string left, string right, CancellationToken cancellationToken, string? middle = null)
     {

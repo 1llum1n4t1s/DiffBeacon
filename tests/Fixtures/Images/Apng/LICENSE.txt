@@ -1,0 +1,7 @@
+CC0 1.0 Universal
+
+The author dedicates this original generator, fixtures, and hand-written pixel
+expectations to the public domain under CC0 1.0 Universal, to the extent permitted
+by law. No external image or decoder output is included in the expected canvases.
+
+Full legal instrument: https://creativecommons.org/publicdomain/zero/1.0/legalcode

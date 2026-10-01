@@ -15,18 +15,20 @@ internal static class ImageComparisonEngine
     internal sealed class Snapshot
     {
         private readonly byte[] _bytes;
+        private readonly ApngImage? _animation;
         internal int Width { get; }
         internal int Height { get; }
         internal int FrameCount { get; }
         internal long Pixels => (long)Width * Height;
 
-        internal Snapshot(byte[] bytes, int width, int height, int frameCount)
-        { _bytes = bytes; Width = width; Height = height; FrameCount = frameCount; }
+        internal Snapshot(byte[] bytes, int width, int height, int frameCount, ApngImage? animation = null)
+        { _bytes = bytes; Width = width; Height = height; FrameCount = frameCount; _animation = animation; }
 
         internal DecodedFrame Decode(int frame, CancellationToken token)
         {
             ValidateFrame(this, frame);
             token.ThrowIfCancellationRequested();
+            if (_animation is not null) return _animation.Decode(frame, token);
             using var data = SKData.CreateCopy(_bytes);
             using var codec = SKCodec.Create(data) ?? throw new InvalidDataException("画像のデコーダーを作成できません。");
             token.ThrowIfCancellationRequested();
@@ -84,6 +86,8 @@ internal static class ImageComparisonEngine
         return await Task.Run(() =>
         {
             token.ThrowIfCancellationRequested();
+            if (ApngImage.TryOpen(bytes, token) is { } animation)
+                return new Snapshot(bytes, animation.Width, animation.Height, animation.FrameCount, animation);
             using var data = SKData.CreateCopy(bytes);
             using var codec = SKCodec.Create(data) ?? throw new InvalidDataException("対応する画像データを読み込めません。");
             var info = codec.Info;
@@ -241,7 +245,7 @@ internal static class ImageComparisonEngine
             throw new ArgumentOutOfRangeException(nameof(frame), $"画像フレームは1..{image.FrameCount}です。");
     }
 
-    private static void ValidateDimensions(int width, int height)
+    internal static void ValidateDimensions(int width, int height)
     {
         if (width <= 0 || height <= 0) throw new InvalidDataException("画像の寸法が不正です。");
         if ((long)width * height > MaximumPixels) throw new InvalidOperationException("画像比較の上限は各画像1600万ピクセルです。");

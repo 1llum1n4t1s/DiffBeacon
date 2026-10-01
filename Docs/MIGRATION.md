@@ -10,7 +10,7 @@
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
 | 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
-| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebPのフレーム選択・前後移動・同期移動、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFF/APNGを含む全旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、ページ設定の永続化は未完了 |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFを含む残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、ページ設定の永続化は未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
@@ -71,9 +71,17 @@ Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成�
 
 フレーム対応のSHA `4f47ba714ba0af49e2e216efd6b282aa38ec0dc1` は [GitHub run 36854029148](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36854029148) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36854029156) が成功した。Windows両構成は15848成功・0失敗・3skip、Mac両構成は15857成功・0失敗・2skip、4構成とも247 UI成功・SDK10.0.401・コンパイラー警告0。取得した8成果物のmanifest列挙64ファイルのSHA・サイズはすべて一致した。証拠は `E:/DiffBeacon-artifacts/github/36854029148`。Cドライブ容量不足による途中取得とMac x64の部分ファイル復旧は、移動記録 `artifacts/verification/image-frames/ci-artifact-relocation.json` と取得先の `osx-x64-recovery-ledger.json` に保持する。このSHAには後述の画像HTMLは含まれない。
 
-デコーダーの成功は完全な画素の取得を示し、コンテナー全体の構造検証とは区別する。GIFの末尾やPNGのIEND等が欠けても成功する実測を記録した。通常デスクトップのネイティブ操作、TIFF/APNGの全ページ、全WebP設定、色管理・EXIF方向、画像マージ、ページ設定の保存は未検証または未移植。画像HTMLの追加範囲は次節に記載する。
+デコーダーの成功は完全な画素の取得を示し、コンテナー全体の構造検証とは区別する。GIFの末尾やPNGのIEND等が欠けても成功する実測を記録した。この段階ではAPNGが未移植だったが、下記の追加実装で対応した。通常デスクトップのネイティブ操作、TIFFの全ページ、全WebP設定、色管理・EXIF方向、ページ設定の保存は未検証または未移植。画像マージとHTMLの追加範囲は後述する。
 
 入力欄調整後の初回AOT自己検証は画像項目の後、アーカイブ展開の一時ディレクトリ移動でアクセス拒否になった。親ACLには実行ユーザーのFullControlがあり、同じnative実行ファイルで別出力への247項目と、その後の同じ発行スクリプトの247項目は成功した。原因は未確定で、失敗結果と再実行記録を保持し、恒久的な解消とは扱わない。
+
+## APNGの合成フレーム比較
+
+静止画の先頭だけへ退避していたAPNGを、合成済みの各フレームのGUI・CLI・単体／包装HTMLへ接続した。App内のmanaged処理が制御チャンク・CRC・sequence・位置・枚数を検証し、個別PNGの復号には既存Skia経路を使う。SOURCE/OVERとNONE/BACKGROUND/PREVIOUS、アニメーションから除外された既定画像、透明SOURCEの色成分を扱い、共通の入力・画素・復号量・キャンセル予算を維持する。先頭fcTLがacTLより前にある有効入力を拒否する不具合も実アプリで再現して修正した。[fixture](../tests/Fixtures/Images/Apng/README.md)の全原画期待値はデコーダーから逆算しない。
+
+ローカルWindows x64では限定E2E836成功、全体managed E2E27177成功・0失敗・10skip、Native AOT全体27222成功・0失敗・3skip、headless UIは双方927成功・0失敗。GUI原画40件はmanaged/native全bytes一致し、3枚のAPNG画面も目視した。Release buildとAOT発行は警告・エラー0、96ソースファイルと発行manifest10件のSHA・サイズも一致した。証拠は `E:/DiffBeacon-artifacts/local/apng-port/final-order-verification.json` と入力・ログ・JSON・PNGに保持する。
+
+この記録時点のAPNGの四RID CIは未実施。実測fixtureは8bit RGBAであり、palette・16bit・Adam7・ICC・EXIFの対応をこの結果から推定しない。遅延・繰返しの再生、複数フレーム編集、元APNG保存、ページ設定の永続化は未完了。通常デスクトップ起動とOS固有ダイアログもheadless UIとは区別する。
 
 ## 原本の画像差分領域処理
 

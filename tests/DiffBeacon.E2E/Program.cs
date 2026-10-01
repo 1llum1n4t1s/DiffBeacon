@@ -1706,7 +1706,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-copy-only", StringComparer.Ordinal))
+    if (args.Contains("--apng-only", StringComparer.Ordinal))
+    {
+        await ImageApngScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--image-copy-only", StringComparer.Ordinal))
     {
         await ImageCopyScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     }
@@ -1785,6 +1789,7 @@ try
     await GnuTableScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageFrameScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageRegionScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageApngScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageHighlightScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageCopyScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     await TextAdvancedCases();

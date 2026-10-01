@@ -26,7 +26,7 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 文字分類は元ソース実行で採取した Windows CTYPE1 / CRT C の固定プロファイル、大文字小文字の折畳みは ASCII を使う。実行時の OS 分類や外部 DLL に依存せず、各 OS に同じ分類を適用するための設計である。採取環境以外の旧実装との完全互換は保証しない。出典は [WordDiff fixture](tests/Fixtures/WordDiffs/README.md)、旧設定分岐などの未移植範囲は [移行一覧](Docs/MIGRATION.md#原文区間を保持する-worddiff) を参照する。
 
-画像はAppの `ImageComparisonEngine` が二／三者の入力スナップショットを確定し、SkiaSharp codecへ選択フレームとprior=-1を渡して必要な前フレーム・disposalを合成する。GUI・CLI・HTMLは同じ `ImageRegionDiffer` の原本領域分類と `ImageRegionRenderer` の強調を使う。元画素は保持し、共通canvasへ複製して処理する。GUIはCTSと世代番号で古い完了を破棄し、復号・bitmap生成後だけ交換する。取消・置換・終了でbitmapとCTSを解放する。CLIの既定は全同番号フレームと枚数差、短い入力は最後のページを反復し、明示指定は選択組だけ比較する。Coreは画像パッケージへ依存させない。上限・操作・復号完全性は[画像の契約](Docs/IMAGE-VIEWER.md)へ集約する。
+画像はAppの `ImageComparisonEngine` が二／三者の入力スナップショットを確定し、GIF/WebPはSkiaSharp codecへ選択フレームとprior=-1を渡して必要な前フレーム・disposalを合成する。APNGは `ApngImage` が共有bytesのチャンク区間とフレーム制御を保持し、構造・CRC・上限を検査する。必要なページまでのPNGを既存Skia経路で復号し、SOURCE/OVERとdisposalを適用して全canvasを返す。全フレーム画素の事前展開は行わず、Snapshotの同じ寸法・枚数・共有作業予算を使う。GUI・CLI・HTMLは同じ `ImageRegionDiffer` の原本領域分類と `ImageRegionRenderer` の強調を使う。元画素は保持し、共通canvasへ複製して処理する。GUIはCTSと世代番号で古い完了を破棄し、復号・bitmap生成後だけ交換する。取消・置換・終了でbitmapとCTSを解放する。CLIの既定は全同番号フレームと枚数差、短い入力は最後のページを反復し、明示指定は選択組だけ比較する。Coreは画像パッケージへ依存させない。上限・操作・復号完全性は[画像の契約](Docs/IMAGE-VIEWER.md)へ集約する。
 
 画像領域はWinIMerge v1.0.54のblock比較・8近傍領域・01∨21候補と01/21/02分類を保持し、三者共通gridと原本のunsigned高さ減算も再現する。原本のMarkDiffは0.7の色合成・透明画素・paneごとの分類除外・選択色を保つ。三者の中央は第三画像であり祖先ではない。通常の差分有無は領域数、左右画素差は補助値として区別する。診断CLI `--image-regions` は全gridも返すため262,144blockに制限し、選択的に強調SHAを追加する。通常呼び出し元と同じ計算を、[領域fixture](tests/Fixtures/ImageRegions/README.md)・[強調fixture](tests/Fixtures/ImageHighlight/README.md)の無改変C++期待値へ照合する。採取用C++ / FreeImageは通常buildに含めない。
 

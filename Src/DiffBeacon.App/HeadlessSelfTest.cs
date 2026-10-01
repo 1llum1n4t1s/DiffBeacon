@@ -352,6 +352,7 @@ internal static class HeadlessSelfTest
                 && animatedRightBytes.SequenceEqual(File.ReadAllBytes(animatedRight)));
             HeadlessImageHighlightChecks.Run(pane, output, Pump, Check, Screenshot);
             HeadlessImageCopyChecks.Run(window, pane, output, artifactOutput, Pump, Check, Screenshot);
+            HeadlessApngChecks.Run(pane, output, Pump, Check, Screenshot);
             pane.BasePath.Text = "";
             pane.DiscardChanges();
             var xmlLeft = Path.Combine(output, "left.xml"); var xmlRight = Path.Combine(output, "right.xml");
