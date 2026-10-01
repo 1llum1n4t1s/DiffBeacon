@@ -33,4 +33,5 @@ dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifac
 - アーカイブ経路の変更は [Providers README](Src/DiffBeacon.Providers/README.md#managed-アーカイブサービスの検証契約) の失敗条件と検証契約を確認し、GUI・CLI・標準プロバイダーの呼び出し元を照合する。SharpCompress のライセンス同梱と、E2E fixture の出典・ライセンス・SHA-256 の記録を維持する。
 - プロジェクト・包装経路の変更は `WorkspaceStore`、GUI の保存・復元・包装、CLI の `--project-copy`・`--package-project` を照合する。[DESIGN.md](DESIGN.md#データフロー) の相対参照・スナップショット・出力保護の境界を維持し、[包装 E2E](tests/DiffBeacon.E2E/README.md) の展開・再読込み・パッチ適用まで確認する。クリップボードの OS 操作は headless 検証と区別する。
 - レポート経路の変更は GUI の `SaveReportAsync`、CLI の `--report`・`--report-project`、包装の `--report` を照合する。[DESIGN.md](DESIGN.md#データフロー) の本文確定・出力保護・上限・キャンセルの境界を維持し、[レポート E2E](tests/DiffBeacon.E2E/README.md#形式別-html-レポートの実行経路) と UI 自己検証で確認する。
+- 表の経路の変更は Core の `ParseTable`・`CompareTables`・`ReplaceCell`、GUI の `ComparisonPane.Table`・`TablePanel`、CLI の `--table`、単体・包装 HTML を照合する。[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約) を維持し、E2E で元行対応・全セル保持・上限を、UI 自己検証でセル編集・Undo/Redo・保存再読込み・検索・読取り専用と古い座標の拒否を確認する。
 - 機能を変えたら利用者向け説明と移行対応表を更新する。設計変更は DESIGN.md、開発手順は Docs/DEVELOPMENT.md に記載し、同じ説明を複製しない。
