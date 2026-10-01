@@ -96,8 +96,8 @@ internal static class ImageComparisonEngine
         ValidateWork(checked(left.Pixels * leftFrame + right.Pixels * rightFrame));
     }
 
-    internal static ComparisonResult Compare(Snapshot left, Snapshot right, int? leftFrame, int? rightFrame,
-        int threshold, CancellationToken token)
+    internal static void ValidateComparison(Snapshot left, Snapshot right, int? leftFrame, int? rightFrame,
+        int threshold)
     {
         if (threshold is < 0 or > 255) throw new ArgumentOutOfRangeException(nameof(threshold), "差分閾値は0..255です。");
         if (leftFrame.HasValue != rightFrame.HasValue) throw new ArgumentException("左右両方のフレームを指定してください。");
@@ -106,6 +106,13 @@ internal static class ImageComparisonEngine
         if (selected) ValidateSelection(left, right, leftFrame!.Value, rightFrame!.Value);
         else ValidateWork(checked(left.Pixels * left.FrameCount * (left.FrameCount + 1L) / 2
             + right.Pixels * right.FrameCount * (right.FrameCount + 1L) / 2));
+    }
+
+    internal static ComparisonResult Compare(Snapshot left, Snapshot right, int? leftFrame, int? rightFrame,
+        int threshold, CancellationToken token)
+    {
+        ValidateComparison(left, right, leftFrame, rightFrame, threshold);
+        var selected = leftFrame.HasValue;
         token.ThrowIfCancellationRequested();
         var frames = new List<FrameResult>();
         var different = !selected && left.FrameCount != right.FrameCount;
@@ -167,7 +174,7 @@ internal static class ImageComparisonEngine
         return new(changed, (long)width * height, width, height, difference);
     }
 
-    private static string PixelHash(byte[] pixels, CancellationToken token)
+    internal static string PixelHash(byte[] pixels, CancellationToken token)
     {
         using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
         for (var offset = 0; offset < pixels.Length; offset += 65_536)

@@ -177,6 +177,8 @@ public static class SpecializedViews
         private WriteableBitmap? _leftBitmap, _rightBitmap, _differenceBitmap;
         private readonly NumericUpDown _leftSelector, _rightSelector;
         private readonly NumericUpDown _threshold = new() { Name = "ImageThreshold", Minimum = 0, Maximum = 255, Value = 0, Increment = 1, Width = 140 };
+        private readonly CheckBox _reportAllFrames = new() { Name = "ImageReportAllFrames", Content = "レポートは全フレーム", IsChecked = true };
+        private int _displayThreshold;
         private readonly Slider _zoom = new() { Name = "ImageZoom", Minimum = 0.1, Maximum = 4, Value = 1, Width = 150 };
         private readonly Slider _opacity = new() { Name = "ImageOpacity", Minimum = 0, Maximum = 1, Value = 0.5, Width = 150 };
         private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
@@ -196,6 +198,17 @@ public static class SpecializedViews
         internal long DifferentPixels { get; private set; }
         internal long TotalPixels { get; private set; }
         internal Task CurrentFrameOperation { get; private set; } = Task.CompletedTask;
+        internal bool ReportAllFrames { get => _reportAllFrames.IsChecked == true; set => _reportAllFrames.IsChecked = value; }
+
+        internal (ImageComparisonEngine.Snapshot Left, ImageComparisonEngine.Snapshot Right, int Threshold, int? LeftFrame, int? RightFrame) CaptureReport()
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (!CurrentFrameOperation.IsCompleted || _leftDecoded is null || _rightDecoded is null)
+                throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
+            // bitmapの所有権を移さず、表示の原本と確定した設定だけを渡す。
+            return (_leftSnapshot!, _rightSnapshot!, _displayThreshold,
+                ReportAllFrames ? null : LeftFrame, ReportAllFrames ? null : RightFrame);
+        }
 
         internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right)
         {
@@ -217,7 +230,7 @@ public static class SpecializedViews
             toolbar.Children.Add(frames);
             var settings = new WrapPanel { Orientation = Orientation.Horizontal };
             foreach (var control in new Control[] { new TextBlock { Text = "倍率" }, _zoom,
-                new TextBlock { Text = "右の不透明度" }, _opacity, new TextBlock { Text = "差分閾値" }, _threshold })
+                new TextBlock { Text = "右の不透明度" }, _opacity, new TextBlock { Text = "差分閾値" }, _threshold, _reportAllFrames })
             { control.Margin = new Thickness(0, 0, 12, 0); settings.Children.Add(control); }
             toolbar.Children.Add(settings); DockPanel.SetDock(toolbar, Dock.Top); Children.Add(toolbar);
             var footer = new StackPanel { Margin = new Thickness(8), Spacing = 4 };
@@ -352,6 +365,7 @@ public static class SpecializedViews
                 _difference.Source = nextDifference;
                 nextLeft = nextRight = nextDifference = null;
                 _leftDecoded = decoded.Left; _rightDecoded = decoded.Right;
+                _displayThreshold = threshold;
                 LeftFrame = leftFrame; RightFrame = rightFrame;
                 DifferentPixels = decoded.Comparison.DifferentPixels; TotalPixels = decoded.Comparison.TotalPixels;
                 RestoreSelectors(); UpdateZoom();

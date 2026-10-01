@@ -171,7 +171,17 @@ public static class ComparisonPackage
                     indexReport.Append("<li><a href=\"report.files/").Append(i + 1).Append(".html\">").Append(WebUtility.HtmlEncode(title)).Append("</a></li>");
                     var ancestor = textMode && pairInputs[i][1] is { } middle
                         ? TextDocument.LoadAsync(middle.Snapshot, token).GetAwaiter().GetResult().Text : null;
-                    var report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left!.Name, pairInputs[i][1]?.Name, right!.Name)
+                    string report;
+                    if (ProjectReport.IsImage(project))
+                    {
+                        if (pairInputs[i][1] is not null) throw new InvalidOperationException("三者画像の詳細HTMLレポートは未対応です。");
+                        // 包装する原本と同じ確定内容を使い、元パスの再読込みを避ける。
+                        var leftImage = ImageComparisonEngine.OpenAsync(left!.Snapshot, token).GetAwaiter().GetResult();
+                        var rightImage = ImageComparisonEngine.OpenAsync(right!.Snapshot, token).GetAwaiter().GetResult();
+                        report = ImageReport.Create(leftImage, rightImage,
+                            project.LeftDescription ?? left.Name, project.RightDescription ?? right.Name, token: token);
+                    }
+                    else report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left!.Name, pairInputs[i][1]?.Name, right!.Name)
                         : MetadataReport(project, pairInputs[i]);
                     Generated($"report.files/{i + 1}.html", report);
                 }

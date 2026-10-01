@@ -76,6 +76,7 @@ string Tar(string name, params (string Entry, string Content)[] entries)
 }
 
 void Check(string name, bool passed, string detail = "") => assertions.Add(new(name, passed ? "passed" : "failed", detail));
+void Skip(string name, string detail) => assertions.Add(new(name, "skipped", detail));
 
 string ExpectedProjectPath(string path, string directory)
 {
@@ -503,7 +504,7 @@ async Task ReportCases()
     var badJson = Text("reports/bad.json", "{\"broken\":");
     var badJsonAncestorProject = Project("bad-json-ancestor-project", [Entry(jsonLeft, jsonSame, "Json", badJson)]);
     await Reject("json-invalid-ancestor", badJsonAncestorProject); await RejectPackage("json-invalid-ancestor", badJsonAncestorProject);
-    foreach (var mode in new[] { "Binary", "Image", "Archive", "Provider", "Folder" })
+    foreach (var mode in new[] { "Binary", "Archive", "Provider", "Folder" })
     {
         var project = Project("unsupported-" + mode, [Entry(left, right, mode)]);
         await Reject("unsupported-" + mode.ToLowerInvariant(), project);
@@ -1705,7 +1706,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-only", StringComparer.Ordinal))
+    if (args.Contains("--image-reports-only", StringComparer.Ordinal))
+    {
+        await ImageReportScenarios.RunAsync(output, fixtures, Run, Check, Skip);
+    }
+    else if (args.Contains("--image-only", StringComparer.Ordinal))
     {
         await ImageFrameScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1732,6 +1737,7 @@ try
     else if (args.Contains("--reports-only", StringComparer.Ordinal))
     {
         await ReportCases();
+        await ImageReportScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     }
     else if (args.Contains("--packaging-only", StringComparer.Ordinal))
     {
@@ -1770,6 +1776,7 @@ try
     await ProjectWorkspaceCases();
     await PackagingCases();
     await ReportCases();
+    await ImageReportScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     var left = Text("left.txt", "alpha\nbeta\n");
     var equal = Text("equal.txt", "alpha\nbeta\n");
     var right = Text("right.txt", "alpha\nchanged\n");

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Avalonia;
@@ -192,7 +193,7 @@ internal static class HeadlessSelfTest
             Check("changed path cannot overwrite unrelated file", rejected && original.SequenceEqual(File.ReadAllBytes(left)));
             var imageLeft = Path.Combine(output, "image-left.png"); var imageRight = Path.Combine(output, "image-right.png");
             File.Copy(Path.Combine(artifactOutput, "comparison.png"), imageLeft, true); File.Copy(imageLeft, imageRight, true);
-            pane.LeftPath.Text = imageLeft; pane.RightPath.Text = imageRight; pane.SelectMode(4);
+            pane.LeftPath.Text = imageLeft; pane.RightPath.Text = imageRight; pane.BasePath.Text = ""; pane.SelectMode(4);
             Pump(pane.ComparePathsAsync());
             var imageBytes = File.ReadAllBytes(imageLeft);
             rejected = false;
@@ -214,6 +215,85 @@ internal static class HeadlessSelfTest
             var imagePanel = pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
             Check("image frames initially show identical first pages", imagePanel.LeftFrameCount == 2 && imagePanel.RightFrameCount == 2
                 && imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 1 && imagePanel.DifferentPixels == 0 && imagePanel.TotalPixels == 6);
+            var imageReportAll = Path.Combine(output, "image-frames-all.html");
+            Pump(pane.SaveReportAsync(imageReportAll));
+            var imageReportHtml = File.ReadAllText(imageReportAll);
+            Check("image GUI all-frame report finds change after identical first pages", imageReportHtml.Contains("data-mode=\"Image\" data-different=\"true\" data-frame-mode=\"all\"", StringComparison.Ordinal)
+                && imageReportHtml.Contains("data-left-frame=\"2\" data-right-frame=\"2\" data-different-pixels=\"6\"", StringComparison.Ordinal));
+            Check("image GUI report embeds PNG and retains current selection", imageReportHtml.Contains("src=\"data:image/png;base64,", StringComparison.Ordinal)
+                && imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 1);
+            var imageReportSnapshot = Path.Combine(output, "image-frames-snapshot.html");
+            try
+            {
+                File.WriteAllBytes(animatedRight, animatedLeftBytes);
+                Pump(pane.SaveReportAsync(imageReportSnapshot));
+                Check("image GUI report uses displayed snapshot when original changes", File.ReadAllText(imageReportSnapshot).Contains("data-different=\"true\"", StringComparison.Ordinal));
+            }
+            finally { File.WriteAllBytes(animatedRight, animatedRightBytes); }
+            rejected = false; try { Pump(pane.SaveReportAsync(animatedLeft)); } catch (InvalidOperationException) { rejected = true; }
+            Check("image GUI report cannot overwrite input", rejected && animatedLeftBytes.SequenceEqual(File.ReadAllBytes(animatedLeft)));
+            using (var reportCancelled = new CancellationTokenSource())
+            {
+                reportCancelled.Cancel(); rejected = false;
+                try { Pump(pane.SaveReportAsync(imageReportAll, reportCancelled.Token)); } catch (OperationCanceledException) { rejected = true; }
+                Check("cancelled image GUI report preserves existing output", rejected && File.ReadAllText(imageReportAll) == imageReportHtml);
+            }
+            Screenshot("image-report-controls.png");
+            var imageProjectPath = Path.Combine(output, "image-input-workspace.zip");
+            Pump(WorkspaceStore.SaveWorkspaceAsync(imageProjectPath, new ComparisonWorkspace
+            { Entries = [new ComparisonProject { LeftPath = animatedLeft, RightPath = animatedRight, Mode = "Image" }] }));
+            var imageProjectBytes = File.ReadAllBytes(imageProjectPath);
+            var imageProjectWindow = new MainWindow(); imageProjectWindow.Show();
+            try
+            {
+                Pump(imageProjectWindow.OpenWorkspaceAsync(imageProjectPath, discardChanges: true));
+                rejected = false;
+                try { Pump(imageProjectWindow.ActivePane.SaveReportAsync(imageProjectPath)); }
+                catch (InvalidOperationException) { rejected = true; }
+                var reportRejected = rejected;
+                var reportProjectBytes = File.ReadAllBytes(imageProjectPath);
+                File.WriteAllBytes(imageProjectPath, imageProjectBytes);
+                rejected = false;
+                try { Pump(imageProjectWindow.PackageWorkspaceAsync(imageProjectPath, options: new(IncludeReport: true))); }
+                catch (IOException) { rejected = true; }
+                var packageProjectBytes = File.ReadAllBytes(imageProjectPath);
+                using (var protectionStream = File.Create(Path.Combine(output, "gui-input-project-protection.json")))
+                using (var protectionWriter = new Utf8JsonWriter(protectionStream, new JsonWriterOptions { Indented = true }))
+                {
+                    protectionWriter.WriteStartObject();
+                    protectionWriter.WriteString("sourceSha256", Convert.ToHexString(SHA256.HashData(imageProjectBytes)));
+                    protectionWriter.WriteBoolean("reportRejected", reportRejected);
+                    protectionWriter.WriteString("reportSha256", Convert.ToHexString(SHA256.HashData(reportProjectBytes)));
+                    protectionWriter.WriteBoolean("reportRetainsInput", imageProjectBytes.SequenceEqual(reportProjectBytes));
+                    protectionWriter.WriteBoolean("packagingRejected", rejected);
+                    protectionWriter.WriteString("packagingSha256", Convert.ToHexString(SHA256.HashData(packageProjectBytes)));
+                    protectionWriter.WriteBoolean("packagingRetainsInput", imageProjectBytes.SequenceEqual(packageProjectBytes));
+                    protectionWriter.WriteEndObject();
+                }
+                Check("image GUI report protects loaded input project", reportRejected && imageProjectBytes.SequenceEqual(reportProjectBytes));
+                Check("image GUI packaging protects loaded input project", rejected && imageProjectBytes.SequenceEqual(packageProjectBytes));
+                imageProjectWindow.ActivePane.ApplyProject(new() { LeftPath = left, RightPath = right, Mode = "Text" });
+                Pump(imageProjectWindow.ActivePane.CompareProjectAsync());
+                rejected = false;
+                try { Pump(imageProjectWindow.ActivePane.SaveReportAsync(imageProjectPath)); }
+                catch (InvalidOperationException) { rejected = true; }
+                Check("text GUI report protects loaded input project", rejected && imageProjectBytes.SequenceEqual(File.ReadAllBytes(imageProjectPath)));
+                var savedProjectPath = Path.Combine(output, "saved-input-workspace.zip");
+                Pump(imageProjectWindow.SaveWorkspaceAsync(savedProjectPath));
+                Pump(imageProjectWindow.SaveWorkspaceAsync(savedProjectPath));
+                var savedProjectBytes = File.ReadAllBytes(savedProjectPath);
+                var savedImageWorkspace = WorkspaceStore.LoadWorkspaceAsync(savedProjectPath); Pump(savedImageWorkspace);
+                Check("GUI workspace can update its own project after save as", savedImageWorkspace.GetAwaiter().GetResult().Entries[0].Mode == "Text");
+                rejected = false;
+                try { Pump(imageProjectWindow.ActivePane.SaveReportAsync(savedProjectPath)); }
+                catch (InvalidOperationException) { rejected = true; }
+                Check("GUI report protects saved input project", rejected && savedProjectBytes.SequenceEqual(File.ReadAllBytes(savedProjectPath)));
+                rejected = false;
+                try { Pump(imageProjectWindow.PackageWorkspaceAsync(savedProjectPath, options: new(IncludeReport: true))); }
+                catch (IOException) { rejected = true; }
+                Check("GUI packaging protects saved input project", rejected && savedProjectBytes.SequenceEqual(File.ReadAllBytes(savedProjectPath)));
+            }
+            finally { File.WriteAllBytes(imageProjectPath, imageProjectBytes); imageProjectWindow.Close(); }
             imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImageNextBoth")
                 .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
             Pump(imagePanel.CurrentFrameOperation);
@@ -224,6 +304,14 @@ internal static class HeadlessSelfTest
                 .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
             Pump(imagePanel.CurrentFrameOperation);
             Check("image frame panes select independently", imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 2 && imagePanel.DifferentPixels == 0);
+            imagePanel.ReportAllFrames = false;
+            var imageReportSelected = Path.Combine(output, "image-frames-selected.html");
+            Pump(pane.SaveReportAsync(imageReportSelected));
+            var selectedImageHtml = File.ReadAllText(imageReportSelected);
+            Check("image GUI report selected cross-frame pair is identical", selectedImageHtml.Contains("data-different=\"false\" data-frame-mode=\"selected\"", StringComparison.Ordinal)
+                && selectedImageHtml.Contains("data-left-frame=\"1\" data-right-frame=\"2\" data-different-pixels=\"0\"", StringComparison.Ordinal));
+            Check("image GUI selected report retains frame positions", imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 2);
+            imagePanel.ReportAllFrames = true;
             imagePanel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImagePreviousBoth")
                 .RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
             Pump(imagePanel.CurrentFrameOperation);

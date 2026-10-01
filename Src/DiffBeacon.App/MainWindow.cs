@@ -442,21 +442,37 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (_reportOperation is not null) throw new InvalidOperationException("HTMLレポートを生成しています。");
         var project = CaptureProject();
         if (!string.IsNullOrWhiteSpace(project.LeftPath) || !string.IsNullOrWhiteSpace(project.RightPath)) EnsureComparedForPackaging();
-        var panes = _owner is MainWindow main ? main.SessionPanes : [this];
+        var workspaceWindow = _owner as MainWindow;
+        var panes = workspaceWindow?.SessionPanes ?? [this];
+        var sourceProject = workspaceWindow?.WorkspaceSourcePath;
         foreach (var pane in panes) pane.EnsureProjectOutputWritable(path);
         var protectedEntries = panes.Select(pane => pane.CaptureProject()).ToArray();
         var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var ancestor = _baseText;
+        (ImageComparisonEngine.Snapshot Left, ImageComparisonEngine.Snapshot Right, int Threshold, int? LeftFrame, int? RightFrame)? imageInput = null;
+        if (ProjectReport.IsImage(project))
+        {
+            if (!string.IsNullOrWhiteSpace(project.BasePath)) throw new InvalidOperationException("三者画像の詳細HTMLレポートは未対応です。");
+            imageInput = (_specialTab.Content as SpecializedViews.ImagePanel
+                ?? throw new InvalidOperationException("画像を比較してからレポートを生成してください。")).CaptureReport();
+        }
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(token);
         _reportOperation = operation;
         _status.Text = "HTMLレポートを生成しています…（中止できます）";
         try
         {
             var cancellation = operation.Token;
-            var html = await Task.Run(() => project.Mode is "Provider" or "Web"
+            var html = await Task.Run(() => imageInput is { } image
+                ? ImageReport.Create(image.Left, image.Right, project.LeftDescription ?? project.LeftPath,
+                    project.RightDescription ?? project.RightPath, image.Threshold, image.LeftFrame, image.RightFrame, cancellation)
+                : project.Mode is "Provider" or "Web"
                 ? HtmlReport.CreateText([new((project.LeftDescription ?? project.LeftPath) + "（変換後のテキスト）", left),
                     new((project.RightDescription ?? project.RightPath) + "（変換後のテキスト）", right)], ProjectReport.Options(project), ProjectReport.MaximumBytes, cancellation)
                 : ProjectReport.Create(project, left, ancestor, right, cancellation), cancellation);
-            await ProjectReport.SaveAsync(path, html, protectedEntries.Concat(panes.Select(pane => pane.CaptureProject())), token: cancellation);
+            // 生成開始時の入力と、生成中に開いた・保存した現行プロジェクトの両方を保護する。
+            var currentPanes = workspaceWindow?.SessionPanes ?? [this];
+            var currentSource = new ComparisonProject { LeftPath = workspaceWindow?.WorkspaceSourcePath ?? "" };
+            await ProjectReport.SaveAsync(path, html, protectedEntries.Concat(currentPanes.Select(pane => pane.CaptureProject())).Append(currentSource),
+                sourceProject, cancellation);
             _status.Text = "HTMLレポートを保存しました。";
         }
         finally { _reportOperation = null; }

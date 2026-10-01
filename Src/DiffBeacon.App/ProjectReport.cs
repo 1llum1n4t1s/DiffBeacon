@@ -8,6 +8,10 @@ public static class ProjectReport
 {
     public const int MaximumBytes = 32 * 1024 * 1024;
 
+    internal static bool IsImage(ComparisonProject project) => project.Mode.ToLowerInvariant() is "image" or "4"
+        || project.Mode.ToLowerInvariant() is "auto" or "0"
+        && SpecializedViews.IsImage(project.LeftPath) && SpecializedViews.IsImage(project.RightPath);
+
     internal static bool IsTextual(ComparisonProject project) => project.Mode.ToLowerInvariant() is "text" or "table" or "json" or "1" or "5" or "6"
         || project.Mode.ToLowerInvariant() is "auto" or "0"
         && !(SpecializedViews.IsImage(project.LeftPath) && SpecializedViews.IsImage(project.RightPath))
@@ -45,7 +49,8 @@ public static class ProjectReport
     }
 
     public static async Task ExportAsync(ComparisonWorkspace workspace, int entryIndex, string output,
-        string? sourceProject = null, CancellationToken token = default)
+        string? sourceProject = null, CancellationToken token = default,
+        int? leftFrame = null, int? rightFrame = null, int? imageThreshold = null)
     {
         _ = WorkspaceStore.SerializeWorkspace(workspace);
         if ((uint)entryIndex >= (uint)workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entryIndex), "比較の番号が範囲外です。");
@@ -53,6 +58,20 @@ public static class ProjectReport
         { SubstitutionRules = entry.SubstitutionRules.ToArray(), LegacySettings = new(entry.LegacySettings) }).ToArray();
         var target = ValidateTarget(output, entries, sourceProject);
         var project = entries[entryIndex];
+        if (IsImage(project))
+        {
+            if (!string.IsNullOrWhiteSpace(project.BasePath)) throw new InvalidOperationException("三者画像の詳細HTMLレポートは未対応です。");
+            var leftImagePath = ValidateLocal(project.LeftPath); var rightImagePath = ValidateLocal(project.RightPath);
+            var leftImage = await ImageComparisonEngine.OpenAsync(leftImagePath, token).ConfigureAwait(false);
+            var rightImage = await ImageComparisonEngine.OpenAsync(rightImagePath, token).ConfigureAwait(false);
+            var imageHtml = await Task.Run(() => ImageReport.Create(leftImage, rightImage,
+                project.LeftDescription ?? project.LeftPath, project.RightDescription ?? project.RightPath,
+                imageThreshold ?? 0, leftFrame, rightFrame, token), token).ConfigureAwait(false);
+            await SaveAsync(target, imageHtml, entries, sourceProject, token).ConfigureAwait(false);
+            return;
+        }
+        if (leftFrame.HasValue || rightFrame.HasValue || imageThreshold.HasValue)
+            throw new ArgumentException("フレーム・閾値のレポート指定は画像比較にだけ使用できます。");
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         async Task<string> Read(string path)
         {

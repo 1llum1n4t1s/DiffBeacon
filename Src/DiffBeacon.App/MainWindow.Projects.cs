@@ -10,14 +10,17 @@ namespace DiffBeacon.App;
 public sealed partial class MainWindow
 {
     private bool _openingWorkspace;
+    internal string? WorkspaceSourcePath { get; private set; }
     public IReadOnlyList<ComparisonPane> SessionPanes => _sessions.Select(item => (ComparisonPane)item.Content!).ToArray();
     public void SelectSession(int index) => _tabs.SelectedItem = _sessions[index];
 
-    public Task SaveWorkspaceAsync(string path, CancellationToken token = default)
+    public async Task SaveWorkspaceAsync(string path, CancellationToken token = default)
     {
+        var target = Path.GetFullPath(path);
         foreach (var pane in SessionPanes) pane.EnsureProjectOutputWritable(path);
-        return WorkspaceStore.SaveWorkspaceAsync(path,
+        await WorkspaceStore.SaveWorkspaceAsync(target,
             new ComparisonWorkspace { Entries = SessionPanes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = _sessions.IndexOf((TabItem)_tabs.SelectedItem!) }, token);
+        WorkspaceSourcePath = target;
     }
 
     public async Task<bool> OpenWorkspaceAsync(string path, bool discardChanges = false, CancellationToken token = default)
@@ -28,7 +31,8 @@ public sealed partial class MainWindow
         try
         {
             // 全設定を検証してから既存タブを置換し、読込み失敗では編集内容を残す。
-            var workspace = await WorkspaceStore.LoadWorkspaceAsync(path, token);
+            var source = Path.GetFullPath(path);
+            var workspace = await WorkspaceStore.LoadWorkspaceAsync(source, token);
             foreach (var project in workspace.Entries)
             {
                 var pane = new ComparisonPane(this);
@@ -43,6 +47,7 @@ public sealed partial class MainWindow
             foreach (var pane in prepared) AttachProjectSession(pane);
             prepared.Clear();
             _tabs.SelectedItem = _sessions[workspace.ActiveEntryIndex];
+            WorkspaceSourcePath = source;
             foreach (var pane in SessionPanes) await pane.CompareProjectAsync();
             return true;
         }

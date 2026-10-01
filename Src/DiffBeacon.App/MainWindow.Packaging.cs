@@ -75,9 +75,10 @@ public sealed partial class MainWindow
         if (indices.Any(index => panes[index].HasUnsavedChanges)) throw new InvalidOperationException("未保存の文書があります。編集内容を保存してから包装してください。");
         foreach (var index in indices) panes[index].EnsureComparedForPackaging();
         var workspace = new ComparisonWorkspace { Entries = panes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = Array.IndexOf(panes, ActivePane) };
+        var sourceProject = WorkspaceSourcePath;
         _packaging = true;
         _packagingOperation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        try { await ComparisonPackage.CreateAsync(workspace, output, options ?? new(), indices, _packagingOperation.Token); }
+        try { await ComparisonPackage.CreateAsync(workspace, output, options ?? new(), indices, _packagingOperation.Token, sourceProject); }
         finally { _packagingOperation.Dispose(); _packagingOperation = null; _packaging = false; }
     }
 

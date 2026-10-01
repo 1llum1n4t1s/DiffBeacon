@@ -20,7 +20,7 @@ internal static class CommandLine
                     + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n--image LEFT RIGHT [--left-frame N --right-frame N] [--threshold N]\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
-                    + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N]\n"
+                    + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N --right-frame N] [--threshold N]\n"
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--package-project INPUT_PROJECT OUTPUT_ARCHIVE [--entries 1,3] [--report] [--patch] [--no-documents] [--no-project]\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"
                     + "--archive-list ARCHIVE [--password-stdin]\n--archive-compare LEFT RIGHT [--password-stdin]\n--archive-entry ARCHIVE ENTRY OUTPUT [--password-stdin]\n--archive-repack INPUT OUTPUT [--password-stdin]\n--archive-extract INPUT NEW_DIRECTORY [--password-stdin]\n--archive-create SOURCE_DIRECTORY OUTPUT\n"
                     + "--merge BASE LEFT RIGHT OUTPUT\n--merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"

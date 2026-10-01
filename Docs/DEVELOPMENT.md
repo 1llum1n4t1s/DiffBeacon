@@ -1,5 +1,7 @@
 # 開発と検証
 
+画像HTMLは `--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N --right-frame N] [--threshold N]` で生成する。番号・閾値は画像比較にだけ指定でき、既定は全同番号フレームと閾値0。限定E2Eは `--image-reports-only`、契約は [画像の説明](IMAGE-VIEWER.md) と [E2Eの手順](../tests/DiffBeacon.E2E/README.md) を参照する。
+
 GNU既定算法の原本参照は `pwsh -NoProfile -File build/Generate-LegacyGnuReference.ps1` で採取する。[原本とadapterの境界](../build/LegacyGnuReference/README.md)を確認する。`--gnu-line-script INPUT_JSON [--max-work N]` は入力 `{ "left": [同値クラスID], "right": [同値クラスID], "classCount": ID上限 }` から変更scriptを返す開発用CLI。原本の入力変換と算法を分けて照合する限定E2Eは `--gnu-line-only`、通常文書比較の元bytesからの接続検証は `--gnu-text-only` を使う。表の復号キーへの接続は `--gnu-table-only` で原本143ケースのCLI/HTMLと共有予算を照合する。これらは全体E2Eにも含める。通常 `--compare` は `lineWorkUsed`・`lineFallback`・`lineFallbackReason` と全元行を返す。予算契約は [Core README](../Src/DiffBeacon.Core/README.md#テキスト比較と保存) を参照する。
 
 必要環境は.NET 10 SDKとPowerShell 7。アーカイブE2Eの独立検証にはPython 3（CIは3.13）も使い、pipパッケージは不要。Pythonはアプリの実行・発行依存ではない。正規のソースディレクトリ名は`Src`であり、macOSでもこの大文字小文字を維持する。通常ビルドは旧C++プロジェクトやsubmoduleに依存しない。
