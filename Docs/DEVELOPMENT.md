@@ -1,10 +1,25 @@
 # 開発と検証
 
+## 検証成果物の容量管理
+
+ローカルで展開保持するのは最新のCLI／UI検証と、次の実装に必要な原本採取に限る。E2Eの`--output`には空き容量のあるドライブを指定し、次の実行前に前回の完了済み出力を整理する。ビルドの`bin/obj`は通常の増分ビルドで再利用し、毎回コピーしない。GitHubの4RID検証は維持し、必要な成果物を一度だけ取得・照合した後、古いrunを圧縮する。
+
+Windowsでは[Compact-Evidence.ps1](../build/Compact-Evidence.ps1)とPython 3.11以降の標準ライブラリの[CompactEvidence.py](../build/CompactEvidence.py)で過去の検証ディレクトリをZIP64へ格納できる。ZIPは入力とは別の場所へ置く。各entryのSHA・サイズと入力の一覧・更新日時・属性が不変であることを確認し、ZIP全体のSHAも照合してから、同じPowerShellセッションで展開元を除去する。リンクと許可root外の操作は拒否する。失敗ログ・入力・出力・PNG・発行物も省略しない。
+
+```powershell
+./build/Compact-Evidence.ps1 -SourcePath "$PWD/artifacts/e2e/previous" `
+  -ArchiveRoot 'E:/DiffBeacon-artifacts/retained/local' -PythonPath '<Python 3の実行ファイル>'
+```
+
+外部の証拠rootを整理するときだけ`-AdditionalEvidenceRoot 'E:/DiffBeacon-artifacts'`を指定する。処理に失敗した場合は元データと途中ZIPを保持する。ZIPが完成している場合は同じ入力と格納先に`-ExistingArchive '<途中ZIPの絶対パス>'`を加えると、全entryを再照合して再開できる。既存のZIP・報告JSONは上書きしない。
+
+2026-10-02の保存先は`E:/DiffBeacon-artifacts/retained`。元パスとZIPの対応・SHA・照合結果は隣接JSONと`artifacts/retention/index.json`へ記録する。以前の文書に記載された過去の展開パスはこの索引から参照する。ZIPをその元ディレクトリへ展開すれば各ファイルを読み直せる。元の属性・mode・更新日時はZIP内の`.diffbeacon-retention-manifest.json`に保存されるが、展開ツールによる属性復元の対応は異なるため必要時にmanifestを参照する。ソース・固定fixture・Git履歴、共有キャッシュ、他プロジェクトはこの清掃の対象にしない。
+
 画像領域の原本参照は `uv run --no-project python tests/Fixtures/ImageRegions/generate-reference.py --output artifacts/verification/image-regions-reference/reproduced` で再採取する。通常buildやE2EにはMSVCを追加せず固定goldenを使う。製品を別プロセスで照合する限定実行は `--image-regions-only`。原本抽出・ライセンス・SHAは[fixture説明](../tests/Fixtures/ImageRegions/README.md)、診断CLIの契約は[画像の説明](IMAGE-VIEWER.md#原本照合の入口)を参照する。
 
 画像強調の再採取は `uv run --no-project python tests/Fixtures/ImageHighlight/generate-reference.py --output artifacts/verification/image-highlight-reference/reproduced`。固定72件は限定E2E `--image-highlight-only` と全体へ接続する。通常GUI・CLI・単体／包装HTMLの描画画素を照合し、UI自己検証は実Bitmap・選択・強調解除・三者ページ操作を保存する。[fixture](../tests/Fixtures/ImageHighlight/README.md)の出典・SHA・GPLを保持する。
 
-静止画像コピー核の再採取は `uv run --no-project python tests/Fixtures/ImageCopy/generate-reference.py --output artifacts/verification/image-copy-reference/reproduced`。固定143ケース・935状態を実画像の限定 `--image-copy-only` と全体 E2Eへ照合する。[fixture](../tests/Fixtures/ImageCopy/README.md)のFreeImage未実測のadapter境界を維持し、[診断CLI](IMAGE-VIEWER.md#静止画像コピー核の診断)を使う。GUI編集・元形式／多ページ保存はまだ接続していない。
+静止画像コピー核の再採取は `uv run --no-project python tests/Fixtures/ImageCopy/generate-reference.py --output artifacts/verification/image-copy-reference/reproduced`。固定143ケース・935状態を実画像の限定 `--image-copy-only` と全体 E2Eへ照合する。[fixture](../tests/Fixtures/ImageCopy/README.md)のFreeImage未実測のadapter境界を維持し、[診断CLI](IMAGE-VIEWER.md#静止画像コピー核の診断)を使う。GUIの静止画編集はheadless自己検証で実controlの方向・領域／全領域・三者auto・共有履歴・readonly・取消／失敗時の状態保持、PNG別名保存と編集済みHTML、保存paneのパス更新とdirty包装拒否を確認する。元形式／多ページ編集保存と通常デスクトップの手動操作は未実測または未対応。今回のGUI接続ではmanaged buildの警告0とmanaged headless UI終了0を観測済みで、件数の確定とNative AOT／CIの検証はまだ行っていない。結果の確定値は[MIGRATION.md](MIGRATION.md)へ集約する。
 
 画像HTMLは `--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]` で生成する。番号・閾値は画像比較にだけ指定でき、既定は全同番号フレームと閾値0。限定E2Eは `--image-reports-only`、契約は [画像の説明](IMAGE-VIEWER.md) と [E2Eの手順](../tests/DiffBeacon.E2E/README.md) を参照する。
 

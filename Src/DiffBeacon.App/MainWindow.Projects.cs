@@ -214,7 +214,7 @@ public sealed partial class ComparisonPane
                     LeftReadOnly = leftRo.IsChecked == true, BaseReadOnly = baseRo.IsChecked == true, RightReadOnly = rightRo.IsChecked == true,
                     LegacyFilter = filter.Text, TableDelimiter = delimiterValue, TableQuote = quoteValue, TableAllowNewlinesInQuotes = multiline.IsChecked == true };
                 LeftEditor.IsReadOnly = !_textSaveAllowed || _projectMetadata.LeftReadOnly; RightEditor.IsReadOnly = !_textSaveAllowed || _projectMetadata.RightReadOnly;
-                SpecializedViews.SetProjectReadOnly(_specialTab.Content as Control, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly);
+                SpecializedViews.SetProjectReadOnly(_specialTab.Content as Control, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, _projectMetadata.BaseReadOnly);
                 _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
                 if (_owner is MainWindow owner) owner.RefreshSessionHeaders();
                 UpdateEditorLayout(_baseText is not null); _status.Text = "比較の設定を適用しました。表・フィルターの変更は再比較で反映されます。";

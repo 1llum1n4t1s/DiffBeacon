@@ -35,26 +35,19 @@ internal static class ImagePngStore
         return full;
     }
 
-    internal static async Task SaveAsync(string output, ImageComparisonEngine.DecodedFrame frame,
-        IEnumerable<string> protectedPaths, CancellationToken token = default)
+    internal static async Task<ImageComparisonEngine.Snapshot> SaveAsync(string output, ImageComparisonEngine.DecodedFrame frame,
+        IEnumerable<string> protectedPaths, CancellationToken token = default,
+        Func<IEnumerable<string>>? currentProtectedPaths = null, Action<string>? outputGuard = null)
     {
         var paths = protectedPaths.ToArray();
         var target = ValidateTarget(output, paths);
         if (frame.Width <= 0 || frame.Height <= 0 || (long)frame.Width * frame.Height > ImageComparisonEngine.MaximumPixels
             || frame.Pixels.LongLength != (long)frame.Width * frame.Height * 4) throw new ArgumentException("保存するBGRA画像が不正です。");
         token.ThrowIfCancellationRequested();
-        byte[] bytes;
-        var pin = GCHandle.Alloc(frame.Pixels, GCHandleType.Pinned);
-        try
-        {
-            using var pixmap = new SKPixmap(new SKImageInfo(frame.Width, frame.Height, SKColorType.Bgra8888,
-                SKAlphaType.Unpremul), pin.AddrOfPinnedObject(), checked(frame.Width * 4));
-            using var png = pixmap.Encode(SKEncodedImageFormat.Png, 100) ?? throw new InvalidDataException("PNGを作成できません。");
-            token.ThrowIfCancellationRequested();
-            if (png.Size > ImageComparisonEngine.MaximumFileBytes) throw new InvalidOperationException("保存するPNGが64 MiBを超えます。");
-            bytes = png.ToArray();
-        }
-        finally { pin.Free(); }
+        // 操作状態を描画してから、ネイティブencoderをUIスレッドの外で実行する。
+        await Task.Yield();
+        var bytes = await Task.Run(() => EncodePng(frame, token), token);
+        var savedSnapshot = new ImageComparisonEngine.Snapshot(bytes, frame.Width, frame.Height, 1);
         var exists = File.Exists(target);
         var attributes = exists ? File.GetAttributes(target) : FileAttributes.Normal;
         UnixFileMode? mode = !OperatingSystem.IsWindows() && exists ? File.GetUnixFileMode(target) : null;
@@ -73,10 +66,28 @@ internal static class ImagePngStore
                 var preserved = attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Archive | FileAttributes.NotContentIndexed);
                 File.SetAttributes(temporary, preserved == 0 ? FileAttributes.Normal : preserved);
             }
-            ValidateTarget(target, paths);
+            ValidateTarget(target, paths.Concat(currentProtectedPaths?.Invoke() ?? []));
+            outputGuard?.Invoke(target);
             token.ThrowIfCancellationRequested();
             File.Move(temporary, target, true);
+            return savedSnapshot;
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
+    }
+
+    private static byte[] EncodePng(ImageComparisonEngine.DecodedFrame frame, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        var pin = GCHandle.Alloc(frame.Pixels, GCHandleType.Pinned);
+        try
+        {
+            using var pixmap = new SKPixmap(new SKImageInfo(frame.Width, frame.Height, SKColorType.Bgra8888,
+                SKAlphaType.Unpremul), pin.AddrOfPinnedObject(), checked(frame.Width * 4));
+            using var png = pixmap.Encode(SKEncodedImageFormat.Png, 100) ?? throw new InvalidDataException("PNGを作成できません。");
+            token.ThrowIfCancellationRequested();
+            if (png.Size > ImageComparisonEngine.MaximumFileBytes) throw new InvalidOperationException("保存するPNGが64 MiBを超えます。");
+            return png.ToArray();
+        }
+        finally { pin.Free(); }
     }
 }

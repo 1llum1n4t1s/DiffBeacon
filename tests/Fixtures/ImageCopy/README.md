@@ -50,4 +50,4 @@ Get-FileHash artifacts/verification/image-copy-reference/reproduced/winimerge-im
 
 2026-10-01 native compile/probe exit=0、143ケース935状態、別出力先の再採取golden bytes一致。原本抽出一致・SHA・履歴・undo/redo・穴保持・拒否不変など5142検証成功/0失敗。入力plain/JSON、出力JSONL、compiler/stderr log、抽出、metadata、assertionsは `artifacts/verification/image-copy-reference/`。中間objectだけを清掃する。失敗契約は同ディレクトリ `failure-contract.md` と親の `artifacts/verification/image-three-way/next-static-edit-contract.md`。
 
-2026-10-02、C#コピー核を実アプリの限定E2Eと全体E2Eへ照合した。原本全143ケース935状態が一致し、PNG保存・独立復号・再読込み、Undo直後savepoint、既存出力属性、入力／script／readonly／リンク保護と各上限拒否を実測した。Windows x64 Native AOT全体とheadless UI回帰も成功。実測値は[移行一覧](../../../Docs/MIGRATION.md#静止画像の領域コピーと共有履歴)に集約する。GUI編集接続、別OS、FreeImage初期値とpaste、元format encoder／多ページ保存、履歴128件境界と処理中取消は未検証または未完了。
+2026-10-02、C#コピー核を実アプリの限定E2Eと全体E2Eへ照合した。原本全143ケース935状態が一致し、PNG保存・独立復号・再読込み、Undo直後savepoint、既存出力属性、入力／script／readonly／リンク保護と各上限拒否を実測した。Windows x64 Native AOT全体とheadless UI回帰も成功。実測値は[移行一覧](../../../Docs/MIGRATION.md#静止画像の領域コピーと共有履歴)に集約する。同じコードのWindows x64／ARM64・Mac Intel／ARM64 Native AOTでも原本全状態・PNG保存・出力保護が一致した。GUI編集接続、FreeImage初期値とpaste、元format encoder／多ページ保存、履歴128件境界と処理中取消は未検証または未完了。

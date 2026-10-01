@@ -12,7 +12,7 @@ internal sealed class ImageEditSession
         ImageComparisonEngine.DecodedFrame After, int[] Counts);
     private readonly bool[] _readOnly;
     private readonly int _blockSize;
-    private readonly double _threshold;
+    private double _threshold;
     private readonly List<Edit> _history = [];
     private readonly int[] _counts;
     private readonly int[] _savePoints;
@@ -22,6 +22,7 @@ internal sealed class ImageEditSession
     private long _work;
     internal ImageRegionDiffer.Result Regions { get; private set; }
     internal int PaneCount => _frames.Length;
+    internal double Threshold => _threshold;
     internal int HistoryIndex => _index;
     internal int HistoryCount => _history.Count;
     internal bool CanUndo => _index >= 0;
@@ -38,6 +39,37 @@ internal sealed class ImageEditSession
         _counts = new int[frames.Count]; _savePoints = new int[frames.Count];
         _blockSize = blockSize; _threshold = threshold;
         _work = ComparisonWork(_frames);
+    }
+
+    private ImageEditSession(ImageEditSession source)
+    {
+        // raw画素/Edit/Regionsは書き換えず候補へ置換する。変更可能な容器だけ分離する。
+        _frames = (ImageComparisonEngine.DecodedFrame[])source._frames.Clone();
+        _history = new List<Edit>(source._history);
+        _readOnly = (bool[])source._readOnly.Clone();
+        _counts = (int[])source._counts.Clone();
+        _savePoints = (int[])source._savePoints.Clone();
+        _blockSize = source._blockSize; _threshold = source._threshold;
+        _index = source._index; _historyBytes = source._historyBytes; _work = source._work;
+        Regions = source.Regions;
+    }
+
+    internal ImageEditSession Fork() => new(this);
+
+    internal void SetThreshold(double threshold, CancellationToken token = default)
+    {
+        if (!double.IsFinite(threshold) || threshold < 0) throw new ArgumentOutOfRangeException(nameof(threshold));
+        token.ThrowIfCancellationRequested();
+        var work = ComparisonWork(_frames); CheckWork(work);
+        var compared = ImageRegionDiffer.Compare(_frames, _blockSize, threshold, token);
+        token.ThrowIfCancellationRequested();
+        _threshold = threshold; Regions = compared; _work += work;
+    }
+
+    internal void SetReadOnly(int pane, bool readOnly)
+    {
+        if (!ValidPane(pane)) throw new ArgumentOutOfRangeException(nameof(pane));
+        _readOnly[pane] = readOnly;
     }
 
     internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> CaptureFrames() => _frames.Select(Clone).ToArray();

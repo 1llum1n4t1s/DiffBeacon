@@ -10,7 +10,7 @@ namespace DiffBeacon.App;
 
 public static partial class SpecializedViews
 {
-    public sealed class ImagePanel : DockPanel, IDisposable
+    public sealed partial class ImagePanel : DockPanel, IDisposable
     {
         private ImageComparisonEngine.Snapshot[]? _snapshots;
         private ImageComparisonEngine.DecodedFrame[]? _decoded, _rendered;
@@ -59,15 +59,17 @@ public static partial class SpecializedViews
         internal ImageComparisonEngine.ReportInput CaptureReport()
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
-            if (!CurrentFrameOperation.IsCompletedSuccessfully || _decoded is null)
+            if (_operationCancellation is not null || _saving || _decoded is null)
                 throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
-            return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences);
+            return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences,
+                _editSession?.CaptureFrames());
         }
 
         internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null)
         {
             _snapshots = middle is null ? [left, right] : [left, middle, right];
             _counts = _snapshots.Select(image => image.FrameCount).ToArray();
+            _readOnly = new bool[_counts.Length];
             _numbers = Enumerable.Repeat(1, _counts.Length).ToArray();
             _selectors = new NumericUpDown[_counts.Length]; _positions = new TextBlock[_counts.Length]; _images = new Image[_counts.Length];
             var labels = _counts.Length == 3 ? new[] { "左", "中央", "右" } : ["左", "右"];
@@ -82,6 +84,7 @@ public static partial class SpecializedViews
                 foreach (var control in new Control[] { FrameButton("ImagePrevious" + names[pane], labels[pane] + " ◀", pane, -1), _selectors[pane],
                     FrameButton("ImageNext" + names[pane], labels[pane] + " ▶", pane, 1), _positions[pane] }) Add(frameControls, control);
                 var column = new DockPanel(); var caption = new TextBlock { Text = labels[pane], Margin = new Thickness(4) };
+                var activePane = pane; _images[pane].PointerPressed += (_, _) => _editPane.SelectedIndex = activePane;
                 DockPanel.SetDock(caption, Dock.Top); column.Children.Add(caption); column.Children.Add(Scroll(_images[pane]));
                 Grid.SetColumn(column, pane); side.Children.Add(column);
                 _selectors[pane].ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
@@ -101,7 +104,12 @@ public static partial class SpecializedViews
                 button.Click += async (_, _) => await NavigateRegionAsync(direction, conflict);
                 Add(navigation, button);
             }
-            toolbar.Children.Add(navigation); DockPanel.SetDock(toolbar, Dock.Top); Children.Add(toolbar);
+            toolbar.Children.Add(navigation); toolbar.Children.Add(CreateEditControls(labels));
+            var toolbarScroll = new ScrollViewer { Name = "ImageToolbar", Content = toolbar, MaxHeight = 130,
+                HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
+            SizeChanged += (_, args) => toolbarScroll.MaxHeight = Math.Max(32, args.NewSize.Height * .2);
+            DockPanel.SetDock(toolbarScroll, Dock.Top); Children.Add(toolbarScroll);
             var footer = new StackPanel { Margin = new Thickness(8), Spacing = 4 };
             footer.Children.Add(_status); footer.Children.Add(new TextBlock { Text = "領域は8近傍でまとめます。中央は第三の比較画像です。画素差の表示は左と右を比較します。", TextWrapping = TextWrapping.Wrap });
             DockPanel.SetDock(footer, Dock.Bottom); Children.Add(footer);
@@ -122,7 +130,7 @@ public static partial class SpecializedViews
             _zoom.ValueChanged += (_, _) => UpdateZoom();
             _opacity.ValueChanged += (_, _) => { for (var i = 1; i < _overlays.Count; i += 2) _overlays[i].Image.Opacity = _opacity.Value; };
             _threshold.ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
-            _showDifferences.IsCheckedChanged += async (_, _) => { if (!_disposed) await SelectFromControlsAsync(); };
+            _showDifferences.IsCheckedChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
             AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; } };
             UpdateNavigation();
         }
@@ -168,25 +176,47 @@ public static partial class SpecializedViews
             => SetNumbersAsync(_counts.Length == 3 ? [left, MiddleFrame!.Value, right] : [left, right], token);
         internal Task SetFramesAsync(int left, int middle, int right, CancellationToken token = default) => SetNumbersAsync([left, middle, right], token);
 
-        private Task SetNumbersAsync(int[] numbers, CancellationToken token)
+        private Task SetNumbersAsync(int[] numbers, CancellationToken token, int? requestedSelection = null)
         {
             ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers); token.ThrowIfCancellationRequested();
+            if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
-            CurrentFrameOperation = LoadFramesAsync(numbers, (double)(_threshold.Value ?? 0), _showDifferences.IsChecked == true, ++_generation, cancel);
+            CurrentFrameOperation = LoadFramesAsync(numbers, (double)(_threshold.Value ?? 0), _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
+            UpdateEditControls();
             return CurrentFrameOperation;
         }
 
-        private async Task LoadFramesAsync(int[] numbers, double threshold, bool show, long generation, CancellationTokenSource cancel)
+        private async Task LoadFramesAsync(int[] numbers, double threshold, bool show, long generation, CancellationTokenSource cancel,
+            Action<ImageEditSession, CancellationToken>? edit = null, int writablePane = -1, int? requestedSelection = null)
         {
-            var token = cancel.Token; var snapshots = _snapshots!; var cached = _decoded; var selected = _selectedDiffIndex;
+            var token = cancel.Token; var snapshots = _snapshots!; var cached = _decoded; var selected = requestedSelection ?? _selectedDiffIndex;
+            var candidateSession = _resetEditing ? null : _editSession?.Fork();
+            var readOnly = _readOnly.ToArray(); var reset = _resetEditing; var adopted = false;
             var next = new WriteableBitmap?[numbers.Length]; WriteableBitmap? nextDifference = null;
             try
             {
                 var result = await Task.Run(() =>
                 {
                     var frames = new ImageComparisonEngine.DecodedFrame[numbers.Length];
-                    for (var i = 0; i < frames.Length; i++) { token.ThrowIfCancellationRequested(); frames[i] = cached is not null && cached[i].Number == numbers[i] ? cached[i] : snapshots[i].Decode(numbers[i], token); }
-                    var comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token);
+                    ImageComparisonEngine.FrameComparison comparison;
+                    if (_counts.All(count => count == 1))
+                    {
+                        if (candidateSession is null)
+                        {
+                            for (var i = 0; i < frames.Length; i++) { token.ThrowIfCancellationRequested(); frames[i] = !reset && cached is not null ? cached[i] : snapshots[i].Decode(1, token); }
+                            candidateSession = new ImageEditSession(frames, readOnly, threshold: threshold, token: token);
+                        }
+                        else if (candidateSession.Threshold != threshold) candidateSession.SetThreshold(threshold, token);
+                        edit?.Invoke(candidateSession, token);
+                        frames = candidateSession.CaptureFrames().ToArray();
+                        comparison = new(frames, candidateSession.Regions, ImageComparisonEngine.ComparePixels(frames[0], frames[^1], threshold, true, token));
+                    }
+                    else
+                    {
+                        if (edit is not null) throw new InvalidOperationException("画像コピーとPNG保存は静止画の比較で使用してください。");
+                        for (var i = 0; i < frames.Length; i++) { token.ThrowIfCancellationRequested(); frames[i] = cached is not null && cached[i].Number == numbers[i] ? cached[i] : snapshots[i].Decode(numbers[i], token); }
+                        comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token);
+                    }
                     var selection = Math.Min(selected, comparison.Regions.Regions.Count - 1);
                     var rendered = ImageRegionRenderer.Render(frames, comparison.Regions, selectedDiffIndex: selection, token: token, showDifferences: show).ToArray();
                     return (comparison, rendered, selection);
@@ -196,12 +226,15 @@ public static partial class SpecializedViews
                 var pixels = result.comparison.Pixels;
                 nextDifference = CreateBitmap(new(1, pixels.Width, pixels.Height, pixels.DifferencePixels!), token);
                 token.ThrowIfCancellationRequested(); if (_disposed || generation != _generation) throw new OperationCanceledException(token);
+                if (writablePane >= 0 && _readOnly[writablePane]) throw new InvalidOperationException("コピー先は読取り専用です。");
+                if (candidateSession is not null) for (var pane = 0; pane < _readOnly.Length; pane++) candidateSession.SetReadOnly(pane, _readOnly[pane]);
                 var old = _bitmaps; var oldDifference = _differenceBitmap;
                 _bitmaps = next.Select(bitmap => bitmap!).ToArray(); _differenceBitmap = nextDifference;
                 for (var i = 0; i < next.Length; i++) _images[i].Source = next[i];
                 foreach (var overlay in _overlays) overlay.Image.Source = next[overlay.Pane];
                 _difference.Source = nextDifference; Array.Fill(next, null); nextDifference = null;
                 _decoded = result.comparison.Frames.ToArray(); _regions = result.comparison.Regions; _rendered = result.rendered; _selectedDiffIndex = result.selection;
+                _editSession = candidateSession; _resetEditing = _discarded = false; adopted = true;
                 _displayThreshold = threshold; _displayShowDifferences = show;
                 numbers.CopyTo(_numbers, 0); DifferentPixels = pixels.DifferentPixels; TotalPixels = pixels.TotalPixels;
                 RestoreSelectors(); UpdateZoom();
@@ -209,17 +242,34 @@ public static partial class SpecializedViews
                     + (_selectedDiffIndex >= 0 ? $" · 選択 {_selectedDiffIndex + 1}/{DifferenceCount}" : "") + $" · 左右の画素差 {DifferentPixels:N0}/{TotalPixels:N0} px";
                 if (old is not null) foreach (var bitmap in old) bitmap.Dispose(); oldDifference?.Dispose();
             }
-            finally { foreach (var bitmap in next) bitmap?.Dispose(); nextDifference?.Dispose(); if (ReferenceEquals(_operationCancellation, cancel)) _operationCancellation = null; cancel.Dispose(); }
+            finally
+            {
+                foreach (var bitmap in next) bitmap?.Dispose(); nextDifference?.Dispose();
+                if (ReferenceEquals(_operationCancellation, cancel)) _operationCancellation = null;
+                cancel.Dispose();
+                if (!_disposed && generation == _generation)
+                {
+                    if (!adopted && _decoded is not null)
+                    {
+                        if (reset) _resetEditing = _discarded = false;
+                        _updatingSelectors = true;
+                        try { _threshold.Value = (decimal)_displayThreshold; _showDifferences.IsChecked = _displayShowDifferences; }
+                        finally { _updatingSelectors = false; }
+                        RestoreSelectors();
+                    }
+                    UpdateEditControls();
+                }
+            }
         }
 
         internal async Task NavigateRegionAsync(int direction, bool conflictsOnly = false)
         {
-            if (_disposed || _regions is null || !CurrentFrameOperation.IsCompletedSuccessfully) return;
+            if (_disposed || _regions is null || _operationCancellation is not null || _saving) return;
             var candidates = _regions.Regions.Select((region, index) => (region, index)).Where(item => !conflictsOnly || _counts.Length == 3 && item.region.Op == 4).Select(item => item.index).ToArray();
             if (candidates.Length == 0) return;
             var position = Array.IndexOf(candidates, _selectedDiffIndex);
-            _selectedDiffIndex = position < 0 ? direction < 0 ? candidates[^1] : candidates[0] : candidates[(position + Math.Sign(direction) + candidates.Length) % candidates.Length];
-            try { await SetNumbersAsync(_numbers.ToArray(), CancellationToken.None); }
+            var selected = position < 0 ? direction < 0 ? candidates[^1] : candidates[0] : candidates[(position + Math.Sign(direction) + candidates.Length) % candidates.Length];
+            try { await SetNumbersAsync(_numbers.ToArray(), CancellationToken.None, selected); }
             catch (OperationCanceledException) { }
         }
 
@@ -231,14 +281,26 @@ public static partial class SpecializedViews
         }
         private void RestoreSelectors()
         {
-            _updatingSelectors = true; try { for (var i = 0; i < _numbers.Length; i++) _selectors[i].Value = _numbers[i]; } finally { _updatingSelectors = false; } UpdateNavigation();
+            _updatingSelectors = true;
+            try
+            {
+                for (var i = 0; i < _numbers.Length; i++) _selectors[i].Value = _numbers[i];
+                _threshold.Value = (decimal)_displayThreshold; _showDifferences.IsChecked = _displayShowDifferences;
+            }
+            finally { _updatingSelectors = false; }
+            UpdateNavigation();
         }
         private void UpdateNavigation()
         {
-            for (var i = 0; i < _numbers.Length; i++) _positions[i].Text = $"{_numbers[i]}/{_counts[i]}";
+            for (var i = 0; i < _numbers.Length; i++) _positions[i].Text = $"{_numbers[i]}/{_counts[i]}"
+                + (_readOnly[i] ? " · 読取り専用" : "") + (PaneModified(i) ? " · 未保存" : "");
             var numbers = _selectors.Select((selector, i) => (int)(selector.Value ?? _numbers[i])).ToArray();
             foreach (var (button, pane, direction) in _frameButtons) button.IsEnabled = pane < 0 ? direction < 0 ? numbers.Max() > 1 : numbers.Max() < _counts.Max()
                 : direction < 0 ? numbers[pane] > 1 : numbers[pane] < _counts[pane];
+            if (_saving) foreach (var (button, _, _) in _frameButtons) button.IsEnabled = false;
+            foreach (var selector in _selectors) selector.IsEnabled = !_saving;
+            _threshold.IsEnabled = _showDifferences.IsEnabled = !_saving;
+            UpdateEditControls();
         }
         private void UpdateZoom()
         {
@@ -252,6 +314,7 @@ public static partial class SpecializedViews
         public void Dispose()
         {
             if (_disposed) return; _disposed = true; _generation++; _lifetime.Cancel(); _operationCancellation?.Cancel();
+            _saveCancellation?.Cancel(); _editSession = null;
             if (_owner is not null) { _owner.Closed -= OwnerClosed; _owner = null; }
             foreach (var image in _images) image.Source = null; foreach (var overlay in _overlays) overlay.Image.Source = null; _difference.Source = null;
             if (_bitmaps is not null) foreach (var bitmap in _bitmaps) bitmap.Dispose(); _differenceBitmap?.Dispose();

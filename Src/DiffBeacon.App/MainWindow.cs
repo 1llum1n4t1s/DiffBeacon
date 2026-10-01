@@ -118,6 +118,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly TextBlock _leftCaption = new() { Text = "左", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold };
     private readonly TextBlock _rightCaption = new() { Text = "右", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold };
     private readonly TabControl _views = new();
+    private readonly ScrollViewer _comparisonToolbar;
     private readonly TabItem _diffTab;
     private readonly TabItem _specialTab = new() { Header = "形式別ビュー" };
     private readonly TabItem _resultTab;
@@ -186,7 +187,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
         // 設定・操作欄が折り返しても、比較本文に領域を残す。
-        SizeChanged += (_, args) => toolbar.MaxHeight = Math.Clamp(args.NewSize.Height * .5, 80, 400);
+        _comparisonToolbar = toolbar;
+        SizeChanged += (_, _) => UpdateComparisonToolbarHeight();
+        _views.SelectionChanged += (_, _) => UpdateComparisonToolbarHeight();
         DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
         DockPanel.SetDock(_status, Dock.Bottom); root.Children.Add(_status);
         DiffList.ItemTemplate = new FuncDataTemplate<DiffRow>((row, _) => BuildRow(row), false);
@@ -254,7 +257,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public async Task ComparePathsAsync()
     {
+        (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
         if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
+        (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
         ResetMergeSession();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         var token = _operation.Token;
@@ -291,6 +296,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                     token.ThrowIfCancellationRequested();
                 }
                 SetSpecialView(imageView);
+                ConfigureImageEditing((SpecializedViews.ImagePanel)imageView);
+                _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? "";
+                LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
                 _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
             if (mode == 3)
@@ -388,6 +396,13 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         SpecializedViews.Release(_specialTab.Content as Control);
         _specialTab.Content = view;
+        UpdateComparisonToolbarHeight();
+    }
+    private void UpdateComparisonToolbarHeight()
+    {
+        // 画像には独自の操作欄があるため、共通設定欄をさらに縮めて原画の領域を残す。
+        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel ? .3 : .5;
+        _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
     {

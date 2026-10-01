@@ -10,7 +10,7 @@
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
 | 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
-| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebPのフレーム選択・前後移動・同期移動、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存 | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFF/APNGを含む全旧画像形式、ベクター、OCR、画像コピーGUI接続・元形式／多ページ保存、ページ設定の永続化は未完了 |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebPのフレーム選択・前後移動・同期移動、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFF/APNGを含む全旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、ページ設定の永続化は未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
@@ -93,9 +93,28 @@ WinIMerge v1.0.54の原本関数を無改変で採取し、二／三者のblock�
 
 ## 静止画像の領域コピーと共有履歴
 
-原本の選択／全領域コピー、三者auto、全pane共有Undo／Redo、dirty／savepointを `ImageEditSession` へ移植し、開発用 `--image-copy` と透明RGBを保つPNG別名保存へ接続した。無改変原本143ケース・935状態は採取と再採取がbytes一致、5142検証成功。golden SHAと出典、zero-filled BGRA拡張・raw pasteのadapter境界は[コピーfixture](../tests/Fixtures/ImageCopy/README.md)、操作・処理上限・出力保護は[画像の契約](IMAGE-VIEWER.md#静止画像コピー核の診断)を参照する。FreeImageの新規画素／paste、元BPP／palette／format、アニメーション／多ページ保存は完全互換を確認していない。GUI編集・編集済みrawのHTML接続は次の未完了単位である。
+原本の選択／全領域コピー、三者auto、全pane共有Undo／Redo、dirty／savepointを `ImageEditSession` へ移植し、開発用 `--image-copy` と透明RGBを保つPNG別名保存へ接続した。無改変原本143ケース・935状態は採取と再採取がbytes一致、5142検証成功。golden SHAと出典、zero-filled BGRA拡張・raw pasteのadapter境界は[コピーfixture](../tests/Fixtures/ImageCopy/README.md)、操作・処理上限・出力保護は[画像の契約](IMAGE-VIEWER.md#静止画像コピー核の診断)を参照する。FreeImageの新規画素／paste、元BPP／palette／format、アニメーション／多ページ保存は完全互換を確認していない。GUI編集・編集済みrawのHTML接続は次節の実装へ進めた。
 
-2026-10-02のRelease buildは警告0・エラー0。限定E2Eは4336成功・0失敗・リンク1skip、通常DLL全体は26342成功・0失敗・10skip。原本全状態と5種類のPNG保存を独立BCL復号・再読込みへ照合し、Undo直後savepoint・既存出力属性・入力／script／readonly保護とJSON／作業／履歴容量拒否を実測した。Windows x64 Native AOT全体は26387成功・0失敗・3skip、管理者実行でリンク拒否も成功、headless UI回帰469成功・0失敗。sourceと通常程序集は検証中不変で、原本再照合・発行manifest10ファイル・実行環境を `VerifyEvidence.py` の574項目へ照合し全成功。証拠は `artifacts/verification/image-copy-cli` と `E:/DiffBeacon-artifacts/local/image-copy-cli-d650-20261002`。最初の管理者runner起動は終了記録がなく、診断ログと捕捉範囲を追加した再実行で管理者と終了0を確認した。最初の原因は未確定で、製品コードを変更した復旧ではない。GUI編集、履歴128件の厳密な境界、処理中OSシグナル取消、通常デスクトップはこの単位で実測していない。Mac・Windows ARM64はこの変更のGitHub検証後に記録する。
+2026-10-02のRelease buildは警告0・エラー0。限定E2Eは4336成功・0失敗・リンク1skip、通常DLL全体は26342成功・0失敗・10skip。原本全状態と5種類のPNG保存を独立BCL復号・再読込みへ照合し、Undo直後savepoint・既存出力属性・入力／script／readonly保護とJSON／作業／履歴容量拒否を実測した。Windows x64 Native AOT全体は26387成功・0失敗・3skip、管理者実行でリンク拒否も成功、headless UI回帰469成功・0失敗。sourceと通常程序集は検証中不変で、原本再照合・発行manifest10ファイル・実行環境を `VerifyEvidence.py` の574項目へ照合し全成功。証拠は `artifacts/verification/image-copy-cli` と `E:/DiffBeacon-artifacts/local/image-copy-cli-d650-20261002`。最初の管理者runner起動は終了記録がなく、診断ログと捕捉範囲を追加した再実行で管理者と終了0を確認した。最初の原因は未確定で、製品コードを変更した復旧ではない。GUI編集、履歴128件の厳密な境界、処理中OSシグナル取消、通常デスクトップはこの単位で実測していない。4RIDのGitHub検証は以下の記録に示す。
+
+コードコミット `33a67d1798beb1794b922b345dd4cdc44d06386e` は [GitHub .NET CI 36884448976](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36884448976) と [CodeQL 36884449144](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36884449144) が成功した。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | headless UI成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 26387 | 0 / 3 | 469 | 発行・実行成功 |
+| `win-arm64` | 26387 | 0 / 3 | 469 | 発行・実行成功 |
+| `osx-x64` | 26396 | 0 / 2 | 469 | 発行・実行成功 |
+| `osx-arm64` | 26396 | 0 / 2 | 469 | 発行・実行成功 |
+
+全構成SDK10.0.401、コンパイラーのCS/IL/MSB警告0。原本143ケース・935状態、5種類のPNGをCIのBCL復号と別のPython標準ライブラリで全BGRA照合し、Windows属性・Mac Unix 0600、Undo直後savepoint、入力／script／readonly／実リンク拒否、JSON・累積作業・履歴容量の拒否理由と既存出力保持も成功した。既存強調72ケース・領域164ケースとUI469項目も維持した。Windowsの3skipはUnix権限・Mac大小文字別名・包装の大小文字衝突、Macの2skipは包装の大小文字／NFC衝突入力を同一ファイルへ解決する環境条件で、画像コピーのリンク拒否は4構成すべて実行した。
+
+取得した8成果物のmanifest64ファイルのSHA・サイズが全一致。証拠は `E:/DiffBeacon-artifacts/github/36884448976`、集計は `artifacts/verification/image-copy-cli/ci-36884448976-summary.json` に保持した。upload-artifactのNode非推奨annotation4件はコンパイラー警告と区別する。全watch・download・verifierは終了0。GUIの画像編集接続と通常デスクトップ／ネイティブ保存ダイアログの実測は、この結果に含まれない。
+
+## 静止画像GUIの編集・PNG保存
+
+二者の両方向・三者の6方向の選択／全領域コピー、競合以外の自動コピー、共有Undo／Redoを通常画像ビューへ接続した。保存は原画PNGの別名保存とし、成功した側だけのパス・比較済みパス・snapshot・保存点を更新する。閾値再比較は編集を保持し、HTMLは未保存の原画も反映する。未保存画像の包装は拒否する。仮sessionと描画をまとめて採用し、取消・古い完了では直前の状態を保持する。保存中の編集・再比較・破棄を拒否し、全タブの入力・フィルター・workspace・readonly・リンクを置換直前にも確認する。
+
+2026-10-02の最終Release buildは警告0・エラー0。通常DLL全体E2Eは26342成功・0失敗・10skip、通常DLLとWindows x64 Native AOTのheadless UIは各812成功・0失敗。無改変コピー原本の代表12操作列・66状態で全原画・領域・履歴・dirtyを照合し、両実行形式の観測JSONはSHAも一致した。PNGは独立BCL復号と再読込み、HTMLは現在の原画と採取後の編集分離を確認した。最小850×550でも画像viewportとスクロール後の保存操作を確認した。最終Native AOT全体E2Eは26387成功・0失敗・3skip、管理者実行のリンク拒否も成功した。証拠は `E:/DiffBeacon-artifacts/local/image-copy-gui-33a67`、過去の途中結果は `artifacts/retention/index.json` から参照する。Native発行は `Publish.ps1 -SkipVerification` とし、UI自己検証をEドライブへ別途出力した。GUI接続のMac／ARM CIと通常デスクトップ操作はこの記録時点では未実測。元形式／多ページ編集保存、FreeImageの完全互換と残りの画像操作は引き続き未完了。
 
 ## 画像の全フレームHTML
 

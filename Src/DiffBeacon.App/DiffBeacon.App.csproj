@@ -22,5 +22,6 @@
     <EmbeddedResource Include="../../tests/Fixtures/Images/disposal.gif" LogicalName="DiffBeacon.SelfTest.Images.disposal.gif" />
     <EmbeddedResource Include="../../tests/Fixtures/Images/disposal-2.png" LogicalName="DiffBeacon.SelfTest.Images.disposal-2.png" />
     <EmbeddedResource Include="../../tests/Fixtures/ImageHighlight/winimerge-image-highlight-golden.json" LogicalName="DiffBeacon.SelfTest.ImageHighlight.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageCopy/winimerge-image-copy-golden.json" LogicalName="DiffBeacon.SelfTest.ImageCopy.json" />
   </ItemGroup>
 </Project>

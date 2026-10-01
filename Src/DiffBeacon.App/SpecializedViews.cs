@@ -16,8 +16,9 @@ public static partial class SpecializedViews
 {
     private static readonly FontFamily Mono = new("Cascadia Mono, Menlo, Consolas, monospace");
     public static void Release(Control? control) { if (control is IDisposable disposable) disposable.Dispose(); }
-    public static bool HasUnsavedChanges(Control? control) => control is BinaryPanel binary && binary.IsDirty?.Invoke() == true || control is TablePanel table && table.HasPendingCellEdit;
-    public static void DiscardChanges(Control? control) { if (control is BinaryPanel binary) binary.MarkClean?.Invoke(); if (control is TablePanel table) table.DiscardCellDraft(); }
+    public static bool HasUnsavedChanges(Control? control) => control is BinaryPanel binary && binary.IsDirty?.Invoke() == true || control is TablePanel table && table.HasPendingCellEdit
+        || control is ImagePanel image && image.HasUnsavedChanges;
+    public static void DiscardChanges(Control? control) { if (control is BinaryPanel binary) binary.MarkClean?.Invoke(); if (control is TablePanel table) table.DiscardCellDraft(); if (control is ImagePanel image) image.DiscardChanges(); }
     public static bool IsImage(string path) => Path.GetExtension(path).ToLowerInvariant() is ".png" or ".jpg" or ".jpeg" or ".bmp" or ".gif" or ".tif" or ".tiff" or ".webp";
 
     public static async Task<Control> ImagesAsync(string left, string right, CancellationToken cancellationToken, string? middle = null)
@@ -27,6 +28,8 @@ public static partial class SpecializedViews
         var middleSnapshot = string.IsNullOrWhiteSpace(middle) ? null : await ImageComparisonEngine.OpenAsync(middle, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
         var panel = new ImagePanel(leftSnapshot, rightSnapshot, middleSnapshot);
+        panel.ConfigureEditing(middleSnapshot is null ? [left, right] : [left, middle!, right],
+            new bool[middleSnapshot is null ? 2 : 3]);
         try
         {
             await panel.SetFramesAsync(1, 1, cancellationToken);
@@ -191,9 +194,10 @@ public static partial class SpecializedViews
             await output.WriteAsync(buffer.AsMemory(0, count), token);
         }
     }
-    public static void SetProjectReadOnly(Control? control, bool left, bool right)
+    public static void SetProjectReadOnly(Control? control, bool left, bool right, bool middle = false)
     {
         if (control is BinaryPanel panel) { panel.LeftReadOnly = left; panel.RightReadOnly = right; panel.ApplyReadOnly?.Invoke(); }
+        if (control is ImagePanel image) image.SetReadOnly(image.MiddleFrameCount.HasValue ? [left, middle, right] : [left, right]);
     }
     private static TextBox HexEditor() => new() { AcceptsReturn = true, AcceptsTab = true, FontFamily = Mono, TextWrapping = TextWrapping.NoWrap, HorizontalContentAlignment = HorizontalAlignment.Stretch };
     private static string Hex(ReadOnlySpan<byte> bytes)

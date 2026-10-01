@@ -351,6 +351,7 @@ internal static class HeadlessSelfTest
             Check("image frame selection preserves original files", animatedLeftBytes.SequenceEqual(File.ReadAllBytes(animatedLeft))
                 && animatedRightBytes.SequenceEqual(File.ReadAllBytes(animatedRight)));
             HeadlessImageHighlightChecks.Run(pane, output, Pump, Check, Screenshot);
+            HeadlessImageCopyChecks.Run(window, pane, output, artifactOutput, Pump, Check, Screenshot);
             pane.BasePath.Text = "";
             pane.DiscardChanges();
             var xmlLeft = Path.Combine(output, "left.xml"); var xmlRight = Path.Combine(output, "right.xml");

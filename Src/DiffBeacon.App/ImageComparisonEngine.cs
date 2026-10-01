@@ -62,7 +62,7 @@ internal static class ImageComparisonEngine
     internal sealed record FrameComparison(IReadOnlyList<DecodedFrame> Frames, ImageRegionDiffer.Result Regions,
         PixelComparison Pixels);
     internal sealed record ReportInput(IReadOnlyList<Snapshot> Images, double Threshold, IReadOnlyList<int>? FrameNumbers,
-        int SelectedDiffIndex = -1, bool ShowDifferences = true);
+        int SelectedDiffIndex = -1, bool ShowDifferences = true, IReadOnlyList<DecodedFrame>? EditedFrames = null);
 
     internal static async Task<Snapshot> OpenAsync(string path, CancellationToken token)
     {
