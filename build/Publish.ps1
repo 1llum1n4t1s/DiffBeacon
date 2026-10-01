@@ -90,9 +90,9 @@ try {
             $startOptions = @{ FilePath = $executablePath; ArgumentList = @('--self-test', ('"' + $verificationPath + '"')); PassThru = $true }
             if ($IsWindows) { $startOptions.WindowStyle = 'Hidden' }
             $process = Start-Process @startOptions
-            if (-not $process.WaitForExit(60000)) {
+            if (-not $process.WaitForExit(180000)) {
                 $process.Kill($true)
-                throw 'ネイティブ自己検証が制限時間 60 秒を超えました。'
+                throw 'ネイティブ自己検証が制限時間 180 秒を超えました。'
             }
             if ($process.ExitCode -ne 0) { throw "ネイティブ自己検証に失敗しました: $($process.ExitCode)" }
             $verificationStatus = 'passed'

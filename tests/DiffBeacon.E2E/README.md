@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+TIFFの限定実行は `--tiff-only`。ビルド完了後、`dotnet tests/DiffBeacon.E2E/bin/Release/net10.0/DiffBeacon.E2E.dll --tiff-only --output E:/DiffBeacon-artifacts/local/tiff-limited` でも実行できる。[自作TIFF入力](../Fixtures/Images/Tiff/README.md)のページ寸法・全BGRA／SHA、byte order、圧縮・色の代表構成、全／選択・三者・短い側の反復、領域・単体／包装HTMLの独立PNG復号を照合する。不正IFD・切詰め・巨大宣言・旧JPEG参照・scan欠損の拒否、既存出力と入力保持を確認する。GUI自己検証は全ページの実bitmap、取消・古い完了、snapshot HTMLをBGRA・PNG・JSONへ記録する。限定実行は全体E2Eの代替にしない。
+
 APNGの限定実行は `--apng-only`。小さな[自作CC0入力](../Fixtures/Images/Apng/README.md)で既定画像の含有／除外、位置・合成・3種のdisposal、透明RGB、全／選択フレーム・三者・短い側の反復を実アプリへ渡す。CLIの画素SHA、単体／包装／再展開HTMLの原画PNGを独立復号して手書き全BGRAへ照合する。不正sequence・CRC・矩形・枚数・欠損・宣言上限の拒否、既存出力・入力の保持も確認する。共有256M作業量の拒否には約36KBの正常APNGを実行時生成し、巨大な復号画素は確保しない。全体実行にも含める。GUI自己検証は自動画像判定・全ページの実bitmap、同期ボタン・取消・古い完了・snapshot HTMLをPNG／JSONに記録する。
 
 静止画像GUI編集はアプリの `--self-test` で実比較タブ・ボタン・領域移動・PNG保存を操作する。コピー原本fixtureの代表12操作列・66状態を全原画BGRA、領域、共有履歴、dirtyへ照合し、PNG独立復号・再読込み、編集済みHTML、未保存包装拒否、読取り専用・全タブの入力保護、取消・古い完了・保存中の再比較拒否を検証する。最小ウィンドウのviewportとスクロール後の保存ボタンも確認する。`image-copy-gui-observations.json`、元golden、入力・PNG・HTML・画面・`ui-report.json`を保持する。原本143ケース・935状態のCLI全件照合と通常デスクトップの操作検証は別の検証範囲である。

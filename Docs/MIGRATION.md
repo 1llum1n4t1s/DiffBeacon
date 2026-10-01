@@ -10,7 +10,7 @@
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
 | 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
-| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFを含む残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、ページ設定の永続化は未完了 |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ／回転・矩形編集、ページ設定の永続化は未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
@@ -71,7 +71,7 @@ Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成�
 
 フレーム対応のSHA `4f47ba714ba0af49e2e216efd6b282aa38ec0dc1` は [GitHub run 36854029148](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36854029148) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36854029156) が成功した。Windows両構成は15848成功・0失敗・3skip、Mac両構成は15857成功・0失敗・2skip、4構成とも247 UI成功・SDK10.0.401・コンパイラー警告0。取得した8成果物のmanifest列挙64ファイルのSHA・サイズはすべて一致した。証拠は `E:/DiffBeacon-artifacts/github/36854029148`。Cドライブ容量不足による途中取得とMac x64の部分ファイル復旧は、移動記録 `artifacts/verification/image-frames/ci-artifact-relocation.json` と取得先の `osx-x64-recovery-ledger.json` に保持する。このSHAには後述の画像HTMLは含まれない。
 
-デコーダーの成功は完全な画素の取得を示し、コンテナー全体の構造検証とは区別する。GIFの末尾やPNGのIEND等が欠けても成功する実測を記録した。この段階ではAPNGが未移植だったが、下記の追加実装で対応した。通常デスクトップのネイティブ操作、TIFFの全ページ、全WebP設定、色管理・EXIF方向、ページ設定の保存は未検証または未移植。画像マージとHTMLの追加範囲は後述する。
+デコーダーの成功は完全な画素の取得を示し、コンテナー全体の構造検証とは区別する。GIFの末尾やPNGのIEND等が欠けても成功する実測を記録した。この段階ではAPNGが未移植だったが、下記の追加実装で対応した。この段階での通常デスクトップのネイティブ操作、TIFFの全ページ、全WebP設定、色管理・EXIF方向、ページ設定の保存は未検証または未移植。画像マージとHTMLの追加範囲は後述する。
 
 入力欄調整後の初回AOT自己検証は画像項目の後、アーカイブ展開の一時ディレクトリ移動でアクセス拒否になった。親ACLには実行ユーザーのFullControlがあり、同じnative実行ファイルで別出力への247項目と、その後の同じ発行スクリプトの247項目は成功した。原因は未確定で、失敗結果と再実行記録を保持し、恒久的な解消とは扱わない。
 
@@ -81,7 +81,15 @@ Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成�
 
 ローカルWindows x64では限定E2E836成功、全体managed E2E27177成功・0失敗・10skip、Native AOT全体27222成功・0失敗・3skip、headless UIは双方927成功・0失敗。GUI原画40件はmanaged/native全bytes一致し、3枚のAPNG画面も目視した。Release buildとAOT発行は警告・エラー0、96ソースファイルと発行manifest10件のSHA・サイズも一致した。証拠は `E:/DiffBeacon-artifacts/local/apng-port/final-order-verification.json` と入力・ログ・JSON・PNGに保持する。
 
-この記録時点のAPNGの四RID CIは未実施。実測fixtureは8bit RGBAであり、palette・16bit・Adam7・ICC・EXIFの対応をこの結果から推定しない。遅延・繰返しの再生、複数フレーム編集、元APNG保存、ページ設定の永続化は未完了。通常デスクトップ起動とOS固有ダイアログもheadless UIとは区別する。
+APNG最終SHA `892f362d1327e85268a9486991ef302b84a27edc` の[四RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36912489623)はWindows両構成とMac ARM64が成功し、Intel Macだけ発行後のUI自己検証が60秒で打ち切られた。Intel MacでもAPNGの全40 raw BGRA・期待値manifest・3画面を取得できたが、後続の表検証途中で終了し、全UIと全体E2Eの成功には数えない。[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36912489412)は成功。発行時の自己検証上限を180秒へ変更した後のIntel Mac再検証は未完了。実測fixtureは8bit RGBAであり、palette・16bit・Adam7・ICC・EXIFの対応をこの結果から推定しない。遅延・繰返しの再生、複数フレーム編集、元APNG保存、ページ設定の永続化は未完了。通常デスクトップ起動とOS固有ダイアログもheadless UIとは区別する。
+
+## TIFFの主ページ比較
+
+先頭だけを扱っていたTIFFを、classic TIFF／BigTIFF・両byte orderの主IFDごとのGUI・CLI・単体／包装HTMLへ接続した。ページごとの寸法とstrip／tileの展開予算を保持し、全主IFDの参照範囲・循環・巨大宣言を復号前に拒否する。AppだけにTiffLibrary／JpegLibraryとMITライセンスを追加し、旧C++／FreeImage／submoduleへの実行時依存を増やさない。
+
+[自作31入力](../tests/Fixtures/Images/Tiff/README.md)は正常17・拒否14。正常入力のBGRAはliteral期待値であり、デコーダーから逆算しない。managed限定E2Eは1079成功・0失敗・0skip、headless UIは1089成功・0失敗（TIFF162項目）。ページ寸法・全画素、圧縮と色の代表構成、全／選択・三者・短い側の反復、HTML原画と包装展開、取消・古い完了・入力と既存出力の保持を照合した。scanのないJPEGが旧実装で成功していた不具合を実CLIで再現し、拒否へ修正した。旧JPEGのtable数と参照範囲も確保前に検査する。証拠は `E:/DiffBeacon-artifacts/local/tiff-port/managed-limited-rebuilt` と `managed-ui-final`。
+
+ローカルWindows x64の全体managed E2Eは28255成功・0失敗・10skip、Native AOTは28300成功・0失敗・3skip、headless UIは双方1089成功・0失敗。TIFF原画46件とobservationsはmanaged／nativeで全bytes一致し、3画面も確認した。Release buildとAOT発行は警告・エラー0、発行manifest12件のSHA・サイズも一致。Native全体E2Eは管理者実行とPython指定を記録する。証拠は `E:/DiffBeacon-artifacts/local/tiff-port`。四RID CIとIntel Macの180秒上限は未検証。正常旧JPEG6、全JPEG entropy、LZW dictionary幅切替／predictor、planar、SubIFD、色管理と方向補正、旧FreeImageの全構成との互換性は未検証。複数ページ編集・元TIFF保存・ページ設定の永続化も未完了。詳細な上限と対応構成は[画像の契約](IMAGE-VIEWER.md)へ集約する。
 
 ## 原本の画像差分領域処理
 

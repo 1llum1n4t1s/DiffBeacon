@@ -54,7 +54,7 @@ Native AOT の Windows 発行には Visual Studio の C++ ビルドツールと 
 ./build/Publish.ps1 -Rid osx-arm64
 ```
 
-発行物は `artifacts/publish/<RID>` に生成する。発行スクリプトはこの RID の既存生成物を削除してから再生成する。実行ファイルと同じホストアーキテクチャでは自己検証も実行し、結果を `artifacts/verification/<RID>` に残す。クロスアーキテクチャでは自己検証を省略した理由を manifest に記録する。`-SkipVerification` は発行だけを行う明示指定である。
+発行物は `artifacts/publish/<RID>` に生成する。発行スクリプトはこの RID の既存生成物を削除してから再生成する。実行ファイルと同じホストアーキテクチャでは自己検証も実行し、結果を `artifacts/verification/<RID>` に残す。自己検証のプロセス制限は180秒で、超過時は子プロセスも終了して発行失敗にする。Intel MacのGitHub runnerでAPNG原画40件まで確認できた後、後続の表UI検証中に旧60秒制限へ到達したため延長した。全検証項目・合否条件は維持し、改定後の同構成の成功はCI実測まで未確認とする。クロスアーキテクチャでは自己検証を省略した理由を manifest に記録する。`-SkipVerification` は発行だけを行う明示指定である。
 
 macOS の成果物は `DiffBeacon.app` と、実行権限を保持する `DiffBeacon.app.tar.gz`。GitHub artifact をダウンロードした場合は tar を展開して起動する。署名・公証・配布はこのスクリプトの工程に含めない。
 

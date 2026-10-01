@@ -21,3 +21,8 @@ tests/Fixtures/ImageCopy/probe-adapter.cpp -text whitespace=cr-at-eol
 tests/Fixtures/Images/Apng/expectations.json -text whitespace=cr-at-eol
 tests/Fixtures/Images/Apng/generate.py -text
 tests/Fixtures/Images/Apng/LICENSE.txt -text
+tests/Fixtures/Images/Tiff/expectations.json -text whitespace=cr-at-eol
+tests/Fixtures/Images/Tiff/generate.py -text
+tests/Fixtures/Images/Tiff/LICENSE.txt -text
+Src/DiffBeacon.App/TiffLibrary.LICENSE.txt -text
+Src/DiffBeacon.App/JpegLibrary.LICENSE.txt -text

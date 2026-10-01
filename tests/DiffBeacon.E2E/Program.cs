@@ -1706,7 +1706,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--apng-only", StringComparer.Ordinal))
+    if (args.Contains("--tiff-only", StringComparer.Ordinal))
+    {
+        await ImageTiffScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--apng-only", StringComparer.Ordinal))
     {
         await ImageApngScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1790,6 +1794,7 @@ try
     await ImageFrameScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageRegionScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageApngScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageTiffScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageHighlightScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageCopyScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     await TextAdvancedCases();

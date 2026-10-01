@@ -67,18 +67,15 @@ internal static class ImageRegionCommands
         {
             var token = cancel.Token;
             var snapshots = new ImageComparisonEngine.Snapshot[count];
-            var width = 0; var height = 0; long work = 0;
+            var width = 0; var height = 0;
             for (var index = 0; index < count; index++)
             {
                 var image = snapshots[index] = await ImageComparisonEngine.OpenAsync(args[index + 1], token);
                 if (numbers[index] > image.FrameCount) throw new ArgumentException($"画像フレームは1..{image.FrameCount}です。");
-                width = Math.Max(width, image.Width); height = Math.Max(height, image.Height);
-                work = checked(work + image.Pixels * numbers[index]);
+                var size = image.GetDimensions(numbers[index]);
+                width = Math.Max(width, size.Width); height = Math.Max(height, size.Height);
             }
-            if ((long)width * height > ImageComparisonEngine.MaximumPixels)
-                throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。");
-            if (work > ImageComparisonEngine.MaximumDecodeWork)
-                throw new InvalidOperationException("画像の復号作業量が256Mピクセルを超えます。");
+            ImageComparisonEngine.ValidateSelection(snapshots, numbers);
             var columns = (width + blockSize - 1) / blockSize;
             var rows = (height + blockSize - 1) / blockSize;
             // 診断JSONの全grid出力だけを制限。通常比較へこの出力制約を持ち込まない。

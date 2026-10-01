@@ -16,18 +16,29 @@ internal static class ImageComparisonEngine
     {
         private readonly byte[] _bytes;
         private readonly ApngImage? _animation;
+        private readonly TiffImage? _tiff;
         internal int Width { get; }
         internal int Height { get; }
         internal int FrameCount { get; }
         internal long Pixels => (long)Width * Height;
 
-        internal Snapshot(byte[] bytes, int width, int height, int frameCount, ApngImage? animation = null)
-        { _bytes = bytes; Width = width; Height = height; FrameCount = frameCount; _animation = animation; }
+        internal Snapshot(byte[] bytes, int width, int height, int frameCount, ApngImage? animation = null, TiffImage? tiff = null)
+        { _bytes = bytes; Width = width; Height = height; FrameCount = frameCount; _animation = animation; _tiff = tiff; }
+
+        internal (int Width, int Height) GetDimensions(int frame)
+        {
+            ValidateFrame(this, frame);
+            return _tiff is null ? (Width, Height) : (_tiff.Pages[frame - 1].Width, _tiff.Pages[frame - 1].Height);
+        }
+
+        internal long DecodeWork(int frame)
+        { ValidateFrame(this, frame); return _tiff is null ? Pixels * frame : _tiff.Pages[frame - 1].Work; }
 
         internal DecodedFrame Decode(int frame, CancellationToken token)
         {
             ValidateFrame(this, frame);
             token.ThrowIfCancellationRequested();
+            if (_tiff is not null) return _tiff.Decode(frame, token);
             if (_animation is not null) return _animation.Decode(frame, token);
             using var data = SKData.CreateCopy(_bytes);
             using var codec = SKCodec.Create(data) ?? throw new InvalidDataException("画像のデコーダーを作成できません。");
@@ -88,6 +99,8 @@ internal static class ImageComparisonEngine
             token.ThrowIfCancellationRequested();
             if (ApngImage.TryOpen(bytes, token) is { } animation)
                 return new Snapshot(bytes, animation.Width, animation.Height, animation.FrameCount, animation);
+            if (TiffImage.TryOpen(bytes, token) is { } tiff)
+                return new Snapshot(bytes, tiff.Pages[0].Width, tiff.Pages[0].Height, tiff.Pages.Count, tiff: tiff);
             using var data = SKData.CreateCopy(bytes);
             using var codec = SKCodec.Create(data) ?? throw new InvalidDataException("対応する画像データを読み込めません。");
             var info = codec.Info;
@@ -107,8 +120,9 @@ internal static class ImageComparisonEngine
         ValidateImages(images);
         if (numbers.Count != images.Count) throw new ArgumentException("全入力のフレーム番号が必要です。");
         long work = 0;
-        for (var i = 0; i < images.Count; i++) { ValidateFrame(images[i], numbers[i]); work = checked(work + images[i].Pixels * numbers[i]); }
+        for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(numbers[i]));
         ValidateWork(work);
+        ValidateCanvas(images, numbers);
     }
 
     internal static void ValidateComparison(Snapshot left, Snapshot right, int? leftFrame, int? rightFrame,
@@ -125,10 +139,14 @@ internal static class ImageComparisonEngine
         // 短い入力は最後に選ばれたページを保持し、全ページ出力にもその復号費用を含める。
         var pages = images.Max(image => image.FrameCount);
         long work = 0;
-        foreach (var image in images)
-            work = checked(work + image.Pixels * (image.FrameCount * (image.FrameCount + 1L) / 2 + (long)(pages - image.FrameCount) * image.FrameCount));
+        long canvasWork = 0;
+        for (var page = 1; page <= pages; page++)
+        {
+            var current = images.Select(image => Math.Min(page, image.FrameCount)).ToArray();
+            for (var i = 0; i < images.Count; i++) work = checked(work + images[i].DecodeWork(current[i]));
+            canvasWork = checked(canvasWork + ValidateCanvas(images, current) * (images.Count + 1));
+        }
         ValidateWork(work);
-        var canvasWork = checked((long)images.Max(image => image.Width) * images.Max(image => image.Height) * pages * (images.Count + 1));
         if (canvasWork > MaximumDecodeWork) throw new InvalidOperationException("画像の描画作業量が256Mピクセルを超えます。");
     }
 
@@ -136,8 +154,16 @@ internal static class ImageComparisonEngine
     {
         if (images.Count is not (2 or 3)) throw new ArgumentException("画像入力は二者または三者です。");
         foreach (var image in images) ValidateDimensions(image.Width, image.Height);
-        if ((long)images.Max(image => image.Width) * images.Max(image => image.Height) > MaximumPixels)
-            throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。");
+    }
+
+    private static long ValidateCanvas(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers)
+    {
+        var width = 0; var height = 0;
+        for (var i = 0; i < images.Count; i++)
+        { var size = images[i].GetDimensions(numbers[i]); width = Math.Max(width, size.Width); height = Math.Max(height, size.Height); }
+        var pixels = (long)width * height;
+        if (pixels > MaximumPixels) throw new InvalidOperationException("比較キャンバスが1600万ピクセルを超えます。");
+        return pixels;
     }
 
     internal static void ValidateThreshold(double threshold)

@@ -16,6 +16,8 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 ## データフロー
 
+TIFFはAppの `TiffImage` が共有入力bytesと主IFDのページ寸法・独立した復号作業量を保持する。全主IFDとstrip／tileの参照範囲・metadata予算を復号前に検査し、選択ページだけをTiffLibraryで復号する。`Snapshot.GetDimensions` と `DecodeWork` をGUI・CLI・HTML・領域診断から使い、比較する組ごとにcanvas予算を数える。Decoderのscratchは128 MiBの専用MemoryPoolへ制限し、旧JPEGのtable数・参照範囲とJPEG headerを確保前に検査する。TiffLibrary／JpegLibraryはAppだけの依存とし、MIT原文を通常出力とAOT発行物へ同梱する。形式ごとの実測範囲は[画像の契約](Docs/IMAGE-VIEWER.md)へ集約する。
+
 `Program.Main` は `--self-test <出力先>` を描画自己検証へ、先頭が `--` の引数を CLI へ、それ以外をデスクトップ起動へ振り分ける。GUI の比較タブは選択モード・入力パスから Core、形式別ビュー、またはプロバイダーへ処理を振り分ける。比較にはキャンセルトークンを渡し、テキスト差分計算は背景タスクで行う。
 
 テキストは `TextDocument` が文字列と文字コード・BOM・改行情報を保持し、`TextDiffer` が行・行内差分とコピー用ブロックを生成する。`TextPreprocessor` は比較キーだけへコメント除外・置換・空白・数字・大小文字設定を適用し、コピーする原文と座標を保持する。コピー・編集後は再比較する。祖先を指定した三者マージは独立変更を統合し、重なる異なる変更を競合マーカー付きの結果へ出す。`MergeSession` は差分ごとの採用順序・未解決状態・行の由来・Undo/Redoを保持する。GUI は祖先がある場合に左・祖先・右・結果の4ペインを表示し、二者マージでは祖先の採用を拒否する。

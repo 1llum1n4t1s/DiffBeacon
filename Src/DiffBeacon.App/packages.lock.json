@@ -68,6 +68,15 @@
         "resolved": "10.0.12",
         "contentHash": "xi+BDjFpW+Sb+MHFHaH6Y/gV9I8BluFwRXc1QyCdoZbIK26eNiBeFuMTe/FMwc33G1wdHCyDg7CVTmb8OdQrMQ=="
       },
+      "TiffLibrary": {
+        "type": "Direct",
+        "requested": "[0.6.65, )",
+        "resolved": "0.6.65",
+        "contentHash": "nlONBCj7VeEHY9pbZPQcxK5hYWv8R8IbfrUVCi9YZSMd7Nnf4zwMx1+81F/q6nDB4xkUDslJrpbfgOBDrDa5tg==",
+        "dependencies": {
+          "JpegLibrary": "0.4.32"
+        }
+      },
       "Avalonia.Angle.Windows.Natives": {
         "type": "Transitive",
         "resolved": "2.1.27548.20260419",
@@ -181,6 +190,11 @@
         "type": "Transitive",
         "resolved": "8.3.1.3",
         "contentHash": "bx8CE8Js+XGX8PUxAHCBDEORt5aaBYtMN4Hr9QFs57Xithh6yjUyYqksizH6eRDhJkwsGI+SXWmPmMm8lZC9Pw=="
+      },
+      "JpegLibrary": {
+        "type": "Transitive",
+        "resolved": "0.4.32",
+        "contentHash": "Lv11HXsyGZxuRUG/0sw+3itw930/c08VkEVXDPin819yheN3Y3YpWQYccs1dW+sBlsGs9S4Y4q6DzyBCctsEeQ=="
       },
       "MicroCom.Runtime": {
         "type": "Transitive",
