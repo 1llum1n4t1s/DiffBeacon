@@ -116,6 +116,10 @@ WinIMerge v1.0.54の原本関数を無改変で採取し、二／三者のblock�
 
 2026-10-02の最終Release buildは警告0・エラー0。通常DLL全体E2Eは26342成功・0失敗・10skip、通常DLLとWindows x64 Native AOTのheadless UIは各812成功・0失敗。無改変コピー原本の代表12操作列・66状態で全原画・領域・履歴・dirtyを照合し、両実行形式の観測JSONはSHAも一致した。PNGは独立BCL復号と再読込み、HTMLは現在の原画と採取後の編集分離を確認した。最小850×550でも画像viewportとスクロール後の保存操作を確認した。最終Native AOT全体E2Eは26387成功・0失敗・3skip、管理者実行のリンク拒否も成功した。証拠は `E:/DiffBeacon-artifacts/local/image-copy-gui-33a67`、過去の途中結果は `artifacts/retention/index.json` から参照する。Native発行は `Publish.ps1 -SkipVerification` とし、UI自己検証をEドライブへ別途出力した。GUI接続のMac／ARM CIと通常デスクトップ操作はこの記録時点では未実測。元形式／多ページ編集保存、FreeImageの完全互換と残りの画像操作は引き続き未完了。
 
+GUI接続のコミット `6734dc1101190279fc2ca3a445e0699c8a74efb4` の [GitHub run 36900262981](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36900262981) はWindows両構成が成功し、Mac両構成はNative AOT発行後のUI自己検証で失敗した。Windowsは各E2E26387成功・0失敗・3skip、UI812成功。Macは最小850×550で画像viewportの高さが0となり、309成功後に停止したため全体E2Eは未実行。[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36900262982) は成功した。取得した検証成果物4個は `E:/DiffBeacon-artifacts/github/36900262981` に保持し、発行物のSHA照合はこの失敗runでは未実測。画像モードの共通設定欄の最大高さを比較ペインの30%から20%へ縮め、同じ最小サイズ・viewport下限の検証を維持して再検証する。
+
+この高さ修正後のローカルRelease buildは警告0・エラー0、通常DLLの全体E2Eは26342成功・0失敗・10skip、Windows x64 Native AOTは26387成功・0失敗・3skip。両実行形式のUI812項目が成功し、850×550の三者viewportは各61 px、代表12操作列・66状態の観測SHAも一致した。ソース72ファイルと発行manifest10ファイルのSHA・サイズを照合した。証拠は `E:/DiffBeacon-artifacts/local/image-copy-gui-mac-layout` に保持する。Macでの修正確認は新しいコミットのCIを必要とし、このローカル結果に含めない。
+
 ## 画像の全フレームHTML
 
 画像HTMLのコミット `675e61255d1cfbcbb64c29763bcee40821e533de` は [GitHub run 36859703730](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36859703730) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36859703759) が成功した。Windows両構成は17168成功・0失敗・3skip、Mac両構成は17177成功・0失敗・2skip、4構成とも260 UI成功・SDK10.0.401・コンパイラー警告0。画像HTML固有項目は各構成196成功。取得した8成果物のmanifest列挙64ファイルのSHA・サイズがすべて一致した。証拠は `E:/DiffBeacon-artifacts/github/36859703730`。全体取得時のデバイスエラーはWindows成果物の個別再取得で解消し、最初の失敗ログも保持する。これはCI実行失敗とは区別する。upload-artifactのNode非推奨annotation4件はコンパイラー警告に含めない。以下のローカル記録と同じコードを4RIDで検証した結果である。

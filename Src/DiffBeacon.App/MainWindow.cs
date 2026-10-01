@@ -401,7 +401,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private void UpdateComparisonToolbarHeight()
     {
         // 画像には独自の操作欄があるため、共通設定欄をさらに縮めて原画の領域を残す。
-        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel ? .3 : .5;
+        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel ? .2 : .5;
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
