@@ -12,6 +12,8 @@
 
 設定0は文字比較・EOL無視、1は単語比較・EOL無視、2は文字比較・EOL厳密、3は文字比較・EOL無視・case無視・全空白無視。全rawブロックを明示して得た oracle と、製品の decoded prefix/suffix/patience アンカーが区切る結果は、全ケースで同一にはならない。
 
+採取JSONの末尾CRLFを含むbytesをSHAの対象にする。3goldenは `.gitattributes` の `-text` でGitの改行変換を禁止し、Windows/Macのcheckoutで同じ採取bytesを保持する。
+
 ## 先行して固定した失敗条件と範囲
 
 正本は `artifacts/verification/table-line-alignment/e2e-contract.md`。
