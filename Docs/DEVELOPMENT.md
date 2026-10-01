@@ -57,4 +57,6 @@ Windowsのシンボリックリンク検証は作成権限が必要。権限が�
 
 後続の表の行合わせ・セル編集・検索は[4構成のrun 36796867483](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36796867483)と[同SHAのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36796867472)で成功した。発行物は同run、実測範囲と集計は[移行一覧](MIGRATION.md#表の行合わせセル編集)、表のAPI・操作・上限は[TABLE-EDITOR.md](TABLE-EDITOR.md)を参照する。
 
+表の同セル内検索・固定文字範囲・一件/全置換と、小さい画面での文字全体の表示は[4構成のrun 36805372990](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36805372990)と[同SHAのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36805373087)で成功した。Mac Intel/ARM64のNative AOT発行物を同runのArtifactsから取得できる。成功数・実測範囲は[移行一覧](MIGRATION.md#表のセル内検索置換)、各構成の成果物・集計は `artifacts/github/36805372990` に保持する。
+
 機能の対応状況と保留事項は [MIGRATION.md](MIGRATION.md) を参照する。

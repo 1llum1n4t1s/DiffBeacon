@@ -40,6 +40,17 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 Macの700px画面では一覧高21・セルY15で文字の下端が切れており、セルが少しでもviewport内にある旧確認では見逃していた。共通の設定・操作欄もスクロール可能にし、960×700でセルの高さ全体が一覧内にある確認へ変更した。最新のローカル通常DLLとWindows x64 Native AOTは220 UI成功、通常DLLの全E2Eは2954成功・0失敗・8スキップ。Windowsで一覧高63・セルY28・文字高17を観測した。結果は `artifacts/verification/table-search-full-viewport-final`・`artifacts/e2e/table-search-full-viewport-final`、ビルド・発行ログは同契約ディレクトリに保持する。
 
+最新の表示修正を含むコード `67ef483608befbd7fc9825535a3ef31cf7f040d8` は、[GitHub run 36805372990](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36805372990)の4構成すべてでNative AOT発行・headless UI・CLI E2Eに成功した。[同SHAのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36805373087)も成功。SDKは全構成10.0.401、CS/IL/MSBコンパイラー警告0件。
+
+| RID | CLI E2E成功 | 失敗 / スキップ | UI自己検証成功 | Native AOT |
+| --- | ---: | ---: | ---: | --- |
+| `win-x64` | 2985 | 0 / 3 | 220 | 発行・実行成功 |
+| `win-arm64` | 2985 | 0 / 3 | 220 | 発行・実行成功 |
+| `osx-x64` | 2994 | 0 / 2 | 220 | 発行・実行成功 |
+| `osx-arm64` | 2994 | 0 / 2 | 220 | 発行・実行成功 |
+
+4構成とも960×700でセルの文字高全体が一覧内にあることを確認し、Mac ARM64のPNGでも欠けずに表示されることを目視確認した。全構成の入力・出力・JSON・PNG・manifest・ログ・run情報・集計を `artifacts/github/36805372990` に保持する。集計の再現手順は `artifacts/verification/table-search/Verify-GitHubResults.ps1`。各Macの `.app` と実行権限を保持するtarを同runのArtifactsから取得できる。UIはheadless操作・描画であり、通常デスクトップの実測とは区別する。署名・公証・公開は実施していない。
+
 ## 表の行合わせ・セル編集
 
 原文区間付き文書と共有行対応モデルを導入し、GUI・`--table`・単体/包装HTMLの判定を統一した。完全一致アンカーの間で上限付き類似対応、三者では祖先対応と左右挿入対応を統合する。セル編集は一つの原文区間だけを変更し、Undo/Redo、readonly・祖先・ghost・古い座標の拒否、既存保存へ接続した。検索は前後・折返し・case・regex・word・ペイン指定、画面は32列ページと行仮想化。同セル内検索、固定文字範囲、一件/選択ペイン全置換と一括Undoへ拡張した。旧方式の全スコア・矩形文字編集・raw横断検索は未完了。[表の契約](TABLE-EDITOR.md)を参照する。
