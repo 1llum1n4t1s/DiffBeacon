@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
@@ -9,7 +8,7 @@ using DiffBeacon.Core;
 namespace DiffBeacon.App;
 
 // セルの表示・編集は原文と共通比較モデルへ接続する。CSV 全体の再生成はしない。
-public sealed class TablePanel : DockPanel
+public sealed partial class TablePanel : DockPanel
 {
     private readonly Func<int, string> _source;
     private readonly Func<int, bool> _readOnly;
@@ -35,7 +34,7 @@ public sealed class TablePanel : DockPanel
     private int _firstColumn;
     internal Task? PendingOperation { get; private set; }
     private int _selectedSide, _selectedRow = -1, _selectedColumn;
-    private sealed record Edit(int Side, string Before, string After);
+    private sealed record Edit(int Side, string Before, string After, SearchScopeState? BeforeScope = null, SearchScopeState? AfterScope = null);
     public TableComparisonResult Comparison { get; private set; }
 
     internal TablePanel(TableComparisonResult comparison, Func<int, string> source, Func<int, bool> readOnly,
@@ -64,8 +63,8 @@ public sealed class TablePanel : DockPanel
         var searching = new WrapPanel();
         foreach (var control in new Control[] { SearchText, _case, _regex, _word, _wrap, _allSides })
         { control.Margin = new Thickness(4); searching.Children.Add(control); }
-        Button(searching, "前のセル", () => FindAsync(-1)); Button(searching, "次のセル", () => FindAsync(1));
-        top.Children.Add(searching); top.Children.Add(_status);
+        Button(searching, "前の一致", () => FindAsync(-1)); Button(searching, "次の一致", () => FindAsync(1));
+        top.Children.Add(searching); AddSearchActions(top); top.Children.Add(_status);
         DockPanel.SetDock(top, Dock.Top); Children.Add(top);
         _rows.ItemTemplate = new FuncDataTemplate<int>((index, _) => RenderRow(index), false);
         Children.Add(_rows);
@@ -104,7 +103,7 @@ public sealed class TablePanel : DockPanel
                 {
                     Padding = new Thickness(6), BorderThickness = new Thickness(.5), BorderBrush = Brushes.Gray,
                     Background = cell is null ? new SolidColorBrush(Color.Parse("#303030")) : kind == DiffKind.Equal ? Brushes.Transparent : new SolidColorBrush(Color.Parse("#553D2847")),
-                    Child = new TextBlock { Text = cell?.Value ?? "（セルなし）", TextWrapping = TextWrapping.Wrap }
+                    Child = new TextBlock { Text = CellPreview(cell?.Value), TextWrapping = TextWrapping.Wrap, MaxHeight = 64, TextTrimming = TextTrimming.CharacterEllipsis }
                 };
                 border.PointerPressed += (_, _) =>
                 {
@@ -117,6 +116,14 @@ public sealed class TablePanel : DockPanel
             Grid.SetColumn(scroll, side); grid.Children.Add(scroll);
         }
         return grid;
+    }
+
+    private static string CellPreview(string? value)
+    {
+        if (value is null) return "（セルなし）";
+        if (value.Length <= 512) return value;
+        var length = char.IsHighSurrogate(value[511]) && char.IsLowSurrogate(value[512]) ? 511 : 512;
+        return value[..length] + "…（セル選択で全文）";
     }
 
     private void UpdateRows()
@@ -136,7 +143,14 @@ public sealed class TablePanel : DockPanel
 
     public bool SelectCell(int side, int alignedRow, int column)
     {
+        EnsureNoPendingCellEdit();
+        return SelectCellCore(side, alignedRow, column);
+    }
+
+    private bool SelectCellCore(int side, int alignedRow, int column)
+    {
         EnsureCurrent();
+        _lastHit = null; _resumeBoundary = null;
         if ((uint)side >= (uint)Comparison.Documents.Count || (uint)alignedRow >= (uint)Comparison.Rows.Count || (uint)column >= (uint)Comparison.ColumnCount)
             throw new ArgumentOutOfRangeException(nameof(column), "存在するペイン・行・列を選択してください。");
         var cell = Comparison.GetCell(side, alignedRow, column);
@@ -144,7 +158,7 @@ public sealed class TablePanel : DockPanel
         if (column < _firstColumn || column >= _firstColumn + ColumnsPerPage)
         { _firstColumn = column / ColumnsPerPage * ColumnsPerPage; UpdateRows(); }
         _side.SelectedIndex = side; _row.Text = Comparison.GetSourceRow(side, alignedRow)?.ToString() ?? ""; _column.Text = (column + 1).ToString();
-        CellEditor.Text = cell?.Value ?? ""; CellEditor.IsReadOnly = cell is null || _readOnly(side);
+        CellEditor.Text = cell?.Value ?? ""; CellEditor.SelectionStart = 0; CellEditor.SelectionEnd = 0; CellEditor.IsReadOnly = cell is null || _readOnly(side);
         _rows.SelectedIndex = alignedRow; _rows.ScrollIntoView(alignedRow);
         _status.Text = cell is null ? "実セルのない行・列は編集できません。" : _readOnly(side) ? "このペインは読取り専用です。検索・選択はできます。" : "セルを変更してから「セルを変更」を押してください。";
         return cell is not null;
@@ -169,22 +183,23 @@ public sealed class TablePanel : DockPanel
             || !int.TryParse(_column.Text, out var column) || column != _selectedColumn + 1)
             throw new InvalidOperationException("元行・列・ペインを変更したときは先に「セルを選択」を押してください。");
         if (_readOnly(_selectedSide)) throw new InvalidOperationException("読取り専用のセルは変更できません。");
-        var document = Comparison.Documents[_selectedSide];
+        var side = _selectedSide; var document = Comparison.Documents[side];
         var edit = StructuredComparer.ReplaceCell(document, Comparison.GetSourceRow(_selectedSide, _selectedRow)!.Value,
             _selectedColumn + 1, CellEditor.Text ?? "", _cancellation());
         var after = document.SourceText.Remove(edit.Start, edit.Length).Insert(edit.Start, edit.Replacement);
         if (after == document.SourceText) return;
-        _write(_selectedSide, after);
-        _undo.Push(new(_selectedSide, document.SourceText, after)); _redo.Clear(); TrimHistory();
-        await RefreshAsync();
+        var scope = CaptureScope();
+        await WriteAndRefreshAsync(side, after);
+        _undo.Push(new(side, document.SourceText, after, scope)); _redo.Clear(); TrimHistory();
     }
 
     public async Task UndoAsync()
     {
+        EnsureNoPendingCellEdit();
         if (!_undo.TryPeek(out var edit)) return;
         if (_readOnly(edit.Side)) throw new InvalidOperationException("読取り専用のセルは変更できません。");
         if (_source(edit.Side) != edit.After) throw new InvalidOperationException("テキスト編集後の内容へ古いセル編集を適用できません。");
-        _write(edit.Side, edit.Before); _undo.Pop(); _redo.Push(edit); await RefreshAsync();
+        await WriteAndRefreshAsync(edit.Side, edit.Before); _undo.Pop(); _redo.Push(edit); RestoreScope(edit.BeforeScope);
     }
 
     private void TrimHistory()
@@ -199,71 +214,46 @@ public sealed class TablePanel : DockPanel
 
     public async Task RedoAsync()
     {
+        EnsureNoPendingCellEdit();
         if (!_redo.TryPeek(out var edit)) return;
         if (_readOnly(edit.Side)) throw new InvalidOperationException("読取り専用のセルは変更できません。");
         if (_source(edit.Side) != edit.Before) throw new InvalidOperationException("テキスト編集後の内容へ古いセル編集を適用できません。");
-        _write(edit.Side, edit.After); _redo.Pop(); _undo.Push(edit); await RefreshAsync();
+        await WriteAndRefreshAsync(edit.Side, edit.After); _redo.Pop(); _undo.Push(edit); RestoreScope(edit.AfterScope);
     }
 
-    internal async Task RefreshAsync()
+    internal Task RefreshAsync()
     {
-        var sourceRow = _selectedRow >= 0 ? Comparison.GetSourceRow(_selectedSide, _selectedRow) : null;
-        Comparison = await _compare(); UpdateRows();
+        EnsureNoPendingCellEdit();
+        return RefreshAfterWriteAsync();
+    }
+
+    // 再比較が拒否・取消されたときは、この操作が書いた原文だけを戻す。
+    private async Task WriteAndRefreshAsync(int side, string after)
+    {
+        var before = _source(side); var comparison = Comparison; var scope = CaptureScope();
+        var draft = CellEditor.Text; var start = CellEditor.SelectionStart; var end = CellEditor.SelectionEnd;
+        _write(side, after);
+        try { await RefreshAfterWriteAsync(); }
+        catch
+        {
+            if (_source(side) == after) _write(side, before);
+            Comparison = comparison; UpdateRows(); RestoreScope(scope);
+            if (CellEditor.Text == draft) { CellEditor.SelectionStart = start; CellEditor.SelectionEnd = end; }
+            throw;
+        }
+    }
+
+    private async Task RefreshAfterWriteAsync()
+    {
+        var side = _selectedSide; var row = _selectedRow; var column = _selectedColumn; var draft = CellEditor.Text;
+        var sourceRow = row >= 0 ? Comparison.GetSourceRow(side, row) : null;
+        var comparison = await _compare();
+        if (_selectedSide != side || _selectedRow != row || _selectedColumn != column || CellEditor.Text != draft)
+            throw new InvalidOperationException("再比較中にセルの選択・編集が変更されました。操作をやり直してください。");
+        ClearSearchSelection(); Comparison = comparison; UpdateRows();
         if (sourceRow is not null)
             for (var index = 0; index < Comparison.Rows.Count; index++)
-                if (Comparison.GetSourceRow(_selectedSide, index) == sourceRow) { SelectCell(_selectedSide, index, _selectedColumn); break; }
+                if (Comparison.GetSourceRow(_selectedSide, index) == sourceRow) { if (_selectedColumn < Comparison.ColumnCount) SelectCellCore(_selectedSide, index, _selectedColumn); break; }
     }
 
-    public async Task FindAsync(int direction)
-    {
-        EnsureCurrent();
-        var text = SearchText.Text ?? "";
-        if (text.Length == 0) return;
-        var pattern = _regex.IsChecked == true ? text : Regex.Escape(text);
-        if (_word.IsChecked == true) pattern = @"(?<![\p{L}\p{N}_])(?:" + pattern + @")(?![\p{L}\p{N}_])";
-        var search = new Regex(pattern, _case.IsChecked == true ? RegexOptions.CultureInvariant : RegexOptions.CultureInvariant | RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
-        var comparison = Comparison; var allSides = _allSides.IsChecked == true; var wrap = _wrap.IsChecked == true;
-        var token = _cancellation();
-        var selectedSide = _side.SelectedIndex; var selectedRow = _selectedRow; var selectedColumn = _selectedColumn;
-        var result = await Task.Run(() =>
-        {
-            var columns = Math.Max(1, comparison.ColumnCount); var sides = comparison.Documents.Count;
-            var count = checked((long)comparison.Rows.Count * sides * columns);
-            var start = selectedRow < 0 ? (direction >= 0 ? -1L : count) : ((long)selectedRow * sides + selectedSide) * columns + selectedColumn;
-            for (var pass = 0; pass < (wrap ? 2 : 1); pass++)
-            {
-                // 実セルだけを表示行・ペイン・列の順で検索し、疎な表の ghost 矩形を走査しない。
-                for (var rowIndex = 0; rowIndex < comparison.Rows.Count; rowIndex++)
-                {
-                    token.ThrowIfCancellationRequested();
-                    var row = direction >= 0 ? rowIndex : comparison.Rows.Count - rowIndex - 1;
-                    for (var sideIndex = 0; sideIndex < sides; sideIndex++)
-                    {
-                        var side = direction >= 0 ? sideIndex : sides - sideIndex - 1;
-                        if (!allSides && side != selectedSide) continue;
-                        var sourceRow = comparison.GetSourceRow(side, row);
-                        if (sourceRow is null) continue;
-                        var cells = comparison.Documents[side].Rows[sourceRow.Value - 1].Cells;
-                        for (var cellIndex = 0; cellIndex < cells.Count; cellIndex++)
-                        {
-                            token.ThrowIfCancellationRequested();
-                            var column = direction >= 0 ? cellIndex : cells.Count - cellIndex - 1;
-                            var position = ((long)row * sides + side) * columns + column;
-                            var following = direction >= 0 ? position > start : position < start;
-                            if (following != (pass == 0)) continue;
-                            if (search.Match(cells[column].Value) is { Success: true } match)
-                                return (Found: true, Side: side, Row: row, Column: column, Start: match.Index, Length: match.Length);
-                        }
-                    }
-                }
-            }
-            return (Found: false, Side: 0, Row: 0, Column: 0, Start: 0, Length: 0);
-        }, token);
-        token.ThrowIfCancellationRequested();
-        EnsureCurrent();
-        if (!ReferenceEquals(Comparison, comparison)) throw new InvalidOperationException("再比較後に検索をやり直してください。");
-        if (!result.Found) { _status.Text = "一致するセルはありません。"; return; }
-        SelectCell(result.Side, result.Row, result.Column); CellEditor.Focus();
-        CellEditor.SelectionStart = result.Start; CellEditor.SelectionEnd = result.Start + result.Length;
-    }
 }

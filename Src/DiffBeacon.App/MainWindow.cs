@@ -425,6 +425,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public async Task SaveReportAsync(string path, CancellationToken token = default)
     {
+        EnsureNoPendingTableEdit();
         if (_reportOperation is not null) throw new InvalidOperationException("HTMLレポートを生成しています。");
         var project = CaptureProject();
         if (!string.IsNullOrWhiteSpace(project.LeftPath) || !string.IsNullOrWhiteSpace(project.RightPath)) EnsureComparedForPackaging();
@@ -462,6 +463,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public async Task SaveAsync(bool right)
     {
+        EnsureNoPendingTableEdit();
         EnsureSideWritable(right);
         if (!_textSaveAllowed) throw new InvalidOperationException("この比較はテキスト保存の対象ではありません。形式別ビューの保存操作を使用してください。");
         var path = right ? RightPath.Text : LeftPath.Text;

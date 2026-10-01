@@ -84,6 +84,7 @@ public sealed partial class ComparisonPane
     {
         LeftPath = LeftPath.Text ?? "", BasePath = BasePath.Text ?? "", RightPath = RightPath.Text ?? "",
         Mode = _mode.SelectedIndex == 8 && (_provider.SelectedItem as string == "web-text" || (_provider.SelectedItem is null && _projectMetadata.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase))) ? "Web" : ModeNames[Math.Clamp(_mode.SelectedIndex, 0, ModeNames.Length - 1)],
+        TableDelimiter = _mode.SelectedIndex == 6 ? _tableSyntax?.Delimiter ?? _projectMetadata.TableDelimiter : _projectMetadata.TableDelimiter,
         ProviderId = _provider.SelectedItem as string ?? _projectMetadata.ProviderId, FileFilterPath = _fileFilter.Text,
         Recursive = _recursive.IsChecked == true, FolderMode = _folderMode.SelectedIndex switch { 1 => "Hash", 2 => "TimestampAndSize", _ => "Content" },
         ExcludedPaths = _excludes.Text, IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true,
@@ -95,6 +96,7 @@ public sealed partial class ComparisonPane
     public void ApplyProject(ComparisonProject project)
     {
         ArgumentNullException.ThrowIfNull(project);
+        _tableSyntax = null;
         _projectMetadata = project with { LegacySettings = new(project.LegacySettings), SubstitutionRules = project.SubstitutionRules.ToArray() };
         LeftPath.Text = project.LeftPath; BasePath.Text = project.BasePath; RightPath.Text = project.RightPath;
         var mode = Array.FindIndex(ModeNames, name => name.Equals(project.Mode, StringComparison.OrdinalIgnoreCase));
@@ -202,6 +204,7 @@ public sealed partial class ComparisonPane
                 char? Character(string? value) => string.IsNullOrEmpty(value) ? null : value == "\\t" ? '\t' : value.Length == 1 ? value[0] : throw new FormatException("区切り文字と引用符は1文字で指定してください。");
                 var delimiterValue = Character(delimiter.Text); var quoteValue = Character(quote.Text);
                 StructuredComparer.ParseDelimited("", delimiterValue ?? ',', quoteValue ?? '"', multiline.IsChecked == true);
+                _tableSyntax = null;
                 _projectMetadata = project with { LeftDescription = left.Text, BaseDescription = middle.Text, RightDescription = right.Text,
                     LeftReadOnly = leftRo.IsChecked == true, BaseReadOnly = baseRo.IsChecked == true, RightReadOnly = rightRo.IsChecked == true,
                     LegacyFilter = filter.Text, TableDelimiter = delimiterValue, TableQuote = quoteValue, TableAllowNewlinesInQuotes = multiline.IsChecked == true };

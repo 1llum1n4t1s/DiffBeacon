@@ -640,6 +640,7 @@ internal static class HeadlessSelfTest
             Check("table sparse search visits actual cells and keeps source intact", tablePanel.Comparison.Documents[0].SourceText == File.ReadAllText(sparsePath),
                 $"elapsedMilliseconds={sparseTimer.ElapsedMilliseconds};actualCellsPerPane=20000;rectangularCoordinates=200020000");
             Screenshot("table-sparse-paged.png");
+            HeadlessTableSearchTests.Run(window, reportPane, output, Check, Screenshot, Pump);
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }
