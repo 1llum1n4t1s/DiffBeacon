@@ -100,4 +100,4 @@ var comparison = TextDiffer.Compare(left.Text, right.Text, options, cancellation
 
 `StructuredComparer.ParseTable` は原文区間付き文書、`CompareTables` は二者／三者の共有行対応とセル判定、`ReplaceCell` は原文の単一区間を置換する編集を返します。旧 `ParseDelimited`・`CompareDelimited` は同じモデルのadapterです。行対応・容量・取消・比較設定の詳細は[表エディターの契約](../../Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
 
-変更ブロック内はraw WordDiffの一致文字量でbest-pairを選び、三者は01/12/20のmapを合成します。全ブロックで予算と候補数を共有し、`AlignmentWorkUsed`・`AlignmentFallbackReason` を返します。`ComparisonOptions.InlineCharacterLevel=false` は文字絞込みを省略し、テキスト行内区間と表行対応で単語区間を使います。外側の表行末は `CompareLineEndings=true` のとき差分になります。初期decodedアンカー分割と旧GNU diffの同値性は未確認です。
+初期行対応は、比較設定を適用した復号セル値を長さ付きの行キーにまとめ、GNU行算法で一致組を求めます。三者の右→左は各統合変更区間だけを比較し、範囲外の一致を流用しません。変更ブロック内はraw WordDiffの一致文字量でbest-pairを選び、三者は01/12/20のmapを合成します。GNU分類・算法とraw処理は全ブロックで予算を共有し、候補数も制限します。`AlignmentWorkUsed`・`AlignmentFallbackReason` を返し、全文同値と共通端の線形確認は予算0でも行います。`ComparisonOptions.InlineCharacterLevel=false` は文字絞込みを省略し、テキスト行内区間と表行対応で単語区間を使います。外側の表行末は `CompareLineEndings=true` のとき差分になります。旧callerのraw CSV入力変換・引用内改行escapeを含む全行対応の完全互換は未確認です。

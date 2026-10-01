@@ -11,28 +11,63 @@ internal static class GnuLineMatcher
         IReadOnlyList<TextLine> sourceLeft, IReadOnlyList<TextLine> sourceRight,
         int[] activeLeft, int[] activeRight, ComparisonOptions options, CancellationToken token)
     {
-        var budget = new Budget(Math.Clamp(options.MaxFallbackComparisons, 0, GnuLineDiffer.MaximumWork), token);
-        var pairs = new List<(int A, int B)>();
-        if (left.Length == right.Length && FullyEqual())
+        return MatchCore(left, 0, left.Length, right, 0, right.Length,
+            options.MaxFallbackComparisons, token, BoundaryEqual);
+
+        bool BoundaryEqual(int ai, int bi)
         {
-            for (var index = 0; index < left.Length; index++)
+            token.ThrowIfCancellationRequested();
+            var a = sourceLeft[activeLeft[ai]];
+            var b = sourceRight[activeRight[bi]];
+            if (!EqualText(a.Content, b.Content, token) ||
+                (options.CompareLineEndings ? !EqualText(a.Ending, b.Ending, token)
+                    : (a.Ending.Length == 0) != (b.Ending.Length == 0))) return false;
+            // 同じ原文でも前の行のコメント状態などで比較キーが異なる場合は本文へ残す。
+            return EqualKey(left[ai], right[bi], token);
+        }
+    }
+
+    // 復号セル等の意味キーを原配列の範囲で比較し、絶対座標の一致組を返す。
+    internal static GnuLineMatches MatchSemantic(GnuLineKey[] left, int leftStart, int leftEnd,
+        GnuLineKey[] right, int rightStart, int rightEnd, int maxWork, CancellationToken token)
+    {
+        ArgumentNullException.ThrowIfNull(left);
+        ArgumentNullException.ThrowIfNull(right);
+        if (leftStart < 0 || leftEnd < leftStart || leftEnd > left.Length)
+            throw new ArgumentOutOfRangeException(nameof(leftStart));
+        if (rightStart < 0 || rightEnd < rightStart || rightEnd > right.Length)
+            throw new ArgumentOutOfRangeException(nameof(rightStart));
+        return MatchCore(left, leftStart, leftEnd, right, rightStart, rightEnd, maxWork, token,
+            (ai, bi) => EqualKey(left[ai], right[bi], token));
+    }
+
+    private static GnuLineMatches MatchCore(GnuLineKey[] left, int leftStart, int leftEnd,
+        GnuLineKey[] right, int rightStart, int rightEnd, int maxWork, CancellationToken token,
+        Func<int, int, bool> boundaryEqual)
+    {
+        token.ThrowIfCancellationRequested();
+        var budget = new Budget(Math.Clamp(maxWork, 0, GnuLineDiffer.MaximumWork), token);
+        var pairs = new List<(int A, int B)>();
+        if (leftEnd - leftStart == rightEnd - rightStart && FullyEqual())
+        {
+            for (var index = 0; index < leftEnd - leftStart; index++)
             {
                 token.ThrowIfCancellationRequested();
-                pairs.Add((index, index));
+                pairs.Add((leftStart + index, rightStart + index));
             }
             return new(pairs.AsReadOnly(), 0, false, null);
         }
-        var prefix = 0;
-        var endLeft = left.Length;
-        var endRight = right.Length;
-        // io.cのhorizon=0と同様に原文一致の完全行だけを本文の外へ出す。
+        var beginLeft = leftStart;
+        var beginRight = rightStart;
+        var endLeft = leftEnd;
+        var endRight = rightEnd;
+        // Textはio.cのhorizon=0に沿う原文境界、意味キーは復号一致境界を使う。
         // 線形の境界走査は従来どおり予算0でも行い、取消を文字単位で確認する。
-        while (prefix < endLeft && prefix < endRight && BoundaryEqual(prefix, prefix))
+        while (beginLeft < endLeft && beginRight < endRight && boundaryEqual(beginLeft, beginRight))
         {
-            pairs.Add((prefix, prefix));
-            prefix++;
+            pairs.Add((beginLeft++, beginRight++));
         }
-        while (endLeft > prefix && endRight > prefix && BoundaryEqual(endLeft - 1, endRight - 1))
+        while (endLeft > beginLeft && endRight > beginRight && boundaryEqual(endLeft - 1, endRight - 1))
         {
             endLeft--;
             endRight--;
@@ -42,8 +77,8 @@ internal static class GnuLineMatcher
         string? reason = null;
         try
         {
-            var countLeft = endLeft - prefix;
-            var countRight = endRight - prefix;
+            var countLeft = endLeft - beginLeft;
+            var countRight = endRight - beginRight;
             if (countLeft != 0 || countRight != 0)
             {
                 if (countLeft > 262_144 || countRight > 262_144)
@@ -52,8 +87,8 @@ internal static class GnuLineMatcher
                 var a = new int[countLeft];
                 var b = new int[countRight];
                 var classes = new Dictionary<GnuLineKey, int>(new KeyComparer(budget));
-                Classify(left, a);
-                Classify(right, b);
+                Classify(left, beginLeft, a);
+                Classify(right, beginRight, b);
                 var script = GnuLineDiffer.Compare(a, b, classes.Count + 1, budget.Remaining, token);
                 budget.Spend(script.WorkUsed);
                 fallback = script.Fallback;
@@ -82,17 +117,17 @@ internal static class GnuLineMatcher
                             token.ThrowIfCancellationRequested();
                             if (a[cursorLeft] != b[cursorRight])
                                 throw new InvalidOperationException("GNU scriptの一致行が異なります。");
-                            middle.Add((prefix + cursorLeft++, prefix + cursorRight++));
+                            middle.Add((beginLeft + cursorLeft++, beginRight + cursorRight++));
                         }
                     }
                 }
 
-                void Classify(GnuLineKey[] keys, int[] equivalents)
+                void Classify(GnuLineKey[] keys, int first, int[] equivalents)
                 {
                     for (var index = 0; index < equivalents.Length; index++)
                     {
                         budget.Spend();
-                        var key = keys[prefix + index];
+                        var key = keys[first + index];
                         if (!classes.TryGetValue(key, out var equivalent))
                         {
                             equivalent = classes.Count + 1; // 原本の予約class 0を使わない。
@@ -110,7 +145,7 @@ internal static class GnuLineMatcher
             middle.Clear();
         }
         pairs.AddRange(middle);
-        while (endLeft < left.Length && endRight < right.Length)
+        while (endLeft < leftEnd && endRight < rightEnd)
         {
             token.ThrowIfCancellationRequested();
             pairs.Add((endLeft++, endRight++));
@@ -119,29 +154,20 @@ internal static class GnuLineMatcher
 
         bool FullyEqual()
         {
-            for (var index = 0; index < left.Length; index++)
+            for (var index = 0; index < leftEnd - leftStart; index++)
             {
                 token.ThrowIfCancellationRequested();
-                if (left[index].MissingFinalNewline != right[index].MissingFinalNewline ||
-                    !EqualText(left[index].Content, right[index].Content, token) ||
-                    !EqualText(left[index].Ending, right[index].Ending, token)) return false;
+                if (!EqualKey(left[leftStart + index], right[rightStart + index], token)) return false;
             }
             return true;
         }
+    }
 
-        bool BoundaryEqual(int ai, int bi)
-        {
-            token.ThrowIfCancellationRequested();
-            var a = sourceLeft[activeLeft[ai]];
-            var b = sourceRight[activeRight[bi]];
-            if (!EqualText(a.Content, b.Content, token) ||
-                (options.CompareLineEndings ? !EqualText(a.Ending, b.Ending, token)
-                    : (a.Ending.Length == 0) != (b.Ending.Length == 0))) return false;
-            // 同じ原文でも前の行のコメント状態などで比較キーが異なる場合は本文へ残す。
-            return left[ai].MissingFinalNewline == right[bi].MissingFinalNewline &&
-                EqualText(left[ai].Content, right[bi].Content, token) &&
-                EqualText(left[ai].Ending, right[bi].Ending, token);
-        }
+    private static bool EqualKey(GnuLineKey left, GnuLineKey right, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        return left.MissingFinalNewline == right.MissingFinalNewline &&
+            EqualText(left.Content, right.Content, token) && EqualText(left.Ending, right.Ending, token);
     }
 
     private static bool EqualText(string left, string right, CancellationToken token)

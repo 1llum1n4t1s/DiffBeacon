@@ -14,6 +14,7 @@ internal sealed class WordLineAlignment
     private int remaining;
     private int candidates;
     internal bool Fallback { get; private set; }
+    internal int RemainingWork => remaining;
     internal int WorkUsed => initialWork - remaining;
     internal string? FallbackReason { get; private set; }
 
@@ -31,6 +32,17 @@ internal sealed class WordLineAlignment
             Whitespace = options.IgnoreWhitespace || options.Whitespace == WhitespaceMode.IgnoreAll ? WordWhitespaceMode.IgnoreAll :
                 options.Whitespace == WhitespaceMode.IgnoreChanges ? WordWhitespaceMode.IgnoreChanges : WordWhitespaceMode.CompareAll
         };
+    }
+
+    // 初期GNUとraw対応は、全pair・全blockで同じ残予算を消費する。
+    internal void AccountInitialMatches(GnuLineMatches matches)
+    {
+        ArgumentNullException.ThrowIfNull(matches);
+        token.ThrowIfCancellationRequested();
+        if (matches.WorkUsed < 0 || matches.WorkUsed > remaining)
+            throw new InvalidOperationException("GNU行対応の作業量が共有残予算を超えています。");
+        remaining -= matches.WorkUsed;
+        if (matches.Fallback) MarkFallback(matches.FallbackReason ?? "gnu-input");
     }
 
     internal IReadOnlyList<AlignedTableRow> Align(TableDocument[] documents, int[] starts, int[] ends,

@@ -4,6 +4,8 @@ GNU算法の限定実行は `--gnu-line-only`。原本の同値クラスと変�
 
 通常テキスト比較への接続は `--gnu-text-only` で限定実行する。原本のdefault 273ケースの元bytesをBOM・EOLごと実ファイルへ戻し、通常 `--compare --eol strict --max-work 8000000` の元行番号から変更scriptを復元して照合する。逆順4095/4097だけ予算退避を許容し、他ケースの不一致・退避は失敗とする。フィルター、共通端保持、予算0/1、巨大一行、EOF、EOL、三者マージとパッチ再構成も確認する。`gnu-text-observations.json` と全入力・終了コード・ログ・assertionsを保持する。両GNU検証は全体E2Eにも含み、限定実行は全体の代替にしない。
 
+表の初期GNU行対応は `--gnu-table-only` で限定実行する。原本defaultのA/B・LF全225ケースから、各変更が片側だけの143ケースを選び、元bytes・SHAを維持してCLIの全元行対応とHTMLの全セル・ghost・色を原本scriptと照合する。両側変更のraw採点はこのscriptから推定しない。引用表記だけの差と三者の無変更側一致、予算0/1/120の全元行保持・GNU退避理由、EOL・EOFも検証し、`gnu-table-observations.json` と入力・出力を保持する。全体E2Eにも含み、旧callerの全raw CSV入力変換との互換は宣言しない。
+
 表行対応の三者回帰では引用符・大小文字・空白・置換設定・部分挿入・左右反転の8ケースを別プロセスで検証する。既知の復号一致組とHTMLのEqual表示、予算0の全元行保持を照合し、入力と対応JSONを保存する。
 
 表行対応の限定実行は `--line-alignment-only`。88件の元関数golden、三者の元行保持、CLI/HTMLの共通対応、4096境界・共有予算・不正引数・入力保持を実アプリ別プロセスで検証する。[fixture契約](../Fixtures/LineAlignment/README.md)に全ブロックoracleと初期アンカー分割の検証範囲を記載する。全体実行にも含める。

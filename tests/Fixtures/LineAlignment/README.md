@@ -10,7 +10,7 @@
 
 元の20入力×4設定＝80ケースを固定snapshotとして保持する。pairdummy補正版はscores4ケースだけ異なり、全mappingは同一。E2Eは両方のSHAと80mappingの一致を確認し、scoresを製品の期待値には使わない。expanded版から `4096-both-edge` と `offset-prefix-three` の追加8件だけを合流し、計88件を実行する。既存80件は上書きしない。
 
-設定0は文字比較・EOL無視、1は単語比較・EOL無視、2は文字比較・EOL厳密、3は文字比較・EOL無視・case無視・全空白無視。全rawブロックを明示して得た oracle と、製品の decoded prefix/suffix/patience アンカーが区切る結果は、全ケースで同一にはならない。
+設定0は文字比較・EOL無視、1は単語比較・EOL無視、2は文字比較・EOL厳密、3は文字比較・EOL無視・case無視・全空白無視。全rawブロックを明示して得た oracle と、製品の decoded キーに対するGNU初期一致組が区切る結果は、全ケースで同一にはならない。
 
 採取JSONの末尾CRLFを含むbytesをSHAの対象にする。3goldenは `.gitattributes` の `-text` でGitの改行変換を禁止し、Windows/Macのcheckoutで同じ採取bytesを保持する。
 

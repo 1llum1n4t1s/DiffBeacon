@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | テキストの二者比較・三者マージ | 差分行・行内強調、差分移動、両方向コピー、編集、保存、競合表示、CLI、左・祖先・右・結果の4ペイン、差分単位の順序付き採用・Undo/Redo・未解決状態・行の由来 | [マージ結果セッション](MERGE-SESSION.md)を実装。旧エディターの構文強調、矩形選択、同期点、移動行、全ショートカット、由来の行番号マージン表示・セッション永続化は未完了 |
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
-| 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧GNUの初期ブロック分割・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
+| 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
 | 画像 | 左右表示、重ね合わせ、倍率・閾値、ピクセル差分 | 各1600万ピクセル上限。複数ページは先頭だけ。ベクター、OCR、全画像形式・画像マージは未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
@@ -34,7 +34,7 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 原本4 translation unitを変更せずMSVCで実行した6,048ケースと全UTF-16文字分類を採取した。CRT C / Windows分類を固定して全OSで使用する。実測で発見したタイトルケース・上付き数字の差を修正した。これは元ソース実行との比較であり、旧GUI配布バイナリの全設定・全字素規則との一致ではない。NULファイルは既存TextDocument契約により拒否する。詳細な出典と失敗条件は [WordDiff E2E](../tests/Fixtures/WordDiffs/README.md) を参照する。
 
-表の変更ブロックはraw WordDiffの共通文字量・best-pair・4096本文上限・三者20写像へ接続した。全ブロック共有予算と不変条件による安全なzipを追加し、CLI三者指定と単語/EOL/予算設定を接続した。三者の統合区間でも復号一致アンカーを保持し、引用表記の違いだけで無変更側の行が追加・削除になる回帰を修正した。初期ブロック分割はdecodedアンカーのままで旧GNU diffとは未同値。旧callerの全設定、フィルター後の座標、全Unicode/パーサー分岐とプロジェクトの追加設定は引き続き未完了。元関数goldenの出典は[表行対応fixture](../tests/Fixtures/LineAlignment/README.md)。
+表の変更ブロックはraw WordDiffの共通文字量・best-pair・4096本文上限・三者20写像へ接続した。全ブロック共有予算と不変条件による安全なzipを追加し、CLI三者指定と単語/EOL/予算設定を接続した。三者の統合区間でも復号一致アンカーを保持し、引用表記の違いだけで無変更側の行が追加・削除になる回帰を修正した。後続のGNU行算法接続は下記に記載する。旧callerの全設定、フィルター後の座標、全Unicode/パーサー分岐とプロジェクトの追加設定は引き続き未完了。元関数goldenの出典は[表行対応fixture](../tests/Fixtures/LineAlignment/README.md)。
 
 再開後の通常DLL全E2Eは5,778成功・0失敗・8スキップ、表行対応の限定E2Eは1,948成功・0失敗、headless UIは230成功・0失敗。Windows x64 Native AOTは5,809 E2E成功・0失敗・3スキップ、230 UI成功。SDK10.0.401、buildとAOT発行のCS/IL/MSB警告0。独立レビューの成立した三者一致回帰を修正し、実CLI/HTMLとGUIで照合した。入力・対応JSON・PNG・ログは `artifacts/verification/table-line-alignment` に保持する。
 
@@ -50,8 +50,15 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 
 原本default 273ケースの元bytesから通常CLIへ接続し271 script完全一致、逆順4095/4097の2件だけ8M予算退避を確認した。通常GNU限定E2Eは3399成功・0失敗、通常DLLの全体E2Eは12367成功・0失敗・8skip。独立レビューでP1/P2なし、新しい文脈の120追加入力も原本script・元行順序・本文・span境界など1442検証すべて成功。headless UIは233成功・0失敗で、反復行の原本対応と4097行の全行保持・上限表示を確認した。SDK10.0.401、最終Rebuildの警告0。成果物は `artifacts/verification/gnu-text` と `artifacts/verification/gnu-review`。最初の限定実行は更新前の検証器が従来の全体検証を走ったため採用せず、全solution Rebuild後に対象ケース選択とコード／程序集SHAを照合して再実行した。
 
-Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成功・0失敗、コンパイラーのCS/IL/MSB警告0。リンク拒否の経路も管理者実行で検証し、実行主体・アプリSHA・Python実体・終了コードを保存した。通常DLLの8skipと区別する。表の初期ブロック分割は復号セルアンカーのままで旧GNUと未同値。旧callerのUTF-8一時文書・引用内改行escape・全Unicodeとフィルター設定の厳密な互換は残る。GNU追加分の残る3構成はGitHubで検証する。上記4構成CIは `118f76461` の表行対応までであり、このGNU追加分を含まない。
+Windows x64 Native AOTは12398 E2E成功・0失敗・3skip、headless UI233成功・0失敗、コンパイラーのCS/IL/MSB警告0。リンク拒否の経路も管理者実行で検証し、実行主体・アプリSHA・Python実体・終了コードを保存した。通常DLLの8skipと区別する。表の初期行対応への後続接続は下記に記載する。旧callerのUTF-8一時文書・引用内改行escape・全Unicodeとフィルター設定の厳密な互換は残る。この通常テキストGNU追加分は `5ea416e1778d3a6b8713c43bdb074c6a054e99df` の [GitHub run 36845332993](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36845332993) で全4構成に成功し、[同SHAのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36845332985)も成功した。Windows各12398 E2E成功・0失敗・3skip、Mac各12407成功・0失敗・2skip、headless UIは全構成233成功、SDK10.0.401、CS/IL/MSB警告0。表のGNU接続はこのrunに含まれない。
 
+## 復号セル行へ接続した GNU 行算法
+
+表の初期patienceアンカーをGNU行算法へ置換した。比較設定を適用した復号セル値と外側EOLを構造キーにし、引用表記だけの差は同値として扱う。祖先との全体一致組を保持し、右→左は各統合変更区間の範囲だけを比較する。GNU分類・算法と後段のraw WordDiff・投影・採点・三者合成で同じ予算を消費し、最初の退避理由と使用量を返す。旧callerのraw CSV一時文書・引用内改行escape・全フィルター座標との完全互換は未確認。
+
+原本A/B・LFの225ケースから各変更が片側だけの143ケースを選び、全元bytes・SHA・scriptを保持して通常表CLIとHTMLを照合し、143件すべて一致した。両側変更のraw採点はこのscriptから推定せず、既存88件の別oracleを維持する。GNU表限定E2Eは2952成功・0失敗、既存行対応限定E2Eは1948成功・0失敗、通常DLL全体E2Eは15318成功・0失敗・8skip。headless UIは235成功・0失敗で、反復行のGNU対応とHTMLの元行を確認した。Release buildは警告0・エラー0。初回は検証器が原本A/Bを小文字a/bと誤認し入力確認256項目だけ失敗したが、元fixtureと期待mapを維持して修正した。初回と修正後の成果物を別々に保持する。
+
+新しい文脈の独立レビューは82ケース・84CLIプロセスを実行しP1/P2なし。非ゼロで異なる開始座標を持つ三者区間の明示期待値とHTML、GNU後の投影や後続blockでの予算退避、引用表記だけ違う無変更側一致も成功。取消はこの独立レビューでは静的確認のみ。成果物は `artifacts/verification/gnu-table` と `artifacts/verification/gnu-table-review`。Windows x64 Native AOTは15349 E2E成功・0失敗・3skip、235 UI成功、CS/IL/MSB警告0。管理者実行・Python実体・アプリSHA・未コミット状態とソース指紋を保存した。残る3構成はこの表接続を含むSHAでGitHub検証し、別途記録する。
 ## 表のセル内検索・置換
 
 同セル内の前後一致と折返し、固定した文字選択範囲、一件・選択ペイン内の全置換と一括Undoを追加した。decoded値で一致を計画し、既存の `ReplaceCell` を通して必要なセルだけを再引用する。capture展開を制限し、未反映セル編集・古い選択・計画中の対象変更を拒否する。原文反映後に再比較を取消した場合も原文とモデルを復元する。長い一覧セルは512文字・高さ64までのプレビューとし、編集・検索・保存・HTMLの全文を保持する。詳細は[表の操作](TABLE-EDITOR.md)を参照する。

@@ -56,7 +56,7 @@ public sealed class TableComparisonResult
     }
 }
 
-// 初期ブロックはセルの一致アンカーで区切り、変更ブロック内は旧raw一致量で対応する。
+// 初期ブロックは復号セルキーのGNU一致で区切り、変更ブロック内は旧raw一致量で対応する。
 internal sealed class TableAlignment
 {
     internal const int MaxTextLength = 64 * 1024 * 1024;
@@ -83,10 +83,10 @@ internal sealed class TableAlignment
 
     private TableComparisonResult Run(TableDocument[] documents)
     {
-        var keys = new string[documents.Length][];
+        var keys = new GnuLineKey[documents.Length][];
         for (var side = 0; side < documents.Length; side++)
         {
-            keys[side] = new string[documents[side].Rows.Count];
+            keys[side] = new GnuLineKey[documents[side].Rows.Count];
             for (var row = 0; row < keys[side].Length; row++)
             {
                 token.ThrowIfCancellationRequested();
@@ -96,8 +96,9 @@ internal sealed class TableAlignment
                     token.ThrowIfCancellationRequested();
                     AppendPart(key, CellKey(cell.Value));
                 }
-                if (options.CompareLineEndings) AppendPart(key, documents[side].Rows[row].Ending);
-                keys[side][row] = key.ToString();
+                // 外側行末はセル本文のキーから分離し、外側EOFの新しい比較条件を加えない。
+                keys[side][row] = new(key.ToString(),
+                    options.CompareLineEndings ? documents[side].Rows[row].Ending : "", false);
             }
         }
         List<AlignedTableRow> rows;
@@ -217,11 +218,11 @@ internal sealed class TableAlignment
 
     private readonly record struct Edit(int Side, int Begin, int End, int OtherCount);
 
-    private List<AlignedTableRow> AlignThree(TableDocument[] documents, string[][] keys)
+    private List<AlignedTableRow> AlignThree(TableDocument[] documents, GnuLineKey[][] keys)
     {
         // Base上の変更区間を統合し、その区間ごとに01/12/20を作る。20の無効化を次blockへ持ち越さない。
         var edits = new List<Edit>();
-        var matches = new List<(int A, int B)>[3];
+        var matches = new IReadOnlyList<(int A, int B)>[3];
         var matchPositions = new int[3];
         foreach (var side in new[] { 0, 2 })
         {
@@ -301,80 +302,16 @@ internal sealed class TableAlignment
         }
     }
 
-    private List<(int A, int B)> ExactMatches(string[] a, string[] b)
+    private IReadOnlyList<(int A, int B)> ExactMatches(GnuLineKey[] a, GnuLineKey[] b)
         => ExactMatches(a, 0, a.Length, b, 0, b.Length);
 
-    private List<(int A, int B)> ExactMatches(string[] a, int aStart, int aEnd, string[] b, int bStart, int bEnd)
+    private IReadOnlyList<(int A, int B)> ExactMatches(GnuLineKey[] a, int aStart, int aEnd,
+        GnuLineKey[] b, int bStart, int bEnd)
     {
-        var result = new List<(int A, int B)>();
-        while (aStart < aEnd && bStart < bEnd && a[aStart] == b[bStart])
-        {
-            token.ThrowIfCancellationRequested();
-            result.Add((aStart++, bStart++));
-        }
-        var suffix = 0;
-        while (aStart < aEnd - suffix && bStart < bEnd - suffix && a[aEnd - suffix - 1] == b[bEnd - suffix - 1])
-        {
-            token.ThrowIfCancellationRequested();
-            suffix++;
-        }
-        aEnd -= suffix;
-        bEnd -= suffix;
-        result.AddRange(Anchors(a, aStart, aEnd, b, bStart, bEnd));
-        for (var index = 0; index < suffix; index++)
-        {
-            token.ThrowIfCancellationRequested();
-            result.Add((aEnd + index, bEnd + index));
-        }
-        return result;
-    }
-
-    private List<(int A, int B)> Anchors(string[] a, int aStart, int aEnd, string[] b, int bStart, int bEnd)
-    {
-        var occurrences = new Dictionary<string, (int A, int B)>(StringComparer.Ordinal);
-        for (var index = aStart; index < aEnd; index++)
-        {
-            token.ThrowIfCancellationRequested();
-            occurrences[a[index]] = occurrences.TryGetValue(a[index], out var entry) ? (-1, entry.B) : (index, -1);
-        }
-        for (var index = bStart; index < bEnd; index++)
-        {
-            token.ThrowIfCancellationRequested();
-            if (occurrences.TryGetValue(b[index], out var entry))
-                occurrences[b[index]] = (entry.A, entry.B == -1 ? index : -2);
-        }
-        var candidates = new List<(int A, int B)>();
-        for (var index = aStart; index < aEnd; index++)
-        {
-            token.ThrowIfCancellationRequested();
-            var entry = occurrences[a[index]];
-            if (entry.A == index && entry.B >= 0) candidates.Add((index, entry.B));
-        }
-        var tails = new List<int>();
-        var previous = new int[candidates.Count];
-        for (var index = 0; index < candidates.Count; index++)
-        {
-            token.ThrowIfCancellationRequested();
-            var low = 0;
-            var high = tails.Count;
-            while (low < high)
-            {
-                var middle = (low + high) / 2;
-                if (candidates[tails[middle]].B < candidates[index].B) low = middle + 1;
-                else high = middle;
-            }
-            previous[index] = low == 0 ? -1 : tails[low - 1];
-            if (low == tails.Count) tails.Add(index);
-            else tails[low] = index;
-        }
-        var result = new List<(int A, int B)>();
-        for (var index = tails.Count == 0 ? -1 : tails[^1]; index >= 0; index = previous[index])
-        {
-            token.ThrowIfCancellationRequested();
-            result.Add(candidates[index]);
-        }
-        result.Reverse();
-        return result;
+        var matches = GnuLineMatcher.MatchSemantic(a, aStart, aEnd, b, bStart, bEnd,
+            alignment.RemainingWork, token);
+        alignment.AccountInitialMatches(matches);
+        return matches.Pairs;
     }
 
 }

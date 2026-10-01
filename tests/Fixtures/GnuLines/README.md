@@ -40,3 +40,5 @@ table-*は旧表保存のESC化に合うbytesを手書きした採取入力で�
 | `Src/diffutils/src/io.c` | `1fe0a8fa9701e90ff65df8538befe228d6787712a6f2da77f456bddc91b17fde` |
 | `Src/diffutils/src/util.c` | `79507d8f97c4f7718c84c422b94a3c052719d22a36df3da206b92f5b7c747600` |
 | `Src/diffutils/lib/cmpbuf.c` | `db087b3d93518eb5b0fea4c1feaec008c7cbfed954757f9b6550c37e76fb8fa5` |
+
+表の初期GNU行対応はdefault A/B・LFの225ケースから各変更が片側のみの143ケースを選び、元bytes・SHAを保持して実CLIの元行対応とHTMLの全セル・種類・ghostを照合する。限定実行は `--gnu-table-only`、選択と一致一覧は `gnu-table-observations.json`。両側変更のraw採点を原本scriptから推定せず、88件の別行対応fixtureへ分ける。引用表記の復号同値・三者の無変更側一致、共有予算・EOL/EOFを追加検証する。旧raw CSV callerの全入力変換の同値性は未確認。

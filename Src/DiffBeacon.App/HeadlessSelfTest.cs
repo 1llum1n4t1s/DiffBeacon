@@ -616,6 +616,23 @@ internal static class HeadlessSelfTest
                 "<td data-side=\"left\" data-row=\"2\" data-aligned-row=\"2\"[^>]*class=\"Equal\"")
                 && File.ReadAllText(decodedLeft) == decodedLeftText && File.ReadAllText(decodedBase) == decodedBaseText);
             Screenshot("table-decoded-anchors.png");
+            var gnuTableLeft = Path.Combine(output, "gnu-table-left.csv");
+            var gnuTableRight = Path.Combine(output, "gnu-table-right.csv");
+            File.WriteAllText(gnuTableLeft, "a\nb\na\n", new UTF8Encoding(false));
+            File.WriteAllText(gnuTableRight, "b\na\nb\n", new UTF8Encoding(false));
+            reportPane.DiscardChanges(); reportPane.ApplyProject(new() { LeftPath = gnuTableLeft, RightPath = gnuTableRight, Mode = "Table" });
+            Pump(reportPane.CompareProjectAsync()); Dispatcher.UIThread.RunJobs();
+            var gnuTable = reportPane.GetVisualDescendants().OfType<TablePanel>().Single();
+            Check("GNU table repeated rows follow original initial script", !gnuTable.Comparison.AlignmentFallback
+                && gnuTable.Comparison.Rows.Select(row => (row.LeftRow, row.RightRow)).SequenceEqual(
+                    new (int?, int?)[] { (1, null), (2, 1), (3, 2), (null, 3) }));
+            Screenshot("gnu-table-repeated.png");
+            var gnuTableReport = Path.Combine(output, "gnu-table-repeated.html"); Pump(reportPane.SaveReportAsync(gnuTableReport));
+            var gnuTableHtml = File.ReadAllText(gnuTableReport);
+            Check("GNU table GUI report retains original input and initial match coordinates", File.ReadAllText(gnuTableLeft) == "a\nb\na\n"
+                && File.ReadAllText(gnuTableRight) == "b\na\nb\n"
+                && System.Text.RegularExpressions.Regex.IsMatch(gnuTableHtml, "<td data-side=\"left\" data-row=\"2\" data-aligned-row=\"2\"[^>]*class=\"Equal\"")
+                && System.Text.RegularExpressions.Regex.IsMatch(gnuTableHtml, "<td data-side=\"right\" data-row=\"1\" data-aligned-row=\"2\"[^>]*class=\"Equal\""));
             var alignedLeft = Path.Combine(output, "table-edit-left.csv"); var alignedRight = Path.Combine(output, "table-edit-right.csv");
             var alignedBase = Path.Combine(output, "table-edit-base.csv");
             const string rawTable = "id;value;keep\r\n1;'two\r\nlines';'raw''quote'\r\n2;tail;\r\n";
