@@ -51,7 +51,8 @@ public static class ProjectReport
     public static async Task ExportAsync(ComparisonWorkspace workspace, int entryIndex, string output,
         string? sourceProject = null, CancellationToken token = default,
         int? leftFrame = null, int? rightFrame = null, double? imageThreshold = null, int? middleFrame = null,
-        ImageOffset? leftOffset = null, ImageOffset? middleOffset = null, ImageOffset? rightOffset = null)
+        ImageOffset? leftOffset = null, ImageOffset? middleOffset = null, ImageOffset? rightOffset = null,
+        int? insertionDeletionMode = null)
     {
         _ = WorkspaceStore.SerializeWorkspace(workspace);
         if ((uint)entryIndex >= (uint)workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entryIndex), "比較の番号が範囲外です。");
@@ -71,6 +72,7 @@ public static class ProjectReport
             ImageComparisonEngine.Snapshot[] images = middleImage is null ? [leftImage, rightImage] : [leftImage, middleImage, rightImage];
             int[]? numbers = selected ? middleImage is null ? [leftFrame!.Value, rightFrame!.Value] : [leftFrame!.Value, middleFrame!.Value, rightFrame!.Value] : null;
             var settings = project.ImageSettings;
+            if (insertionDeletionMode.HasValue) settings = settings with { InsertionDeletionMode = insertionDeletionMode.Value };
             if (middleImage is null && middleOffset.HasValue) throw new ArgumentException("中央の画像位置は三者比較だけです。");
             settings = settings with { LeftOffset = leftOffset ?? settings.LeftOffset,
                 MiddleOffset = middleOffset ?? settings.MiddleOffset, RightOffset = rightOffset ?? settings.RightOffset };
@@ -80,12 +82,12 @@ public static class ProjectReport
                 : [project.LeftDescription ?? project.LeftPath, project.BaseDescription ?? project.BasePath, project.RightDescription ?? project.RightPath];
             var imageHtml = await Task.Run(() => ImageReport.Create(new(images, imageThreshold ?? settings.Threshold, numbers,
                 ShowDifferences: settings.ShowDifferences, Orientations: settings.Orientations(middleImage is not null), BlockSize: settings.BlockSize,
-                Offsets: settings.Offsets(middleImage is not null)), titles, token), token).ConfigureAwait(false);
+                Offsets: settings.Offsets(middleImage is not null), InsertionDeletionMode: settings.InsertionDeletionMode), titles, token), token).ConfigureAwait(false);
             await SaveAsync(target, imageHtml, entries, sourceProject, token).ConfigureAwait(false);
             return;
         }
         if (leftFrame.HasValue || rightFrame.HasValue || imageThreshold.HasValue || middleFrame.HasValue
-            || leftOffset.HasValue || middleOffset.HasValue || rightOffset.HasValue)
+            || leftOffset.HasValue || middleOffset.HasValue || rightOffset.HasValue || insertionDeletionMode.HasValue)
             throw new ArgumentException("フレーム・閾値のレポート指定は画像比較にだけ使用できます。");
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         async Task<string> Read(string path)

@@ -16,7 +16,15 @@ TIFFは`.tif`／`.tiff`のclassic TIFFとBigTIFF、両byte orderの主IFDをペ�
 
 ペイン選択欄で対象を選び、「左90°」「右90°」「左右反転」「上下反転」を使う。読取り専用の画像と多ページ画像でも表示を変換できる。変換は水平反転・垂直反転・反時計回り回転の順に適用し、ページを切り替えても保持する。表示の変換だけでは未保存状態やUndo履歴を変更しない。各入力の変換と差分ブロックサイズ（1～256、既定8）は比較プロジェクトに保存する。
 
-静止画像の領域コピーは変換後の表示座標で行い、結果を保存用の原画へ逆写像する。Undo／Redoは原画の変更を復元し、現在の表示変換を保つ。PNG別名保存では回転・反転を焼き込まず、編集済みの原画を保存する。HTMLの主画像は変換後の表示、原画の詳細は変換前の画素を使う。自動位置合わせ、挿入・削除検出、矩形編集、多ページ編集は未対応。
+静止画像の領域コピーは変換後の表示座標で行い、結果を保存用の原画へ逆写像する。Undo／Redoは原画の変更を復元し、現在の表示変換を保つ。PNG別名保存では回転・反転を焼き込まず、編集済みの原画を保存する。HTMLの主画像は変換後の表示、原画の詳細は変換前の画素を使う。自動位置合わせ、矩形編集、多ページ編集は未対応。
+
+## 行・列の挿入と削除
+
+画像設定の「挿入・削除」で「なし」「縦方向」「横方向」を選ぶ。縦方向は行、横方向は列の対応を固定Myers算法で検出し、対応する画素を同じ位置に表示する。欠落側に追加した透明な行・列と、元画像の透明画素を区別して座標対応を保持する。強調は原本と同じ通常色・選択色を使い、変更区間の透明画素には削除色を使う。読取り専用と多ページ画像でも整列表示を選べる。
+
+静止画の差分コピーは比較時の領域と行・列対応を固定し、原画の挿入・削除を末尾側から適用する。Undo／Redoは原画を戻し、現在の整列モードを保つ。いずれかの画像に位置ずらしがある場合、原本と同じく画素コピーのみを行い、行・列の挿入・削除を行わない。原本経路が範囲外を参照する寸法の組は拒否する。表示用の空白行・列や強調をPNGの原画保存へ混入させない。
+
+通常CLIとプロジェクトHTMLには `--insertion-deletion-mode none|vertical|horizontal` を指定できる。比較の寸法・画素SHAは整列後の表示に対応し、HTMLの「原画」は整列前の原画を保持する。比較プロジェクトの `imageSettings.insertionDeletionMode` は0（なし）、1（縦方向）、2（横方向）で、省略時は0。選択したモードはGUI・単体／包装レポートへ引き継ぐ。
 
 通常CLIの `--image` では `--left-orientation 90,1,0` のように角度・水平反転・垂直反転を指定する。角度は0・90・180・270、反転は0または1。中央・右は `--middle-orientation`・`--right-orientation`、ブロックサイズは `--block-size N`。出力する寸法・画素SHA・比較結果は変換後の表示に対応する。中央入力なしの中央変換は拒否する。
 
@@ -64,7 +72,7 @@ TIFFは復号前に全主IFDの範囲・循環・型・タグ順と重複、stri
 
 ## 静止画像コピー核の診断
 
-開発用 `DiffBeacon --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]` は単一フレームの二／三者画像を復号し、GUIと同じ表示変換・領域コピー・全pane共有のUndo／Redoを実行する。診断CLIでは位置ずらしも扱う。挿入削除は使わない。拡張canvasの初期値はzero-filled BGRAで、FreeImageの新規画素・paste処理の完全互換は未確認。[コピーfixture](../tests/Fixtures/ImageCopy/README.md)の無改変原本143ケース・935状態と、[変換fixture](../tests/Fixtures/ImageTransforms/README.md)の288ケース・2,816状態を期待値とする。
+開発用 `DiffBeacon --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]` は単一フレームの二／三者画像を復号し、GUIと同じ表示変換・領域コピー・全pane共有のUndo／Redoを実行する。診断CLIでは位置ずらしと挿入削除も扱う。`mode`操作の`index`は0～2。ルートの`includeAlignment: true`は整列全画素・逆座標を追加し、診断出力だけを共通canvas4096画素までに制限する。[挿入削除fixture](../tests/Fixtures/ImageInsertions/README.md)と[強調fixture](../tests/Fixtures/ImageInsertionHighlight/README.md)を原本とする。拡張canvasの初期値はzero-filled BGRAで、FreeImageの新規画素・paste処理の完全互換は未確認。[コピーfixture](../tests/Fixtures/ImageCopy/README.md)の無改変原本143ケース・935状態と、[変換fixture](../tests/Fixtures/ImageTransforms/README.md)の288ケース・2,816状態も継続して照合する。
 
 scriptは `blockSize`（1..256、既定8）、`threshold`（有限の非負数、既定0）、`readOnly`（入力数と同じbool配列、既定全false）、`actions` を持つJSON object。操作のpane・領域indexは0始まり。未知・重複property、未知kind、必要値の欠落を拒否する。
 

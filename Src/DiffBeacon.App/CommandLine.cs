@@ -18,8 +18,11 @@ internal static class CommandLine
                     + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT] [--max-work N]\n"
                     + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
                     + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
+                    + "開発用: --image-line-script INPUT_JSON [--max-work N]\n"
+                    + "開発用: --image-align LEFT [MIDDLE] RIGHT [--horizontal] [--threshold X] [--block-size N]\n"
                     + "開発用: --image-regions LEFT [MIDDLE] RIGHT [--block-size N] [--threshold X] [--left-frame N [--middle-frame N] --right-frame N] [--highlight-alpha X] [--selected-region N]\n"
                     + "開発用: --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]\n"
+                    + "画像の行・列整列: --image / --report-project に --insertion-deletion-mode none|vertical|horizontal\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n--image LEFT [MIDDLE] RIGHT [--left-frame N [--middle-frame N] --right-frame N] [--threshold X] [--block-size N] [--left-orientation ANGLE,HORIZONTAL,VERTICAL] [--middle-orientation ANGLE,HORIZONTAL,VERTICAL] [--right-orientation ANGLE,HORIZONTAL,VERTICAL] [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y]\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
                     + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y] [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]\n"
@@ -32,6 +35,8 @@ internal static class CommandLine
             var command = args[0];
             if (command == "--word-diff") return await WordDiffCommands.RunAsync(args);
             if (command == "--gnu-line-script") return await GnuLineCommands.RunAsync(args);
+            if (command == "--image-line-script") return await ImageLineCommands.RunAsync(args);
+            if (command == "--image-align") return await ImageAlignmentCommands.RunAsync(args);
             if (command == "--image-regions") return await ImageRegionCommands.RunAsync(args);
             if (command == "--image-copy") return await ImageCopyCommands.RunAsync(args);
             if (command == "--image") return await ImageCommands.RunAsync(args);

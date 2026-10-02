@@ -34,3 +34,12 @@ tests/Fixtures/ImageTransforms/LICENSE.txt -text
 tests/Fixtures/ImageTransforms/ui-golden.json.gz -text
 tests/Fixtures/ImageOffsets/winimerge-offsets-golden.json -text whitespace=cr-at-eol
 tests/Fixtures/ImageOffsets/extract.py -text
+tests/Fixtures/ImageInsertions/extract.py -text
+tests/Fixtures/ImageInsertions/winimerge-insertions-golden.json.gz -text
+tests/Fixtures/ImageLines/winimerge-image-lines-golden.json.gz -text
+tests/Fixtures/ImageLines/reference-source/Diff.hpp -text -whitespace
+tests/Fixtures/ImageInsertionHighlight/winimerge-insertion-highlight-golden.json.gz -text
+tests/Fixtures/ImageInsertionHighlight/extract.py -text
+tests/Fixtures/ImageInsertionHighlight/capture.py -text whitespace=cr-at-eol
+tests/Fixtures/ImageInsertionHighlight/state-function.cpp.txt -text whitespace=cr-at-eol
+tests/Fixtures/ImageInsertionHighlight/LICENSE.txt -text whitespace=cr-at-eol

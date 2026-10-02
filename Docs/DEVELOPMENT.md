@@ -6,6 +6,8 @@
 
 ローカルで展開保持するのは最新のCLI／UI検証と、次の実装に必要な原本採取に限る。E2Eの`--output`には空き容量のあるドライブを指定し、次の実行前に前回の完了済み出力を整理する。ビルドの`bin/obj`は通常の増分ビルドで再利用し、毎回コピーしない。GitHubの4RID検証は維持し、必要な成果物を一度だけ取得・照合した後、古いrunを圧縮する。
 
+GitHubから取得したZIPはそのまま保持し、entryをストリームで読みながらSHA・サイズ・CRCを照合する。確認に使うJSONと代表PNGだけを抽出し、Native AOT発行物や全体E2Eを一括展開しない。実行に展開が必要な場合は対象RIDだけを使い、用途を終えた展開物を照合後に整理してから次のRIDへ進む。
+
 Windowsでは[Compact-Evidence.ps1](../build/Compact-Evidence.ps1)とPython 3.11以降の標準ライブラリの[CompactEvidence.py](../build/CompactEvidence.py)で過去の検証ディレクトリをZIP64へ格納できる。ZIPは入力とは別の場所へ置く。各entryのSHA・サイズと入力の一覧・更新日時・属性が不変であることを確認し、ZIP全体のSHAも照合してから、同じPowerShellセッションで展開元を除去する。リンクと許可root外の操作は拒否する。失敗ログ・入力・出力・PNG・発行物も省略しない。
 
 ```powershell

@@ -32,7 +32,8 @@ internal static class ImageCopyCommands
             var token = cancel.Token;
             using var script = await ReadScriptAsync(scriptPath, token);
             var root = script.RootElement;
-            ValidateObject(root, ["blockSize", "threshold", "readOnly", "actions", "includeOffsets"]);
+            ValidateObject(root, ["blockSize", "threshold", "readOnly", "actions", "includeOffsets", "includeAlignment"]);
+            var includeAlignment = root.TryGetProperty("includeAlignment", out var alignmentJson) && alignmentJson.GetBoolean();
             var includeOffsets = root.TryGetProperty("includeOffsets", out var include) && include.GetBoolean();
             var blockSize = root.TryGetProperty("blockSize", out var block) ? Integer(block) : 8;
             if (blockSize is < 1 or > 256) throw new ArgumentException("ブロックサイズは1..256です。");
@@ -55,7 +56,7 @@ internal static class ImageCopyCommands
                 if (!value.TryGetProperty("kind", out var kindJson) || kindJson.ValueKind != JsonValueKind.String)
                     throw new ArgumentException("画像操作kindが必要です。");
                 var kind = kindJson.GetString()!;
-                if (kind is not ("copy" or "all" or "auto" or "undo" or "redo" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy" or "offset"))
+                if (kind is not ("copy" or "all" or "auto" or "undo" or "redo" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy" or "offset" or "mode"))
                     throw new ArgumentException("未知の画像操作kindです。");
                 int Read(string field, bool required)
                 {
@@ -65,7 +66,8 @@ internal static class ImageCopyCommands
                 }
                 var source = Read("src", kind is "copy" or "all" or "offset");
                 var destination = Read("dst", kind is "copy" or "all" or "auto" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy" or "offset");
-                var index = Read("index", kind is "copy" or "set-savepoint" or "rotate" or "flipx" or "flipy" or "offset");
+                var index = Read("index", kind is "copy" or "set-savepoint" or "rotate" or "flipx" or "flipy" or "offset" or "mode");
+                if (kind == "mode" && index is < 0 or > 2) throw new ArgumentException("画像挿入削除modeは0・1・2です。");
                 if (kind == "offset")
                 {
                     if (destination < 0 || destination >= paths.Count) throw new ArgumentException("位置を変える画像paneが範囲外です。");
@@ -106,7 +108,7 @@ internal static class ImageCopyCommands
                 var frames = snapshots.Select(snapshot => snapshot.Decode(1, token)).ToArray();
                 var session = new ImageEditSession(frames, readOnly, blockSize, threshold, token);
                 using var writer = new Utf8JsonWriter(content);
-                writer.WriteStartObject(); writer.WriteStartArray("states"); WriteState(writer, session, hashesOnly, token, includeOffsets);
+                writer.WriteStartObject(); writer.WriteStartArray("states"); WriteState(writer, session, hashesOnly, token, includeOffsets, includeAlignment);
                 long exportBytes = 0;
                 foreach (var action in actions)
                 {
@@ -114,6 +116,7 @@ internal static class ImageCopyCommands
                     var result = -1;
                     switch (action.Kind)
                     {
+                        case "mode": session.SetInsertionDeletionMode(action.Index, token); break;
                         case "copy": session.Copy(action.Index, action.Source, action.Destination, token); break;
                         case "all": session.CopyAll(action.Source, action.Destination, token); break;
                         case "auto": result = session.AutoMerge(action.Destination, token); break;
@@ -140,7 +143,7 @@ internal static class ImageCopyCommands
                             exports.Add((action.Path!, frame)); session.MarkSaved(action.Destination); result = 1; break;
                     }
                     writer.WriteStartObject(); writer.WriteNumber("actionResult", result); writer.WritePropertyName("state");
-                    WriteState(writer, session, hashesOnly, token, includeOffsets); writer.WriteEndObject();
+                    WriteState(writer, session, hashesOnly, token, includeOffsets, includeAlignment); writer.WriteEndObject();
                     writer.Flush();
                 }
                 writer.WriteEndArray(); writer.WriteEndObject(); writer.Flush();
@@ -181,9 +184,11 @@ internal static class ImageCopyCommands
                 throw new ArgumentException("画像操作scriptに未知または重複したpropertyがあります。");
     }
 
-    private static void WriteState(Utf8JsonWriter writer, ImageEditSession session, bool hashesOnly, CancellationToken token, bool includeOffsets)
+    private static void WriteState(Utf8JsonWriter writer, ImageEditSession session, bool hashesOnly, CancellationToken token, bool includeOffsets, bool includeAlignment)
     {
-        writer.WriteStartObject(); writer.WriteStartArray("frames");
+        writer.WriteStartObject();
+        if (includeAlignment) WriteAlignment(writer, session, hashesOnly, token);
+        writer.WriteStartArray("frames");
         foreach (var frame in session.CaptureViewFrames())
         {
             token.ThrowIfCancellationRequested(); writer.WriteStartObject();
@@ -239,6 +244,41 @@ internal static class ImageCopyCommands
             writer.WriteNumber("modcount", session.ModCount(i)); writer.WriteNumber("savepoint", session.SavePoint(i)); writer.WriteEndObject();
         }
         writer.WriteEndArray(); writer.WriteEndObject(); writer.WriteEndObject();
+    }
+
+    private static void WriteAlignment(Utf8JsonWriter writer, ImageEditSession session, bool hashesOnly, CancellationToken token)
+    {
+        var frames = session.CaptureAlignedFrames(); var offsets = session.CaptureOffsets();
+        var size = ImageOffset.Canvas(frames, offsets);
+        // 全座標の診断出力だけを制限する。通常のコピー処理の上限とは別。
+        if ((long)size.Width * size.Height > 4096) throw new InvalidOperationException("全座標の整列診断は4096画素までです。");
+        writer.WriteNumber("mode", session.InsertionDeletionMode);
+        writer.WriteStartArray("aligned");
+        for (var pane = 0; pane < frames.Count; pane++)
+        {
+            var frame = frames[pane]; var position = offsets[pane];
+            var pixels = new byte[checked(size.Width * size.Height * 4)];
+            for (var y = 0; y < frame.Height; y++)
+            {
+                token.ThrowIfCancellationRequested();
+                frame.Pixels.AsSpan(y * frame.Width * 4, frame.Width * 4)
+                    .CopyTo(pixels.AsSpan(((y + position.Y) * size.Width + position.X) * 4));
+            }
+            writer.WriteStartObject(); writer.WriteNumber("canvasWidth", size.Width); writer.WriteNumber("canvasHeight", size.Height);
+            if (!hashesOnly) writer.WriteString("bgraHex", Convert.ToHexString(pixels));
+            writer.WriteString("sha256", ImageComparisonEngine.PixelHash(pixels, token));
+            writer.WriteStartArray("mapping");
+            for (var y = -1; y <= size.Height; y++)
+            for (var x = -1; x <= size.Width; x++)
+            {
+                token.ThrowIfCancellationRequested();
+                var real = session.ConvertToRealPosition(pane, x, y);
+                writer.WriteStartArray(); writer.WriteNumberValue(x); writer.WriteNumberValue(y); writer.WriteBooleanValue(real.Inside);
+                writer.WriteNumberValue(real.X); writer.WriteNumberValue(real.Y); writer.WriteEndArray();
+            }
+            writer.WriteEndArray(); writer.WriteEndObject();
+        }
+        writer.WriteEndArray();
     }
 
     private sealed class BoundedJsonStream : MemoryStream

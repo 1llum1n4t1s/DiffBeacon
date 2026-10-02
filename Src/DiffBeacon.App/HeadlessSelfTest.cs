@@ -357,6 +357,8 @@ internal static class HeadlessSelfTest
             HeadlessImageProjectChecks.Run(pane, output, Pump, Check, Screenshot);
             HeadlessImageTransformChecks.Run(pane, output, Pump, Check, Screenshot);
             HeadlessImageOffsetChecks.Run(pane, output, Pump, Check, Screenshot);
+            HeadlessImageInsertionChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            HeadlessImageInsertionHighlightChecks.Run(pane, output, Pump, Check, Screenshot);
             pane.BasePath.Text = "";
             pane.DiscardChanges();
             var xmlLeft = Path.Combine(output, "left.xml"); var xmlRight = Path.Combine(output, "right.xml");

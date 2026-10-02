@@ -73,10 +73,12 @@ internal static class ImageComparisonEngine
     internal sealed record ComparisonResult(bool Different, int LeftFrames, int RightFrames, double Threshold,
         string Mode, IReadOnlyList<FrameResult> Frames, int? MiddleFrames);
     internal sealed record FrameComparison(IReadOnlyList<DecodedFrame> Frames, ImageRegionDiffer.Result Regions,
-        PixelComparison Pixels, IReadOnlyList<DecodedFrame>? OriginalFrames = null);
+        PixelComparison Pixels, IReadOnlyList<DecodedFrame>? OriginalFrames = null, long AlignmentWork = 0,
+        ImageLineAlignment.Result? Alignment = null, long CanvasWork = 0);
     internal sealed record ReportInput(IReadOnlyList<Snapshot> Images, double Threshold, IReadOnlyList<int>? FrameNumbers,
         int SelectedDiffIndex = -1, bool ShowDifferences = true, IReadOnlyList<DecodedFrame>? EditedFrames = null,
-        IReadOnlyList<ImageOrientation>? Orientations = null, int BlockSize = 8, IReadOnlyList<ImageOffset>? Offsets = null);
+        IReadOnlyList<ImageOrientation>? Orientations = null, int BlockSize = 8, IReadOnlyList<ImageOffset>? Offsets = null,
+        int InsertionDeletionMode = 0);
 
     internal static async Task<Snapshot> OpenAsync(string path, CancellationToken token)
     {
@@ -190,47 +192,90 @@ internal static class ImageComparisonEngine
     internal static void ValidateThreshold(double threshold)
     { if (!double.IsFinite(threshold) || threshold < 0) throw new ArgumentOutOfRangeException(nameof(threshold), "差分閾値は有限の非負数です。"); }
 
+    internal static void ValidateInsertionDeletionMode(int mode)
+    { if (mode is < 0 or > 2) throw new InvalidDataException("画像の挿入・削除モードは0（なし）、1（縦）、2（横）です。"); }
+
+    internal static int ParseInsertionDeletionMode(string mode) => mode switch
+    {
+        "none" => 0, "vertical" => 1, "horizontal" => 2,
+        _ => throw new ArgumentException("画像の挿入・削除モードはnone、vertical、horizontalです。")
+    };
+
+    private static void ValidateAlignmentWork(long maximumAlignmentWork)
+    {
+        if (maximumAlignmentWork < 0 || maximumAlignmentWork > ImageLineDiffer.MaximumWork)
+            throw new ArgumentOutOfRangeException(nameof(maximumAlignmentWork));
+    }
+
     internal static FrameComparison CompareDecoded(IReadOnlyList<DecodedFrame> frames, double threshold,
         bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
-        IReadOnlyList<ImageOffset>? offsets = null)
+        IReadOnlyList<ImageOffset>? offsets = null, int insertionDeletionMode = 0,
+        long maximumAlignmentWork = ImageLineDiffer.MaximumWork, long maximumCanvasWork = MaximumDecodeWork)
     {
         ValidateThreshold(threshold);
+        ValidateInsertionDeletionMode(insertionDeletionMode);
+        ValidateAlignmentWork(maximumAlignmentWork);
+        if (maximumCanvasWork < 0 || maximumCanvasWork > MaximumDecodeWork) throw new ArgumentOutOfRangeException(nameof(maximumCanvasWork));
         ValidateOrientations(orientations, frames.Count);
         var views = orientations is null ? frames : frames.Select((frame, index) => orientations[index].Apply(frame, token)).ToArray();
         var positions = ImageOffset.Validate(offsets, frames.Count);
+        long work = 0;
+        ImageLineAlignment.Result? alignment = null;
+        if (insertionDeletionMode != 0)
+        {
+            alignment = ImageLineAlignment.Align(views, insertionDeletionMode == 2, threshold, token, maximumAlignmentWork);
+            views = alignment.Frames;
+            work = alignment.Work;
+        }
+        var canvas = ImageOffset.Canvas(views, positions);
+        var canvasWork = checked((long)canvas.Width * canvas.Height * (frames.Count + 1));
+        if (canvasWork > maximumCanvasWork) throw new InvalidOperationException("画像の描画作業量が256Mピクセルを超えます。");
         var regions = ImageRegionDiffer.Compare(views, blockSize, threshold, token, positions);
         var pixels = ComparePixels(views[0], views[^1], threshold, includeDifferencePixels, token, positions[0], positions[^1]);
-        return new(views, regions, pixels, frames);
+        return new(views, regions, pixels, frames, work, alignment, canvasWork);
     }
 
     internal static FrameComparison DecodeSelection(IReadOnlyList<Snapshot> images, IReadOnlyList<int> numbers,
         double threshold, bool includeDifferencePixels, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
-        IReadOnlyList<ImageOffset>? offsets = null)
+        IReadOnlyList<ImageOffset>? offsets = null, int insertionDeletionMode = 0,
+        long maximumAlignmentWork = ImageLineDiffer.MaximumWork, long maximumCanvasWork = MaximumDecodeWork)
     {
         ValidateSelection(images, numbers, orientations, offsets); ValidateThreshold(threshold);
+        ValidateInsertionDeletionMode(insertionDeletionMode); ValidateAlignmentWork(maximumAlignmentWork);
         var frames = new DecodedFrame[images.Count];
         for (var i = 0; i < images.Count; i++) frames[i] = images[i].Decode(numbers[i], token);
-        return CompareDecoded(frames, threshold, includeDifferencePixels, token, orientations, blockSize, offsets);
+        return CompareDecoded(frames, threshold, includeDifferencePixels, token, orientations, blockSize, offsets,
+            insertionDeletionMode, maximumAlignmentWork, maximumCanvasWork);
     }
 
     internal static ComparisonResult Compare(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers,
         double threshold, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
-        IReadOnlyList<ImageOffset>? offsets = null)
+        IReadOnlyList<ImageOffset>? offsets = null, int insertionDeletionMode = 0,
+        long maximumAlignmentWork = ImageLineDiffer.MaximumWork)
     {
         ValidateComparison(images, numbers, threshold, orientations, offsets);
+        ValidateInsertionDeletionMode(insertionDeletionMode);
+        ValidateAlignmentWork(maximumAlignmentWork);
         var selected = numbers is not null;
         token.ThrowIfCancellationRequested();
         var frames = new List<FrameResult>();
         var different = !selected && images.Select(image => image.FrameCount).Distinct().Count() != 1;
         var count = selected ? 1 : images.Max(image => image.FrameCount);
+        long alignmentWork = 0;
+        long canvasWork = 0;
         for (var index = 1; index <= count; index++)
         {
             token.ThrowIfCancellationRequested();
             var currentNumbers = numbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
-            var comparison = DecodeSelection(images, currentNumbers, threshold, false, token, orientations, blockSize, offsets);
+            // 全ページで残予算を共有し、処理を開始する前に核へ渡す。
+            var comparison = DecodeSelection(images, currentNumbers, threshold, false, token, orientations, blockSize, offsets,
+                insertionDeletionMode, maximumAlignmentWork - alignmentWork, MaximumDecodeWork - canvasWork);
+            alignmentWork += comparison.AlignmentWork;
+            canvasWork += comparison.CanvasWork;
             var a = comparison.Frames[0]; var b = comparison.Frames[^1];
             var middle = images.Count == 3 ? comparison.Frames[1] : null;
-            var rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, blockSize: blockSize, token: token);
+            var rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, blockSize: blockSize, token: token,
+                alignment: comparison.Alignment);
             frames.Add(new(a.Number, b.Number, a.Width, a.Height, b.Width, b.Height,
                 comparison.Pixels.DifferentPixels, comparison.Pixels.TotalPixels, PixelHash(a.Pixels, token), PixelHash(b.Pixels, token),
                 middle?.Number, middle?.Width, middle?.Height, middle is null ? null : PixelHash(middle.Pixels, token),

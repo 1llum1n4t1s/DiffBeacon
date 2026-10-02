@@ -14,15 +14,26 @@ internal static class ImageRegionCommands
         if (count is not (2 or 3)) throw new ArgumentException("--image-regions LEFT [MIDDLE] RIGHT を指定してください。");
         var blockSize = 8; double threshold = 0; double highlightAlpha = .7;
         var selectedDiffIndex = -1; var render = false;
+        var insertionDeletionMode = 0;
+        var offsets = new ImageOffset[count];
         int? leftFrame = null, middleFrame = null, rightFrame = null;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var index = optionStart; index < args.Length; index += 2)
         {
             var option = args[index];
             if (option is not ("--block-size" or "--threshold" or "--left-frame" or "--middle-frame" or "--right-frame"
-                or "--highlight-alpha" or "--selected-region")
+                or "--highlight-alpha" or "--selected-region" or "--insertion-deletion-mode"
+                or "--left-offset" or "--middle-offset" or "--right-offset")
                 || !seen.Add(option) || index + 1 >= args.Length)
                 throw new ArgumentException($"未知・重複または値が不足した画像領域オプションです: {option}");
+            if (option == "--insertion-deletion-mode")
+            { insertionDeletionMode = ImageComparisonEngine.ParseInsertionDeletionMode(args[index + 1]); continue; }
+            if (option.EndsWith("-offset", StringComparison.Ordinal))
+            {
+                if (option == "--middle-offset" && count != 3) throw new ArgumentException("中央の画像位置は三者比較だけです。");
+                offsets[option == "--left-offset" ? 0 : option == "--middle-offset" ? 1 : count - 1] = ImageOffset.Parse(args[index + 1]);
+                continue;
+            }
             if (option == "--threshold")
             {
                 if (!double.TryParse(args[index + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out threshold)
@@ -73,9 +84,9 @@ internal static class ImageRegionCommands
                 var image = snapshots[index] = await ImageComparisonEngine.OpenAsync(args[index + 1], token);
                 if (numbers[index] > image.FrameCount) throw new ArgumentException($"画像フレームは1..{image.FrameCount}です。");
                 var size = image.GetDimensions(numbers[index]);
-                width = Math.Max(width, size.Width); height = Math.Max(height, size.Height);
+                width = Math.Max(width, checked(size.Width + offsets[index].X)); height = Math.Max(height, checked(size.Height + offsets[index].Y));
             }
-            ImageComparisonEngine.ValidateSelection(snapshots, numbers);
+            ImageComparisonEngine.ValidateSelection(snapshots, numbers, offsets: offsets);
             var columns = (width + blockSize - 1) / blockSize;
             var rows = (height + blockSize - 1) / blockSize;
             // 診断JSONの全grid出力だけを制限。通常比較へこの出力制約を持ち込まない。
@@ -84,8 +95,15 @@ internal static class ImageRegionCommands
             {
                 var frames = new ImageComparisonEngine.DecodedFrame[count];
                 for (var index = 0; index < count; index++) frames[index] = snapshots[index].Decode(numbers[index], token);
-                var regionResult = ImageRegionDiffer.Compare(frames, blockSize, threshold, token);
-                var rendered = render ? ImageRegionRenderer.Render(frames, regionResult, blockSize, highlightAlpha, selectedDiffIndex, token) : null;
+                ImageLineAlignment.Result? alignment = insertionDeletionMode == 0 ? null
+                    : ImageLineAlignment.Align(frames, insertionDeletionMode == 2, threshold, token);
+                IReadOnlyList<ImageComparisonEngine.DecodedFrame> views = alignment?.Frames ?? frames;
+                var canvas = ImageOffset.Canvas(views, offsets);
+                if ((long)((canvas.Width + blockSize - 1) / blockSize) * ((canvas.Height + blockSize - 1) / blockSize) > 262_144)
+                    throw new InvalidOperationException("開発用の領域JSONは262,144ブロックまでです。");
+                var regionResult = ImageRegionDiffer.Compare(views, blockSize, threshold, token, offsets);
+                var rendered = render ? ImageRegionRenderer.Render(views, regionResult, blockSize, highlightAlpha, selectedDiffIndex, token,
+                    alignment: alignment) : null;
                 return (Result: regionResult, Rendered: rendered);
             }, token);
             var result = comparison.Result;

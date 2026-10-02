@@ -183,7 +183,7 @@ public static class ComparisonPackage
                         report = ImageReport.Create(new(middleImage is null ? [leftImage, rightImage] : [leftImage, middleImage, rightImage],
                             settings.Threshold, settings.ReportAllFrames ? null : settings.FrameNumbers(middleImage is not null),
                             ShowDifferences: settings.ShowDifferences, Orientations: settings.Orientations(middleImage is not null), BlockSize: settings.BlockSize,
-                            Offsets: settings.Offsets(middleImage is not null)),
+                            Offsets: settings.Offsets(middleImage is not null), InsertionDeletionMode: settings.InsertionDeletionMode),
                             middleImage is null ? [project.LeftDescription ?? left.Name, project.RightDescription ?? right.Name]
                                 : [project.LeftDescription ?? left.Name, project.BaseDescription ?? middleInput!.Name, project.RightDescription ?? right.Name], token);
                     }

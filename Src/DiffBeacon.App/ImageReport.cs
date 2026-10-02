@@ -25,6 +25,7 @@ internal static class ImageReport
         var orientations = input.Orientations?.ToArray();
         var offsets = input.Offsets?.ToArray();
         ImageComparisonEngine.ValidateComparison(images, input.FrameNumbers, input.Threshold, orientations, offsets);
+        ImageComparisonEngine.ValidateInsertionDeletionMode(input.InsertionDeletionMode);
         if (input.EditedFrames is { } edited && (edited.Count != images.Count || images.Any(image => image.FrameCount != 1)
             || edited.Any(frame => frame.Number != 1))) throw new ArgumentException("編集済みレポートは静止画の全入力が必要です。");
         if (titles.Count != images.Count) throw new ArgumentException("全画像の見出しが必要です。");
@@ -43,6 +44,8 @@ internal static class ImageReport
         html.Append("\" data-right-frames=\""); html.Number(images[^1].FrameCount);
         if (images.Count == 3) { html.Append("\" data-middle-frames=\""); html.Number(images[1].FrameCount); }
         html.Append("\" data-threshold=\""); html.Append(input.Threshold.ToString("R", CultureInfo.InvariantCulture));
+        if (input.InsertionDeletionMode != 0)
+        { html.Append("\" data-insertion-deletion-mode=\""); html.Number(input.InsertionDeletionMode); }
         html.Append("\"><h1>画像比較</h1><table><caption>閾値: "); html.Append(input.Threshold.ToString("R", CultureInfo.InvariantCulture));
         html.Append(" / フレーム: "); html.Append(selected ? "選択した組" : "全同番号フレーム");
         html.Append("</caption><thead><tr>");
@@ -51,18 +54,25 @@ internal static class ImageReport
         html.Append("<th>左右の画素差・領域</th></tr></thead><tbody>");
         var different = !selected && images.Select(image => image.FrameCount).Distinct().Count() != 1;
         var count = selected ? 1 : images.Max(image => image.FrameCount);
+        long alignmentWork = 0;
+        long canvasWork = 0;
         for (var index = 1; index <= count; index++)
         {
             token.ThrowIfCancellationRequested();
             var numbers = input.FrameNumbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
             var set = input.EditedFrames is { } raw
-                ? ImageComparisonEngine.CompareDecoded(raw, input.Threshold, true, token, orientations, input.BlockSize, offsets)
-                : ImageComparisonEngine.DecodeSelection(images, numbers, input.Threshold, true, token, orientations, input.BlockSize, offsets);
+                ? ImageComparisonEngine.CompareDecoded(raw, input.Threshold, true, token, orientations, input.BlockSize, offsets,
+                    input.InsertionDeletionMode, ImageLineDiffer.MaximumWork - alignmentWork, ImageComparisonEngine.MaximumDecodeWork - canvasWork)
+                : ImageComparisonEngine.DecodeSelection(images, numbers, input.Threshold, true, token, orientations, input.BlockSize, offsets,
+                    input.InsertionDeletionMode, ImageLineDiffer.MaximumWork - alignmentWork, ImageComparisonEngine.MaximumDecodeWork - canvasWork);
+            alignmentWork += set.AlignmentWork;
+            canvasWork += set.CanvasWork;
             var a = set.Frames[0]; var b = set.Frames[^1];
             token.ThrowIfCancellationRequested();
             var comparison = set.Pixels;
             var rendered = ImageRegionRenderer.Render(set.Frames, set.Regions, blockSize: input.BlockSize,
-                selectedDiffIndex: Math.Min(input.SelectedDiffIndex, set.Regions.Regions.Count - 1), token: token, showDifferences: input.ShowDifferences);
+                selectedDiffIndex: Math.Min(input.SelectedDiffIndex, set.Regions.Regions.Count - 1), token: token, showDifferences: input.ShowDifferences,
+                alignment: set.Alignment);
             different |= set.Regions.Regions.Count > 0;
             html.Append("<tr data-left-frame=\""); html.Frame(a?.Number);
             html.Append("\" data-right-frame=\""); html.Frame(b?.Number);

@@ -2,9 +2,17 @@
 
 画像の位置ずらしを比較・コピー核、GUI矢印操作、通常`--image`、プロジェクト保存・復元、GUI／プロジェクト／包装HTMLへ接続した。原本DLLの12ケース43状態を3回採取して全bytes一致を確認し、正規化・支持矩形・左上拡張・位置を戻さないUndo・原画PNGを固定E2EとGUI自己検証で照合する。自動位置合わせは未対応。[位置ずらしの契約](IMAGE-VIEWER.md#静止画像コピー核の診断)を参照する。
 
+位置ずらし対応のSHA `d0644bcbf04ff12ba2dfd44ef2a4af275679b956` は [4構成のGitHub Actions](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36941324269) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36941324655) が成功した。Windows両構成の全体E2Eは76780成功・0失敗・3skip、Mac両構成は76789成功・0失敗・2skip、headless UIは全構成3093成功・0失敗。原本の12ケース43状態と93画面、GUI HTML4画像、既存回転反転の14ケース124状態346画面を各構成の成果物へ独立照合した。8成果物はZIPのまま保持してentryを照合し、抽出はmanifestと代表PNGだけ、Native発行物・全体E2Eの一括展開は0 bytes。証拠は `artifacts/verification/image-copy-cli/ci-36941324269-summary.json` と `E:/DiffBeacon-artifacts/github/36941324269`。通常デスクトップ操作とMac署名・公証はこの検証に含めない。
+
 この変更は新しい比較アプリの実装と Native AOT 発行経路の追加であり、旧 WinMerge の全機能との互換性を完了したものではない。旧 C++ / MFC の `Src/Merge.rc` と各実装は残っているが、新しい `DiffBeacon.slnx` の通常ビルド経路には含まれない。旧機能の存在と、新しいアプリで実装・検証された機能を区別する。
 
-行比較のDiff算法は依頼によりGNUベースの一種類に統一する。原本との対応検証と処理上限を備えた現行実装を採用し、旧WinMergeの算法選択ドロップダウンと別算法の移植は完了条件から外す。行内のWordDiffや比較フィルターは引き続き対応範囲に含む。
+画像の行・列整列、逆座標と構造コピーをGUI・通常CLI・プロジェクト設定・単体／包装HTMLへ接続した。原本58ケース304状態の全ghost画素・座標対応・コピー・Undo／Redo・位置と方向・原画PNGを照合し、強調の別原本12ケース146状態で通常／選択削除色、透明実画素、alpha0/.3/.7/1を検証する。最新通常DLLの限定E2Eは9110成功・0失敗・0skip、headless UIは7513成功・0失敗、Release buildは警告0・エラー0。GUIの固定alpha .7は原本12ケース62状態を実Bitmap全BGRAへ照合し、最小ウィンドウのモード選択とPNG保存も確認した。通常デスクトップと、GUIのalpha0/.3/1選択はこの検証に含まない。証拠は `E:/DiffBeacon-artifacts/local/image-insertions/integration-managed-4` と `integration-ui-3`。全体E2Eは通常DLL145951成功・0失敗・10skip、Windows x64 Native AOT145996成功・0失敗・3skip。Native AOTの発行は警告0・エラー0、headless UIは7513成功・0失敗で通常DLLと画像観測SHAが一致した。全体E2Eの入力・出力・ログは全ファイルSHA-256照合済みZIPで保持し、展開分を除去する。変更後のGitHub 4RID検証は未実施。
+
+独立レビューで発見した全ページの描画予算漏れは、整列後canvasに対する累積256Mの処理前検査へ修正した。整列前240M／整列後360Mの10ページTIFFで旧ビルドの誤受理を再現し、修正後の終了2・空stdout・既存HTMLと入力保持、選択1ページの成功を確認した。また、幅不一致を先にfalseとする原本の判定順を保持し、横方向の三者整列の誤拒否を修正した。原本fixtureは変更していない。検証済みの過去出力は容量索引のZIPへ格納する。
+
+テキストと表の行比較のDiff算法は依頼によりGNUベースの一種類に統一する。原本との対応検証と処理上限を備えた現行実装を採用し、旧WinMergeの算法選択ドロップダウンと別算法の移植は完了条件から外す。画像行の挿入削除検出にはWinIMerge既定Myers一種類を移植する。行内のWordDiffや比較フィルターは引き続き対応範囲に含む。
+
+画像行Myers核は原本の分類順・signed char量子化・32bit hash・discard・同点規則を移植した。[固定原本](../tests/Fixtures/ImageLines/README.md)14,797ケースの全scriptと行hashを実アプリの`--image-line-script`へ照合し、予算修正後の通常DLL・Windows x64 Native AOTの限定E2Eは各59215成功・0失敗・0skip。Release buildとAOT発行は警告0・エラー0。入力へ期待scriptを渡さず、寸法・負の閾値・原本で整数量子化が未定義になる閾値・後半ケースの不正入力、予算境界と残量不足を検査した。独立レビューで見つかった処理完了後の累積予算検査を、比較開始前の残量引渡しと各処理中の検査へ修正し、部分stdoutと入力改変がないことを再検証した。修正前の通常DLL全体は135938成功・0失敗・10skip、修正後の管理者実行AOT全体は135994成功・0失敗・3skip、AOT headless UIは3093成功・0失敗。両版の行比較観測SHAは一致し、発行12ファイルのSHA・サイズも一致した。証拠は `E:/DiffBeacon-artifacts/local/image-insertions/line-progress.json` と容量索引のZIP。この記録は行比較核の段階であり、後から追加した整列診断・座標対応の全状態の実行検証、画像GUI・構造コピーへの接続、変更後の4RID検証は未完了。
 
 | 旧機能・処理分岐 | 新しい実装の範囲 | 判定・残作業 |
 | --- | --- | --- |
@@ -12,7 +20,7 @@
 | フォルダー比較 | 再帰比較、片側のみの項目、キャンセル、選択項目のコピー API | 基本経路を実装。コピーはリンクを拒否し、削除 API は提供しない。同期・全状態列・旧シェル操作の同等性は未完了 |
 | 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
-| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、回転・反転の表示／コピー／設定保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・位置合わせ・矩形編集、旧全体設定の永続化は未完了 |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、回転・反転と手動位置ずらし、行列の挿入削除の表示／コピー／設定保存、編集済み原画のHTML | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存・自動位置合わせ・矩形編集、旧全体設定の永続化は未完了 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |

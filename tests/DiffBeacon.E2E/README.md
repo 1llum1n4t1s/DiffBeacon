@@ -1,5 +1,13 @@
 # 実行経路の検証
 
+`--image-insertions-only`には通常CLI・プロジェクト保存二回往復・単体／包装／展開再読込みHTMLも含む。代表8件で整列全画素と原画保持を確認し、[強調原本](../Fixtures/ImageInsertionHighlight/README.md)12件146状態は実`--image-regions`の全canvas画素SHAへ照合する。透明実画素・ghost・通常／選択色・alpha0/.3/.7/1・offsetを含む。GUI自己検証は編集原本58件304状態と、固定alpha .7の強調原本12件62状態を実Bitmapへ照合する。CLIの全alpha検証とGUIの固定alphaを区別する。多ページ予算の自作TIFFは整列前240M／整列後360Mの描画量を再現し、全ページ拒否・選択1ページ成功・空stdout・既存HTMLと入力保持を確認する。
+
+画像の挿入・削除コピーは `--image-insertions-only` と全体E2Eで検証する。[固定原本](../Fixtures/ImageInsertions/README.md)の58ケース304状態を実`--image-copy`へ送り、縦・横の整列、構造コピー、Undo／Redo、モード・位置・回転の変更、読取り専用、保存点を照合する。全canvas BGRA・座標対応・差分と競合数を確認し、原画PNGの出力を独立復号する。`includeAlignment`は診断出力の指定で、共通canvas4096画素までに限定する。GUI・通常比較CLI・HTMLの挿入削除モード接続は、このコピー経路の検証とは別に行う。
+
+画像整列・逆座標の限定実行は `--image-alignment-only`。`--image-align`の小画像診断へ原本PNGを送り、[挿入削除fixture](../Fixtures/ImageInsertions/README.md)の最初のmode選択56状態で全ghost BGRA・共通canvas・差分と競合数・全座標と外周1画素・原画保持を照合する。回転後・offset後・構造コピーの残りの状態、GUIの操作をこの初期比較と混同しない。整列診断入口は単一フレーム・入力と共通canvas4096画素までで、製品整列核の処理上限とは別にJSON出力量を限定する。
+
+画像行Myers核の限定実行は `--image-lines-only`。[固定原本](../Fixtures/ImageLines/README.md)の14,797ケースを一つの実アプリ別プロセスへ送り、期待値を入力から除いて全script・uint32行hashを照合する。全体E2Eにも含む。寸法・負の閾値の拒否、結果の部分公開がないことと入力保持を確認し、元入力・stdout/stderr・終了コード・`assertions.json`・`image-lines-proof.json`を保持する。行比較核だけの検証であり、画像表示と構造コピーの挿入削除対応は別途接続・検証する。
+
 位置ずらしの比較・コピー核は `--image-offsets-only` と全体E2Eに含む。[原本fixture](../Fixtures/ImageOffsets/README.md)の12ケース43状態を実`--image-copy`の全BGRA・寸法・変換・位置・dirty/savepoint・Undo/Redoへ照合する。raw PNGは独立BCL復号で確認する。不正pane、整数極値、巨大canvasの拒否では先行exportを含め既存出力・入力・scriptを保護する。代表6状態で通常CLI・source-generated JSONの二回往復・単体／包装／展開再読込みHTMLの原画と位置canvas全BGRAを照合する。不正座標・型・整数overflow・巨大canvas・中央なし・重複引数で入力と既存出力を保護する。UI自己検証は全12ケース43状態の全canvas BGRA・位置・方向・dirty・履歴、readonly矢印実ボタン、取消・古い完了・多ページと設定保存復元をPNG／NDJSONに記録する。
 
 回転・反転は `--image-transforms-only` と全体E2Eで検証する。[原本fixture](../Fixtures/ImageTransforms/README.md)の288ケース・2,816状態を実`--image-copy`別プロセスの全BGRA・寸法・変換・領域・共有Undo／Redo・保存点へ照合する。PNG出力は表示変換を焼き込まない原画へ独立復号して比較する。通常`--image`、プロジェクト保存・復元、単体／包装／再読込みHTML、不正設定と出力保護も同じ限定実行に含む。GUI自己検証は代表14操作列、読取り専用の実回転ボタン、取消・古い完了、TIFFページ切替・再読込み・レポートを検査し、4枚の画面PNGとJSONを保持する。限定実行とheadless操作は通常デスクトップの操作確認とは区別する。

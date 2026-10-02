@@ -12,6 +12,8 @@ public sealed record ImageViewSettings
     public bool ReportAllFrames { get; set; } = true;
     public string View { get; set; } = "SideBySide";
     public int BlockSize { get; set; } = 8;
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public int InsertionDeletionMode { get; set; }
     public ImageOrientation LeftOrientation { get; set; } = new();
     public ImageOrientation MiddleOrientation { get; set; } = new();
     public ImageOrientation RightOrientation { get; set; } = new();
@@ -34,6 +36,7 @@ public sealed record ImageViewSettings
             if (offset.X < 0 || offset.Y < 0 || offset.X > ImageComparisonEngine.MaximumPixels || offset.Y > ImageComparisonEngine.MaximumPixels)
                 throw new InvalidDataException("保存する画像位置は非負の比較キャンバス範囲内です。");
         if (settings.BlockSize is < 1 or > 256) throw new InvalidDataException("画像差分のブロックサイズは1～256です。");
+        ImageComparisonEngine.ValidateInsertionDeletionMode(settings.InsertionDeletionMode);
         if (settings.LeftFrame is < 1 or > 1024 || settings.MiddleFrame is < 1 or > 1024 || settings.RightFrame is < 1 or > 1024)
             throw new InvalidDataException("保存する画像ページ番号は1～1024です。");
         if (!double.IsFinite(settings.Threshold) || settings.Threshold is < 0 or > 510)

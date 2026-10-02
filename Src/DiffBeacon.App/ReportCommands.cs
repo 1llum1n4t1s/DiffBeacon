@@ -11,15 +11,18 @@ internal static class ReportCommands
         int? index = null;
         int? leftFrame = null, middleFrame = null, rightFrame = null;
         double? threshold = null;
+        int? insertionDeletionMode = null;
         ImageOffset? leftOffset = null, middleOffset = null, rightOffset = null;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var optionIndex = 3; optionIndex < args.Length; optionIndex += 2)
         {
             var option = args[optionIndex];
             if (option is not ("--entry" or "--left-frame" or "--middle-frame" or "--right-frame" or "--threshold"
-                or "--left-offset" or "--middle-offset" or "--right-offset") || !seen.Add(option)
+                or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode") || !seen.Add(option)
                 || optionIndex + 1 >= args.Length)
                 throw new ArgumentException(usage);
+            if (option == "--insertion-deletion-mode")
+            { insertionDeletionMode = ImageComparisonEngine.ParseInsertionDeletionMode(args[optionIndex + 1]); continue; }
             if (option.EndsWith("-offset", StringComparison.Ordinal))
             {
                 var position = ImageOffset.Parse(args[optionIndex + 1]);
@@ -52,7 +55,7 @@ internal static class ReportCommands
             var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], cancellation.Token);
             var entry = index ?? workspace.ActiveEntryIndex;
             await ProjectReport.ExportAsync(workspace, entry, args[2], args[1], cancellation.Token, leftFrame, rightFrame, threshold, middleFrame,
-                leftOffset, middleOffset, rightOffset);
+                leftOffset, middleOffset, rightOffset, insertionDeletionMode);
             CommandLine.WriteJson(writer => { writer.WriteString("output", Path.GetFullPath(args[2])); writer.WriteNumber("entry", entry + 1); });
             return 0;
         }

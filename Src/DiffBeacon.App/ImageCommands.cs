@@ -14,6 +14,7 @@ internal static class ImageCommands
         int? leftFrame = null, middleFrame = null, rightFrame = null;
         double threshold = 0;
         var blockSize = 8;
+        var insertionDeletionMode = 0;
         var orientations = Enumerable.Range(0, inputCount).Select(_ => new ImageOrientation()).ToArray();
         var offsets = new ImageOffset[inputCount];
         var seen = new HashSet<string>(StringComparer.Ordinal);
@@ -22,10 +23,12 @@ internal static class ImageCommands
             var option = args[index];
             if (option is not ("--left-frame" or "--middle-frame" or "--right-frame" or "--threshold"
                 or "--left-orientation" or "--middle-orientation" or "--right-orientation" or "--block-size"
-                or "--left-offset" or "--middle-offset" or "--right-offset") || !seen.Add(option))
+                or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode") || !seen.Add(option))
                 throw new ArgumentException($"未知または重複する画像オプションです: {option}");
             if (index + 1 >= args.Length) throw new ArgumentException($"{option} に値を指定してください。");
-            if (option.EndsWith("-offset", StringComparison.Ordinal))
+            if (option == "--insertion-deletion-mode")
+                insertionDeletionMode = ImageComparisonEngine.ParseInsertionDeletionMode(args[index + 1]);
+            else if (option.EndsWith("-offset", StringComparison.Ordinal))
             {
                 if (option == "--middle-offset" && inputCount != 3) throw new ArgumentException("中央の画像位置は三者比較だけです。");
                 offsets[option == "--left-offset" ? 0 : option == "--middle-offset" ? 1 : inputCount - 1] = ImageOffset.Parse(args[index + 1]);
@@ -73,7 +76,8 @@ internal static class ImageCommands
             var token = cancel.Token;
             var images = new ImageComparisonEngine.Snapshot[inputCount];
             for (var i = 0; i < inputCount; i++) images[i] = await ImageComparisonEngine.OpenAsync(args[i + 1], token);
-            var result = await Task.Run(() => ImageComparisonEngine.Compare(images, numbers, threshold, token, orientations, blockSize, offsets), token);
+            var result = await Task.Run(() => ImageComparisonEngine.Compare(images, numbers, threshold, token, orientations, blockSize, offsets,
+                insertionDeletionMode), token);
             // 完了した結果だけ標準出力へ渡し、失敗・取消時に成功JSONを残さない。
             using var content = new MemoryStream();
             using (var writer = new Utf8JsonWriter(content))
@@ -83,6 +87,7 @@ internal static class ImageCommands
                 writer.WriteNumber("leftFrames", result.LeftFrames); writer.WriteNumber("rightFrames", result.RightFrames);
                 if (result.MiddleFrames.HasValue) writer.WriteNumber("middleFrames", result.MiddleFrames.Value);
                 writer.WriteNumber("threshold", result.Threshold); writer.WriteString("mode", result.Mode);
+                if (insertionDeletionMode != 0) writer.WriteNumber("insertionDeletionMode", insertionDeletionMode);
                 writer.WriteStartArray("frames");
                 foreach (var frame in result.Frames)
                 {

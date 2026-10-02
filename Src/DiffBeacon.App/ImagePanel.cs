@@ -33,6 +33,8 @@ public static partial class SpecializedViews
         private double _displayThreshold;
         private double _requestedThreshold;
         private int _requestedBlockSize = 8, _displayBlockSize = 8;
+        private int _requestedInsertionDeletionMode, _displayInsertionDeletionMode;
+        private readonly ComboBox _insertionDeletionMode = new() { Name = "ImageInsertionDeletionMode", ItemsSource = new[] { "なし", "縦方向", "横方向" }, SelectedIndex = 0, MinWidth = 100 };
         private readonly NumericUpDown _blockSizeControl = new() { Name = "ImageBlockSize", Minimum = 1, Maximum = 256, Value = 8, Increment = 1, Width = 90 };
         private bool _displayShowDifferences = true;
         private ImageOrientation[] _requestedOrientations = [];
@@ -70,7 +72,7 @@ public static partial class SpecializedViews
             if (_operationCancellation is not null || _saving || _decoded is null)
                 throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
             return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences,
-                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray());
+                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray(), _displayInsertionDeletionMode);
         }
 
         internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null)
@@ -104,7 +106,7 @@ public static partial class SpecializedViews
             toolbar.Children.Add(frameControls);
             var settings = new WrapPanel();
             foreach (var control in new Control[] { new TextBlock { Text = "倍率" }, _zoom, new TextBlock { Text = "重ね合わせ不透明度" }, _opacity,
-                new TextBlock { Text = "差分閾値" }, _threshold, _showDifferences, _reportAllFrames }) Add(settings, control);
+                new TextBlock { Text = "差分閾値" }, _threshold, new TextBlock { Text = "挿入・削除" }, _insertionDeletionMode, _showDifferences, _reportAllFrames }) Add(settings, control);
             toolbar.Children.Add(settings);
             var navigation = new WrapPanel();
             foreach (var (name, label, direction, conflict) in new[] { ("ImagePreviousDifference", "前の領域", -1, false), ("ImageNextDifference", "次の領域", 1, false),
@@ -156,6 +158,13 @@ public static partial class SpecializedViews
                 _requestedBlockSize = (int)value; await SelectFromControlsAsync();
             };
             _showDifferences.IsCheckedChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
+            _insertionDeletionMode.SelectionChanged += async (_, _) =>
+            {
+                if (_updatingSelectors || _disposed) return;
+                if (_insertionDeletionMode.SelectedIndex is < 0 or > 2) { RestoreSelectors(); return; }
+                _requestedInsertionDeletionMode = _insertionDeletionMode.SelectedIndex;
+                await SelectFromControlsAsync();
+            };
             AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; } };
             UpdateNavigation();
         }
@@ -218,6 +227,7 @@ public static partial class SpecializedViews
             var orientations = _requestedOrientations.ToArray();
             var offsets = _requestedOffsets.ToArray();
             var blockSize = _requestedBlockSize;
+            var insertionDeletionMode = _requestedInsertionDeletionMode;
             var candidateSession = _resetEditing ? null : _editSession?.Fork();
             var readOnly = _readOnly.ToArray(); var reset = _resetEditing; var adopted = false;
             var next = new WriteableBitmap?[numbers.Length]; WriteableBitmap? nextDifference = null;
@@ -237,20 +247,22 @@ public static partial class SpecializedViews
                         else if (candidateSession.Threshold != threshold) candidateSession.SetThreshold(threshold, token);
                         candidateSession.SetBlockSize(blockSize, token);
                         candidateSession.SetViewTransforms(orientations, offsets, token);
+                        candidateSession.SetInsertionDeletionMode(insertionDeletionMode, token);
                         edit?.Invoke(candidateSession, token);
                         offsets = candidateSession.CaptureOffsets().ToArray();
-                        frames = candidateSession.CaptureViewFrames().ToArray();
-                        comparison = new(frames, candidateSession.Regions, ImageComparisonEngine.ComparePixels(frames[0], frames[^1], threshold, true, token, offsets[0], offsets[^1]), candidateSession.CaptureFrames());
+                        frames = candidateSession.CaptureAlignedFrames().ToArray();
+                        comparison = new(frames, candidateSession.Regions, ImageComparisonEngine.ComparePixels(frames[0], frames[^1], threshold, true, token, offsets[0], offsets[^1]), candidateSession.CaptureFrames(), Alignment: candidateSession.Alignment);
                     }
                     else
                     {
                         if (edit is not null) throw new InvalidOperationException("画像コピーとPNG保存は静止画の比較で使用してください。");
                         for (var i = 0; i < frames.Length; i++) { token.ThrowIfCancellationRequested(); frames[i] = cached is not null && cached[i].Number == numbers[i] ? cached[i] : snapshots[i].Decode(numbers[i], token); }
-                        comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token, orientations, blockSize, offsets);
+                        comparison = ImageComparisonEngine.CompareDecoded(frames, threshold, true, token, orientations, blockSize, offsets, insertionDeletionMode);
                         frames = comparison.Frames.ToArray();
                     }
                     var selection = Math.Min(selected, comparison.Regions.Regions.Count - 1);
-                    var rendered = ImageRegionRenderer.Render(frames, comparison.Regions, blockSize: blockSize, selectedDiffIndex: selection, token: token, showDifferences: show).ToArray();
+                    var rendered = ImageRegionRenderer.Render(frames, comparison.Regions, blockSize: blockSize, selectedDiffIndex: selection, token: token, showDifferences: show,
+                        alignment: comparison.Alignment).ToArray();
                     return (comparison, rendered, selection);
                 }, token);
                 token.ThrowIfCancellationRequested(); if (_disposed || generation != _generation) throw new OperationCanceledException(token);
@@ -268,6 +280,7 @@ public static partial class SpecializedViews
                 _decoded = result.comparison.Frames.ToArray(); _regions = result.comparison.Regions; _rendered = result.rendered; _selectedDiffIndex = result.selection;
                 _rawDecoded = (result.comparison.OriginalFrames ?? result.comparison.Frames).ToArray(); _displayOrientations = orientations; _displayBlockSize = blockSize;
                 _displayOffsets = offsets;
+                _displayInsertionDeletionMode = insertionDeletionMode;
                 _editSession = candidateSession; _resetEditing = _discarded = false; adopted = true;
                 _displayThreshold = threshold; _displayShowDifferences = show;
                 numbers.CopyTo(_numbers, 0); DifferentPixels = pixels.DifferentPixels; TotalPixels = pixels.TotalPixels;
@@ -321,6 +334,7 @@ public static partial class SpecializedViews
                 for (var i = 0; i < _numbers.Length; i++) _selectors[i].Value = _numbers[i];
                 _requestedThreshold = _displayThreshold;
                 _requestedBlockSize = _displayBlockSize; _blockSizeControl.Value = _displayBlockSize;
+                _requestedInsertionDeletionMode = _displayInsertionDeletionMode; _insertionDeletionMode.SelectedIndex = _displayInsertionDeletionMode;
                 _requestedOrientations = _displayOrientations.ToArray();
                 _requestedOffsets = _displayOffsets.ToArray();
                 _threshold.Value = ThresholdControlValue(_displayThreshold); _showDifferences.IsChecked = _displayShowDifferences;
@@ -339,6 +353,7 @@ public static partial class SpecializedViews
             foreach (var selector in _selectors) selector.IsEnabled = !_saving;
             _threshold.IsEnabled = _showDifferences.IsEnabled = !_saving;
             _blockSizeControl.IsEnabled = !_saving;
+            _insertionDeletionMode.IsEnabled = !_saving;
             UpdateEditControls();
         }
         private void UpdateZoom()

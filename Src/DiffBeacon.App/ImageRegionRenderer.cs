@@ -3,13 +3,13 @@ namespace DiffBeacon.App;
 // WinIMerge v1.0.54 (da639cdfaeca87aaad0eaceec509afa11ad61421)
 // ImgDiffBuffer.hpp 1888–1964 の GetDiffColorFromPosition / MarkDiff を移植。
 // GPL version 2 or later。原本・ライセンス: tests/Fixtures/ImageRegions、採取: ImageHighlight。
-// 挿入削除NONE、overlay/wipeなし。色は原本constructorの通常色／選択色。
+// overlay/wipeなし。色は原本constructorの通常色／選択色／削除色。
 internal static class ImageRegionRenderer
 {
     internal static IReadOnlyList<ImageComparisonEngine.DecodedFrame> Render(
         IReadOnlyList<ImageComparisonEngine.DecodedFrame> frames, ImageRegionDiffer.Result regions,
         int blockSize = 8, double highlightAlpha = .7, int selectedDiffIndex = -1,
-        CancellationToken token = default, bool showDifferences = true)
+        CancellationToken token = default, bool showDifferences = true, ImageLineAlignment.Result? alignment = null)
     {
         ArgumentNullException.ThrowIfNull(frames);
         ArgumentNullException.ThrowIfNull(regions);
@@ -73,6 +73,22 @@ internal static class ImageRegionRenderer
         if (conflicts != regions.ConflictCount || present.Contains(false))
             throw new ArgumentException("領域の個数またはConflict数が不正です。", nameof(regions));
 
+        bool[]? deleted = null;
+        if (alignment is not null)
+        {
+            if (alignment.Frames.Count != frames.Count || alignment.Frames.Where((frame, pane) =>
+                frame.Width != frames[pane].Width || frame.Height != frames[pane].Height).Any())
+                throw new ArgumentException("整列の寸法・pane数が描画画像と一致しません。", nameof(alignment));
+            var axis = alignment.Horizontal ? frames[0].Width : frames[0].Height;
+            deleted = new bool[axis];
+            foreach (var interval in alignment.LineDiffInfos)
+            {
+                token.ThrowIfCancellationRequested();
+                if (interval.DisplayBegin < 0 || interval.DisplayEndMaximum < interval.DisplayBegin || interval.DisplayEndMaximum >= axis)
+                    throw new ArgumentException("整列の表示区間が描画画像の範囲外です。", nameof(alignment));
+                Array.Fill(deleted, true, interval.DisplayBegin, interval.DisplayEndMaximum - interval.DisplayBegin + 1);
+            }
+        }
         var rendered = new ImageComparisonEngine.DecodedFrame[frames.Count];
         for (var pane = 0; pane < frames.Count; pane++)
         {
@@ -111,8 +127,15 @@ internal static class ImageRegionRenderer
                         }
                         else
                         {
-                            // 原本のGetDiffColorFromPositionは挿入削除NONEなら通常／選択色を返す。
-                            pixels[offset] = (byte)blue; pixels[offset + 1] = (byte)green; pixels[offset + 2] = (byte)red;
+                            // 原本は透明画素のみ、ghostを含む変更区間全体へ削除色を使う。
+                            var localX = bx * blockSize + j - offsets[pane].X;
+                            var localY = y - offsets[pane].Y;
+                            var deletedColor = deleted is not null && localX >= 0 && localY >= 0
+                                && localX < original.Width && localY < original.Height
+                                && deleted[alignment!.Horizontal ? localX : localY];
+                            pixels[offset] = deletedColor ? (byte)192 : (byte)blue;
+                            pixels[offset + 1] = deletedColor ? (byte)192 : (byte)green;
+                            pixels[offset + 2] = deletedColor ? (byte)(id - 1 == selectedDiffIndex ? 240 : 192) : (byte)red;
                             pixels[offset + 3] = (byte)(255 * highlightAlpha);
                         }
                     }

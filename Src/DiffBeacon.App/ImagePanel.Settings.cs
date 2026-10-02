@@ -17,6 +17,7 @@ public static partial class SpecializedViews
             LeftOffset = _displayOffsets[0], RightOffset = _displayOffsets[^1],
             MiddleOffset = _displayOffsets.Length == 3 ? _displayOffsets[1] : default,
             BlockSize = _displayBlockSize,
+            InsertionDeletionMode = _displayInsertionDeletionMode,
             MiddleOrientation = _displayOrientations.Length == 3 ? _displayOrientations[1] : new()
         };
 
@@ -60,6 +61,7 @@ public static partial class SpecializedViews
                 _requestedOrientations = settings.Orientations(_counts.Length == 3);
                 _requestedOffsets = settings.Offsets(_counts.Length == 3);
                 _requestedBlockSize = settings.BlockSize; _blockSizeControl.Value = settings.BlockSize;
+                _requestedInsertionDeletionMode = settings.InsertionDeletionMode; _insertionDeletionMode.SelectedIndex = settings.InsertionDeletionMode;
                 _showDifferences.IsChecked = settings.ShowDifferences;
                 _zoom.Value = settings.Zoom; _opacity.Value = settings.OverlayOpacity;
                 _reportAllFrames.IsChecked = settings.ReportAllFrames;
@@ -70,6 +72,16 @@ public static partial class SpecializedViews
 
         private static decimal ThresholdControlValue(double value)
             => decimal.Parse(value.ToString("R", CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture);
+
+        internal Task SetInsertionDeletionModeAsync(int mode, CancellationToken token = default)
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            if (mode is < 0 or > 2) throw new ArgumentOutOfRangeException(nameof(mode));
+            token.ThrowIfCancellationRequested();
+            if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
+            _requestedInsertionDeletionMode = mode;
+            return SetNumbersAsync(_numbers.ToArray(), token);
+        }
 
         internal Task SetOrientationAsync(int pane, ImageOrientation orientation, CancellationToken token = default)
         {
