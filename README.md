@@ -60,7 +60,7 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 テキスト比較の `--max-work N` は行対応と行内差分それぞれの処理予算を指定します。行対応を省略した場合は JSON の `lineFallback`・`lineFallbackReason` に示し、元の全行を保持して未確定部分を変更扱いにします。
 
-画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。表示位置は `--left-offset X,Y`・`--middle-offset X,Y`・`--right-offset X,Y` で非負の絶対座標を指定できます。`--report-project` でも同じ指定で保存設定を上書きしてレポートを生成でき、プロジェクト自体は変更しません。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
+画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。行・列の挿入削除検出は `--insertion-deletion-mode none|vertical|horizontal`（既定 `none`）で指定します。表示位置は `--left-offset X,Y`・`--middle-offset X,Y`・`--right-offset X,Y` で非負の絶対座標を指定できます。`--report-project` でも同じ指定で保存設定を上書きしてレポートを生成でき、プロジェクト自体は変更しません。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
 
 表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
 
