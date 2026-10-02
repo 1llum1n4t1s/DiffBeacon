@@ -50,6 +50,7 @@ internal static class HeadlessImageInsertionHighlightChecks
         {
             cases++; var name = item.GetProperty("name").GetString()!; var inputs = item.GetProperty("inputs"); var count = inputs.GetArrayLength();
             var paths = new string[count]; var inputHashes = new string[count]; var attributes = new FileAttributes[count];
+            var preparedAttributes = new FileAttributes[count];
             var readOnly = item.GetProperty("readOnly").EnumerateArray().Select(value => value.GetInt32() != 0).ToArray();
             for (var p = 0; p < count; p++)
             {
@@ -58,7 +59,11 @@ internal static class HeadlessImageInsertionHighlightChecks
                 File.WriteAllBytes(paths[p], png); attributes[p] = File.GetAttributes(paths[p]);
                 var decoded = HeadlessImageCopyChecks.ReadPng(paths[p]);
                 Fixture(name + " independent input PNG " + p, MatchesRaw(decoded, inputs[p]), "independent dimensions and every original raw BGRA byte");
-                if (readOnly[p]) File.SetAttributes(paths[p], attributes[p] | FileAttributes.ReadOnly);
+                // Normalは他の属性と併用できない。設定後にOSが返す属性を保持検証の基準にする。
+                if (readOnly[p]) File.SetAttributes(paths[p], (attributes[p] & ~FileAttributes.Normal) | FileAttributes.ReadOnly);
+                preparedAttributes[p] = File.GetAttributes(paths[p]);
+                Fixture(name + " readonly fixture " + p, !readOnly[p] || (preparedAttributes[p] & FileAttributes.ReadOnly) != 0,
+                    "prepared attributes=" + preparedAttributes[p]);
             }
             try
             {
@@ -132,9 +137,9 @@ internal static class HeadlessImageInsertionHighlightChecks
                 for (var p = 0; p < count; p++)
                 {
                     check("image insertion highlight GUI " + name + " final raw export " + p, MatchesRaw(exported[p], item.GetProperty("exports")[p]), "original final SaveImageAs whole raw BGRA");
-                    var expectedAttributes = readOnly[p] ? attributes[p] | FileAttributes.ReadOnly : attributes[p];
+                    var actualAttributes = File.GetAttributes(paths[p]);
                     check("image insertion highlight GUI " + name + " input preserved " + p, Hash(File.ReadAllBytes(paths[p])) == inputHashes[p]
-                        && File.GetAttributes(paths[p]) == expectedAttributes, "original PNG bytes and readonly attributes");
+                        && actualAttributes == preparedAttributes[p], "original PNG bytes; expected attributes=" + preparedAttributes[p] + "; actual=" + actualAttributes);
                 }
             }
             finally { for (var p = 0; p < count; p++) File.SetAttributes(paths[p], attributes[p]); }
