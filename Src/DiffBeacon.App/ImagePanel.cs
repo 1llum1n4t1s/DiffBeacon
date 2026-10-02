@@ -69,7 +69,7 @@ public static partial class SpecializedViews
         internal ImageComparisonEngine.ReportInput CaptureReport()
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
-            if (_operationCancellation is not null || _saving || _decoded is null)
+            if (_operationCancellation is not null || _saving || _decoded is null || HasFloatingImage || _clipboardBusy)
                 throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
             return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences,
                 _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray(), _displayInsertionDeletionMode);
@@ -93,12 +93,12 @@ public static partial class SpecializedViews
             for (var pane = 0; pane < _counts.Length; pane++)
             {
                 _selectors[pane] = new() { Name = "Image" + names[pane] + "Frame", Minimum = 1, Maximum = _counts[pane], Value = 1, Increment = 1, Width = 110 };
-                _positions[pane] = new(); _images[pane] = new() { Name = "ImagePane" + names[pane], Stretch = Stretch.Fill };
+                _positions[pane] = new(); _images[pane] = new() { Name = "ImagePane" + names[pane], Stretch = Stretch.Fill,
+                    HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
                 foreach (var control in new Control[] { FrameButton("ImagePrevious" + names[pane], labels[pane] + " ◀", pane, -1), _selectors[pane],
                     FrameButton("ImageNext" + names[pane], labels[pane] + " ▶", pane, 1), _positions[pane] }) Add(frameControls, control);
                 var column = new DockPanel(); var caption = new TextBlock { Text = labels[pane], Margin = new Thickness(4) };
-                var activePane = pane; _images[pane].PointerPressed += (_, _) => _editPane.SelectedIndex = activePane;
-                DockPanel.SetDock(caption, Dock.Top); column.Children.Add(caption); column.Children.Add(Scroll(_images[pane]));
+                DockPanel.SetDock(caption, Dock.Top); column.Children.Add(caption); column.Children.Add(Scroll(AttachRectanglePane(pane)));
                 Grid.SetColumn(column, pane); side.Children.Add(column);
                 _selectors[pane].ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
             }
@@ -165,7 +165,7 @@ public static partial class SpecializedViews
                 _requestedInsertionDeletionMode = _insertionDeletionMode.SelectedIndex;
                 await SelectFromControlsAsync();
             };
-            AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; } };
+            AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; AttachRectangleOwner(owner); } };
             UpdateNavigation();
         }
 
@@ -214,6 +214,7 @@ public static partial class SpecializedViews
         {
             ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations, _requestedOffsets); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
+            CancelRectangleInteraction();
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
             CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
             UpdateEditControls();
@@ -265,6 +266,7 @@ public static partial class SpecializedViews
                         alignment: comparison.Alignment).ToArray();
                     return (comparison, rendered, selection);
                 }, token);
+                if (edit is not null && EditCandidateReady is { } ready) await ready();
                 token.ThrowIfCancellationRequested(); if (_disposed || generation != _generation) throw new OperationCanceledException(token);
                 for (var i = 0; i < next.Length; i++) next[i] = CreateBitmap(result.rendered[i], token);
                 var pixels = result.comparison.Pixels;
@@ -363,13 +365,15 @@ public static partial class SpecializedViews
             foreach (var (image, pane) in _overlays) { image.Width = _rendered[pane].Width * _zoom.Value; image.Height = _rendered[pane].Height * _zoom.Value; }
             foreach (var grid in _overlayGrids) { grid.Width = _regions!.Width * _zoom.Value; grid.Height = _regions.Height * _zoom.Value; }
             if (_decoded is not null) { _difference.Width = Math.Max(_decoded[0].Width, _decoded[^1].Width) * _zoom.Value; _difference.Height = Math.Max(_decoded[0].Height, _decoded[^1].Height) * _zoom.Value; }
+            UpdateRectangleVisuals();
         }
         private void OwnerClosed(object? sender, EventArgs e) => Dispose();
         public void Dispose()
         {
             if (_disposed) return; _disposed = true; _generation++; _lifetime.Cancel(); _operationCancellation?.Cancel();
+            CancelRectangleInteraction();
             _saveCancellation?.Cancel(); _editSession = null;
-            if (_owner is not null) { _owner.Closed -= OwnerClosed; _owner = null; }
+            if (_owner is not null) { _owner.Closed -= OwnerClosed; DetachRectangleOwner(_owner); _owner = null; }
             foreach (var image in _images) image.Source = null; foreach (var overlay in _overlays) overlay.Image.Source = null; _difference.Source = null;
             if (_bitmaps is not null) foreach (var bitmap in _bitmaps) bitmap.Dispose(); _differenceBitmap?.Dispose();
             _bitmaps = null; _differenceBitmap = null; _decoded = _rendered = _rawDecoded = null; _regions = null; _snapshots = null; _lifetime.Dispose();

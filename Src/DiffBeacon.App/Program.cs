@@ -13,6 +13,8 @@ public static class Program
         if (Console.IsInputRedirected) Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
         Arguments = args;
         if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);
+        if (args.Length == 3 && args[0] == "--clipboard-self-test")
+            return DesktopClipboardSelfTest.Run(args[1], args[2]);
         if (args.Length > 0 && args[0].StartsWith("--", StringComparison.Ordinal))
             return CommandLine.RunAsync(args).GetAwaiter().GetResult();
         return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);

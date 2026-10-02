@@ -46,6 +46,13 @@ jobs:
           $manifest = Get-Content 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
           dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output 'artifacts/e2e/${{ matrix.rid }}' --app $manifest.executable
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify actual OS clipboard across application processes
+        run: |
+          $manifest = Get-Content 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
+          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-clipboard' --write
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-clipboard' --read
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4

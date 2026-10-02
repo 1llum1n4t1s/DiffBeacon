@@ -37,6 +37,7 @@ internal static class ImageInsertionHighlightScenarios
         {
             var name = item.GetProperty("name").GetString()!; var inputs = item.GetProperty("inputs"); var count = inputs.GetArrayLength();
             var paths = new string[count]; var hashes = new string[count]; var attributes = new FileAttributes[count];
+            var preparedAttributes = new FileAttributes[count];
             var readonlyFlags = item.GetProperty("readOnly");
             for (var pane = 0; pane < count; pane++)
             {
@@ -47,7 +48,13 @@ internal static class ImageInsertionHighlightScenarios
                 var decoded = ImageReportScenarios.DecodePng(bytes); var raw = Convert.FromHexString(inputs[pane].GetProperty("bgraHex").GetString()!);
                 check(Label(name + "-input-pixels-" + pane), decoded.Width == inputs[pane].GetProperty("width").GetInt32()
                     && decoded.Height == inputs[pane].GetProperty("height").GetInt32() && decoded.Bgra.AsSpan().SequenceEqual(raw), "independent PNG decode and every original pixel");
-                if (readonlyFlags[pane].GetInt32() != 0) File.SetAttributes(paths[pane], attributes[pane] | FileAttributes.ReadOnly);
+                if (readonlyFlags[pane].GetInt32() != 0)
+                    File.SetAttributes(paths[pane], (attributes[pane] & ~FileAttributes.Normal) | FileAttributes.ReadOnly);
+                // Normalの正規化を含め、実アプリに渡す直前のOS属性を保存する。
+                preparedAttributes[pane] = File.GetAttributes(paths[pane]);
+                if (readonlyFlags[pane].GetInt32() != 0)
+                    check(Label(name + "-readonly-fixture-" + pane), (preparedAttributes[pane] & FileAttributes.ReadOnly) != 0,
+                        "prepared OS attributes=" + preparedAttributes[pane]);
             }
             firstPaths ??= paths;
             try
@@ -104,9 +111,10 @@ internal static class ImageInsertionHighlightScenarios
                     normalFrame.GetProperty(property).GetInt32() == initial.GetProperty(property).GetInt32(), "normal comparison original counts");
                 for (var pane = 0; pane < count; pane++)
                 {
-                    var wantedAttributes = readonlyFlags[pane].GetInt32() == 0 ? attributes[pane] : attributes[pane] | FileAttributes.ReadOnly;
-                    check(Label(name + "-input-preserved-" + pane), Hash(paths[pane]) == hashes[pane] && File.GetAttributes(paths[pane]) == wantedAttributes, "PNG bytes and readonly attributes preserved");
-                    inputObservations.Add(new { path = paths[pane], before = hashes[pane], after = Hash(paths[pane]), attributes = (int)wantedAttributes });
+                    var actualAttributes = File.GetAttributes(paths[pane]);
+                    check(Label(name + "-input-preserved-" + pane), Hash(paths[pane]) == hashes[pane] && actualAttributes == preparedAttributes[pane],
+                        "PNG bytes; expected OS attributes=" + preparedAttributes[pane] + "; actual=" + actualAttributes);
+                    inputObservations.Add(new { path = paths[pane], before = hashes[pane], after = Hash(paths[pane]), attributes = (int)actualAttributes });
                 }
             }
             finally { for (var pane = 0; pane < count; pane++) File.SetAttributes(paths[pane], attributes[pane]); }

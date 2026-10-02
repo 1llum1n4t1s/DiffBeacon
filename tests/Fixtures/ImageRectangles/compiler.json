@@ -1,0 +1,19 @@
+{
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+    "/nologo",
+    "/std:c++17",
+    "/EHsc",
+    "/MT",
+    "/Y-",
+    "/utf-8",
+    "/W3",
+    "/Od",
+    "/FeE:\\DiffBeacon-artifacts\\reference\\image-rectangle-v1.0.54\\kernel\\kernel-probe.exe",
+    "/FoE:\\DiffBeacon-artifacts\\reference\\image-rectangle-v1.0.54\\kernel\\kernel-probe.obj",
+    "E:\\DiffBeacon-artifacts\\reference\\image-rectangle-v1.0.54\\kernel\\kernel-probe.cpp"
+  ],
+  "exit": 0,
+  "msvc": "14.51.36231",
+  "sdk": "10.0.28000.0"
+}

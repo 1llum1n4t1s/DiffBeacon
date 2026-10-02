@@ -1,0 +1,36 @@
+{
+  "sourcePath": "C:\\Users\\IMT\\dev\\DiffBeacon\\tests\\Fixtures\\ImageCopy\\reference-source\\ImgMergeBuffer.hpp",
+  "sourceSha256": "956B69A5D76D6918CD6D3245B5DB5BFDEF902C82221E2539FFEA1B33996AE40B",
+  "extraction": [
+    {
+      "name": "DeleteRectangle",
+      "startByte": 7370,
+      "endByteExclusive": 7976,
+      "startLine": 319,
+      "endLine": 340,
+      "sha256": "7CA9FB9BD478C741BFB69C4F07F2806FF6E06853280C45030FF18D23CF3A3B6D"
+    },
+    {
+      "name": "PasteImage",
+      "startByte": 10820,
+      "endByteExclusive": 11215,
+      "startLine": 479,
+      "endLine": 492,
+      "sha256": "A3C2F7DDD85BA87B48E2DB47FD6332145740FE2E07202D907DACAF291BE94819"
+    },
+    {
+      "name": "PasteImageInternal",
+      "startByte": 13122,
+      "endByteExclusive": 13896,
+      "startLine": 541,
+      "endLine": 564,
+      "sha256": "D0B2EF4B42CE541BB2CE060B247D274BE9DE2F29A4A9C783F5CEC2AE883D595C"
+    }
+  ],
+  "windowSources": {
+    "ImgMergeWindow.hpp": "1B9A3A433D98D106DB9628B361BF28BB2CA2374A9C86A603D4AF126D72D48998",
+    "ImgWindow.hpp": "ECCE317F1507C5FC5D1E8C51032489940A2F1A23D35484FBA233ED3301B8E74D"
+  },
+  "probeSha256": "DE3F07201CD70939B451FCAEA516348B1E47BAE96EA554F0E9FA86946FA4062B",
+  "scope": "identity-orientation row-BGRA declared shim; NOT full original application"
+}

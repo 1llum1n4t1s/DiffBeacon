@@ -6,6 +6,7 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <RuntimeIdentifiers>win-x64;win-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
     <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../DiffBeacon.Core/DiffBeacon.Core.csproj" />
@@ -36,5 +37,9 @@
     <EmbeddedResource Include="../../tests/Fixtures/ImageTransforms/input.png" LogicalName="DiffBeacon.SelfTest.ImageTransforms.input.png" />
     <EmbeddedResource Include="../../tests/Fixtures/ImageTransforms/ui-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageTransforms.json.gz" />
     <EmbeddedResource Include="../../tests/Fixtures/ImageOffsets/winimerge-offsets-golden.json" LogicalName="DiffBeacon.SelfTest.ImageOffsets.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageRectangles/cases.json" LogicalName="DiffBeacon.SelfTest.ImageRectangles.Cases.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageRectangles/winimerge-rectangles-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageRectangles.Golden.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageResize/cases.json" LogicalName="DiffBeacon.SelfTest.ImageResize.Cases.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageResize/winimerge-resize-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageResize.Golden.gz" />
   </ItemGroup>
 </Project>

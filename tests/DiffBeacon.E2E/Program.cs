@@ -1706,7 +1706,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-insertions-only", StringComparer.Ordinal))
+    if (args.Contains("--image-rectangles-only", StringComparer.Ordinal))
+    {
+        await ImageRectangleScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--image-insertions-only", StringComparer.Ordinal))
     {
         await ImageInsertionScenarios.RunAsync(output, fixtures, Run, Check);
         await ImageInsertionPathScenarios.RunAsync(output, fixtures, Run, Check);
@@ -1832,6 +1836,7 @@ try
     await ImageInsertionPathScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageInsertionHighlightScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageInsertionBudgetScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageRectangleScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageCopyScenarios.RunAsync(output, fixtures, Run, Check, Skip);
     await TextAdvancedCases();
     await ProjectWorkspaceCases();

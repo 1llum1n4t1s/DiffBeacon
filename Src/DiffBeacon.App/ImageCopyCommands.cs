@@ -6,7 +6,8 @@ namespace DiffBeacon.App;
 // 実画像を入力した原本コピー核の診断。GUI接続と元形式保存は別の移植単位。
 internal static class ImageCopyCommands
 {
-    private sealed record Action(string Kind, int Source, int Destination, int Index, string? Path);
+    private sealed record Action(string Kind, int Source, int Destination, int Index, string? Path,
+        ImageRectangle Rectangle = default, int X = 0, int Y = 0);
     internal static async Task<int> RunAsync(string[] args)
     {
         var paths = new List<string>(); var option = 1;
@@ -52,10 +53,35 @@ internal static class ImageCopyCommands
             var actions = new List<Action>();
             foreach (var value in actionJson.EnumerateArray())
             {
-                ValidateObject(value, ["kind", "src", "dst", "index", "path"]);
+                ValidateObject(value, ["kind", "src", "dst", "index", "path", "source", "destination", "rectangle", "x", "y"]);
                 if (!value.TryGetProperty("kind", out var kindJson) || kindJson.ValueKind != JsonValueKind.String)
                     throw new ArgumentException("画像操作kindが必要です。");
                 var kind = kindJson.GetString()!;
+                if (kind is "delete-rectangle" or "paste-image")
+                {
+                    ValidateObject(value, kind == "delete-rectangle" ? ["kind", "destination", "rectangle"]
+                        : ["kind", "source", "destination", "x", "y"]);
+                    var dst = Integer(value.GetProperty("destination"));
+                    if (dst < 0 || dst >= paths.Count) throw new ArgumentException("矩形操作の画像paneが範囲外です。");
+                    if (kind == "delete-rectangle")
+                    {
+                        var rectangle = value.GetProperty("rectangle");
+                        if (rectangle.ValueKind != JsonValueKind.Array || rectangle.GetArrayLength() != 4)
+                            throw new ArgumentException("rectangleは[left,top,right,bottom]の整数配列です。");
+                        var rc = new ImageRectangle(Integer(rectangle[0]), Integer(rectangle[1]), Integer(rectangle[2]), Integer(rectangle[3]));
+                        if (rc.Left < 0 || rc.Top < 0 || rc.Right < rc.Left || rc.Bottom < rc.Top)
+                            throw new ArgumentException("削除矩形の半開区間が不正です。");
+                        actions.Add(new(kind, 0, dst, 0, null, rc));
+                    }
+                    else
+                    {
+                        var src = Integer(value.GetProperty("source"));
+                        if (src < 0 || src >= paths.Count) throw new ArgumentException("貼付け元の画像paneが範囲外です。");
+                        actions.Add(new(kind, src, dst, 0, null, default, Integer(value.GetProperty("x")), Integer(value.GetProperty("y"))));
+                    }
+                    continue;
+                }
+                ValidateObject(value, ["kind", "src", "dst", "index", "path"]);
                 if (kind is not ("copy" or "all" or "auto" or "undo" or "redo" or "save" or "set-savepoint" or "export" or "rotate" or "flipx" or "flipy" or "offset" or "mode"))
                     throw new ArgumentException("未知の画像操作kindです。");
                 int Read(string field, bool required)
@@ -116,6 +142,8 @@ internal static class ImageCopyCommands
                     var result = -1;
                     switch (action.Kind)
                     {
+                        case "delete-rectangle": result = session.DeleteRectangle(action.Destination, action.Rectangle, token) ? 1 : 0; break;
+                        case "paste-image": result = session.PasteImage(action.Source, action.Destination, action.X, action.Y, token) ? 1 : 0; break;
                         case "mode": session.SetInsertionDeletionMode(action.Index, token); break;
                         case "copy": session.Copy(action.Index, action.Source, action.Destination, token); break;
                         case "all": session.CopyAll(action.Source, action.Destination, token); break;

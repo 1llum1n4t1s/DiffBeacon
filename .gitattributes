@@ -43,3 +43,15 @@ tests/Fixtures/ImageInsertionHighlight/extract.py -text
 tests/Fixtures/ImageInsertionHighlight/capture.py -text whitespace=cr-at-eol
 tests/Fixtures/ImageInsertionHighlight/state-function.cpp.txt -text whitespace=cr-at-eol
 tests/Fixtures/ImageInsertionHighlight/LICENSE.txt -text whitespace=cr-at-eol
+# 矩形原本の採取データと無改変関数は固定SHAを維持する。
+tests/Fixtures/ImageRectangles/*.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageRectangles/*.inc -text -whitespace
+tests/Fixtures/ImageRectangles/kernel-probe.cpp -text -whitespace
+tests/Fixtures/ImageRectangles/winimerge-rectangles-golden.json.gz -text
+tests/Fixtures/ImageRectangles/extract.py -text whitespace=cr-at-eol
+tests/Fixtures/ImageRectangles/GPL-LICENSE.txt -text whitespace=cr-at-eol
+tests/Fixtures/ImageResize/*.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageResize/probe-*.cpp -text -whitespace
+tests/Fixtures/ImageResize/generate-reference.py -text
+tests/Fixtures/ImageResize/winimerge-resize-golden.json.gz -text
+tests/Fixtures/ImageResize/GPL-LICENSE.txt -text whitespace=cr-at-eol

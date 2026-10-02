@@ -3,7 +3,7 @@ namespace DiffBeacon.App;
 // WinIMerge v1.0.54 ImgMergeBuffer.hpp の領域コピー・共有履歴を移植。
 // GPL-2.0-or-later。原本・採取境界は tests/Fixtures/ImageCopy を参照。
 // 静止画専用。拡張の初期値は明示したzero-filled BGRA契約。
-internal sealed class ImageEditSession
+internal sealed partial class ImageEditSession
 {
     internal const int MaximumHistoryRecords = 128;
     internal const long MaximumHistoryBytes = 256L * 1024 * 1024;
@@ -115,10 +115,10 @@ internal sealed class ImageEditSession
     internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> CaptureFrames() => _frames.Select(Clone).ToArray();
     internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> CaptureViewFrames() => _viewFrames.Select(Clone).ToArray();
     internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> CaptureAlignedFrames() => _alignedFrames.Select(Clone).ToArray();
-    internal ImageLineAlignment.Position ConvertToRealPosition(int pane, int x, int y)
+    internal ImageLineAlignment.Position ConvertToRealPosition(int pane, int x, int y, bool clamp = true)
     {
         if (!ValidPane(pane)) throw new ArgumentOutOfRangeException(nameof(pane));
-        return ConvertPosition(pane, x, y, _offsets);
+        return ConvertPosition(pane, x, y, _offsets, clamp);
     }
     internal IReadOnlyList<ImageOrientation> CaptureOrientations() => _orientations.Select(value => value with { }).ToArray();
     internal IReadOnlyList<ImageOffset> CaptureOffsets() => (ImageOffset[])_offsets.Clone();
@@ -229,6 +229,13 @@ internal sealed class ImageEditSession
             next = CopyRegion(index, source, destination, next, copyOffsets, budget, token);
         if (retainedBytes + rawBefore.Pixels.LongLength + next.Pixels.LongLength > MaximumHistoryBytes)
             throw new InvalidOperationException("画像編集の履歴上限（128件・256 MiB）を超えます。");
+        AdoptEdit(destination, next, copyOffsets, retainedBytes, budget, token);
+    }
+
+    private void AdoptEdit(int destination, ImageComparisonEngine.DecodedFrame next, ImageOffset[] copyOffsets,
+        long retainedBytes, OperationBudget budget, CancellationToken token)
+    {
+        var rawBefore = _frames[destination];
         var candidate = (ImageComparisonEngine.DecodedFrame[])_viewFrames.Clone(); candidate[destination] = next;
         var compared = CompareCandidate(candidate, _blockSize, _threshold, copyOffsets, _insertionDeletionMode, budget, token);
         var counters = (int[])_counts.Clone();
@@ -474,16 +481,16 @@ internal sealed class ImageEditSession
 
     private static InvalidDataException UnsafeCopy() => new("画像構造コピーの原本経路が画像の範囲外を参照します。");
 
-    private ImageLineAlignment.Position ConvertPosition(int pane, int x, int y, IReadOnlyList<ImageOffset> offsets)
+    private ImageLineAlignment.Position ConvertPosition(int pane, int x, int y, IReadOnlyList<ImageOffset> offsets, bool clamp = true)
     {
         var lx = (long)x - offsets[pane].X; var ly = (long)y - offsets[pane].Y;
         if (lx < int.MinValue || lx > int.MaxValue || ly < int.MinValue || ly > int.MaxValue)
             throw new ArgumentOutOfRangeException(nameof(x), "画像位置を減算した座標が整数範囲外です。");
         x = (int)lx; y = (int)ly;
-        if (_alignment is not null) return _alignment.ConvertToRealPosition(pane, x, y);
+        if (_alignment is not null) return _alignment.ConvertToRealPosition(pane, x, y, clamp);
         var frame = _alignedFrames[pane];
         var inside = x >= 0 && x < frame.Width && y >= 0 && y < frame.Height;
-        return new(inside, Math.Clamp(x, 0, frame.Width - 1), Math.Clamp(y, 0, frame.Height - 1));
+        return new(inside, clamp ? Math.Clamp(x, 0, frame.Width - 1) : x, clamp ? Math.Clamp(y, 0, frame.Height - 1) : y);
     }
 
     private sealed record ComparisonCandidate(ImageComparisonEngine.DecodedFrame[] Aligned,

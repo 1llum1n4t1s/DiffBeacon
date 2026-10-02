@@ -20,6 +20,8 @@ public static partial class SpecializedViews
         private readonly ComboBox _editPane = new() { Name = "ImageEditPane", MinWidth = 90, SelectedIndex = 0 };
         private (int Source, int Destination)[] _copyPairs = [];
         private readonly List<(Button Button, string Kind)> _editButtons = [];
+        // headless操作検証で、候補計算済み・画面採用前の境界を決定的に待機させる。
+        internal Func<Task>? EditCandidateReady { get; set; }
 
         internal bool HasUnsavedChanges => !_discarded && _editSession is not null && Enumerable.Range(0, _counts.Length).Any(_editSession.IsModified);
         internal int HistoryIndex => _editSession?.HistoryIndex ?? -1;
@@ -53,6 +55,8 @@ public static partial class SpecializedViews
             ObjectDisposedException.ThrowIf(_disposed, this);
             if (values.Count != _counts.Length) throw new ArgumentException("読取り専用の指定数が入力数と一致しません。");
             for (var pane = 0; pane < values.Count; pane++) { _readOnly[pane] = values[pane]; _editSession?.SetReadOnly(pane, values[pane]); }
+            if (_resizeMode != 0 && _dragPane >= 0 && _readOnly[_dragPane]) CancelRectangleInteraction();
+            UpdateRectangleVisuals();
             UpdateNavigation();
         }
 
@@ -63,7 +67,7 @@ public static partial class SpecializedViews
             _copyDirection.ItemsSource = _copyPairs.Select(pair => labels[pair.Source] + " → " + labels[pair.Destination]).ToArray();
             _editPane.ItemsSource = labels;
             _copyDirection.SelectionChanged += (_, _) => UpdateEditControls();
-            _editPane.SelectionChanged += (_, _) => UpdateEditControls();
+            _editPane.SelectionChanged += (_, _) => { ++_rectangleEpoch; _clipboardCancellation?.Cancel(); UpdateEditControls(); };
             var panel = new WrapPanel();
             Add(panel, _copyDirection);
             AddEditButton(panel, "ImageCopyRegion", "選択領域をコピー", "copy", () => CopyChosenAsync(false));
@@ -81,8 +85,9 @@ public static partial class SpecializedViews
             AddEditButton(panel, "ImageAutoMerge", "競合以外を自動コピー", "auto", () => AutoMergeAsync(_editPane.SelectedIndex));
             AddEditButton(panel, "ImageUndo", "元に戻す", "undo", () => UndoEditAsync());
             AddEditButton(panel, "ImageRedo", "やり直す", "redo", () => RedoEditAsync());
+            AddEditButton(panel, "ImageCancelEdit", "中止", "cancel", () => { _operationCancellation?.Cancel(); _saveCancellation?.Cancel(); CancelRectangleInteraction(); return Task.CompletedTask; });
+            AddRectangleControls(panel);
             AddEditButton(panel, "ImageSavePng", "PNGで別名保存…", "save", PickPngAsync);
-            AddEditButton(panel, "ImageCancelEdit", "中止", "cancel", () => { _operationCancellation?.Cancel(); _saveCancellation?.Cancel(); return Task.CompletedTask; });
             return panel;
         }
 
@@ -119,6 +124,7 @@ public static partial class SpecializedViews
             RequireEditing(); token.ThrowIfCancellationRequested();
             if (writablePane >= 0 && (writablePane >= _counts.Length || _readOnly[writablePane]))
                 throw new InvalidOperationException("コピー先は読取り専用か、存在しない画像です。");
+            CancelRectangleInteraction(preservePointerPress: true);
             _operationCancellation?.Cancel();
             var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
             CurrentFrameOperation = LoadFramesAsync(_numbers.ToArray(), _displayThreshold, _displayShowDifferences, ++_generation, cancel, edit, writablePane);
@@ -154,6 +160,7 @@ public static partial class SpecializedViews
         internal async Task SaveToAsync(int pane, string output, CancellationToken token = default)
         {
             RequireEditing();
+            if (HasFloatingImage || _clipboardBusy) throw new InvalidOperationException("貼り付けを確定し、クリップボード操作が完了してからPNGを保存してください。");
             if (_operationCancellation is not null) throw new InvalidOperationException("画像の操作が完了してから保存してください。");
             if (pane < 0 || pane >= _counts.Length) throw new ArgumentOutOfRangeException(nameof(pane));
             if (_readOnly[pane]) throw new InvalidOperationException("読取り専用の画像を保存できません。");
@@ -214,6 +221,12 @@ public static partial class SpecializedViews
                     "undo" => ready && _editSession!.CanUndo,
                     "redo" => ready && _editSession!.CanRedo,
                     "save" => ready && canWrite && _paths.Length == _counts.Length,
+                    "rectangle-select" => RectangleReady,
+                    "rectangle-copy" => RectangleReady && RectangleSelection(pane) is not null,
+                    "rectangle-cut" or "rectangle-delete" => RectangleReady && canWrite && RectangleSelection(pane) is not null,
+                    "rectangle-paste" => RectangleReady && canWrite,
+                    "rectangle-commit" => RectangleReady && HasFloatingImage && !_readOnly[_floatingPane],
+                    "rectangle-cancel" => HasFloatingImage || _rectangles.Any(value => value is not null) || _clipboardBusy,
                     _ => false
                 };
             _copyDirection.IsEnabled = _editPane.IsEnabled = !_saving;
