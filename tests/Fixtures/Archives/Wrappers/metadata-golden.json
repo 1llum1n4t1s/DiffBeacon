@@ -1,0 +1,127 @@
+{
+  "sourceArchiveManifest": "../manifest.json",
+  "sourceLicense": "../LICENSE.txt",
+  "toolName": "7-Zip 26.03 official existing full tool",
+  "toolSha256": "6EE3C0ED0B27663C1B948AE85A7C0BB073AED1498983182F3F0DF1F6A8C30B2F",
+  "arguments": [
+    "l",
+    "-slt",
+    "-ba",
+    "-sccUTF-8"
+  ],
+  "collectorTimezone": "Tokyo Standard Time",
+  "collectorOffsetMinutes": 540.0,
+  "collectorCulture": "ja-JP",
+  "listingEncoding": "UTF-8",
+  "timestampSemantics": "These fixtures retain Windows FILETIME at 100ns precision. Listing displays collector local time; normalize exact 7-digit fields to UTC without rounding. Public SharpCompress returns Local DateTime and must roundtrip exact UTC ticks on every runner timezone.",
+  "dependencySources": [
+    "https://raw.githubusercontent.com/adamhathcock/sharpcompress/0.50.4/src/SharpCompress/Common/SevenZip/ArchiveReader.cs#L141-L143",
+    "https://raw.githubusercontent.com/adamhathcock/sharpcompress/0.50.4/src/SharpCompress/Common/Rar/Headers/FileHeader.cs#L156-L165"
+  ],
+  "sources": [
+    {
+      "name": "7Zip.solid.7z",
+      "inputSha256": "3C336BF14BEF2DC998B548A304C0C07C9C9DA899F90E426A965A5F322E232B53",
+      "entries": [
+        {
+          "path": "exe",
+          "directory": true,
+          "size": 0,
+          "listingLocal": "2022-02-15 21:08:14.1957309",
+          "modifiedUtc": "2022-02-15T12:08:14.1957309Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "jpg",
+          "directory": true,
+          "size": 0,
+          "listingLocal": "2022-02-14 18:38:18.9730814",
+          "modifiedUtc": "2022-02-14T09:38:18.9730814Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "jpg/test.jpg",
+          "directory": false,
+          "size": 40372,
+          "listingLocal": "2022-02-14 18:38:18.9730814",
+          "modifiedUtc": "2022-02-14T09:38:18.9730814Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "тест.txt",
+          "directory": false,
+          "size": 15498,
+          "listingLocal": "2022-02-14 18:38:18.9730814",
+          "modifiedUtc": "2022-02-14T09:38:18.9730814Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "exe/test.exe",
+          "directory": false,
+          "size": 45056,
+          "listingLocal": "2022-02-14 18:38:18.9720830",
+          "modifiedUtc": "2022-02-14T09:38:18.972083Z",
+          "precisionFractionDigits": 7
+        }
+      ],
+      "listingSha256": "E5ED69958976AB3DCD52D03562B81C9DD46727DB30F5302581B53351746C3874",
+      "exit": 0
+    },
+    {
+      "name": "Rar5.solid.rar",
+      "inputSha256": "3043D68C5A81F46ADCBB5393632D243944EAD44EB383A677AC82E68AFDDE27CF",
+      "entries": [
+        {
+          "path": "тест.txt",
+          "directory": false,
+          "size": 15498,
+          "listingLocal": "2011-06-24 10:35:53.4918566",
+          "modifiedUtc": "2011-06-24T01:35:53.4918566Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "exe/test.exe",
+          "directory": false,
+          "size": 45056,
+          "listingLocal": "2002-05-19 21:43:42.3278080",
+          "modifiedUtc": "2002-05-19T12:43:42.327808Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "jpg/test.jpg",
+          "directory": false,
+          "size": 40372,
+          "listingLocal": "2011-07-06 06:00:17.0884179",
+          "modifiedUtc": "2011-07-05T21:00:17.0884179Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "Empty",
+          "directory": true,
+          "size": 0,
+          "listingLocal": "2011-07-06 05:39:52.1474179",
+          "modifiedUtc": "2011-07-05T20:39:52.1474179Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "exe",
+          "directory": true,
+          "size": 0,
+          "listingLocal": "2011-07-06 05:58:09.9304179",
+          "modifiedUtc": "2011-07-05T20:58:09.9304179Z",
+          "precisionFractionDigits": 7
+        },
+        {
+          "path": "jpg",
+          "directory": true,
+          "size": 0,
+          "listingLocal": "2011-07-06 06:00:53.9634179",
+          "modifiedUtc": "2011-07-05T21:00:53.9634179Z",
+          "precisionFractionDigits": 7
+        }
+      ],
+      "listingSha256": "C0AF85957BEA02C85275FB24AFC553855D1483ED3230EF176BA85B2D319F4C81",
+      "exit": 0
+    }
+  ]
+}

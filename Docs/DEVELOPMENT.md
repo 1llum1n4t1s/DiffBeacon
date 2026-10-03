@@ -1,5 +1,28 @@
 # 開発と検証
 
+## 固定fixtureのGit属性
+
+固定SHAを持つ原本・manifest・goldenは、最も近い`.gitattributes`で`-text`を指定し、継承した`eol`指定も解除する。親ディレクトリの属性はルートの指定より優先されるため、ルートに規則を書いただけでは保護を確認できない。TAR.Zは[専用属性](../tests/Fixtures/Archives/TarZ/.gitattributes)を使う。原文の改行・空白は変更せず、必要なwhitespace設定を属性側へ記載する。
+
+stage後は実効属性とGit indexの原本bytesを確認する。次はPython標準ライブラリだけで、Git blobをバイナリのまま取得してSHA-256を照合する例。期待SHAの正本とも照合し、改行を正規化して一致扱いにしない。
+
+```powershell
+git check-attr --all -- tests/Fixtures/Archives/TarZ/manifest.json
+git check-attr --cached --all -- tests/Fixtures/Archives/TarZ/manifest.json
+$verifyFixtureGitBytes = @'
+import hashlib, subprocess, sys
+from pathlib import Path
+working = hashlib.sha256(Path(sys.argv[1]).read_bytes()).hexdigest()
+blob = subprocess.run(["git", "cat-file", "blob", sys.argv[2]], check=True, stdout=subprocess.PIPE).stdout
+stored = hashlib.sha256(blob).hexdigest()
+assert working == stored, (working, stored)
+print(stored)
+'@
+python -c $verifyFixtureGitBytes 'tests/Fixtures/Archives/TarZ/manifest.json' ':tests/Fixtures/Archives/TarZ/manifest.json'
+```
+
+commit後も第2引数を`HEAD:tests/Fixtures/Archives/TarZ/manifest.json`へ替えて照合する。CIはそのcommitの固定SHAを検査し、ローカル作業中のbytesと区別する。
+
 ## 検証成果物の容量管理
 
 画像変換のGUI自己検証では固定goldenをgzipで同梱し、約2.46 MBのJSONを約71 KBへ圧縮する。`python build/Generate-ImageTransformUiFixture.py`で再生成し、展開後の全bytesと正本SHAを照合する。E2Eは同じ正本をそのまま読み、通常の画像処理にはgoldenを使わない。
@@ -8,14 +31,17 @@
 
 GitHubから取得したZIPはそのまま保持し、entryをストリームで読みながらSHA・サイズ・CRCを照合する。確認に使うJSONと代表PNGだけを抽出し、Native AOT発行物や全体E2Eを一括展開しない。実行に展開が必要な場合は対象RIDだけを使い、用途を終えた展開物を照合後に整理してから次のRIDへ進む。
 
-Windowsでは[Compact-Evidence.ps1](../build/Compact-Evidence.ps1)とPython 3.11以降の標準ライブラリの[CompactEvidence.py](../build/CompactEvidence.py)で過去の検証ディレクトリをZIP64へ格納できる。ZIPは入力とは別の場所へ置く。各entryのSHA・サイズと入力の一覧・更新日時・属性が不変であることを確認し、ZIP全体のSHAも照合してから、同じPowerShellセッションで展開元を除去する。リンクと許可root外の操作は拒否する。失敗ログ・入力・出力・PNG・発行物も省略しない。
+Windowsでは[Compact-Evidence.ps1](../build/Compact-Evidence.ps1)とPython 3.11以降の標準ライブラリの[CompactEvidence.py](../build/CompactEvidence.py)で過去の検証ディレクトリをZIP64へ格納できる。ZIPは入力とは別の場所へ置く。各entryのSHA・サイズと入力の一覧・更新日時・属性が不変であることを確認し、ZIP全体のSHAも照合する。展開元の清掃はCodexの共通`Remove-CodexItem.ps1`へ対象・許可root・対象外の新規台帳を渡す。移動と消去は別結果として記録し、元パス・ごみ箱実体・管理情報の残存ゼロで完了とする。リンクと許可root外の操作は拒否し、ごみ箱全体は空にしない。失敗ログ・入力・出力・PNG・発行物も省略しない。
 
 ```powershell
-./build/Compact-Evidence.ps1 -SourcePath "$PWD/artifacts/e2e/previous" `
-  -ArchiveRoot 'E:/DiffBeacon-artifacts/retained/local' -PythonPath '<Python 3の実行ファイル>'
+pwsh -STA -NoProfile -File build/Compact-Evidence.ps1 -SourcePath "$PWD/artifacts/e2e/previous" `
+  -ArchiveRoot "$PWD/artifacts/retained/local" -PythonPath '<Python 3の実行ファイル>' `
+  -OwnerAttestsQuiescentAndNoMixedWork
 ```
 
-外部の証拠rootを整理するときだけ`-AdditionalEvidenceRoot 'E:/DiffBeacon-artifacts'`を指定する。処理に失敗した場合は元データと途中ZIPを保持する。ZIPが完成している場合は同じ入力と格納先に`-ExistingArchive '<途中ZIPの絶対パス>'`を加えると、全entryを再照合して再開できる。既存のZIP・報告JSONは上書きしない。
+`-OwnerAttestsQuiescentAndNoMixedWork`は、所有者が利用中プロセスと他作業の混在がないことを確認してから指定する。不可視プロセスとcwdを完全に確認するものではない。清掃は利用者の`.codex/scripts/Remove-CodexItem.ps1`に固定し、別ヘルパーへ変更する引数は提供しない。操作前に同じ`.codex/references/windows-delete-workflow.md`の検証状態・対応範囲を読む。手順書が停止中・対象未対応を示す場合、またはコードの稼働状態と手順書が一致しない場合は元データを保持し、`-WhatIf`による読取り検査だけを行う。2026-10-04の移植検証では、コードの停止フラグと手順書に不一致を観測したため実削除を行っていない。停止フラグを解除せず、別実装を使わない。ごみ箱へ移せない場合、取消・拒否・対応項目を特定できない場合も停止し、元データまたは移動済み項目とZIPを保持する。処理別JSONに残存状態を記録する。現在、圧縮だけ行う場合は`CompactEvidence.py`を直接実行でき、展開元を削除しない。
+
+外部の証拠rootを整理するときだけ`-AdditionalEvidenceRoot`を指定する。ZIPが完成している場合は同じ入力と格納先に`-ExistingArchive '<途中ZIPの絶対パス>'`を加えると、全entryを再照合できる。ただし削除の拒否対象を再実行する許可ではない。既存のZIP・報告JSONは上書きしない。2026-10-03以降のローカル出力はCドライブを使い、I/OエラーのあったEドライブは読取り専用とする。
 
 2026-10-02の保存先は`E:/DiffBeacon-artifacts/retained`。元パスとZIPの対応・SHA・照合結果は隣接JSONと`artifacts/retention/index.json`へ記録する。以前の文書に記載された過去の展開パスはこの索引から参照する。ZIPをその元ディレクトリへ展開すれば各ファイルを読み直せる。元の属性・mode・更新日時はZIP内の`.diffbeacon-retention-manifest.json`に保存されるが、展開ツールによる属性復元の対応は異なるため必要時にmanifestを参照する。ソース・固定fixture・Git履歴、共有キャッシュ、他プロジェクトはこの清掃の対象にしない。
 
@@ -60,8 +86,8 @@ Native AOT の Windows 発行には Visual Studio の C++ ビルドツールと 
 
 ```powershell
 # Windows 上
-./build/Publish.ps1 -Rid win-x64
-./build/Publish.ps1 -Rid win-arm64
+pwsh -STA -NoProfile -File build/Publish.ps1 -Rid win-x64 -OwnerAttestsQuiescentAndNoMixedWork
+pwsh -STA -NoProfile -File build/Publish.ps1 -Rid win-arm64 -OwnerAttestsQuiescentAndNoMixedWork
 # macOS 上
 ./build/Publish.ps1 -Rid osx-x64
 ./build/Publish.ps1 -Rid osx-arm64
@@ -73,10 +99,10 @@ Native AOT の Windows 発行には Visual Studio の C++ ビルドツールと 
 Import-Module 'C:/Program Files/Microsoft Visual Studio/18/Community/Common7/Tools/Microsoft.VisualStudio.DevShell.dll'
 Enter-VsDevShell -VsInstallPath 'C:/Program Files/Microsoft Visual Studio/18/Community' -DevCmdArguments '-arch=x64 -host_arch=x64' -SkipAutomaticLocation
 $env:IlcUseEnvironmentalTools = 'true'
-./build/Publish.ps1 -Rid win-x64
+./build/Publish.ps1 -Rid win-x64 -OwnerAttestsQuiescentAndNoMixedWork
 ```
 
-発行物は `artifacts/publish/<RID>` に生成する。発行スクリプトはこの RID の既存生成物を削除してから再生成する。実行ファイルと同じホストアーキテクチャでは自己検証も実行し、結果を `artifacts/verification/<RID>` に残す。自己検証全体の制限は既定600秒で、`-VerificationTimeoutSeconds`に1～3600秒を指定できる。超過時は子プロセスも終了して発行失敗にする。実行時間と制限をmanifestへ記録する。個々のUI操作の30秒制限と全検証項目・合否条件は維持する。自己検証は各段階の開始・終了、経過時間と成功／失敗数をconsoleと`self-test-progress.json`へ記録する。同じディレクトリの一時ファイルをflushして置換するため、強制終了中でも直前の完成した進捗を保持する。最終`ui-report.json`がないtimeoutを全UI成功として扱わない。画像ドラッグ対応SHAのMac ARM64 runnerは最後の表検索まで進んで旧180秒制限に達し、前回の同構成の成功も約178秒だったため、検証全体の枠を広げた。改定後の固定SHA 3b6f41bのCIではMac ARM64約195秒・x64約185秒で完走し、最終UI集計・表検索の完成進捗を照合した。全体E2E・実OSクリップボードも両構成で成功した。詳細は移行対応表の固定SHA検証記録を参照する。クロスアーキテクチャでは自己検証を省略した理由を manifest に記録する。`-SkipVerification` は発行だけを行う明示指定である。
+発行物は `artifacts/publish/<RID>` に生成する。Windowsの旧発行物は、所有者の静止・混在なし確認を受け、Codexの指定共通ヘルパーによるごみ箱移動・今回項目の個別消去・元パス／実体／管理情報の残存確認を終えてから再生成する。既存発行物があるWindowsではSTA実行と上記switchが必要で、処理別JSONをartifacts/publish-cleanupへ残す。共通ヘルパーが停止中・未対応の場合は旧発行物を保持し、`-OutputRoot artifacts/native-runs/<新しい検証名>`で未使用の生成先を指定できる。その場合、発行物は指定rootのRID配下、自己検証は同rootのverification/RIDへ生成し、過去結果を混在させない。macOSは従来の同OS清掃経路を使う。実行ファイルと同じホストアーキテクチャでは自己検証も実行し、結果を `artifacts/verification/<RID>` に残す。自己検証全体の制限は既定600秒で、`-VerificationTimeoutSeconds`に1～3600秒を指定できる。超過時は子プロセスも終了して発行失敗にする。実行時間と制限をmanifestへ記録する。個々のUI操作の30秒制限と全検証項目・合否条件は維持する。自己検証は各段階の開始・終了、経過時間と成功／失敗数をconsoleと`self-test-progress.json`へ記録する。同じディレクトリの一時ファイルをflushして置換するため、強制終了中でも直前の完成した進捗を保持する。最終`ui-report.json`がないtimeoutを全UI成功として扱わない。画像ドラッグ対応SHAのMac ARM64 runnerは最後の表検索まで進んで旧180秒制限に達し、前回の同構成の成功も約178秒だったため、検証全体の枠を広げた。改定後の固定SHA 3b6f41bのCIではMac ARM64約195秒・x64約185秒で完走し、最終UI集計・表検索の完成進捗を照合した。全体E2E・実OSクリップボードも両構成で成功した。詳細は移行対応表の固定SHA検証記録を参照する。クロスアーキテクチャでは自己検証を省略した理由を manifest に記録する。`-SkipVerification` は発行だけを行う明示指定である。
 
 macOS の成果物は `DiffBeacon.app` と、実行権限を保持する `DiffBeacon.app.tar.gz`。GitHub artifact をダウンロードした場合は tar を展開して起動する。署名・公証・配布はこのスクリプトの工程に含めない。
 

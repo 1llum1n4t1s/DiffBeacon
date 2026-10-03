@@ -5,6 +5,8 @@ param(
     [ValidateSet('win-x64', 'win-arm64', 'osx-x64', 'osx-arm64')]
     [string] $RuntimeIdentifier,
     [switch] $SkipVerification,
+    [switch] $OwnerAttestsQuiescentAndNoMixedWork,
+    [string] $OutputRoot,
     [ValidateRange(1, 3600)]
     [int] $VerificationTimeoutSeconds = 600
 )
@@ -16,22 +18,43 @@ $isMacTarget = $RuntimeIdentifier.StartsWith('osx-')
 if (($isMacTarget -and -not $IsMacOS) -or (-not $isMacTarget -and -not $IsWindows)) {
     throw 'Native AOT は対象と同じ OS 上で発行してください。Windows と macOS 間のクロスコンパイルには対応していません。'
 }
-$publishRoot = Join-Path $repoRoot 'artifacts/publish'
+$artifactsRoot = Join-Path $repoRoot 'artifacts'
+$publishRoot = if ($OutputRoot) { [IO.Path]::GetFullPath($OutputRoot, $repoRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) } else { Join-Path $artifactsRoot 'publish' }
+if (-not $publishRoot.StartsWith($artifactsRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '発行rootはリポジトリのartifacts配下へ指定してください。' }
 $outputPath = Join-Path $publishRoot $RuntimeIdentifier
-$verificationPath = Join-Path $repoRoot "artifacts/verification/$RuntimeIdentifier"
+$verificationPath = if ($OutputRoot) { Join-Path $publishRoot "verification/$RuntimeIdentifier" } else { Join-Path $repoRoot "artifacts/verification/$RuntimeIdentifier" }
 $projectPath = Join-Path $repoRoot 'Src/DiffBeacon.App/DiffBeacon.App.csproj'
 if (-not (Test-Path -LiteralPath $projectPath -PathType Leaf)) { throw "アプリのプロジェクトが見つかりません: $projectPath" }
 
 # 生成先を確認してから古い発行物を削除し、異なるビルドの混在を防ぐ。
-foreach ($path in @((Join-Path $repoRoot 'artifacts'), $publishRoot, $outputPath)) {
-    if ((Test-Path -LiteralPath $path) -and ((Get-Item -LiteralPath $path).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-        throw "生成先にリンクは使用できません: $path"
+foreach ($path in @($publishRoot, $outputPath, $verificationPath)) {
+    $ancestor = $path
+    while ($ancestor) {
+        if ((Test-Path -LiteralPath $ancestor) -and ((Get-Item -LiteralPath $ancestor).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+            throw "生成先にリンクは使用できません: $ancestor"
+        }
+        $ancestor = [IO.Path]::GetDirectoryName($ancestor)
     }
 }
 if (-not [IO.Path]::GetFullPath($outputPath).StartsWith($publishRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
     throw "発行先が許可されたディレクトリの外です: $outputPath"
 }
-if (Test-Path -LiteralPath $outputPath) { Remove-Item -LiteralPath $outputPath -Recurse -Force }
+if (Test-Path -LiteralPath $outputPath) {
+    if ($IsWindows) {
+        $WindowsCleanupHelper = Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) '.codex/scripts/Remove-CodexItem.ps1'
+        if (-not $OwnerAttestsQuiescentAndNoMixedWork) { throw '旧発行物の利用中プロセスなし・他作業混在なしを確認し、-OwnerAttestsQuiescentAndNoMixedWork を指定してください。' }
+        if ([Threading.Thread]::CurrentThread.ApartmentState -ne 'STA') { throw '旧発行物を清掃するWindows発行は pwsh -STA -NoProfile -File build/Publish.ps1 で実行してください。' }
+        # 旧発行物はごみ箱で今回の項目を照合し、個別に完全消去してから再生成する。
+        $cleanupRoot = Join-Path $repoRoot 'artifacts/publish-cleanup'
+        New-Item -ItemType Directory -Path $cleanupRoot -Force | Out-Null
+        $cleanupId = [guid]::NewGuid().ToString('N')
+        $cleanupPath = Join-Path $cleanupRoot "$RuntimeIdentifier-$cleanupId-clean.json"
+        if (-not (Test-Path -LiteralPath $WindowsCleanupHelper -PathType Leaf)) { throw '指定されたWindows共通清掃ヘルパーがないため、旧発行物を保持します。新しい-OutputRootを指定できます。' }
+        & $WindowsCleanupHelper -AllowedRoot $publishRoot -LiteralPath @($outputPath) -LedgerPath $cleanupPath
+        $cleaned = Get-Content -LiteralPath $cleanupPath -Raw | ConvertFrom-Json
+        if ($cleaned.state -ne 'complete' -or @($cleaned.items | Where-Object { -not $_.sourceAbsent -or -not $_.recycleAbsent -or -not $_.metadataAbsent }).Count -gt 0 -or (Test-Path -LiteralPath $outputPath)) { throw '旧発行物のごみ箱移動／完全消去を確認できません。' }
+    } else { Remove-Item -LiteralPath $outputPath -Recurse -Force }
+}
 New-Item -ItemType Directory -Path $outputPath -Force | Out-Null
 Push-Location $repoRoot
 try {

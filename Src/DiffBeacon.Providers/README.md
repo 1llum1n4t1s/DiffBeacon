@@ -41,7 +41,7 @@ tarは10万エントリ、各内容256 MiB、ヘッダーとパディングを�
 | キャンセル、読み取り専用出力、出力先リンク、入出力同一 | 原本と既存出力を保持し、今回作った途中出力だけを削除する。 |
 | 作成・再梱包・全件展開 | 一時出力を閉じてから置換。全件展開は未存在のディレクトリへ全検証後に公開。RAR作成・暗号化出力は未対応として明示する。 |
 
-`ManagedArchive` は SharpCompress 0.50.4（MIT）と.NET標準APIを使う純managedサービスです。`ReadManifest(path, password, cancellationToken)`は`Format`（`7z`・`rar`・`zip`・`tar`・`tar.gz`・`tar.bz2`・`tar.Z`）と、正規化した相対パス、ディレクトリ種別、実測サイズ、内容SHA-256、暗号化フラグ、更新日時を返します。エントリはパスのordinal順、ディレクトリはサイズ0・ハッシュ空文字です。全内容を順次復号するためsolidでも読み落としません。TARの安全な先頭`./`は除去し、ルートディレクトリ自身は比較一覧に含めません。
+`ManagedArchive` は SharpCompress 0.50.4（MIT）と.NET標準APIを使う純managedサービスです。`ReadManifest(path, password, cancellationToken)`は`Format`（`7z`・`rar`・`zip`・`tar`・`tar.gz`・`tar.bz2`・`tar.Z`および明示wrapper鎖の`zip.gz.Z`等）と、正規化した相対パス、ディレクトリ種別、実測サイズ、内容SHA-256、暗号化フラグ、更新日時を返します。エントリはパスのordinal順、ディレクトリはサイズ0・ハッシュ空文字です。全内容を順次復号するためsolidでも読み落としません。TARの安全な先頭`./`は除去し、ルートディレクトリ自身は比較一覧に含めません。
 
 `ReadEntry`は全検証後に選択したバイト列を返します。`WriteArchive(destinationPath, entries, cancellationToken)`と`Repack(sourcePath, destinationPath, password, cancellationToken)`は出力拡張子から7z・zip/jar/ear/war/xpi・tar・tar.gz/tgz・tar.bz2/tbz2/tbz・tar.Z/tazを選びます。`ManagedArchiveWriteEntry(Path, Content, LastModifiedTime)`の`Content`は`ReadOnlyMemory<byte>?`、nullはディレクトリです。既存の`WriteSevenZip`/`RepackToSevenZip`は同じ処理の7z指定APIです。7zは非solid LZMA2、全出力は非暗号化です。更新日時を伝達しますがZIPは1980〜2107年・2秒精度へ制約し、元形式の精度・タイムゾーンの完全保存は保証しません。属性・ACL・圧縮方式・solid設定・元暗号化は保存しません。
 
@@ -49,7 +49,7 @@ tarは10万エントリ、各内容256 MiB、ヘッダーとパディングを�
 
 暗黙の親を含む10万パスノードと、NFC辞書キー＋元表記の合計16 Mi文字も制限します。TAR補助メタデータは各1 MiB、復号したヘッダー・パディングを含む総量は1 GiBまでです。全ヘッダーのchecksum、PAXのsize指定、2ブロック終端を検証します。GZipは各連結メンバーのヘッダー・CRC・ISIZE・フッターの存在を検証し、途中欠損を拒否します。TAR本文は形式上CRCを持たず、意味的な内容改変を検出するものではありません。
 
-既定上限は10万エントリ、入力1 GiB、各内容256 MiB、展開合計1 GiB、プレビュー16 MiB、出力1 GiBです。`ManagedArchiveLimits` で指定できます。プレビューは選択したファイルだけ、再梱包は一度に1ファイルだけをメモリへ保持します。入力も出力もリンクを含むパスを拒否します。格納名の絶対・親参照・空セグメント・制御文字・Windows予約名・末尾空白/点・重複（大文字小文字も区別しない）、リンク属性とRARリダイレクト、分割ボリュームを拒否します。`ReadManifest` は格納先を作成せず、再梱包の途中出力は指定した出力先ディレクトリに作成し、完了後に置換します。読み取り専用出力は拒否します。上限超過・失敗・キャンセルでは原本・既存出力を保持し、途中出力を削除します。
+既定上限は10万エントリ、入力1 GiB、各内容256 MiB、展開合計1 GiB、プレビュー16 MiB、出力1 GiBです。`ManagedArchiveLimits` で指定できます。終端containerのプレビューcaptureは選択したファイルだけ、再梱包captureは一度に1ファイルだけを保持します。明示wrapper入力は各層を完全検証する中間MemoryStreamも保持し、下記の共有予算とpeak制約を使います。入力も出力もリンクを含むパスを拒否します。格納名の絶対・親参照・空セグメント・制御文字・Windows予約名・末尾空白/点・重複（大文字小文字も区別しない）、リンク属性とRARリダイレクト、分割ボリュームを拒否します。`ReadManifest` は格納先を作成せず、再梱包の途中出力は指定した出力先ディレクトリに作成し、完了後に置換します。読み取り専用出力は拒否します。上限超過・失敗・キャンセルでは原本・既存出力を保持し、途中出力を削除します。
 
 ZIPはライブラリの`CheckCrc`付き抽出でCRC値0とWinZip AESの認証も検証します。他の形式は公開CRCが0以外なら実測CRCと照合します。暗号化RARのCRCは秘密鍵で変換されるため比較しません。7zのCRC省略と値0の区別は公開APIでは未確認で、暗号化RARとともに完全性は復号器の検証範囲に依存します。あらゆる破損の検出を保証しません。パスワード指定時のライブラリ例外は本文とinner exceptionを残さない定型診断へ置き換えます。CPUを使う同期APIなのでUIからはバックグラウンドで呼び、CancellationTokenを渡します。ライブラリの内部処理からI/Oへ戻るまではキャンセルが遅れる場合があります。
 
@@ -80,3 +80,13 @@ RAR作成、暗号化出力、分割、CAB/LZH/ISO/MSI等の全旧形式、属�
 アプリの標準ビューはこの契約から外部実行ファイルを自動起動しません。PDF・OCRなど、標準プロバイダーが対応していない形式を扱う実行ファイルは別途明示的な登録が必要です。新しい有料サービス・外部API・ダウンロード処理は含みません。
 
 標準tar/tar-metadata providerのTAR読取り・復号・hashは背景タスクで実行し、GUIの中止操作を受け付けます。callerは完成結果をEditorへ採用する直前にも取消を確認します。共有TAR検査、リンクを追跡しないmetadata表示、ManagedArchiveのリンク拒否を維持します。実GUIのearly/late中止では、完成した全canonical本文・metadata、最終両Editorの前回本文保持、取消表示と入力SHAをJSON/PNGで確認します。
+
+### 明示 container wrapper 入力
+
+`SupportsInput` は既存入力に加え、ZIP/JAR/EAR/WAR/XPI・7z・RARの終端名を `.gz`/`.bz2`/`.Z` で1段以上包む明示名を認識します。全公開read/preview/export/repack/extractと標準archive providerで同じRead経路を使い、GUI Autoへ接続します。各wrapperのmagicと全member/footer/EOFを検証してから次段へ進み、GZip FNAMEは物理pathやhandler選択に使いません。contained archive entryはleafです。既存単段TARのraw/header予算とconsumer policyは維持します。裸compressed非archive、TAR複数wrapper統一、GUI内側entry navigation、wrapper出力作成は次工程です。
+
+`ManagedArchiveLimits` 末尾の `MaximumWrapperDepth`（既定8）と `MaximumWorkBytes`（8 GiB）は新明示鎖に適用します。各中間内容は `MaximumEntryBytes` 以下、全wrapper復号output＋終端entry outputは同一 `MaximumDecodedBytes` を共有します。wrapper/member/entry/implicit parent件数とpathkey＋元表記/名前metadataも共有し、上限の次1byteを拒否します。作業量は実read（seek後の再read含む）＋復号output＋明示処理したmetadataで、codec内部の厳密CPU命令数ではありません。現在入力と次MemoryStreamだけを保持し中間ToArrayやtemp保存を行いません。終端capture APIの最後のcopyは残るため、peakは終端buffer＋capture＋return copy（概ね最大3×entry上限、成長容量/codec workspace別）です。
+
+BZip2は公開decoderのsingle member strict CRC/footerを使い、全次memberの4byte `BZh1`〜`BZh9`をowned経路で検査します。GZipは既存header/FHCRC/CRC/ISIZE/連結検査、Zはowned codecの構造検査と完全性の限界を維持します。[固定wrapper原本](../../tests/Fixtures/Archives/Wrappers/README.md)と独立Python/公式Z全層oracleを実App E2Eで使います。
+
+GUIは初期検証失敗を空panelとして採用せず、任意の左右masked passwordを持つgeneric再試行を提供します。4096文字以下/空nullで保存・ログへ転記しません。Retry成功時だけ採用し、Cancel/×/Stop/失敗/古い完了では確定Rows/preview/表示元を保持します。Refreshは候補を背景計算し採用直前に取消/世代を再確認、保持したpanelも再操作できます。tab closeでpanel lifetimeと進行operationを解放します。

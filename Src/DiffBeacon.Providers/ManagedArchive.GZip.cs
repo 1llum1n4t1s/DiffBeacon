@@ -7,7 +7,7 @@ public sealed partial class ManagedArchive
 {
     // BCL GZipStreamは欠損footerでもEOFを返すため、メンバー境界を明示検証する。
     // managed DEFLATEの消費量を使い、先読みされたfooter/次メンバーを正確に巻き戻す。
-    private sealed class VerifiedGZipStream(Stream input, CancellationToken token, int maximumMembers) : Stream
+    private sealed class VerifiedGZipStream(Stream input, CancellationToken token, int maximumMembers, ArchiveReadBudget? budget = null) : Stream
     {
         private readonly byte[] _buffer = new byte[64 * 1024];
         private SharpDeflateStream? _deflate;
@@ -28,6 +28,7 @@ public sealed partial class ManagedArchive
             token.ThrowIfCancellationRequested();
             if (input.Position == input.Length) return false;
             if (++_members > maximumMembers) throw new InvalidDataException("gzipメンバー数の上限を超えました。");
+            budget?.Item();
             uint headerCrc = uint.MaxValue;
             var headerBytes = 0;
             byte HeaderByte()
@@ -37,6 +38,7 @@ public sealed partial class ManagedArchive
                 if (value < 0 || ++headerBytes > 1024 * 1024)
                     throw new InvalidDataException("gzipヘッダーが欠損または上限を超えています。");
                 var octet = (byte)value;
+                budget?.Work(1);
                 headerCrc = DecodedSink.CrcTable[(headerCrc ^ octet) & 255] ^ (headerCrc >> 8);
                 return octet;
             }
@@ -50,8 +52,8 @@ public sealed partial class ManagedArchive
                 var length = HeaderByte() | HeaderByte() << 8;
                 for (var index = 0; index < length; index++) HeaderByte();
             }
-            if ((flags & 8) != 0) while (HeaderByte() != 0) { }
-            if ((flags & 16) != 0) while (HeaderByte() != 0) { }
+            if ((flags & 8) != 0) while (HeaderByte() != 0) { budget?.PathCharacters(1); }
+            if ((flags & 16) != 0) while (HeaderByte() != 0) { budget?.PathCharacters(1); }
             if ((flags & 2) != 0)
             {
                 Span<byte> expected = stackalloc byte[2];

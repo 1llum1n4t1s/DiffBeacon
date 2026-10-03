@@ -58,6 +58,10 @@ TARの読書きは `System.Formats.Tar`、ZIP出力は `System.IO.Compression` �
 
 TAR.Zの圧縮層はProvidersの`ZReadStream`・`ZWriteStream`が担当する。読込みは9～16bitのblock／nonblock、幅の変更とCLEARの8code境界を検査し、内側を同じTAR検証・共有上限へ渡す。`ManagedArchive`はリンクや特殊entryを拒否し、標準`tar`・`tar-metadata`プロバイダーはリンクを追わず名前とメタデータを比較する。出力は16bit block形式で、TAR終端を完成させてからZの残codeを明示完了し、一時出力を公開する。`Flush`はZ列を終端化しない。Z自体にはCRC・宣言長・明示EOFがなく、検証できる破損の範囲は[Providersの契約](Src/DiffBeacon.Providers/README.md#managed-アーカイブサービスの検証契約)に従う。通常アプリは外部codecを探さず、独立した公式decoderのビルドはE2E／CIだけで行う。
 
+明示的なZIP派生・7z・RARの名前に続く`.gz`・`.bz2`・`.Z`の圧縮鎖は、`ManagedArchive.Wrappers`で外から順に検証する。`SupportsInput`を出力対応と分け、GZip FNAMEや内包entryから次の形式や物理パスを選ばない。全member・EOFと検証可能なfooterを確認してから次段へ進み、終端の実形式と明示拡張子を照合する。中間物はseek可能なメモリに保持し、一時ファイルと中間`ToArray`を作らず、次段完成後に親bufferを解放する。最大8段・中間各256 MiB・復号出力合計1 GiB・実read／復号出力／明示metadata処理合計8 GiBに制限し、wrapper・member・終端entry・暗黙parentとパス文字にも共通予算を使う。作業量はcodec内部のCPU命令数の厳密な制限ではなく、最終captureのbufferと返却copy、成長容量・codec workspaceは別途メモリを使う。既存単段TARは専用の検証と予算を維持し、内包archive entryの自動再帰は行わない。
+
+アーカイブGUIは読込み候補を完全検証した後、取消と世代を確認して採用する。再比較・previewの失敗や古い完了では確定一覧・選択・preview・表示元を保持する。panelの寿命は作成時の比較tokenから独立させ、初回読込みと各操作だけを連結し、tab-close時に所有する操作を取消・解放する。初回の非取消失敗は、破損を認証必須と断定しない再試行ダイアログで扱う。左右の任意passwordはmasked欄から候補にだけ渡し、設定・プロジェクト・ログへ保存しない。初回取消とダイアログの取消では候補を採用しない。
+
 比較文書の包装は`ComparisonPackage`へ集約する。GUIは保存済み本文と最後に比較したパス・形式を確認し、選択と設定をawait前に確定する。所有する一時ディレクトリへ各原本のバイト列を確定し、同じ内容からレポート・パッチ・アーカイブを作ることで、生成物間の内容のずれを防ぐ。生成物も順次一時ファイルへ移し、全比較分のbyte配列をメモリへ保持しない。入力と生成物の合計は1 GiB、文書各256 MiB、生成物各32 MiB、同梱JSONは4 MiBとする。成功・例外・中止時は所有する一時ファイルと空の一時ディレクトリを削除し、最終出力の公開は`ManagedArchive`の保存経路を使う。包装CLIの`PackageCommands`も同じ経路を呼ぶ。
 
 同梱プロジェクトの文書とフィルターは安全な格納相対名を参照する。JSONの相対参照もXMLと同じくプロジェクト所在から解決する。URL・他OSの絶対表記は維持する。文書を含めない指定では元の絶対参照を保持し、URLの暗黙取得や保存された外部ツールの実行はしない。

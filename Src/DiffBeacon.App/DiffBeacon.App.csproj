@@ -20,6 +20,9 @@
     <None Include="TiffLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="JpegLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/Zip.deflate.WinzipAES.zip" LogicalName="DiffBeacon.SelfTest.Encrypted.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/7Zip.solid.7z" LogicalName="DiffBeacon.SelfTest.Wrappers.7Zip.solid.7z" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Rar5.solid.rar" LogicalName="DiffBeacon.SelfTest.Wrappers.Rar5.solid.rar" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Wrappers/metadata-golden.json" LogicalName="DiffBeacon.SelfTest.Wrappers.Metadata.json" />
     <EmbeddedResource Include="../../tests/Fixtures/Images/same-first-left.gif" LogicalName="DiffBeacon.SelfTest.Images.same-first-left.gif" />
     <EmbeddedResource Include="../../tests/Fixtures/Images/same-first-right.gif" LogicalName="DiffBeacon.SelfTest.Images.same-first-right.gif" />
     <EmbeddedResource Include="../../tests/Fixtures/Images/short.gif" LogicalName="DiffBeacon.SelfTest.Images.short.gif" />

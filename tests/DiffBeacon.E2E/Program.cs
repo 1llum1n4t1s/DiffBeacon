@@ -8,6 +8,35 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
+// 誤記や旧selectorを通常全体実行へ落とさず、成果物作成/アプリ起動より先に拒否する。
+var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
+var selectors = new HashSet<string>(StringComparer.Ordinal)
+{
+    "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
+    "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
+    "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
+    "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
+    "--image-reports-only", "--image-only", "--gnu-table-only", "--gnu-text-only", "--gnu-line-only",
+    "--line-alignment-only", "--word-diff-only", "--reports-only", "--packaging-only", "--projects-only",
+    "--archives-only", "--legacy-comments-only", "--text-advanced-only", "--provider-boundaries-only"
+};
+var seenOptions = new HashSet<string>(StringComparer.Ordinal);
+var selectorCount = 0;
+for (var argumentIndex = 0; argumentIndex < args.Length; argumentIndex++)
+{
+    var option = args[argumentIndex];
+    string? error = null;
+    if (!seenOptions.Add(option)) error = "オプションが重複しています。";
+    else if (selectors.Contains(option)) { if (++selectorCount > 1) error = "限定selectorは1件だけ指定してください。"; }
+    else if (valueOptions.Contains(option))
+    {
+        if (argumentIndex + 1 >= args.Length || string.IsNullOrWhiteSpace(args[argumentIndex + 1]) || args[argumentIndex + 1].StartsWith("--", StringComparison.Ordinal)) error = "オプションの値が必要です。";
+        else argumentIndex++;
+    }
+    else error = "不明なE2Eオプションです。";
+    if (error is not null) { Console.Error.WriteLine(error); return 2; }
+}
+
 var outputArgument = Option("--output") ?? "artifacts/e2e/local";
 var output = Path.GetFullPath(outputArgument);
 Directory.CreateDirectory(output);
@@ -1706,7 +1735,9 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--tar-z-only", StringComparer.Ordinal))
+    if (args.Contains("--archive-wrappers-only", StringComparer.Ordinal))
+        await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
+    else if (args.Contains("--tar-z-only", StringComparer.Ordinal))
         await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     else if (args.Contains("--image-overlay-only", StringComparer.Ordinal))
     {
@@ -1815,6 +1846,7 @@ try
     else if (args.Contains("--archives-only", StringComparer.Ordinal))
     {
         await ArchiveCases();
+        await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
         await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     }
     else if (args.Contains("--legacy-comments-only", StringComparer.Ordinal))
@@ -1832,6 +1864,7 @@ try
     else
     {
     await ArchiveCases();
+    await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
     await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);

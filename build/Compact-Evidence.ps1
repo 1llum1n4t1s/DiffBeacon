@@ -3,9 +3,13 @@ param(
     [Parameter(Mandatory)][string]$ArchiveRoot,
     [Parameter(Mandatory)][string]$PythonPath,
     [string[]]$AdditionalEvidenceRoot = @(),
-    [string]$ExistingArchive
+    [string]$ExistingArchive,
+    [switch]$OwnerAttestsQuiescentAndNoMixedWork
 )
 $ErrorActionPreference = 'Stop'
+$WindowsCleanupHelper = Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) '.codex/scripts/Remove-CodexItem.ps1'
+if (-not $OwnerAttestsQuiescentAndNoMixedWork) { throw '展開元の所有者が利用中プロセスなし・他作業混在なしを確認してから -OwnerAttestsQuiescentAndNoMixedWork を指定してください。' }
+if (-not $IsWindows -or [Threading.Thread]::CurrentThread.ApartmentState -ne 'STA') { throw 'Windowsでは pwsh -STA -NoProfile -File build/Compact-Evidence.ps1 で実行してください。圧縮だけなら CompactEvidence.py を使用できます。' }
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $allowedRoots = @([IO.Path]::GetFullPath((Join-Path $repoRoot 'artifacts')))
 $allowedRoots += @($AdditionalEvidenceRoot | ForEach-Object { [IO.Path]::GetFullPath($_).TrimEnd('\', '/') })
@@ -70,10 +74,17 @@ foreach ($source in $sources) {
         -not $report.sourceUnchanged -or -not $report.allFileHashesVerified -or $report.files -ne $report.verifiedFiles) { throw '除去前の照合条件を満たしません。' }
     if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $report.archiveSha256) { throw '照合後のZIPが変化しました。' }
     Assert-Source $source | Out-Null
-    # 対象の絶対パス・root範囲・リンク・全entry SHAを検査した同じPowerShellセッションで除去する。
-    Remove-Item -LiteralPath $source -Recurse -Force
+    # 全entry照合後も、ごみ箱への移動と今回項目の完全消去を別々に記録する。
+    $cleanupPath = Join-Path $archivePath "$name-recycle-clean.json"
+    $evidenceRoot = @($allowedRoots | Where-Object { $source.StartsWith($_ + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) } | Sort-Object Length -Descending)[0]
+    if (-not (Test-Path -LiteralPath $WindowsCleanupHelper -PathType Leaf)) { throw '指定されたWindows共通清掃ヘルパーがないため、展開元とZIPを保持します。' }
+    & $WindowsCleanupHelper -AllowedRoot $evidenceRoot -LiteralPath @($source) -LedgerPath $cleanupPath
+    $cleaned = Get-Content -LiteralPath $cleanupPath -Raw | ConvertFrom-Json
+    if ($cleaned.state -ne 'complete' -or @($cleaned.items | Where-Object { -not $_.sourceAbsent -or -not $_.recycleAbsent -or -not $_.metadataAbsent }).Count -gt 0) { throw '元データ・ごみ箱実体・管理情報の消失を確認できません。' }
     if (Test-Path -LiteralPath $source) { throw "展開元が残っています: $source" }
     $report.sourceRemoved = $true
+    $report | Add-Member -NotePropertyName cleanupProtocol -NotePropertyValue 'recycle-exact-item-purge' -Force
+    $report | Add-Member -NotePropertyName cleanupReport -NotePropertyValue $cleanupPath -Force
     $report | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $reportPath -Encoding utf8NoBOM
     $report | ConvertTo-Json -Depth 6 -Compress
 }

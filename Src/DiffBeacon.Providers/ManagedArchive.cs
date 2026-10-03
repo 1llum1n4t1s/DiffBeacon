@@ -14,7 +14,9 @@ public sealed record ManagedArchiveLimits(
     long MaximumDecodedBytes = 1024L * 1024 * 1024,
     int MaximumPreviewBytes = 16 * 1024 * 1024,
     long MaximumOutputBytes = 1024L * 1024 * 1024,
-    int MaximumPathCharacters = 16 * 1024 * 1024);
+    int MaximumPathCharacters = 16 * 1024 * 1024,
+    int MaximumWrapperDepth = 8,
+    long MaximumWorkBytes = 8L * 1024 * 1024 * 1024);
 
 public sealed record ManagedArchiveEntry(string Path, bool IsDirectory, long Size,
     string Sha256, bool IsEncrypted, DateTime? LastModifiedTime);
@@ -36,7 +38,8 @@ public sealed partial class ManagedArchive
         if (_limits.MaximumEntries <= 0 || _limits.MaximumInputBytes <= 0 ||
             _limits.MaximumEntryBytes <= 0 || _limits.MaximumDecodedBytes <= 0 ||
             _limits.MaximumPreviewBytes <= 0 || _limits.MaximumOutputBytes <= 0 ||
-            _limits.MaximumPathCharacters <= 0 ||
+            _limits.MaximumPathCharacters <= 0 || _limits.MaximumWrapperDepth <= 0 ||
+            _limits.MaximumWorkBytes <= 0 ||
             _limits.MaximumEntryBytes > int.MaxValue)
             throw new ArgumentOutOfRangeException(nameof(limits));
     }
@@ -99,14 +102,33 @@ public sealed partial class ManagedArchive
         using var input = new CheckedStream(file, _limits.MaximumInputBytes, token);
         try
         {
-            var tarFormat = DetectTarFormat(input, path);
+            if (TryGetWrapperChain(path, out var terminalLength, out var terminalType, out var depth))
+                return ReadWrapped(input, path, terminalLength, terminalType, depth, password, token,
+                    capture, consume, captureLimit, prefixOnly);
+            return ReadCore(input, path, password, token, capture, consume, captureLimit, prefixOnly);
+        }
+        catch (OperationCanceledException) { throw; }
+        catch (Exception) when (password is not null)
+        {
+            // 依存ライブラリの例外文や inner exception に認証情報を残さない。
+            throw new InvalidDataException("アーカイブを読み取れません。パスワード、破損、圧縮方式を確認してください。");
+        }
+    }
+
+    private ManagedArchiveManifest ReadCore(Stream input, string logicalName, string? password, CancellationToken token,
+        Func<ManagedArchiveEntry, bool>? capture, Action<ManagedArchiveEntry, MemoryStream?>? consume,
+        long? captureLimit, bool prefixOnly, ArchiveReadBudget? budget = null, ArchiveType? expectedType = null)
+    {
+            var tarFormat = expectedType is null ? DetectTarFormat(input, logicalName) : null;
             if (tarFormat is not null)
                 return ReadTar(input, tarFormat, token, capture, consume, captureLimit, prefixOnly);
             // Stream API で隣接ボリュームの暗黙の探索・読み取りを防ぐ。
             using var archive = ArchiveFactory.OpenArchive(input, ReaderOptions.ForExternalStream.WithPassword(password));
             if (archive.Type is not (ArchiveType.SevenZip or ArchiveType.Rar or ArchiveType.Zip))
                 throw new InvalidDataException("このサービスの読み取り対象は 7z・RAR・ZIP です。");
-            var names = new EntryNames(_limits.MaximumEntries, _limits.MaximumPathCharacters);
+            if (expectedType is not null && archive.Type != expectedType)
+                throw new InvalidDataException("明示した内側アーカイブ形式と内容が一致しません。");
+            var names = new EntryNames(_limits.MaximumEntries, _limits.MaximumPathCharacters, budget);
             var result = new List<ManagedArchiveEntry>();
             long total = 0;
             if (archive.Type == ArchiveType.Rar)
@@ -135,38 +157,45 @@ public sealed partial class ManagedArchive
             void Process(IEntry entry, Action<Stream> decode)
             {
                 token.ThrowIfCancellationRequested();
+                budget?.CheckPath(entry.Key);
                 var name = ValidateEntryPath(entry.Key);
                 names.Add(name, entry.IsDirectory);
                 // 7z の実装は VolumeIndex にエントリ順序を格納するため、分割判定に使わない。
                 if (IsLink(entry) || entry.IsSplitAfter || archive.Type != ArchiveType.SevenZip && (entry.VolumeIndexFirst > 0 || entry.VolumeIndexLast > 0))
                     throw new InvalidDataException("リンク・分割エントリは読み取れません。");
                 if (entry.Size < 0 || entry.Size > _limits.MaximumEntryBytes ||
-                    entry.Size > _limits.MaximumDecodedBytes - total || (entry.IsDirectory && entry.Size != 0))
+                    entry.Size > (budget?.DecodedRemaining ?? _limits.MaximumDecodedBytes - total) || (entry.IsDirectory && entry.Size != 0))
                     throw new InvalidDataException("アーカイブ内容のサイズ上限超過、または不正なサイズです。");
                 if (entry.IsEncrypted && string.IsNullOrEmpty(password))
                     throw new InvalidDataException("暗号化アーカイブにはパスワードが必要です。");
                 var metadata = new ManagedArchiveEntry(name, entry.IsDirectory, entry.Size,
                     "", entry.IsEncrypted, entry.LastModifiedTime);
+                budget?.Work(64); // 型・サイズ・時刻・暗号化属性・ハッシュの保持量。
                 var keep = capture?.Invoke(metadata) == true;
                 if (keep && !prefixOnly && entry.Size > (captureLimit ?? _limits.MaximumEntryBytes))
                     throw new InvalidDataException("プレビューのサイズ上限を超えました。");
                 using var content = keep ? prefixOnly ? new PrefixMemoryStream(checked((int)captureLimit!.Value)) : new MemoryStream() : null;
                 if (!entry.IsDirectory)
                 {
+                    // ZIP抽出がlocal headerを採用しても、先に読んだcentral CRCを失わない。
+                    long expectedCrc = 0;
+                    if (!(archive.Type == ArchiveType.Rar && entry.IsEncrypted))
+                    {
+                        try { expectedCrc = entry.Crc; }
+                        catch (ArgumentNullException) { } // CRCを格納しないRAR5。
+                    }
                     using var sink = new DecodedSink(content, Math.Min(_limits.MaximumEntryBytes,
-                        Math.Min(_limits.MaximumDecodedBytes - total,
-                            keep && !prefixOnly ? captureLimit ?? _limits.MaximumEntryBytes : _limits.MaximumEntryBytes)), token);
+                        Math.Min(budget?.DecodedRemaining ?? _limits.MaximumDecodedBytes - total,
+                            keep && !prefixOnly ? captureLimit ?? _limits.MaximumEntryBytes : _limits.MaximumEntryBytes)), token, budget);
                     decode(sink);
-                    if (sink.Length != entry.Size)
+                    if (sink.Length != metadata.Size)
                         throw new InvalidDataException("宣言されたサイズと展開したサイズが一致しません。");
                     // RAR5 暗号化の CRC は秘密鍵で変換されるため、公開 CRC 値とは比較しない。
                     // ZIP AES AE-2 と CRC を省略した 7z は値が 0。復号器の認証検証に従う。
                     if (!(archive.Type == ArchiveType.Rar && entry.IsEncrypted))
                     {
-                        long crc;
-                        try { crc = entry.Crc; }
-                        catch (ArgumentNullException) { crc = 0; } // CRC を格納しない RAR5。
-                        if (crc != 0 && unchecked((uint)crc) != sink.Crc32)
+                        if ((expectedCrc != 0 || archive.Type == ArchiveType.Zip && !entry.IsEncrypted)
+                            && unchecked((uint)expectedCrc) != sink.Crc32)
                             throw new InvalidDataException("アーカイブ内容の CRC が一致しません。");
                     }
                     total += sink.Length;
@@ -175,13 +204,6 @@ public sealed partial class ManagedArchive
                 result.Add(metadata);
                 consume?.Invoke(metadata, content);
             }
-        }
-        catch (OperationCanceledException) { throw; }
-        catch (Exception) when (password is not null)
-        {
-            // 依存ライブラリの例外文や inner exception に認証情報を残さない。
-            throw new InvalidDataException("アーカイブを読み取れません。パスワード、破損、圧縮方式を確認してください。");
-        }
     }
 
     private static void ValidateOutput(string path)
@@ -252,7 +274,7 @@ public sealed partial class ManagedArchive
         }
     }
 
-    private sealed class DecodedSink(MemoryStream? content, long limit, CancellationToken token) : Stream
+    private sealed class DecodedSink(MemoryStream? content, long limit, CancellationToken token, ArchiveReadBudget? budget = null) : Stream
     {
         internal static readonly uint[] CrcTable = CreateCrcTable();
         private readonly IncrementalHash _hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
@@ -276,6 +298,7 @@ public sealed partial class ManagedArchive
         {
             token.ThrowIfCancellationRequested();
             if (buffer.Length > limit - _length) throw new InvalidDataException("展開サイズの上限を超えました。");
+            budget?.Decoded(buffer.Length);
             _length += buffer.Length;
             _hash.AppendData(buffer);
             foreach (var value in buffer) _crc = CrcTable[(_crc ^ value) & 255] ^ (_crc >> 8);

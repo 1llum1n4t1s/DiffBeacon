@@ -21,17 +21,23 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private readonly TextBlock _status = new() { Margin = new Thickness(8), TextWrapping = TextWrapping.Wrap };
     private readonly TextBox _preview = new() { Name = "archive-preview", IsReadOnly = true, AcceptsReturn = true, FontFamily = new FontFamily("Cascadia Mono, Menlo, monospace") };
     public ListBox EntryList { get; } = new() { Name = "archive-entries" };
-    public TextBox LeftPassword { get; } = new() { Name = "archive-left-password", PasswordChar = '●', PlaceholderText = "左のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
-    public TextBox RightPassword { get; } = new() { Name = "archive-right-password", PasswordChar = '●', PlaceholderText = "右のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
+    public TextBox LeftPassword { get; } = new() { Name = "archive-left-password", PasswordChar = '●', MaxLength = 4096, PlaceholderText = "左のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
+    public TextBox RightPassword { get; } = new() { Name = "archive-right-password", PasswordChar = '●', MaxLength = 4096, PlaceholderText = "右のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
     public TextBox ExtractionName { get; } = new() { Name = "archive-extraction-name", Text = "extracted", PlaceholderText = "新しい展開フォルダー名", Width = 200, Margin = new Thickness(4) };
     public IReadOnlyList<ArchiveEntryDifference> Rows { get; private set; } = [];
     public string PreviewText => _preview.Text ?? "";
     public string StatusText => _status.Text ?? "";
+    internal Action? RefreshReadyForAdoption { get; set; }
+    internal string LeftSourcePath => _leftPath;
+    internal string RightSourcePath => _rightPath;
+    internal bool IsDisposed => _disposed;
 
-    private ArchivePanel(string left, string right, CancellationToken token, Action<string>? guardOutput)
+    private ArchivePanel(string left, string right, Action<string>? guardOutput)
     {
-        _leftPath = left; _rightPath = right; _guardOutput = guardOutput; _lifetime = CancellationTokenSource.CreateLinkedTokenSource(token);
+        _leftPath = left; _rightPath = right; _guardOutput = guardOutput; _lifetime = new CancellationTokenSource();
         var panel = new DockPanel(); var actions = new WrapPanel(); actions.Children.Add(LeftPassword); actions.Children.Add(RightPassword);
+        var sources = new TextBlock { Name = "archive-confirmed-sources", Text = $"左: {left}\n右: {right}", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(8, 4) };
+        DockPanel.SetDock(sources, Dock.Top); panel.Children.Add(sources);
         Button("アーカイブを再比較", RefreshAsync);
         Button("左エントリを書き出す", () => ExportAsync(false)); Button("右エントリを書き出す", () => ExportAsync(true));
         Button("左を再梱包", () => RepackAsync(false)); Button("右を再梱包", () => RepackAsync(true));
@@ -57,27 +63,39 @@ public sealed class ArchivePanel : UserControl, IDisposable
             button.Click += async (_, _) => await GuardAsync(action); actions.Children.Add(button);
         }
     }
-    public static bool Supports(string path) => ManagedArchive.SupportsOutput(path) || Path.GetExtension(path).Equals(".rar", StringComparison.OrdinalIgnoreCase);
-    public static async Task<ArchivePanel> CreateAsync(string left, string right, CancellationToken token, Action<string>? guardOutput = null)
+    public static bool Supports(string path) => ManagedArchive.SupportsInput(path);
+    public static Task<ArchivePanel> CreateAsync(string left, string right, CancellationToken token, Action<string>? guardOutput = null)
+        => CreateWithPasswordsAsync(left, right, token, guardOutput, null, null);
+    internal static async Task<ArchivePanel> CreateWithPasswordsAsync(string left, string right, CancellationToken token,
+        Action<string>? guardOutput, string? leftPassword, string? rightPassword)
     {
-        var panel = new ArchivePanel(left, right, token, guardOutput); await panel.GuardAsync(panel.RefreshAsync); return panel;
+        var panel = new ArchivePanel(left, right, guardOutput);
+        try
+        {
+            panel.LeftPassword.Text = leftPassword; panel.RightPassword.Text = rightPassword;
+            await panel.RefreshCoreAsync(token); token.ThrowIfCancellationRequested(); return panel;
+        }
+        catch { panel.Dispose(); throw; }
     }
-    public async Task RefreshAsync()
+    internal void CancelOperation() => _operation?.Cancel();
+    public Task RefreshAsync() => RefreshCoreAsync(CancellationToken.None);
+    private async Task RefreshCoreAsync(CancellationToken callerToken)
     {
         if (_disposed) return;
-        _operation?.Cancel(); _operation?.Dispose(); _operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        _operation?.Cancel(); _operation?.Dispose(); _operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, callerToken);
         var version = ++_refreshVersion; var token = _operation.Token; var service = new ManagedArchive(); var leftPassword = Password(false); var rightPassword = Password(true);
-        _previewVersion++; Rows = []; EntryList.ItemsSource = null; _preview.Text = ""; _status.Text = "アーカイブを比較しています…";
+        _previewVersion++;
         try
         {
             var left = await Task.Run(() => service.ReadManifest(_leftPath, leftPassword, token), token);
             var right = await Task.Run(() => service.ReadManifest(_rightPath, rightPassword, token), token);
-            token.ThrowIfCancellationRequested(); if (_disposed) return;
-            Rows = ArchiveComparison.Compare(left, right); EntryList.ItemsSource = Rows;
+            var candidate = ArchiveComparison.Compare(left, right);
+            RefreshReadyForAdoption?.Invoke();
+            token.ThrowIfCancellationRequested(); if (_disposed || version != _refreshVersion) return;
+            Rows = candidate; EntryList.ItemsSource = Rows; _preview.Text = "";
             _status.Text = $"{left.Format} / {right.Format}: {Rows.Count} 項目、差分 {Rows.Count(row => row.Status != "Equal")} 件。格納名・型・サイズ・SHA-256で比較します。暗号化アーカイブはパスワードを入力して再比較してください。再梱包の出力は暗号化されません。全件展開は選択した親フォルダー内の新しいフォルダーへ保存します。";
         }
         catch (Exception) when (version != _refreshVersion) { }
-        catch { Rows = []; EntryList.ItemsSource = null; throw; }
     }
     public async Task PreviewAsync(ArchiveEntryDifference row)
     {
@@ -143,7 +161,12 @@ public sealed class ArchivePanel : UserControl, IDisposable
         var output = Path.Combine(parent, name);
         await ExtractToAsync(rightSide, output, _lifetime.Token); _status.Text = $"すべてのエントリを展開しました: {output}";
     }
-    private string? Password(bool rightSide) => string.IsNullOrEmpty(rightSide ? RightPassword.Text : LeftPassword.Text) ? null : rightSide ? RightPassword.Text : LeftPassword.Text;
+    private string? Password(bool rightSide)
+    {
+        var value = rightSide ? RightPassword.Text : LeftPassword.Text;
+        if (value?.Length > 4096) throw new InvalidDataException("パスワードの文字数上限を超えました。");
+        return string.IsNullOrEmpty(value) ? null : value;
+    }
     private void EnsureNewOutput(string output)
     {
         _guardOutput?.Invoke(output);

@@ -152,6 +152,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     // 実GUI自己検証で、完成した変換結果の採用直前に中止操作を再現する。
     internal Action<ProviderResult>? ProviderResultReadyForAdoption { get; set; }
+    internal Action<ArchivePanel>? ArchiveReadyForAdoption { get; set; }
+    internal Action<ArchiveRetryDialog>? ArchiveRetryShown { get; set; }
 
     public ComparisonPane(Window owner)
     {
@@ -182,7 +184,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "アーカイブ作成", CreateArchiveAsync);
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
-        AddAction(actions, "中止", () => { _operation?.Cancel(); _reportOperation?.Cancel(); return Task.CompletedTask; });
+        AddAction(actions, "中止", () => { _operation?.Cancel(); _reportOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
         top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", OpenProjectAsync);
@@ -279,7 +281,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
         ResetMergeSession();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
-        var token = _operation.Token;
+        (_specialTab.Content as ArchivePanel)?.CancelOperation();
+        var operation = _operation; var token = operation.Token;
         var left = LeftPath.Text ?? ""; var right = RightPath.Text ?? "";
         var imageSettings = CaptureImageSettings();
         _lastPackageComparison = null;
@@ -329,7 +332,39 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             }
             if (mode == 7 || (mode == 0 && ArchivePanel.Supports(left) && ArchivePanel.Supports(right)))
             {
-                SetSpecialView(await ArchivePanel.CreateAsync(left, right, token, EnsureProjectOutputWritable));
+                ArchivePanel? candidate = null;
+                string? leftPassword = null, rightPassword = null;
+                try
+                {
+                    while (candidate is null)
+                    {
+                        token.ThrowIfCancellationRequested();
+                        try { candidate = await ArchivePanel.CreateWithPasswordsAsync(left, right, token, EnsureProjectOutputWritable, leftPassword, rightPassword); }
+                        catch (OperationCanceledException) { throw; }
+                        catch (Exception exception) when (exception is not OutOfMemoryException)
+                        {
+                            token.ThrowIfCancellationRequested();
+                            if (operation != _operation) return;
+                            var dialog = new ArchiveRetryDialog(leftPassword, rightPassword);
+                            try
+                            {
+                                var retryTask = dialog.ShowDialog<ArchiveRetryResult?>(_owner);
+                                ArchiveRetryShown?.Invoke(dialog);
+                                var retry = await retryTask;
+                                token.ThrowIfCancellationRequested();
+                                if (operation != _operation) return;
+                                if (retry is null) throw new OperationCanceledException("アーカイブ操作を中止しました。", token);
+                                leftPassword = retry.LeftPassword; rightPassword = retry.RightPassword;
+                            }
+                            finally { dialog.LeftPassword.Text = dialog.RightPassword.Text = ""; dialog.Close(); }
+                        }
+                    }
+                    ArchiveReadyForAdoption?.Invoke(candidate);
+                    token.ThrowIfCancellationRequested();
+                    if (operation != _operation) return;
+                    SetSpecialView(candidate); candidate = null;
+                }
+                finally { candidate?.Dispose(); leftPassword = rightPassword = null; }
                 _views.SelectedItem = _specialTab; _status.Text = "アーカイブビューを開きました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
             _leftDocument = await TextDocument.LoadAsync(left, token);
@@ -349,7 +384,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (mode is 5 or 6) _status.Text = mode == 5 ? "JSONの構造を比較しました。" : "表の区切り・引用符設定で比較しました。";
             _lastPackageComparison = comparisonForPackaging;
         }
-        finally { CompareButton.IsEnabled = true; }
+        catch (OperationCanceledException) when (operation != _operation) { }
+        catch (OperationCanceledException) { _status.Text = "比較を中止しました。"; throw; }
+        finally { if (operation == _operation) CompareButton.IsEnabled = true; }
     }
 
     public void CompareEditors()
@@ -656,6 +693,35 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             Grid.SetColumn(text, i); grid.Children.Add(text);
         }
         return grid;
+    }
+}
+
+// 認証必須と断定せず、候補の検証失敗から明示再試行へ進む。秘密値は保存しない。
+internal sealed record ArchiveRetryResult(string? LeftPassword, string? RightPassword);
+internal sealed class ArchiveRetryDialog : Window
+{
+    internal TextBox LeftPassword { get; } = new() { PasswordChar = '●', MaxLength = 4096, PlaceholderText = "左のパスワード（任意）", Margin = new Thickness(0, 4) };
+    internal TextBox RightPassword { get; } = new() { PasswordChar = '●', MaxLength = 4096, PlaceholderText = "右のパスワード（任意）", Margin = new Thickness(0, 4) };
+    internal Button Retry { get; } = new() { Content = "再試行", Margin = new Thickness(4) };
+    internal Button Cancel { get; } = new() { Content = "キャンセル", Margin = new Thickness(4) };
+    internal ArchiveRetryDialog(string? leftPassword, string? rightPassword)
+    {
+        Title = "アーカイブを開けませんでした"; Width = 480; SizeToContent = SizeToContent.Height;
+        CanResize = false; WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        LeftPassword.Text = leftPassword; RightPassword.Text = rightPassword;
+        var panel = new StackPanel { Margin = new Thickness(16) };
+        var status = new TextBlock { Text = "読込みを検証できませんでした。パスワード、破損、形式を確認して再試行してください。", TextWrapping = TextWrapping.Wrap };
+        panel.Children.Add(status); panel.Children.Add(LeftPassword); panel.Children.Add(RightPassword);
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+        buttons.Children.Add(Cancel); buttons.Children.Add(Retry); panel.Children.Add(buttons); Content = panel;
+        Cancel.Click += (_, _) => Close();
+        Retry.Click += (_, _) =>
+        {
+            if (LeftPassword.Text?.Length > 4096 || RightPassword.Text?.Length > 4096) { status.Text = "パスワードは左右それぞれ4096文字以下で入力してください。"; return; }
+            Close(new ArchiveRetryResult(string.IsNullOrEmpty(LeftPassword.Text) ? null : LeftPassword.Text,
+                string.IsNullOrEmpty(RightPassword.Text) ? null : RightPassword.Text));
+        };
+        Closed += (_, _) => LeftPassword.Text = RightPassword.Text = "";
     }
 }
 

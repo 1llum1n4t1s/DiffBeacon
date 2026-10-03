@@ -685,12 +685,31 @@ internal static class HeadlessSelfTest
             var encryptedPath = Path.Combine(output, "encrypted.zip");
             using (var resource = typeof(HeadlessSelfTest).Assembly.GetManifestResourceStream("DiffBeacon.SelfTest.Encrypted.zip") ?? throw new InvalidOperationException("暗号化検証用入力がありません。"))
             using (var encryptedFile = File.Create(encryptedPath)) resource.CopyTo(encryptedFile);
-            pane.LeftPath.Text = pane.RightPath.Text = encryptedPath; Pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var encryptedRetryShown = false;
+            var encryptedRetryCount = 0;
+            // provider表示から実Auto比較へ戻し、保持対象を実操作で確定する。
+            pane.LeftPath.Text = pane.RightPath.Text = guiZ; Pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var priorEncryptedCandidatePanel = pane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+            Pump(priorEncryptedCandidatePanel.PreviewAsync(priorEncryptedCandidatePanel.Rows.First(row => row.Left is { IsDirectory: false })));
+            var priorEncryptedRows = priorEncryptedCandidatePanel.Rows;
+            pane.ArchiveRetryShown = dialog =>
+            {
+                encryptedRetryCount++;
+                encryptedRetryShown = dialog.LeftPassword.PasswordChar == '●' && dialog.RightPassword.PasswordChar == '●';
+                Check("encrypted retry preserves previous confirmed archive", pane.GetVisualDescendants().OfType<ArchivePanel>().Single() == priorEncryptedCandidatePanel
+                    && ReferenceEquals(priorEncryptedCandidatePanel.Rows, priorEncryptedRows));
+                dialog.LeftPassword.Text = "test";
+                dialog.RightPassword.Text = encryptedRetryCount == 1 ? "wrong-private-wrapper-password" : "test";
+                dialog.Retry.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            };
+            pane.LeftPath.Text = pane.RightPath.Text = encryptedPath;
+            try { Pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs(); }
+            finally { pane.ArchiveRetryShown = null; }
             var encryptedPanel = pane.GetVisualDescendants().OfType<ArchivePanel>().Single();
-            Check("encrypted archive shows error rather than false equality without password", encryptedPanel.Rows.Count == 0 && !string.IsNullOrEmpty(encryptedPanel.StatusText));
-            encryptedPanel.LeftPassword.Text = encryptedPanel.RightPassword.Text = "test"; Pump(encryptedPanel.RefreshAsync());
+            Check("encrypted archive shows generic masked retry before successful adoption", encryptedRetryShown && encryptedRetryCount == 2 && encryptedPanel.Rows.Count > 0);
             Check("masked GUI passwords unlock encrypted archive contents", encryptedPanel.Rows.Count > 0 && encryptedPanel.Rows.All(row => row.Status == "Equal") && encryptedPanel.LeftPassword.PasswordChar == '●');
             Screenshot("encrypted-archives.png");
+            HeadlessArchiveWrapperChecks.Run(window, pane, output, Pump, Check, Screenshot);
             pane.DiscardChanges();
             var directoryLeft = Path.Combine(output, "directory-left"); var directoryRight = Path.Combine(output, "directory-right");
             Directory.CreateDirectory(directoryLeft); Directory.CreateDirectory(directoryRight);

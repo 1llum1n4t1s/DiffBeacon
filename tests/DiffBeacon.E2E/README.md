@@ -161,3 +161,15 @@ CLIへのOS signal注入はこの限定実行に追加していない。キャ�
 TAR.ZのGUI自己検証はAuto/picker/preview/export/extractに加え、標準tar/tar-metadata選択の全canonical本文・metadataと変換後テキスト保存拒否を確認します。展開32 MiBの反復entryを含む小さい圧縮入力で、比較開始前にpostした実「中止」ボタン操作が前回本文を保持したまま実行され、取消表示と入力SHAが保持されることを検査します。archive-z-gui-providers.json、archive-z-gui-cancel.jsonとPNGを保持します。
 
 標準TAR providerの結果完成後・採用前の中止も、実Builtin tar-metadata結果と実「中止」ボタンで再現します。default-nullの内部GUI採用境界callbackで中止し、完成した全canonical本文とmetadata、最終両Editorの前回本文、取消表示、入力SHAをarchive-z-gui-late-cancel.jsonと編集4ペインPNGへ保存します。早期取消も最終本文保持までassertします。
+
+### 明示 archive wrapper 鎖
+
+`--archive-wrappers-only` は ZIP派生/7z/RAR＋gz/bz2/Zの固定鎖、全entry export、compare/repack/extract、暗号化stdin、破損後member/終端/深度と出力保護を実App別プロセスで検証します。通常全体と `--archives-only` にも接続します。既存 Build-ZReference のdecoderを明示します。
+
+```powershell
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --archive-wrappers-only --z-reference <absolute-existing-ncompress> --output artifacts/e2e/wrappers
+```
+
+`archive_wrapper_verifier.py` はPython標準のstrict各member復号と明示公式Zを使い、全層・終端bytes/SHA、ZIP全entry bytes/timeを独立照合して `wrapper-oracle/proof.json` を保存します。小予算・取消・GUI候補採用/Refresh/実Stop/Retry/Cancel/×は App のheadless自己検証にJSON/PNGを残します。限定実行は全体E2Eの代替ではありません。新wrapper出力形式や内側entry navigationは検証済みとして扱いません。
+
+E2E harnessは未知option、値欠損、同じoptionの重複、複数selectorをoutput作成/App起動前に終了コード2で拒否します。wrapper限定はこの前処理もharness別プロセスで検証し、11組のstdout/stderrを保持します。

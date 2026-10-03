@@ -162,7 +162,7 @@ public sealed partial class ManagedArchive
     }
 
     // 親の明示ディレクトリと暗黙ディレクトリを分け、順序に依存しない衝突検証を行う。
-    private sealed class EntryNames(int maximum, int maximumCharacters)
+    private sealed class EntryNames(int maximum, int maximumCharacters, ArchiveReadBudget? budget = null)
     {
         private readonly Dictionary<string, (string Name, bool Directory, bool Explicit)> _names = new(StringComparer.OrdinalIgnoreCase);
         private int _count;
@@ -173,6 +173,8 @@ public sealed partial class ManagedArchive
             var characters = (long)key.Length + name.Length;
             if (_names.Count >= maximum || characters > maximumCharacters - _characters)
                 throw new InvalidDataException("暗黙の親を含む格納パス数または保持文字数の上限を超えました。");
+            budget?.Item();
+            budget?.PathCharacters(characters);
             _names.Add(key, (name, directory, explicitlyStored));
             _characters += characters;
         }
