@@ -36,11 +36,12 @@ public sealed partial class ManagedArchive
     private ManagedArchiveManifest ReadWrapped(Stream physicalInput, string logicalName, int terminalLength,
         ArchiveType terminalType, int depth, string? password, CancellationToken token,
         Func<ManagedArchiveEntry, bool>? capture, Action<ManagedArchiveEntry, MemoryStream?>? consume,
-        long? captureLimit, bool prefixOnly)
+        long? captureLimit, bool prefixOnly, ArchiveReadBudget? sharedBudget = null, OwnedEntryCapture? ownedCapture = null)
     {
         if (depth > _limits.MaximumWrapperDepth)
             throw new InvalidDataException("アーカイブ wrapper の深度上限を超えました。");
-        var budget = new ArchiveReadBudget(_limits);
+        var budget = sharedBudget ?? new ArchiveReadBudget(_limits);
+        budget.Layers(depth);
         Stream current = physicalInput;
         MemoryStream? owned = null;
         var nameLength = logicalName.Length;
@@ -96,7 +97,7 @@ public sealed partial class ManagedArchive
             }
             using var terminalInput = new WorkReadStream(current, budget, token);
             var manifest = ReadCore(terminalInput, logicalName[..terminalLength], password, token,
-                capture, consume, captureLimit, prefixOnly, budget, terminalType);
+                capture, consume, captureLimit, prefixOnly, budget, terminalType, ownedCapture, inputAlreadyDecoded: true);
             return manifest with { Format = manifest.Format + string.Concat(suffixes) };
         }
         finally { owned?.Dispose(); }
@@ -116,13 +117,18 @@ public sealed partial class ManagedArchive
         if (!valid) throw new InvalidDataException("明示した wrapper 形式とヘッダーが一致しません。");
     }
 
-    private sealed class ArchiveReadBudget(ManagedArchiveLimits limits)
+    internal sealed class ArchiveReadBudget(ManagedArchiveLimits limits)
     {
         public long DecodedRemaining { get; private set; } = limits.MaximumDecodedBytes;
         private long _work = limits.MaximumWorkBytes;
         private long _items = limits.MaximumEntries;
         private long _characters = limits.MaximumPathCharacters;
+        private long _layers = limits.MaximumWrapperDepth;
+        private long _headers = (long)limits.MaximumEntries * 3;
+        public long WorkRemaining => _work;
         public void Work(long amount) => Charge(ref _work, amount, "アーカイブ作業量の上限を超えました。");
+        public void Layers(long amount) => Charge(ref _layers, amount, "格納階層とwrapperの共有深度上限を超えました。");
+        public void TarHeader() => Charge(ref _headers, 1, "TARヘッダーの共有件数上限を超えました。");
         public void Item() => Charge(ref _items, 1, "wrapper・メンバー・格納パスの共有件数上限を超えました。");
         public void PathCharacters(long amount)
         {

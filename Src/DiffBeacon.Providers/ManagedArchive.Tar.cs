@@ -44,12 +44,14 @@ public sealed partial class ManagedArchive
 
     private ManagedArchiveManifest ReadTar(Stream input, string format, CancellationToken token,
         Func<ManagedArchiveEntry, bool>? capture, Action<ManagedArchiveEntry, MemoryStream?>? consume,
-        long? captureLimit, bool prefixOnly)
+        long? captureLimit, bool prefixOnly, ArchiveReadBudget? budget = null,
+        OwnedEntryCapture? ownedCapture = null, bool inputAlreadyDecoded = false)
     {
+        if (budget is not null && format != "tar") { budget.Layers(1); budget.Item(); }
         using var session = new TarReadSession(input, format, _limits.MaximumDecodedBytes,
-            _limits.MaximumEntryBytes, _limits.MaximumEntries, token);
+            _limits.MaximumEntryBytes, _limits.MaximumEntries, token, budget, inputAlreadyDecoded);
         var reader = session.Reader;
-        var names = new EntryNames(_limits.MaximumEntries, _limits.MaximumPathCharacters);
+        var names = new EntryNames(_limits.MaximumEntries, _limits.MaximumPathCharacters, budget);
         var result = new List<ManagedArchiveEntry>();
         long total = 0;
         while (reader.GetNextEntry(copyData: false) is { } entry)
@@ -63,6 +65,7 @@ public sealed partial class ManagedArchive
             // PAX sizeを適用した検証境界とDataStreamの境界が一致することを確認する。
             if (entry.Length != session.EntryLength)
                 throw new InvalidDataException("TARの補助metadataとヘッダーのサイズが一致しません。");
+            budget?.CheckPath(entry.Name);
             var tarName = entry.Name.Replace('\\', '/');
             while (tarName.StartsWith("./", StringComparison.Ordinal)) tarName = tarName[2..];
             if (tarName is "" or ".")
@@ -76,21 +79,29 @@ public sealed partial class ManagedArchive
                 entry.Length > _limits.MaximumDecodedBytes - total || directory && entry.Length != 0)
                 throw new InvalidDataException("アーカイブ内容のサイズ上限超過、または不正なサイズです。");
             var metadata = new ManagedArchiveEntry(name, directory, entry.Length, "", false, entry.ModificationTime.UtcDateTime);
-            var keep = capture?.Invoke(metadata) == true;
+            budget?.Work(64);
+            var keep = capture?.Invoke(metadata) == true || ownedCapture?.Wants(metadata) == true;
             if (keep && !prefixOnly && entry.Length > (captureLimit ?? _limits.MaximumEntryBytes))
                 throw new InvalidDataException("プレビューのサイズ上限を超えました。");
-            using var content = keep ? prefixOnly ? new PrefixMemoryStream(checked((int)captureLimit!.Value)) : new MemoryStream() : null;
-            if (!directory)
+            var content = keep ? prefixOnly ? new PrefixMemoryStream(checked((int)captureLimit!.Value))
+                : ownedCapture is not null ? new BoundedCaptureStream(ownedCapture.MaximumBytes) : new MemoryStream() : null;
+            var transferred = false;
+            try
             {
+              if (!directory)
+              {
                 using var sink = new DecodedSink(content, Math.Min(_limits.MaximumEntryBytes,
-                    Math.Min(_limits.MaximumDecodedBytes - total, keep && !prefixOnly ? captureLimit ?? _limits.MaximumEntryBytes : _limits.MaximumEntryBytes)), token);
+                    Math.Min(_limits.MaximumDecodedBytes - total, keep && !prefixOnly ? captureLimit ?? _limits.MaximumEntryBytes : _limits.MaximumEntryBytes)), token, budget, chargeDecoded: false);
                 entry.DataStream?.CopyTo(sink);
                 if (sink.Length != entry.Length) throw new InvalidDataException("宣言されたサイズと展開したサイズが一致しません。");
                 total += sink.Length;
                 metadata = metadata with { Sha256 = sink.Hash() };
+              }
+              result.Add(metadata);
+              consume?.Invoke(metadata, content);
+              transferred = ownedCapture?.Take(metadata, content) == true;
             }
-            result.Add(metadata);
-            consume?.Invoke(metadata, content);
+            finally { if (!transferred) content?.Dispose(); }
         }
         session.CompleteRead();
         result.Sort((a, b) => StringComparer.Ordinal.Compare(a.Path, b.Path));
@@ -112,19 +123,21 @@ public sealed partial class ManagedArchive
         public TarReader Reader { get; }
         public long EntryLength => _verified.EntryLength;
         internal TarReadSession(Stream input, string format, long maximumDecoded, long maximumEntry,
-            int maximumEntries, CancellationToken token)
+            int maximumEntries, CancellationToken token, ArchiveReadBudget? budget = null, bool inputAlreadyDecoded = false)
         {
             _token = token;
             _compression = format switch
             {
-                "tar.gz" => new VerifiedGZipStream(input, token, maximumEntries),
+                "tar.gz" => new VerifiedGZipStream(input, token, maximumEntries, budget),
+                "tar.bz2" when budget is not null => new VerifiedBZip2Stream(input, token, budget),
                 "tar.bz2" => BZip2Stream.Create(input, SharpCompress.Compressors.CompressionMode.Decompress, true, leaveOpen: true),
                 "tar.Z" => new ZReadStream(input, token, leaveOpen: true),
                 _ => null
             };
             // 復号したmetadata/paddingも総量に含める。
-            _decoded = new SequentialLimitStream(_compression ?? input, maximumDecoded, token);
-            _verified = new TarValidationStream(_decoded, maximumEntry, maximumEntries);
+            _decoded = new SequentialLimitStream(_compression ?? input, maximumDecoded, token, budget,
+                chargeDecoded: _compression is not null || !inputAlreadyDecoded);
+            _verified = new TarValidationStream(_decoded, maximumEntry, maximumEntries, budget);
             Reader = new TarReader(_verified, leaveOpen: true);
         }
         public void CompleteRead()
@@ -144,7 +157,8 @@ public sealed partial class ManagedArchive
         { Reader.Dispose(); _verified.Dispose(); _decoded.Dispose(); _compression?.Dispose(); }
     }
 
-    private sealed class SequentialLimitStream(Stream inner, long limit, CancellationToken token) : Stream
+    private sealed class SequentialLimitStream(Stream inner, long limit, CancellationToken token,
+        ArchiveReadBudget? budget = null, bool chargeDecoded = true) : Stream
     {
         public long BytesRead { get; private set; }
         public override int Read(byte[] buffer, int offset, int count) => Read(buffer.AsSpan(offset, count));
@@ -158,6 +172,7 @@ public sealed partial class ManagedArchive
             callToken.ThrowIfCancellationRequested();
             BytesRead += length;
             if (BytesRead > limit) throw new InvalidDataException("圧縮アーカイブの復号サイズ上限を超えました。");
+            if (chargeDecoded) budget?.Decoded(length);
             return length;
         }
         public override bool CanRead => true;
@@ -173,7 +188,8 @@ public sealed partial class ManagedArchive
 
     // TarReaderはchecksumを比較しないため、PAX/GNU補助headerも含めて事前検証する。
     // 補助headerは1MiBまでに絞り、TarReader内部のmetadata一括確保を制限する。
-    private sealed class TarValidationStream(Stream inner, long maximumEntry, int maximumEntries) : Stream
+    private sealed class TarValidationStream(Stream inner, long maximumEntry, int maximumEntries,
+        ArchiveReadBudget? budget = null) : Stream
     {
         private readonly byte[] _header = new byte[512];
         private int _offset = 512;
@@ -238,6 +254,7 @@ public sealed partial class ManagedArchive
                 if (ZeroBlocks > 0) throw new InvalidDataException("TAR終端の後にエントリがあります。");
                 if (++_headers > (long)maximumEntries * 3)
                     throw new InvalidDataException("TARヘッダー数の上限を超えました。");
+                budget?.TarHeader();
                 var length = ParseTarLength(_header.AsSpan(124, 12));
                 var metadata = _header[156] is (byte)'x' or (byte)'g' or (byte)'L' or (byte)'K';
                 if (!metadata)

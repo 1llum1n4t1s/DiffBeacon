@@ -90,3 +90,13 @@ RAR作成、暗号化出力、分割、CAB/LZH/ISO/MSI等の全旧形式、属�
 BZip2は公開decoderのsingle member strict CRC/footerを使い、全次memberの4byte `BZh1`〜`BZh9`をowned経路で検査します。GZipは既存header/FHCRC/CRC/ISIZE/連結検査、Zはowned codecの構造検査と完全性の限界を維持します。[固定wrapper原本](../../tests/Fixtures/Archives/Wrappers/README.md)と独立Python/公式Z全層oracleを実App E2Eで使います。
 
 GUIは初期検証失敗を空panelとして採用せず、任意の左右masked passwordを持つgeneric再試行を提供します。4096文字以下/空nullで保存・ログへ転記しません。Retry成功時だけ採用し、Cancel/×/Stop/失敗/古い完了では確定Rows/preview/表示元を保持します。Refreshは候補を背景計算し採用直前に取消/世代を再確認、保持したpanelも再操作できます。tab closeでpanel lifetimeと進行operationを解放します。
+
+### 明示した内包アーカイブの入力
+
+`ArchiveSource` は絶対物理root、正規化した `EntryChain`、任意のroot SHA-256をimmutableに保持します。password・復号buffer・仮想captionを含みません。`WithChild(entry)` はcontainerを一段追加します。`ResolveManifest(source, containerPasswords, cancellationToken)` はSHA付きsourceと最終manifest、`ResolveEntry(source, entry, maximumBytes, containerPasswords, cancellationToken)` は完全検証後の最終entry bytesを返します。rootの全SHAを読込み前、同じhandleの読込み後、現在の物理pathで照合し、指定SHAの不一致・変更・path差替えを拒否します。悪意ある並行writerに対するOS snapshotの保証ではありません。
+
+rootは深度0、格納entryへの遷移と各圧縮wrapperはそれぞれ1で、既定8の共通深度予算を使います。全階層の実read・SHA再read・復号・名前・件数・TAR header・metadataは一つの予算を共有します。各内包containerの保持は256 MiB以下ですが、単一のstreaming TAR全体を256 MiBへ縮めません。raw TARはheader／metadata／paddingを含むbyteを一度だけ復号量へ計上し、外側で既に復号したraw TARのpayloadを重ねて復号計上しません。選択entryが正常でも、後方のsibling・footer・EOFの検証が成功するまで次のcontainerや出力を公開しません。中間ToArray・temp展開は使わず、親から次bufferへ所有権を移します。内側wrapperの復号中は格納containerも保持し、最終entryには返却copyが必要です。codec workspaceと成長容量を含む厳密なpeak RAM保証ではありません。
+
+CLIの `--archive-source-list DESCRIPTOR_JSON`／`--archive-source-entry DESCRIPTOR_JSON ENTRY OUTPUT` は最大1 MiBのdescriptorを読みます。項目は `rootPath`、`entryChain`、任意の `rootSha256`／`limits` だけで、未知・重複propertyは拒否します。rootだけをdescriptorから相対解決し、chainを物理pathとして扱いません。`limits` は `ManagedArchiveLimits` と同名のcamelCase項目で、正の整数かつ既定値以下だけを受け付けます。末尾 `--password-stdin` はroot＋chain数の行を外側から順に読み、plaintext層は空行を使います。認証情報は保存・出力せず、各操作の終了時に保持参照を解放します。出力はroot・descriptor・readonly・linkを保護してatomic置換します。
+
+[固定Source入力](../../tests/Fixtures/Archives/Sources/README.md)の独立Python／実CLI E2Eで階層全体のCRC・内容・共有予算を検証します。GUI子タブ、workspace DTO、深いcontainerのrepack／全展開、包装・HTML経路への接続は未実装です。旧root経路へ代入して対応済みと扱いません。

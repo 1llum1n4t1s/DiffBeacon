@@ -33,6 +33,7 @@ internal static class CommandLine
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--package-project INPUT_PROJECT OUTPUT_ARCHIVE [--entries 1,3] [--report] [--patch] [--no-documents] [--no-project]\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"
                     + "--archive-list ARCHIVE [--password-stdin]\n--archive-compare LEFT RIGHT [--password-stdin]\n--archive-entry ARCHIVE ENTRY OUTPUT [--password-stdin]\n--archive-repack INPUT OUTPUT [--password-stdin]\n--archive-extract INPUT NEW_DIRECTORY [--password-stdin]\n--archive-create SOURCE_DIRECTORY OUTPUT\n"
                     + "--merge BASE LEFT RIGHT OUTPUT\n--merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"
+                    + "--archive-source-list DESCRIPTOR_JSON [--password-stdin]\n--archive-source-entry DESCRIPTOR_JSON ENTRY OUTPUT [--password-stdin]\n"
                     + "--self-test OUTPUT_DIRECTORY\nExit: 0 equal/success, 1 differences/conflicts, 2 error");
                 return 0;
             }
@@ -48,6 +49,7 @@ internal static class CommandLine
             if (command == "--image") return await ImageCommands.RunAsync(args);
             if (command == "--package-project") return await PackageCommands.RunAsync(args);
             if (command == "--report-project") return await ReportCommands.RunAsync(args);
+            if (command is "--archive-source-list" or "--archive-source-entry") return await ArchiveSourceCommands.RunAsync(args);
             if (command.StartsWith("--archive-", StringComparison.Ordinal)) return await ArchiveCommands.RunAsync(args);
             var required = command switch { "--merge" => 5, "--merge-select" => 6, "--patch-create" or "--patch-apply" => 4, _ => 3 };
             if (args.Length < required) throw new ArgumentException("引数が不足しています。--help を参照してください。");

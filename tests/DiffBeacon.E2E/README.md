@@ -173,3 +173,13 @@ dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-
 `archive_wrapper_verifier.py` はPython標準のstrict各member復号と明示公式Zを使い、全層・終端bytes/SHA、ZIP全entry bytes/timeを独立照合して `wrapper-oracle/proof.json` を保存します。小予算・取消・GUI候補採用/Refresh/実Stop/Retry/Cancel/×は App のheadless自己検証にJSON/PNGを残します。限定実行は全体E2Eの代替ではありません。新wrapper出力形式や内側entry navigationは検証済みとして扱いません。
 
 E2E harnessは未知option、値欠損、同じoptionの重複、複数selectorをoutput作成/App起動前に終了コード2で拒否します。wrapper限定はこの前処理もharness別プロセスで検証し、11組のstdout/stderrを保持します。
+
+### 明示した内包アーカイブ
+
+`--archive-sources-only` は実アプリのSource専用CLIへdescriptorを渡します。通常全体と `--archives-only` にも含みます。[固定入力](../Fixtures/Archives/Sources/README.md)を変更せず、ZIP内ZIP、raw TAR、未知名gzip／bzip2 TAR、内側wrapper、深度8／9、二層の異なるpasswordとplaintext空行を検証します。最終全entryのsize／SHA、empty file、directory／missing拒否、後続sibling／内側CRC破損、root同サイズ・同mtime差替え、共有復号量の正確なbyte境界、件数・名前・深度・作業量、descriptor／root／readonly／link出力保護を確認します。
+
+```powershell
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --archive-sources-only --output artifacts/e2e/sources
+```
+
+280MiBのTARは各140MiBの二entryを含む固定圧縮入力でlistし、巨大raw fileを保存しません。Python標準libraryは全入力SHA・サイズ、全container CRC／内容、raw TAR SHA、取得した全entry bytesを独立照合し、run内の `archive-sources/independent-proof.json` と標準出力・エラー・終了コードを保持します。Windowsのlink作成特権がない場合はその操作をskipとして区別し、管理者／GitHub runnerで別途実行します。runで作った検証用linkとtargetは `retained-links.json` に記録して保持し、規定の清掃経路へ渡します。Source CLIの実CancellationToken取消、GUI子タブ・workspace・包装・HTMLは、この限定実行の検証済み範囲へ含めません。限定実行は全体E2Eの代替にしません。

@@ -58,7 +58,7 @@ internal static class ArchiveCommands
         CommandLine.WriteJson(writer => writer.WriteString("output", Path.GetFullPath(args[0] == "--archive-entry" ? args[3] : args[2]))); return 0;
     }
 
-    private static async Task<string> ReadPasswordAsync(CancellationToken token)
+    internal static async Task<string> ReadPasswordAsync(CancellationToken token)
     {
         // 引数・環境変数・応答へ転記せず、過大な標準入力も制限する。
         var password = new System.Text.StringBuilder(); var buffer = new char[1];
@@ -75,23 +75,39 @@ internal static class ArchiveCommands
 
 internal static class ArchiveActions
 {
-    internal static async Task ExportAsync(string archive, string entry, string output, string? password, CancellationToken token)
+    internal static Task ExportAsync(string archive, string entry, string output, string? password, CancellationToken token)
+        => ExportCoreAsync(archive, output,
+            cancellation => Task.Run(() => new ManagedArchive().ReadEntryForExport(archive, entry, password, cancellation), cancellation), token);
+
+    internal static Task ExportSourceAsync(ArchiveSource source, string entry, string output, string descriptor,
+        ManagedArchiveLimits limits, IReadOnlyList<string?> passwords, CancellationToken token)
+        => ExportCoreAsync(source.RootPath, output,
+            cancellation => Task.Run(() => new ManagedArchive(limits).ResolveEntry(source, entry,
+                checked((int)Math.Min(limits.MaximumEntryBytes, limits.MaximumOutputBytes)), passwords, cancellation), cancellation), token, descriptor);
+
+    private static async Task ExportCoreAsync(string archive, string output, Func<CancellationToken, Task<byte[]>> read,
+        CancellationToken token, string? descriptor = null)
     {
         var target = ValidatePath(output); var original = Path.GetFullPath(archive);
-        if (ArchivePaths.SameFile(target, original)) throw new IOException("元アーカイブへエントリを上書きできません。");
+        CheckInputs();
         if (!Directory.Exists(Path.GetDirectoryName(target))) throw new DirectoryNotFoundException("出力先のディレクトリがありません。");
         ValidateWritable(target);
-        var bytes = await Task.Run(() => new ManagedArchive().ReadEntryForExport(archive, entry, password, token), token);
+        var bytes = await read(token);
         var temporary = Path.Combine(Path.GetDirectoryName(target)!, ".diffbeacon-entry-" + Guid.NewGuid().ToString("N") + ".tmp");
         try
         {
             await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 65536, true))
             { await stream.WriteAsync(bytes, token); await stream.FlushAsync(token); }
-            token.ThrowIfCancellationRequested(); ValidatePath(target); ValidateWritable(target);
+            token.ThrowIfCancellationRequested(); ValidatePath(target); ValidateWritable(target); CheckInputs();
             if (!OperatingSystem.IsWindows() && File.Exists(target)) File.SetUnixFileMode(temporary, File.GetUnixFileMode(target));
             if (File.Exists(target)) File.Replace(temporary, target, null); else File.Move(temporary, target);
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
+        void CheckInputs()
+        {
+            if (ArchivePaths.SameFile(target, original) || descriptor is not null && ArchivePaths.SameFile(target, descriptor))
+                throw new IOException("元アーカイブや入力descriptorへエントリを上書きできません。");
+        }
     }
     internal static async Task CreateAsync(string directory, string output, CancellationToken token)
     {
@@ -127,7 +143,7 @@ internal static class ArchiveActions
             }
         }
     }
-    private static string ValidatePath(string path)
+    internal static string ValidatePath(string path)
     {
         var full = Path.GetFullPath(path); string? current = full;
         while (current is not null)

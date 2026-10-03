@@ -39,7 +39,9 @@ pwsh -STA -NoProfile -File build/Compact-Evidence.ps1 -SourcePath "$PWD/artifact
   -OwnerAttestsQuiescentAndNoMixedWork
 ```
 
-`-OwnerAttestsQuiescentAndNoMixedWork`は、所有者が利用中プロセスと他作業の混在がないことを確認してから指定する。不可視プロセスとcwdを完全に確認するものではない。清掃は利用者の`.codex/scripts/Remove-CodexItem.ps1`に固定し、別ヘルパーへ変更する引数は提供しない。操作前に同じ`.codex/references/windows-delete-workflow.md`の検証状態・対応範囲を読む。手順書が停止中・対象未対応を示す場合、またはコードの稼働状態と手順書が一致しない場合は元データを保持し、`-WhatIf`による読取り検査だけを行う。2026-10-04の移植検証では、コードの停止フラグと手順書に不一致を観測したため実削除を行っていない。停止フラグを解除せず、別実装を使わない。ごみ箱へ移せない場合、取消・拒否・対応項目を特定できない場合も停止し、元データまたは移動済み項目とZIPを保持する。処理別JSONに残存状態を記録する。現在、圧縮だけ行う場合は`CompactEvidence.py`を直接実行でき、展開元を削除しない。
+`-OwnerAttestsQuiescentAndNoMixedWork`は、所有者が利用中プロセスと他作業の混在がないことを確認してから指定する。不可視プロセスとcwdを完全に確認するものではない。清掃は利用者の`.codex/scripts/Remove-CodexItem.ps1`に固定し、別ヘルパーへ変更する引数は提供しない。操作前に同じ`.codex/references/windows-delete-workflow.md`の検証状態・対応範囲を読む。手順書が停止中・対象未対応を示す場合、またはコードの稼働状態と手順書が一致しない場合は元データを保持し、`-WhatIf`による読取り検査だけを行う。停止フラグを解除せず、別実装を使わない。ごみ箱へ移せない場合、取消・拒否・対応項目を特定できない場合も対象の清掃を停止し、元データまたは移動済み項目とZIPを保持する。処理別JSONに残存状態を記録する。圧縮だけ行う場合は`CompactEvidence.py`を直接実行でき、展開元を削除しない。
+
+2026-10-04の移植検証では、最初に手順書と停止フラグの不一致を確認して元データを保持した。その後、共通ヘルパー側の更新と11件のE2E・並行実行の成功、現在のコードSHAとの一致を確認したため、過去の取消修正E2E 21492 files／963433353 bytesを全entry照合済みZIP 57202172 bytesへ保存し、対象だけをごみ箱へ移した。今回項目の個別消去はE_ABORTで途中失敗し、元パスは不在だがごみ箱に10212 files／812355400 bytesと管理情報が残った。全原本を保持したZIPと台帳の対応は `artifacts/retention/index.json` に記録する。この清掃を完了扱いにせず、部分消去後の合計サイズを拒否する現行Resumeも再実行していない。既存のpolicy拒否対象を別APIで再試行しない。symbolic linkや子reparse pointを含む検証rootは現行ヘルパーの対象外であり、保持する。
 
 外部の証拠rootを整理するときだけ`-AdditionalEvidenceRoot`を指定する。ZIPが完成している場合は同じ入力と格納先に`-ExistingArchive '<途中ZIPの絶対パス>'`を加えると、全entryを再照合できる。ただし削除の拒否対象を再実行する許可ではない。既存のZIP・報告JSONは上書きしない。2026-10-03以降のローカル出力はCドライブを使い、I/OエラーのあったEドライブは読取り専用とする。
 

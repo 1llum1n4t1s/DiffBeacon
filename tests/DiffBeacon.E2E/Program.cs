@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
+    "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
     "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
@@ -1735,7 +1735,9 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--archive-wrappers-only", StringComparer.Ordinal))
+    if (args.Contains("--archive-sources-only", StringComparer.Ordinal))
+        await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
+    else if (args.Contains("--archive-wrappers-only", StringComparer.Ordinal))
         await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
     else if (args.Contains("--tar-z-only", StringComparer.Ordinal))
         await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
@@ -1846,6 +1848,7 @@ try
     else if (args.Contains("--archives-only", StringComparer.Ordinal))
     {
         await ArchiveCases();
+        await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
         await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
         await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     }
@@ -1864,6 +1867,7 @@ try
     else
     {
     await ArchiveCases();
+    await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
     await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
     await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);

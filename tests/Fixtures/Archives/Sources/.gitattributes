@@ -1,0 +1,3 @@
+* -text !eol
+*.md text eol=crlf
+*.py text eol=crlf

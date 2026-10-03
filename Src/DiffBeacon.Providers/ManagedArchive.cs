@@ -117,11 +117,13 @@ public sealed partial class ManagedArchive
 
     private ManagedArchiveManifest ReadCore(Stream input, string logicalName, string? password, CancellationToken token,
         Func<ManagedArchiveEntry, bool>? capture, Action<ManagedArchiveEntry, MemoryStream?>? consume,
-        long? captureLimit, bool prefixOnly, ArchiveReadBudget? budget = null, ArchiveType? expectedType = null)
+        long? captureLimit, bool prefixOnly, ArchiveReadBudget? budget = null, ArchiveType? expectedType = null,
+        OwnedEntryCapture? ownedCapture = null, bool inputAlreadyDecoded = false)
     {
             var tarFormat = expectedType is null ? DetectTarFormat(input, logicalName) : null;
             if (tarFormat is not null)
-                return ReadTar(input, tarFormat, token, capture, consume, captureLimit, prefixOnly);
+                return ReadTar(input, tarFormat, token, capture, consume, captureLimit, prefixOnly,
+                    budget, ownedCapture, inputAlreadyDecoded);
             // Stream API で隣接ボリュームの暗黙の探索・読み取りを防ぐ。
             using var archive = ArchiveFactory.OpenArchive(input, ReaderOptions.ForExternalStream.WithPassword(password));
             if (archive.Type is not (ArchiveType.SevenZip or ArchiveType.Rar or ArchiveType.Zip))
@@ -171,12 +173,16 @@ public sealed partial class ManagedArchive
                 var metadata = new ManagedArchiveEntry(name, entry.IsDirectory, entry.Size,
                     "", entry.IsEncrypted, entry.LastModifiedTime);
                 budget?.Work(64); // 型・サイズ・時刻・暗号化属性・ハッシュの保持量。
-                var keep = capture?.Invoke(metadata) == true;
+                var keep = capture?.Invoke(metadata) == true || ownedCapture?.Wants(metadata) == true;
                 if (keep && !prefixOnly && entry.Size > (captureLimit ?? _limits.MaximumEntryBytes))
                     throw new InvalidDataException("プレビューのサイズ上限を超えました。");
-                using var content = keep ? prefixOnly ? new PrefixMemoryStream(checked((int)captureLimit!.Value)) : new MemoryStream() : null;
-                if (!entry.IsDirectory)
+                var content = keep ? prefixOnly ? new PrefixMemoryStream(checked((int)captureLimit!.Value))
+                    : ownedCapture is not null ? new BoundedCaptureStream(ownedCapture.MaximumBytes) : new MemoryStream() : null;
+                var transferred = false;
+                try
                 {
+                  if (!entry.IsDirectory)
+                  {
                     // ZIP抽出がlocal headerを採用しても、先に読んだcentral CRCを失わない。
                     long expectedCrc = 0;
                     if (!(archive.Type == ArchiveType.Rar && entry.IsEncrypted))
@@ -200,9 +206,12 @@ public sealed partial class ManagedArchive
                     }
                     total += sink.Length;
                     metadata = metadata with { Sha256 = sink.Hash() };
+                  }
+                  result.Add(metadata);
+                  consume?.Invoke(metadata, content);
+                  transferred = ownedCapture?.Take(metadata, content) == true;
                 }
-                result.Add(metadata);
-                consume?.Invoke(metadata, content);
+                finally { if (!transferred) content?.Dispose(); }
             }
     }
 
@@ -232,7 +241,7 @@ public sealed partial class ManagedArchive
         return full;
     }
 
-    private static string ValidateEntryPath(string? path)
+    internal static string ValidateEntryPath(string? path)
     {
         if (string.IsNullOrWhiteSpace(path) || path.Length > 4096 ||
             path.Any(c => char.IsControl(c) || c is ':' or '*' or '?' or '"' or '<' or '>' or '|'))
@@ -274,7 +283,8 @@ public sealed partial class ManagedArchive
         }
     }
 
-    private sealed class DecodedSink(MemoryStream? content, long limit, CancellationToken token, ArchiveReadBudget? budget = null) : Stream
+    private sealed class DecodedSink(MemoryStream? content, long limit, CancellationToken token,
+        ArchiveReadBudget? budget = null, bool chargeDecoded = true) : Stream
     {
         internal static readonly uint[] CrcTable = CreateCrcTable();
         private readonly IncrementalHash _hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
@@ -298,7 +308,8 @@ public sealed partial class ManagedArchive
         {
             token.ThrowIfCancellationRequested();
             if (buffer.Length > limit - _length) throw new InvalidDataException("展開サイズの上限を超えました。");
-            budget?.Decoded(buffer.Length);
+            if (chargeDecoded) budget?.Decoded(buffer.Length);
+            else budget?.Work(buffer.Length);
             _length += buffer.Length;
             _hash.AppendData(buffer);
             foreach (var value in buffer) _crc = CrcTable[(_crc ^ value) & 255] ^ (_crc >> 8);
