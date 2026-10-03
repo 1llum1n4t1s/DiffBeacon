@@ -8,6 +8,7 @@ public sealed record ImageViewSettings
     public double Threshold { get; set; }
     public double Zoom { get; set; } = 1;
     public double OverlayOpacity { get; set; } = .3;
+    public double HighlightAlpha { get; set; } = .7;
     public bool ShowDifferences { get; set; } = true;
     public bool ReportAllFrames { get; set; } = true;
     public string View { get; set; } = "SideBySide";
@@ -45,6 +46,7 @@ public sealed record ImageViewSettings
             throw new InvalidDataException("保存する画像倍率は0.1～8の有限値です。");
         if (!double.IsFinite(settings.OverlayOpacity) || settings.OverlayOpacity is < 0 or > 1)
             throw new InvalidDataException("画像の重ね合わせ不透明度は0～1の有限値です。");
+        ImageComparisonEngine.ValidateHighlightAlpha(settings.HighlightAlpha);
         if (settings.View is not ("SideBySide" or "Overlay" or "PixelDifference"))
             throw new InvalidDataException("画像の表示方式が不正です。");
     }

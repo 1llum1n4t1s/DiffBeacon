@@ -13,6 +13,7 @@ internal static class ImageCommands
         if (inputCount is not (2 or 3)) throw new ArgumentException("--image LEFT [MIDDLE] RIGHT を指定してください。");
         int? leftFrame = null, middleFrame = null, rightFrame = null;
         double threshold = 0;
+        double highlightAlpha = .7;
         var blockSize = 8;
         var insertionDeletionMode = 0;
         var orientations = Enumerable.Range(0, inputCount).Select(_ => new ImageOrientation()).ToArray();
@@ -21,7 +22,7 @@ internal static class ImageCommands
         for (var index = optionStart; index < args.Length; index += 2)
         {
             var option = args[index];
-            if (option is not ("--left-frame" or "--middle-frame" or "--right-frame" or "--threshold"
+            if (option is not ("--left-frame" or "--middle-frame" or "--right-frame" or "--threshold" or "--highlight-alpha"
                 or "--left-orientation" or "--middle-orientation" or "--right-orientation" or "--block-size"
                 or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode") || !seen.Add(option))
                 throw new ArgumentException($"未知または重複する画像オプションです: {option}");
@@ -48,6 +49,12 @@ internal static class ImageCommands
                 var value = new ImageOrientation { Rotation = rotation, FlipHorizontal = parts[1] == "1", FlipVertical = parts[2] == "1" };
                 ImageOrientation.Validate(value);
                 orientations[option == "--left-orientation" ? 0 : option == "--middle-orientation" ? 1 : inputCount - 1] = value;
+            }
+            else if (option == "--highlight-alpha")
+            {
+                if (!double.TryParse(args[index + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out highlightAlpha))
+                    throw new ArgumentException("差分色の不透明度は0～1の有限値です。");
+                ImageComparisonEngine.ValidateHighlightAlpha(highlightAlpha);
             }
             else if (option == "--threshold")
             {
@@ -77,7 +84,7 @@ internal static class ImageCommands
             var images = new ImageComparisonEngine.Snapshot[inputCount];
             for (var i = 0; i < inputCount; i++) images[i] = await ImageComparisonEngine.OpenAsync(args[i + 1], token);
             var result = await Task.Run(() => ImageComparisonEngine.Compare(images, numbers, threshold, token, orientations, blockSize, offsets,
-                insertionDeletionMode), token);
+                insertionDeletionMode, highlightAlpha: highlightAlpha), token);
             // 完了した結果だけ標準出力へ渡し、失敗・取消時に成功JSONを残さない。
             using var content = new MemoryStream();
             using (var writer = new Utf8JsonWriter(content))
@@ -87,6 +94,7 @@ internal static class ImageCommands
                 writer.WriteNumber("leftFrames", result.LeftFrames); writer.WriteNumber("rightFrames", result.RightFrames);
                 if (result.MiddleFrames.HasValue) writer.WriteNumber("middleFrames", result.MiddleFrames.Value);
                 writer.WriteNumber("threshold", result.Threshold); writer.WriteString("mode", result.Mode);
+                writer.WriteNumber("highlightAlpha", highlightAlpha);
                 if (insertionDeletionMode != 0) writer.WriteNumber("insertionDeletionMode", insertionDeletionMode);
                 writer.WriteStartArray("frames");
                 foreach (var frame in result.Frames)

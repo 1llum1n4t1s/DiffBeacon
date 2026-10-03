@@ -85,6 +85,46 @@ internal static class HeadlessImageRectangleChecks
 
         var raw = new ImageComparisonEngine.DecodedFrame(1, 4, 3, Enumerable.Range(0, 48).Select(i => (byte)(17 + i * 37)).ToArray());
         var piece = new ImageComparisonEngine.DecodedFrame(1, 2, 2, new byte[] { 19, 41, 67, 0, 173, 11, 239, 0, 7, 21, 45, 128, 255, 128, 32, 255 });
+        // 失敗先行: 差分色の変更・描画取消・失敗で、原本RefreshImagesが保持する作業状態を消さない。
+        foreach (var floating in new[] { false, true })
+        {
+            var alphaPanel = Open("alpha-interaction-" + floating, [raw, raw]);
+            var rectangle = new ImageRectangle(0, 0, 2, 2);
+            if (floating) { pump(alphaPanel.BeginFloatingAsync(0, piece)); alphaPanel.MoveFloating(1, 1); }
+            else alphaPanel.SelectRectangle(0, rectangle);
+            var slider = alphaPanel.GetVisualDescendants().OfType<Slider>().Single(value => value.Name == "ImageHighlightAlpha");
+            slider.Value = .3; pump(alphaPanel.CurrentFrameOperation);
+            AssertInteraction("actual Slider");
+            var settings = alphaPanel.CaptureSettings();
+            var enteredAlpha = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var releaseAlpha = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var cancelAlpha = new CancellationTokenSource();
+            alphaPanel.FrameCandidateReady = () => { enteredAlpha.TrySetResult(); return releaseAlpha.Task; };
+            var canceledAlpha = alphaPanel.ApplySettingsAsync(settings with { HighlightAlpha = 1 }, cancelAlpha.Token);
+            pump(enteredAlpha.Task);
+            check("rectangle GUI pending alpha preserves interaction " + floating,
+                floating ? alphaPanel.HasFloatingImage && alphaPanel.FloatingPosition == (0, 1, 1)
+                    : alphaPanel.RectangleSelection(0) == rectangle, "computed candidate waits before adoption");
+            cancelAlpha.Cancel(); releaseAlpha.SetResult(); Rejected("rectangle GUI computed alpha canceled " + floating, () => pump(canceledAlpha));
+            alphaPanel.FrameCandidateReady = null; AssertInteraction("canceled candidate");
+            alphaPanel.FrameCandidateReady = () => throw new InvalidDataException("injected candidate publication failure");
+            Rejected("rectangle GUI alpha publication failure " + floating, () => pump(alphaPanel.ApplySettingsAsync(settings with { HighlightAlpha = 1 })));
+            alphaPanel.FrameCandidateReady = null; AssertInteraction("failed candidate");
+            screenshot("image-alpha-interaction-" + floating + ".png");
+            if (floating)
+            {
+                pump(alphaPanel.CommitFloatingAsync()); State("alpha preserved floating commit", alphaPanel, Paste(raw, piece, 1, 1), raw);
+                check("rectangle GUI alpha preserved floating is committable", alphaPanel.HistoryCount == 1, "same payload survives real commit");
+            }
+            void AssertInteraction(string phase)
+            {
+                check("rectangle GUI alpha " + phase + " preserves interaction " + floating,
+                    (floating ? alphaPanel.HasFloatingImage && alphaPanel.FloatingPosition == (0, 1, 1) : alphaPanel.RectangleSelection(0) == rectangle)
+                    && alphaPanel.CaptureSettings().HighlightAlpha == .3 && alphaPanel.HistoryCount == 0 && !alphaPanel.HasUnsavedChanges,
+                    "selection/floating position, adopted alpha and history retained");
+                State("alpha " + phase + " " + floating, alphaPanel, raw, raw);
+            }
+        }
         var basic = Open("interaction", [raw, raw]);
         using var platform = new ClipboardStub(); basic.ClipboardOverride = ImageClipboard.ForPlatform(() => platform);
         basic.SelectRectangle(0, new(2, 1, 4, 3));

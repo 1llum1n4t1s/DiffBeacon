@@ -14,7 +14,7 @@ internal static class HeadlessImageProjectChecks
         var left = Path.Combine(output, "tiff", "two-pages-le.tif");
         var right = Path.Combine(output, "tiff", "same-first-right.tif");
         var requested = new ImageViewSettings { LeftFrame = 2, RightFrame = 2, Threshold = 510, Zoom = 2.5,
-            OverlayOpacity = .65, View = "Overlay", ShowDifferences = false, ReportAllFrames = false };
+            OverlayOpacity = .65, HighlightAlpha = .3, View = "Overlay", ShowDifferences = false, ReportAllFrames = false };
         var project = new ComparisonProject { LeftPath = left, RightPath = right, Mode = "Image", ImageSettings = requested };
         pane.ApplyProject(project); pump(pane.ComparePathsAsync());
         var panel = Panel(pane);
@@ -77,7 +77,7 @@ internal static class HeadlessImageProjectChecks
         using var canceled = new CancellationTokenSource(); canceled.Cancel();
         var bitmaps = panel.RenderedFrames.ToArray();
         var refused = false;
-        try { pump(panel.ApplySettingsAsync(frozen with { LeftFrame = 1, RightFrame = 1 }, canceled.Token)); }
+        try { pump(panel.ApplySettingsAsync(frozen with { LeftFrame = 1, RightFrame = 1, HighlightAlpha = 1 }, canceled.Token)); }
         catch (OperationCanceledException) { refused = true; }
         check("image project GUI canceled restore preserves display", refused && panel.CaptureSettings() == frozen
             && panel.RenderedFrames.SequenceEqual(bitmaps), "");
@@ -85,12 +85,41 @@ internal static class HeadlessImageProjectChecks
         try { pump(panel.ApplySettingsAsync(frozen with { LeftFrame = 3 })); } catch (ArgumentException) { refused = true; }
         check("image project GUI unavailable page preserves display", refused && panel.CaptureSettings() == frozen
             && panel.RenderedFrames.SequenceEqual(bitmaps), "");
-        var obsolete = panel.ApplySettingsAsync(frozen with { LeftFrame = 1, RightFrame = 1, Zoom = 1 });
-        var latestSettings = frozen with { View = "PixelDifference", Zoom = 8, ShowDifferences = true, Threshold = 0 };
+        foreach (var invalidAlpha in new[] { -.1, 1.1, double.NaN, double.PositiveInfinity })
+        {
+            refused = false;
+            try { pump(panel.ApplySettingsAsync(frozen with { HighlightAlpha = invalidAlpha })); }
+            catch (ArgumentException) { refused = true; }
+            check("image project GUI invalid alpha preserves display " + invalidAlpha, refused && panel.CaptureSettings() == frozen
+                && panel.RenderedFrames.SequenceEqual(bitmaps) && panel.HistoryCount == 0 && !panel.HasUnsavedChanges, "");
+        }
+        using var pendingCancellation = new CancellationTokenSource();
+        var canceledEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var canceledRelease = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        panel.FrameCandidateReady = () => { canceledEntered.TrySetResult(); return canceledRelease.Task; };
+        var canceledCandidate = panel.ApplySettingsAsync(frozen with { HighlightAlpha = 1 }, pendingCancellation.Token);
+        pump(canceledEntered.Task); pendingCancellation.Cancel(); canceledRelease.SetResult();
+        refused = false;
+        try { pump(canceledCandidate); } catch (OperationCanceledException) { refused = true; }
+        panel.FrameCandidateReady = null;
+        check("image project GUI canceled computed alpha preserves display", refused && panel.CaptureSettings() == frozen
+            && panel.CaptureReport().HighlightAlpha == frozen.HighlightAlpha && panel.RenderedFrames.SequenceEqual(bitmaps)
+            && panel.HistoryCount == 0 && !panel.HasUnsavedChanges, "real candidate canceled before publication");
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        panel.FrameCandidateReady = () => { entered.TrySetResult(); return release.Task; };
+        var obsolete = panel.ApplySettingsAsync(frozen with { LeftFrame = 1, RightFrame = 1, Zoom = 1, HighlightAlpha = 1 });
+        pump(entered.Task);
+        check("image project GUI pending alpha is not saved", !obsolete.IsCompleted && panel.CaptureSettings().HighlightAlpha == frozen.HighlightAlpha
+            && panel.RenderedFrames.SequenceEqual(bitmaps),
+            "computed old candidate is gated before real publication");
+        panel.FrameCandidateReady = null;
+        var latestSettings = frozen with { View = "PixelDifference", Zoom = 8, ShowDifferences = true, Threshold = 0, HighlightAlpha = 0 };
         var latest = panel.ApplySettingsAsync(latestSettings);
+        pump(latest); release.SetResult();
         try { pump(Task.WhenAll(obsolete, latest)); } catch (OperationCanceledException) { }
         check("image project GUI latest restore wins", latest.IsCompletedSuccessfully && panel.CaptureSettings() == latestSettings
-            && panel.DifferentPixels == 1, "");
+            && panel.CaptureReport().HighlightAlpha == latestSettings.HighlightAlpha && panel.DifferentPixels == 1, "");
         screenshot("image-project-latest.png");
         var three = new ComparisonProject { LeftPath = left, BasePath = right, RightPath = left, Mode = "Image",
             ImageSettings = new() { LeftFrame = 1, MiddleFrame = 2, RightFrame = 2, Zoom = .1, OverlayOpacity = 0 } };

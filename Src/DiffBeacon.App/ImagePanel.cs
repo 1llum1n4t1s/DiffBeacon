@@ -32,6 +32,7 @@ public static partial class SpecializedViews
         private Window? _owner;
         private double _displayThreshold;
         private double _requestedThreshold;
+        private double _requestedHighlightAlpha = .7, _displayHighlightAlpha = .7;
         private int _requestedBlockSize = 8, _displayBlockSize = 8;
         private int _requestedInsertionDeletionMode, _displayInsertionDeletionMode;
         private readonly ComboBox _insertionDeletionMode = new() { Name = "ImageInsertionDeletionMode", ItemsSource = new[] { "なし", "縦方向", "横方向" }, SelectedIndex = 0, MinWidth = 100 };
@@ -47,6 +48,7 @@ public static partial class SpecializedViews
         private readonly CheckBox _showDifferences = new() { Name = "ImageShowDifferences", Content = "差分を強調", IsChecked = true };
         private readonly Slider _zoom = new() { Name = "ImageZoom", Minimum = .1, Maximum = 8, Value = 1, Width = 130 };
         private readonly Slider _opacity = new() { Name = "ImageOpacity", Minimum = 0, Maximum = 1, Value = .3, Width = 130 };
+        private readonly Slider _highlightAlpha = new() { Name = "ImageHighlightAlpha", Minimum = 0, Maximum = 1, Value = .7, Width = 130 };
         private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
         private readonly TabControl _imageViews = new() { Name = "ImageDisplayMode" };
 
@@ -64,6 +66,8 @@ public static partial class SpecializedViews
         internal IReadOnlyList<ImageRegionDiffer.Region> Regions => _regions?.Regions ?? [];
         internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> RenderedFrames => _rendered ?? [];
         internal Task CurrentFrameOperation { get; private set; } = Task.CompletedTask;
+        // headless操作検証では実計算後の採用待ちを再現し、候補画素や検査を差し替えない。
+        internal Func<Task>? FrameCandidateReady { get; set; }
         internal bool ReportAllFrames { get => _reportAllFrames.IsChecked == true; set => _reportAllFrames.IsChecked = value; }
 
         internal ImageComparisonEngine.ReportInput CaptureReport()
@@ -72,7 +76,7 @@ public static partial class SpecializedViews
             if (_operationCancellation is not null || _saving || _decoded is null || HasFloatingImage || _clipboardBusy)
                 throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
             return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences,
-                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray(), _displayInsertionDeletionMode);
+                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray(), _displayInsertionDeletionMode, _displayHighlightAlpha);
         }
 
         internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null)
@@ -106,6 +110,7 @@ public static partial class SpecializedViews
             toolbar.Children.Add(frameControls);
             var settings = new WrapPanel();
             foreach (var control in new Control[] { new TextBlock { Text = "倍率" }, _zoom, new TextBlock { Text = "重ね合わせ不透明度" }, _opacity,
+                new TextBlock { Text = "差分色の不透明度" }, _highlightAlpha,
                 new TextBlock { Text = "差分閾値" }, _threshold, new TextBlock { Text = "挿入・削除" }, _insertionDeletionMode, _showDifferences, _reportAllFrames }) Add(settings, control);
             toolbar.Children.Add(settings);
             var navigation = new WrapPanel();
@@ -144,6 +149,12 @@ public static partial class SpecializedViews
             Children.Add(_imageViews);
             _zoom.ValueChanged += (_, _) => UpdateZoom();
             _opacity.ValueChanged += (_, _) => { for (var i = 1; i < _overlays.Count; i += 2) _overlays[i].Image.Opacity = _opacity.Value; };
+            _highlightAlpha.ValueChanged += async (_, _) =>
+            {
+                if (_updatingSelectors || _disposed) return;
+                _requestedHighlightAlpha = _highlightAlpha.Value;
+                await SelectFromControlsAsync(preserveRectangle: true);
+            };
             _threshold.ValueChanged += async (_, _) =>
             {
                 if (_updatingSelectors || _disposed) return;
@@ -198,10 +209,10 @@ public static partial class SpecializedViews
             return button;
         }
 
-        private async Task SelectFromControlsAsync()
+        private async Task SelectFromControlsAsync(bool preserveRectangle = false)
         {
             var generation = _generation;
-            try { var task = SetNumbersAsync(ReadNumbers(), CancellationToken.None); generation = _generation; UpdateNavigation(); await task; }
+            try { var task = SetNumbersAsync(ReadNumbers(), CancellationToken.None, preserveRectangle: preserveRectangle); generation = _generation; UpdateNavigation(); await task; }
             catch (OperationCanceledException) { }
             catch (Exception error) { if (!_disposed && generation == _generation) { RestoreSelectors(); _status.Text = "画像を表示できません: " + error.Message; } }
         }
@@ -210,11 +221,17 @@ public static partial class SpecializedViews
             => SetNumbersAsync(_counts.Length == 3 ? [left, MiddleFrame!.Value, right] : [left, right], token);
         internal Task SetFramesAsync(int left, int middle, int right, CancellationToken token = default) => SetNumbersAsync([left, middle, right], token);
 
-        private Task SetNumbersAsync(int[] numbers, CancellationToken token, int? requestedSelection = null)
+        private Task SetNumbersAsync(int[] numbers, CancellationToken token, int? requestedSelection = null, bool preserveRectangle = false)
         {
             ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations, _requestedOffsets); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
-            CancelRectangleInteraction();
+            // 差分色だけの再描画は原本RefreshImagesと同様に選択・浮動貼り付けを保持する。
+            // 同時にページや座標系が変わる場合は従来どおり作業状態を解除する。
+            var sameDisplayCoordinates = !_resetEditing && numbers.SequenceEqual(_numbers)
+                && _requestedOrientations.SequenceEqual(_displayOrientations) && _requestedOffsets.SequenceEqual(_displayOffsets)
+                && _requestedThreshold == _displayThreshold && _requestedBlockSize == _displayBlockSize
+                && _requestedInsertionDeletionMode == _displayInsertionDeletionMode;
+            if (!preserveRectangle || !sameDisplayCoordinates) CancelRectangleInteraction();
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
             CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
             UpdateEditControls();
@@ -225,15 +242,18 @@ public static partial class SpecializedViews
             Action<ImageEditSession, CancellationToken>? edit = null, int writablePane = -1, int? requestedSelection = null)
         {
             var token = cancel.Token; var snapshots = _snapshots!; var cached = _rawDecoded; var selected = requestedSelection ?? _selectedDiffIndex;
+            var candidateReady = FrameCandidateReady;
             var orientations = _requestedOrientations.ToArray();
             var offsets = _requestedOffsets.ToArray();
             var blockSize = _requestedBlockSize;
+            var highlightAlpha = _requestedHighlightAlpha;
             var insertionDeletionMode = _requestedInsertionDeletionMode;
             var candidateSession = _resetEditing ? null : _editSession?.Fork();
             var readOnly = _readOnly.ToArray(); var reset = _resetEditing; var adopted = false;
             var next = new WriteableBitmap?[numbers.Length]; WriteableBitmap? nextDifference = null;
             try
             {
+                ImageComparisonEngine.ValidateHighlightAlpha(highlightAlpha);
                 var result = await Task.Run(() =>
                 {
                     var frames = new ImageComparisonEngine.DecodedFrame[numbers.Length];
@@ -262,11 +282,12 @@ public static partial class SpecializedViews
                         frames = comparison.Frames.ToArray();
                     }
                     var selection = Math.Min(selected, comparison.Regions.Regions.Count - 1);
-                    var rendered = ImageRegionRenderer.Render(frames, comparison.Regions, blockSize: blockSize, selectedDiffIndex: selection, token: token, showDifferences: show,
+                    var rendered = ImageRegionRenderer.Render(frames, comparison.Regions, blockSize: blockSize, highlightAlpha: highlightAlpha, selectedDiffIndex: selection, token: token, showDifferences: show,
                         alignment: comparison.Alignment).ToArray();
                     return (comparison, rendered, selection);
                 }, token);
                 if (edit is not null && EditCandidateReady is { } ready) await ready();
+                if (candidateReady is not null) await candidateReady();
                 token.ThrowIfCancellationRequested(); if (_disposed || generation != _generation) throw new OperationCanceledException(token);
                 for (var i = 0; i < next.Length; i++) next[i] = CreateBitmap(result.rendered[i], token);
                 var pixels = result.comparison.Pixels;
@@ -285,6 +306,7 @@ public static partial class SpecializedViews
                 _displayInsertionDeletionMode = insertionDeletionMode;
                 _editSession = candidateSession; _resetEditing = _discarded = false; adopted = true;
                 _displayThreshold = threshold; _displayShowDifferences = show;
+                _displayHighlightAlpha = highlightAlpha;
                 numbers.CopyTo(_numbers, 0); DifferentPixels = pixels.DifferentPixels; TotalPixels = pixels.TotalPixels;
                 RestoreSelectors(); UpdateZoom();
                 _status.Text = $"領域 {DifferenceCount} 個" + (_counts.Length == 3 ? $" · 競合 {ConflictCount} 個" : "")
@@ -335,6 +357,7 @@ public static partial class SpecializedViews
             {
                 for (var i = 0; i < _numbers.Length; i++) _selectors[i].Value = _numbers[i];
                 _requestedThreshold = _displayThreshold;
+                _requestedHighlightAlpha = _displayHighlightAlpha; _highlightAlpha.Value = _displayHighlightAlpha;
                 _requestedBlockSize = _displayBlockSize; _blockSizeControl.Value = _displayBlockSize;
                 _requestedInsertionDeletionMode = _displayInsertionDeletionMode; _insertionDeletionMode.SelectedIndex = _displayInsertionDeletionMode;
                 _requestedOrientations = _displayOrientations.ToArray();

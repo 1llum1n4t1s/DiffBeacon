@@ -216,6 +216,13 @@ internal static class HeadlessImageInsertionChecks
                 window.Width = compact ? window.MinWidth : width; window.Height = compact ? window.MinHeight : height;
                 Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
                 var toolbar = panel.GetVisualDescendants().OfType<ScrollViewer>().Single(control => control.Name == "ImageToolbar");
+                var alpha = panel.GetVisualDescendants().OfType<Slider>().Single(control => control.Name == "ImageHighlightAlpha");
+                alpha.BringIntoView(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+                var alphaPosition = alpha.TranslatePoint(new Point(), toolbar);
+                check("image insertions GUI alpha reachable " + compact, alphaPosition.HasValue && alphaPosition.Value.Y >= -1
+                    && alphaPosition.Value.Y + alpha.Bounds.Height <= toolbar.Bounds.Height + 1 && alpha.IsEnabled,
+                    $"alpha={alphaPosition}; toolbar={toolbar.Bounds}");
+                if (compact) screenshot("image-alpha-compact-control.png");
                 var mode = panel.GetVisualDescendants().OfType<ComboBox>().Single(control => control.Name == "ImageInsertionDeletionMode");
                 mode.BringIntoView(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
                 var modePosition = mode.TranslatePoint(new Point(), toolbar);

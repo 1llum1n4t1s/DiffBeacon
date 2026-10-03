@@ -2,7 +2,7 @@
 
 矩形の画素操作は`--image-rectangles-only`と全体E2Eで検証する。[矩形原本](../Fixtures/ImageRectangles/README.md)32ケースのうち、現行の入力・安全契約に適合する20ケースを実`--image-copy`へ送り、全BGRA・履歴・Undo/Redo・原画PNGを照合する。残り12ケースの除外理由を`image-rectangles/proof.json`へ記録し、未対応の空入力、原本の読取り専用貼り付けや不正paneを成功済み扱いにしない。回転・反転16組合せ、同pane貼り付け、三者履歴分岐、整数極値、不正schema、履歴と作業量の上限も実アプリで確認する。期待値の独立計算と原本関数の採取範囲を区別し、GUI・OSクリップボード・原本FreeImageのcrop・浮動貼り付けはこの限定E2Eの検証範囲外とする。
 
-`--image-insertions-only`には通常CLI・プロジェクト保存二回往復・単体／包装／展開再読込みHTMLも含む。代表8件で整列全画素と原画保持を確認し、[強調原本](../Fixtures/ImageInsertionHighlight/README.md)12件146状態は実`--image-regions`の全canvas画素SHAへ照合する。透明実画素・ghost・通常／選択色・alpha0/.3/.7/1・offsetを含む。GUI自己検証は編集原本58件304状態と、固定alpha .7の強調原本12件62状態を実Bitmapへ照合する。CLIの全alpha検証とGUIの固定alphaを区別する。多ページ予算の自作TIFFは整列前240M／整列後360Mの描画量を再現し、全ページ拒否・選択1ページ成功・空stdout・既存HTMLと入力保持を確認する。
+`--image-insertions-only`には通常CLI・プロジェクト保存二回往復・単体／包装／展開再読込みHTMLも含む。代表8件で整列全画素と原画保持を確認し、[強調原本](../Fixtures/ImageInsertionHighlight/README.md)12件146状態は実`--image-regions`の全canvas画素SHAへ照合する。透明実画素・ghost・通常／選択色・alpha0/.3/.7/1・offsetを含む。GUI自己検証は編集原本58件304状態と、強調原本12件146状態のalpha0/.3/.7/1を実Bitmapへ照合する。4値の実Slider変更も確認する。全未選択状態は通常CLI・単体HTML・CLI上書き・包装・展開再読込みの強調PNG全BGRAへ接続する。多ページ予算の自作TIFFは整列前240M／整列後360Mの描画量を再現し、全ページ拒否・選択1ページ成功・空stdout・既存HTMLと入力保持を確認する。
 
 画像の挿入・削除コピーは `--image-insertions-only` と全体E2Eで検証する。[固定原本](../Fixtures/ImageInsertions/README.md)の58ケース304状態を実`--image-copy`へ送り、縦・横の整列、構造コピー、Undo／Redo、モード・位置・回転の変更、読取り専用、保存点を照合する。全canvas BGRA・座標対応・差分と競合数を確認し、原画PNGの出力を独立復号する。`includeAlignment`は診断出力の指定で、共通canvas4096画素までに限定する。GUI・通常比較CLI・HTMLの挿入削除モード接続は、このコピー経路の検証とは別に行う。
 

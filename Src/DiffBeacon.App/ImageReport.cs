@@ -26,6 +26,7 @@ internal static class ImageReport
         var offsets = input.Offsets?.ToArray();
         ImageComparisonEngine.ValidateComparison(images, input.FrameNumbers, input.Threshold, orientations, offsets);
         ImageComparisonEngine.ValidateInsertionDeletionMode(input.InsertionDeletionMode);
+        ImageComparisonEngine.ValidateHighlightAlpha(input.HighlightAlpha);
         if (input.EditedFrames is { } edited && (edited.Count != images.Count || images.Any(image => image.FrameCount != 1)
             || edited.Any(frame => frame.Number != 1))) throw new ArgumentException("編集済みレポートは静止画の全入力が必要です。");
         if (titles.Count != images.Count) throw new ArgumentException("全画像の見出しが必要です。");
@@ -44,6 +45,7 @@ internal static class ImageReport
         html.Append("\" data-right-frames=\""); html.Number(images[^1].FrameCount);
         if (images.Count == 3) { html.Append("\" data-middle-frames=\""); html.Number(images[1].FrameCount); }
         html.Append("\" data-threshold=\""); html.Append(input.Threshold.ToString("R", CultureInfo.InvariantCulture));
+        html.Append("\" data-highlight-alpha=\""); html.Append(input.HighlightAlpha.ToString("R", CultureInfo.InvariantCulture));
         if (input.InsertionDeletionMode != 0)
         { html.Append("\" data-insertion-deletion-mode=\""); html.Number(input.InsertionDeletionMode); }
         html.Append("\"><h1>画像比較</h1><table><caption>閾値: "); html.Append(input.Threshold.ToString("R", CultureInfo.InvariantCulture));
@@ -71,6 +73,7 @@ internal static class ImageReport
             token.ThrowIfCancellationRequested();
             var comparison = set.Pixels;
             var rendered = ImageRegionRenderer.Render(set.Frames, set.Regions, blockSize: input.BlockSize,
+                highlightAlpha: input.HighlightAlpha,
                 selectedDiffIndex: Math.Min(input.SelectedDiffIndex, set.Regions.Regions.Count - 1), token: token, showDifferences: input.ShowDifferences,
                 alignment: set.Alignment);
             different |= set.Regions.Regions.Count > 0;

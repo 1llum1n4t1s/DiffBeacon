@@ -14,7 +14,7 @@ internal static class HeadlessImageInsertionHighlightChecks
     // 失敗先行: ghost/透明実画素・通常色/選択色の混同、削除intervalとoffsetの誤投影、
     // 三者paneの色混同、強調画素の原画混入、readonly比較の誤拒否、原本改変。
     // 固定WinIMerge v1.0.54の公開API二回採取。GPL-2.0-or-later、入力は自作CC0。
-    // GUIの固定alpha .7だけを照合し、alpha0/.3/1をGUI検証済み扱いにしない。
+    // alpha0/.3/.7/1の全状態を実Bitmapで照合し、各値の実Slider変更も操作する。
     internal static void Run(ComparisonPane pane, string output, Action<Task> pump,
         Action<string, bool, string> check, Action<string> screenshot)
     {
@@ -42,10 +42,11 @@ internal static class HeadlessImageInsertionHighlightChecks
             && golden.GetProperty("algorithm").GetString() == "Myers", "fixed source/DLL/public header and original licensing");
         var root = Path.Combine(output, "image-insertion-highlight"); Directory.CreateDirectory(root);
         File.WriteAllText(Path.Combine(root, "gui-failure-contract.md"),
-            "GUI固定alpha .7: 全12件62状態のNONE/垂直/水平・未選択/先頭/末尾・offset・透明実画素・三者について、実WriteableBitmap全canvas BGRAを二回採取原本literalへ照合する。設定はApplySettingsAsync、選択は実領域ナビゲーションを使う。原画全BGRAと入力PNG bytes/属性・readonlyを保持する。\n"
-            + "原本146状態中、alpha0/.3/1の84状態はGUIのalpha操作がないためGUI検証対象外。期待値の再生成・golden複製は行わない。OS操作/通常desktop描画は未検証。\n");
+            "全12件146状態のNONE/垂直/水平・alpha0/.3/.7/1・未選択/先頭/末尾・offset・透明実画素・三者について、実WriteableBitmap全canvas BGRAを二回採取原本literalへ照合する。設定はApplySettingsAsyncと4値の実Slider、選択は実領域ナビゲーションを使う。原画全BGRAと履歴・入力PNG bytes/属性・readonlyを保持する。\n"
+            + "期待値の再生成・golden複製は行わない。OS操作/通常desktop描画は未検証。\n");
         using var evidence = new StreamWriter(Path.Combine(root, "gui-observations.ndjson"), false, new UTF8Encoding(false));
         var cases = 0; var states = 0; var totalStates = 0;
+        var sliderAlphas = new HashSet<double>();
         foreach (var item in golden.GetProperty("cases").EnumerateArray())
         {
             cases++; var name = item.GetProperty("name").GetString()!; var inputs = item.GetProperty("inputs"); var count = inputs.GetArrayLength();
@@ -75,13 +76,13 @@ internal static class HeadlessImageInsertionHighlightChecks
                 pump(pane.ComparePathsAsync()); var panel = Panel();
                 foreach (var state in item.GetProperty("states").EnumerateArray())
                 {
-                    totalStates++; if (state.GetProperty("highlightAlpha").GetDouble() != .7) continue;
+                    totalStates++; var alpha = state.GetProperty("highlightAlpha").GetDouble();
                     states++; var index = state.GetProperty("stateIndex").GetInt32(); var wanted = state.GetProperty("panes");
                     var selected = state.GetProperty("currentDiffIndex").GetInt32(); var mode = state.GetProperty("mode").GetInt32();
                     var offsets = wanted.EnumerateArray().Select(value => new ImageOffset(value.GetProperty("offsetX").GetInt32(), value.GetProperty("offsetY").GetInt32())).ToArray();
                     var orientations = wanted.EnumerateArray().Select(value => new ImageOrientation { Rotation = value.GetProperty("angle").GetInt32(),
                         FlipHorizontal = value.GetProperty("flipx").GetBoolean(), FlipVertical = value.GetProperty("flipy").GetBoolean() }).ToArray();
-                    var settings = panel.CaptureSettings() with { InsertionDeletionMode = mode, ShowDifferences = true,
+                    var settings = panel.CaptureSettings() with { InsertionDeletionMode = mode, ShowDifferences = true, HighlightAlpha = alpha,
                         Threshold = item.GetProperty("threshold").GetDouble(), BlockSize = item.GetProperty("blockSize").GetInt32(),
                         LeftOffset = offsets[0], RightOffset = offsets[^1], MiddleOffset = count == 3 ? offsets[1] : default,
                         LeftOrientation = orientations[0], RightOrientation = orientations[^1], MiddleOrientation = count == 3 ? orientations[1] : new() };
@@ -92,11 +93,21 @@ internal static class HeadlessImageInsertionHighlightChecks
                         pane.DiscardChanges(); pane.ApplyProject(project); pump(pane.ComparePathsAsync()); panel = Panel();
                     }
                     else pump(panel.ApplySettingsAsync(settings));
+                    if (sliderAlphas.Add(alpha))
+                    {
+                        var slider = panel.GetVisualDescendants().OfType<Slider>().Single(value => value.Name == "ImageHighlightAlpha");
+                        slider.Value = alpha == 0 ? 1 : 0; pump(panel.CurrentFrameOperation);
+                        slider.Value = alpha; pump(panel.CurrentFrameOperation);
+                        check("image insertion highlight GUI actual Slider " + alpha, panel.CaptureSettings().HighlightAlpha == alpha
+                            && panel.CaptureReport().HighlightAlpha == alpha && panel.HistoryCount == 0 && !panel.HasUnsavedChanges,
+                            "actual ValueChanged and re-render publication preserve raw history");
+                    }
                     if (selected >= 0)
                         for (var i = 0; i <= panel.DifferenceCount && panel.SelectedDiffIndex != selected; i++) pump(panel.NavigateRegionAsync(1));
                     var prefix = "image insertion highlight GUI " + name + " state " + index;
-                    check(prefix + " settings", panel.CaptureSettings() == settings && panel.CaptureReport().InsertionDeletionMode == mode,
-                        "adopted settings include mode, full threshold, block size and offsets");
+                    check(prefix + " settings", panel.CaptureSettings() == settings && panel.CaptureReport().InsertionDeletionMode == mode
+                        && panel.CaptureReport().HighlightAlpha == alpha,
+                        "adopted settings include mode, full threshold, block size, offsets and highlight alpha");
                     check(prefix + " classification and selection", panel.DifferenceCount == state.GetProperty("differenceCount").GetInt32()
                         && panel.ConflictCount == (count == 3 ? state.GetProperty("conflictCount").GetInt32() : 0)
                         && panel.SelectedDiffIndex == selected, "actual first/last region navigation; two-pane GUI hides conflicts");
@@ -106,7 +117,7 @@ internal static class HeadlessImageInsertionHighlightChecks
                     using (var writer = new Utf8JsonWriter(buffer))
                     {
                         writer.WriteStartObject(); writer.WriteString("case", name); writer.WriteNumber("state", index); writer.WriteNumber("mode", mode);
-                        writer.WriteNumber("highlightAlpha", .7); writer.WriteNumber("selectedDiffIndex", panel.SelectedDiffIndex);
+                        writer.WriteNumber("highlightAlpha", alpha); writer.WriteNumber("selectedDiffIndex", panel.SelectedDiffIndex);
                         writer.WriteNumber("differenceCount", panel.DifferenceCount); writer.WriteNumber("conflictCount", panel.ConflictCount);
                         writer.WriteStartArray("panes");
                         for (var p = 0; p < count; p++)
@@ -144,14 +155,16 @@ internal static class HeadlessImageInsertionHighlightChecks
             }
             finally { for (var p = 0; p < count; p++) File.SetAttributes(paths[p], attributes[p]); }
         }
-        check("image insertion highlight GUI fixed alpha coverage", cases == 12 && states == 62 && totalStates == 146,
-            $"cases={cases}; alpha .7 states={states}; original states={totalStates}; alpha0/.3/1 excluded from GUI");
+        check("image insertion highlight GUI all alpha coverage", cases == 12 && states == 146 && totalStates == 146
+            && sliderAlphas.SetEquals(new[] { 0, .3, .7, 1 }),
+            $"cases={cases}; GUI states={states}; original states={totalStates}; alpha0/.3/.7/1");
         using (var file = File.Create(Path.Combine(root, "gui-coverage.json")))
         using (var writer = new Utf8JsonWriter(file, new() { Indented = true }))
         {
             writer.WriteStartObject(); writer.WriteString("gzipSha256", gzipSha); writer.WriteString("sourceSha256", jsonSha); writer.WriteString("repeatObservationsSha256", repeatSha);
-            writer.WriteNumber("cases", cases); writer.WriteNumber("guiStates", states); writer.WriteNumber("originalStates", totalStates); writer.WriteNumber("guiHighlightAlpha", .7);
-            writer.WriteString("unverifiedGuiAlpha", "0/.3/1"); writer.WriteString("source", "tests/Fixtures/ImageInsertionHighlight/README.md"); writer.WriteEndObject();
+            writer.WriteNumber("cases", cases); writer.WriteNumber("guiStates", states); writer.WriteNumber("originalStates", totalStates);
+            writer.WriteStartArray("guiHighlightAlpha"); foreach (var alpha in new[] { 0, .3, .7, 1 }) writer.WriteNumberValue(alpha); writer.WriteEndArray();
+            writer.WriteString("source", "tests/Fixtures/ImageInsertionHighlight/README.md"); writer.WriteEndObject();
         }
         pane.DiscardChanges();
 

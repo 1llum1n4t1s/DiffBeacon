@@ -30,7 +30,7 @@ internal static class ImageProjectScenarios
         foreach (var name in names) { var path = Path.Combine(folder, name); File.Copy(Path.Combine(source, name), path); Track(path); }
         var defaults = Settings(); var selected = Settings(); selected["leftFrame"] = 2; selected["rightFrame"] = 2;
         selected["middleFrame"] = 2; selected["reportAllFrames"] = false; selected["showDifferences"] = false;
-        selected["threshold"] = 510; selected["zoom"] = 2.5; selected["overlayOpacity"] = .75; selected["view"] = "Overlay";
+        selected["threshold"] = 510; selected["zoom"] = 2.5; selected["overlayOpacity"] = .75; selected["highlightAlpha"] = .3; selected["view"] = "Overlay";
         var twoSettings = new Dictionary<string, object?>(selected) { ["middleFrame"] = 1 };
         var two = Project("selected-two", twoSettings); var three = Project("selected-three", selected, true);
         await Copy("selected-two", two, twoSettings); await Copy("selected-three", three, selected);
@@ -48,7 +48,7 @@ internal static class ImageProjectScenarios
         foreach (var upper in new[] { false, true })
         {
             var s = Settings(); foreach (var key in new[] { "leftFrame", "middleFrame", "rightFrame" }) s[key] = upper ? 1024 : 1;
-            s["threshold"] = upper ? 510 : 0; s["zoom"] = upper ? 8 : .1; s["overlayOpacity"] = upper ? 1 : 0;
+            s["threshold"] = upper ? 510 : 0; s["zoom"] = upper ? 8 : .1; s["overlayOpacity"] = upper ? 1 : 0; s["highlightAlpha"] = upper ? 1 : 0;
             var path = Project("bounds-" + upper, s, true); await Copy("bounds-" + upper, path, s);
             if (upper) { s["reportAllFrames"] = false; await Reject("actual-pages", Project("actual-pages", s, true), reportsOnly: true); }
         }
@@ -57,6 +57,7 @@ internal static class ImageProjectScenarios
             ("middleFrame",0),("middleFrame",1025),("middleFrame",1.5),("rightFrame",0),("rightFrame",1025),("rightFrame","1"),
             ("threshold",-.1),("threshold",510.1),("threshold","NaN"),("threshold",null),
             ("zoom",.09),("zoom",8.01),("zoom","1"),("overlayOpacity",-.1),("overlayOpacity",1.1),
+            ("highlightAlpha",-.1),("highlightAlpha",1.1),("highlightAlpha","NaN"),("highlightAlpha",null),("highlightAlpha","0.3"),
             ("view","overlay"),("view","Other"),("view",1),("view",null),
             ("showDifferences",1),("showDifferences",null),("reportAllFrames","false"),("reportAllFrames",null) })
         {
@@ -154,7 +155,7 @@ internal static class ImageProjectScenarios
             }
         }
     }
-    private static Dictionary<string, object?> Settings() => new() { ["leftFrame"] = 1, ["middleFrame"] = 1, ["rightFrame"] = 1, ["threshold"] = 0, ["zoom"] = 1, ["overlayOpacity"] = .3, ["showDifferences"] = true, ["reportAllFrames"] = true, ["view"] = "SideBySide" };
+    private static Dictionary<string, object?> Settings() => new() { ["leftFrame"] = 1, ["middleFrame"] = 1, ["rightFrame"] = 1, ["threshold"] = 0, ["zoom"] = 1, ["overlayOpacity"] = .3, ["highlightAlpha"] = .7, ["showDifferences"] = true, ["reportAllFrames"] = true, ["view"] = "SideBySide" };
     private static byte[] Raw(JsonElement frame) => Convert.FromBase64String(frame.GetProperty("bgraBase64").GetString()!);
     private static string Sha(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes));
     private static string Hash(string path) => Sha(File.ReadAllBytes(path));

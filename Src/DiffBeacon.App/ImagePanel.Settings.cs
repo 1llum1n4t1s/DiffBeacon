@@ -11,6 +11,7 @@ public static partial class SpecializedViews
             // 番号と閾値は採用済みの原画に対応する値を使い、復号待ちの選択を保存しない。
             LeftFrame = LeftFrame, MiddleFrame = MiddleFrame ?? 1, RightFrame = RightFrame,
             Threshold = _displayThreshold, ShowDifferences = _displayShowDifferences,
+            HighlightAlpha = _displayHighlightAlpha,
             Zoom = _zoom.Value, OverlayOpacity = _opacity.Value, ReportAllFrames = ReportAllFrames,
             View = _imageViews.SelectedIndex switch { 1 => "Overlay", 2 => "PixelDifference", _ => "SideBySide" },
             LeftOrientation = _displayOrientations[0], RightOrientation = _displayOrientations[^1],
@@ -37,7 +38,8 @@ public static partial class SpecializedViews
             var generation = _generation;
             try
             {
-                var operation = SetNumbersAsync(numbers, token);
+                var alphaOnly = requested with { HighlightAlpha = previous.HighlightAlpha } == previous;
+                var operation = SetNumbersAsync(numbers, token, preserveRectangle: alphaOnly);
                 generation = _generation;
                 await operation;
             }
@@ -58,6 +60,7 @@ public static partial class SpecializedViews
                 _threshold.Value = ThresholdControlValue(settings.Threshold);
                 // decimal表示の丸めを復号・保存・レポートのDouble閾値へ戻さない。
                 _requestedThreshold = settings.Threshold;
+                _requestedHighlightAlpha = settings.HighlightAlpha; _highlightAlpha.Value = settings.HighlightAlpha;
                 _requestedOrientations = settings.Orientations(_counts.Length == 3);
                 _requestedOffsets = settings.Offsets(_counts.Length == 3);
                 _requestedBlockSize = settings.BlockSize; _blockSizeControl.Value = settings.BlockSize;
