@@ -49,7 +49,14 @@ public static partial class SpecializedViews
         if (new FileInfo(left).Length > limit || new FileInfo(right).Length > limit) throw new InvalidOperationException("16進比較の上限は各16 MiBです。");
         var a = await ReadBinaryAsync(left, limit, cancellationToken);
         var b = await ReadBinaryAsync(right, limit, cancellationToken);
-        var root = new BinaryPanel { LeftReadOnly = leftReadOnly, RightReadOnly = rightReadOnly };
+        return BinarySnapshot(a, b, left, right, leftReadOnly, rightReadOnly, guardOutput);
+    }
+    internal static Control BinarySnapshot(byte[] a, byte[] b, string left, string right,
+        bool leftReadOnly, bool rightReadOnly, Action<string>? guardOutput = null,
+        string? leftProtectedPath = null, string? rightProtectedPath = null, bool fixedLeftReadOnly = false, bool fixedRightReadOnly = false)
+    {
+        if (a.Length > 16 * 1024 * 1024 || b.Length > 16 * 1024 * 1024) throw new InvalidOperationException("16進比較の上限は各16 MiBです。");
+        var root = new BinaryPanel { FixedLeftReadOnly = fixedLeftReadOnly, FixedRightReadOnly = fixedRightReadOnly, LeftReadOnly = leftReadOnly, RightReadOnly = rightReadOnly };
         var actions = new WrapPanel();
         var offset = new NumericUpDown { Minimum = 0, Maximum = Math.Max(a.Length, b.Length), Increment = 4096, Value = 0, Width = 140 };
         var status = new TextBlock { Margin = new Thickness(8), TextWrapping = TextWrapping.Wrap };
@@ -142,7 +149,7 @@ public static partial class SpecializedViews
         void GuardOutput(string path)
         {
             guardOutput?.Invoke(path);
-            if ((root.LeftReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(left, path)) || (root.RightReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(right, path)))
+            if ((root.LeftReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(leftProtectedPath ?? left, path)) || (root.RightReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(rightProtectedPath ?? right, path)))
                 throw new InvalidOperationException("読取り専用に指定された入力を上書きできません。");
         }
         offset.ValueChanged += (_, _) =>
@@ -176,8 +183,11 @@ public static partial class SpecializedViews
     }
     public sealed class BinaryPanel : DockPanel
     {
-        public bool LeftReadOnly { get; set; }
-        public bool RightReadOnly { get; set; }
+        private bool _leftReadOnly, _rightReadOnly;
+        internal bool FixedLeftReadOnly { get; init; }
+        internal bool FixedRightReadOnly { get; init; }
+        public bool LeftReadOnly { get => FixedLeftReadOnly || _leftReadOnly; set => _leftReadOnly = value; }
+        public bool RightReadOnly { get => FixedRightReadOnly || _rightReadOnly; set => _rightReadOnly = value; }
         public Action? ApplyReadOnly { get; set; }
         internal Func<bool, string, CancellationToken, Task>? SaveContent { get; set; }
         public Task SaveToAsync(bool rightSide, string path, CancellationToken token = default) => SaveContent?.Invoke(rightSide, path, token) ?? throw new InvalidOperationException("バイナリを読み込んでいません。");

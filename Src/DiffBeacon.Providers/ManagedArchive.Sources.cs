@@ -22,6 +22,18 @@ public sealed partial class ManagedArchive
         return content.ToArray();
     }
 
+    /// <summary>全containerと全entryを検証し、選択ファイルの先頭だけを保持する。</summary>
+    public byte[] ResolveEntryPreview(ArchiveSource source, string entryPath,
+        IReadOnlyList<string?>? containerPasswords = null, CancellationToken cancellationToken = default, int maximumBytes = 4096)
+    {
+        if (maximumBytes <= 0 || maximumBytes > _limits.MaximumPreviewBytes) throw new ArgumentOutOfRangeException(nameof(maximumBytes));
+        using var capture = new OwnedEntryCapture(ValidateEntryPath(entryPath), maximumBytes, prefixOnly: true);
+        ResolveSource(source, containerPasswords, cancellationToken, capture);
+        using var content = capture.Detach();
+        cancellationToken.ThrowIfCancellationRequested();
+        return content.ToArray();
+    }
+
     private ManagedArchiveSourceManifest ResolveSource(ArchiveSource source,
         IReadOnlyList<string?>? containerPasswords, CancellationToken token, OwnedEntryCapture? finalCapture)
     {
@@ -34,15 +46,15 @@ public sealed partial class ManagedArchive
         if (containerPasswords is not null && containerPasswords.Count > passwordCount)
             throw new ArgumentException("格納階層より多いパスワードが指定されました。", nameof(containerPasswords));
         var passwords = new string?[passwordCount];
-        for (var index = 0; index < (containerPasswords?.Count ?? 0); index++)
-        {
-            var password = containerPasswords![index];
-            if (password?.Length > 4096) throw new ArgumentException("パスワードが長すぎます。", nameof(containerPasswords));
-            passwords[index] = password;
-        }
         MemoryStream? owned = null;
         try
         {
+            for (var index = 0; index < (containerPasswords?.Count ?? 0); index++)
+            {
+                var password = containerPasswords![index];
+                if (password?.Length > 4096) throw new ArgumentException("パスワードが長すぎます。", nameof(containerPasswords));
+                passwords[index] = password;
+            }
             var path = ValidateLocalPath(source.RootPath, mustExist: true);
             using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var input = new CheckedStream(file, _limits.MaximumInputBytes, token);
@@ -90,9 +102,9 @@ public sealed partial class ManagedArchive
         input.Position = 0;
         if (TryGetWrapperChain(name, out var terminalLength, out var terminalType, out var depth))
             return ReadWrapped(input, name, terminalLength, terminalType, depth, password, token,
-                null, null, capture?.MaximumBytes, false, budget, capture);
+                null, null, capture?.MaximumBytes, capture?.PrefixOnly == true, budget, capture);
         using var work = new WorkReadStream(input, budget, token);
-        return ReadCore(work, name, password, token, null, null, capture?.MaximumBytes, false,
+        return ReadCore(work, name, password, token, null, null, capture?.MaximumBytes, capture?.PrefixOnly == true,
             budget, ownedCapture: capture, inputAlreadyDecoded: inputAlreadyDecoded);
     }
 
@@ -119,17 +131,18 @@ public sealed partial class ManagedArchive
         return Convert.ToHexString(hash.GetHashAndReset());
     }
 
-    private sealed class OwnedEntryCapture(string path, int maximumBytes) : IDisposable
+    private sealed class OwnedEntryCapture(string path, int maximumBytes, bool prefixOnly = false) : IDisposable
     {
         private MemoryStream? _content;
         private bool _directory;
         public int MaximumBytes { get; } = maximumBytes;
+        public bool PrefixOnly { get; } = prefixOnly;
         public bool Wants(ManagedArchiveEntry entry)
         {
             if (entry.Path != path) return false;
             _directory = entry.IsDirectory;
             if (_directory) return false;
-            if (entry.Size > MaximumBytes) throw new InvalidDataException("内包ファイルの保持サイズ上限を超えました。");
+            if (!PrefixOnly && entry.Size > MaximumBytes) throw new InvalidDataException("内包ファイルの保持サイズ上限を超えました。");
             return true;
         }
         public bool Take(ManagedArchiveEntry entry, MemoryStream? content)

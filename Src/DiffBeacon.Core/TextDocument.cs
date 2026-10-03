@@ -32,6 +32,13 @@ public sealed class TextDocument
 
     public static TextDocument Create(string text = "") => new("", text, new UTF8Encoding(false, true), []);
 
+    /// <summary>物理保存先を持たない内容を、通常のBOM・encoding・NUL契約で復号する。</summary>
+    public static TextDocument FromSnapshot(byte[] bytes, TextLoadOptions? options = null)
+    {
+        ArgumentNullException.ThrowIfNull(bytes);
+        return FromBytes("", bytes, options ?? new TextLoadOptions());
+    }
+
     // 別文書の出力で読込み元のPath/Textを変更しない。
     public Task SaveCopyAsync(string path, string text, CancellationToken cancellationToken = default) =>
         new TextDocument(Path, Text, encoding, preamble).SaveAsync(path, text, cancellationToken);

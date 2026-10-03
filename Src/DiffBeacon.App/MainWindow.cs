@@ -278,6 +278,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public async Task ComparePathsAsync()
     {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (ProjectInputs.HasArchives(CaptureProject()))
+        {
+            if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄して内包項目を開き直しますか？")) return;
+            await CompareArchiveProjectAsync(); return;
+        }
         (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
         if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
         (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
@@ -342,7 +348,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                     {
                         ArchiveReadStarting?.Invoke();
                         token.ThrowIfCancellationRequested();
-                        try { candidate = await ArchivePanel.CreateWithPasswordsAsync(left, right, token, EnsureProjectOutputWritable, leftPassword, rightPassword); }
+                        try { candidate = await ArchivePanel.CreateWithPasswordsAsync(left, right, token, EnsureArchiveOutputWritable, leftPassword, rightPassword); }
                         catch (OperationCanceledException) { throw; }
                         catch (Exception exception) when (exception is not OutOfMemoryException)
                         {
@@ -365,6 +371,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                     ArchiveReadyForAdoption?.Invoke(candidate);
                     token.ThrowIfCancellationRequested();
                     if (operation != _operation) return;
+                    BindArchivePanel(candidate);
                     SetSpecialView(candidate); candidate = null;
                 }
                 finally { candidate?.Dispose(); leftPassword = rightPassword = null; }
@@ -405,6 +412,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private Task RefreshEditorsAsync()
     {
+        if (ProjectInputs.HasArchives(_projectMetadata) || _specialTab.Content is ArchivePanel) return ComparePathsAsync();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         if (_mode.SelectedIndex == 6 && _specialTab.Content is TablePanel table) return table.RefreshAsync();
         return CompareEditorsAsync();
@@ -451,6 +459,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _owner.Closed -= _ownerClosedHandler;
         _operation?.Cancel(); _operation?.Dispose();
         _reportOperation?.Cancel();
+        ClearArchivePasswords();
         SpecializedViews.Release(_specialTab.Content as Control);
     }
     internal void UpdateImageDisplayVisibility(bool active)
@@ -467,8 +476,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private void UpdateComparisonToolbarHeight()
     {
-        // 画像には独自の操作欄があるため、共通設定欄をさらに縮めて原画の領域を残す。
-        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel ? .2 : .5;
+        // 画像・アーカイブには独自の操作欄があるため、共通設定をスクロールして比較本文の領域を残す。
+        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel or ArchivePanel ? .2 : .5;
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
@@ -524,7 +533,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         EnsureNoPendingTableEdit();
         if (_reportOperation is not null) throw new InvalidOperationException("HTMLレポートを生成しています。");
         var project = CaptureProject();
-        if (!string.IsNullOrWhiteSpace(project.LeftPath) || !string.IsNullOrWhiteSpace(project.RightPath)) EnsureComparedForPackaging();
+        if (ProjectInputs.HasArchives(project) || !string.IsNullOrWhiteSpace(project.LeftPath) || !string.IsNullOrWhiteSpace(project.RightPath)) EnsureComparedForPackaging();
         var workspaceWindow = _owner as MainWindow;
         var panes = workspaceWindow?.SessionPanes ?? [this];
         var sourceProject = workspaceWindow?.WorkspaceSourcePath;

@@ -16,7 +16,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output)
+    internal static int Run(string output, bool archiveSourcesOnly = false)
     {
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
@@ -60,6 +60,13 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (archiveSourcesOnly)
+            {
+                Progress("HeadlessArchiveSourceChecks", "start");
+                HeadlessArchiveSourceChecks.Run(window, pane, output, Pump, Check, Screenshot);
+                Progress("HeadlessArchiveSourceChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             pane.LeftPath.Text = left; pane.RightPath.Text = right;
             Pump(pane.ComparePathsAsync());
             Check("file comparison shows difference", pane.CurrentDiff is { Blocks.Count: 1 });
@@ -710,6 +717,9 @@ internal static class HeadlessSelfTest
             Check("masked GUI passwords unlock encrypted archive contents", encryptedPanel.Rows.Count > 0 && encryptedPanel.Rows.All(row => row.Status == "Equal") && encryptedPanel.LeftPassword.PasswordChar == '●');
             Screenshot("encrypted-archives.png");
             HeadlessArchiveWrapperChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessArchiveSourceChecks", "start");
+            HeadlessArchiveSourceChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessArchiveSourceChecks", "complete");
             pane.DiscardChanges();
             var directoryLeft = Path.Combine(output, "directory-left"); var directoryRight = Path.Combine(output, "directory-right");
             Directory.CreateDirectory(directoryLeft); Directory.CreateDirectory(directoryRight);
@@ -1181,6 +1191,7 @@ internal static class HeadlessSelfTest
             using var stream = File.Create(Path.Combine(artifactOutput, "ui-report.json"));
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
+            writer.WriteString("scope", archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }

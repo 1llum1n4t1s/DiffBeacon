@@ -20,6 +20,7 @@
     <None Include="TiffLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="JpegLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/Zip.deflate.WinzipAES.zip" LogicalName="DiffBeacon.SelfTest.Encrypted.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Sources/two-passwords.zip" LogicalName="DiffBeacon.SelfTest.Sources.two-passwords.zip" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/7Zip.solid.7z" LogicalName="DiffBeacon.SelfTest.Wrappers.7Zip.solid.7z" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/Rar5.solid.rar" LogicalName="DiffBeacon.SelfTest.Wrappers.Rar5.solid.rar" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/Wrappers/metadata-golden.json" LogicalName="DiffBeacon.SelfTest.Wrappers.Metadata.json" />

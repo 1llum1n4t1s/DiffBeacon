@@ -1,12 +1,26 @@
 # .NET 10 / Avalonia 移行の到達点
 
+## 内包アーカイブの子比較・保存・包装
+
+左右に実在するentryを子タブのText／Binary／Archiveとして開く。自動判定、別名書出し、三者・通常文書との混在Text比較、version 2のtyped workspace、leaf本文の単体HTML、root snapshotを含む包装・leafパッチを接続した。物理rootと格納名・leaf・確定SHAを分け、固定readonlyと全タブの入力・filter・workspace出力保護を維持する。復元後は「比較」の明示操作を待ち、各階層のpasswordをmasked欄で再入力する。passwordと復号本文は保存しない。候補は準備後に親・世代・token・activeタブを照合して追加し、取消・別タブ・refresh・親closeで古い完了を破棄する。
+
+通常版のRelease buildは警告0・エラー0、全体E2Eは158367成功・0失敗・3skip、5530命令・11060 stdout/stderr fileを照合した。全UIは10174成功・0失敗で、Sourceの実操作53件を含み、517PNGのCRC・寸法・復号長・filterを独立照合した。通常／最小windowの一覧・previewは291／93px、scroll後の比較button到達も確認した。全container CRC・leaf／全byte書出し・二者／三者HTMLの原文と改行、暗号化workspaceへのpassword／復号本文の不在をPythonで再照合した。プロジェクトは110命令、独立した7比較・3外部leafパッチ適用と、包装全file・展開・相対参照再読込みを確認した。ソース348件・managed App payload551件・driverの検証前後一致を保持する。
+
+Windows x64 Native AOTも全体E2E 158367成功・0失敗・3skip、5530命令、UI 10174成功・0失敗、517PNGの独立照合が成功した。payload12件／3licenseのSHA・サイズ、source348件の照合、既存compiler graphへ復帰した2lockfile以外の346件のbyte不変とdriver2件の不変を確認した。通常デスクトップと実OS clipboardはこのローカル検証に含めない。最新変更の4RID CIはこれから実行する。
+
+初回全体の旧workspace検証が新たに有効になったformatVersion 2を未知としていたため、未知versionを3へ修正した。全UIでown archiveの上書き拒否が共通guardに先取りされ例外型が変わったため、own rootsのIOException検査を先にし全入力保護を後段へ維持した。失敗入力・ログ・JSONと、その修正後の全体／UI再実行を分けて保持する。独立PNG照合の初回がtop levelだけ148枚を列挙していたため、既存契約と同じ再帰・fixture除外で517枚を確認した。
+
+深いcontainerの再梱包／全件展開、片側だけのentry、画像／provider子比較、Source Binary／ArchiveのHTML・report／patch包装、暗号化SourceのCLI report／包装、通常desktop・ネイティブダイアログと新しい文脈の独立出荷レビューは未完了。証拠はartifacts/local/nested-archive-source/gui、最新Nativeはartifacts/native-runs/archive-project-gui-20261004。これは全機能移植の完了ではない。
+
 ## 内包アーカイブの明示取得
 
-Providersのimmutable `ArchiveSource` と、実アプリCLIの `--archive-source-list`／`--archive-source-entry` を追加した。物理rootと内包chainを別に保持し、全外側containerの後続entry・CRC・footerまで検証した後だけ次段へ進む。深度・復号量・名前・件数・TAR header・作業量を共有し、rootのSHA変更、descriptorへの上書き、readonlyとlinkを拒否する。各内包保持は256 MiB以下、通常streaming TAR全体の上限は縮めない。GUI子タブ・workspace・包装・HTML接続と深いcontainerの再梱包／展開は後続工程である。
+Providersのimmutable `ArchiveSource` と、実アプリCLIの `--archive-source-list`／`--archive-source-entry` を追加した。物理rootと内包chainを別に保持し、全外側containerの後続entry・CRC・footerまで検証した後だけ次段へ進む。深度・復号量・名前・件数・TAR header・作業量を共有し、rootのSHA変更、descriptorへの上書き、readonlyとlinkを拒否する。各内包保持は256 MiB以下、通常streaming TAR全体の上限は縮めない。以下はservice／CLI checkpoint時点の記録である。GUI子タブ・workspace・包装・HTML接続は上の最新ローカル検証を参照し、深いcontainerの再梱包／展開は引き続き未対応。
 
 Release警告0・エラー0、Windows通常版とx64 Native AOTのSource限定E2Eはそれぞれ管理者processで323成功・0失敗・0skip、127 App commands。通常版の全体E2Eは158094成功・0失敗・3skip、5420 App commands。headless UIは両版10121成功・0失敗で、各512 PNGのCRC・寸法・復号長・filterを独立照合した。Native発行物12件のSHA・サイズと3ライセンス、検証前後の339 sourceを照合し、Native restoreによる2 lockfileの既存compiler graph復帰と製品依存の不変も確認した。
 
-Python標準libraryが18固定入力と11正常階層の全内容・CRC、16取得file、280MiB TARのraw SHAと各140MiB entryを独立照合した。固定入力一式は約327KBで、巨大raw TARを保存していない。別の実アプリ経路で、root／内包のsolid 7z・RAR5、暗号化7z／ZIP／RAR5、未知名TAR.ZとSHA付きdescriptorの再取得を両版各22命令で確認した。最初の非管理者実行は310成功後にlink作成特権不足でrunnerが中断したため失敗として保持し、管理者再実行でlink入力／出力保護も検証した。Source CLIの実取消、GUI接続と今回のsourceを含む4RID検証は続行中。通常デスクトップや実OSクリップボードは今回のローカル検証に含めない。証拠は `artifacts/local/nested-archive-source`。
+Python標準libraryが18固定入力と11正常階層の全内容・CRC、16取得file、280MiB TARのraw SHAと各140MiB entryを独立照合した。固定入力一式は約327KBで、巨大raw TARを保存していない。別の実アプリ経路で、root／内包のsolid 7z・RAR5、暗号化7z／ZIP／RAR5、未知名TAR.ZとSHA付きdescriptorの再取得を両版各22命令で確認した。最初の非管理者実行は310成功後にlink作成特権不足でrunnerが中断したため失敗として保持し、管理者再実行でlink入力／出力保護も検証した。通常デスクトップや実OSクリップボードは今回のローカル検証に含めない。証拠は `artifacts/local/nested-archive-source`。
+
+このservice／CLIを含むcommit `d8e9669481d3b872988eeef19e69e5558134d4c0` の[4RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37147393452)と[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37147393447)は成功した。Windows両構成の全体E2Eは158094成功・0失敗・3skip、5420命令、macOS両構成は158103成功・0失敗・2skip、5423命令。全4構成のUIは10121成功・0失敗、各512PNGを独立復号し、実OSクリップボードも別writer／reader processで一致を確認した。8ZIP・671689114byte・95670entryの全CRC／SHA／サイズとGitHub digest、固定原本、Source独立proof、Native payload／license、Mac bundleの内部全file・実行属性を照合した。全4RIDを展開保持せず、ZIPと小さい採用receiptを `artifacts/github/37147393452` に保持する。Source CLIの実取消、新しい文脈の独立出荷レビュー、通常デスクトップ・ネイティブダイアログの検証は未完了であり、新しいGUI／プロジェクト変更はこのservice／CLIのCIに含まない。
 
 ## ZIP・7z・RARの明示的な多重圧縮
 
@@ -50,7 +64,7 @@ Release buildは警告0・エラー0、通常版の限定E2Eは1,118成功・0�
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
 | 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、回転・反転と手動位置ずらし、行列の挿入削除の表示／コピー／設定保存、編集済み原画のHTML、GUI矩形選択／移動／複製・Copy／Cut／Delete・浮動貼り付け・3辺Resize、差分色の不透明度と設定保存 | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存、旧全体設定の一括移行は未完了。XOR／Alpha／ANIM・点滅・共通設定と通常CLI／HTML／包装の接続は実装し、最終通常版の全体E2E・UIが成功した。変更後のNative／4RID検証はSHA dc20aaの全構成で成功した（TAR.Z節の実測を参照） |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
-| Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2/TAR.ZとZIP派生/7z/RARの明示的gz/bz2/Z鎖の内容比較、初期再試行、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Zはmanagedで読書きし、通常アプリに外部圧縮ツールは不要。全形式の詳細レポート・一時ZIPのクリップボード包装、内包entryの多段比較・裸compressed・TAR複数wrapper・wrapper作成、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
+| Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2/TAR.ZとZIP派生/7z/RARの明示的gz/bz2/Z鎖の内容比較、初期再試行、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、Sourceの多段Text／Binary／Archive子比較・typed workspace・leaf HTML／patch包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Zはmanagedで読書きし、通常アプリに外部圧縮ツールは不要。全形式の詳細レポート・一時ZIPのクリップボード包装、深いcontainerの再梱包／全件展開・片側entry・画像／provider子比較・裸compressed・TAR複数wrapper・wrapper作成、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
 | 多言語 | 新 UI は日本語を中心に実装 | 旧翻訳カタログとローカライズ切替、RTL、全ダイアログの同等性は未完了 |
 | 詳細フィルター | 大文字小文字、4種の空白処理、空行、行正規表現、ASCII数字・CStyle/CSharp/Python/XMLコメントの除外、順序付き置換、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式 | 比較前処理は原文を保持し、GUI・CLI・フォルダーへ適用。同梱12 `.flt` の読込みを確認。内容検索、左右別属性、関数・算術、PCRE固有構文、全旧構文のコメント処理、複数行置換、全表示フィルターは未完了 |

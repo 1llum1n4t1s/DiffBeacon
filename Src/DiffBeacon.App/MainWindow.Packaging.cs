@@ -108,6 +108,13 @@ public sealed partial class ComparisonPane
     public void EnsureComparedForPackaging()
     {
         EnsureNoPendingTableEdit();
+        var project = CaptureProject();
+        if (ProjectInputs.HasArchives(project))
+        {
+            if (_lastArchiveComparison != ArchiveComparisonIdentity(project) || !CompareButton.IsEnabled)
+                throw new InvalidOperationException("包装・レポートの前に現在の内包入力で比較してください。");
+            return;
+        }
         var current = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
         if (_lastPackageComparison != current || !CompareButton.IsEnabled)
             throw new InvalidOperationException("包装前に現在のパスと形式で比較してください。");

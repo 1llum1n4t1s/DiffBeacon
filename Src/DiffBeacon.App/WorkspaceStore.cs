@@ -15,6 +15,9 @@ public sealed record ComparisonProject
     public string LeftPath { get; set; } = "";
     public string BasePath { get; set; } = "";
     public string RightPath { get; set; } = "";
+    public ArchiveProjectInput? LeftArchiveInput { get; set; }
+    public ArchiveProjectInput? BaseArchiveInput { get; set; }
+    public ArchiveProjectInput? RightArchiveInput { get; set; }
     public string Mode { get; set; } = "Text";
     public string? ProviderId { get; set; }
     public string? FileFilterPath { get; set; }
@@ -54,6 +57,7 @@ public sealed record ComparisonWorkspace
     Converters = new[] { typeof(SubstitutionRuleJsonConverter) })]
 [JsonSerializable(typeof(ComparisonProject))]
 [JsonSerializable(typeof(ComparisonWorkspace))]
+[JsonSerializable(typeof(ArchiveProjectInput))]
 internal partial class ProjectJsonContext : JsonSerializerContext { }
 
 internal sealed class SubstitutionRuleJsonConverter : JsonConverter<SubstitutionRule>
@@ -105,32 +109,50 @@ public static class WorkspaceStore
     public const int MaxFileBytes = 4 * 1024 * 1024;
     private static readonly string[] KnownModes = ["Auto", "Text", "Folder", "Binary", "Image", "Json", "Table", "Archive", "Web", "Provider"];
 
-    public static Task SaveAsync(string path, ComparisonProject project, CancellationToken token = default)
+    public static Task SaveAsync(string path, ComparisonProject project, CancellationToken token = default, string? sourceProject = null)
     {
         ArgumentNullException.ThrowIfNull(project);
+        if (ProjectInputs.HasArchives(project))
+            return SaveWorkspaceAsync(path, new ComparisonWorkspace { Entries = [project] }, token, sourceProject);
         Validate(new ComparisonWorkspace { Entries = [project] });
         token.ThrowIfCancellationRequested();
-        return SaveBytesAsync(path, JsonSerializer.SerializeToUtf8Bytes(project, ProjectJsonContext.Default.ComparisonProject), token);
+        var snapshot = CloneProject(project);
+        return SaveBytesAsync(path, JsonSerializer.SerializeToUtf8Bytes(snapshot, ProjectJsonContext.Default.ComparisonProject), token, [snapshot], sourceProject);
     }
 
-    public static Task SaveWorkspaceAsync(string path, ComparisonWorkspace workspace, CancellationToken token = default)
+    public static Task SaveWorkspaceAsync(string path, ComparisonWorkspace workspace, CancellationToken token = default, string? sourceProject = null)
     {
         token.ThrowIfCancellationRequested();
-        return SaveBytesAsync(path, SerializeWorkspace(workspace), token);
+        _ = SerializeWorkspace(workspace);
+        var snapshot = workspace with { Entries = workspace.Entries.Select(CloneProject).ToArray() };
+        return SaveBytesAsync(path, SerializeWorkspace(snapshot), token, snapshot.Entries, sourceProject);
     }
 
     internal static byte[] SerializeWorkspace(ComparisonWorkspace workspace)
     {
+        ArgumentNullException.ThrowIfNull(workspace);
+        if (workspace.FormatVersion is not (1 or 2)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        if (workspace.Entries?.Any(project => project is not null && ProjectInputs.HasArchives(project)) == true)
+            workspace = workspace with { FormatVersion = 2 };
         Validate(workspace);
         var bytes = JsonSerializer.SerializeToUtf8Bytes(workspace, ProjectJsonContext.Default.ComparisonWorkspace);
         if (bytes.Length > MaxFileBytes) throw new InvalidDataException("比較プロジェクトは 4 MiB 以下にしてください。");
         return bytes;
     }
 
-    private static async Task SaveBytesAsync(string path, byte[] bytes, CancellationToken token)
+    internal static ComparisonProject CloneProject(ComparisonProject project) => project with
+    {
+        SubstitutionRules = project.SubstitutionRules.ToArray(), LegacySettings = new(project.LegacySettings),
+        ImageSettings = project.ImageSettings with { }, LeftArchiveInput = project.LeftArchiveInput?.Copy(),
+        BaseArchiveInput = project.BaseArchiveInput?.Copy(), RightArchiveInput = project.RightArchiveInput?.Copy()
+    };
+
+    private static async Task SaveBytesAsync(string path, byte[] bytes, CancellationToken token,
+        IReadOnlyList<ComparisonProject> protectedProjects, string? sourceProject = null)
     {
         if (bytes.Length > MaxFileBytes) throw new InvalidDataException("比較プロジェクトは 4 MiB 以下にしてください。");
         var fullPath = Path.GetFullPath(path);
+        ProjectInputs.EnsureOutput(fullPath, protectedProjects, sourceProject);
         EnsureNoLinks(fullPath);
         var targetExists = File.Exists(fullPath);
         var attributes = targetExists ? File.GetAttributes(fullPath) : FileAttributes.Normal;
@@ -159,6 +181,7 @@ public static class WorkspaceStore
                 File.SetAttributes(temporaryPath, preserved == 0 ? FileAttributes.Normal : preserved);
             }
             EnsureNoLinks(fullPath);
+            ProjectInputs.EnsureOutput(fullPath, protectedProjects, sourceProject);
             if (File.Exists(fullPath) && (File.GetAttributes(fullPath) & FileAttributes.ReadOnly) != 0)
                 throw new UnauthorizedAccessException("読み取り専用の比較プロジェクトは保存できません。");
             token.ThrowIfCancellationRequested();
@@ -183,6 +206,9 @@ public static class WorkspaceStore
         var root = document.RootElement;
         if (root.ValueKind != JsonValueKind.Object) throw new InvalidDataException("比較プロジェクトがオブジェクトではありません。");
         var wrapper = root.TryGetProperty("entries", out _) || root.TryGetProperty("formatVersion", out _) || root.TryGetProperty("activeEntryIndex", out _);
+        if (wrapper && root.TryGetProperty("entries", out var projects) && projects.ValueKind == JsonValueKind.Array)
+            foreach (var project in projects.EnumerateArray()) ValidateArchiveJson(project);
+        else if (!wrapper) ValidateArchiveJson(root);
         var workspace = wrapper
             ? root.Deserialize(ProjectJsonContext.Default.ComparisonWorkspace) ?? throw new InvalidDataException("比較ワークスペースが空です。")
             : new ComparisonWorkspace { Entries = [root.Deserialize(ProjectJsonContext.Default.ComparisonProject) ?? throw new InvalidDataException("比較プロジェクトが空です。")] };
@@ -195,11 +221,38 @@ public static class WorkspaceStore
                 LeftPath = ResolveJsonPath(project.LeftPath, directory)!,
                 BasePath = ResolveJsonPath(project.BasePath, directory)!,
                 RightPath = ResolveJsonPath(project.RightPath, directory)!,
+                LeftArchiveInput = ResolveArchive(project.LeftArchiveInput, directory),
+                BaseArchiveInput = ResolveArchive(project.BaseArchiveInput, directory),
+                RightArchiveInput = ResolveArchive(project.RightArchiveInput, directory),
                 FileFilterPath = ResolveJsonPath(project.FileFilterPath, directory)
             }).ToArray()
         };
         token.ThrowIfCancellationRequested();
         return workspace;
+    }
+
+    private static ArchiveProjectInput? ResolveArchive(ArchiveProjectInput? input, string directory)
+        => input is null ? null : input with { RootPath = ResolveJsonPath(input.RootPath, directory)!, EntryChain = input.EntryChain.ToArray() };
+
+    private static void ValidateArchiveJson(JsonElement project)
+    {
+        if (project.ValueKind != JsonValueKind.Object) return;
+        var sides = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var side in project.EnumerateObject())
+        {
+            if (side.Name is not ("leftArchiveInput" or "baseArchiveInput" or "rightArchiveInput")) continue;
+            if (!sides.Add(side.Name)) throw new InvalidDataException("内包入力の指定が重複しています。");
+            if (side.Value.ValueKind == JsonValueKind.Null) continue;
+            if (side.Value.ValueKind != JsonValueKind.Object) throw new InvalidDataException("内包入力にはobjectを指定してください。");
+            var fields = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var field in side.Value.EnumerateObject())
+            {
+                if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256") || !fields.Add(field.Name))
+                    throw new InvalidDataException("内包入力に未対応または重複した項目があります。");
+                if (field.Name == "entryChain" && (field.Value.ValueKind != JsonValueKind.Array || field.Value.GetArrayLength() > 8))
+                    throw new InvalidDataException("内包入力の格納階層が不正です。");
+            }
+        }
     }
 
     private static string? ResolveJsonPath(string? value, string directory)
@@ -226,7 +279,7 @@ public static class WorkspaceStore
     private static void Validate(ComparisonWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        if (workspace.FormatVersion != 1) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        if (workspace.FormatVersion is not (1 or 2)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
         if (workspace.Entries is null || workspace.Entries.Length is < 1 or > MaxEntries)
             throw new InvalidDataException($"比較は 1 ～ {MaxEntries} 件を指定してください。");
         if (workspace.ActiveEntryIndex < 0 || workspace.ActiveEntryIndex >= workspace.Entries.Length)
@@ -241,6 +294,24 @@ public static class WorkspaceStore
                 throw new InvalidDataException($"未対応の比較形式です: {project.Mode}");
             if (project.FolderMode is not ("Content" or "Hash" or "TimestampAndSize"))
                 throw new InvalidDataException("フォルダー比較方式が不正です。");
+            if (ProjectInputs.HasArchives(project))
+            {
+                if (workspace.FormatVersion != 2) throw new InvalidDataException("内包入力には形式バージョン2のワークスペースが必要です。");
+                var mode = project.Mode.ToLowerInvariant();
+                if (mode is not ("text" or "1" or "binary" or "3" or "archive" or "7"))
+                    throw new InvalidDataException("内包入力はText／Binary／Archiveの明示形式で開いてください。");
+                if (mode is not ("text" or "1") && ProjectInputs.HasBase(project))
+                    throw new InvalidDataException("内包入力の祖先指定はText比較だけで使用できます。");
+                for (var side = 0; side < 3; side++)
+                {
+                    var input = ProjectInputs.Archive(project, side);
+                    if (input is null) continue;
+                    var oldPath = side switch { 0 => project.LeftPath, 1 => project.BasePath, _ => project.RightPath };
+                    if (!string.IsNullOrEmpty(oldPath)) throw new InvalidDataException("物理pathと内包入力を同じ側へ指定できません。");
+                    if (side == 1 && mode is not ("text" or "1")) throw new InvalidDataException("中央の内包入力はText比較だけで使用できます。");
+                    input.Validate(mode is "archive" or "7", side switch { 0 => project.LeftReadOnly, 1 => project.BaseReadOnly, _ => project.RightReadOnly });
+                }
+            }
             if (!Enum.IsDefined(project.CommentSyntax) || !Enum.IsDefined(project.Whitespace))
                 throw new InvalidDataException("比較プロジェクトのコメント構文または空白の比較方式が不正です。");
             if (project.SubstitutionRules.Any(rule => rule is null || rule.Pattern is null || rule.Replacement is null))
@@ -248,7 +319,7 @@ public static class WorkspaceStore
             if (project.LegacySettings.Values.Any(value => value is null))
                 throw new InvalidDataException("旧プロジェクト設定の値が null です。");
             ImageViewSettings.Validate(project.ImageSettings);
-            if (string.IsNullOrWhiteSpace(project.BasePath) && (project.ImageSettings.MiddleFrame != 1 || !project.ImageSettings.MiddleOrientation.IsIdentity || project.ImageSettings.MiddleOffset != default))
+            if (!ProjectInputs.HasBase(project) && (project.ImageSettings.MiddleFrame != 1 || !project.ImageSettings.MiddleOrientation.IsIdentity || project.ImageSettings.MiddleOffset != default))
                 throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
         }
     }

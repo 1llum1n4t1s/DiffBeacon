@@ -32,9 +32,9 @@ public static class ProjectReport
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         static string Title(string? description, string? name, string path, string fallback) =>
             !string.IsNullOrWhiteSpace(description) ? description : name ?? (string.IsNullOrWhiteSpace(path) ? fallback : path);
-        var documents = new List<ReportDocument> { new(Title(project.LeftDescription, leftName, project.LeftPath, "左"), left) };
-        if (ancestor is not null) documents.Add(new(Title(project.BaseDescription, baseName, project.BasePath, "共通の祖先"), ancestor));
-        documents.Add(new(Title(project.RightDescription, rightName, project.RightPath, "右"), right));
+        var documents = new List<ReportDocument> { new(Title(project.LeftDescription, leftName, ProjectInputs.Caption(project, 0), "左"), left) };
+        if (ancestor is not null) documents.Add(new(Title(project.BaseDescription, baseName, ProjectInputs.Caption(project, 1), "共通の祖先"), ancestor));
+        documents.Add(new(Title(project.RightDescription, rightName, ProjectInputs.Caption(project, 2), "右"), right));
         var settings = Options(project);
         var html = project.Mode.ToLowerInvariant() switch
         {
@@ -65,8 +65,7 @@ public static class ProjectReport
     {
         _ = WorkspaceStore.SerializeWorkspace(workspace);
         if ((uint)entryIndex >= (uint)workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entryIndex), "比較の番号が範囲外です。");
-        var entries = workspace.Entries.Select(entry => entry with
-        { SubstitutionRules = entry.SubstitutionRules.ToArray(), LegacySettings = new(entry.LegacySettings), ImageSettings = entry.ImageSettings with { } }).ToArray();
+        var entries = workspace.Entries.Select(WorkspaceStore.CloneProject).ToArray();
         var target = ValidateTarget(output, entries, sourceProject);
         var project = entries[entryIndex];
         if (IsImage(project))
@@ -102,15 +101,9 @@ public static class ProjectReport
             || leftOffset.HasValue || middleOffset.HasValue || rightOffset.HasValue || insertionDeletionMode.HasValue || highlightAlpha.HasValue || wipe is not null || displayOptions?.Specified == true)
             throw new ArgumentException("フレーム・閾値のレポート指定は画像比較にだけ使用できます。");
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
-        async Task<string> Read(string path)
-        {
-            if (string.IsNullOrWhiteSpace(path) || IsUrl(path)) throw new InvalidOperationException("単体レポートにはローカルの比較文書を指定してください。");
-            ValidateLocal(path);
-            return (await TextDocument.LoadAsync(path, token).ConfigureAwait(false)).Text;
-        }
-        var left = await Read(project.LeftPath).ConfigureAwait(false);
-        var ancestor = string.IsNullOrWhiteSpace(project.BasePath) ? null : await Read(project.BasePath).ConfigureAwait(false);
-        var right = await Read(project.RightPath).ConfigureAwait(false);
+        var left = (await ProjectInputReader.ReadTextAsync(project, 0, token).ConfigureAwait(false)).Text;
+        var ancestor = !ProjectInputs.HasBase(project) ? null : (await ProjectInputReader.ReadTextAsync(project, 1, token).ConfigureAwait(false)).Text;
+        var right = (await ProjectInputReader.ReadTextAsync(project, 2, token).ConfigureAwait(false)).Text;
         var html = await Task.Run(() => Create(project, left, ancestor, right, token), token).ConfigureAwait(false);
         await SaveAsync(target, html, entries, sourceProject, token).ConfigureAwait(false);
     }
@@ -133,11 +126,8 @@ public static class ProjectReport
     {
         var target = ValidateLocal(output);
         if (!Directory.Exists(Path.GetDirectoryName(target))) throw new DirectoryNotFoundException("レポートの保存先フォルダーがありません。");
-        IEnumerable<string?> Paths(ComparisonProject project) => [project.LeftPath, project.BasePath, project.RightPath, project.FileFilterPath];
         var projects = entries.ToArray();
-        foreach (var source in projects.SelectMany(Paths).Append(sourceProject))
-            if (!string.IsNullOrWhiteSpace(source) && !IsUrl(source) && ArchivePaths.SameFile(source, target))
-                throw new InvalidOperationException("レポートで比較文書・フィルター・プロジェクトを上書きできません。");
+        ProjectInputs.EnsureOutput(target, projects, sourceProject);
         EnsureReadOnlyDirectories(target, projects);
         return target;
     }

@@ -186,18 +186,24 @@ internal static class ArchiveSourceScenarios
                 check("source readonly preserved", Hash(readonlyPath) == readonlyBefore && File.GetAttributes(readonlyPath).HasFlag(FileAttributes.ReadOnly), "");
             }
             finally { File.SetAttributes(readonlyPath, attributes); }
-            // 検証用linkはrun内へ保持し、エージェントの直接削除を追加しない。
-            var link = Path.Combine(work, "output-link.bin"); var linkTarget = Path.Combine(work, "link-target.bin"); File.WriteAllText(linkTarget, "protected link target");
+            // linkだけを小さいsibling rootへ分離し、通常のfull runを正規圧縮／清掃可能にする。
+            var linkRoot = Path.GetFullPath(output).TrimEnd(Path.DirectorySeparatorChar) + "-source-links-" + Guid.NewGuid().ToString("N");
+            Directory.CreateDirectory(linkRoot);
+            var linkedRoot = Path.Combine(linkRoot, "protected.zip"); File.Copy(nestedPath, linkedRoot);
+            var linkedDescriptor = Path.Combine(linkRoot, "descriptor.json");
+            File.WriteAllText(linkedDescriptor, JsonSerializer.Serialize(new { rootPath = linkedRoot, entryChain = new[] { "inner.zip" } }));
+            var link = Path.Combine(linkRoot, "output-link.bin"); var linkTarget = Path.Combine(linkRoot, "link-target.bin"); File.WriteAllText(linkTarget, "protected link target");
             try
             {
                 File.CreateSymbolicLink(link, linkTarget); var before = Hash(linkTarget);
                 await run("source-link-output", 2, false, ["--archive-source-entry", normal, "leaf.txt", link]);
                 check("source linked output target preserved", Hash(linkTarget) == before && new FileInfo(link).LinkTarget == linkTarget, "owned run link retained for prescribed cleanup");
-                var sourceLink = Path.Combine(work, "source-link.zip"); File.CreateSymbolicLink(sourceLink, ownedRoot);
+                var sourceLink = Path.Combine(linkRoot, "source-link.zip"); File.CreateSymbolicLink(sourceLink, linkedRoot);
                 await Reject("linked-root", Descriptor("linked-root", sourceLink, ["inner.zip"]), "leaf.txt");
-                var descriptorLink = Path.Combine(work, "descriptor-link.json"); File.CreateSymbolicLink(descriptorLink, normal);
+                var descriptorLink = Path.Combine(linkRoot, "descriptor-link.json"); File.CreateSymbolicLink(descriptorLink, linkedDescriptor);
                 await Reject("linked-descriptor", descriptorLink, "leaf.txt");
-                File.WriteAllText(Path.Combine(work, "retained-links.json"), JsonSerializer.Serialize(new[] { new { path = link, target = linkTarget }, new { path = sourceLink, target = ownedRoot }, new { path = descriptorLink, target = normal } }));
+                var ledger = JsonSerializer.Serialize(new { linkRoot, items = new[] { new { path = link, target = linkTarget }, new { path = sourceLink, target = linkedRoot }, new { path = descriptorLink, target = linkedDescriptor } }, mainRunContainsNoSourceLinks = true });
+                File.WriteAllText(Path.Combine(work, "retained-links.json"), ledger); File.WriteAllText(Path.Combine(linkRoot, "retained-links.json"), ledger);
             }
             catch (Exception exception) when (exception is UnauthorizedAccessException or PlatformNotSupportedException)
             { skip("source links require platform permission", exception.Message); }

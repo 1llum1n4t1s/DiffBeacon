@@ -93,10 +93,10 @@ GUIは初期検証失敗を空panelとして採用せず、任意の左右masked
 
 ### 明示した内包アーカイブの入力
 
-`ArchiveSource` は絶対物理root、正規化した `EntryChain`、任意のroot SHA-256をimmutableに保持します。password・復号buffer・仮想captionを含みません。`WithChild(entry)` はcontainerを一段追加します。`ResolveManifest(source, containerPasswords, cancellationToken)` はSHA付きsourceと最終manifest、`ResolveEntry(source, entry, maximumBytes, containerPasswords, cancellationToken)` は完全検証後の最終entry bytesを返します。rootの全SHAを読込み前、同じhandleの読込み後、現在の物理pathで照合し、指定SHAの不一致・変更・path差替えを拒否します。悪意ある並行writerに対するOS snapshotの保証ではありません。
+`ArchiveSource` は絶対物理root、正規化した `EntryChain`、任意のroot SHA-256をimmutableに保持します。password・復号buffer・仮想captionを含みません。`WithChild(entry)` はcontainerを一段追加します。`ResolveManifest(source, containerPasswords, cancellationToken)` はSHA付きsourceと最終manifest、`ResolveEntry(source, entry, maximumBytes, containerPasswords, cancellationToken)` は完全検証後の最終entry bytesを返します。`ResolveEntryPreview` は全containerと最終entryを検証してから先頭4096bytesだけを返し、leafの全サイズを4096bytesへ制限しません。rootの全SHAを読込み前、同じhandleの読込み後、現在の物理pathで照合し、指定SHAの不一致・変更・path差替えを拒否します。悪意ある並行writerに対するOS snapshotの保証ではありません。
 
 rootは深度0、格納entryへの遷移と各圧縮wrapperはそれぞれ1で、既定8の共通深度予算を使います。全階層の実read・SHA再read・復号・名前・件数・TAR header・metadataは一つの予算を共有します。各内包containerの保持は256 MiB以下ですが、単一のstreaming TAR全体を256 MiBへ縮めません。raw TARはheader／metadata／paddingを含むbyteを一度だけ復号量へ計上し、外側で既に復号したraw TARのpayloadを重ねて復号計上しません。選択entryが正常でも、後方のsibling・footer・EOFの検証が成功するまで次のcontainerや出力を公開しません。中間ToArray・temp展開は使わず、親から次bufferへ所有権を移します。内側wrapperの復号中は格納containerも保持し、最終entryには返却copyが必要です。codec workspaceと成長容量を含む厳密なpeak RAM保証ではありません。
 
 CLIの `--archive-source-list DESCRIPTOR_JSON`／`--archive-source-entry DESCRIPTOR_JSON ENTRY OUTPUT` は最大1 MiBのdescriptorを読みます。項目は `rootPath`、`entryChain`、任意の `rootSha256`／`limits` だけで、未知・重複propertyは拒否します。rootだけをdescriptorから相対解決し、chainを物理pathとして扱いません。`limits` は `ManagedArchiveLimits` と同名のcamelCase項目で、正の整数かつ既定値以下だけを受け付けます。末尾 `--password-stdin` はroot＋chain数の行を外側から順に読み、plaintext層は空行を使います。認証情報は保存・出力せず、各操作の終了時に保持参照を解放します。出力はroot・descriptor・readonly・linkを保護してatomic置換します。
 
-[固定Source入力](../../tests/Fixtures/Archives/Sources/README.md)の独立Python／実CLI E2Eで階層全体のCRC・内容・共有予算を検証します。GUI子タブ、workspace DTO、深いcontainerのrepack／全展開、包装・HTML経路への接続は未実装です。旧root経路へ代入して対応済みと扱いません。
+[固定Source入力](../../tests/Fixtures/Archives/Sources/README.md)の独立Python／実CLI E2Eで階層全体のCRC・内容・共有予算を検証します。Appのtyped入力からGUI子比較、workspace、包装とText HTMLへ接続します。実装と実測範囲は[移行対応表](../../Docs/MIGRATION.md)を参照してください。深いcontainerのrepack／全展開は未対応です。

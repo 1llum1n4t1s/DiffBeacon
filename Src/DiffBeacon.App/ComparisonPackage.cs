@@ -25,8 +25,7 @@ public static class ComparisonPackage
     {
         // UI の値を await 前に確定し、編集中の配列・辞書をバックグラウンドで共有しない。
         WorkspaceStore.SerializeWorkspace(workspace);
-        var clone = workspace with { Entries = workspace.Entries.Select(project => project with
-        { SubstitutionRules = project.SubstitutionRules.ToArray(), LegacySettings = new(project.LegacySettings), ImageSettings = project.ImageSettings with { } }).ToArray() };
+        var clone = workspace with { Entries = workspace.Entries.Select(WorkspaceStore.CloneProject).ToArray() };
         var indices = selectedIndices?.ToArray() ?? Enumerable.Range(0, clone.Entries.Length).ToArray();
         if (indices.Length == 0 || indices.Distinct().Count() != indices.Length || indices.Any(index => index < 0 || index >= clone.Entries.Length))
             throw new ArgumentException("包装する比較を重複なく1件以上選択してください。");
@@ -50,15 +49,15 @@ public static class ComparisonPackage
         var selected = indices.Select(index => workspace.Entries[index]).ToArray();
         if (selected.Any(project => project.Mode.ToLowerInvariant() is "folder" or "2"))
             throw new InvalidOperationException("フォルダー比較の包装は未対応です。フォルダーのアーカイブ作成を使用してください。");
-        foreach (var project in workspace.Entries)
-            foreach (var path in Paths(project).Append(project.FileFilterPath ?? "").Where(path => !string.IsNullOrWhiteSpace(path) && !IsUrl(path)))
-                if (ArchivePaths.SameFile(target, path)) throw new IOException("比較元を包装先に指定できません。");
+        ProjectInputs.EnsureOutput(target, workspace.Entries, sourceProject);
         var sources = new string[selected.Length][];
         for (var i = 0; i < selected.Length; i++)
         {
             var project = selected[i];
-            if (string.IsNullOrWhiteSpace(project.LeftPath) || string.IsNullOrWhiteSpace(project.RightPath))
+            if (string.IsNullOrWhiteSpace(SidePath(project, 0)) || string.IsNullOrWhiteSpace(SidePath(project, 2)))
                 throw new InvalidOperationException("包装前に左右の文書をファイルへ保存してください。");
+            if (ProjectInputs.HasArchives(project) && !ProjectReport.IsTextual(project) && (options.IncludeReport || options.IncludePatch))
+                throw new InvalidOperationException("内包Binary／ArchiveのHTML・パッチ包装は未対応です。");
             sources[i] = Paths(project).ToArray();
             foreach (var source in sources[i].Where(path => !IsUrl(path)))
             {
@@ -90,7 +89,8 @@ public static class ComparisonPackage
                 }
                 var info = new FileInfo(source);
                 var initialSize = info.Length; var initialModified = info.LastWriteTimeUtc;
-                var snapshot = Path.Combine(stage, inputs.Count.ToString("D4") + Path.GetExtension(source));
+                // Sourceのwrapper判定に必要な全basenameを失わない。
+                var snapshot = Path.Combine(stage, inputs.Count.ToString("D4") + "-" + Path.GetFileName(source));
                 owned.Add(snapshot);
                 using (var original = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (var copy = new FileStream(snapshot, FileMode.CreateNew, FileAccess.Write, FileShare.None))
@@ -119,7 +119,7 @@ public static class ComparisonPackage
             var pairInputs = new Input?[selected.Length][];
             for (var i = 0; i < selected.Length; i++)
             {
-                var project = selected[i]; var three = !string.IsNullOrWhiteSpace(project.BasePath);
+                var project = selected[i]; var three = ProjectInputs.HasBase(project);
                 var paths = new string[3]; var files = new Input?[3];
                 for (var side = 0; side < 3; side++)
                 {
@@ -128,6 +128,12 @@ public static class ComparisonPackage
                     var prefix = three ? (side + 1).ToString() : side == 0 ? "original" : "altered";
                     var relative = CommonRelative(common[side], source);
                     var input = Snapshot(source, prefix + "/" + relative); files[side] = input;
+                    if (ProjectInputs.Archive(project, side) is { } archiveInput)
+                    {
+                        if (!StringComparer.Ordinal.Equals(archiveInput.RootSha256?.ToUpperInvariant(), input.Hash))
+                            throw new InvalidDataException("確定したアーカイブ原本と包装snapshotのSHAが一致しません。");
+                        ProjectInputReader.ValidateSnapshot(archiveInput, input.Snapshot, token);
+                    }
                     paths[side] = options.IncludeDocuments ? input.Name : Path.GetFullPath(source);
                 }
                 var filter = project.FileFilterPath;
@@ -136,7 +142,14 @@ public static class ComparisonPackage
                     if (IsUrl(filter)) throw new InvalidDataException("ファイルフィルターはローカルのファイルを指定してください。");
                     filter = Snapshot(filter, $"filters/{i + 1}-" + Path.GetFileName(filter)).Name;
                 }
-                packed[i] = project with { LeftPath = paths[0], BasePath = paths[1], RightPath = paths[2], FileFilterPath = filter };
+                ArchiveProjectInput? PackedInput(int side) => ProjectInputs.Archive(project, side) is { } input
+                    ? input with { RootPath = paths[side], EntryChain = input.EntryChain.ToArray() } : null;
+                packed[i] = project with
+                {
+                    LeftPath = project.LeftArchiveInput is null ? paths[0] : "", BasePath = project.BaseArchiveInput is null ? paths[1] : "",
+                    RightPath = project.RightArchiveInput is null ? paths[2] : "", FileFilterPath = filter,
+                    LeftArchiveInput = PackedInput(0), BaseArchiveInput = PackedInput(1), RightArchiveInput = PackedInput(2)
+                };
                 pairInputs[i] = files;
             }
             var generated = new List<(string Name, string Snapshot)>(); long generatedBytes = 0;
@@ -163,20 +176,23 @@ public static class ComparisonPackage
                 string? a = null, b = null;
                 if (textMode && (options.IncludePatch || options.IncludeReport))
                 {
-                    a = TextDocument.LoadAsync(left!.Snapshot, token).GetAwaiter().GetResult().Text;
-                    b = TextDocument.LoadAsync(right!.Snapshot, token).GetAwaiter().GetResult().Text;
+                    a = ProjectInputReader.ReadTextAsync(project, 0, token, left!.Snapshot).GetAwaiter().GetResult().Text;
+                    b = ProjectInputReader.ReadTextAsync(project, 2, token, right!.Snapshot).GetAwaiter().GetResult().Text;
                 }
                 if (options.IncludePatch && textMode && project.Mode.ToLowerInvariant() is not ("json" or "5"))
                 {
-                    patches.Append(UnifiedPatch.Create(a!, b!, left!.Name, right!.Name));
+                    string PatchName(int side, Input input) => ProjectInputs.Archive(project, side)?.LeafEntry is { } leaf
+                        ? (side == 0 ? "original/" : "altered/") + leaf : input.Name;
+                    patches.Append(UnifiedPatch.Create(a!, b!, PatchName(0, left!), PatchName(2, right!)));
                     if (patches.Length > MaximumGeneratedBytes) throw new InvalidDataException("パッチの上限を超えました。");
                 }
                 if (options.IncludeReport)
                 {
-                    var title = project.LeftDescription ?? Path.GetFileName(project.LeftPath);
+                    var title = project.LeftDescription ?? (project.LeftArchiveInput is null
+                        ? Path.GetFileName(project.LeftPath) : ProjectInputs.Caption(project, 0));
                     indexReport.Append("<li><a href=\"report.files/").Append(i + 1).Append(".html\">").Append(WebUtility.HtmlEncode(title)).Append("</a></li>");
                     var ancestor = textMode && pairInputs[i][1] is { } middle
-                        ? TextDocument.LoadAsync(middle.Snapshot, token).GetAwaiter().GetResult().Text : null;
+                        ? ProjectInputReader.ReadTextAsync(project, 1, token, middle.Snapshot).GetAwaiter().GetResult().Text : null;
                     string report;
                     if (ProjectReport.IsImage(project))
                     {
@@ -235,8 +251,8 @@ public static class ComparisonPackage
     }
 
     private static IEnumerable<string> Paths(ComparisonProject project)
-    { yield return project.LeftPath; if (!string.IsNullOrWhiteSpace(project.BasePath)) yield return project.BasePath; yield return project.RightPath; }
-    private static string SidePath(ComparisonProject project, int side) => side switch { 0 => project.LeftPath, 1 => project.BasePath, _ => project.RightPath };
+    { yield return SidePath(project, 0); if (ProjectInputs.HasBase(project)) yield return SidePath(project, 1); yield return SidePath(project, 2); }
+    private static string SidePath(ComparisonProject project, int side) => ProjectInputs.PathFor(project, side);
     private static bool IsUrl(string path) => Uri.TryCreate(path, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https";
     private static string ValidateLocal(string path)
     {

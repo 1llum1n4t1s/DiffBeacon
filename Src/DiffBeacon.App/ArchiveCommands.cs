@@ -79,20 +79,21 @@ internal static class ArchiveActions
         => ExportCoreAsync(archive, output,
             cancellation => Task.Run(() => new ManagedArchive().ReadEntryForExport(archive, entry, password, cancellation), cancellation), token);
 
-    internal static Task ExportSourceAsync(ArchiveSource source, string entry, string output, string descriptor,
-        ManagedArchiveLimits limits, IReadOnlyList<string?> passwords, CancellationToken token)
+    internal static Task ExportSourceAsync(ArchiveSource source, string entry, string output, string? descriptor,
+        ManagedArchiveLimits limits, IReadOnlyList<string?> passwords, CancellationToken token, Action? beforePublication = null)
         => ExportCoreAsync(source.RootPath, output,
             cancellation => Task.Run(() => new ManagedArchive(limits).ResolveEntry(source, entry,
-                checked((int)Math.Min(limits.MaximumEntryBytes, limits.MaximumOutputBytes)), passwords, cancellation), cancellation), token, descriptor);
+                checked((int)Math.Min(limits.MaximumEntryBytes, limits.MaximumOutputBytes)), passwords, cancellation), cancellation), token, descriptor, beforePublication);
 
     private static async Task ExportCoreAsync(string archive, string output, Func<CancellationToken, Task<byte[]>> read,
-        CancellationToken token, string? descriptor = null)
+        CancellationToken token, string? descriptor = null, Action? beforePublication = null)
     {
         var target = ValidatePath(output); var original = Path.GetFullPath(archive);
         CheckInputs();
         if (!Directory.Exists(Path.GetDirectoryName(target))) throw new DirectoryNotFoundException("出力先のディレクトリがありません。");
         ValidateWritable(target);
         var bytes = await read(token);
+        beforePublication?.Invoke(); token.ThrowIfCancellationRequested();
         var temporary = Path.Combine(Path.GetDirectoryName(target)!, ".diffbeacon-entry-" + Guid.NewGuid().ToString("N") + ".tmp");
         try
         {

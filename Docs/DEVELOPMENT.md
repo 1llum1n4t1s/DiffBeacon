@@ -43,6 +43,8 @@ pwsh -STA -NoProfile -File build/Compact-Evidence.ps1 -SourcePath "$PWD/artifact
 
 2026-10-04の移植検証では、最初に手順書と停止フラグの不一致を確認して元データを保持した。その後、共通ヘルパー側の更新と11件のE2E・並行実行の成功、現在のコードSHAとの一致を確認したため、過去の取消修正E2E 21492 files／963433353 bytesを全entry照合済みZIP 57202172 bytesへ保存し、対象だけをごみ箱へ移した。今回項目の個別消去はE_ABORTで途中失敗し、元パスは不在だがごみ箱に10212 files／812355400 bytesと管理情報が残った。全原本を保持したZIPと台帳の対応は `artifacts/retention/index.json` に記録する。この清掃を完了扱いにせず、部分消去後の合計サイズを拒否する現行Resumeも再実行していない。既存のpolicy拒否対象を別APIで再試行しない。symbolic linkや子reparse pointを含む検証rootは現行ヘルパーの対象外であり、保持する。
 
+内包GUI検証の最初の全体runから、reportsの226files／275643425bytesを全entry照合済みZIP 1390196bytesへ保存した。この対象だけの移動後、個別消去がE_ABORTで失敗し、元パスは不在、今回のごみ箱directoryと管理情報は残る。directory内のfileは0件だが残存ゼロを満たさず清掃未完了とする。残り4対象は移動していない。ZIP・台帳・残存receiptは `artifacts/retention/index.json` のpartialCleanupに対応を記録する。同じ対象の再試行や別APIへの切替を行わない。
+
 外部の証拠rootを整理するときだけ`-AdditionalEvidenceRoot`を指定する。ZIPが完成している場合は同じ入力と格納先に`-ExistingArchive '<途中ZIPの絶対パス>'`を加えると、全entryを再照合できる。ただし削除の拒否対象を再実行する許可ではない。既存のZIP・報告JSONは上書きしない。2026-10-03以降のローカル出力はCドライブを使い、I/OエラーのあったEドライブは読取り専用とする。
 
 2026-10-02の保存先は`E:/DiffBeacon-artifacts/retained`。元パスとZIPの対応・SHA・照合結果は隣接JSONと`artifacts/retention/index.json`へ記録する。以前の文書に記載された過去の展開パスはこの索引から参照する。ZIPをその元ディレクトリへ展開すれば各ファイルを読み直せる。元の属性・mode・更新日時はZIP内の`.diffbeacon-retention-manifest.json`に保存されるが、展開ツールによる属性復元の対応は異なるため必要時にmanifestを参照する。ソース・固定fixture・Git履歴、共有キャッシュ、他プロジェクトはこの清掃の対象にしない。
@@ -83,6 +85,8 @@ E2E はアプリを別プロセスで実行し、CLI の終了コード、比較
 ```powershell
 dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifacts/verification/managed
 ```
+
+内包アーカイブの子比較だけを調べる場合は、上の自己検証へ `--archive-sources-only` を追加する。限定結果の `scope` は `archive-sources-only`、全UIは `all` となる。実entry選択・子タブ候補・階層password再試行・Stop／refresh／tab close・readonly・全入力の出力保護・通常／最小viewport・workspace／HTMLをPNGとJSONへ残す。限定は全UIの代替にせず、コード変更後の全体E2Eと全UI、同OS Native AOTも実行する。Sourceとtyped workspace／包装のCLI限定実行・独立検証は [E2Eの手順](../tests/DiffBeacon.E2E/README.md) に集約する。
 
 Native AOT の Windows 発行には Visual Studio の C++ ビルドツールと Windows SDK、macOS 発行には Xcode のネイティブツールが必要。発行は対象と同じ OS で実行する。
 
