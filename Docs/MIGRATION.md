@@ -54,7 +54,7 @@ GUIの自動判定・比較・プレビュー・エントリ保存・全件展�
 
 読込みは9～16bitのblock／nonblock、出力は16bit block形式。固定39原本には幅の変更・辞書満杯・CLEAR、現行block24件、歴史的nonblock10～16bitの14件と独立literal nonblock9を含む。歴史的v4.1のmaxbits9原本2件にはmodern decoderと幅境界が異なる旧自己互換があり、この2件を正常goldenとして使わない。出典・全SHA・CC0入力・public-domain原文・再生成は[TAR.Z fixture](../tests/Fixtures/Archives/TarZ/README.md)へ集約する。ZにはCRC・宣言長・明示EOFがなく、内側TARの構造・終端と作業上限を検査しても、すべての意味的改変や末尾padding欠損を検出できるわけではない。
 
-限定E2Eと全体E2Eは固定原本の全entryを照合し、writer出力を別buildの公式ncompressとPython標準tarfileで独立に復号・照合する。ローカルではfull7zでも全TAR bytesを照合する。通常.NET build・発行アプリに検証用C/compilerを追加しない。最終Release buildは警告・エラー0、通常版とWindows x64 Native AOTのheadless UIは各10081成功・0失敗。最終Native AOT全体E2Eは156652成功・0失敗・3skip、4880命令のstdout／stderrと実終了コードを独立照合し、起動失敗・timeoutは0。検証中の259入力と実行ファイルのSHAを照合した。標準TARプロバイダーの復号を背景で実行し、復号中と結果採用直前の実中止ボタンで前回本文と入力を保持する。変更後4RIDのGitHub検証は未完了であり、全旧アーカイブ形式の移植完了とは判定しない。
+限定E2Eと全体E2Eは固定原本の全entryを照合し、writer出力を別buildの公式ncompressとPython標準tarfileで独立に復号・照合する。ローカルではfull7zでも全TAR bytesを照合する。通常.NET build・発行アプリに検証用C/compilerを追加しない。最終Release buildは警告・エラー0、通常版とWindows x64 Native AOTのheadless UIは各10081成功・0失敗。最終Native AOT全体E2Eは156652成功・0失敗・3skip、4880命令のstdout／stderrと実終了コードを独立照合し、起動失敗・timeoutは0。検証中の259入力と実行ファイルのSHAを照合した。標準TARプロバイダーの復号を背景で実行し、復号中と結果採用直前の実中止ボタンで前回本文と入力を保持する。先行SHA `ba7193aacc34190ad20c5cfd4c6e9033d82366d9` の[GitHub検証](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37125361234)で固定manifestのSHA検査が失敗した。親のArchives属性がCRLF原本をLFへ変換していたため、TAR.Z専用の近い属性へ移し、期待SHAと原本bytesを保持する。修正後4RIDのGitHub検証は未完了であり、全旧アーカイブ形式の移植完了とは判定しない。
 
 ## 原文区間を保持する WordDiff
 

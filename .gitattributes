@@ -64,11 +64,3 @@ tests/Fixtures/ImageOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
 # 時刻依存overlay原本のclock mock核と全BGRA採取データを保護する。
 tests/Fixtures/ImageTemporalOverlays/golden.json.gz -text -whitespace
 tests/Fixtures/ImageTemporalOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
-# TAR.Z原本・独立期待値と公式reference sourceの全SHAを維持する。
-tests/Fixtures/Archives/TarZ/*.tar -text
-tests/Fixtures/Archives/TarZ/*.Z -text
-tests/Fixtures/Archives/TarZ/manifest.json -text
-tests/Fixtures/Archives/TarZ/nonblock-provenance.json -text
-tests/Fixtures/Archives/TarZ/nonblock-source-README -text
-tests/Fixtures/Archives/TarZ/ncompress-UNLICENSE -text
-tests/Fixtures/Archives/TarZ/reference-source/* -text -whitespace
