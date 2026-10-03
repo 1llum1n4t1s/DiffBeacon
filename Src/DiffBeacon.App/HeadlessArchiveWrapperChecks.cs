@@ -69,11 +69,13 @@ internal static class HeadlessArchiveWrapperChecks
         Observe("initial"); screenshot("archive-wrappers-initial.png");
         var canceledBeforeModal = false; var unexpectedModal = 0;
         pane.ArchiveRetryShown = dialog => { unexpectedModal++; dialog.Cancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); };
-        Dispatcher.UIThread.Post(() => { canceledBeforeModal = true; stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); });
+        // 小さな入力がUIキューより先に完了しても、操作開始後の実Stopを確実に検証する。
+        pane.ArchiveReadStarting = () => { canceledBeforeModal = true; stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); };
         pane.LeftPath.Text = pane.RightPath.Text = twice;
-        ExpectCanceled(pane.ComparePathsAsync()); Observe("early-stop");
-        check("wrapper real Stop before modal", canceledBeforeModal && unexpectedModal == 0, "owner enabled, queued before comparison read continuation");
-        pane.ArchiveRetryShown = null;
+        try { ExpectCanceled(pane.ComparePathsAsync(), "before-read"); }
+        finally { pane.ArchiveReadStarting = null; pane.ArchiveRetryShown = null; }
+        Observe("early-stop");
+        check("wrapper real Stop before modal", canceledBeforeModal && unexpectedModal == 0, "owner enabled, active comparison canceled at archive read boundary");
         // 破損候補の実 modal Cancel/×、旧 panel の再操作。
         pane.LeftPath.Text = pane.RightPath.Text = bad;
         var modalCount = 0;
@@ -84,9 +86,9 @@ internal static class HeadlessArchiveWrapperChecks
                 && dialog.LeftPassword.MaxLength == 4096 && dialog.RightPassword.MaxLength == 4096, "no password values in evidence");
             dialog.Cancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         };
-        ExpectCanceled(pane.ComparePathsAsync()); Observe("failure-cancel");
+        ExpectCanceled(pane.ComparePathsAsync(), "modal-cancel"); Observe("failure-cancel");
         pane.ArchiveRetryShown = dialog => { modalCount++; dialog.Close(); };
-        ExpectCanceled(pane.ComparePathsAsync()); Observe("failure-close");
+        ExpectCanceled(pane.ComparePathsAsync(), "modal-close"); Observe("failure-close");
         pane.ArchiveRetryShown = null;
         // 自己検証所有の入力を外部変更した状態で再読込みし、確定表示を保持する。
         File.WriteAllBytes(path, zipped[..^4]); var changedInputHash = Hash(File.ReadAllBytes(path)); var refreshFailed = false;
@@ -103,10 +105,10 @@ internal static class HeadlessArchiveWrapperChecks
             check("wrapper late cancel receives complete candidate", candidate.Rows.Count == 1 && candidate.Rows[0].Left?.Sha256 == expectedSha, "real public service result");
             stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         };
-        ExpectCanceled(pane.ComparePathsAsync()); pane.ArchiveReadyForAdoption = null; Observe("late-cancel");
+        ExpectCanceled(pane.ComparePathsAsync(), "before-adoption"); pane.ArchiveReadyForAdoption = null; Observe("late-cancel");
         // Refresh 完了直前の中止も確定 rows/preview を保持する。
         panel.RefreshReadyForAdoption = () => stop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-        ExpectCanceled(panel.RefreshAsync()); panel.RefreshReadyForAdoption = null; Observe("refresh-cancel");
+        ExpectCanceled(panel.RefreshAsync(), "refresh-before-adoption"); panel.RefreshReadyForAdoption = null; Observe("refresh-cancel");
         // 完成した古い候補から実際に新比較を開始し、新結果の世代だけを採用する。
         Task? latest = null;
         pane.ArchiveReadyForAdoption = _ =>
@@ -154,7 +156,7 @@ internal static class HeadlessArchiveWrapperChecks
 
         void Observe(string stage) => observed.Add((stage, ReferenceEquals(panel.Rows, rows), panel.PreviewText == preview,
             panel.LeftSourcePath == path && panel.RightSourcePath == path, pane.GetVisualDescendants().OfType<ArchivePanel>().SingleOrDefault() == panel));
-        void ExpectCanceled(Task task) { var canceled = false; try { pump(task); } catch (OperationCanceledException) { canceled = true; } check("wrapper real UI cancellation", canceled, "expected cancellation, actual task completed"); }
+        void ExpectCanceled(Task task, string stage) { var canceled = false; try { pump(task); } catch (OperationCanceledException) { canceled = true; } check("wrapper real UI cancellation " + stage, canceled, "expected cancellation, actual task completed"); }
         void Reject(string label, ManagedArchiveLimits limits, string input) => check("wrapper rejects " + label, !Accept(limits, input), "public ManagedArchive ReadManifest");
     }
     private static bool Accept(ManagedArchiveLimits limits, string path)

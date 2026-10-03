@@ -2,6 +2,10 @@
 
 ## ZIP・7z・RARの明示的な多重圧縮
 
+初回の[4RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37135868237)はWindows／MacのARM64が成功し、x64両構成はアーカイブの中止自己検証で失敗した。UIキューへ中止を予約した小さな入力が中止前に完了していたため、実際の中止ボタンを比較操作作成後・読込み開始直前の観測点から押す方式へ変更し、各取消の失敗名に境界を明記する。元の表示保持・modal・採用直前・refresh取消の検証は維持する。失敗ZIP2個の全entry CRC／SHA／サイズを照合し、`artifacts/github/37135868237`へ保持した。[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37135868265)は成功。修正後の再検証は続行中で、初回runの成功とは扱わない。
+
+中止検証の修正後はRelease警告0・エラー0、通常版UI10,121成功・0失敗、全体E2E157,722成功・0失敗・11skip。5,274 App呼出しと10,548 stdout／stderrを照合した。Windows x64 Native AOTの発行とUI10,121成功・0失敗、発行13ファイルのSHA／サイズも確認した。発行後の補助検証はCore／ProvidersのlockへNative用ILCompiler情報が追加され終了1となったが、追跡済みGitのNative graphと一致し、compiler情報だけを除いた通常版graphは事前SHAへ正確に戻ることを確認した。製品依存を変えないこの差分だけを厳密に検査する形へ補助検証を修正し、311 sourceのbytes不変・2 lockの既知restore差分を照合して終了0。元の終了1は保持する。証拠は`artifacts/local/archive-wrapper-cancel-fix`。UI観測点だけの変更に対しローカルNative全体E2Eは繰り返さず、修正後の4RID CIで全体E2Eを実行する。
+
 ZIP/JAR/EAR/WAR/XPI・7z・RARを`.gz`・`.bz2`・`.Z`で包んだ明示名を、GUI Auto・標準archive provider・CLIの一覧／比較／エントリ保存／再梱包／全件抽出へ接続した。各層を終端まで検証し、深度・中間内容・累積復号量・実読込み作業量を共有する。暗号化入力の初期失敗は任意の左右パスワードで再試行でき、取消・失敗・古い完了で確定表示を保持する。ZIPの宣言CRCとサイズは展開前に固定し、不一致時は既存出力を置き換えない。
 
 Release buildは警告0・エラー0、通常版の限定E2Eは1,118成功・0失敗・0skip、全体E2Eは157,722成功・0失敗・11skip、headless UIは10,121成功・0失敗。34正常鎖の全層と再梱包／抽出bytes、中央CRC／サイズ不正の拒否を独立Python／公式Zで確認した。UIの8状態で一覧・プレビュー・表示元を保持し、7z／RARの全11nodeの型・サイズ・UTC時刻を固定原本へ照合した。証拠は`artifacts/local/archive-wrapper-integration/managed-acceptance.json`。Windows x64 Native AOTもUI10,121成功・0失敗、全体E2E157,772成功・0失敗・3skipで終了し、5,293 App commandsと10,586 streams、発行12payload＋manifest、313 sourceの不変を確認した。Nativeの証拠は`artifacts/local/archive-wrapper-integration/native-full-acceptance.json`。4RID検証は続行中。新規reviewerはスレッド上限で起動できず、新しい文脈の独立レビューは未完了。内包entryの子タブ比較、裸の圧縮ファイル、TARの複数wrapper統一、wrapper出力作成は後続工程で、全移植完了とは扱わない。

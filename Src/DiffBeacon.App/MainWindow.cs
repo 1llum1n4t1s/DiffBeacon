@@ -154,6 +154,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     internal Action<ProviderResult>? ProviderResultReadyForAdoption { get; set; }
     internal Action<ArchivePanel>? ArchiveReadyForAdoption { get; set; }
     internal Action<ArchiveRetryDialog>? ArchiveRetryShown { get; set; }
+    // 実GUI自己検証で、有効な比較操作の読込み開始時に中止ボタンを押す。
+    internal Action? ArchiveReadStarting { get; set; }
 
     public ComparisonPane(Window owner)
     {
@@ -338,6 +340,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 {
                     while (candidate is null)
                     {
+                        ArchiveReadStarting?.Invoke();
                         token.ThrowIfCancellationRequested();
                         try { candidate = await ArchivePanel.CreateWithPasswordsAsync(left, right, token, EnsureProjectOutputWritable, leftPassword, rightPassword); }
                         catch (OperationCanceledException) { throw; }
