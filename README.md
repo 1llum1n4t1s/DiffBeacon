@@ -60,7 +60,7 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 テキスト比較の `--max-work N` は行対応と行内差分それぞれの処理予算を指定します。行対応を省略した場合は JSON の `lineFallback`・`lineFallbackReason` に示し、元の全行を保持して未確定部分を変更扱いにします。
 
-画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。行・列の挿入削除検出は `--insertion-deletion-mode none|vertical|horizontal`（既定 `none`）で指定します。表示位置は `--left-offset X,Y`・`--middle-offset X,Y`・`--right-offset X,Y` で非負の絶対座標を指定できます。`--report-project` でも同じ指定で保存設定を上書きしてレポートを生成でき、プロジェクト自体は変更しません。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
+画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。`--highlight-alpha X` は差分色の不透明度（有限の0～1、既定0.7）を指定し、差分判定や原画を変更しません。行・列の挿入削除検出は `--insertion-deletion-mode none|vertical|horizontal`（既定 `none`）で指定します。表示位置は `--left-offset X,Y`・`--middle-offset X,Y`・`--right-offset X,Y` で非負の絶対座標を指定できます。`--report-project` でも同じ指定で保存設定を上書きしてレポートを生成でき、プロジェクト自体は変更しません。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
 
 表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
 
@@ -68,7 +68,7 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 保存した比較プロジェクトを包装するには、`DiffBeacon --package-project project.json comparison.zip --report --patch` を使います。`--entries 1,3` で包装する比較を番号で選択でき、`--no-documents`・`--no-project` で文書・プロジェクトを除外できます。
 
-比較プロジェクトから単体HTMLを作るには、`DiffBeacon --report-project project.json comparison.html` を使います。既定では選択中の比較、`--entry 2`では指定した番号の比較を出力します。テキスト・表・JSONの二者／三者比較と二者／三者画像比較に対応します。画像はプロジェクトに保存した全／選択フレーム・閾値・強調設定を使います。フレームと閾値は `--image` と同じオプションで明示指定すると、その値を優先します。画像設定を持たない旧プロジェクトでは全フレーム・閾値0・強調ありです。レポート生成の終了コードは、差分の有無にかかわらず成功時0です。
+比較プロジェクトから単体HTMLを作るには、`DiffBeacon --report-project project.json comparison.html` を使います。既定では選択中の比較、`--entry 2`では指定した番号の比較を出力します。テキスト・表・JSONの二者／三者比較と二者／三者画像比較に対応します。画像はプロジェクトに保存した全／選択フレーム・閾値・強調設定を使います。フレーム・閾値・差分色の不透明度は `--image` と同じオプションで明示指定すると、その値を優先します。画像設定を持たない旧プロジェクトでは全フレーム・閾値0・強調ありで、差分色の不透明度を省略した設定は0.7です。レポート生成の終了コードは、差分の有無にかかわらず成功時0です。
 
 ## 制限と困ったとき
 
