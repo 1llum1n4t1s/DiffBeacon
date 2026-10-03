@@ -5,6 +5,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.VisualTree;
 
 namespace DiffBeacon.App;
 
@@ -51,6 +52,11 @@ public static partial class SpecializedViews
         private readonly Slider _highlightAlpha = new() { Name = "ImageHighlightAlpha", Minimum = 0, Maximum = 1, Value = .7, Width = 130 };
         private readonly TextBlock _status = new() { TextWrapping = TextWrapping.Wrap };
         private readonly TabControl _imageViews = new() { Name = "ImageDisplayMode" };
+        private readonly ScrollViewer _toolbarScroll = new() { Name = "ImageToolbar", MaxHeight = 130,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
+        private readonly StackPanel _imageFooter = new() { Margin = new Thickness(8), Spacing = 4 };
+        private readonly List<TextBlock> _paneCaptions = [];
 
         internal int LeftFrame => _numbers[0];
         internal int RightFrame => _numbers[^1];
@@ -102,6 +108,7 @@ public static partial class SpecializedViews
                 foreach (var control in new Control[] { FrameButton("ImagePrevious" + names[pane], labels[pane] + " ◀", pane, -1), _selectors[pane],
                     FrameButton("ImageNext" + names[pane], labels[pane] + " ▶", pane, 1), _positions[pane] }) Add(frameControls, control);
                 var column = new DockPanel(); var caption = new TextBlock { Text = labels[pane], Margin = new Thickness(4) };
+                _paneCaptions.Add(caption);
                 DockPanel.SetDock(caption, Dock.Top); column.Children.Add(caption); column.Children.Add(Scroll(AttachRectanglePane(pane)));
                 Grid.SetColumn(column, pane); side.Children.Add(column);
                 _selectors[pane].ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
@@ -123,14 +130,10 @@ public static partial class SpecializedViews
                 Add(navigation, button);
             }
             toolbar.Children.Add(navigation); toolbar.Children.Add(CreateEditControls(labels));
-            var toolbarScroll = new ScrollViewer { Name = "ImageToolbar", Content = toolbar, MaxHeight = 130,
-                HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
-                VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
-            SizeChanged += (_, args) => toolbarScroll.MaxHeight = Math.Max(32, args.NewSize.Height * .2);
-            DockPanel.SetDock(toolbarScroll, Dock.Top); Children.Add(toolbarScroll);
-            var footer = new StackPanel { Margin = new Thickness(8), Spacing = 4 };
-            footer.Children.Add(_status); footer.Children.Add(new TextBlock { Text = "領域は8近傍でまとめます。中央は第三の比較画像です。画素差の表示は左と右を比較します。", TextWrapping = TextWrapping.Wrap });
-            DockPanel.SetDock(footer, Dock.Bottom); Children.Add(footer);
+            _toolbarScroll.Content = toolbar;
+            DockPanel.SetDock(_toolbarScroll, Dock.Top); Children.Add(_toolbarScroll);
+            _imageFooter.Children.Add(_status); _imageFooter.Children.Add(new TextBlock { Text = "領域は8近傍でまとめます。中央は第三の比較画像です。画素差の表示は左と右を比較します。", TextWrapping = TextWrapping.Wrap });
+            DockPanel.SetDock(_imageFooter, Dock.Bottom); Children.Add(_imageFooter);
             var overlays = new Grid { ColumnDefinitions = new ColumnDefinitions(_counts.Length == 3 ? "*,*" : "*"), ColumnSpacing = 8 };
             for (var pane = 0; pane < _counts.Length - 1; pane++)
             {
@@ -178,6 +181,31 @@ public static partial class SpecializedViews
             };
             AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; AttachRectangleOwner(owner); } };
             UpdateNavigation();
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            // 小さいパネルでは縦の余白だけを詰め、テーマ差があっても画像領域を残す。
+            // 測定の前に切り替え、切り替える前のDesiredSizeを再利用しない。
+            var compact = double.IsFinite(availableSize.Height) && availableSize.Height < 300;
+            _imageFooter.Margin = new Thickness(8, compact ? 0 : 8);
+            _imageFooter.Spacing = compact ? 0 : 4;
+            foreach (var caption in _paneCaptions) caption.Margin = new Thickness(4, compact ? 0 : 4);
+            var measured = base.MeasureOverride(availableSize);
+            // テーマの操作部品より短いviewportではBringIntoViewでも全体を表示できない。
+            // 初回の測定値から下限を決め、同じ測定内の再計算は一度だけにする。
+            var controlHeight = _toolbarScroll.GetVisualDescendants().OfType<Control>()
+                .Where(control => control is Slider or Button or ComboBox or NumericUpDown or CheckBox)
+                .Select(control => control.DesiredSize.Height).DefaultIfEmpty(0).Max();
+            var proportionalHeight = double.IsFinite(availableSize.Height) ? availableSize.Height * .2 : 130;
+            // 内容の外側余白は一緒にスクロールするため、viewportの下限へ加えない。
+            var maxHeight = Math.Max(Math.Max(32, proportionalHeight), controlHeight);
+            if (Math.Abs(_toolbarScroll.MaxHeight - maxHeight) > .01)
+            {
+                _toolbarScroll.MaxHeight = maxHeight;
+                measured = base.MeasureOverride(availableSize);
+            }
+            return measured;
         }
 
         private static void Add(Panel panel, Control control) { control.Margin = new Thickness(0, 0, 8, 0); panel.Children.Add(control); }

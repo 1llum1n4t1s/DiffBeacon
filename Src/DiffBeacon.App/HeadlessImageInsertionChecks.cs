@@ -209,38 +209,53 @@ internal static class HeadlessImageInsertionChecks
     private static void Layout(MainWindow window, SpecializedViews.ImagePanel panel, Action<string, bool, string> check, Action<string> screenshot)
     {
         var width = window.Width; var height = window.Height;
+        var windowMinHeight = window.MinHeight;
+        var toolbar = panel.GetVisualDescendants().OfType<ScrollViewer>().Single(control => control.Name == "ImageToolbar");
+        var alpha = panel.GetVisualDescendants().OfType<Slider>().Single(control => control.Name == "ImageHighlightAlpha");
+        var minHeight = alpha.MinHeight;
+        // 本来の最小ウィンドウより小さい寸法は、明示したWindows実験だけで使う。
+        var stressLayout = OperatingSystem.IsWindows() && Environment.GetEnvironmentVariable("DIFFBEACON_IMAGE_LAYOUT_STRESS") == "1";
         try
         {
+            // 失敗先行: テーマのSliderが20%上限より高いと全体へのスクロールが不可能になる。
+            // 実テーマに加え64/80pxの操作部品を実レイアウトで測り、画像領域と保存操作も守る。
+            foreach (var sliderHeight in new[] { minHeight, 64d, 80d }.Distinct())
             foreach (var compact in new[] { false, true })
+            foreach (var constrained in stressLayout && sliderHeight == 80 && compact ? new[] { false, true } : new[] { false })
             {
+                alpha.MinHeight = sliderHeight;
+                // 共通toolbarの20%を除いたパネルを約32px縮める寸法ストレス。
+                // 実Macの描画やフォントを再現したものではない。
+                window.MinHeight = windowMinHeight - (constrained ? 40 : 0);
+                var stressSuffix = constrained ? " constrained-height" : "";
+                var scenario = compact + (sliderHeight == minHeight ? "" : " slider-" + sliderHeight) + stressSuffix;
+                var imageSuffix = (sliderHeight == minHeight ? "" : "-slider-" + sliderHeight) + (constrained ? "-constrained-height" : "");
                 window.Width = compact ? window.MinWidth : width; window.Height = compact ? window.MinHeight : height;
                 Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
-                var toolbar = panel.GetVisualDescendants().OfType<ScrollViewer>().Single(control => control.Name == "ImageToolbar");
-                var alpha = panel.GetVisualDescendants().OfType<Slider>().Single(control => control.Name == "ImageHighlightAlpha");
                 alpha.BringIntoView(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
                 var alphaPosition = alpha.TranslatePoint(new Point(), toolbar);
-                check("image insertions GUI alpha reachable " + compact, alphaPosition.HasValue && alphaPosition.Value.Y >= -1
+                check("image insertions GUI alpha reachable " + scenario, alphaPosition.HasValue && alphaPosition.Value.Y >= -1
                     && alphaPosition.Value.Y + alpha.Bounds.Height <= toolbar.Bounds.Height + 1 && alpha.IsEnabled,
-                    $"alpha={alphaPosition}; toolbar={toolbar.Bounds}");
-                if (compact) screenshot("image-alpha-compact-control.png");
+                    $"alpha={alphaPosition}; alphaBounds={alpha.Bounds}; desired={alpha.DesiredSize}; toolbar={toolbar.Bounds}; viewport={toolbar.Viewport}; maxHeight={toolbar.MaxHeight}; panel={panel.Bounds}");
+                if (compact) screenshot("image-alpha-compact-control" + imageSuffix + ".png");
                 var mode = panel.GetVisualDescendants().OfType<ComboBox>().Single(control => control.Name == "ImageInsertionDeletionMode");
                 mode.BringIntoView(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
                 var modePosition = mode.TranslatePoint(new Point(), toolbar);
-                check("image insertions GUI mode reachable " + compact, modePosition.HasValue && modePosition.Value.Y >= -1
+                check("image insertions GUI mode reachable " + scenario, modePosition.HasValue && modePosition.Value.Y >= -1
                     && modePosition.Value.Y + mode.Bounds.Height <= toolbar.Bounds.Height + 1 && mode.IsEnabled,
                     $"mode={modePosition}; toolbar={toolbar.Bounds}");
-                if (compact) screenshot("image-insertions-compact-mode.png");
+                if (compact) screenshot("image-insertions-compact-mode" + imageSuffix + ".png");
                 toolbar.ScrollToEnd(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
                 var heights = panel.GetVisualDescendants().OfType<Image>().Where(image => image.Name?.StartsWith("ImagePane", StringComparison.Ordinal) == true)
                     .Select(image => image.GetVisualAncestors().OfType<ScrollViewer>().First().Bounds.Height).ToArray();
                 var save = Button(panel, "ImageSavePng"); var position = save.TranslatePoint(new Point(), toolbar);
-                check("image insertions GUI viewport visible " + compact, heights.Length == 3 && heights.All(value => value >= 24), "heights=" + string.Join(",", heights));
-                check("image insertions GUI PNG save reachable " + compact, position.HasValue && position.Value.Y >= 0
+                check("image insertions GUI viewport visible " + scenario, heights.Length == 3 && heights.All(value => value >= 24), "heights=" + string.Join(",", heights));
+                check("image insertions GUI PNG save reachable " + scenario, position.HasValue && position.Value.Y >= 0
                     && position.Value.Y + save.Bounds.Height <= toolbar.Bounds.Height + 1, $"save={position}; toolbar={toolbar.Bounds}");
-                if (compact) screenshot("image-insertions-compact.png");
+                if (compact) screenshot("image-insertions-compact" + imageSuffix + ".png");
             }
         }
-        finally { window.Width = width; window.Height = height; Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick(); }
+        finally { alpha.MinHeight = minHeight; window.MinHeight = windowMinHeight; window.Width = width; window.Height = height; Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick(); }
     }
     private static string[] Inputs(JsonElement item, string root)
     {
