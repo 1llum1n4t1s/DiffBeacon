@@ -76,9 +76,12 @@ public sealed partial class MainWindow
         foreach (var index in indices) panes[index].EnsureComparedForPackaging();
         var workspace = new ComparisonWorkspace { Entries = panes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = Array.IndexOf(panes, ActivePane) };
         var sourceProject = WorkspaceSourcePath;
+        var packageOptions = options ?? new();
+        var wipes = (packageOptions.IncludeReport ? indices : []).Select(index => (Index: index, Wipe: panes[index].CapturePackagingImageDisplay()))
+            .Where(item => item.Wipe is not null).ToDictionary(item => item.Index, item => item.Wipe!);
         _packaging = true;
         _packagingOperation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        try { await ComparisonPackage.CreateAsync(workspace, output, options ?? new(), indices, _packagingOperation.Token, sourceProject); }
+        try { await ComparisonPackage.CreateWithImageDisplaysAsync(workspace, output, packageOptions, indices, _packagingOperation.Token, sourceProject, wipes); }
         finally { _packagingOperation.Dispose(); _packagingOperation = null; _packaging = false; }
     }
 
@@ -97,6 +100,11 @@ public sealed partial class MainWindow
 public sealed partial class ComparisonPane
 {
     private (string Left, string Base, string Right, int Mode, string? Provider)? _lastPackageComparison;
+    internal ImageReportDisplaySnapshot? CapturePackagingImageDisplay()
+    {
+        var report = (_specialTab.Content as SpecializedViews.ImagePanel)?.CaptureReport();
+        return report?.Wipe is { } wipe ? new(wipe, report.SelectedDiffIndex) : null;
+    }
     public void EnsureComparedForPackaging()
     {
         EnsureNoPendingTableEdit();

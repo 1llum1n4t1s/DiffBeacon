@@ -494,7 +494,7 @@ internal static class HeadlessImageDragChecks
             var saved = File.ReadAllBytes(path); File.SetAttributes(path, FileAttributes.ReadOnly);
             check("image drag settings readonly failure keeps mode", !store.SetMode(ImageDragMode.None) && store.Mode == ImageDragMode.AdjustOffset && File.ReadAllBytes(path).AsSpan().SequenceEqual(saved), store.Diagnostic ?? "");
             File.SetAttributes(path, FileAttributes.Normal);
-            foreach (var json in new[] { "{", "{\"dragMode\":3}", "{\"dragMode\":4}", "{\"dragMode\":9}", "{\"dragMode\":null}", "{\"unknown\":1}" })
+            foreach (var json in new[] { "{", "{\"dragMode\":9}", "{\"dragMode\":null}", "{\"unknown\":1}" })
             {
                 File.WriteAllText(path, json); var invalid = File.ReadAllBytes(path);
                 check("image drag invalid settings retain " + json, !store.Reload() && store.Mode == ImageDragMode.AdjustOffset

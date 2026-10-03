@@ -15,9 +15,9 @@ public static partial class SpecializedViews
     public sealed partial class ImagePanel
     {
         private readonly ImageApplicationOptionsStore _applicationOptions;
-        private readonly ComboBox _dragMode = new() { Name = "ImageDragMode", ItemsSource = new[] { "操作なし", "表示を移動", "画像位置を調整", "矩形選択" }, MinWidth = 145 };
+        private readonly ComboBox _dragMode = new() { Name = "ImageDragMode", ItemsSource = new[] { "操作なし", "表示を移動", "画像位置を調整", "縦ワイプ", "横ワイプ", "矩形選択" }, MinWidth = 145 };
         private readonly TextBlock _dragCondition = new() { Text = "ドラッグ操作は左右／左・中央・右表示で使用", IsVisible = false };
-        private static readonly ImageDragMode[] SupportedDragModes = [ImageDragMode.None, ImageDragMode.Move, ImageDragMode.AdjustOffset, ImageDragMode.RectangleSelect];
+        private static readonly ImageDragMode[] SupportedDragModes = [ImageDragMode.None, ImageDragMode.Move, ImageDragMode.AdjustOffset, ImageDragMode.VerticalWipe, ImageDragMode.HorizontalWipe, ImageDragMode.RectangleSelect];
         private readonly List<ScrollViewer> _paneScrolls = [];
         private readonly List<Vector> _observedScrolls = [];
         private readonly List<Border> _offsetPreviewBorders = [];
@@ -220,14 +220,17 @@ public static partial class SpecializedViews
             _displayDragPane = pane; _pressedDragMode = mode; _displayDragPointer = args.Pointer;
             _displayDragStart = _displayDragPrevious = args.GetPosition(_paneScrolls[pane]);
             _displayDragZoom = _zoom.Value; _displayDragGeneration = _generation;
+            if (IsWipePress) StartWipe(pane, args);
         }
         private bool DisplayDragValid(int pane, IPointer pointer)
             => _displayDragPane == pane && _displayDragPointer == pointer && _displayDragGeneration == _generation
-                && _displayDragZoom == _zoom.Value && DisplayDragReady;
+                && (IsWipePress || _displayDragZoom == _zoom.Value) && DisplayDragReady;
         private bool MoveDisplayDrag(int pane, PointerEventArgs args)
         {
             if (_displayDragPane != pane) return false;
+            if (IsWipePress && _operationCancellation is not null) { args.Handled = true; return true; }
             if (!DisplayDragValid(pane, args.Pointer)) { CancelDisplayDrag(); return true; }
+            if (IsWipePress) { MoveWipe(pane, args); args.Handled = true; return true; }
             var point = args.GetPosition(_paneScrolls[pane]);
             if (_pressedDragMode == ImageDragMode.AdjustOffset)
             {
@@ -270,6 +273,7 @@ public static partial class SpecializedViews
                 foreach (var menu in _attachedScrollMenus) menu.Opened -= ScrollMenuOpened;
                 _attachedScrollMenus.Clear(); _absoluteScrollCommand = null;
             }
+            ClearWipe();
             var pointer = _displayDragPointer; _displayDragPointer = null; _displayDragPane = -1; _offsetPreview = null;
             UpdateOffsetPreview(); pointer?.Capture(null);
         }

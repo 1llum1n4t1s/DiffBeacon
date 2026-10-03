@@ -1,6 +1,6 @@
 namespace DiffBeacon.App;
 
-// 原本 WinIMerge の公開値。wipe の予約値は実装完了まで選択・保存しない。
+// 原本 WinIMerge の公開値。縦/横ワイプは表示だけを変更する。
 internal enum ImageDragMode
 {
     None = 0,

@@ -167,7 +167,7 @@ internal static class ImageHighlightScenarios
     }
 
     // BCLだけでraw BGRAをPNG RGBAへ包装。差分判定は行わない。
-    private static void WritePng(string path, int width, int height, byte[] bgra)
+    internal static void WritePng(string path, int width, int height, byte[] bgra)
     {
         if (bgra.Length != checked(width * height * 4)) throw new InvalidDataException("Fixture pixel length mismatch.");
         using var file = File.Create(path); file.Write(new byte[] { 137, 80, 78, 71, 13, 10, 26, 10 });

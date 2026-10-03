@@ -70,7 +70,7 @@ public static partial class SpecializedViews
         internal int ConflictCount => _counts.Length == 3 ? _regions?.ConflictCount ?? 0 : 0;
         internal int SelectedDiffIndex => _selectedDiffIndex;
         internal IReadOnlyList<ImageRegionDiffer.Region> Regions => _regions?.Regions ?? [];
-        internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> RenderedFrames => _rendered ?? [];
+        internal IReadOnlyList<ImageComparisonEngine.DecodedFrame> RenderedFrames => _wipeRendered ?? _rendered ?? [];
         internal Task CurrentFrameOperation { get; private set; } = Task.CompletedTask;
         // headless操作検証では実計算後の採用待ちを再現し、候補画素や検査を差し替えない。
         internal Func<Task>? FrameCandidateReady { get; set; }
@@ -82,7 +82,7 @@ public static partial class SpecializedViews
             if (_operationCancellation is not null || _saving || _decoded is null || HasFloatingImage || _clipboardBusy)
                 throw new InvalidOperationException("画像フレームの表示が完了してからレポートを生成してください。");
             return new(_snapshots!.ToArray(), _displayThreshold, ReportAllFrames ? null : _numbers.ToArray(), _selectedDiffIndex, _displayShowDifferences,
-                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray(), _displayInsertionDeletionMode, _displayHighlightAlpha);
+                _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray(), _displayInsertionDeletionMode, _displayHighlightAlpha, _activeWipe);
         }
 
         internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null,
@@ -153,7 +153,7 @@ public static partial class SpecializedViews
             _imageViews.SelectedIndex = 0;
             Children.Add(_imageViews);
             InitializeDragOptions();
-            _zoom.ValueChanged += (_, _) => { CancelDisplayDrag(); UpdateZoom(); };
+            _zoom.ValueChanged += (_, _) => { PreserveWipeOrCancelDrag(); UpdateZoom(); };
             _opacity.ValueChanged += (_, _) => { for (var i = 1; i < _overlays.Count; i += 2) _overlays[i].Image.Opacity = _opacity.Value; };
             _highlightAlpha.ValueChanged += async (_, _) =>
             {
@@ -256,14 +256,14 @@ public static partial class SpecializedViews
         {
             ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations, _requestedOffsets); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
-            CancelDisplayDrag();
+            PreserveWipeOrCancelDrag();
             // 差分色だけの再描画は原本RefreshImagesと同様に選択・浮動貼り付けを保持する。
             // 同時にページや座標系が変わる場合は従来どおり作業状態を解除する。
             var sameDisplayCoordinates = !_resetEditing && numbers.SequenceEqual(_numbers)
                 && _requestedOrientations.SequenceEqual(_displayOrientations) && _requestedOffsets.SequenceEqual(_displayOffsets)
                 && _requestedThreshold == _displayThreshold && _requestedBlockSize == _displayBlockSize
                 && _requestedInsertionDeletionMode == _displayInsertionDeletionMode;
-            if (!preserveRectangle || !sameDisplayCoordinates) CancelRectangleInteraction();
+            if (!preserveRectangle || !sameDisplayCoordinates) CancelRectangleInteraction(preservePointerPress: IsWipePress);
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
             CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
             UpdateEditControls();
@@ -283,6 +283,7 @@ public static partial class SpecializedViews
             var candidateSession = _resetEditing ? null : _editSession?.Fork();
             var readOnly = _readOnly.ToArray(); var reset = _resetEditing; var adopted = false;
             var next = new WriteableBitmap?[numbers.Length]; WriteableBitmap? nextDifference = null;
+            WriteableBitmap[]? wipeNext = null;
             try
             {
                 ImageComparisonEngine.ValidateHighlightAlpha(highlightAlpha);
@@ -321,6 +322,14 @@ public static partial class SpecializedViews
                 if (edit is not null && EditCandidateReady is { } ready) await ready();
                 if (candidateReady is not null) await candidateReady();
                 token.ThrowIfCancellationRequested(); if (_disposed || generation != _generation) throw new OperationCanceledException(token);
+                var wipe = _activeWipe;
+                var wipeFrames = wipe is null ? null : ImageWipeRenderer.Render(result.rendered, wipe, token,
+                    ImageComparisonEngine.MaximumDecodeWork - (long)result.rendered[0].Width * result.rendered[0].Height * (numbers.Length + 1)).ToArray();
+                if (wipeFrames is not null)
+                {
+                    wipeNext = new WriteableBitmap[wipeFrames.Length];
+                    for (var i = 0; i < wipeFrames.Length; i++) wipeNext[i] = CreateBitmap(wipeFrames[i], token);
+                }
                 for (var i = 0; i < next.Length; i++) next[i] = CreateBitmap(result.rendered[i], token);
                 var pixels = result.comparison.Pixels;
                 nextDifference = CreateBitmap(new(1, pixels.Width, pixels.Height, pixels.DifferencePixels!), token);
@@ -333,6 +342,16 @@ public static partial class SpecializedViews
                 foreach (var overlay in _overlays) overlay.Image.Source = next[overlay.Pane];
                 _difference.Source = nextDifference; Array.Fill(next, null); nextDifference = null;
                 _decoded = result.comparison.Frames.ToArray(); _regions = result.comparison.Regions; _rendered = result.rendered; _selectedDiffIndex = result.selection;
+                _displayCanvasWork = (long)_rendered[0].Width * _rendered[0].Height * (numbers.Length + 1);
+                ++_wipeRevision;
+                if (_wipeBitmaps is not null) foreach (var bitmap in _wipeBitmaps) bitmap.Dispose();
+                _wipeBitmaps = wipeNext; _wipeRendered = wipeFrames;
+                if (wipe is not null) _activeWipe = wipe.Clamp(_rendered[0].Width, _rendered[0].Height);
+                // 確定表示は旧activeで維持し、待機中の最新要求は新canvasへ引き継ぐ。
+                _requestedWipe = _requestedWipe?.Clamp(_rendered[0].Width, _rendered[0].Height);
+                if (wipeNext is not null) for (var i = 0; i < _images.Length; i++) _images[i].Source = wipeNext[i];
+                wipeNext = null;
+                if (IsWipePress) _displayDragGeneration = generation;
                 _rawDecoded = (result.comparison.OriginalFrames ?? result.comparison.Frames).ToArray(); _displayOrientations = orientations; _displayBlockSize = blockSize;
                 _displayOffsets = offsets;
                 _displayInsertionDeletionMode = insertionDeletionMode;
@@ -344,16 +363,20 @@ public static partial class SpecializedViews
                 _status.Text = $"領域 {DifferenceCount} 個" + (_counts.Length == 3 ? $" · 競合 {ConflictCount} 個" : "")
                     + (_selectedDiffIndex >= 0 ? $" · 選択 {_selectedDiffIndex + 1}/{DifferenceCount}" : "") + $" · 左右の画素差 {DifferentPixels:N0}/{TotalPixels:N0} px";
                 if (old is not null) foreach (var bitmap in old) bitmap.Dispose(); oldDifference?.Dispose();
+                if (!_wipeRunning && _requestedWipe is { } pendingWipe && pendingWipe != _activeWipe)
+                    CurrentWipeOperation = RunWipeAsync();
             }
             finally
             {
                 foreach (var bitmap in next) bitmap?.Dispose(); nextDifference?.Dispose();
+                if (wipeNext is not null) foreach (var bitmap in wipeNext) bitmap?.Dispose();
                 if (ReferenceEquals(_operationCancellation, cancel)) _operationCancellation = null;
                 cancel.Dispose();
                 if (!_disposed && generation == _generation)
                 {
                     if (!adopted && _decoded is not null)
                     {
+                        if (IsWipePress) _displayDragGeneration = generation;
                         if (reset) _resetEditing = _discarded = false;
                         _updatingSelectors = true;
                         try { _threshold.Value = ThresholdControlValue(_displayThreshold); _showDifferences.IsChecked = _displayShowDifferences; }
@@ -421,7 +444,7 @@ public static partial class SpecializedViews
             foreach (var (image, pane) in _overlays) { image.Width = _rendered[pane].Width * _zoom.Value; image.Height = _rendered[pane].Height * _zoom.Value; }
             foreach (var grid in _overlayGrids) { grid.Width = _regions!.Width * _zoom.Value; grid.Height = _regions.Height * _zoom.Value; }
             if (_decoded is not null) { _difference.Width = Math.Max(_decoded[0].Width, _decoded[^1].Width) * _zoom.Value; _difference.Height = Math.Max(_decoded[0].Height, _decoded[^1].Height) * _zoom.Value; }
-            UpdateRectangleVisuals();
+            UpdateRectangleVisuals(); UpdateWipeGuide();
         }
         private void OwnerClosed(object? sender, EventArgs e) => Dispose();
         public void Dispose()

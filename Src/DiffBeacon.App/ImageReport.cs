@@ -27,6 +27,7 @@ internal static class ImageReport
         ImageComparisonEngine.ValidateComparison(images, input.FrameNumbers, input.Threshold, orientations, offsets);
         ImageComparisonEngine.ValidateInsertionDeletionMode(input.InsertionDeletionMode);
         ImageComparisonEngine.ValidateHighlightAlpha(input.HighlightAlpha);
+        input.Wipe?.Validate();
         if (input.EditedFrames is { } edited && (edited.Count != images.Count || images.Any(image => image.FrameCount != 1)
             || edited.Any(frame => frame.Number != 1))) throw new ArgumentException("編集済みレポートは静止画の全入力が必要です。");
         if (titles.Count != images.Count) throw new ArgumentException("全画像の見出しが必要です。");
@@ -35,6 +36,8 @@ internal static class ImageReport
         // 整列後の寸法は画素を調べないと確定しない。全ページの予算成立前に描画しない。
         using var preparation = !selected && count > 1 && input.InsertionDeletionMode != 0
             ? PrepareAll(input, orientations, offsets, count, token) : null;
+        if (!selected && count > 1 && input.InsertionDeletionMode == 0 && input.Wipe is not null)
+            PreflightWipe(input, orientations, offsets, count, token);
         try
         {
         var html = new BoundedHtml(Math.Min(maximumBytes, ProjectReport.MaximumBytes), token);
@@ -63,6 +66,7 @@ internal static class ImageReport
         var different = !selected && images.Select(image => image.FrameCount).Distinct().Count() != 1;
         long alignmentWork = 0;
         long canvasWork = 0;
+        var wipe = input.Wipe;
         for (var index = 1; index <= count; index++)
         {
             token.ThrowIfCancellationRequested();
@@ -83,6 +87,12 @@ internal static class ImageReport
                 highlightAlpha: input.HighlightAlpha,
                 selectedDiffIndex: Math.Min(input.SelectedDiffIndex, set.Regions.Regions.Count - 1), token: token, showDifferences: input.ShowDifferences,
                 alignment: set.Alignment);
+            if (wipe is not null)
+            {
+                wipe = wipe.Clamp(rendered[0].Width, rendered[0].Height);
+                rendered = ImageWipeRenderer.Render(rendered, wipe, token, ImageComparisonEngine.MaximumDecodeWork - canvasWork);
+                canvasWork += ImageWipeRenderer.Work(rendered[0].Width, rendered[0].Height, rendered.Count, wipe);
+            }
             different |= set.Regions.Regions.Count > 0;
             html.Append("<tr data-left-frame=\""); html.Frame(a?.Number);
             html.Append("\" data-right-frame=\""); html.Frame(b?.Number);
@@ -116,6 +126,26 @@ internal static class ImageReport
         catch (Exception error) { preparation?.RecordFailure(error); throw; }
     }
 
+    private static void PreflightWipe(ImageComparisonEngine.ReportInput input,
+        IReadOnlyList<ImageOrientation>? orientations, IReadOnlyList<ImageOffset>? offsets, int count, CancellationToken token)
+    {
+        var positions = ImageOffset.Validate(offsets, input.Images.Count); var wipe = input.Wipe!; long work = 0;
+        for (var page = 1; page <= count; page++)
+        {
+            token.ThrowIfCancellationRequested(); var width = 0; var height = 0;
+            for (var pane = 0; pane < input.Images.Count; pane++)
+            {
+                var size = input.Images[pane].GetDimensions(Math.Min(page, input.Images[pane].FrameCount));
+                var swap = orientations?[pane].SwapsDimensions == true;
+                width = Math.Max(width, checked((swap ? size.Height : size.Width) + positions[pane].X));
+                height = Math.Max(height, checked((swap ? size.Width : size.Height) + positions[pane].Y));
+            }
+            wipe = wipe.Clamp(width, height);
+            work = checked(work + (long)width * height * (input.Images.Count + 1) + ImageWipeRenderer.Work(width, height, input.Images.Count, wipe));
+            if (work > ImageComparisonEngine.MaximumDecodeWork) throw new InvalidOperationException("画像ワイプを含む描画作業量が256Mピクセルを超えます。");
+        }
+    }
+
     private static ImageReportPreparation PrepareAll(ImageComparisonEngine.ReportInput input,
         IReadOnlyList<ImageOrientation>? orientations, IReadOnlyList<ImageOffset>? offsets, int count, CancellationToken token)
     {
@@ -123,6 +153,7 @@ internal static class ImageReport
         try
         {
             long alignmentWork = 0, canvasWork = 0;
+            var wipe = input.Wipe;
             for (var page = 1; page <= count; page++)
             {
                 token.ThrowIfCancellationRequested();
@@ -132,6 +163,13 @@ internal static class ImageReport
                     ImageComparisonEngine.MaximumDecodeWork - canvasWork);
                 alignmentWork = checked(alignmentWork + prepared.AlignmentWork);
                 canvasWork = checked(canvasWork + prepared.CanvasWork);
+                if (wipe is not null)
+                {
+                    var canvas = ImageOffset.Canvas(prepared.Frames, ImageOffset.Validate(offsets, input.Images.Count));
+                    wipe = wipe.Clamp(canvas.Width, canvas.Height);
+                    canvasWork = checked(canvasWork + ImageWipeRenderer.Work(canvas.Width, canvas.Height, input.Images.Count, wipe));
+                    if (canvasWork > ImageComparisonEngine.MaximumDecodeWork) throw new InvalidOperationException("画像ワイプを含む描画作業量が256Mピクセルを超えます。");
+                }
                 preparation.Add(prepared);
             }
             preparation.Rewind();

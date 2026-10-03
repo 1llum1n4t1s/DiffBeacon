@@ -24,8 +24,35 @@ internal static class HeadlessSelfTest
         Directory.CreateDirectory(output);
         var assertions = new List<(string Name, bool Passed, string Detail)>();
         MainWindow? window = null;
+        var progressClock = Stopwatch.StartNew();
+        var progressStages = new List<(string Stage, string State, long ElapsedMs, int Passed, int Failed)>();
+        long stageStart = 0;
+        void Progress(string stage, string state)
+        {
+            var elapsed = state == "start" ? 0 : progressClock.ElapsedMilliseconds - stageStart;
+            if (state == "start") stageStart = progressClock.ElapsedMilliseconds;
+            progressStages.Add((stage, state, elapsed, assertions.Count(item => item.Passed), assertions.Count(item => !item.Passed)));
+            Console.WriteLine($"self-test {stage} {state} elapsed={elapsed}ms passed={progressStages[^1].Passed} failed={progressStages[^1].Failed}");
+            var progressTemporary = Path.Combine(artifactOutput, ".self-test-progress-" + Guid.NewGuid().ToString("N") + ".tmp");
+            try
+            {
+                using (var file = new FileStream(progressTemporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.WriteThrough))
+                {
+                    using (var writer = new Utf8JsonWriter(file, new JsonWriterOptions { Indented = true }))
+                    {
+                        writer.WriteStartObject(); writer.WriteNumber("totalElapsedMs", progressClock.ElapsedMilliseconds); writer.WriteStartArray("stages");
+                        foreach (var item in progressStages) { writer.WriteStartObject(); writer.WriteString("stage", item.Stage); writer.WriteString("state", item.State); writer.WriteNumber("elapsedMs", item.ElapsedMs); writer.WriteNumber("passed", item.Passed); writer.WriteNumber("failed", item.Failed); writer.WriteEndObject(); }
+                        writer.WriteEndArray(); writer.WriteEndObject(); writer.Flush();
+                    }
+                    file.Flush(true);
+                }
+                File.Move(progressTemporary, Path.Combine(artifactOutput, "self-test-progress.json"), overwrite: true);
+            }
+            finally { if (File.Exists(progressTemporary)) File.Delete(progressTemporary); }
+        }
         try
         {
+            Progress("initial-ui", "start");
             AppBuilder.Configure<BeaconApplication>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).WithInterFont().SetupWithoutStarting();
             var left = Path.Combine(output, "left.txt"); var right = Path.Combine(output, "right.txt");
             File.WriteAllText(left, "title\r\nleft value\r\ntail\r\n", new UTF8Encoding(false));
@@ -350,17 +377,44 @@ internal static class HeadlessSelfTest
             Check("synchronized image navigation returns to shared first page", imagePanel.LeftFrame == 1 && imagePanel.RightFrame == 1 && imagePanel.DifferentPixels == 0);
             Check("image frame selection preserves original files", animatedLeftBytes.SequenceEqual(File.ReadAllBytes(animatedLeft))
                 && animatedRightBytes.SequenceEqual(File.ReadAllBytes(animatedRight)));
+            Progress("initial-ui", "complete");
+            Progress("HeadlessImageHighlightChecks", "start");
             HeadlessImageHighlightChecks.Run(pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageHighlightChecks", "complete");
+            Progress("HeadlessImageCopyChecks", "start");
             HeadlessImageCopyChecks.Run(window, pane, output, artifactOutput, Pump, Check, Screenshot);
+            Progress("HeadlessImageCopyChecks", "complete");
+            Progress("HeadlessApngChecks", "start");
             HeadlessApngChecks.Run(pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessApngChecks", "complete");
+            Progress("HeadlessTiffChecks", "start");
             HeadlessTiffChecks.Run(pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessTiffChecks", "complete");
+            Progress("HeadlessImageProjectChecks", "start");
             HeadlessImageProjectChecks.Run(pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageProjectChecks", "complete");
+            Progress("HeadlessImageTransformChecks", "start");
             HeadlessImageTransformChecks.Run(pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageTransformChecks", "complete");
+            Progress("HeadlessImageOffsetChecks", "start");
             HeadlessImageOffsetChecks.Run(pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageOffsetChecks", "complete");
+            Progress("HeadlessImageInsertionChecks", "start");
             HeadlessImageInsertionChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageInsertionChecks", "complete");
+            Progress("HeadlessImageInsertionHighlightChecks", "start");
             HeadlessImageInsertionHighlightChecks.Run(pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageInsertionHighlightChecks", "complete");
+            Progress("HeadlessImageRectangleChecks", "start");
             HeadlessImageRectangleChecks.Run(window, pane, artifactOutput, Pump, Check, Screenshot);
+            Progress("HeadlessImageRectangleChecks", "complete");
+            Progress("HeadlessImageDragChecks", "start");
             HeadlessImageDragChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageDragChecks", "complete");
+            Progress("HeadlessImageWipeChecks", "start");
+            HeadlessImageWipeChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageWipeChecks", "complete");
+            Progress("providers-document-editing", "start");
             pane.BasePath.Text = "";
             pane.DiscardChanges();
             var xmlLeft = Path.Combine(output, "left.xml"); var xmlRight = Path.Combine(output, "right.xml");
@@ -493,6 +547,8 @@ internal static class HeadlessSelfTest
                 foreach (var createdPath in new[] { largeLeft, largeRight })
                     if (Path.GetFullPath(createdPath).StartsWith(output + Path.DirectorySeparatorChar, StringComparison.Ordinal) && File.Exists(createdPath)) File.Delete(createdPath);
             }
+            Progress("providers-document-editing", "complete");
+            Progress("workspace-reports-packaging", "start");
             window.AddSession();
             Check("new comparison tab is independent", window.ActivePane != pane && window.ActivePane.LeftEditor.Text == "");
             var workspaceLeft = Path.Combine(output, "workspace-left.txt"); var workspaceRight = Path.Combine(output, "workspace-right.txt");
@@ -754,6 +810,8 @@ internal static class HeadlessSelfTest
                 && scoreHtml.Contains("C one two three four D", StringComparison.Ordinal)
                 && System.Text.RegularExpressions.Regex.IsMatch(scoreHtml, "data-side=\"left\" data-row=\"1\" data-aligned-row=\"2\""));
             Screenshot("table-word-score-three.png");
+            Progress("workspace-reports-packaging", "complete");
+            Progress("table-editing", "start");
             var decodedLeft = Path.Combine(output, "table-decoded-left.csv");
             var decodedBase = Path.Combine(output, "table-decoded-base.csv");
             var decodedRight = Path.Combine(output, "table-decoded-right.csv");
@@ -917,7 +975,11 @@ internal static class HeadlessSelfTest
             Check("table sparse search visits actual cells and keeps source intact", tablePanel.Comparison.Documents[0].SourceText == File.ReadAllText(sparsePath),
                 $"elapsedMilliseconds={sparseTimer.ElapsedMilliseconds};actualCellsPerPane=20000;rectangularCoordinates=200020000");
             Screenshot("table-sparse-paged.png");
+            Progress("table-editing", "complete");
+            Progress("HeadlessTableSearchTests", "start");
             HeadlessTableSearchTests.Run(window, reportPane, output, Check, Screenshot, Pump);
+            Progress("HeadlessTableSearchTests", "complete");
+            Progress("finalize", "complete");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }

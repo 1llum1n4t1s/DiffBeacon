@@ -59,6 +59,8 @@ public static partial class SpecializedViews
             // 支持枠は画像extentの外にも描く。selection/floating/Resizeの既存clipは維持する。
             var previewLayer = new Canvas { Name = "ImageOffsetPreviewLayer" + pane, IsHitTestVisible = false, ClipToBounds = false };
             previewLayer.Children.Add(preview); _offsetPreviewBorders.Add(preview);
+            var guide = new Border { Name = "ImageWipeGuide" + pane, Background = Brushes.Red, IsVisible = false, IsHitTestVisible = false };
+            previewLayer.Children.Add(guide); _wipeGuides.Add(guide);
             var handles = new[] { "Right", "Bottom", "Corner" }.Select(name => new Border
             { Name = "ImageResize" + name + pane, BorderBrush = Brushes.DodgerBlue, BorderThickness = new Thickness(1), Background = Brushes.LightSteelBlue, Opacity = .6 }).ToArray();
             foreach (var handle in handles) layer.Children.Add(handle);
@@ -110,7 +112,7 @@ public static partial class SpecializedViews
                         _draggingSelection = true;
                     else if (configuredMode == ImageDragMode.RectangleSelect && RectangleReady)
                     { _rectangleAnchor = point; _draggingRectangle = true; SelectRectangle(pane, Rectangle(point, point)); }
-                    else if (configuredMode is ImageDragMode.Move or ImageDragMode.AdjustOffset)
+                    else if (configuredMode is ImageDragMode.Move or ImageDragMode.AdjustOffset or ImageDragMode.VerticalWipe or ImageDragMode.HorizontalWipe)
                     {
                         if (!CanContinueRectangleDrag(e.Pointer, pressSerial)) { CancelStaleRectangleDrag(pressSerial); return; }
                         StartDisplayDrag(pane, configuredMode, e);
@@ -181,7 +183,7 @@ public static partial class SpecializedViews
                 var shortcut = (e.KeyModifiers & (KeyModifiers.Control | KeyModifiers.Meta)) != 0;
                 Func<Task>? command = e.Key switch
                 {
-                    Key.Escape => () => { CancelRectangleInteraction(preservePointerPress: _displayDragPane >= 0); return Task.CompletedTask; },
+                    Key.Escape => () => { CancelRectangleInteraction(preservePointerPress: _displayDragPane >= 0); _wipeGuideVisible = false; UpdateWipeGuide(); return Task.CompletedTask; },
                     Key.Enter when HasFloatingImage => () => CommitFloatingAsync(),
                     Key.Delete when _rectangles[pane] is not null => () => DeleteRectangleAsync(),
                     Key.A when shortcut => () => { SelectAllRectangle(pane); return Task.CompletedTask; },

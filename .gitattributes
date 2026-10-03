@@ -61,3 +61,6 @@ tests/Fixtures/ImageWipes/probe-adapter.cpp -text whitespace=cr-at-eol
 # 重ね合わせ原本の全BGRA採取データとadapterは固定SHAを維持する。
 tests/Fixtures/ImageOverlays/winimerge-image-overlay-golden.json.gz -text -whitespace
 tests/Fixtures/ImageOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
+# 時刻依存overlay原本のclock mock核と全BGRA採取データを保護する。
+tests/Fixtures/ImageTemporalOverlays/golden.json.gz -text -whitespace
+tests/Fixtures/ImageTemporalOverlays/probe-adapter.cpp -text whitespace=cr-at-eol

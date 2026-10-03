@@ -62,7 +62,7 @@ Native AOT の Windows 発行には Visual Studio の C++ ビルドツールと 
 ./build/Publish.ps1 -Rid osx-arm64
 ```
 
-発行物は `artifacts/publish/<RID>` に生成する。発行スクリプトはこの RID の既存生成物を削除してから再生成する。実行ファイルと同じホストアーキテクチャでは自己検証も実行し、結果を `artifacts/verification/<RID>` に残す。自己検証のプロセス制限は180秒で、超過時は子プロセスも終了して発行失敗にする。Intel MacのGitHub runnerでAPNG原画40件まで確認できた後、後続の表UI検証中に旧60秒制限へ到達したため延長した。全検証項目・合否条件は維持し、改定後の同構成の成功はCI実測まで未確認とする。クロスアーキテクチャでは自己検証を省略した理由を manifest に記録する。`-SkipVerification` は発行だけを行う明示指定である。
+発行物は `artifacts/publish/<RID>` に生成する。発行スクリプトはこの RID の既存生成物を削除してから再生成する。実行ファイルと同じホストアーキテクチャでは自己検証も実行し、結果を `artifacts/verification/<RID>` に残す。自己検証全体の制限は既定600秒で、`-VerificationTimeoutSeconds`に1～3600秒を指定できる。超過時は子プロセスも終了して発行失敗にする。実行時間と制限をmanifestへ記録する。個々のUI操作の30秒制限と全検証項目・合否条件は維持する。自己検証は各段階の開始・終了、経過時間と成功／失敗数をconsoleと`self-test-progress.json`へ記録する。同じディレクトリの一時ファイルをflushして置換するため、強制終了中でも直前の完成した進捗を保持する。最終`ui-report.json`がないtimeoutを全UI成功として扱わない。画像ドラッグ対応SHAのMac ARM64 runnerは最後の表検索まで進んで旧180秒制限に達し、前回の同構成の成功も約178秒だったため、検証全体の枠を広げた。改定後のMac完走は次の変更SHAのCI実測まで未確認とする。クロスアーキテクチャでは自己検証を省略した理由を manifest に記録する。`-SkipVerification` は発行だけを行う明示指定である。
 
 macOS の成果物は `DiffBeacon.app` と、実行権限を保持する `DiffBeacon.app.tar.gz`。GitHub artifact をダウンロードした場合は tar を展開して起動する。署名・公証・配布はこのスクリプトの工程に含めない。
 

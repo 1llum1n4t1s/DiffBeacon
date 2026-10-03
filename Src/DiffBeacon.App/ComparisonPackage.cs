@@ -18,6 +18,10 @@ public static class ComparisonPackage
 
     public static Task CreateAsync(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
         IReadOnlyList<int>? selectedIndices = null, CancellationToken token = default, string? sourceProject = null)
+        => CreateWithImageDisplaysAsync(workspace, output, options, selectedIndices, token, sourceProject, null);
+
+    internal static Task CreateWithImageDisplaysAsync(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
+        IReadOnlyList<int>? selectedIndices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplaySnapshot>? wipes)
     {
         // UI の値を await 前に確定し、編集中の配列・辞書をバックグラウンドで共有しない。
         WorkspaceStore.SerializeWorkspace(workspace);
@@ -28,11 +32,14 @@ public static class ComparisonPackage
             throw new ArgumentException("包装する比較を重複なく1件以上選択してください。");
         if (!options.IncludeDocuments && !options.IncludeReport && !options.IncludePatch && !options.IncludeProject)
             throw new ArgumentException("文書・レポート・パッチ・プロジェクトのいずれかを含めてください。");
-        return Task.Run(() => Create(clone, output, options, indices, token, sourceProject), token);
+        var capturedWipes = wipes?.ToDictionary(pair => pair.Key, pair => pair.Value);
+        if (capturedWipes is not null) foreach (var display in capturedWipes.Values)
+        { display.Wipe.Validate(); if (display.SelectedDiffIndex < -1) throw new ArgumentException("選択領域の番号が不正です。"); }
+        return Task.Run(() => Create(clone, output, options, indices, token, sourceProject, capturedWipes), token);
     }
 
     private static void Create(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
-        int[] indices, CancellationToken token, string? sourceProject)
+        int[] indices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplaySnapshot>? wipes)
     {
         token.ThrowIfCancellationRequested();
         var target = ValidateLocal(output);
@@ -184,7 +191,8 @@ public static class ComparisonPackage
                             settings.Threshold, settings.ReportAllFrames ? null : settings.FrameNumbers(middleImage is not null),
                             ShowDifferences: settings.ShowDifferences, Orientations: settings.Orientations(middleImage is not null), BlockSize: settings.BlockSize,
                             Offsets: settings.Offsets(middleImage is not null), InsertionDeletionMode: settings.InsertionDeletionMode,
-                            HighlightAlpha: settings.HighlightAlpha),
+                            HighlightAlpha: settings.HighlightAlpha, Wipe: wipes?.GetValueOrDefault(indices[i])?.Wipe,
+                            SelectedDiffIndex: wipes?.GetValueOrDefault(indices[i])?.SelectedDiffIndex ?? -1),
                             middleImage is null ? [project.LeftDescription ?? left.Name, project.RightDescription ?? right.Name]
                                 : [project.LeftDescription ?? left.Name, project.BaseDescription ?? middleInput!.Name, project.RightDescription ?? right.Name], token);
                     }

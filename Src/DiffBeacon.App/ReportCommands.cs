@@ -14,14 +14,17 @@ internal static class ReportCommands
         double? highlightAlpha = null;
         int? insertionDeletionMode = null;
         ImageOffset? leftOffset = null, middleOffset = null, rightOffset = null;
+        string? wipeMode = null, wipePosition = null;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var optionIndex = 3; optionIndex < args.Length; optionIndex += 2)
         {
             var option = args[optionIndex];
             if (option is not ("--entry" or "--left-frame" or "--middle-frame" or "--right-frame" or "--threshold" or "--highlight-alpha"
-                or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode") || !seen.Add(option)
+                or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode" or "--wipe-mode" or "--wipe-position") || !seen.Add(option)
                 || optionIndex + 1 >= args.Length)
                 throw new ArgumentException(usage);
+            if (option == "--wipe-mode") { wipeMode = args[optionIndex + 1]; continue; }
+            if (option == "--wipe-position") { wipePosition = args[optionIndex + 1]; continue; }
             if (option == "--insertion-deletion-mode")
             { insertionDeletionMode = ImageComparisonEngine.ParseInsertionDeletionMode(args[optionIndex + 1]); continue; }
             if (option.EndsWith("-offset", StringComparison.Ordinal))
@@ -54,6 +57,7 @@ internal static class ReportCommands
             }
         }
         if (leftFrame.HasValue != rightFrame.HasValue) throw new ArgumentException("--left-frame と --right-frame は両方指定してください。");
+        var wipe = ImageWipeSnapshot.Parse(wipeMode, wipePosition);
         using var cancellation = new CancellationTokenSource();
         ConsoleCancelEventHandler handler = (_, ev) => { ev.Cancel = true; cancellation.Cancel(); };
         Console.CancelKeyPress += handler;
@@ -61,8 +65,8 @@ internal static class ReportCommands
         {
             var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], cancellation.Token);
             var entry = index ?? workspace.ActiveEntryIndex;
-            await ProjectReport.ExportAsync(workspace, entry, args[2], args[1], cancellation.Token, leftFrame, rightFrame, threshold, middleFrame,
-                leftOffset, middleOffset, rightOffset, insertionDeletionMode, highlightAlpha);
+            await ProjectReport.ExportWithWipeAsync(workspace, entry, args[2], args[1], cancellation.Token, leftFrame, rightFrame, threshold, middleFrame,
+                leftOffset, middleOffset, rightOffset, insertionDeletionMode, highlightAlpha, wipe);
             CommandLine.WriteJson(writer => { writer.WriteString("output", Path.GetFullPath(args[2])); writer.WriteNumber("entry", entry + 1); });
             return 0;
         }

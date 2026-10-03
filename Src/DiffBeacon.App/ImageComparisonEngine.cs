@@ -80,7 +80,7 @@ internal static class ImageComparisonEngine
     internal sealed record ReportInput(IReadOnlyList<Snapshot> Images, double Threshold, IReadOnlyList<int>? FrameNumbers,
         int SelectedDiffIndex = -1, bool ShowDifferences = true, IReadOnlyList<DecodedFrame>? EditedFrames = null,
         IReadOnlyList<ImageOrientation>? Orientations = null, int BlockSize = 8, IReadOnlyList<ImageOffset>? Offsets = null,
-        int InsertionDeletionMode = 0, double HighlightAlpha = .7);
+        int InsertionDeletionMode = 0, double HighlightAlpha = .7, ImageWipeSnapshot? Wipe = null);
 
     internal static async Task<Snapshot> OpenAsync(string path, CancellationToken token)
     {
@@ -282,10 +282,11 @@ internal static class ImageComparisonEngine
     internal static ComparisonResult Compare(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers,
         double threshold, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
         IReadOnlyList<ImageOffset>? offsets = null, int insertionDeletionMode = 0,
-        long maximumAlignmentWork = ImageLineDiffer.MaximumWork, double highlightAlpha = .7)
+        long maximumAlignmentWork = ImageLineDiffer.MaximumWork, double highlightAlpha = .7, ImageWipeSnapshot? wipe = null)
     {
         ValidateComparison(images, numbers, threshold, orientations, offsets);
         ValidateHighlightAlpha(highlightAlpha);
+        wipe?.Validate();
         ValidateInsertionDeletionMode(insertionDeletionMode);
         ValidateAlignmentWork(maximumAlignmentWork);
         var selected = numbers is not null;
@@ -308,6 +309,12 @@ internal static class ImageComparisonEngine
             var middle = images.Count == 3 ? comparison.Frames[1] : null;
             var rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, blockSize: blockSize, highlightAlpha: highlightAlpha, token: token,
                 alignment: comparison.Alignment);
+            if (wipe is not null)
+            {
+                wipe = wipe.Clamp(rendered[0].Width, rendered[0].Height);
+                rendered = ImageWipeRenderer.Render(rendered, wipe, token, MaximumDecodeWork - canvasWork);
+                canvasWork += ImageWipeRenderer.Work(rendered[0].Width, rendered[0].Height, rendered.Count, wipe);
+            }
             frames.Add(new(a.Number, b.Number, a.Width, a.Height, b.Width, b.Height,
                 comparison.Pixels.DifferentPixels, comparison.Pixels.TotalPixels, PixelHash(a.Pixels, token), PixelHash(b.Pixels, token),
                 middle?.Number, middle?.Width, middle?.Height, middle is null ? null : PixelHash(middle.Pixels, token),

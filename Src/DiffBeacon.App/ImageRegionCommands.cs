@@ -17,15 +17,18 @@ internal static class ImageRegionCommands
         var insertionDeletionMode = 0;
         var offsets = new ImageOffset[count];
         int? leftFrame = null, middleFrame = null, rightFrame = null;
+        string? wipeMode = null, wipePosition = null;
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var index = optionStart; index < args.Length; index += 2)
         {
             var option = args[index];
             if (option is not ("--block-size" or "--threshold" or "--left-frame" or "--middle-frame" or "--right-frame"
                 or "--highlight-alpha" or "--selected-region" or "--insertion-deletion-mode"
-                or "--left-offset" or "--middle-offset" or "--right-offset")
+                or "--left-offset" or "--middle-offset" or "--right-offset" or "--wipe-mode" or "--wipe-position")
                 || !seen.Add(option) || index + 1 >= args.Length)
                 throw new ArgumentException($"未知・重複または値が不足した画像領域オプションです: {option}");
+            if (option == "--wipe-mode") { wipeMode = args[index + 1]; continue; }
+            if (option == "--wipe-position") { wipePosition = args[index + 1]; continue; }
             if (option == "--insertion-deletion-mode")
             { insertionDeletionMode = ImageComparisonEngine.ParseInsertionDeletionMode(args[index + 1]); continue; }
             if (option.EndsWith("-offset", StringComparison.Ordinal))
@@ -71,6 +74,7 @@ internal static class ImageRegionCommands
         if (count == 2 && middleFrame.HasValue || selected && (!leftFrame.HasValue || !rightFrame.HasValue || count == 3 && !middleFrame.HasValue))
             throw new ArgumentException("選択するフレーム番号は各入力すべてに指定してください。中央は三者比較だけです。");
         var numbers = count == 2 ? new[] { leftFrame ?? 1, rightFrame ?? 1 } : [leftFrame ?? 1, middleFrame ?? 1, rightFrame ?? 1];
+        var wipe = ImageWipeSnapshot.Parse(wipeMode, wipePosition);
         using var cancel = new CancellationTokenSource();
         ConsoleCancelEventHandler handler = (_, e) => { e.Cancel = true; cancel.Cancel(); };
         Console.CancelKeyPress += handler;
@@ -102,12 +106,15 @@ internal static class ImageRegionCommands
                 if ((long)((canvas.Width + blockSize - 1) / blockSize) * ((canvas.Height + blockSize - 1) / blockSize) > 262_144)
                     throw new InvalidOperationException("開発用の領域JSONは262,144ブロックまでです。");
                 var regionResult = ImageRegionDiffer.Compare(views, blockSize, threshold, token, offsets);
-                var rendered = render ? ImageRegionRenderer.Render(views, regionResult, blockSize, highlightAlpha, selectedDiffIndex, token,
+                var rendered = render || wipe is not null ? ImageRegionRenderer.Render(views, regionResult, blockSize, highlightAlpha, selectedDiffIndex, token,
                     alignment: alignment) : null;
+                if (wipe is not null && rendered is not null)
+                    rendered = ImageWipeRenderer.Render(rendered, wipe, token, ImageComparisonEngine.MaximumDecodeWork - (long)canvas.Width * canvas.Height * (count + 1));
                 return (Result: regionResult, Rendered: rendered);
             }, token);
             var result = comparison.Result;
-            using var content = new MemoryStream();
+            // 新wipe全BGRAだけを制限し、従来の領域JSON出力契約は維持する。
+            using var content = wipe is null ? new MemoryStream() : new BoundedWipeOutput(token);
             using (var writer = new Utf8JsonWriter(content))
             {
                 writer.WriteStartObject();
@@ -134,7 +141,9 @@ internal static class ImageRegionCommands
                     {
                         token.ThrowIfCancellationRequested(); writer.WriteStartObject();
                         writer.WriteNumber("frame", frame.Number); writer.WriteNumber("width", frame.Width); writer.WriteNumber("height", frame.Height);
-                        writer.WriteString("pixelSha256", ImageComparisonEngine.PixelHash(frame.Pixels, token)); writer.WriteEndObject();
+                        writer.WriteString("pixelSha256", ImageComparisonEngine.PixelHash(frame.Pixels, token));
+                        if (wipe is not null) writer.WriteBase64String("bgraBase64", frame.Pixels);
+                        writer.WriteEndObject();
                     }
                     writer.WriteEndArray();
                 }
@@ -163,5 +172,17 @@ internal static class ImageRegionCommands
             return result.Regions.Count == 0 ? 0 : 1;
         }
         finally { Console.CancelKeyPress -= handler; }
+    }
+    private sealed class BoundedWipeOutput(CancellationToken token) : MemoryStream
+    {
+        private void Check(int count)
+        {
+            token.ThrowIfCancellationRequested();
+            if (count > ProjectReport.MaximumBytes - Length)
+                throw new InvalidOperationException("ワイプ診断JSONは32 MiBまでです。");
+        }
+        public override void Write(byte[] buffer, int offset, int count) { Check(count); base.Write(buffer, offset, count); }
+        public override void Write(ReadOnlySpan<byte> buffer) { Check(buffer.Length); base.Write(buffer); }
+        public override void WriteByte(byte value) { Check(1); base.WriteByte(value); }
     }
 }

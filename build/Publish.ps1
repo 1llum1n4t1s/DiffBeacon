@@ -4,7 +4,9 @@ param(
     [Alias('Rid')]
     [ValidateSet('win-x64', 'win-arm64', 'osx-x64', 'osx-arm64')]
     [string] $RuntimeIdentifier,
-    [switch] $SkipVerification
+    [switch] $SkipVerification,
+    [ValidateRange(1, 3600)]
+    [int] $VerificationTimeoutSeconds = 600
 )
 
 $ErrorActionPreference = 'Stop'
@@ -84,16 +86,22 @@ try {
     $hostArchitecture = [Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
     $targetArchitecture = $RuntimeIdentifier.Split('-')[1]
     $verificationStatus = 'skipped by request'
+    $verificationSeconds = $null
     if (-not $SkipVerification) {
         if ($hostArchitecture -eq $targetArchitecture) {
             New-Item -ItemType Directory -Path $verificationPath -Force | Out-Null
             $startOptions = @{ FilePath = $executablePath; ArgumentList = @('--self-test', ('"' + $verificationPath + '"')); PassThru = $true }
             if ($IsWindows) { $startOptions.WindowStyle = 'Hidden' }
+            Write-Host "ネイティブ自己検証: $RuntimeIdentifier（制限 $VerificationTimeoutSeconds 秒）"
+            $verificationTimer = [Diagnostics.Stopwatch]::StartNew()
             $process = Start-Process @startOptions
-            if (-not $process.WaitForExit(180000)) {
+            if (-not $process.WaitForExit($VerificationTimeoutSeconds * 1000)) {
                 $process.Kill($true)
-                throw 'ネイティブ自己検証が制限時間 180 秒を超えました。'
+                throw "ネイティブ自己検証が制限時間 $VerificationTimeoutSeconds 秒を超えました。進捗は $verificationPath を確認してください。"
             }
+            $verificationTimer.Stop()
+            $verificationSeconds = $verificationTimer.Elapsed.TotalSeconds
+            Write-Host "ネイティブ自己検証の実行時間: $verificationSeconds 秒"
             if ($process.ExitCode -ne 0) { throw "ネイティブ自己検証に失敗しました: $($process.ExitCode)" }
             $verificationStatus = 'passed'
         } else {
@@ -109,6 +117,8 @@ try {
         sdkVersion = ($sdkVersion | Out-String).Trim()
         nativeAot = $true
         selfTest = $verificationStatus
+        verificationTimeoutSeconds = $VerificationTimeoutSeconds
+        verificationSeconds = $verificationSeconds
         executable = [IO.Path]::GetRelativePath($repoRoot, $executablePath)
         files = $files
     } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $outputPath 'publish-manifest.json') -Encoding utf8NoBOM

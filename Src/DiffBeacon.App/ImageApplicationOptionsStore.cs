@@ -44,8 +44,8 @@ internal sealed class ImageApplicationOptionsStore
     internal void RemoveOutputGuard(Action<string> guard) => _outputGuards.Remove(guard);
     internal static void ValidateMode(ImageDragMode mode)
     {
-        if (mode is not (ImageDragMode.None or ImageDragMode.Move or ImageDragMode.AdjustOffset or ImageDragMode.RectangleSelect))
-            throw new InvalidDataException("画像ドラッグモードは操作なし・表示を移動・画像位置を調整・矩形選択から指定してください。ワイプはまだ使用できません。");
+        if (mode is not (ImageDragMode.None or ImageDragMode.Move or ImageDragMode.AdjustOffset or ImageDragMode.VerticalWipe or ImageDragMode.HorizontalWipe or ImageDragMode.RectangleSelect))
+            throw new InvalidDataException("画像ドラッグモードは0～5から指定してください。");
     }
 
     internal bool Reload()
