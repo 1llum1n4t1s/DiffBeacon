@@ -38,8 +38,8 @@ public static class BuiltinComparisonProviders
                 "web-source" => "HTTPページのHTMLソース: GETで取得した応答本文を比較。ログイン・JavaScript実行・ブラウザー描画なし。",
                 "web-text" => "HTTPページの静的テキスト: GETで取得して本文抽出。ログイン・CSS・JavaScript・ブラウザー描画なし。",
                 "office" => "Office Open XML: DOCX本文・ヘッダー等、PPTXスライド本文、XLSXセル値・数式・キャッシュ値。書式・画像・描画・数式再計算なし。",
-                "tar" => "tar/tar.gz: 展開せず名前・型・リンク先・サイズ・SHA-256を比較。時刻・所有者・権限・格納順は無視。リンク先は参照しません。",
-                _ => "tar/tar.gzメタデータ: 内容に加え所有者番号・権限・更新日時も比較。リンク先は参照しません。"
+                "tar" => "tar/tar.gz/tar.bz2/tar.Z: 展開せず名前・型・リンク先・サイズ・SHA-256を比較。時刻・所有者・権限・格納順は無視。リンク先は参照しません。",
+                _ => "tar/tar.gz/tar.bz2/tar.Zメタデータ: 内容に加え所有者番号・権限・更新日時も比較。リンク先は参照しません。"
             };
             return new ProviderResult($"{(left == right ? "一致" : "差分あり")} · {description}", left, right);
         }
@@ -49,7 +49,7 @@ public static class BuiltinComparisonProviders
             if (Id.StartsWith("web-", StringComparison.Ordinal))
             { var html = await FetchAsync(path, token); return Id == "web-text" ? HtmlText(html, token) : NormalizeLines(html); }
             if (Id == "office") return await OfficeAsync(path, token);
-            if (Id is "tar" or "tar-metadata") return await TarAsync(path, Id == "tar-metadata", token);
+            if (Id is "tar" or "tar-metadata") return await Task.Run(() => TarAsync(path, Id == "tar-metadata", token), token);
             var bytes = await ReadFileAsync(path, Id == "xml" ? XmlLimit : TextLimit, token);
             if (Id == "xml") return CanonicalXml(ParseXml(bytes), token);
             var text = Decode(bytes, null);
@@ -414,14 +414,15 @@ public static class BuiltinComparisonProviders
     private static async Task<string> TarAsync(string path, bool metadata, CancellationToken token)
     {
         await using var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024, true);
-        var compressed = path.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".tgz", StringComparison.OrdinalIgnoreCase);
-        using var gzip = compressed ? new GZipStream(file, CompressionMode.Decompress, true) : null;
-        using var bounded = new BoundedReadStream(gzip ?? (Stream)file, ArchiveLimit, token);
-        using var reader = new TarReader(bounded, true);
+        if (file.Length > ArchiveLimit) throw new InvalidDataException("tar入力が1 GiBを超えました。");
+        using var session = ManagedArchive.OpenTarSession(file, path, ArchiveLimit, EntryLimit, 100_000, token);
+        var reader = session.Reader;
         var rows = new SortedDictionary<string, string>(StringComparer.Ordinal); long contentTotal = 0;
         while (await reader.GetNextEntryAsync(false, token) is { } entry)
         {
             token.ThrowIfCancellationRequested();
+            if (entry.EntryType != TarEntryType.GlobalExtendedAttributes && entry.Length != session.EntryLength)
+                throw new InvalidDataException("TARの補助metadataとヘッダーのサイズが一致しません。");
             if (rows.Count >= 100_000 || entry.Length > EntryLimit || contentTotal > ArchiveLimit - entry.Length) throw new InvalidDataException("tarは10万エントリ、各256 MiB、非圧縮合計1 GiBまでです。");
             var hashText = "—"; long read = 0;
             if (entry.DataStream is { } data)
@@ -437,19 +438,7 @@ public static class BuiltinComparisonProviders
             if (metadata) row += $"\tmode={Convert.ToString((int)entry.Mode, 8)}\tuid={entry.Uid}\tgid={entry.Gid}\tmtime={entry.ModificationTime.UtcDateTime:O}";
             if (!rows.TryAdd(entry.Name, row)) throw new InvalidDataException("tarに同名エントリがあります。曖昧な比較を避けるため拒否します。");
         }
+        session.CompleteRead();
         return string.Join('\n', rows.Values);
-    }
-    private sealed class BoundedReadStream(Stream inner, long limit, CancellationToken token) : Stream
-    {
-        private long _read;
-        private int Check(int count) { _read += count; if (_read > limit) throw new InvalidDataException("非圧縮tarストリームが1 GiBを超えました。"); return count; }
-        public override bool CanRead => true; public override bool CanSeek => false; public override bool CanWrite => false;
-        public override long Length => throw new NotSupportedException(); public override long Position { get => _read; set => throw new NotSupportedException(); }
-        public override int Read(byte[] buffer, int offset, int count) { token.ThrowIfCancellationRequested(); return Check(inner.Read(buffer, offset, count)); }
-        public override int Read(Span<byte> buffer) { token.ThrowIfCancellationRequested(); return Check(inner.Read(buffer)); }
-        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
-        { token.ThrowIfCancellationRequested(); return Check(await inner.ReadAsync(buffer, cancellationToken)); }
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-        public override void SetLength(long value) => throw new NotSupportedException(); public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException(); public override void Flush() { }
     }
 }

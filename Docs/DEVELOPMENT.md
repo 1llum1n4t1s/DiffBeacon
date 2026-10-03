@@ -35,12 +35,17 @@ GNU既定算法の原本参照は `pwsh -NoProfile -File build/Generate-LegacyGn
 
 必要環境は.NET 10 SDKとPowerShell 7。アーカイブE2Eの独立検証にはPython 3（CIは3.13）も使い、pipパッケージは不要。Pythonはアプリの実行・発行依存ではない。正規のソースディレクトリ名は`Src`であり、macOSでもこの大文字小文字を維持する。通常ビルドは旧C++プロジェクトやsubmoduleに依存しない。
 
+TAR.Zのwriter出力は検証専用の公式ncompressで独立に復号する。Windows／macOSの各hostで `pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local` を実行し、E2Eへ `--z-reference <生成したncompress.exeまたはncompressの絶対パス>` を渡す。Windowsは既存MSVC、macOSは既存clangを使い、固定した原本SHAとcompiler／decoderのSHA・引数・終了コードを生成先へ記録する。通常.NET build・製品起動・発行物にCやcompilerを追加しない。限定 `--tar-z-only`、第二decoderの指定、固定39原本の出典と再生成は[TAR.Z fixture](../tests/Fixtures/Archives/TarZ/README.md)を参照する。CIは全体E2Eにこの独立decoderを指定し、build proofもverification artifactへ保存する。
+
 表行対応の元関数fixtureを再採取する場合だけ、WindowsのMSVC・SDK・ICUを使う `pwsh -NoProfile -File build/Generate-LegacyLineReference.ps1` を実行する。出力は`artifacts/verification/table-line-alignment/reproduced`。元関数の抽出・buffer adapter・固定コンパイラパスと採取範囲は[fixtureの出典](../tests/Fixtures/LineAlignment/README.md)を参照する。これらはアプリの通常buildや実行依存に含めない。
 
 ```powershell
 dotnet build DiffBeacon.slnx -c Release
 dotnet run --project Src/DiffBeacon.App/DiffBeacon.App.csproj -c Release --no-build
-dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/local
+pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local
+$decoderName = if ($IsWindows) { 'ncompress.exe' } else { 'ncompress' }
+$zReference = (Resolve-Path -LiteralPath (Join-Path artifacts/z-reference/local $decoderName)).Path
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/local --z-reference $zReference
 ```
 
 E2E はアプリを別プロセスで実行し、CLI の終了コード、比較結果、マージ、パッチのバイト列、再帰比較、異常入力を確認する。`artifacts/e2e/local/assertions.json` と入力・出力・標準出力・標準エラーログが再現用成果物になる。UI は次の headless 自己検証で確認する。
@@ -76,7 +81,9 @@ $env:IlcUseEnvironmentalTools = 'true'
 macOS の成果物は `DiffBeacon.app` と、実行権限を保持する `DiffBeacon.app.tar.gz`。GitHub artifact をダウンロードした場合は tar を展開して起動する。署名・公証・配布はこのスクリプトの工程に含めない。
 
 ```powershell
-dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/native --app artifacts/publish/win-x64/DiffBeacon.exe
+pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local
+$zReference = (Resolve-Path -LiteralPath artifacts/z-reference/local/ncompress.exe).Path
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/native --app artifacts/publish/win-x64/DiffBeacon.exe --z-reference $zReference
 ```
 
 `.github/workflows/main.yml` は Windows x64 / ARM64、macOS Intel / ARM64 上でビルド、Native AOT 発行、自己検証、E2E を行い、検証成果物と発行物を保存する。CodeQL は C# の手動ビルドを解析する。ローカル結果と GitHub 上の実行結果は区別し、CI の完了は実際の run を確認する。

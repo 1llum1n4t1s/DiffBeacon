@@ -1,0 +1,452 @@
+{
+  "schema": 1,
+  "source": {
+    "commit": "03592d7a4702bb83558b6f1520c2a6a5381374c8",
+    "url": "https://raw.githubusercontent.com/vapier/ncompress/03592d7a4702bb83558b6f1520c2a6a5381374c8/compress.c",
+    "sha256": "29C5A78005921A7881D8C83EA711E826C8C87F354B4A2F47F8C474117F6646D8",
+    "licenseUrl": "https://raw.githubusercontent.com/vapier/ncompress/03592d7a4702bb83558b6f1520c2a6a5381374c8/UNLICENSE",
+    "licenseSha256": "7E12E5DF4BAE12CB21581BA157CED20E1986A0508DD10D0E8A4AB9A4CF94E85C"
+  },
+  "tools": [
+    {
+      "path": "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\archive-tar-z-ncompress-probe\\ncompress.exe",
+      "bytes": 185344,
+      "sha256": "BA68ACDDEBD2F68312837BE77BC9320B9F85AC863553AFD1E812B50A4C00E44F"
+    },
+    {
+      "path": "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\archive-tar-z-sevenzip-probe\\full-tool\\7z.exe",
+      "bytes": 577536,
+      "sha256": "6EE3C0ED0B27663C1B948AE85A7C0BB073AED1498983182F3F0DF1F6A8C30B2F"
+    },
+    {
+      "path": "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\archive-tar-z-sevenzip-probe\\full-tool\\7z.dll",
+      "bytes": 1906688,
+      "sha256": "65E4C1F855F9EF6E8F0F5DF8E3F27D9EB5F07311408639DA0A1CA0B8F4871B0D"
+    }
+  ],
+  "normalCases": [
+    {
+      "name": "small_repeated-b9.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 9,
+      "block": true,
+      "sha256": "8AFDF02C68941966890BA16ECE3EEE96C3450636BD524B1105F4873FD2FB6536"
+    },
+    {
+      "name": "entropy-b9.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 9,
+      "block": true,
+      "sha256": "D0EFB15C6619CDDF279B77060B7138468AD8396BC1FF57DFC3FFD2C9D5A8D8EB"
+    },
+    {
+      "name": "two_phase-b9.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 9,
+      "block": true,
+      "sha256": "AACA98A8AE5AA4B664C5AE5AC5FEC703C2D8F0DFF1F2FD2BBB6C447A3A4469AE"
+    },
+    {
+      "name": "small_repeated-b10.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 10,
+      "block": true,
+      "sha256": "7E36AD28F180AC48FD8882B76B9383B1614659AC0E74EACCADB2A7C5F438CFF2"
+    },
+    {
+      "name": "entropy-b10.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 10,
+      "block": true,
+      "sha256": "2D8EE89A86F7DF0BA24D8DB3AE03409890C10AFF35C71785C40B1480B41507ED"
+    },
+    {
+      "name": "two_phase-b10.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 10,
+      "block": true,
+      "sha256": "826AD44B173A84415DFF1B02F5DF816AAD1FE66FF6373F264F5F61D4A7E16653"
+    },
+    {
+      "name": "small_repeated-b11.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 11,
+      "block": true,
+      "sha256": "3C3D60121B1ADB70D456ABFCF4E29507D2FDFB612FA177159A33BAD3773F0EBE"
+    },
+    {
+      "name": "entropy-b11.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 11,
+      "block": true,
+      "sha256": "37115720AF9673E73A3BBDEAE206AD1BE8A74093AC0AC5E11BEFE9AAA30ACC3C"
+    },
+    {
+      "name": "two_phase-b11.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 11,
+      "block": true,
+      "sha256": "93A3E39CCE229DC6105F47159CEB8B56754D053ADC48FE4D3C740BA51C3FEF3B"
+    },
+    {
+      "name": "small_repeated-b12.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 12,
+      "block": true,
+      "sha256": "110C50DA428C6CEDD46239DEDD77EB5004071BDA71E7B384D0030D70403DBE76"
+    },
+    {
+      "name": "entropy-b12.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 12,
+      "block": true,
+      "sha256": "95777EEE61C649F831DB4701E4B33B49EBB9EA5FEB3ED7D84C07C6C1105F5153"
+    },
+    {
+      "name": "two_phase-b12.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 12,
+      "block": true,
+      "sha256": "0AFD5594ECCA01D2110BC9848B9C1F5AD06AAFB74157E67C13B9E7F9FF392883"
+    },
+    {
+      "name": "small_repeated-b13.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 13,
+      "block": true,
+      "sha256": "29A1570A70555D58E816E207517F7076AB5BE18411C2C5146326E5F0935C7FEA"
+    },
+    {
+      "name": "entropy-b13.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 13,
+      "block": true,
+      "sha256": "BBCDD67F86BEF92F3B0AFEC9B8A04B2D23EBCE60C6A88B83736F9E08F7448AD1"
+    },
+    {
+      "name": "two_phase-b13.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 13,
+      "block": true,
+      "sha256": "C8462A2D4AFDD970DA602C8FC74A5208CA563B4175056D78AFEEFBD2F8DBA5A5"
+    },
+    {
+      "name": "small_repeated-b14.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 14,
+      "block": true,
+      "sha256": "87DA730DD7512B3A32EDC45063BCB6E1CD3FAFEEB0B5DFF710B0FB66E7217916"
+    },
+    {
+      "name": "entropy-b14.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 14,
+      "block": true,
+      "sha256": "B8C01F578AA48387BEB2F76EF9F5C03FED746E53094C7E27DDE1F610FEF5BB52"
+    },
+    {
+      "name": "two_phase-b14.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 14,
+      "block": true,
+      "sha256": "B8A31846AED13796A39528EB2BFF295D86223EEC002337C98185C89B09514EBE"
+    },
+    {
+      "name": "small_repeated-b15.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 15,
+      "block": true,
+      "sha256": "8C93CE0C1D989D9D3F565226AFB27A17DE5F08E0C0039E179C531CCD3DCD7185"
+    },
+    {
+      "name": "entropy-b15.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 15,
+      "block": true,
+      "sha256": "6D8F36E16CFDCA7CF06A8EB72A8008AAA9D85E4936B27A16D39F436B7F19F772"
+    },
+    {
+      "name": "two_phase-b15.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 15,
+      "block": true,
+      "sha256": "BC0EFCD621F0F1409FBE02996ACE64E6B10E6DC3BD59803B1AA14317C0F88607"
+    },
+    {
+      "name": "small_repeated-b16.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 16,
+      "block": true,
+      "sha256": "BC993E3074A0F2A6E70F8E7D546A874898BA04B0B2D7D08291B64D0E4E733E3F"
+    },
+    {
+      "name": "entropy-b16.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 16,
+      "block": true,
+      "sha256": "06ED4E1D921128E40CD641D1401DE2B1DB1E2564F2C8592FCA5F4C56F74CBB54"
+    },
+    {
+      "name": "two_phase-b16.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 16,
+      "block": true,
+      "sha256": "9CB2D1DB2A0DE5F6B73D1A440CC0C4703A8EF4D71FC8E81EF6B6AB4851302D2E"
+    },
+    {
+      "name": "entropy-nonblock-b10.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 10,
+      "block": false,
+      "sha256": "21781CFF47D7406E273DD09A7CE3329394A5C52DE22ADE94A07461106F3DAA7A"
+    },
+    {
+      "name": "entropy-nonblock-b11.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 11,
+      "block": false,
+      "sha256": "1B35142F78A9FA37ACE833DF8AF0382CE26D8ED4DACE75AAD96C4E88DAE4F0A2"
+    },
+    {
+      "name": "entropy-nonblock-b12.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 12,
+      "block": false,
+      "sha256": "17C103109B19A574548479BC17BF3A02E29F4229D9CDA7C1CA493294D342274E"
+    },
+    {
+      "name": "entropy-nonblock-b13.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 13,
+      "block": false,
+      "sha256": "0A10285A2F2F85D29FF554B8151C14F430DD01FC51C1A14F13BE1D10711162D1"
+    },
+    {
+      "name": "entropy-nonblock-b14.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 14,
+      "block": false,
+      "sha256": "CCC4669356B3513FF49D81F64FA0D7E31AF8B7ED8614607F87A2F0804E16868D"
+    },
+    {
+      "name": "entropy-nonblock-b15.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 15,
+      "block": false,
+      "sha256": "B38A833381B68A4CAFC2CA531E06B111996834BC4B4A0E965BAFFAD8635AD73B"
+    },
+    {
+      "name": "entropy-nonblock-b16.tar.Z",
+      "kind": "entropy",
+      "maximumBits": 16,
+      "block": false,
+      "sha256": "DE9D454E797A4BEE638461362F3F85CEED112E14D88D3E2A6348C85A0F5180C6"
+    },
+    {
+      "name": "two_phase-nonblock-b10.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 10,
+      "block": false,
+      "sha256": "1556025B6CEC44919C1B2F57578D7813C2FBFD816690A84C81AF09D0C64D0E49"
+    },
+    {
+      "name": "two_phase-nonblock-b11.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 11,
+      "block": false,
+      "sha256": "2B24FCA493DCE21F583638683CFC5C87A938807BFA1F710F69B75895F5378EFF"
+    },
+    {
+      "name": "two_phase-nonblock-b12.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 12,
+      "block": false,
+      "sha256": "9B36928FEF1FFE5EC8FD1302E0709E43B6702EE47D133A1FC95D04E5A069CB0A"
+    },
+    {
+      "name": "two_phase-nonblock-b13.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 13,
+      "block": false,
+      "sha256": "4D781023BA31F3B1F7037002FF03E49D34A1F4334B07F0AAC43B21E3A1ED4695"
+    },
+    {
+      "name": "two_phase-nonblock-b14.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 14,
+      "block": false,
+      "sha256": "892956D203FBEB2DF29F043C1E12F01481356FED4CF838EF1374380660EB0980"
+    },
+    {
+      "name": "two_phase-nonblock-b15.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 15,
+      "block": false,
+      "sha256": "F8B2E9AA0AF73C051B9DA2906F26A5AC496D36D9B82C5C1F073B18346F51AA66"
+    },
+    {
+      "name": "two_phase-nonblock-b16.tar.Z",
+      "kind": "two_phase",
+      "maximumBits": 16,
+      "block": false,
+      "sha256": "F02EAB5478AF48617B471B5B8E950D53A16FB6F2B1676EE15DA9515E1D3A4DC7"
+    },
+    {
+      "name": "literal-nonblock-b9.tar.Z",
+      "kind": "small_repeated",
+      "maximumBits": 9,
+      "block": false,
+      "sha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D",
+      "origin": "CC0 independent fixed9bit literal codes; original TAR bytes from ncompress input, no historical boundary analysis oracle"
+    }
+  ],
+  "inputs": [
+    {
+      "kind": "small_repeated",
+      "tarName": "small_repeated.tar",
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "tarBytes": 20480,
+      "entries": [
+        {
+          "name": "empty",
+          "type": "directory",
+          "bytes": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "name": "data.bin",
+          "type": "regular",
+          "bytes": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "name": "日本語.txt",
+          "type": "regular",
+          "bytes": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ]
+    },
+    {
+      "kind": "entropy",
+      "tarName": "entropy.tar",
+      "tarSha256": "F7838B065297EAE60D054F118E7E9DBFF7BF71C795969E560C6F035BFA2204BA",
+      "tarBytes": 143360,
+      "entries": [
+        {
+          "name": "empty",
+          "type": "directory",
+          "bytes": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "name": "data.bin",
+          "type": "regular",
+          "bytes": 131072,
+          "sha256": "5335E95782F8CF27A6AF05F81D3D1A3086415693B98C2BE9E5AE5C379D827EAA",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "name": "日本語.txt",
+          "type": "regular",
+          "bytes": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ]
+    },
+    {
+      "kind": "two_phase",
+      "tarName": "two_phase.tar",
+      "tarSha256": "20D9E1FAB2AF739D9AF89777BCDBC005131D9CD6D99E6E37AE426D426B1D8452",
+      "tarBytes": 266240,
+      "entries": [
+        {
+          "name": "empty",
+          "type": "directory",
+          "bytes": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "name": "data.bin",
+          "type": "regular",
+          "bytes": 262144,
+          "sha256": "F47A4683E17670C236F6E0A6BBEF09AB9BD8F845D91966ED450E0731FB51F7F1",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "name": "日本語.txt",
+          "type": "regular",
+          "bytes": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ]
+    }
+  ],
+  "literalIndependentProof": [
+    {
+      "executable": "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\archive-tar-z-ncompress-probe\\ncompress.exe",
+      "toolSha256": "BA68ACDDEBD2F68312837BE77BC9320B9F85AC863553AFD1E812B50A4C00E44F",
+      "arguments": [
+        "-d",
+        "-c",
+        "C:\\Users\\IMT\\dev\\DiffBeacon\\tests\\Fixtures\\Archives\\TarZ\\literal-nonblock-b9.tar.Z"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "stdoutBytes": 20480,
+      "stdoutSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "rawTarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "allBytesMatch": true
+    },
+    {
+      "executable": "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\archive-tar-z-sevenzip-probe\\full-tool\\7z.exe",
+      "toolSha256": "6EE3C0ED0B27663C1B948AE85A7C0BB073AED1498983182F3F0DF1F6A8C30B2F",
+      "arguments": [
+        "x",
+        "-so",
+        "C:\\Users\\IMT\\dev\\DiffBeacon\\tests\\Fixtures\\Archives\\TarZ\\literal-nonblock-b9.tar.Z"
+      ],
+      "exitCode": 0,
+      "stderr": "",
+      "stdoutBytes": 20480,
+      "stdoutSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "rawTarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "allBytesMatch": true
+    }
+  ],
+  "historicalNonblock9": "Excluded from normal golden; preserved only in research with documented old10bit vs modern9bit boundary difference"
+}

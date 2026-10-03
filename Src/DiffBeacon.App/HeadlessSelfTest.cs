@@ -511,6 +511,177 @@ internal static class HeadlessSelfTest
             var formatsPanel = pane.GetVisualDescendants().OfType<ArchivePanel>().Single();
             Check("GUI automatically compares 7z with compressed TAR", formatsPanel.Rows.Count > 0 && formatsPanel.Rows.All(row => row.Status == "Equal"));
             Screenshot("archives-formats.png");
+            var guiZ = Path.Combine(output, "gui-repacked.tar.Z"); Pump(formatsPanel.RepackToAsync(true, guiZ));
+            pane.LeftPath.Text = sevenPath; pane.RightPath.Text = guiZ; Pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var zPanel = pane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+            Check("GUI Auto recognizes TAR.Z and preserves all entries", archiveService.ReadManifest(guiZ).Format == "tar.Z"
+                && zPanel.Rows.Count > 0 && zPanel.Rows.All(row => row.Status == "Equal"));
+            Check("GUI TAR.Z save picker is connected", ArchivePickers.FileTypes.Any(type => type.Patterns?.Contains("*.tar.Z") == true));
+            var zPreview = zPanel.Rows.Single(row => row.Path == "folder/value.txt"); Pump(zPanel.PreviewAsync(zPreview));
+            Check("GUI TAR.Z preview uses decoded original bytes", zPanel.PreviewText.Contains("52 49 47 48 54", StringComparison.Ordinal));
+            var guiZExport = Path.Combine(output, "gui-z-export.txt"); Pump(zPanel.ExportToAsync(true, zPreview.Path, guiZExport));
+            Check("GUI TAR.Z entry export preserves bytes", File.ReadAllBytes(guiZExport).SequenceEqual(File.ReadAllBytes(archiveValue)));
+            var guiZExtract = Path.Combine(output, "gui-z-extracted"); Pump(zPanel.ExtractToAsync(true, guiZExtract));
+            Check("GUI TAR.Z extraction preserves all content", File.ReadAllText(Path.Combine(guiZExtract, "folder/value.txt")) == "RIGHT\n");
+            Screenshot("archives-tar-z.png");
+            var zProtected = Path.Combine(output, "gui-z-protected.tar.Z"); File.WriteAllText(zProtected, "protected Z output");
+            foreach (var limits in new[] {
+                new DiffBeacon.Providers.ManagedArchiveLimits(MaximumInputBytes: 4),
+                new DiffBeacon.Providers.ManagedArchiveLimits(MaximumDecodedBytes: 1024),
+                new DiffBeacon.Providers.ManagedArchiveLimits(MaximumEntryBytes: 4),
+                new DiffBeacon.Providers.ManagedArchiveLimits(MaximumEntries: 1) })
+            {
+                rejected = false;
+                try { new DiffBeacon.Providers.ManagedArchive(limits).Repack(guiZ, zProtected); } catch (InvalidDataException) { rejected = true; }
+                Check("TAR.Z service rejects configured input decoded entry or count limit", rejected && File.ReadAllText(zProtected) == "protected Z output");
+            }
+            rejected = false;
+            try { new DiffBeacon.Providers.ManagedArchive(new(MaximumOutputBytes: 16)).Repack(guiZ, zProtected); }
+            catch (InvalidDataException) { rejected = true; }
+            Check("TAR.Z output limit preserves existing output and removes stage", rejected && File.ReadAllText(zProtected) == "protected Z output"
+                && !Directory.EnumerateFiles(output, ".diffbeacon-*.archive.tmp").Any());
+            using (var zCancellation = new CancellationTokenSource())
+            {
+                rejected = false;
+                try { archiveService.WriteArchive(zProtected, CancelZCreation(), zCancellation.Token); } catch (OperationCanceledException) { rejected = true; }
+                Check("TAR.Z cancellation after first entry preserves existing output", rejected && File.ReadAllText(zProtected) == "protected Z output"
+                    && !Directory.EnumerateFiles(output, ".diffbeacon-*.archive.tmp").Any());
+                IEnumerable<DiffBeacon.Providers.ManagedArchiveWriteEntry> CancelZCreation()
+                {
+                    yield return new("first.bin", new byte[8192]);
+                    zCancellation.Cancel(); zCancellation.Token.ThrowIfCancellationRequested();
+                }
+            }
+            var guiZRaw = Path.Combine(output, "gui-z-provider.tar"); archiveService.Repack(guiZ, guiZRaw);
+            var providerSelector = pane.GetVisualDescendants().OfType<ComboBox>().Single(box => box.Items.OfType<string>().Contains("tar-metadata"));
+            var providerProof = new List<(string Provider, string LeftText, string RightText)>();
+            var smallZHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guiZ)));
+            var smallRawHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guiZRaw)));
+            pane.SelectMode(8);
+            foreach (var providerId in new[] { "tar", "tar-metadata" })
+            {
+                providerSelector.SelectedItem = providerId; pane.LeftPath.Text = guiZRaw; pane.RightPath.Text = guiZ;
+                Pump(pane.ComparePathsAsync());
+                var canonical = pane.LeftEditor.Text ?? "";
+                Check("GUI standard " + providerId + " compares TAR.Z content and metadata", pane.CurrentDiff is { HasDifferences: false }
+                    && canonical == pane.RightEditor.Text && canonical.Contains("folder/value.txt", StringComparison.Ordinal)
+                    && canonical.Contains(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(archiveValue))), StringComparison.Ordinal)
+                    && (providerId == "tar" || canonical.Contains("mode=600\tuid=0\tgid=0\tmtime=", StringComparison.Ordinal)));
+                rejected = false; try { Pump(pane.SaveAsync(false)); } catch (InvalidOperationException) { rejected = true; }
+                Check("GUI standard " + providerId + " rejects transformed text save", rejected && pane.LeftEditor.IsReadOnly && pane.RightEditor.IsReadOnly
+                    && smallZHash == Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guiZ)))
+                    && smallRawHash == Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guiZRaw))));
+                providerProof.Add((providerId, canonical, pane.RightEditor.Text ?? ""));
+            }
+            using (var providerFile = File.Create(Path.Combine(artifactOutput, "archive-z-gui-providers.json")))
+            using (var proofWriter = new Utf8JsonWriter(providerFile, new JsonWriterOptions { Indented = true }))
+            {
+                proofWriter.WriteStartObject(); proofWriter.WriteString("smallZHash", smallZHash); proofWriter.WriteString("smallRawHash", smallRawHash);
+                proofWriter.WriteStartArray("providers");
+                foreach (var proof in providerProof)
+                {
+                    proofWriter.WriteStartObject(); proofWriter.WriteString("providerId", proof.Provider);
+                    proofWriter.WriteString("leftText", proof.LeftText); proofWriter.WriteString("rightText", proof.RightText); proofWriter.WriteEndObject();
+                }
+                proofWriter.WriteEndArray(); proofWriter.WriteEndObject();
+            }
+            Screenshot("archives-tar-z-provider.png");
+            var guiZLarge = Path.Combine(output, "gui-z-provider-cancel.tar.Z");
+            var largeZContent = new byte[32 * 1024 * 1024]; Array.Fill(largeZContent, (byte)0x5a);
+            var largeEntryHash = Convert.ToHexString(SHA256.HashData(largeZContent));
+            archiveService.WriteArchive(guiZLarge, [new("large-repeat.bin", largeZContent, new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc))]);
+            var largeManifest = archiveService.ReadManifest(guiZLarge);
+            Check("GUI provider cancellation input has every entry byte bound", largeManifest.Entries.Count == 1
+                && largeManifest.Entries[0] is { Path: "large-repeat.bin", Size: 32 * 1024 * 1024 }
+                && largeManifest.Entries[0].Sha256 == largeEntryHash);
+            var largeZHash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guiZLarge)));
+            var previousProviderText = pane.LeftEditor.Text;
+            var providerCancel = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中止"));
+            var cancelPosted = false; var comparisonPendingAtCancel = false; var previousRowsAtCancel = false;
+            pane.LeftPath.Text = pane.RightPath.Text = guiZLarge;
+            var providerClock = Stopwatch.StartNew(); long cancelElapsedMs = -1;
+            // 実ボタンの GuardAsync 経路を通し、取消表示まで待つ。復号後の別 await を応答性の成功としない。
+            Dispatcher.UIThread.Post(() =>
+            {
+                cancelElapsedMs = providerClock.ElapsedMilliseconds; comparisonPendingAtCancel = !pane.CompareButton.IsEnabled;
+                previousRowsAtCancel = pane.LeftEditor.Text == previousProviderText && pane.RightEditor.Text == previousProviderText;
+                providerCancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); cancelPosted = true;
+            });
+            pane.CompareButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            Pump(WaitForProviderCancel()); Dispatcher.UIThread.RunJobs();
+            var cancellationShown = pane.GetVisualDescendants().OfType<TextBlock>().Any(text => text.Text == "比較を中止しました。");
+            var largeInputPreserved = largeZHash == Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guiZLarge)));
+            var finalProviderRowsPreserved = pane.LeftEditor.Text == previousProviderText && pane.RightEditor.Text == previousProviderText;
+            using (var cancelFile = File.Create(Path.Combine(artifactOutput, "archive-z-gui-cancel.json")))
+            using (var proofWriter = new Utf8JsonWriter(cancelFile, new JsonWriterOptions { Indented = true }))
+            {
+                proofWriter.WriteStartObject(); proofWriter.WriteString("provider", "tar-metadata");
+                proofWriter.WriteNumber("expandedBytes", largeZContent.Length); proofWriter.WriteNumber("compressedBytes", new FileInfo(guiZLarge).Length);
+                proofWriter.WriteString("largeEntryHash", largeEntryHash); proofWriter.WriteString("largeZHash", largeZHash);
+                proofWriter.WriteStartArray("entries");
+                foreach (var entry in largeManifest.Entries)
+                {
+                    proofWriter.WriteStartObject(); proofWriter.WriteString("path", entry.Path); proofWriter.WriteNumber("size", entry.Size);
+                    proofWriter.WriteString("sha256", entry.Sha256); proofWriter.WriteBoolean("isDirectory", entry.IsDirectory);
+                    proofWriter.WriteString("lastModifiedTime", entry.LastModifiedTime?.ToString("O")); proofWriter.WriteEndObject();
+                }
+                proofWriter.WriteEndArray(); proofWriter.WriteNumber("cancelElapsedMs", cancelElapsedMs); proofWriter.WriteNumber("elapsedMs", providerClock.ElapsedMilliseconds);
+                proofWriter.WriteBoolean("cancelPosted", cancelPosted); proofWriter.WriteBoolean("comparisonPendingAtCancel", comparisonPendingAtCancel);
+                proofWriter.WriteBoolean("previousRowsAtCancel", previousRowsAtCancel); proofWriter.WriteBoolean("cancellationShown", cancellationShown);
+                proofWriter.WriteBoolean("finalProviderRowsPreserved", finalProviderRowsPreserved);
+                proofWriter.WriteBoolean("largeInputPreserved", largeInputPreserved); proofWriter.WriteString("previousProviderText", previousProviderText);
+                proofWriter.WriteString("finalLeftText", pane.LeftEditor.Text); proofWriter.WriteString("finalRightText", pane.RightEditor.Text); proofWriter.WriteEndObject();
+            }
+            Screenshot("archives-tar-z-provider-cancel.png");
+            Check("GUI TAR.Z provider handles real cancel before decoded rows replace prior display", cancelPosted && comparisonPendingAtCancel && previousRowsAtCancel);
+            Check("GUI TAR.Z provider cancellation shows status and preserves input", cancellationShown && largeInputPreserved && finalProviderRowsPreserved);
+            async Task WaitForProviderCancel()
+            {
+                while (!cancelPosted || !pane.CompareButton.IsEnabled) await Task.Delay(1);
+            }
+            DiffBeacon.Providers.ProviderResult? completedProviderResult = null;
+            var lateCancelInvoked = false; var lateComparisonPending = false; var latePriorRowsAtCancel = false;
+            pane.ProviderResultReadyForAdoption = result =>
+            {
+                completedProviderResult = result; lateComparisonPending = !pane.CompareButton.IsEnabled;
+                latePriorRowsAtCancel = pane.LeftEditor.Text == previousProviderText && pane.RightEditor.Text == previousProviderText;
+                providerCancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); lateCancelInvoked = true;
+            };
+            try
+            {
+                pane.CompareButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Pump(WaitForLateProviderCancel()); Dispatcher.UIThread.RunJobs();
+            }
+            finally { pane.ProviderResultReadyForAdoption = null; }
+            var lateCancellationShown = pane.GetVisualDescendants().OfType<TextBlock>().Any(text => text.Text == "比較を中止しました。");
+            var lateFinalRowsPreserved = pane.LeftEditor.Text == previousProviderText && pane.RightEditor.Text == previousProviderText;
+            var lateInputPreserved = largeZHash == Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(guiZLarge)));
+            var expectedCompletedText = "large-repeat.bin\tRegularFile\t33554432\tlink=\tsha256=" + largeEntryHash
+                + "\tmode=600\tuid=0\tgid=0\tmtime=2020-01-02T03:04:05.0000000Z";
+            using (var lateFile = File.Create(Path.Combine(artifactOutput, "archive-z-gui-late-cancel.json")))
+            using (var proofWriter = new Utf8JsonWriter(lateFile, new JsonWriterOptions { Indented = true }))
+            {
+                proofWriter.WriteStartObject(); proofWriter.WriteString("provider", "tar-metadata"); proofWriter.WriteString("inputSha256", largeZHash);
+                proofWriter.WriteString("expectedCompletedText", expectedCompletedText); proofWriter.WriteString("completedSummary", completedProviderResult?.Summary);
+                proofWriter.WriteString("completedLeftText", completedProviderResult?.LeftText); proofWriter.WriteString("completedRightText", completedProviderResult?.RightText);
+                proofWriter.WriteBoolean("lateCancelInvoked", lateCancelInvoked); proofWriter.WriteBoolean("lateComparisonPending", lateComparisonPending);
+                proofWriter.WriteBoolean("latePriorRowsAtCancel", latePriorRowsAtCancel); proofWriter.WriteBoolean("lateCancellationShown", lateCancellationShown);
+                proofWriter.WriteBoolean("lateFinalRowsPreserved", lateFinalRowsPreserved); proofWriter.WriteBoolean("lateInputPreserved", lateInputPreserved);
+                proofWriter.WriteString("previousProviderText", previousProviderText); proofWriter.WriteString("finalLeftText", pane.LeftEditor.Text);
+                proofWriter.WriteString("finalRightText", pane.RightEditor.Text); proofWriter.WriteEndObject();
+            }
+            // Editorの実本文を描画し、取消後の古い差分一覧だけを保存しない。
+            var providerViews = pane.GetVisualDescendants().OfType<TabControl>().Single(view => view.Items.OfType<TabItem>().Any(item => Equals(item.Header, "編集 / 4ペイン")));
+            var providerPreviousView = providerViews.SelectedItem;
+            providerViews.SelectedItem = providerViews.Items.OfType<TabItem>().Single(item => Equals(item.Header, "編集 / 4ペイン"));
+            Screenshot("archives-tar-z-provider-late-cancel.png"); providerViews.SelectedItem = providerPreviousView;
+            Check("GUI late TAR.Z cancel receives completed real provider rows", lateCancelInvoked && lateComparisonPending && latePriorRowsAtCancel
+                && completedProviderResult?.LeftText == expectedCompletedText && completedProviderResult.RightText == expectedCompletedText);
+            Check("GUI late TAR.Z cancel preserves final prior Editor bodies", lateCancellationShown && lateFinalRowsPreserved && lateInputPreserved);
+            async Task WaitForLateProviderCancel()
+            {
+                while (!lateCancelInvoked || !pane.CompareButton.IsEnabled) await Task.Delay(1);
+            }
+            pane.SelectMode(0);
             var encryptedPath = Path.Combine(output, "encrypted.zip");
             using (var resource = typeof(HeadlessSelfTest).Assembly.GetManifestResourceStream("DiffBeacon.SelfTest.Encrypted.zip") ?? throw new InvalidOperationException("暗号化検証用入力がありません。"))
             using (var encryptedFile = File.Create(encryptedPath)) resource.CopyTo(encryptedFile);

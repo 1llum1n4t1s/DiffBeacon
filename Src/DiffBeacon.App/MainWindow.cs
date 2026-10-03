@@ -150,6 +150,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly EventHandler _ownerClosedHandler;
     private bool _disposed;
 
+    // 実GUI自己検証で、完成した変換結果の採用直前に中止操作を再現する。
+    internal Action<ProviderResult>? ProviderResultReadyForAdoption { get; set; }
+
     public ComparisonPane(Window owner)
     {
         _owner = owner;
@@ -294,6 +297,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             {
                 var provider = _providers.Get((string)_provider.SelectedItem!);
                 var result = await provider.CompareAsync(new ComparisonRequest(left, right, provider.Formats[0]), token);
+                ProviderResultReadyForAdoption?.Invoke(result);
+                token.ThrowIfCancellationRequested();
                 LeftEditor.Text = _savedLeft = result.LeftText; RightEditor.Text = _savedRight = result.RightText;
                 LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
                 await CompareEditorsAsync();

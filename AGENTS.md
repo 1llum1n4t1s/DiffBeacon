@@ -8,11 +8,14 @@
 
 ## 必須の検証
 
-.NET 10 SDK（`global.json`）と PowerShell 7 を使う。E2E のアーカイブ独立検証には Python 3 も必要。実行ファイルの指定方法は [E2E の手順](tests/DiffBeacon.E2E/README.md) を参照する。コード変更後はリポジトリルートで次を実行する。
+.NET 10 SDK（`global.json`）と PowerShell 7 を使う。E2E のアーカイブ独立検証には Python 3 と、固定した公式Z decoderをビルドする既存MSVC（Windows）／clang（macOS）も必要。C／compilerは製品や通常.NET buildの依存ではない。実行ファイルの指定方法は [E2E の手順](tests/DiffBeacon.E2E/README.md) を参照する。コード変更後はリポジトリルートで次を実行する。
 
 ```powershell
 dotnet build DiffBeacon.slnx -c Release
-dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/local
+pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local
+$decoderName = if ($IsWindows) { 'ncompress.exe' } else { 'ncompress' }
+$zReference = (Resolve-Path -LiteralPath (Join-Path artifacts/z-reference/local $decoderName)).Path
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/local --z-reference $zReference
 ```
 
 UI の変更は次の描画・操作検証も実行し、出力された PNG と JSON を確認する。レイアウト変更では `HeadlessImageCopyChecks` の通常／最小ウィンドウでの三者画像viewportと、スクロール後のPNG保存ボタンへの到達も確認する。
@@ -38,7 +41,7 @@ dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifac
 - 画像領域照合経路の変更は `ImageRegionDiffer`・`ImageRegionCommands`・CLI の `--image-regions` を照合し、限定 E2E の `--image-regions-only` と全体 E2E で原本の全pair grid・領域ID・分類・矩形、入力保持と上限拒否を確認する。[領域 fixture](tests/Fixtures/ImageRegions/README.md) の原本・golden の SHA-256、ライセンスと `.gitattributes` の `-text` を維持し、再生成は同手順に従う。
 - 画像強調経路の変更は `ImageRegionRenderer`・`ImagePanel`・`ImageReport` と CLI の `--image`・`--image-regions` を照合する。限定 `--image-highlight-only` で72件の無改変原本を照合し、通常GUI・CLI・単体／包装HTMLの三者分類・強調・元画素保持を確認する。[強調fixture](tests/Fixtures/ImageHighlight/README.md) の SHA・ライセンスを維持し、UI自己検証で実Bitmapの全BGRA・選択色・強調解除・同期の範囲外据え置きを確認する。採取用 C++ / FreeImage を通常ビルドへ追加しない。
 - 静止画像編集・保存の変更は `ImageEditSession`・`ImagePngStore`・`ImageCopyCommands`・`ImagePanel`（`ImagePanel.Editing.cs`）・`ComparisonPane`（`MainWindow.ImageEditing.cs`）と限定 `--image-copy-only`・全体 E2E を照合する。[コピーfixture](tests/Fixtures/ImageCopy/README.md) の原本SHA・golden・adapter境界と `-text` を保持する。原画全BGRA・領域mask・共有履歴／dirtyと独立PNG保存再読込み、入力／script／readonly／リンク保護、各予算の拒否理由を確認する。UI自己検証では `HeadlessImageCopyChecks` の原本照合・PNG独立再読込みに加え、世代・取消・失敗時の表示保持、読取り専用変更と共有Undo／Redo、全タブの入力・フィルター・workspaceへの出力保護、保存した側だけのパス・保存点更新、未保存原画のHTML反映と包装拒否を確認する。JSON・PNGの成果物を保持し、ネイティブ保存ダイアログ・元形式／多ページ保存を検証済み扱いにしない。
-- アーカイブ経路の変更は [Providers README](Src/DiffBeacon.Providers/README.md#managed-アーカイブサービスの検証契約) の失敗条件と検証契約を確認し、GUI・CLI・標準プロバイダーの呼び出し元を照合する。SharpCompress のライセンス同梱と、E2E fixture の出典・ライセンス・SHA-256 の記録を維持する。
+- アーカイブ経路の変更は [Providers README](Src/DiffBeacon.Providers/README.md#managed-アーカイブサービスの検証契約) の失敗条件と検証契約を確認し、GUI・CLI・標準プロバイダーの呼び出し元を照合する。SharpCompress のライセンス同梱と、E2E fixture の出典・ライセンス・SHA-256 の記録を維持する。TAR.Zは限定`--tar-z-only`と全体E2Eで固定39原本・全entry・writerの公式decoderによる独立復号を確認する。`--z-reference`を明示し、[固定原本・再生成手順](tests/Fixtures/Archives/TarZ/README.md)とCIの検証専用buildを保つ。
 - 静止画像の矩形編集・サイズ変更・画像クリップボードの変更は `ImageEditSession.Rectangles.cs`・`ImagePanel.Rectangles.cs`・`ImageClipboard`・`WindowsImageClipboard` と CLI の `--image-copy` を照合する。限定 `--image-rectangles-only` と全体 E2E、UI自己検証の `HeadlessImageRectangleChecks` で前述の静止画像編集・保存の検証に加え、方向／位置／整列の座標境界、Resizeと浮動確定の独立履歴、pointer capture・Cut公開失敗時の原画保持を確認する。[矩形fixture](tests/Fixtures/ImageRectangles/README.md)と[Resize fixture](tests/Fixtures/ImageResize/README.md)の固定SHA・ライセンス・adapter境界と `.gitattributes` を保持し、採取用MSVC／FreeImageを通常ビルドへ追加しない。PNG・JSON・ログを保持する。実OSクリップボードはheadlessの注入検証と区別し、[開発手順](Docs/DEVELOPMENT.md)のクリーンなGitHub Windows/macOS runnerで別writer／readerプロセスを実行する。ローカルでrunner判定を偽装せず、利用者のクリップボードを検証用に置換しない。
 - 画像の回転・反転の変更は `ImageOrientation`・`ImageComparisonEngine`・`ImageEditSession`・`ImagePanel.Settings.cs` と CLI の `--image`・`--image-copy`、プロジェクト保存・復元、単体／包装HTMLの呼び出し元を照合する。[表示変換fixture](tests/Fixtures/ImageTransforms/README.md) の原本SHA・ライセンス・全BGRAを維持し、限定 `--image-transforms-only` と全体E2E、UI自己検証の `HeadlessImageTransformChecks` を実行する。[設計のデータフロー](DESIGN.md#データフロー) の変換順・表示座標と原画の境界・共有作業予算を保ち、変換後のコピー、共有Undo／Redo・保存点、原画PNGの独立再読込み、読取り専用、不正設定と出力保護、TIFFページ切替、取消・古い完了時の表示保持を確認する。PNG・JSON・HTMLを保持し、採取用DLL・C++を通常ビルドへ追加しない。
 - 画像の表示位置の変更は `ImageOffset`・`ImageComparisonEngine`・`ImageRegionDiffer`・`ImageRegionRenderer`・`ImageEditSession`・`ImagePanel.Settings.cs` と、CLI の `--image`・`--image-copy`・`--report-project`、プロジェクト保存・復元、単体／包装HTMLを照合する。[設計のデータフロー](DESIGN.md#データフロー)の支持矩形・正規化・原画と表示位置の境界を維持し、[位置fixture](tests/Fixtures/ImageOffsets/README.md)の原本SHA・ライセンス・全BGRAを保持する。限定 `--image-offsets-only` と全体E2E、UI自己検証の `HeadlessImageOffsetChecks` を実行し、位置と方向の一括復元・コピー拡張とUndo後の位置保持・原画PNGの独立再読込み・設定JSONの往復・HTMLの位置キャンバスを確認する。読取り専用の実ボタン、多ページ、取消・古い完了時の表示保持、不正座標・整数極値・巨大キャンバスの拒否と入力・既存出力の保持を確認し、PNG・NDJSON・JSON・HTMLの成果物を保持する。採取用DLL・C++は通常ビルドへ追加しない。

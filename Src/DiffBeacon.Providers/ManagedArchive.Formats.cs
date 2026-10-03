@@ -15,6 +15,7 @@ public sealed partial class ManagedArchive
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
         var name = path.ToLowerInvariant();
+        if (name.EndsWith(".tar.z", StringComparison.Ordinal) || name.EndsWith(".taz", StringComparison.Ordinal)) return "tar.Z";
         if (name.EndsWith(".tar.gz", StringComparison.Ordinal) || name.EndsWith(".tgz", StringComparison.Ordinal)) return "tar.gz";
         if (name.EndsWith(".tar.bz2", StringComparison.Ordinal) || name.EndsWith(".tbz2", StringComparison.Ordinal) || name.EndsWith(".tbz", StringComparison.Ordinal)) return "tar.bz2";
         return Path.GetExtension(name) switch
@@ -33,7 +34,7 @@ public sealed partial class ManagedArchive
         => RepackCore(sourcePath, destinationPath, RequireOutputFormat(destinationPath), password, cancellationToken);
 
     private static string RequireOutputFormat(string path) => OutputFormat(path)
-        ?? throw new InvalidDataException("出力形式は 7z・ZIP 派生・TAR・tar.gz・tar.bz2 を指定してください。");
+        ?? throw new InvalidDataException("出力形式は 7z・ZIP 派生・TAR・tar.gz・tar.bz2・tar.Z を指定してください。");
 
     private void WriteArchiveCore(string destinationPath, IEnumerable<ManagedArchiveWriteEntry> entries,
         string format, CancellationToken token)
@@ -127,6 +128,7 @@ public sealed partial class ManagedArchive
                     {
                         "tar.gz" => new GZipStream(output, CompressionLevel.Optimal, leaveOpen: true),
                         "tar.bz2" => BZip2Stream.Create(output, SharpCompress.Compressors.CompressionMode.Compress, false, leaveOpen: true),
+                        "tar.Z" => new ZWriteStream(output, token, leaveOpen: true),
                         _ => null
                     };
                     using var tar = new TarWriter(compression ?? output, TarEntryFormat.Pax, leaveOpen: true);
@@ -142,6 +144,9 @@ public sealed partial class ManagedArchive
                         if (content is not null) entry.DataStream = content;
                         tar.WriteEntry(entry);
                     });
+                    // 正常なTAR終端を書き出した後だけZの残codeを完了する。
+                    tar.Dispose();
+                    if (compression is ZWriteStream z) z.Complete();
                 }
                 token.ThrowIfCancellationRequested();
                 file.Flush(flushToDisk: true);

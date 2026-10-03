@@ -30,7 +30,7 @@
 | Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲コピー、別名保存 | 表示・編集は各16 MiB上限。同じオフセットで比較し、挿入位置の再整列や旧Hex全操作の同等性は未完了 |
 | 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、回転・反転と手動位置ずらし、行列の挿入削除の表示／コピー／設定保存、編集済み原画のHTML、GUI矩形選択／移動／複製・Copy／Cut／Delete・浮動貼り付け・3辺Resize、差分色の不透明度と設定保存 | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存、旧全体設定の一括移行は未完了。XOR／Alpha／ANIM・点滅・共通設定と通常CLI／HTML／包装の接続は実装し、最終通常版の全体E2E・UIが成功した。変更後のNative／4RID検証は進行中 |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
-| Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2の内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Z、全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
+| Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2/TAR.Zの内容比較、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Zはmanagedで読書きし、通常アプリに外部圧縮ツールは不要。全形式の詳細レポート・一時ZIPのクリップボード包装、多段比較、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
 | 多言語 | 新 UI は日本語を中心に実装 | 旧翻訳カタログとローカライズ切替、RTL、全ダイアログの同等性は未完了 |
 | 詳細フィルター | 大文字小文字、4種の空白処理、空行、行正規表現、ASCII数字・CStyle/CSharp/Python/XMLコメントの除外、順序付き置換、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式 | 比較前処理は原文を保持し、GUI・CLI・フォルダーへ適用。同梱12 `.flt` の読込みを確認。内容検索、左右別属性、関数・算術、PCRE固有構文、全旧構文のコメント処理、複数行置換、全表示フィルターは未完了 |
@@ -47,6 +47,14 @@ WinMerge XML の要素と window-type の対応は `Src/ProjectFile.cpp`、`Src/
 全機能移行完了の判定には、上の未完了項目の実装と、Windows / macOS の対象アーキテクチャ上で再現できる検証結果が必要。CI 定義の追加だけで、ビルド・起動・配布の成功を確認したことにはならない。
 
 アーカイブの旧互換範囲は実装根拠で区別する。`Src/7zCommon.cpp:391`の作成UIは7z・ZIP派生形式・TAR/TAR.Z/TAR.GZ/TAR.BZ2/TGZ/TBZ2を提供し、RAR/LZH/CAB作成はコメントアウトされている。`Src/ArchiveDlg.cpp:28`は選択文書・レポート・パッチ・プロジェクトを包装し、`ArchiveSupport/Merge7z/Merge7zCommon.cpp:243`は全件抽出、`Src/7zCommon.cpp:480`は多段アーカイブを再判定する。読込み形式は`ArchiveSupport/Merge7z/Merge7zCommon.cpp:721`以降の登録を参照する。暗号化出力・分割出力は調査した旧作成経路に指定がなく、既存機能の移植漏れとは断定しない。分割読込み・MSI・リンク保存の厳密な旧動作は未確定であり、追加実測が必要。
+
+## TAR.Zの読書き
+
+GUIの自動判定・比較・プレビュー・エントリ保存・全件展開・作成・再梱包、通常アーカイブCLI、標準`archive`・`tar`・`tar-metadata`プロバイダーと比較プロジェクトの包装でTAR.Zを扱う。`tar.Z`／`taz`は同じ圧縮TARとして認識し、外部7z DLL・compress実行ファイルを通常アプリから呼び出さない。標準TARプロバイダーはリンクを追わず型・名前・リンク先を比較し、アーカイブの保存／展開サービスはリンクと特殊entryを拒否する。
+
+読込みは9～16bitのblock／nonblock、出力は16bit block形式。固定39原本には幅の変更・辞書満杯・CLEAR、現行block24件、歴史的nonblock10～16bitの14件と独立literal nonblock9を含む。歴史的v4.1のmaxbits9原本2件にはmodern decoderと幅境界が異なる旧自己互換があり、この2件を正常goldenとして使わない。出典・全SHA・CC0入力・public-domain原文・再生成は[TAR.Z fixture](../tests/Fixtures/Archives/TarZ/README.md)へ集約する。ZにはCRC・宣言長・明示EOFがなく、内側TARの構造・終端と作業上限を検査しても、すべての意味的改変や末尾padding欠損を検出できるわけではない。
+
+限定E2Eと全体E2Eは固定原本の全entryを照合し、writer出力を別buildの公式ncompressとPython標準tarfileで独立に復号・照合する。ローカルではfull7zでも全TAR bytesを照合する。通常.NET build・発行アプリに検証用C/compilerを追加しない。最終Release buildは警告・エラー0、通常版とWindows x64 Native AOTのheadless UIは各10081成功・0失敗。最終Native AOT全体E2Eは156652成功・0失敗・3skip、4880命令のstdout／stderrと実終了コードを独立照合し、起動失敗・timeoutは0。検証中の259入力と実行ファイルのSHAを照合した。標準TARプロバイダーの復号を背景で実行し、復号中と結果採用直前の実中止ボタンで前回本文と入力を保持する。変更後4RIDのGitHub検証は未完了であり、全旧アーカイブ形式の移植完了とは判定しない。
 
 ## 原文区間を保持する WordDiff
 
@@ -95,7 +103,7 @@ overlay Phase2では通常GUIへNone／XOR／Alpha／ANIM・差分点滅と共�
 
 Phase3ではframe／overlayを同時採用し、取消／失敗時にも確定表示を保持する。選択組のtyped capture、全ページのtuple別時刻採取と選択clamp継承、全画像entryの包装SHA照合、保存後のsnapshot更新、通常CLIへ接続した。独立レビューで指摘された再比較／設定復元時の不透明度scopeと点滅checkboxの不一致は、変更前の実UIで再現して修正し、最終6観測すべてでcontrolと採用設定の一致を確認した。最終Releaseは警告0・エラー0、全体headless UI10,059成功・0失敗、全体通常E2E155,760成功・0失敗・10skip、4,502実コマンド・timeout0。親の独立照合で表示／report170・既存wipe133・前後36の計339 PNG、旧6故障の表示保持、保存後包装5entryと原画／表示6 PNGが一致した。通常CLIの原本HTML30ケース150 PNG・領域25ケース63 BGRAと、全体E2Eのstdout／stderr9,004本も一致した。ソース・実行DLL142行の検証前後SHA、runtime495ファイル、原本／canonical14ファイルと5lockを凍結して照合済み。証拠は`artifacts/local/image-overlay-product/phase3-summary.json`、`phase3-freeze-source-proof.json`と`artifacts/local/image-overlay-integration/parent-phase3-final-full-cli.json`、各PNG proof。10skipはWindowsのUnix／Mac／case alias制約とsymlink作成権限による。Nativeの実測は次段の記録を参照する。通常OS pointer・ネイティブ保存ダイアログは未検証であり、通常版の成功から推定しない。
 
-同じ最終ソースのWindows x64 Native AOTは発行警告0・エラー0、headless UI10,059成功・0失敗、全体E2E155,805成功・0失敗・3skip、4,517実コマンド・timeout0で完走した。既存開発シェルからの発行と管理者プロセスを確認し、通常版で権限不足だったsymlink保護も成功した。残る3skipはUnixFileMode、Macの実APFS、case collisionのホスト制約である。発行manifestの全12ファイルとmanifest自身、171ビルド入力の前後SHA、原本1,303frame・31,056 BGRA bytes、GUI339 PNGとscope6観測、包装5entry、通常CLIの150 PNG・63 BGRA、実stdout／stderr9,034本を独立照合した。自己検証は約113秒、全体E2Eは約218秒。証拠は`artifacts/local/image-overlay-integration/native-final-summary.json`と各proof。変更後の4RID GitHub検証とCodeQLは次段で実行する。実OSクリップボード、通常デスクトップのpointerとネイティブ保存ダイアログはローカルで未実行。
+同じ最終ソースのWindows x64 Native AOTは発行警告0・エラー0、headless UI10,059成功・0失敗、全体E2E155,805成功・0失敗・3skip、4,517実コマンド・timeout0で完走した。既存開発シェルからの発行と管理者プロセスを確認し、通常版で権限不足だったsymlink保護も成功した。残る3skipはUnixFileMode、Macの実APFS、case collisionのホスト制約である。発行manifestの全12ファイルとmanifest自身、171ビルド入力の前後SHA、原本1,303frame・31,056 BGRA bytes、GUI339 PNGとscope6観測、包装5entry、通常CLIの150 PNG・63 BGRA、実stdout／stderr9,034本を独立照合した。自己検証は約113秒、全体E2Eは約218秒。証拠は`artifacts/local/image-overlay-integration/native-final-summary.json`と各proof。固定commit `21824be` の[GitHub run 37118662889](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37118662889)ではWin x64／ARM64とMac ARM64が成功し、[同commitのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37118662810)も成功した。Mac Intelはワイプの選択変更後の描画検証で147.6秒・終了2となり、全体E2E・OS clipboardは未実行。失敗した複合条件の各実値は当時記録していない。旧要求だけの完了を待てる経路をWindowsで二段の候補gateにより再現し、旧要求完了・位置2・選択0・captureあり、別の最新要求が未完了というJSONを保持した。自己検証を最新の`CurrentWipeOperation`の完了まで待つよう修正し、待機中の表示保持と完了後の位置8・全BGRAを検査する。修正後のMac Intelの解消は次の固定commitのCIで確認する。成功3RIDの発行物・全命令・BGRA／PNG・別writer／reader OS clipboardと、失敗RIDの例外・直前PNGは`artifacts/github/37118662889`へ独立照合して保持した。実OSクリップボード、通常デスクトップのpointerとネイティブ保存ダイアログはローカルで未実行。
 
 ワイプ単独移植時点では、縦／横ワイプはUIで選択し共有設定へ保存・読込みできる。重ね合わせと画素差表示では具体的利用条件を表示して操作モード欄を無効にし、確定modeは保持する。ワイプの一時表示と選択強調を保存開始時のsnapshotとして単体／全ページ／包装HTMLへ反映し、原画と分類・履歴は保持する。共有256M予算へ複製と入替えの作業を加算し、多ページは描画前に累積上限を検査する。両表示のドラッグ／同期、原本overlayとの同等性、旧全体設定の一括移行は後段の残作業である。原本の通常PNG保存はraw原画、レポートPNGはactive wipeを含みガイドを含まないため、プロジェクトの`imageSettings`へ一時wipe状態を混ぜない。
 

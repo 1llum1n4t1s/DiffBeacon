@@ -166,10 +166,35 @@ internal static class HeadlessImageWipeChecks
             var selectedSurface = Surface(selectedPanel, 0);
             window.MouseDown(selectedSurface.TranslatePoint(new(6, 6), window)!.Value, MouseButton.Left); pump(selectedPanel.CurrentWipeOperation);
             var selectedEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously); var selectedRelease = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            selectedPanel.WipeCandidateReady = () => { selectedEntered.TrySetResult(); return selectedRelease.Task; };
+            var latestEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously); var latestRelease = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var selectedCandidate = 0;
+            selectedPanel.WipeCandidateReady = () =>
+            {
+                if (++selectedCandidate == 1) { selectedEntered.TrySetResult(); return selectedRelease.Task; }
+                if (selectedCandidate == 2) { latestEntered.TrySetResult(); return latestRelease.Task; }
+                return Task.CompletedTask;
+            };
             window.MouseMove(selectedSurface.TranslatePoint(new(24, 24), window)!.Value, RawInputModifiers.LeftMouseButton); var selectedPending = selectedPanel.CurrentWipeOperation; pump(selectedEntered.Task);
-            pump(selectedPanel.NavigateRegionAsync(1)); selectedPanel.WipeCandidateReady = null; selectedRelease.TrySetResult(); pump(selectedPending); Render();
-            check("wipe selected redraw preserves latest position", selectedPanel.ActiveWipe?.Position == 8 && selectedPanel.SelectedDiffIndex >= 0 && selectedPanel.HasDisplayPointerCapture, "adopted2/request8 cross selected-highlight redraw");
+            pump(selectedPanel.NavigateRegionAsync(1)); selectedRelease.TrySetResult(); pump(selectedPending); pump(latestEntered.Task); Render();
+            WriteSelectedTrace("before-latest-adoption");
+            check("wipe selected redraw replaces completed request", selectedPending.IsCompletedSuccessfully && !ReferenceEquals(selectedPending, selectedPanel.CurrentWipeOperation) && !selectedPanel.CurrentWipeOperation.IsCompleted, "completed request belongs to previous display generation; latest candidate is held");
+            check("wipe selected redraw retains adopted display while latest candidate waits", selectedPanel.ActiveWipe?.Position == 2 && selectedPanel.SelectedDiffIndex >= 0 && selectedPanel.HasDisplayPointerCapture, "active=" + selectedPanel.ActiveWipe?.Position + "; selection=" + selectedPanel.SelectedDiffIndex + "; capture=" + selectedPanel.HasDisplayPointerCapture);
+            selectedPanel.WipeCandidateReady = null; latestRelease.TrySetResult(); pump(selectedPanel.CurrentWipeOperation); Render();
+            WriteSelectedTrace("after-latest-adoption");
+            check("wipe selected redraw preserves latest position", selectedPanel.ActiveWipe?.Position == 8 && selectedPanel.SelectedDiffIndex >= 0 && selectedPanel.HasDisplayPointerCapture, "active=" + selectedPanel.ActiveWipe?.Position + "; selection=" + selectedPanel.SelectedDiffIndex + "; capture=" + selectedPanel.HasDisplayPointerCapture + "; oldTask=" + selectedPending.Status + "; currentTask=" + selectedPanel.CurrentWipeOperation.Status);
+            void WriteSelectedTrace(string stage)
+            {
+                using var trace = new Utf8JsonWriter(File.Create(Path.Combine(folder, "selected-request-" + stage + ".json")), new() { Indented = true });
+                trace.WriteStartObject(); trace.WriteString("stage", stage);
+                trace.WriteNumber("activePosition", selectedPanel.ActiveWipe?.Position ?? -1);
+                trace.WriteNumber("selectedDiffIndex", selectedPanel.SelectedDiffIndex);
+                trace.WriteBoolean("pointerCapture", selectedPanel.HasDisplayPointerCapture);
+                trace.WriteString("oldTask", selectedPending.Status.ToString());
+                trace.WriteString("currentTask", selectedPanel.CurrentWipeOperation.Status.ToString());
+                trace.WriteBoolean("sameTask", ReferenceEquals(selectedPending, selectedPanel.CurrentWipeOperation));
+                trace.WriteString("displayWorker", selectedPanel.DisplayWorkerOperation.Status.ToString());
+                trace.WriteEndObject();
+            }
             var selectedExpected = Enumerable.Range(0, 3).Select(paneIndex =>
             {
                 var pixels = Enumerable.Range(0, 32 * 24 * 4).Select(n => (byte)(n * 37 + 17 + paneIndex * 43)).ToArray();

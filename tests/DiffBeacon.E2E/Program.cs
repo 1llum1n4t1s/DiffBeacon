@@ -1706,7 +1706,9 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-overlay-only", StringComparer.Ordinal))
+    if (args.Contains("--tar-z-only", StringComparer.Ordinal))
+        await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
+    else if (args.Contains("--image-overlay-only", StringComparer.Ordinal))
     {
         await ImageOverlayScenarios.RunAsync(output, fixtures, Run, Check);
         await ImageOverlayReportScenarios.RunAsync(output, fixtures, Run, Check);
@@ -1813,6 +1815,7 @@ try
     else if (args.Contains("--archives-only", StringComparer.Ordinal))
     {
         await ArchiveCases();
+        await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     }
     else if (args.Contains("--legacy-comments-only", StringComparer.Ordinal))
     {
@@ -1829,6 +1832,7 @@ try
     else
     {
     await ArchiveCases();
+    await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);
     await GnuLineScenarios.RunAsync(output, fixtures, Run, Check);

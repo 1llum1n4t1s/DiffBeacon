@@ -41,10 +41,16 @@ jobs:
         run: dotnet build DiffBeacon.slnx -c Release
       - name: Publish and verify native application
         run: ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}'
+      - name: Build independent Z decoder for verification
+        run: |
+          pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory 'artifacts/z-reference/${{ matrix.rid }}'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Run end-to-end scenarios
         run: |
           $manifest = Get-Content 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
-          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output 'artifacts/e2e/${{ matrix.rid }}' --app $manifest.executable
+          $decoderName = if ($IsWindows) { 'ncompress.exe' } else { 'ncompress' }
+          $zReference = (Resolve-Path -LiteralPath (Join-Path 'artifacts/z-reference/${{ matrix.rid }}' $decoderName)).Path
+          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output 'artifacts/e2e/${{ matrix.rid }}' --app $manifest.executable --z-reference $zReference
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify actual OS clipboard across application processes
         run: |
@@ -62,6 +68,7 @@ jobs:
             artifacts/e2e/${{ matrix.rid }}/
             artifacts/verification/${{ matrix.rid }}/
             artifacts/publish/${{ matrix.rid }}/publish-manifest.json
+            artifacts/z-reference/${{ matrix.rid }}/
           if-no-files-found: warn
       - name: Upload native application
         uses: actions/upload-artifact@v4

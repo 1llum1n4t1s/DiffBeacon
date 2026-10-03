@@ -26,6 +26,7 @@ internal static class ArchivePickers
         new("ZIP / JAR / EAR / WAR / XPI") { Patterns = ["*.zip", "*.jar", "*.ear", "*.war", "*.xpi"] },
         new("TAR") { Patterns = ["*.tar"] },
         new("TAR + GZip") { Patterns = ["*.tar.gz", "*.tgz"] },
-        new("TAR + BZip2") { Patterns = ["*.tar.bz2", "*.tbz2", "*.tbz"] }
+        new("TAR + BZip2") { Patterns = ["*.tar.bz2", "*.tbz2", "*.tbz"] },
+        new("TAR + compress") { Patterns = ["*.tar.Z", "*.tar.z", "*.taz"] }
     ];
 }

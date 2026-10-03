@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+TAR.Zは`--tar-z-only`で限定実行し、`--archives-only`と全体E2Eにも含む。全39固定原本（block9–16、nonblock10–16、独立literal nonblock9）の全entry bytes・型・サイズ、通常CLI全操作と標準archive／tar metadata provider、壊れたheader/code/TAR、既存出力保護、包装と相対入力再読込みを照合する。[固定原本・出典](../Fixtures/Archives/TarZ/README.md)を参照する。writer出力は`build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local`で別buildした公式decoderを`--z-reference <decoder>`へ明示し、Python標準tarfileで全内容・時刻・writer metadataを独立検証する。Windowsは`ncompress.exe`、macOSは`ncompress`。`--z-sevenzip <full7z>`はローカル第二decoderの追加照合。reference toolとC/compilerは製品・通常.NET buildの依存ではない。入力・出力・独立復号TAR・proof・exit・stdout/stderr・assertionsを保持する。限定は全体の代替ではない。
+
 画像重ね合わせの限定実行は`--image-overlay-only`（核と通常CLI）、`--image-overlay-reports-only`（通常CLI）を使う。`--image-overlay-script`へ期待値を除いた入力を送り、[静的原本](../Fixtures/ImageOverlays/README.md)49ケースと[時間原本](../Fixtures/ImageTemporalOverlays/README.md)77ケース83状態の全BGRA・個別clock読取り・blend alpha・分類／原画保持を照合する。通常CLIは適合する原本を単体HTML30ケース、領域診断25ケース、画像比較6ケースへ接続し、独立PNG復号・Alpha優先順位・無指定payload・不正引数・32MiB超過時のstdout空と入力／既存HTML保持を確認する。通常UTCのANIM出力のdigest検証と、固定原本clockの全画素照合を区別する。限定実行は全体E2Eの代替にしない。
 
 GUIの`HeadlessImageOverlayChecks`は全体`--self-test`へ含む。run内のoptionsとclockを注入し、全タブ設定共有、Alphaの明示／継承とJSON／record状態、timer停止／再開、最大一つの候補・取消／世代／revision、frameと表示の同時採用、元表示保持を実Bitmap・PNG・JSONへ残す。通常／最小と64／80px操作欄で全6部品の到達と周期4桁の実文字配置を確認する。選択組HTMLのclock0・確定capture、全ページのtuple／個別blend時計／選択とワイプ縮小の継承、描画予算の時計前拒否、包装の原本SHA照合・同size／mtime差替え拒否を独立PNGで検証する。矩形・guide・浮動貼付・原画PNGの境界を保ち、通常OSのpointer／保存ダイアログをheadless成功から推定しない。
@@ -95,7 +97,13 @@ GNU算法の限定実行は `--gnu-line-only`。原本の同値クラスと変�
 - 旧 `.flt` の既定 include / exclude、ファイル・ディレクトリ規則を逆に扱う。
 - 読取り専用の既存出力をマージで変更する、Unix のパッチ保存で実行権限を失う。
 
-`dotnet run --project tests/DiffBeacon.E2E -c Release -- --output artifacts/e2e/local`
+```powershell
+pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local
+$zReferenceName = if ($IsWindows) { 'ncompress.exe' } else { 'ncompress' }
+$zReference = (Resolve-Path -LiteralPath (Join-Path 'artifacts/z-reference/local' $zReferenceName)).Path
+dotnet build DiffBeacon.slnx -c Release
+dotnet run --project tests/DiffBeacon.E2E -c Release --no-build -- --output artifacts/e2e/local --z-reference $zReference
+```
 
 プロバイダーのレビュー境界 5 ケースだけを再現する場合は `--provider-boundaries-only` を追加する。CLI とファイル形式を通す E2E の経路は全体実行と共通である。
 
@@ -111,9 +119,9 @@ GNU算法の限定実行は `--gnu-line-only`。原本の同値クラスと変�
 
 `tests/DiffBeacon.FakeProvider` は外部プロバイダーの E2E 専用実行ファイル。ソリューションの Release ビルドで同時に生成し、正常応答・不正プロトコル版・応答上限を実プロセスで検証する。Web の検証は `TcpListener` を使って 127.0.0.1 の空きポートにだけ待受け、検証終了時に停止する。外部ネットワークへ接続しない。
 
-`--archives-only` は実ファイルの 7z / RAR / ZIP 読込み・暗号化・再パックを CLI 経由で検証する。入力 fixture は `tests/Fixtures/Archives/manifest.json` に固定した公式 SharpCompress 0.50.4 のファイルで、出典とライセンスを同じディレクトリに保持する。公開テスト用パスワードは stdin だけで渡し、コマンド引数・JSON レポートへ記録しない。全体実行にも同じ検証を含める。
+`--archives-only` は実ファイルの 7z / RAR / ZIP 読込み・暗号化・再パックと、TAR.Z の読書き・独立復号も CLI 経由で検証する。入力 fixture は `tests/Fixtures/Archives/manifest.json` に固定した公式 SharpCompress 0.50.4 のファイルで、出典とライセンスを同じディレクトリに保持する。公開テスト用パスワードは stdin だけで渡し、コマンド引数・JSON レポートへ記録しない。全体実行にも同じ検証を含める。
 
-ZIP/TAR系作成と全件抽出は、実装前に次の失敗条件を検証契約として固定する。未知の出力拡張子、破損CRC、unsafe/重複/大小文字衝突/ファイルを親に持つ格納名、リンク、既存の展開先はエラーにし、原本・既存出力を保持する。抽出失敗で新しい展開先や途中ディレクトリを残さない。成功時は空ディレクトリ・Unicode名・全バイト・SHA-256を保持する。作成形式は7z/zip/jar/ear/war/xpi/tar/tar.gz/tgz/tar.bz2/tbz2/tbzを通し、ZIP/TAR/GZipはBCLからも内容を読む。BZip2はPython標準ライブラリで独立に全名・サイズ・SHA-256を照合する。アプリ依存やユニットテストを追加しない。
+ZIP/TAR系作成と全件抽出は、実装前に次の失敗条件を検証契約として固定する。未知の出力拡張子、破損CRC、unsafe/重複/大小文字衝突/ファイルを親に持つ格納名、リンク、既存の展開先はエラーにし、原本・既存出力を保持する。抽出失敗で新しい展開先や途中ディレクトリを残さない。成功時は空ディレクトリ・Unicode名・全バイト・SHA-256を保持する。作成形式は7z/zip/jar/ear/war/xpi/tar/tar.gz/tgz/tar.bz2/tbz2/tbz・tar.Z/tazを通し、ZIP/TAR/GZipはBCLからも内容を読む。BZip2はPython標準ライブラリで独立に全名・サイズ・SHA-256を照合する。アプリ依存やユニットテストを追加しない。
 
 `archive_verifier.py`は独立したTAR作成器でもあり、標準的な`.`/`./`ルート表記の入力を生成する。独立読込み・作成のコマンド、終了コード、Python版、OS、全内容のハッシュを`independent-archive.log`へ残す。Windows ARM64の標準tarでUnicode名が読めず作成時に異常終了した実測があるため、OS標準tarに依存しない。GZipの連結メンバーは内容を保持し、末尾欠損は一覧・展開・再梱包の各経路で拒否する。深い暗黙親による保持名の増幅も実ZIP入力から拒否する。UI自己検証は実行ごとに固有のfixtureディレクトリを作り、同じ出力先でも再実行できる。抽出の一時ディレクトリができてからキャンセルし、途中出力の除去を確認する。
 
@@ -149,3 +157,7 @@ CLIへのOS signal注入はこの限定実行に追加していない。キャ�
 表の行整列は二者の中間挿入・削除、三者の独立挿入・同じ挿入・祖先だけの変更を通す。単体と包装内の HTML の各比較行を解析し、各側の全元行が一度だけ元順序で現れること、後続の一致アンカーが同じ表示行へ対応すること、各セルの元値が失われないことを照合する。quoted CRLF を一つの論理行として扱い、独自引用符・二重引用符によるエスケープ・末尾空セルとmissingの区別も確認する。正規化で差分を無視したセルも元の値を表示する。解析した対応表を `*-mapped-table.json` に保存し、単体 HTML と BCL で読み出した包装 HTML の対応表を完全一致で確認する。旧 `--table LEFT RIGHT` の二者 CLI は従来の `rows`（元文書の最大行数）を維持し、追加の `alignedRows` / `mapping` が HTML の表示行数・元行対応と一致し、小さなケースでは `alignmentFallback=false` となることを確認する。取消・GUIのセル編集と保存は親の別検証へ引き継ぐ。
 
 表の解析上限は論理行 262,144、セル 1,048,576、本文 64 Mi 文字。行合わせの変更区間で左右行数の積が262,144を超えると、決定的なfallbackを使う。600行ずつの完全一致アンカーがない反復値入力で `alignmentFallback=true`、表示600行、左右の元行1～600が一度ずつ順番どおりに対応することを実CLIで確認する。262,145単セル行と1行1,048,577セルは、同じパスを左右へ指定しても終了コード2で拒否し、成功JSONを出力せず原本を保持する。入力は約0.5 MiB・2 MiBで、stderrと入力の長さ・論理行数・セル数・SHA-256を `table-capacity-inputs.json` と既存コマンド成果物へ保持する。本文64 Mi文字と上限ちょうどの高コスト境界はこの追加E2Eでは実行しない。
+
+TAR.ZのGUI自己検証はAuto/picker/preview/export/extractに加え、標準tar/tar-metadata選択の全canonical本文・metadataと変換後テキスト保存拒否を確認します。展開32 MiBの反復entryを含む小さい圧縮入力で、比較開始前にpostした実「中止」ボタン操作が前回本文を保持したまま実行され、取消表示と入力SHAが保持されることを検査します。archive-z-gui-providers.json、archive-z-gui-cancel.jsonとPNGを保持します。
+
+標準TAR providerの結果完成後・採用前の中止も、実Builtin tar-metadata結果と実「中止」ボタンで再現します。default-nullの内部GUI採用境界callbackで中止し、完成した全canonical本文とmetadata、最終両Editorの前回本文、取消表示、入力SHAをarchive-z-gui-late-cancel.jsonと編集4ペインPNGへ保存します。早期取消も最終本文保持までassertします。

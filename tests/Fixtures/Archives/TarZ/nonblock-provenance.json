@@ -1,0 +1,41 @@
+{
+  "sources": [
+    {
+      "path": "compress-v4.1.c.orig",
+      "url": "https://raw.githubusercontent.com/vapier/ncompress/fb52189600278fdaf6b101caf180e5ee4b0e0ecb/compress.c",
+      "bytes": 42620,
+      "sha256": "DCFB5FA31D9B74205FF747FE794DD18868AC7C6B27F6E4689504E035161C9057"
+    },
+    {
+      "path": "patchlevel.h",
+      "url": "https://raw.githubusercontent.com/vapier/ncompress/fb52189600278fdaf6b101caf180e5ee4b0e0ecb/patchlevel.h",
+      "bytes": 21,
+      "sha256": "301E1318EA4B494287383DACDDFDFE06A22DBD75F2EA1C1CAA9525FAFFFC219A"
+    },
+    {
+      "path": "README",
+      "url": "https://raw.githubusercontent.com/vapier/ncompress/fb52189600278fdaf6b101caf180e5ee4b0e0ecb/README",
+      "bytes": 7854,
+      "sha256": "4F7F867F013FE4086DDB4439ECED94530C91C33079555280D020599FF4914CDC"
+    },
+    {
+      "path": "compress.1",
+      "url": "https://raw.githubusercontent.com/vapier/ncompress/fb52189600278fdaf6b101caf180e5ee4b0e0ecb/compress.1",
+      "bytes": 5306,
+      "sha256": "C41DAE804D945CF10C85168BDB0418ECBA674563B7F56D9068820E15F85D2D62"
+    },
+    {
+      "path": "current-project-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/vapier/ncompress/03592d7a4702bb83558b6f1520c2a6a5381374c8/LICENSE.txt",
+      "bytes": 97,
+      "sha256": "D402C89370DA74FFA591E911F7FD6DE640A5C1CEECAF230EAA8C9A7C132F1403"
+    },
+    {
+      "path": "current-project-UNLICENSE",
+      "url": "https://raw.githubusercontent.com/vapier/ncompress/03592d7a4702bb83558b6f1520c2a6a5381374c8/UNLICENSE",
+      "bytes": 1211,
+      "sha256": "7E12E5DF4BAE12CB21581BA157CED20E1986A0508DD10D0E8A4AB9A4CF94E85C"
+    }
+  ],
+  "downloadedBytes": 57109
+}
