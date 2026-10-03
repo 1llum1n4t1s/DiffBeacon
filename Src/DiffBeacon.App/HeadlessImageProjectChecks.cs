@@ -20,8 +20,8 @@ internal static class HeadlessImageProjectChecks
         var panel = Panel(pane);
         check("image project GUI restores selected pages and threshold", panel.LeftFrame == 2 && panel.RightFrame == 2
             && panel.DifferentPixels == 0 && panel.CaptureSettings() == requested, "");
-        check("image project GUI restores overlay tab", panel.GetVisualDescendants().OfType<TabControl>()
-            .Single(control => control.Name == "ImageDisplayMode").SelectedIndex == 1, "");
+        check("image project GUI restores overlay alias image viewport", panel.GetVisualDescendants().OfType<TabControl>()
+            .Single(control => control.Name == "ImageDisplayMode").SelectedIndex == 0, "");
         var copiedSettings = pane.CaptureProject().ImageSettings;
         copiedSettings.Threshold = 0;
         requested.Zoom = 1;

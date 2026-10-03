@@ -77,11 +77,11 @@ public sealed partial class MainWindow
         var workspace = new ComparisonWorkspace { Entries = panes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = Array.IndexOf(panes, ActivePane) };
         var sourceProject = WorkspaceSourcePath;
         var packageOptions = options ?? new();
-        var wipes = (packageOptions.IncludeReport ? indices : []).Select(index => (Index: index, Wipe: panes[index].CapturePackagingImageDisplay()))
-            .Where(item => item.Wipe is not null).ToDictionary(item => item.Index, item => item.Wipe!);
+        var displays = (packageOptions.IncludeReport ? indices : []).Select(index => (Index: index, Display: panes[index].CapturePackagingImageDisplay()))
+            .Where(item => item.Display is not null).ToDictionary(item => item.Index, item => item.Display!);
         _packaging = true;
         _packagingOperation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        try { await ComparisonPackage.CreateWithImageDisplaysAsync(workspace, output, packageOptions, indices, _packagingOperation.Token, sourceProject, wipes); }
+        try { await ComparisonPackage.CreateWithImageDisplaysAsync(workspace, output, packageOptions, indices, _packagingOperation.Token, sourceProject, displays); }
         finally { _packagingOperation.Dispose(); _packagingOperation = null; _packaging = false; }
     }
 
@@ -100,10 +100,10 @@ public sealed partial class MainWindow
 public sealed partial class ComparisonPane
 {
     private (string Left, string Base, string Right, int Mode, string? Provider)? _lastPackageComparison;
-    internal ImageReportDisplaySnapshot? CapturePackagingImageDisplay()
+    internal ImageReportDisplayCapture? CapturePackagingImageDisplay()
     {
         var report = (_specialTab.Content as SpecializedViews.ImagePanel)?.CaptureReport();
-        return report?.Wipe is { } wipe ? new(wipe, report.SelectedDiffIndex) : null;
+        return report?.DisplayCapture;
     }
     public void EnsureComparedForPackaging()
     {

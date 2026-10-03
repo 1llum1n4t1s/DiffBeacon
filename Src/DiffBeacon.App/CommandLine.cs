@@ -19,11 +19,13 @@ internal static class CommandLine
                     + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
                     + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
                     + "開発用: --image-line-script INPUT_JSON [--max-work N]\n"
+                    + "開発用: --image-overlay-script INPUT_JSON [--max-work 0..256000000] [--cancel-after-clock 1..16]（mode0..3、個別epoch clock）\n"
                     + "開発用: --image-align LEFT [MIDDLE] RIGHT [--horizontal] [--threshold X] [--block-size N]\n"
                     + "開発用: --image-regions LEFT [MIDDLE] RIGHT [--block-size N] [--threshold X] [--left-frame N [--middle-frame N] --right-frame N] [--highlight-alpha X] [--selected-region N]\n"
                     + "開発用: --image-copy LEFT [MIDDLE] RIGHT --script SCRIPT_JSON [--hashes-only]\n"
                     + "画像の行・列整列: --image / --report-project に --insertion-deletion-mode none|vertical|horizontal\n"
                     + "画像ワイプ: --image / --image-regions / --report-project に --wipe-mode vertical|horizontal と --wipe-position N（vertical=Y、horizontal=X、非負整数）\n"
+                    + "画像overlay: --image / --image-regions / --report-project に --overlay-mode none|xor|alpha|anim、--overlay-alpha X（0～1）、--overlay-blink true|false、--overlay-period N / --blink-period N（200～8000ms）\n"
                     + "画像の差分色: --image / --report-project に --highlight-alpha X（0～1、既定0.7）\n"
                     + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n--image LEFT [MIDDLE] RIGHT [--left-frame N [--middle-frame N] --right-frame N] [--threshold X] [--block-size N] [--left-orientation ANGLE,HORIZONTAL,VERTICAL] [--middle-orientation ANGLE,HORIZONTAL,VERTICAL] [--right-orientation ANGLE,HORIZONTAL,VERTICAL] [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y]\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
@@ -38,6 +40,7 @@ internal static class CommandLine
             if (command == "--word-diff") return await WordDiffCommands.RunAsync(args);
             if (command == "--gnu-line-script") return await GnuLineCommands.RunAsync(args);
             if (command == "--image-wipe-script") return await ImageWipeCommands.RunAsync(args);
+            if (command == "--image-overlay-script") return await ImageOverlayCommands.RunAsync(args);
             if (command == "--image-line-script") return await ImageLineCommands.RunAsync(args);
             if (command == "--image-align") return await ImageAlignmentCommands.RunAsync(args);
             if (command == "--image-regions") return await ImageRegionCommands.RunAsync(args);

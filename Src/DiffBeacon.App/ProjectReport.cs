@@ -60,7 +60,8 @@ public static class ProjectReport
         string? sourceProject = null, CancellationToken token = default,
         int? leftFrame = null, int? rightFrame = null, double? imageThreshold = null, int? middleFrame = null,
         ImageOffset? leftOffset = null, ImageOffset? middleOffset = null, ImageOffset? rightOffset = null,
-        int? insertionDeletionMode = null, double? highlightAlpha = null, ImageWipeSnapshot? wipe = null)
+        int? insertionDeletionMode = null, double? highlightAlpha = null, ImageWipeSnapshot? wipe = null,
+        ImageDisplayOptions? displayOptions = null)
     {
         _ = WorkspaceStore.SerializeWorkspace(workspace);
         if ((uint)entryIndex >= (uint)workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entryIndex), "比較の番号が範囲外です。");
@@ -91,12 +92,14 @@ public static class ProjectReport
             var imageHtml = await Task.Run(() => ImageReport.Create(new(images, imageThreshold ?? settings.Threshold, numbers,
                 ShowDifferences: settings.ShowDifferences, Orientations: settings.Orientations(middleImage is not null), BlockSize: settings.BlockSize,
                 Offsets: settings.Offsets(middleImage is not null), InsertionDeletionMode: settings.InsertionDeletionMode,
-                HighlightAlpha: highlightAlpha ?? settings.HighlightAlpha, Wipe: wipe), titles, token), token).ConfigureAwait(false);
+                HighlightAlpha: highlightAlpha ?? settings.HighlightAlpha, Wipe: wipe,
+                DisplaySettings: displayOptions?.Settings(settings.OverlayOpacity, settings.ShowDifferences, settings.BlockSize,
+                    imageThreshold ?? settings.Threshold, highlightAlpha ?? settings.HighlightAlpha, wipe: wipe)), titles, token), token).ConfigureAwait(false);
             await SaveAsync(target, imageHtml, entries, sourceProject, token).ConfigureAwait(false);
             return;
         }
         if (leftFrame.HasValue || rightFrame.HasValue || imageThreshold.HasValue || middleFrame.HasValue
-            || leftOffset.HasValue || middleOffset.HasValue || rightOffset.HasValue || insertionDeletionMode.HasValue || highlightAlpha.HasValue || wipe is not null)
+            || leftOffset.HasValue || middleOffset.HasValue || rightOffset.HasValue || insertionDeletionMode.HasValue || highlightAlpha.HasValue || wipe is not null || displayOptions?.Specified == true)
             throw new ArgumentException("フレーム・閾値のレポート指定は画像比較にだけ使用できます。");
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         async Task<string> Read(string path)

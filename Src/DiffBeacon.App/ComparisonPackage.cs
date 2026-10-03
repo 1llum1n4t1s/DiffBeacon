@@ -21,7 +21,7 @@ public static class ComparisonPackage
         => CreateWithImageDisplaysAsync(workspace, output, options, selectedIndices, token, sourceProject, null);
 
     internal static Task CreateWithImageDisplaysAsync(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
-        IReadOnlyList<int>? selectedIndices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplaySnapshot>? wipes)
+        IReadOnlyList<int>? selectedIndices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplayCapture>? displays)
     {
         // UI の値を await 前に確定し、編集中の配列・辞書をバックグラウンドで共有しない。
         WorkspaceStore.SerializeWorkspace(workspace);
@@ -32,14 +32,13 @@ public static class ComparisonPackage
             throw new ArgumentException("包装する比較を重複なく1件以上選択してください。");
         if (!options.IncludeDocuments && !options.IncludeReport && !options.IncludePatch && !options.IncludeProject)
             throw new ArgumentException("文書・レポート・パッチ・プロジェクトのいずれかを含めてください。");
-        var capturedWipes = wipes?.ToDictionary(pair => pair.Key, pair => pair.Value);
-        if (capturedWipes is not null) foreach (var display in capturedWipes.Values)
-        { display.Wipe.Validate(); if (display.SelectedDiffIndex < -1) throw new ArgumentException("選択領域の番号が不正です。"); }
-        return Task.Run(() => Create(clone, output, options, indices, token, sourceProject, capturedWipes), token);
+        var capturedDisplays = displays?.ToDictionary(pair => pair.Key, pair => pair.Value);
+        if (capturedDisplays is not null) foreach (var display in capturedDisplays.Values) display.Settings.Validate();
+        return Task.Run(() => Create(clone, output, options, indices, token, sourceProject, capturedDisplays), token);
     }
 
     private static void Create(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
-        int[] indices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplaySnapshot>? wipes)
+        int[] indices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplayCapture>? displays)
     {
         token.ThrowIfCancellationRequested();
         var target = ValidateLocal(output);
@@ -181,18 +180,24 @@ public static class ComparisonPackage
                     string report;
                     if (ProjectReport.IsImage(project))
                     {
+                        var display = displays?.GetValueOrDefault(indices[i]);
+                        var staged = pairInputs[i][1] is null ? new[] { left!, right! } : new[] { left!, pairInputs[i][1]!, right! };
+                        if (display is not null && (staged.Length != display.InputHashes.Count || staged.Where((input, side) =>
+                            !StringComparer.OrdinalIgnoreCase.Equals(input.Hash, display.InputHashes[side])).Any()))
+                            throw new InvalidDataException("表示した画像原本と包装stagingのSHAが一致しません。");
                         // 包装する原本と同じ確定内容を使い、元パスの再読込みを避ける。
                         var leftImage = ImageComparisonEngine.OpenAsync(left!.Snapshot, token).GetAwaiter().GetResult();
                         var rightImage = ImageComparisonEngine.OpenAsync(right!.Snapshot, token).GetAwaiter().GetResult();
                         var middleInput = pairInputs[i][1];
                         var middleImage = middleInput is null ? null : ImageComparisonEngine.OpenAsync(middleInput.Snapshot, token).GetAwaiter().GetResult();
                         var settings = project.ImageSettings;
+                        display?.ValidateSettings(settings, staged.Length);
                         report = ImageReport.Create(new(middleImage is null ? [leftImage, rightImage] : [leftImage, middleImage, rightImage],
                             settings.Threshold, settings.ReportAllFrames ? null : settings.FrameNumbers(middleImage is not null),
                             ShowDifferences: settings.ShowDifferences, Orientations: settings.Orientations(middleImage is not null), BlockSize: settings.BlockSize,
                             Offsets: settings.Offsets(middleImage is not null), InsertionDeletionMode: settings.InsertionDeletionMode,
-                            HighlightAlpha: settings.HighlightAlpha, Wipe: wipes?.GetValueOrDefault(indices[i])?.Wipe,
-                            SelectedDiffIndex: wipes?.GetValueOrDefault(indices[i])?.SelectedDiffIndex ?? -1),
+                            HighlightAlpha: settings.HighlightAlpha, Wipe: display?.Sample.Wipe,
+                            SelectedDiffIndex: display?.Settings.SelectedDiffIndex ?? -1, DisplayCapture: display),
                             middleImage is null ? [project.LeftDescription ?? left.Name, project.RightDescription ?? right.Name]
                                 : [project.LeftDescription ?? left.Name, project.BaseDescription ?? middleInput!.Name, project.RightDescription ?? right.Name], token);
                     }

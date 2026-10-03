@@ -40,46 +40,116 @@ public static partial class SpecializedViews
         private void RequestWipe(ImageWipeSnapshot wipe)
         {
             _requestedWipe = wipe; ++_wipeRevision;
-            if (!_wipeRunning) CurrentWipeOperation = RunWipeAsync();
+            RequestDisplayRefresh(false);
         }
+        // timer/設定/wipe要求を一つのworkerへ集約。tickはrevisionを進めない。
         private async Task RunWipeAsync()
         {
             _wipeRunning = true;
             try
             {
-                while (!_disposed && _requestedWipe is { } requested && _rendered is { } baseline)
+                while (!_disposed && _operationCancellation is null && _displayRefreshPending && CanDisplayRefresh && _rendered is { } baseline)
                 {
+                    _displayRefreshPending = false;
                     var revision = _wipeRevision; var generation = _generation;
-                    requested = requested.Clamp(baseline[0].Width, baseline[0].Height);
+                    var requested = _requestedWipe?.Clamp(baseline[0].Width, baseline[0].Height);
+                    var settings = DisplaySettings(requested);
+                    var comparison = _displayComparison;
+                    var previousPrepared = _overlayPrepared;
+                    var previousWork = _overlayPreparationWork;
+                    var opacityExplicit = _requestedOpacityExplicit;
+                    var canvasWork = _displayCanvasWork; var renderClock = RenderClock;
+                    using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+                    _displayCandidateCancellation = cancellation;
+                    var displayToken = cancellation.Token;
                     WriteableBitmap[]? candidate = null;
                     try
                     {
-                        var frames = await Task.Run(() => ImageWipeRenderer.Render(baseline, requested, _lifetime.Token,
-                            ImageComparisonEngine.MaximumDecodeWork - _displayCanvasWork).ToArray(), _lifetime.Token);
-                        if (WipeCandidateReady is { } ready) await ready();
+                        DisplayCandidatesStarted++;
+                        var computed = await Task.Run(() =>
+                        {
+                            var budget = new ImageDisplayWorkBudget(ImageComparisonEngine.MaximumDecodeWork, displayToken);
+                            budget.Reserve(canvasWork);
+                            var prepared = previousPrepared;
+                            var preparationWork = previousWork;
+                            ImageOverlayRenderer.Result result;
+                            if (settings.Mode == 0 && (!settings.BlinkDifferences || !settings.ShowDifferences))
+                            {
+                                var frames = requested is null ? baseline : ImageWipeRenderer.Render(baseline, requested, displayToken,
+                                    ImageComparisonEngine.MaximumDecodeWork - budget.Used);
+                                result = new(frames, new([], [], settings.ShowDifferences, requested));
+                            }
+                            else
+                            {
+                                if (comparison is null) throw new InvalidOperationException("比較済み画像がありません。");
+                                budget.EnsureAvailable(checked(ImageOverlayRenderer.RefreshWork(comparison, settings, prepared is null)
+                                    + (prepared is null ? 0 : preparationWork)));
+                                if (prepared is null)
+                                {
+                                    var before = budget.Used;
+                                    prepared = ImageOverlayRenderer.FromComparison(comparison, settings, budget);
+                                    preparationWork = budget.Used - before;
+                                }
+                                else budget.Reserve(preparationWork);
+                                result = ImageOverlayRenderer.Render(prepared with { Settings = settings }, renderClock, budget);
+                            }
+                            return (result, prepared, preparationWork);
+                        }, displayToken);
+                        if (requested is not null && WipeCandidateReady is { } ready) await ready().WaitAsync(displayToken);
+                        if (OverlayCandidateReady is { } overlayReady) await overlayReady().WaitAsync(displayToken);
+                        displayToken.ThrowIfCancellationRequested();
                         if (_disposed || revision != _wipeRevision || generation != _generation) continue;
-                        candidate = new WriteableBitmap[frames.Length];
-                        for (var i = 0; i < frames.Length; i++) candidate[i] = CreateBitmap(frames[i], _lifetime.Token);
+                        var frames = computed.result.Frames;
+                        candidate = new WriteableBitmap[frames.Count];
+                        for (var i = 0; i < frames.Count; i++) candidate[i] = CreateBitmap(frames[i], displayToken);
+                        if (_disposed || revision != _wipeRevision || generation != _generation) continue;
                         var old = _wipeBitmaps; _wipeBitmaps = candidate; candidate = null;
-                        _wipeRendered = frames; _activeWipe = _requestedWipe = requested;
-                        for (var i = 0; i < frames.Length; i++) _images[i].Source = _wipeBitmaps[i];
+                        _wipeRendered = frames.ToArray(); _activeWipe = _requestedWipe = requested;
+                        _overlayPrepared = computed.prepared; _overlayPreparationWork = computed.preparationWork;
+                        if (_displayError is not null && _status.Text == _displayError)
+                            _status.Text = $"領域 {DifferenceCount} 個" + (_counts.Length == 3 ? $" · 競合 {ConflictCount} 個" : "")
+                                + (_selectedDiffIndex >= 0 ? $" · 選択 {_selectedDiffIndex + 1}/{DifferenceCount}" : "") + $" · 左右の画素差 {DifferentPixels:N0}/{TotalPixels:N0} px";
+                        _displayError = null;
+                        _adoptedOpacity = settings.Alpha; _adoptedOpacityExplicit = opacityExplicit;
+                        AdoptedDisplay = new(generation, revision, frames, computed.result.Sample, settings);
+                        for (var i = 0; i < frames.Count; i++) _images[i].Source = _wipeBitmaps[i];
                         if (old is not null) foreach (var bitmap in old) bitmap.Dispose();
-                        UpdateWipeGuide();
+                        DisplayCandidatesAdopted++;
+                        if (_displayCompletionRevision == revision) _displayStateCompletion?.TrySetResult();
+                        RestoreOverlayControls(); UpdateWipeGuide();
                     }
                     catch (OperationCanceledException) when (_disposed) { return; }
-                    catch (Exception error) { if (!_disposed && revision == _wipeRevision) _status.Text = "ワイプを表示できません: " + error.Message; }
-                    finally { if (candidate is not null) foreach (var bitmap in candidate) bitmap?.Dispose(); }
-                    if (revision == _wipeRevision) return;
+                    catch (OperationCanceledException) when (displayToken.IsCancellationRequested) { }
+                    catch (Exception error)
+                    {
+                        if (!_disposed && revision == _wipeRevision)
+                        {
+                            _status.Text = _displayError = "画像の表示を更新できません: " + error.Message;
+                            _requestedOpacity = _adoptedOpacity; _requestedOpacityExplicit = _adoptedOpacityExplicit;
+                            RestoreOverlayControls();
+                            if (_displayCompletionRevision == revision) _displayStateCompletion?.TrySetException(error);
+                        }
+                    }
+                    finally
+                    {
+                        if (ReferenceEquals(_displayCandidateCancellation, cancellation)) _displayCandidateCancellation = null;
+                        if (candidate is not null) foreach (var bitmap in candidate) bitmap?.Dispose();
+                    }
                 }
             }
             finally { _wipeRunning = false; }
         }
         private void ClearWipe()
         {
+            if (_requestedWipe is null && _activeWipe is null)
+            { _wipeGuideVisible = false; UpdateWipeGuide(); return; }
             ++_wipeRevision; _requestedWipe = _activeWipe = null; _wipeRendered = null; _wipeGuideVisible = false;
+            _displayStateCompletion?.TrySetResult();
             if (!_disposed && _bitmaps is not null) for (var i = 0; i < _images.Length; i++) _images[i].Source = _bitmaps[i];
             if (_wipeBitmaps is not null) foreach (var bitmap in _wipeBitmaps) bitmap.Dispose();
             _wipeBitmaps = null; UpdateWipeGuide();
+            if (!_disposed && _rendered is not null) AdoptBaselineDisplay(_rendered, null);
+            if (!_disposed && NeedsOverlay) RequestDisplayRefresh(false);
         }
         private void UpdateWipeGuide()
         {

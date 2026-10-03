@@ -21,6 +21,7 @@ internal static class ImageComparisonEngine
         internal int Height { get; }
         internal int FrameCount { get; }
         internal long Pixels => (long)Width * Height;
+        internal string SourceHash(CancellationToken token) => PixelHash(_bytes, token);
 
         internal Snapshot(byte[] bytes, int width, int height, int frameCount, ApngImage? animation = null, TiffImage? tiff = null)
         { _bytes = bytes; Width = width; Height = height; FrameCount = frameCount; _animation = animation; _tiff = tiff; }
@@ -80,7 +81,8 @@ internal static class ImageComparisonEngine
     internal sealed record ReportInput(IReadOnlyList<Snapshot> Images, double Threshold, IReadOnlyList<int>? FrameNumbers,
         int SelectedDiffIndex = -1, bool ShowDifferences = true, IReadOnlyList<DecodedFrame>? EditedFrames = null,
         IReadOnlyList<ImageOrientation>? Orientations = null, int BlockSize = 8, IReadOnlyList<ImageOffset>? Offsets = null,
-        int InsertionDeletionMode = 0, double HighlightAlpha = .7, ImageWipeSnapshot? Wipe = null);
+        int InsertionDeletionMode = 0, double HighlightAlpha = .7, ImageWipeSnapshot? Wipe = null,
+        ImageReportDisplayCapture? DisplayCapture = null, ImageOverlayRenderer.Settings? DisplaySettings = null);
 
     internal static async Task<Snapshot> OpenAsync(string path, CancellationToken token)
     {
@@ -282,13 +284,18 @@ internal static class ImageComparisonEngine
     internal static ComparisonResult Compare(IReadOnlyList<Snapshot> images, IReadOnlyList<int>? numbers,
         double threshold, CancellationToken token, IReadOnlyList<ImageOrientation>? orientations = null, int blockSize = 8,
         IReadOnlyList<ImageOffset>? offsets = null, int insertionDeletionMode = 0,
-        long maximumAlignmentWork = ImageLineDiffer.MaximumWork, double highlightAlpha = .7, ImageWipeSnapshot? wipe = null)
+        long maximumAlignmentWork = ImageLineDiffer.MaximumWork, double highlightAlpha = .7, ImageWipeSnapshot? wipe = null,
+        ImageOverlayRenderer.Settings? displaySettings = null, IImageDisplayClock? clock = null)
     {
         ValidateComparison(images, numbers, threshold, orientations, offsets);
         ValidateHighlightAlpha(highlightAlpha);
         wipe?.Validate();
         ValidateInsertionDeletionMode(insertionDeletionMode);
         ValidateAlignmentWork(maximumAlignmentWork);
+        displaySettings?.Validate(); clock ??= new ImageSystemDisplayClock();
+        using var preparation = ImageReport.PreflightComparison(new(images, threshold, numbers, Orientations: orientations,
+            BlockSize: blockSize, Offsets: offsets, InsertionDeletionMode: insertionDeletionMode, HighlightAlpha: highlightAlpha,
+            Wipe: wipe, DisplaySettings: displaySettings), token);
         var selected = numbers is not null;
         token.ThrowIfCancellationRequested();
         var frames = new List<FrameResult>();
@@ -301,19 +308,34 @@ internal static class ImageComparisonEngine
             token.ThrowIfCancellationRequested();
             var currentNumbers = numbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
             // 全ページで残予算を共有し、処理を開始する前に核へ渡す。
-            var comparison = DecodeSelection(images, currentNumbers, threshold, false, token, orientations, blockSize, offsets,
+            var prepared = preparation?.Next();
+            var comparison = prepared is not null ? ComparePrepared(prepared, threshold, false, token, blockSize, offsets)
+                : DecodeSelection(images, currentNumbers, threshold, false, token, orientations, blockSize, offsets,
                 insertionDeletionMode, maximumAlignmentWork - alignmentWork, MaximumDecodeWork - canvasWork);
             alignmentWork += comparison.AlignmentWork;
             canvasWork += comparison.CanvasWork;
             var a = comparison.Frames[0]; var b = comparison.Frames[^1];
             var middle = images.Count == 3 ? comparison.Frames[1] : null;
-            var rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, blockSize: blockSize, highlightAlpha: highlightAlpha, token: token,
+            IReadOnlyList<DecodedFrame> rendered;
+            if (displaySettings is not null && (displaySettings.Mode != 0 || displaySettings.ShowDifferences && displaySettings.BlinkDifferences))
+            {
+                wipe = wipe?.Clamp(comparison.Regions.Width, comparison.Regions.Height);
+                var settings = displaySettings with { Threshold = threshold, BlockSize = blockSize, HighlightAlpha = highlightAlpha, Wipe = wipe };
+                var budget = new ImageDisplayWorkBudget(MaximumDecodeWork - canvasWork, token);
+                budget.EnsureAvailable(ImageOverlayRenderer.RefreshWork(comparison, settings, true));
+                rendered = ImageOverlayRenderer.Render(ImageOverlayRenderer.FromComparison(comparison, settings, budget), clock, budget).Frames;
+                canvasWork = checked(canvasWork + budget.Used);
+            }
+            else
+            {
+            rendered = ImageRegionRenderer.Render(comparison.Frames, comparison.Regions, blockSize: blockSize, highlightAlpha: highlightAlpha, token: token,
                 alignment: comparison.Alignment);
             if (wipe is not null)
             {
                 wipe = wipe.Clamp(rendered[0].Width, rendered[0].Height);
                 rendered = ImageWipeRenderer.Render(rendered, wipe, token, MaximumDecodeWork - canvasWork);
                 canvasWork += ImageWipeRenderer.Work(rendered[0].Width, rendered[0].Height, rendered.Count, wipe);
+            }
             }
             frames.Add(new(a.Number, b.Number, a.Width, a.Height, b.Width, b.Height,
                 comparison.Pixels.DifferentPixels, comparison.Pixels.TotalPixels, PixelHash(a.Pixels, token), PixelHash(b.Pixels, token),

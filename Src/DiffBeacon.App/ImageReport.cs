@@ -18,7 +18,8 @@ internal static class ImageReport
     }
 
     internal static string Create(ImageComparisonEngine.ReportInput input, IReadOnlyList<string> titles,
-        CancellationToken token = default, int maximumBytes = ProjectReport.MaximumBytes)
+        CancellationToken token = default, int maximumBytes = ProjectReport.MaximumBytes,
+        IImageDisplayClock? clock = null, Action<IReadOnlyList<int>, ImageDisplaySample>? observe = null)
     {
         token.ThrowIfCancellationRequested();
         var images = input.Images;
@@ -28,6 +29,10 @@ internal static class ImageReport
         ImageComparisonEngine.ValidateInsertionDeletionMode(input.InsertionDeletionMode);
         ImageComparisonEngine.ValidateHighlightAlpha(input.HighlightAlpha);
         input.Wipe?.Validate();
+        input.DisplayCapture?.ValidateImages(images, token);
+        input.DisplayCapture?.ValidateReport(input);
+        var displaySettings = input.DisplayCapture?.Settings ?? input.DisplaySettings;
+        displaySettings?.Validate();
         if (input.EditedFrames is { } edited && (edited.Count != images.Count || images.Any(image => image.FrameCount != 1)
             || edited.Any(frame => frame.Number != 1))) throw new ArgumentException("編集済みレポートは静止画の全入力が必要です。");
         if (titles.Count != images.Count) throw new ArgumentException("全画像の見出しが必要です。");
@@ -36,8 +41,8 @@ internal static class ImageReport
         // 整列後の寸法は画素を調べないと確定しない。全ページの予算成立前に描画しない。
         using var preparation = !selected && count > 1 && input.InsertionDeletionMode != 0
             ? PrepareAll(input, orientations, offsets, count, token) : null;
-        if (!selected && count > 1 && input.InsertionDeletionMode == 0 && input.Wipe is not null)
-            PreflightWipe(input, orientations, offsets, count, token);
+        if (!selected && count > 1 && input.InsertionDeletionMode == 0 && (input.Wipe is not null || NeedsDisplay(displaySettings)))
+            PreflightDisplay(input, orientations, offsets, count, token);
         try
         {
         var html = new BoundedHtml(Math.Min(maximumBytes, ProjectReport.MaximumBytes), token);
@@ -57,6 +62,14 @@ internal static class ImageReport
         html.Append("\" data-highlight-alpha=\""); html.Append(input.HighlightAlpha.ToString("R", CultureInfo.InvariantCulture));
         if (input.InsertionDeletionMode != 0)
         { html.Append("\" data-insertion-deletion-mode=\""); html.Number(input.InsertionDeletionMode); }
+        if (displaySettings is not null)
+        {
+            html.Append("\" data-overlay-mode=\""); html.Number(displaySettings.Mode);
+            html.Append("\" data-overlay-alpha=\""); html.Append(displaySettings.Alpha.ToString("R", CultureInfo.InvariantCulture));
+            html.Append("\" data-overlay-blink=\""); html.Append(displaySettings.BlinkDifferences ? "true" : "false");
+            html.Append("\" data-overlay-period=\""); html.Number(displaySettings.AnimationPeriod);
+            html.Append("\" data-blink-period=\""); html.Number(displaySettings.BlinkPeriod);
+        }
         html.Append("\"><h1>画像比較</h1><table><caption>閾値: "); html.Append(input.Threshold.ToString("R", CultureInfo.InvariantCulture));
         html.Append(" / フレーム: "); html.Append(selected ? "選択した組" : "全同番号フレーム");
         html.Append("</caption><thead><tr>");
@@ -67,12 +80,20 @@ internal static class ImageReport
         long alignmentWork = 0;
         long canvasWork = 0;
         var wipe = input.Wipe;
+        var selectedDiffIndex = input.SelectedDiffIndex;
+        var lastTuple = input.DisplayCapture?.FrameNumbers;
+        var lastComparison = input.DisplayCapture?.Comparison;
+        ImageOverlayRenderer.Result? lastDisplay = input.DisplayCapture is { } initial ? new(initial.Frames, initial.Sample) : null;
+        clock ??= new ImageSystemDisplayClock();
         for (var index = 1; index <= count; index++)
         {
             token.ThrowIfCancellationRequested();
             var numbers = input.FrameNumbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
-            var set = preparation is not null
-                ? ImageComparisonEngine.ComparePrepared(preparation.Next(), input.Threshold, true, token, input.BlockSize, offsets)
+            var reuse = lastTuple is not null && lastDisplay is not null && numbers.SequenceEqual(lastTuple);
+            // spoolはページ順なので、captureを再利用する場合も当該ページを消費する。
+            var prepared = preparation?.Next();
+            var set = reuse ? lastComparison! : prepared is not null
+                ? ImageComparisonEngine.ComparePrepared(prepared, input.Threshold, true, token, input.BlockSize, offsets)
                 : input.EditedFrames is { } raw
                 ? ImageComparisonEngine.CompareDecoded(raw, input.Threshold, true, token, orientations, input.BlockSize, offsets,
                     input.InsertionDeletionMode, ImageLineDiffer.MaximumWork - alignmentWork, ImageComparisonEngine.MaximumDecodeWork - canvasWork)
@@ -83,16 +104,35 @@ internal static class ImageReport
             var a = set.Frames[0]; var b = set.Frames[^1];
             token.ThrowIfCancellationRequested();
             var comparison = set.Pixels;
-            var rendered = ImageRegionRenderer.Render(set.Frames, set.Regions, blockSize: input.BlockSize,
-                highlightAlpha: input.HighlightAlpha,
-                selectedDiffIndex: Math.Min(input.SelectedDiffIndex, set.Regions.Regions.Count - 1), token: token, showDifferences: input.ShowDifferences,
-                alignment: set.Alignment);
-            if (wipe is not null)
+            IReadOnlyList<ImageComparisonEngine.DecodedFrame> rendered;
+            ImageDisplaySample sample;
+            wipe = wipe?.Clamp(set.Regions.Width, set.Regions.Height);
+            // CompareImages1161–1162の選択縮小を次ページへ継承する。
+            selectedDiffIndex = Math.Min(selectedDiffIndex, set.Regions.Regions.Count - 1);
+            if (reuse) { rendered = lastDisplay!.Frames; sample = lastDisplay.Sample; }
+            else if (NeedsDisplay(displaySettings))
             {
-                wipe = wipe.Clamp(rendered[0].Width, rendered[0].Height);
-                rendered = ImageWipeRenderer.Render(rendered, wipe, token, ImageComparisonEngine.MaximumDecodeWork - canvasWork);
-                canvasWork += ImageWipeRenderer.Work(rendered[0].Width, rendered[0].Height, rendered.Count, wipe);
+                var settings = PageSettings(input with { SelectedDiffIndex = selectedDiffIndex }, displaySettings!, set.Regions.Regions.Count, wipe);
+                var budget = new ImageDisplayWorkBudget(ImageComparisonEngine.MaximumDecodeWork - canvasWork, token);
+                budget.EnsureAvailable(ImageOverlayRenderer.RefreshWork(set, settings, true));
+                var baseline = ImageOverlayRenderer.FromComparison(set, settings, budget);
+                var display = ImageOverlayRenderer.Render(baseline, clock, budget);
+                canvasWork = checked(canvasWork + budget.Used); rendered = display.Frames; sample = display.Sample;
             }
+            else
+            {
+                rendered = ImageRegionRenderer.Render(set.Frames, set.Regions, blockSize: input.BlockSize,
+                    highlightAlpha: input.HighlightAlpha, selectedDiffIndex: selectedDiffIndex,
+                    token: token, showDifferences: input.ShowDifferences, alignment: set.Alignment);
+                if (wipe is not null)
+                {
+                    rendered = ImageWipeRenderer.Render(rendered, wipe, token, ImageComparisonEngine.MaximumDecodeWork - canvasWork);
+                    canvasWork += ImageWipeRenderer.Work(rendered[0].Width, rendered[0].Height, rendered.Count, wipe);
+                }
+                sample = new([], [], input.ShowDifferences, wipe);
+            }
+            lastTuple = numbers.ToArray(); lastComparison = set; lastDisplay = new(rendered, sample);
+            observe?.Invoke(Array.AsReadOnly(numbers.ToArray()), sample);
             different |= set.Regions.Regions.Count > 0;
             html.Append("<tr data-left-frame=\""); html.Frame(a?.Number);
             html.Append("\" data-right-frame=\""); html.Frame(b?.Number);
@@ -126,10 +166,43 @@ internal static class ImageReport
         catch (Exception error) { preparation?.RecordFailure(error); throw; }
     }
 
-    private static void PreflightWipe(ImageComparisonEngine.ReportInput input,
+    private static bool NeedsDisplay(ImageOverlayRenderer.Settings? settings)
+        => settings is not null && (settings.Mode != 0 || settings.ShowDifferences && settings.BlinkDifferences);
+
+    internal static ImageReportPreparation? PreflightComparison(ImageComparisonEngine.ReportInput input, CancellationToken token)
+    {
+        if (input.FrameNumbers is not null || !NeedsDisplay(input.DisplaySettings) || input.Images.Max(image => image.FrameCount) <= 1) return null;
+        var count = input.Images.Max(image => image.FrameCount);
+        if (input.InsertionDeletionMode != 0) return PrepareAll(input, input.Orientations, input.Offsets, count, token);
+        PreflightDisplay(input, input.Orientations, input.Offsets, count, token); return null;
+    }
+
+    private static ImageOverlayRenderer.Settings PageSettings(ImageComparisonEngine.ReportInput input,
+        ImageOverlayRenderer.Settings settings, int regionCount, ImageWipeSnapshot? wipe)
+        => settings with { Threshold = input.Threshold, BlockSize = input.BlockSize, HighlightAlpha = input.HighlightAlpha,
+            SelectedDiffIndex = Math.Min(input.SelectedDiffIndex, regionCount - 1), ShowDifferences = input.ShowDifferences, Wipe = wipe };
+
+    private static long AdditionalWork(ImageComparisonEngine.ReportInput input, int page, int width, int height,
+        IReadOnlyList<ImageComparisonEngine.DecodedFrame>? frames, IReadOnlyList<ImageOrientation>? orientations, ImageWipeSnapshot? wipe)
+    {
+        var numbers = input.Images.Select(image => Math.Min(page, image.FrameCount)).ToArray();
+        if (page == 1 && input.DisplayCapture is { } capture && numbers.SequenceEqual(capture.FrameNumbers)) return 0;
+        var settings = input.DisplayCapture?.Settings ?? input.DisplaySettings;
+        if (!NeedsDisplay(settings)) return wipe is null ? 0 : ImageWipeRenderer.Work(width, height, input.Images.Count, wipe);
+        long source = 0, middle = 0;
+        for (var pane = 0; pane < input.Images.Count; pane++)
+        {
+            var size = frames is null ? input.Images[pane].GetDimensions(numbers[pane]) : (frames[pane].Width, frames[pane].Height);
+            var area = (long)size.Item1 * size.Item2; source += area; if (pane == 1) middle = area;
+        }
+        return ImageOverlayRenderer.RefreshWorkMetadata(width, height, input.Images.Count, source, middle,
+            PageSettings(input, settings!, int.MaxValue, wipe));
+    }
+
+    private static void PreflightDisplay(ImageComparisonEngine.ReportInput input,
         IReadOnlyList<ImageOrientation>? orientations, IReadOnlyList<ImageOffset>? offsets, int count, CancellationToken token)
     {
-        var positions = ImageOffset.Validate(offsets, input.Images.Count); var wipe = input.Wipe!; long work = 0;
+        var positions = ImageOffset.Validate(offsets, input.Images.Count); var wipe = input.Wipe; long work = 0;
         for (var page = 1; page <= count; page++)
         {
             token.ThrowIfCancellationRequested(); var width = 0; var height = 0;
@@ -140,9 +213,9 @@ internal static class ImageReport
                 width = Math.Max(width, checked((swap ? size.Height : size.Width) + positions[pane].X));
                 height = Math.Max(height, checked((swap ? size.Width : size.Height) + positions[pane].Y));
             }
-            wipe = wipe.Clamp(width, height);
-            work = checked(work + (long)width * height * (input.Images.Count + 1) + ImageWipeRenderer.Work(width, height, input.Images.Count, wipe));
-            if (work > ImageComparisonEngine.MaximumDecodeWork) throw new InvalidOperationException("画像ワイプを含む描画作業量が256Mピクセルを超えます。");
+            wipe = wipe?.Clamp(width, height);
+            work = checked(work + (long)width * height * (input.Images.Count + 1) + AdditionalWork(input, page, width, height, null, orientations, wipe));
+            if (work > ImageComparisonEngine.MaximumDecodeWork) throw new InvalidOperationException("overlay/wipeを含む描画作業量が256Mピクセルを超えます。");
         }
     }
 
@@ -163,13 +236,10 @@ internal static class ImageReport
                     ImageComparisonEngine.MaximumDecodeWork - canvasWork);
                 alignmentWork = checked(alignmentWork + prepared.AlignmentWork);
                 canvasWork = checked(canvasWork + prepared.CanvasWork);
-                if (wipe is not null)
-                {
-                    var canvas = ImageOffset.Canvas(prepared.Frames, ImageOffset.Validate(offsets, input.Images.Count));
-                    wipe = wipe.Clamp(canvas.Width, canvas.Height);
-                    canvasWork = checked(canvasWork + ImageWipeRenderer.Work(canvas.Width, canvas.Height, input.Images.Count, wipe));
+                var canvas = ImageOffset.Canvas(prepared.Frames, ImageOffset.Validate(offsets, input.Images.Count));
+                wipe = wipe?.Clamp(canvas.Width, canvas.Height);
+                canvasWork = checked(canvasWork + AdditionalWork(input, page, canvas.Width, canvas.Height, prepared.Frames, orientations, wipe));
                     if (canvasWork > ImageComparisonEngine.MaximumDecodeWork) throw new InvalidOperationException("画像ワイプを含む描画作業量が256Mピクセルを超えます。");
-                }
                 preparation.Add(prepared);
             }
             preparation.Rewind();

@@ -45,6 +45,8 @@ public sealed partial class MainWindow : Window
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
         root.Children.Add(_tabs);
+        _tabs.SelectionChanged += (_, _) => UpdateImageDisplayVisibility();
+        PropertyChanged += (_, args) => { if (args.Property == IsVisibleProperty) UpdateImageDisplayVisibility(); };
         Content = root;
         AddSession(arguments);
         if (ImageOptions.Diagnostic is { } diagnostic)
@@ -90,6 +92,11 @@ public sealed partial class MainWindow : Window
     {
         if (_sessions.Count >= WorkspaceStore.MaxEntries) return Dialogs.MessageAsync(this, "比較タブの上限", "比較タブは256件以下にしてください。");
         AddSession(); return Task.CompletedTask;
+    }
+    internal void UpdateImageDisplayVisibility()
+    {
+        foreach (var tab in _sessions)
+            ((ComparisonPane)tab.Content!).UpdateImageDisplayVisibility(IsVisible && ReferenceEquals(_tabs.SelectedItem, tab));
     }
 }
 
@@ -212,6 +219,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _resultTab = new TabItem { Header = "マージ結果", Content = CreateMergeResultView() };
         _views.ItemsSource = new[] { _diffTab, new TabItem { Header = "編集 / 4ペイン", Content = _editGrid }, _resultTab, _specialTab };
         _views.SelectedItem = _diffTab;
+        _views.SelectionChanged += (_, _) => (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         root.Children.Add(_views);
         Content = root;
         CompareButton.Click += async (_, _) => await GuardAsync(ComparePathsAsync);
@@ -400,10 +408,16 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _reportOperation?.Cancel();
         SpecializedViews.Release(_specialTab.Content as Control);
     }
+    internal void UpdateImageDisplayVisibility(bool active)
+    {
+        if (_specialTab.Content is SpecializedViews.ImagePanel image)
+            image.SetDisplayActive(active && ReferenceEquals(_views.SelectedItem, _specialTab));
+    }
     private void SetSpecialView(Control view)
     {
         SpecializedViews.Release(_specialTab.Content as Control);
         _specialTab.Content = view;
+        (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         UpdateComparisonToolbarHeight();
     }
     private void UpdateComparisonToolbarHeight()

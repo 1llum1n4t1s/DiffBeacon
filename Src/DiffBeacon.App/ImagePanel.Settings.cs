@@ -6,14 +6,14 @@ public static partial class SpecializedViews
 {
     public sealed partial class ImagePanel
     {
-        internal ImageViewSettings CaptureSettings() => new()
+        private ImageViewSettings CaptureSettingsValues() => new()
         {
             // 番号と閾値は採用済みの原画に対応する値を使い、復号待ちの選択を保存しない。
             LeftFrame = LeftFrame, MiddleFrame = MiddleFrame ?? 1, RightFrame = RightFrame,
             Threshold = _displayThreshold, ShowDifferences = _displayShowDifferences,
             HighlightAlpha = _displayHighlightAlpha,
-            Zoom = _zoom.Value, OverlayOpacity = _opacity.Value, ReportAllFrames = ReportAllFrames,
-            View = _imageViews.SelectedIndex switch { 1 => "Overlay", 2 => "PixelDifference", _ => "SideBySide" },
+            Zoom = _zoom.Value, OverlayOpacity = _adoptedOpacity, ReportAllFrames = ReportAllFrames,
+            View = _imageViews.SelectedIndex == 1 ? "PixelDifference" : _imageViewToken,
             LeftOrientation = _displayOrientations[0], RightOrientation = _displayOrientations[^1],
             LeftOffset = _displayOffsets[0], RightOffset = _displayOffsets[^1],
             MiddleOffset = _displayOffsets.Length == 3 ? _displayOffsets[1] : default,
@@ -26,6 +26,7 @@ public static partial class SpecializedViews
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
             var requested = settings with { };
+            if (!requested.HasExplicitOverlayOpacity) requested.SetInheritedOverlayOpacity(_applicationOptions.Current.OverlayAlpha);
             ImageViewSettings.Validate(requested);
             if (_counts.Length == 2 && (requested.MiddleFrame != 1 || !requested.MiddleOrientation.IsIdentity || requested.MiddleOffset != default))
                 throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
@@ -42,6 +43,7 @@ public static partial class SpecializedViews
                 var operation = SetNumbersAsync(numbers, token, preserveRectangle: alphaOnly);
                 generation = _generation;
                 await operation;
+                _imageViewToken = requested.View == "PixelDifference" ? "SideBySide" : requested.View;
             }
             catch
             {
@@ -66,11 +68,14 @@ public static partial class SpecializedViews
                 _requestedBlockSize = settings.BlockSize; _blockSizeControl.Value = settings.BlockSize;
                 _requestedInsertionDeletionMode = settings.InsertionDeletionMode; _insertionDeletionMode.SelectedIndex = settings.InsertionDeletionMode;
                 _showDifferences.IsChecked = settings.ShowDifferences;
+                _requestedOpacity = settings.OverlayOpacity; _requestedOpacityExplicit = settings.HasExplicitOverlayOpacity;
                 _zoom.Value = settings.Zoom; _opacity.Value = settings.OverlayOpacity;
                 _reportAllFrames.IsChecked = settings.ReportAllFrames;
-                _imageViews.SelectedIndex = settings.View switch { "Overlay" => 1, "PixelDifference" => 2, _ => 0 };
+                _imageViewToken = settings.View == "PixelDifference" ? "SideBySide" : settings.View;
+                _imageViews.SelectedIndex = settings.View == "PixelDifference" ? 1 : 0;
             }
             finally { _updatingSelectors = false; }
+            RestoreOverlayControls();
         }
 
         private static decimal ThresholdControlValue(double value)

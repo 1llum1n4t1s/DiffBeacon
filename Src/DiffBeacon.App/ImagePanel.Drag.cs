@@ -56,7 +56,14 @@ public static partial class SpecializedViews
                 if (!_applicationOptions.SetMode(SupportedDragModes[_dragMode.SelectedIndex]))
                 { ApplicationDragModeChanged(); _status.Text = _applicationOptions.Diagnostic; }
             };
-            _imageViews.SelectionChanged += (_, _) => { CancelDisplayDrag(); UpdateDragControls(); };
+            _imageViews.SelectionChanged += (_, _) =>
+            {
+                CancelDisplayDrag();
+                if (_imageViews.SelectedIndex == 1)
+                { ++_wipeRevision; _displayStateCompletion?.TrySetResult(); _displayCandidateCancellation?.Cancel(); }
+                if (!_updatingSelectors) _imageViewToken = "SideBySide";
+                UpdateDragControls(); UpdateOverlayTimer();
+            };
         }
         private void ApplicationDragModeChanged()
         {

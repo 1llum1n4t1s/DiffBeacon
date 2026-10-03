@@ -19,15 +19,17 @@ internal static class ImageCommands
         var orientations = Enumerable.Range(0, inputCount).Select(_ => new ImageOrientation()).ToArray();
         var offsets = new ImageOffset[inputCount];
         string? wipeMode = null, wipePosition = null;
+        var displayOptions = new ImageDisplayOptions();
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var index = optionStart; index < args.Length; index += 2)
         {
             var option = args[index];
             if (option is not ("--left-frame" or "--middle-frame" or "--right-frame" or "--threshold" or "--highlight-alpha"
                 or "--left-orientation" or "--middle-orientation" or "--right-orientation" or "--block-size"
-                or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode" or "--wipe-mode" or "--wipe-position") || !seen.Add(option))
+                or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode" or "--wipe-mode" or "--wipe-position") && !ImageDisplayOptions.IsOption(option) || !seen.Add(option))
                 throw new ArgumentException($"未知または重複する画像オプションです: {option}");
             if (index + 1 >= args.Length) throw new ArgumentException($"{option} に値を指定してください。");
+            if (ImageDisplayOptions.IsOption(option)) { displayOptions.Parse(option, args[index + 1]); continue; }
             if (option == "--wipe-mode") { wipeMode = args[index + 1]; continue; }
             if (option == "--wipe-position") { wipePosition = args[index + 1]; continue; }
             if (option == "--insertion-deletion-mode")
@@ -79,6 +81,7 @@ internal static class ImageCommands
             throw new ArgumentException("選択フレーム番号は全入力分を指定してください。中央は三者比較だけです。");
         int[]? numbers = selected ? inputCount == 3 ? [leftFrame!.Value, middleFrame!.Value, rightFrame!.Value] : [leftFrame!.Value, rightFrame!.Value] : null;
         var wipe = ImageWipeSnapshot.Parse(wipeMode, wipePosition);
+        var display = displayOptions.Settings(blockSize: blockSize, threshold: threshold, highlightAlpha: highlightAlpha, wipe: wipe);
         using var cancel = new CancellationTokenSource();
         ConsoleCancelEventHandler handler = (_, e) => { e.Cancel = true; cancel.Cancel(); };
         Console.CancelKeyPress += handler;
@@ -88,9 +91,9 @@ internal static class ImageCommands
             var images = new ImageComparisonEngine.Snapshot[inputCount];
             for (var i = 0; i < inputCount; i++) images[i] = await ImageComparisonEngine.OpenAsync(args[i + 1], token);
             var result = await Task.Run(() => ImageComparisonEngine.Compare(images, numbers, threshold, token, orientations, blockSize, offsets,
-                insertionDeletionMode, highlightAlpha: highlightAlpha, wipe: wipe), token);
+                insertionDeletionMode, highlightAlpha: highlightAlpha, wipe: wipe, displaySettings: display), token);
             // 完了した結果だけ標準出力へ渡し、失敗・取消時に成功JSONを残さない。
-            using var content = new MemoryStream();
+            using var content = display is null ? new MemoryStream() : new ImageRegionCommands.BoundedWipeOutput(token);
             using (var writer = new Utf8JsonWriter(content))
             {
                 writer.WriteStartObject();
@@ -99,6 +102,7 @@ internal static class ImageCommands
                 if (result.MiddleFrames.HasValue) writer.WriteNumber("middleFrames", result.MiddleFrames.Value);
                 writer.WriteNumber("threshold", result.Threshold); writer.WriteString("mode", result.Mode);
                 writer.WriteNumber("highlightAlpha", highlightAlpha);
+                if (display is not null) ImageDisplayOptions.WriteMetadata(writer, display);
                 if (wipe is not null) { writer.WriteNumber("wipeMode", (int)wipe.Mode); writer.WriteNumber("wipePosition", wipe.Position); }
                 if (insertionDeletionMode != 0) writer.WriteNumber("insertionDeletionMode", insertionDeletionMode);
                 writer.WriteStartArray("frames");

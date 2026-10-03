@@ -150,8 +150,8 @@ internal static class HeadlessImageDragChecks
         start = At(readonlyPanel, 0, 16, 16); window.MouseDown(start, MouseButton.Left); window.MouseUp(start + new Vector(3, -5), MouseButton.Left); pump(readonlyPanel.CurrentDragOperation);
         check("image drag readonly offsets allowed", readonlyPanel.CaptureSettings().LeftOffset == new ImageOffset(1, 0) && readonlyPanel.HistoryCount == 0 && RawSame(readonlyPanel, raw), "readOnly protects pixels, not view mode");
         var tabs = readonlyPanel.GetVisualDescendants().OfType<TabControl>().Single(t => t.Name == "ImageDisplayMode"); tabs.SelectedIndex = 1; Render();
-        check("image drag overlay mode disabled retains configured mode", !readonlyPanel.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "ImageDragMode").IsEnabled
-            && readonlyPanel.DragMode == ImageDragMode.AdjustOffset, "concrete SideBySide usage condition; overlay is pending migration"); tabs.SelectedIndex = 0;
+        check("image drag pixel difference view disabled retains configured mode", !readonlyPanel.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "ImageDragMode").IsEnabled
+            && readonlyPanel.DragMode == ImageDragMode.AdjustOffset, "pixel difference has no image gesture; canonical overlay uses image panes"); tabs.SelectedIndex = 0;
 
         foreach (var mode in new[] { ImageDragMode.Move, ImageDragMode.AdjustOffset })
         {

@@ -5,7 +5,12 @@ namespace DiffBeacon.App;
 
 internal sealed record ImageApplicationOptions
 {
-    public ImageDragMode DragMode { get; init; } = ImageDragMode.Move;
+    public ImageDragMode DragMode { get; set; } = ImageDragMode.Move;
+    public int OverlayMode { get; set; }
+    public bool BlinkDifferences { get; set; }
+    public int AnimationPeriod { get; set; } = 1000;
+    public int BlinkPeriod { get; set; } = 800;
+    public double OverlayAlpha { get; set; } = .3;
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true,
@@ -20,7 +25,9 @@ internal sealed class ImageApplicationOptionsStore
     private readonly string? _path;
     private string? _unavailableReason;
     private readonly List<Action<string>> _outputGuards = [];
-    internal ImageDragMode Mode { get; private set; } = ImageDragMode.Move;
+    private ImageApplicationOptions _current = new();
+    internal ImageApplicationOptions Current => _current with { };
+    internal ImageDragMode Mode => _current.DragMode;
     internal string? Diagnostic { get; private set; }
     internal event Action? Changed;
 
@@ -61,26 +68,33 @@ internal sealed class ImageApplicationOptionsStore
             if (stream.ReadByte() != -1) throw new InvalidDataException("読込み中に画像操作設定のサイズが変更されました。");
             var options = JsonSerializer.Deserialize(bytes, ImageApplicationOptionsJsonContext.Default.ImageApplicationOptions)
                 ?? throw new InvalidDataException("画像操作設定が空です。");
-            ValidateMode(options.DragMode);
-            Mode = options.DragMode; Diagnostic = null; NotifyChanged(); return true;
+            ValidateOptions(options);
+            _current = options; Diagnostic = null; NotifyChanged(); return true;
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or JsonException)
         { Diagnostic = "画像操作設定を読み込めません。既存の設定ファイルを保持しました: " + error.Message; return false; }
     }
 
-    internal bool SetMode(ImageDragMode mode)
+    internal bool SetMode(ImageDragMode mode) => SetOptions(_current with { DragMode = mode });
+    internal static void ValidateOptions(ImageApplicationOptions options)
+    {
+        ValidateMode(options.DragMode);
+        new ImageOverlayRenderer.Settings(options.OverlayMode, options.OverlayAlpha, false, options.BlinkDifferences,
+            options.AnimationPeriod, options.BlinkPeriod).Validate();
+    }
+    internal bool SetOptions(ImageApplicationOptions requested)
     {
         string? temporary = null;
         try
         {
-            ValidateMode(mode);
+            var options = requested with { }; ValidateOptions(options);
             if (_unavailableReason is not null) throw new IOException(_unavailableReason);
             if (_path is not null)
             {
                 var path = GuardTarget();
                 var directory = Path.GetDirectoryName(path)!; Directory.CreateDirectory(directory);
                 temporary = Path.Combine(directory, ".diffbeacon-options-" + Guid.NewGuid().ToString("N") + ".tmp");
-                var bytes = JsonSerializer.SerializeToUtf8Bytes(new ImageApplicationOptions { DragMode = mode }, ImageApplicationOptionsJsonContext.Default.ImageApplicationOptions);
+                var bytes = JsonSerializer.SerializeToUtf8Bytes(options, ImageApplicationOptionsJsonContext.Default.ImageApplicationOptions);
                 var attributes = File.Exists(path) ? File.GetAttributes(path) : FileAttributes.Normal;
                 UnixFileMode? unixMode = !OperatingSystem.IsWindows() && File.Exists(path) ? File.GetUnixFileMode(path) : null;
                 using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.WriteThrough))
@@ -93,7 +107,7 @@ internal sealed class ImageApplicationOptionsStore
                 }
                 GuardTarget(); File.Move(temporary, path, overwrite: true); temporary = null;
             }
-            Mode = mode; Diagnostic = null; NotifyChanged(); return true;
+            _current = options; Diagnostic = null; NotifyChanged(); return true;
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
         { Diagnostic = "画像操作設定を保存できません。操作モードは変更していません: " + error.Message; return false; }

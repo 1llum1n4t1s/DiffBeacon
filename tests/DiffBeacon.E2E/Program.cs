@@ -1706,7 +1706,14 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--image-wipe-only", StringComparer.Ordinal))
+    if (args.Contains("--image-overlay-only", StringComparer.Ordinal))
+    {
+        await ImageOverlayScenarios.RunAsync(output, fixtures, Run, Check);
+        await ImageOverlayReportScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--image-overlay-reports-only", StringComparer.Ordinal))
+        await ImageOverlayReportScenarios.RunAsync(output, fixtures, Run, Check);
+    else if (args.Contains("--image-wipe-only", StringComparer.Ordinal))
     {
         await ImageWipeScenarios.RunAsync(output, fixtures, Run, Check);
     }
@@ -1834,6 +1841,8 @@ try
     await ImageProjectScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageTransformScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageWipeScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageOverlayScenarios.RunAsync(output, fixtures, Run, Check);
+    await ImageOverlayReportScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageHighlightScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageOffsetScenarios.RunAsync(output, fixtures, Run, Check);
     await ImageLineScenarios.RunAsync(output, fixtures, Run, Check);

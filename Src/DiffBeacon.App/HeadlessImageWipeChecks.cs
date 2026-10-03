@@ -69,6 +69,9 @@ internal static class HeadlessImageWipeChecks
                 }
                 window.MouseUp(surface.TranslatePoint(new(21, 21), window)!.Value, MouseButton.Left); pump(panel.CurrentWipeOperation); Render();
                 check(label + " release baseline", panel.ActiveWipe is null && !panel.HasDisplayPointerCapture, "capture/guide/pixels released");
+                check(label + " release adopted display matches bitmap", panel.AdoptedDisplay is { } releasedDisplay
+                    && releasedDisplay.Sample.Wipe is null && releasedDisplay.Settings.Wipe is null
+                    && releasedDisplay.Frames.Select((frame, i) => frame.Pixels.AsSpan().SequenceEqual(panel.RenderedFrames[i].Pixels)).All(x => x), "typed snapshot cannot retain old wipe");
                 for (var i = 0; i < count; i++) check(label + " release pixels " + i, panel.RenderedFrames[i].Pixels.AsSpan().SequenceEqual(raw[i].Pixels), "full BGRA baseline");
                 var releasedHtml = Path.Combine(folder, label + "-released-gui.html"); pump(pane.SaveReportAsync(releasedHtml)); VerifyHtml(releasedHtml, null);
                 var releasedPackage = Path.Combine(folder, label + "-released.zip"); pump(window.PackageWorkspaceAsync(releasedPackage,
@@ -93,7 +96,7 @@ internal static class HeadlessImageWipeChecks
                     if (initialPending) window.MouseDown(surface.TranslatePoint(new(24, 24), window)!.Value, MouseButton.Left);
                     else window.MouseMove(surface.TranslatePoint(new(24, 24), window)!.Value, RawInputModifiers.LeftMouseButton);
                     var crossWipe = panel.CurrentWipeOperation; pump(crossEntered.Task);
-                    pump(panel.SetFramesAsync(1, 1)); panel.WipeCandidateReady = null; crossRelease.TrySetResult(); pump(crossWipe); Render();
+                    pump(panel.SetFramesAsync(1, 1)); panel.WipeCandidateReady = null; crossRelease.TrySetResult(); pump(crossWipe); pump(panel.CurrentWipeOperation); Render();
                     var crossStage = initialPending ? "cross-initial-pending" : "cross-adopted-pending";
                     using (var crossFile = File.Create(Path.Combine(folder, label + "-" + crossStage + ".json")))
                     using (var crossWriter = new Utf8JsonWriter(crossFile))
@@ -116,7 +119,7 @@ internal static class HeadlessImageWipeChecks
                 var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously); var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                 panel.WipeCandidateReady = () => { entered.TrySetResult(); return release.Task; };
                 var pending = panel.SetWipeAsync(new(mode, 2)); pump(entered.Task);
-                panel.SetWipeAsync(new(mode, 8)); panel.SetWipeAsync(new(mode, 4)); panel.WipeCandidateReady = null; release.TrySetResult(); pump(pending); CheckPixels("latest", 4);
+                panel.SetWipeAsync(new(mode, 8)); panel.SetWipeAsync(new(mode, 4)); panel.WipeCandidateReady = null; release.TrySetResult(); pump(pending); pump(panel.CurrentWipeOperation); CheckPixels("latest", 4);
                 panel.SetDragMode(mode); window.MouseDown(surface.TranslatePoint(new(18, 18), window)!.Value, MouseButton.Left); pump(panel.CurrentWipeOperation);
                 IPointer? pointer = null; surface.AddHandler(InputElement.PointerMovedEvent, Capture, RoutingStrategies.Tunnel, handledEventsToo: true);
                 window.MouseMove(surface.TranslatePoint(new(21, 21), window)!.Value, RawInputModifiers.LeftMouseButton);
@@ -232,7 +235,7 @@ internal static class HeadlessImageWipeChecks
             var multiEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously); var multiRelease = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             multi.WipeCandidateReady = () => { multiEntered.TrySetResult(); return multiRelease.Task; };
             window.MouseMove(multiSurface.TranslatePoint(new(4, 0), window)!.Value, RawInputModifiers.LeftMouseButton); var multiPending = multi.CurrentWipeOperation; pump(multiEntered.Task);
-            pump(multi.SetFramesAsync(1, 1)); multi.WipeCandidateReady = null; multiRelease.TrySetResult(); pump(multiPending);
+            pump(multi.SetFramesAsync(1, 1)); multi.WipeCandidateReady = null; multiRelease.TrySetResult(); pump(multiPending); pump(multi.CurrentWipeOperation);
             check("wipe TIFF pending request survives new small page", multi.ActiveWipe?.Position == 0 && multi.HasDisplayPointerCapture, "requested0 retained; old active2 must not replace it with clamped1");
             pump(multi.SetFramesAsync(2, 2)); check("wipe TIFF latest position inherited after growth", multi.ActiveWipe?.Position == 0, "completed worker position0 preserved on non-loop redraw");
             ImageComparisonEngine.DecodedFrame[] crossTiffExpected = [new(2, 1, 3, [0,255,0,255, 255,255,255,255, 255,0,0,255]), new(2, 1, 3, [0,0,255,255, 0,0,255,255, 255,0,0,255])];

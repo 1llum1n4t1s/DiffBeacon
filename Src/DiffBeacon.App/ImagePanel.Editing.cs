@@ -127,6 +127,7 @@ public static partial class SpecializedViews
             CancelRectangleInteraction(preservePointerPress: true);
             _operationCancellation?.Cancel();
             var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
+            _displayCandidateCancellation?.Cancel();
             CurrentFrameOperation = LoadFramesAsync(_numbers.ToArray(), _displayThreshold, _displayShowDifferences, ++_generation, cancel, edit, writablePane);
             UpdateEditControls(); return CurrentFrameOperation;
         }

@@ -26,7 +26,6 @@ internal sealed record ImageWipeSnapshot(ImageDragMode Mode, int Position)
 }
 
 // 包装用の一時表示状態。gestureと選択領域はprojectJSONへ保存しない。
-internal sealed record ImageReportDisplaySnapshot(ImageWipeSnapshot Wipe, int SelectedDiffIndex);
 
 internal static class ImageWipeRenderer
 {

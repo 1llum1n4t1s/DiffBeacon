@@ -414,6 +414,9 @@ internal static class HeadlessSelfTest
             Progress("HeadlessImageWipeChecks", "start");
             HeadlessImageWipeChecks.Run(window, pane, output, Pump, Check, Screenshot);
             Progress("HeadlessImageWipeChecks", "complete");
+            Progress("HeadlessImageOverlayChecks", "start");
+            HeadlessImageOverlayChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            Progress("HeadlessImageOverlayChecks", "complete");
             Progress("providers-document-editing", "start");
             pane.BasePath.Text = "";
             pane.DiscardChanges();

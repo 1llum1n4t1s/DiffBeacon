@@ -3,13 +3,14 @@ namespace DiffBeacon.App;
 // WinIMerge v1.0.54 (da639cdfaeca87aaad0eaceec509afa11ad61421)
 // ImgDiffBuffer.hpp 1888–1964 の GetDiffColorFromPosition / MarkDiff を移植。
 // GPL version 2 or later。原本・ライセンス: tests/Fixtures/ImageRegions、採取: ImageHighlight。
-// overlay/wipeなし。色は原本constructorの通常色／選択色／削除色。
+// 色は原本constructorの通常色／選択色／削除色。displayCanvasはoverlay後画素、framesは元支持矩形。
 internal static class ImageRegionRenderer
 {
     internal static IReadOnlyList<ImageComparisonEngine.DecodedFrame> Render(
         IReadOnlyList<ImageComparisonEngine.DecodedFrame> frames, ImageRegionDiffer.Result regions,
         int blockSize = 8, double highlightAlpha = .7, int selectedDiffIndex = -1,
-        CancellationToken token = default, bool showDifferences = true, ImageLineAlignment.Result? alignment = null)
+        CancellationToken token = default, bool showDifferences = true, ImageLineAlignment.Result? alignment = null,
+        IReadOnlyList<ImageComparisonEngine.DecodedFrame>? displayCanvas = null)
     {
         ArgumentNullException.ThrowIfNull(frames);
         ArgumentNullException.ThrowIfNull(regions);
@@ -72,6 +73,9 @@ internal static class ImageRegionRenderer
         }
         if (conflicts != regions.ConflictCount || present.Contains(false))
             throw new ArgumentException("領域の個数またはConflict数が不正です。", nameof(regions));
+        if (displayCanvas is not null && (displayCanvas.Count != frames.Count || displayCanvas.Any(frame => frame.Width != width
+            || frame.Height != height || frame.Pixels.LongLength != (long)width * height * 4)))
+            throw new ArgumentException("表示canvasの寸法/BGRA長が不正です。", nameof(displayCanvas));
 
         bool[]? deleted = null;
         if (alignment is not null)
@@ -94,8 +98,8 @@ internal static class ImageRegionRenderer
         {
             token.ThrowIfCancellationRequested();
             var original = frames[pane];
-            var pixels = new byte[checked(width * height * 4)];
-            for (var y = 0; y < original.Height; y++)
+            var pixels = displayCanvas is null ? new byte[checked(width * height * 4)] : displayCanvas[pane].Pixels.ToArray();
+            for (var y = 0; displayCanvas is null && y < original.Height; y++)
             {
                 token.ThrowIfCancellationRequested();
                 original.Pixels.AsSpan(y * original.Width * 4, original.Width * 4)

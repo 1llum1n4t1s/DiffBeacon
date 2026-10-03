@@ -7,7 +7,19 @@ public sealed record ImageViewSettings
     public int RightFrame { get; set; } = 1;
     public double Threshold { get; set; }
     public double Zoom { get; set; } = 1;
-    public double OverlayOpacity { get; set; } = .3;
+    private readonly struct OpacityValue(double value, bool isExplicit) : IEquatable<OpacityValue>
+    {
+        internal double Value { get; } = value;
+        internal bool IsExplicit { get; } = isExplicit;
+        public bool Equals(OpacityValue other) => Value.Equals(other.Value);
+        public override bool Equals(object? obj) => obj is OpacityValue other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+    }
+    private OpacityValue _overlayOpacity = new(.3, false);
+    public double OverlayOpacity { get => _overlayOpacity.Value; set => _overlayOpacity = new(value, true); }
+    internal bool HasExplicitOverlayOpacity => _overlayOpacity.IsExplicit;
+    internal void SetInheritedOverlayOpacity(double value) => _overlayOpacity = new(value, false);
+    internal void RestoreOverlayOpacityPresence(bool explicitValue) => _overlayOpacity = new(_overlayOpacity.Value, explicitValue);
     public double HighlightAlpha { get; set; } = .7;
     public bool ShowDifferences { get; set; } = true;
     public bool ReportAllFrames { get; set; } = true;
