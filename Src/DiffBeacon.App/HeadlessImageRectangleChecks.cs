@@ -362,6 +362,7 @@ internal static class HeadlessImageRectangleChecks
             pane.DiscardChanges(); pane.ApplyProject(new() { Mode = "Image", LeftPath = paths[0], BasePath = frames.Length == 3 ? paths[1] : "", RightPath = paths[^1],
                 LeftReadOnly = readOnly, ImageSettings = settings ?? new() { BlockSize = 1, Zoom = 8, ShowDifferences = false } });
             pump(pane.ComparePathsAsync()); var panel = pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+            panel.SetDragMode(ImageDragMode.RectangleSelect);
             return panel;
         }
         void State(string name, SpecializedViews.ImagePanel panel, ImageComparisonEngine.DecodedFrame first, ImageComparisonEngine.DecodedFrame second)

@@ -23,12 +23,16 @@ public static partial class SpecializedViews
 
     public static async Task<Control> ImagesAsync(string left, string right, CancellationToken cancellationToken, string? middle = null,
         ImageViewSettings? settings = null)
+        => await ImagesWithOptionsAsync(left, right, cancellationToken, middle, settings, null);
+
+    internal static async Task<Control> ImagesWithOptionsAsync(string left, string right, CancellationToken cancellationToken, string? middle,
+        ImageViewSettings? settings, ImageApplicationOptionsStore? applicationOptions)
     {
         var leftSnapshot = await ImageComparisonEngine.OpenAsync(left, cancellationToken);
         var rightSnapshot = await ImageComparisonEngine.OpenAsync(right, cancellationToken);
         var middleSnapshot = string.IsNullOrWhiteSpace(middle) ? null : await ImageComparisonEngine.OpenAsync(middle, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
-        var panel = new ImagePanel(leftSnapshot, rightSnapshot, middleSnapshot);
+        var panel = new ImagePanel(leftSnapshot, rightSnapshot, middleSnapshot, applicationOptions);
         panel.ConfigureEditing(middleSnapshot is null ? [left, right] : [left, middle!, right],
             new bool[middleSnapshot is null ? 2 : 3]);
         try

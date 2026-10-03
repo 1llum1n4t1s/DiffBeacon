@@ -14,11 +14,11 @@ public static partial class SpecializedViews
     public sealed partial class ImagePanel
     {
         // 失敗先行契約: GUI契約JSON。原本GUIは静的照合、画素核はImageRectangles/ImageResize原本観測。
-        private readonly CheckBox _rectangleMode = new() { Name = "ImageRectangleMode", Content = "ドラッグで矩形選択", IsChecked = true };
         private readonly List<Canvas> _rectangleLayers = [];
         private readonly List<Border> _selectionBorders = [];
         private readonly List<Image> _floatingImages = [];
         private readonly List<Grid> _rectangleGrids = [];
+        private readonly List<EventHandler<PointerPressedEventArgs>> _rectanglePressHandlers = [];
         private readonly List<Border[]> _resizeHandles = [];
         private ImageRectangle?[] _rectangles = [];
         private long _rectangleEpoch;
@@ -55,18 +55,24 @@ public static partial class SpecializedViews
             var border = new Border { BorderBrush = Brushes.Gold, BorderThickness = new Thickness(1), IsVisible = false };
             var floating = new Image { Stretch = Stretch.Fill, IsVisible = false };
             layer.Children.Add(floating); layer.Children.Add(border);
+            var preview = new Border { Name = "ImageOffsetPreview" + pane, BorderBrush = Brushes.Gold, BorderThickness = new Thickness(1), IsVisible = false };
+            // 支持枠は画像extentの外にも描く。selection/floating/Resizeの既存clipは維持する。
+            var previewLayer = new Canvas { Name = "ImageOffsetPreviewLayer" + pane, IsHitTestVisible = false, ClipToBounds = false };
+            previewLayer.Children.Add(preview); _offsetPreviewBorders.Add(preview);
             var handles = new[] { "Right", "Bottom", "Corner" }.Select(name => new Border
             { Name = "ImageResize" + name + pane, BorderBrush = Brushes.DodgerBlue, BorderThickness = new Thickness(1), Background = Brushes.LightSteelBlue, Opacity = .6 }).ToArray();
             foreach (var handle in handles) layer.Children.Add(handle);
             var grid = new Grid { Name = "ImageRectangleSurface" + pane, Focusable = true, Background = Brushes.Transparent,
                 HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Left, VerticalAlignment = Avalonia.Layout.VerticalAlignment.Top };
-            grid.Children.Add(_images[pane]); grid.Children.Add(layer);
+            grid.Children.Add(_images[pane]); grid.Children.Add(layer); grid.Children.Add(previewLayer);
             _rectangleLayers.Add(layer); _selectionBorders.Add(border); _floatingImages.Add(floating); _rectangleGrids.Add(grid);
             _resizeHandles.Add(handles);
             grid.GotFocus += (_, _) => { if (!_disposed) _editPane.SelectedIndex = pane; };
-            grid.PointerPressed += async (_, e) =>
+            // 入口はpane client全体へ接続し、編集座標とcapture先は従来の画像gridを使う。
+            _rectanglePressHandlers.Add(async (_, e) =>
             {
-                if (!e.GetCurrentPoint(grid).Properties.IsLeftButtonPressed || !RectangleReady) return;
+                if (e.GetCurrentPoint(grid).Properties.PointerUpdateKind != PointerUpdateKind.LeftButtonPressed || !DisplayDragReady) return;
+                var configuredMode = DragMode;
                 _rectanglePressed = true; _pressedRectanglePointer = e.Pointer; var pressSerial = ++_rectanglePressSerial;
                 // pending編集中もwindow外のrelease/capturelostを受けるため、実captureを先に保持する。
                 _rectanglePointer = e.Pointer; e.Pointer.Capture(grid);
@@ -74,9 +80,15 @@ public static partial class SpecializedViews
                 {
                     var point = PixelPointFromControl(e.GetPosition(grid));
                     if (HasFloatingImage && (_floatingPane != pane || !ContainsFloating(point)))
-                    { await CommitFloatingAsync(); if (!RectangleReady) return; }
+                    {
+                        await CommitFloatingAsync();
+                        if (!CanContinueRectangleDrag(e.Pointer, pressSerial)) { CancelStaleRectangleDrag(pressSerial); return; }
+                        if (!RectangleReady) return;
+                    }
+                    if (_rectangles[pane] is { } outside && !Contains(outside, point))
+                    { ++_rectangleEpoch; _rectangles[pane] = null; UpdateRectangleVisuals(); }
                     _editPane.SelectedIndex = pane; grid.Focus();
-                    var resizeMode = ResizeHandleAt(pane, point);
+                    var resizeMode = RectangleReady ? ResizeHandleAt(pane, point) : 0;
                     if (resizeMode != 0)
                     {
                         if (_readOnly[pane]) throw new InvalidOperationException("読取り専用の画像はResizeできません。");
@@ -86,22 +98,35 @@ public static partial class SpecializedViews
                     }
                     else if (HasFloatingImage && _floatingPane == pane && ContainsFloating(point))
                     {
-                        if (e.KeyModifiers.HasFlag(KeyModifiers.Control)) await CommitFloatingAsync(keepFloating: true);
+                        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+                        {
+                            await CommitFloatingAsync(keepFloating: true);
+                            if (!CanContinueRectangleDrag(e.Pointer, pressSerial)) { CancelStaleRectangleDrag(pressSerial); return; }
+                        }
                         if (!HasFloatingImage) return;
                         _draggingFloating = true;
                     }
                     else if (_rectangles[pane] is { } selected && Contains(selected, point))
                         _draggingSelection = true;
-                    else if (_rectangleMode.IsChecked == true)
+                    else if (configuredMode == ImageDragMode.RectangleSelect && RectangleReady)
                     { _rectangleAnchor = point; _draggingRectangle = true; SelectRectangle(pane, Rectangle(point, point)); }
+                    else if (configuredMode is ImageDragMode.Move or ImageDragMode.AdjustOffset)
+                    {
+                        if (!CanContinueRectangleDrag(e.Pointer, pressSerial)) { CancelStaleRectangleDrag(pressSerial); return; }
+                        StartDisplayDrag(pane, configuredMode, e);
+                    }
+                    else { EndRectangleDrag(); return; }
                     // Ctrl押下のstampはEditAsyncでcaptureを解除するため、確定完了後に取り直す。
-                    if (!CanContinueRectangleDrag(e.Pointer, pressSerial)) { EndRectangleDrag(); return; }
+                    if (!CanContinueRectangleDrag(e.Pointer, pressSerial)) { CancelStaleRectangleDrag(pressSerial); return; }
                     _rectanglePointer = e.Pointer; e.Pointer.Capture(grid); _dragPane = pane; _lastDrag = point;
                     e.Handled = true;
                 });
-            };
+            });
             grid.PointerMoved += async (_, e) =>
             {
+                try { if (MoveDisplayDrag(pane, e)) return; }
+                catch (Exception error) when (error is ArithmeticException or ArgumentException)
+                { CancelDisplayDrag(); EndRectangleDrag(); _status.Text = "画像ドラッグの座標を処理できません: " + error.Message; e.Handled = true; return; }
                 if (_dragPane != pane || !_draggingRectangle && !_draggingFloating && !_draggingSelection && _resizeMode == 0 || !RectangleReady) return;
                 var point = PixelPointFromControl(e.GetPosition(grid));
                 if (_resizeMode != 0)
@@ -136,6 +161,9 @@ public static partial class SpecializedViews
             };
             grid.PointerReleased += async (_, e) =>
             {
+                if (e.GetCurrentPoint(grid).Properties.IsLeftButtonPressed || e.InitialPressMouseButton != MouseButton.Left) return;
+                if (_displayDragPane == pane)
+                { await RectangleEventAsync(() => CurrentDragOperation = FinishDisplayDragAsync(pane, e)); return; }
                 var mode = _resizeMode; var start = _resizeStart; var generation = _resizeGeneration; var epoch = _resizeEpoch;
                 var current = _dragPane == pane;
                 var selecting = _draggingRectangle;
@@ -145,7 +173,7 @@ public static partial class SpecializedViews
                 if (current && mode != 0)
                     await RectangleEventAsync(() => CurrentRectangleOperation = FinishResizeAsync(pane, mode, start, PixelPointFromControl(e.GetPosition(grid)), generation, epoch));
             };
-            grid.PointerCaptureLost += (_, _) => { CancelRectanglePress(); EndRectangleDrag(); };
+            grid.PointerCaptureLost += (_, _) => { CancelDisplayDrag(); CancelRectanglePress(); EndRectangleDrag(); };
             grid.KeyDown += async (_, e) =>
             {
                 if (_disposed || e.Handled) return;
@@ -153,7 +181,7 @@ public static partial class SpecializedViews
                 var shortcut = (e.KeyModifiers & (KeyModifiers.Control | KeyModifiers.Meta)) != 0;
                 Func<Task>? command = e.Key switch
                 {
-                    Key.Escape => () => { CancelRectangleInteraction(); return Task.CompletedTask; },
+                    Key.Escape => () => { CancelRectangleInteraction(preservePointerPress: _displayDragPane >= 0); return Task.CompletedTask; },
                     Key.Enter when HasFloatingImage => () => CommitFloatingAsync(),
                     Key.Delete when _rectangles[pane] is not null => () => DeleteRectangleAsync(),
                     Key.A when shortcut => () => { SelectAllRectangle(pane); return Task.CompletedTask; },
@@ -180,15 +208,22 @@ public static partial class SpecializedViews
             => owner.RemoveHandler(PointerReleasedEvent, RectanglePointerReleasedAnywhere);
         private void RectanglePointerReleasedAnywhere(object? sender, PointerReleasedEventArgs args)
         {
-            if (args.InitialPressMouseButton == MouseButton.Left && _pressedRectanglePointer == args.Pointer) CancelRectanglePress();
+            if (args.InitialPressMouseButton == MouseButton.Left && !args.GetCurrentPoint(this).Properties.IsLeftButtonPressed
+                && _pressedRectanglePointer == args.Pointer) CancelRectanglePress();
         }
         private bool CanContinueRectangleDrag(IPointer pointer, long serial)
             => !_disposed && _rectanglePressed && _pressedRectanglePointer == pointer && serial == _rectanglePressSerial;
+        private void CancelStaleRectangleDrag(long serial)
+        {
+            // 旧awaitの後に始まったpressは、現在のgestureの所有者として保護する。
+            if (serial != _rectanglePressSerial) return;
+            CancelDisplayDrag(); EndRectangleDrag();
+        }
         private void CancelRectanglePress() { _rectanglePressed = false; _pressedRectanglePointer = null; ++_rectanglePressSerial; }
 
         private void AddRectangleControls(Panel panel)
         {
-            Add(panel, _rectangleMode);
+            Add(panel, new TextBlock { Text = "ドラッグ操作" }); Add(panel, _dragMode); Add(panel, _dragCondition);
             AddEditButton(panel, "ImageSelectAllRectangle", "画像全体を選択", "rectangle-select", () => { SelectAllRectangle(_editPane.SelectedIndex); return Task.CompletedTask; });
             AddEditButton(panel, "ImageCopyRectangle", "矩形をコピー", "rectangle-copy", CopyRectangleAsync);
             AddEditButton(panel, "ImageCutRectangle", "矩形を切取り", "rectangle-cut", CutRectangleAsync);

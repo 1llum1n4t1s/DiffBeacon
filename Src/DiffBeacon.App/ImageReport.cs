@@ -30,8 +30,14 @@ internal static class ImageReport
         if (input.EditedFrames is { } edited && (edited.Count != images.Count || images.Any(image => image.FrameCount != 1)
             || edited.Any(frame => frame.Number != 1))) throw new ArgumentException("編集済みレポートは静止画の全入力が必要です。");
         if (titles.Count != images.Count) throw new ArgumentException("全画像の見出しが必要です。");
-        var html = new BoundedHtml(Math.Min(maximumBytes, ProjectReport.MaximumBytes), token);
         var selected = input.FrameNumbers is not null;
+        var count = selected ? 1 : images.Max(image => image.FrameCount);
+        // 整列後の寸法は画素を調べないと確定しない。全ページの予算成立前に描画しない。
+        using var preparation = !selected && count > 1 && input.InsertionDeletionMode != 0
+            ? PrepareAll(input, orientations, offsets, count, token) : null;
+        try
+        {
+        var html = new BoundedHtml(Math.Min(maximumBytes, ProjectReport.MaximumBytes), token);
         html.Append("<!doctype html><html lang=\"ja\"><head><meta charset=\"utf-8\"><title>画像比較</title>"
             + "<style>body{font-family:system-ui,sans-serif}table{border-collapse:collapse;width:100%}"
             + "th,td{border:1px solid #888;padding:.5rem;vertical-align:top}img{max-width:100%;height:auto;"
@@ -55,14 +61,15 @@ internal static class ImageReport
         for (var i = 0; i < titles.Count; i++) { html.Append("<th data-side=\""); html.Append(sides[i]); html.Append("\">"); html.Escape(titles[i]); html.Append("</th>"); }
         html.Append("<th>左右の画素差・領域</th></tr></thead><tbody>");
         var different = !selected && images.Select(image => image.FrameCount).Distinct().Count() != 1;
-        var count = selected ? 1 : images.Max(image => image.FrameCount);
         long alignmentWork = 0;
         long canvasWork = 0;
         for (var index = 1; index <= count; index++)
         {
             token.ThrowIfCancellationRequested();
             var numbers = input.FrameNumbers ?? images.Select(image => Math.Min(index, image.FrameCount)).ToArray();
-            var set = input.EditedFrames is { } raw
+            var set = preparation is not null
+                ? ImageComparisonEngine.ComparePrepared(preparation.Next(), input.Threshold, true, token, input.BlockSize, offsets)
+                : input.EditedFrames is { } raw
                 ? ImageComparisonEngine.CompareDecoded(raw, input.Threshold, true, token, orientations, input.BlockSize, offsets,
                     input.InsertionDeletionMode, ImageLineDiffer.MaximumWork - alignmentWork, ImageComparisonEngine.MaximumDecodeWork - canvasWork)
                 : ImageComparisonEngine.DecodeSelection(images, numbers, input.Threshold, true, token, orientations, input.BlockSize, offsets,
@@ -105,6 +112,32 @@ internal static class ImageReport
         html.Append("</tbody></table></body></html>");
         if (!different) html.MarkSame(differentPosition);
         return html.Finish();
+        }
+        catch (Exception error) { preparation?.RecordFailure(error); throw; }
+    }
+
+    private static ImageReportPreparation PrepareAll(ImageComparisonEngine.ReportInput input,
+        IReadOnlyList<ImageOrientation>? orientations, IReadOnlyList<ImageOffset>? offsets, int count, CancellationToken token)
+    {
+        var preparation = new ImageReportPreparation(token);
+        try
+        {
+            long alignmentWork = 0, canvasWork = 0;
+            for (var page = 1; page <= count; page++)
+            {
+                token.ThrowIfCancellationRequested();
+                var numbers = input.Images.Select(image => Math.Min(page, image.FrameCount)).ToArray();
+                var prepared = ImageComparisonEngine.PrepareSelection(input.Images, numbers, input.Threshold, token,
+                    orientations, offsets, input.InsertionDeletionMode, ImageLineDiffer.MaximumWork - alignmentWork,
+                    ImageComparisonEngine.MaximumDecodeWork - canvasWork);
+                alignmentWork = checked(alignmentWork + prepared.AlignmentWork);
+                canvasWork = checked(canvasWork + prepared.CanvasWork);
+                preparation.Add(prepared);
+            }
+            preparation.Rewind();
+            return preparation;
+        }
+        catch (Exception error) { preparation.RecordFailure(error); preparation.Dispose(); throw; }
     }
 
     private static void AppendSource(BoundedHtml html, ImageComparisonEngine.DecodedFrame? frame,

@@ -85,8 +85,10 @@ public static partial class SpecializedViews
                 _editSession?.CaptureFrames(), _displayOrientations.ToArray(), _displayBlockSize, _displayOffsets.ToArray(), _displayInsertionDeletionMode, _displayHighlightAlpha);
         }
 
-        internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null)
+        internal ImagePanel(ImageComparisonEngine.Snapshot left, ImageComparisonEngine.Snapshot right, ImageComparisonEngine.Snapshot? middle = null,
+            ImageApplicationOptionsStore? applicationOptions = null)
         {
+            _applicationOptions = applicationOptions ?? new();
             _snapshots = middle is null ? [left, right] : [left, middle, right];
             _counts = _snapshots.Select(image => image.FrameCount).ToArray();
             _requestedOrientations = _counts.Select(_ => new ImageOrientation()).ToArray();
@@ -109,7 +111,7 @@ public static partial class SpecializedViews
                     FrameButton("ImageNext" + names[pane], labels[pane] + " ▶", pane, 1), _positions[pane] }) Add(frameControls, control);
                 var column = new DockPanel(); var caption = new TextBlock { Text = labels[pane], Margin = new Thickness(4) };
                 _paneCaptions.Add(caption);
-                DockPanel.SetDock(caption, Dock.Top); column.Children.Add(caption); column.Children.Add(Scroll(AttachRectanglePane(pane)));
+                DockPanel.SetDock(caption, Dock.Top); column.Children.Add(caption); column.Children.Add(AttachImageScroll(pane, AttachRectanglePane(pane)));
                 Grid.SetColumn(column, pane); side.Children.Add(column);
                 _selectors[pane].ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
             }
@@ -150,7 +152,8 @@ public static partial class SpecializedViews
                 new TabItem { Header = "重ね合わせ", Content = overlays }, new TabItem { Header = "左右の画素差", Content = Scroll(_difference) } };
             _imageViews.SelectedIndex = 0;
             Children.Add(_imageViews);
-            _zoom.ValueChanged += (_, _) => UpdateZoom();
+            InitializeDragOptions();
+            _zoom.ValueChanged += (_, _) => { CancelDisplayDrag(); UpdateZoom(); };
             _opacity.ValueChanged += (_, _) => { for (var i = 1; i < _overlays.Count; i += 2) _overlays[i].Image.Opacity = _opacity.Value; };
             _highlightAlpha.ValueChanged += async (_, _) =>
             {
@@ -253,6 +256,7 @@ public static partial class SpecializedViews
         {
             ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations, _requestedOffsets); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
+            CancelDisplayDrag();
             // 差分色だけの再描画は原本RefreshImagesと同様に選択・浮動貼り付けを保持する。
             // 同時にページや座標系が変わる場合は従来どおり作業状態を解除する。
             var sameDisplayCoordinates = !_resetEditing && numbers.SequenceEqual(_numbers)
@@ -408,6 +412,7 @@ public static partial class SpecializedViews
             _blockSizeControl.IsEnabled = !_saving;
             _insertionDeletionMode.IsEnabled = !_saving;
             UpdateEditControls();
+            UpdateDragControls();
         }
         private void UpdateZoom()
         {
@@ -422,7 +427,9 @@ public static partial class SpecializedViews
         public void Dispose()
         {
             if (_disposed) return; _disposed = true; _generation++; _lifetime.Cancel(); _operationCancellation?.Cancel();
-            CancelRectangleInteraction();
+            CancelDisplayDrag(); CancelRectangleInteraction();
+            _applicationOptions.Changed -= ApplicationDragModeChanged;
+            if (_optionsGuard is not null) _applicationOptions.RemoveOutputGuard(_optionsGuard);
             _saveCancellation?.Cancel(); _editSession = null;
             if (_owner is not null) { _owner.Closed -= OwnerClosed; DetachRectangleOwner(_owner); _owner = null; }
             foreach (var image in _images) image.Source = null; foreach (var overlay in _overlays) overlay.Image.Source = null; _difference.Source = null;

@@ -85,7 +85,7 @@ public static partial class SpecializedViews
             AddEditButton(panel, "ImageAutoMerge", "競合以外を自動コピー", "auto", () => AutoMergeAsync(_editPane.SelectedIndex));
             AddEditButton(panel, "ImageUndo", "元に戻す", "undo", () => UndoEditAsync());
             AddEditButton(panel, "ImageRedo", "やり直す", "redo", () => RedoEditAsync());
-            AddEditButton(panel, "ImageCancelEdit", "中止", "cancel", () => { _operationCancellation?.Cancel(); _saveCancellation?.Cancel(); CancelRectangleInteraction(); return Task.CompletedTask; });
+            AddEditButton(panel, "ImageCancelEdit", "中止", "cancel", () => { _operationCancellation?.Cancel(); _saveCancellation?.Cancel(); CancelDisplayDrag(); CancelRectangleInteraction(); return Task.CompletedTask; });
             AddRectangleControls(panel);
             AddEditButton(panel, "ImageSavePng", "PNGで別名保存…", "save", PickPngAsync);
             return panel;
@@ -169,7 +169,7 @@ public static partial class SpecializedViews
             _outputGuard?.Invoke(target);
             var session = _editSession!; var frame = session.CaptureFrame(pane);
             using var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token);
-            _saveCancellation = cancel; _saving = true; UpdateNavigation();
+            CancelDisplayDrag(); _saveCancellation = cancel; _saving = true; UpdateNavigation();
             void Guard(string path)
             {
                 ObjectDisposedException.ThrowIf(_disposed, this);

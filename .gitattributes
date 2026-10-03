@@ -55,3 +55,9 @@ tests/Fixtures/ImageResize/probe-*.cpp -text -whitespace
 tests/Fixtures/ImageResize/generate-reference.py -text
 tests/Fixtures/ImageResize/winimerge-resize-golden.json.gz -text
 tests/Fixtures/ImageResize/GPL-LICENSE.txt -text whitespace=cr-at-eol
+# ワイプ原本の全BGRA採取データとadapterは固定SHAを維持する。
+tests/Fixtures/ImageWipes/winimerge-image-wipe-golden.json.gz -text -whitespace
+tests/Fixtures/ImageWipes/probe-adapter.cpp -text whitespace=cr-at-eol
+# 重ね合わせ原本の全BGRA採取データとadapterは固定SHAを維持する。
+tests/Fixtures/ImageOverlays/winimerge-image-overlay-golden.json.gz -text -whitespace
+tests/Fixtures/ImageOverlays/probe-adapter.cpp -text whitespace=cr-at-eol

@@ -30,7 +30,7 @@ internal static class HeadlessSelfTest
             var left = Path.Combine(output, "left.txt"); var right = Path.Combine(output, "right.txt");
             File.WriteAllText(left, "title\r\nleft value\r\ntail\r\n", new UTF8Encoding(false));
             File.WriteAllText(right, "title\r\nright value\r\ntail\r\n", new UTF8Encoding(false));
-            window = new MainWindow { Width = 1280, Height = 850 };
+            window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
             pane.LeftPath.Text = left; pane.RightPath.Text = right;
@@ -360,6 +360,7 @@ internal static class HeadlessSelfTest
             HeadlessImageInsertionChecks.Run(window, pane, output, Pump, Check, Screenshot);
             HeadlessImageInsertionHighlightChecks.Run(pane, output, Pump, Check, Screenshot);
             HeadlessImageRectangleChecks.Run(window, pane, artifactOutput, Pump, Check, Screenshot);
+            HeadlessImageDragChecks.Run(window, pane, output, Pump, Check, Screenshot);
             pane.BasePath.Text = "";
             pane.DiscardChanges();
             var xmlLeft = Path.Combine(output, "left.xml"); var xmlRight = Path.Combine(output, "right.xml");

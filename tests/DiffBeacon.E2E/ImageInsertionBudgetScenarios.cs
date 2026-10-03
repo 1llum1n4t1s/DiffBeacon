@@ -1,11 +1,13 @@
 using System.Security.Cryptography;
+using System.IO.Compression;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 internal static class ImageInsertionBudgetScenarios
 {
     // 失敗先行: raw240Mの事前検査だけでaligned360Mを受理、ページごとの予算リセット、
-    // 失敗時の部分JSON/既存HTML破壊、入力TIFF変更、選択1ページ12Mの誤拒否。
+    // 失敗時の部分JSON/既存HTML破壊、入力TIFF変更、選択1ページ12Mの誤拒否、
+    // 拒否前のPNG化、spool往復での原画・整列・方向・短入力反復の破損。
     public static async Task RunAsync(string output, string fixtures,
         Func<string, int, bool, string[], Task<CommandResult>> run, Action<string, bool, string> check)
     {
@@ -57,6 +59,15 @@ internal static class ImageInsertionBudgetScenarios
             && reportRejected.Stderr.Contains(workError, StringComparison.Ordinal), reportRejected.Stderr);
         check(Label("report-existing-output-preserved"), Hash(protectedOutput) == protectedHash
             && File.GetAttributes(protectedOutput) == protectedAttributes, "existing HTML SHA and attributes");
+        var protectedPackage = Path.Combine(proof, "protected-all-pages.zip");
+        await File.WriteAllTextAsync(protectedPackage, "protected existing package");
+        var packageHash = Hash(protectedPackage); var packageAttributes = File.GetAttributes(protectedPackage);
+        var packageRejected = await run(Label("all-pages-package-reject"), 2, false,
+            ["--package-project", project, protectedPackage, "--report"]);
+        check(Label("package-atomic-rejection"), string.IsNullOrWhiteSpace(packageRejected.Stdout)
+            && packageRejected.Stderr.Contains(workError, StringComparison.Ordinal), packageRejected.Stderr);
+        check(Label("package-existing-output-preserved"), Hash(protectedPackage) == packageHash
+            && File.GetAttributes(protectedPackage) == packageAttributes, "existing package SHA and attributes");
         var report = Path.Combine(proof, "selected-page.html");
         await run(Label("selected-page-report-success"), 0, true, ["--report-project", project, report, "--left-frame", "1", "--right-frame", "1"]);
         var html = await File.ReadAllTextAsync(report);
@@ -85,12 +96,100 @@ internal static class ImageInsertionBudgetScenarios
         check(Label("project-override-preserved"), Hash(project) == projectHash && File.GetAttributes(project) == projectAttributes, "selected frame override leaves saved all-pages project intact");
         for (var pane = 0; pane < paths.Length; pane++) check(Label("input-preserved-" + pane), Hash(paths[pane]) == before[pane].Hash
             && File.GetAttributes(paths[pane]) == before[pane].Attributes, "input TIFF SHA and attributes");
+        await VerifyPreparedPages();
         await File.WriteAllTextAsync(Path.Combine(proof, "observations.json"), JsonSerializer.Serialize(new { inputPages = pages, inputWidth = width, inputHeight = height,
             alignedHeight, canvasWidth, rawCanvasWork = rawWork, alignedCanvasWork = alignedWork, maximumCanvasWork = maximumWork, selectedPixels,
             selectedCanvasWork = selectedPixels * 3, rejected.ExitCode, rejection = rejected.Stderr, reportRejection = reportRejected.Stderr,
-            selectedJson = selected.Stdout, protectedOutput = new { path = protectedOutput, before = protectedHash, after = Hash(protectedOutput) },
+            reportDurationMilliseconds = reportRejected.DurationMilliseconds, packageDurationMilliseconds = packageRejected.DurationMilliseconds,
+            packageRejection = packageRejected.Stderr, selectedJson = selected.Stdout,
+            protectedPackage = new { path = protectedPackage, before = packageHash, after = Hash(protectedPackage) },
+            protectedOutput = new { path = protectedOutput, before = protectedHash, after = Hash(protectedOutput) },
             inputs = paths.Select((path, pane) => new { path, before = before[pane].Hash, after = Hash(path), attributesBefore = (int)before[pane].Attributes, attributesAfter = (int)File.GetAttributes(path) })
         }, new JsonSerializerOptions { WriteIndented = true }));
+
+        async Task VerifyPreparedPages()
+        {
+            var shortRight = Path.Combine(folder, "right-short.tif"); var middle = Path.Combine(folder, "middle.tif");
+            WriteTiff(shortRight, 1, 2); WriteTiff(middle, 0, 3);
+            var originalHashes = new[] { Hash(shortRight), Hash(middle) };
+            foreach (var three in new[] { false, true })
+            foreach (var horizontal in new[] { false, true })
+            {
+                var name = (three ? "three" : "two") + (horizontal ? "-horizontal" : "-vertical");
+                var currentProject = Path.Combine(folder, name + ".json");
+                var rotation = horizontal ? 90 : 0;
+                await File.WriteAllTextAsync(currentProject, JsonSerializer.Serialize(new { formatVersion = 1, activeEntryIndex = 0, entries = new[] {
+                    new { leftPath = paths[0], basePath = three ? middle : "", rightPath = shortRight, mode = "Image", imageSettings = new {
+                        insertionDeletionMode = horizontal ? 2 : 1, showDifferences = false, reportAllFrames = true,
+                        leftOrientation = new { rotation }, middleOrientation = new { rotation = three ? rotation : 0 }, rightOrientation = new { rotation } } } } }));
+                var destination = Path.Combine(proof, "prepared-" + name + ".html");
+                await run(Label("prepared-" + name), 0, true, ["--report-project", currentProject, destination]);
+                var text = await File.ReadAllTextAsync(destination);
+                var rows = Regex.Matches(text, "<tr\\b[^>]*data-left-frame=\"[^\"]+\"[^>]*>.*?</tr>", RegexOptions.CultureInvariant | RegexOptions.Singleline);
+                check(Label("prepared-" + name + "-count"), rows.Count == pages, "ten prepared pages; short right repeats last2 and middle repeats last3");
+                var sides = three ? new[] { "left", "middle", "right" } : ["left", "right"];
+                for (var page = 0; page < rows.Count; page++)
+                {
+                    var row = rows[page].Value;
+                    check(Label("prepared-" + name + "-numbers-" + page), row.Contains("data-left-frame=\"" + (page + 1) + "\"", StringComparison.Ordinal)
+                        && row.Contains("data-right-frame=\"" + Math.Min(page + 1, 2) + "\"", StringComparison.Ordinal)
+                        && (!three || row.Contains("data-middle-frame=\"" + Math.Min(page + 1, 3) + "\"", StringComparison.Ordinal))
+                        && row.Contains("data-total-pixels=\"30000\"", StringComparison.Ordinal)
+                        && row.Contains("data-different-pixels=\"20000\"", StringComparison.Ordinal), "sourceNumber and aligned A+B+C geometry");
+                    var images = Regex.Matches(row, "<img\\b[^>]*>", RegexOptions.CultureInvariant).Cast<Match>().ToArray();
+                    foreach (var side in sides)
+                    foreach (var original in new[] { false, true })
+                    {
+                        var tag = images.Single(image => image.Value.Contains("data-side=\"" + side + (original ? "-original" : "") + "\"", StringComparison.Ordinal)).Value;
+                        var png = Convert.FromBase64String(Regex.Match(tag, "src=\"data:image/png;base64,([^\"]+)\"", RegexOptions.CultureInvariant).Groups[1].Value);
+                        var decoded = ImageReportScenarios.DecodePng(png);
+                        var expected = original ? RawBgra(side == "right" ? 1 : 0) : AlignedBgra(side == "right", horizontal);
+                        check(Label("prepared-" + name + "-pixels-" + page + "-" + side + (original ? "-original" : "")),
+                            decoded.Width == (original ? 100 : horizontal ? 300 : 100) && decoded.Height == (original ? 200 : horizontal ? 100 : 300)
+                            && decoded.Bgra.AsSpan().SequenceEqual(expected), "independent PNG decoder; every literal original/aligned BGRA; no product SHA expectation");
+                        if (page == 0) await File.WriteAllBytesAsync(Path.Combine(proof, "prepared-" + name + "-" + side + (original ? "-original" : "") + ".png"), png);
+                    }
+                }
+                if (three && horizontal)
+                {
+                    var package = Path.Combine(proof, "prepared-three-horizontal.zip");
+                    await run(Label("prepared-package"), 0, true, ["--package-project", currentProject, package, "--report"]);
+                    using var archive = ZipFile.OpenRead(package);
+                    using var reader = new StreamReader(archive.GetEntry("report.files/1.html")!.Open());
+                    var packaged = await reader.ReadToEndAsync();
+                    var packagedRows = Regex.Matches(packaged, "<tr\\b[^>]*data-left-frame=\"[^\"]+\"[^>]*>.*?</tr>", RegexOptions.CultureInvariant | RegexOptions.Singleline);
+                    check(Label("prepared-package-pages"), packagedRows.Count == pages, "wrapped three-pane horizontal ten-page report");
+                    for (var page = 0; page < packagedRows.Count; page++)
+                    foreach (var side in sides)
+                    foreach (var original in new[] { false, true })
+                    {
+                        var tags = Regex.Matches(packagedRows[page].Value, "<img\\b[^>]*>", RegexOptions.CultureInvariant).Cast<Match>();
+                        var tag = tags.Single(image => image.Value.Contains("data-side=\"" + side + (original ? "-original" : "") + "\"", StringComparison.Ordinal)).Value;
+                        var png = Convert.FromBase64String(Regex.Match(tag, "src=\"data:image/png;base64,([^\"]+)\"", RegexOptions.CultureInvariant).Groups[1].Value);
+                        var decoded = ImageReportScenarios.DecodePng(png);
+                        var expected = original ? RawBgra(side == "right" ? 1 : 0) : AlignedBgra(side == "right", true);
+                        check(Label("prepared-package-pixels-" + page + "-" + side + (original ? "-original" : "")),
+                            decoded.Bgra.AsSpan().SequenceEqual(expected), "packaged PNG independently decoded; every literal BGRA");
+                    }
+                }
+            }
+            check(Label("prepared-inputs-preserved"), Hash(shortRight) == originalHashes[0] && Hash(middle) == originalHashes[1], "short-page TIFF and middle input hashes");
+        }
+    }
+
+    private static byte[] AlignedBgra(bool right, bool horizontal)
+    {
+        var width = horizontal ? 300 : 100; var height = horizontal ? 100 : 300;
+        var result = new byte[width * height * 4];
+        for (var y = 0; y < height; y++) for (var x = 0; x < width; x++)
+        {
+            var axis = horizontal ? x : y;
+            if (right ? axis < 100 : axis >= 200) continue;
+            var color = axis / 100; var pixel = (y * width + x) * 4;
+            result[pixel] = (byte)(30 + color * 50); result[pixel + 1] = (byte)(20 + color * 50);
+            result[pixel + 2] = (byte)(10 + color * 50); result[pixel + 3] = 255;
+        }
+        return result;
     }
 
     // TIFF格納と固定色だけを構築し、比較・整列・製品期待値の採取はしない。

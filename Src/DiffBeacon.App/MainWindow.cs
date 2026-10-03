@@ -15,10 +15,14 @@ public sealed partial class MainWindow : Window
 {
     private readonly TabControl _tabs = new();
     private readonly List<TabItem> _sessions = [];
+    internal ImageApplicationOptionsStore ImageOptions { get; }
     public ComparisonPane ActivePane => (ComparisonPane)((TabItem)_tabs.SelectedItem!).Content!;
 
-    public MainWindow(string[]? arguments = null)
+    public MainWindow(string[]? arguments = null) : this(arguments, new ImageApplicationOptionsStore()) { }
+
+    internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions)
     {
+        ImageOptions = imageOptions;
         Title = "DiffBeacon";
         Width = 1280;
         Height = 850;
@@ -43,6 +47,8 @@ public sealed partial class MainWindow : Window
         root.Children.Add(_tabs);
         Content = root;
         AddSession(arguments);
+        if (ImageOptions.Diagnostic is { } diagnostic)
+            Opened += async (_, _) => await Dialogs.MessageAsync(this, "画像操作設定", diagnostic);
         if (arguments is { Length: 1 } && Path.GetExtension(arguments[0]).ToLowerInvariant() is ".json" or ".winmerge" or ".diffbeacon")
             Opened += async (_, _) =>
             {
@@ -290,7 +296,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right))) { await CompareDirectoryAsync(left, right, token); _lastPackageComparison = comparisonForPackaging; return; }
             if (mode == 4 || (mode == 0 && SpecializedViews.IsImage(left) && SpecializedViews.IsImage(right)))
             {
-                var imageView = await SpecializedViews.ImagesAsync(left, right, token, BasePath.Text, imageSettings);
+                var imageView = await SpecializedViews.ImagesWithOptionsAsync(left, right, token, BasePath.Text, imageSettings,
+                    (_owner as MainWindow)?.ImageOptions);
                 if (token.IsCancellationRequested)
                 {
                     SpecializedViews.Release(imageView);
