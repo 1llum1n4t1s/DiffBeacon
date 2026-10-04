@@ -17,6 +17,7 @@ public sealed partial class MainWindow
     public async Task SaveWorkspaceAsync(string path, CancellationToken token = default)
     {
         var target = Path.GetFullPath(path);
+        foreach (var pane in SessionPanes) pane.EnsureArchiveDraftSaved();
         foreach (var pane in SessionPanes) pane.EnsureProjectOutputWritable(path);
         await WorkspaceStore.SaveWorkspaceAsync(target,
             new ComparisonWorkspace { Entries = SessionPanes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = _sessions.IndexOf((TabItem)_tabs.SelectedItem!) }, token);
@@ -119,6 +120,7 @@ public sealed partial class ComparisonPane
         foreach (var side in Enumerable.Range(0, 3))
             ProjectInputs.Archive(project, side)?.Validate(project.Mode == "Archive", side == 0 ? project.LeftReadOnly : side == 1 ? project.BaseReadOnly : project.RightReadOnly);
         _tableSyntax = null;
+        InvalidateTextSave();
         _operation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelChildOperation();
         ClearArchivePasswords(); _lastArchiveComparison = null;
         _projectMetadata = WorkspaceStore.CloneProject(project);
@@ -178,6 +180,7 @@ public sealed partial class ComparisonPane
 
     private void EnsureSideWritable(bool right)
     {
+        if (CanEditMissingText(right)) return;
         if ((right ? _projectMetadata.RightArchiveInput : _projectMetadata.LeftArchiveInput) is not null)
             throw new InvalidOperationException("内包入力は読取り専用です。元アーカイブへ保存できません。");
         if (right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly)
@@ -188,14 +191,20 @@ public sealed partial class ComparisonPane
     {
         var description = right ? _projectMetadata.RightDescription : _projectMetadata.LeftDescription;
         var readOnly = right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly;
+        if (CanEditMissingText(right)) readOnly = false;
         var caption = string.IsNullOrWhiteSpace(description) ? right ? "右" : "左" : description;
         if (ProjectInputs.Archive(_projectMetadata, right ? 2 : 0)?.MissingEntryChain is not null
             && !caption.Contains("（存在しない）", StringComparison.Ordinal)) caption += "（存在しない）";
+        if (HasArchiveDraft(right)) caption += "（未保存）";
         return caption + (readOnly ? "（読取り専用）" : "");
     }
 
     internal void EnsureProjectOutputWritable(string path)
     {
+        foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this])
+            foreach (var root in pane._detachedArchiveRoots)
+                if (ArchivePaths.SameFile(root, path))
+                    throw new InvalidOperationException("外部保存した文書のアーカイブ原本を上書きできません。");
         var archiveProjects = (_owner as MainWindow)?.SessionPanes.Select(pane => pane.CaptureProject()) ?? [CaptureProject()];
         foreach (var project in archiveProjects)
             foreach (var side in Enumerable.Range(0, 3))
@@ -239,6 +248,8 @@ public sealed partial class ComparisonPane
         var leftRo = new CheckBox { Content = "左を読取り専用にする", IsChecked = project.LeftReadOnly };
         var baseRo = new CheckBox { Content = "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
         var rightRo = new CheckBox { Content = "右を読取り専用にする", IsChecked = project.RightReadOnly };
+        if (project.LeftArchiveInput is { MissingEntryChain: not null } leftMissing) leftRo.IsChecked = leftMissing.InheritedReadOnly ?? true;
+        if (project.RightArchiveInput is { MissingEntryChain: not null } rightMissing) rightRo.IsChecked = rightMissing.InheritedReadOnly ?? true;
         leftRo.IsEnabled = project.LeftArchiveInput is null; baseRo.IsEnabled = project.BaseArchiveInput is null; rightRo.IsEnabled = project.RightArchiveInput is null;
         panel.Children.Add(leftRo); panel.Children.Add(baseRo); panel.Children.Add(rightRo);
         var filter = Field("ファイルマスク／式（.flt指定がある場合はそちらを使用）", project.LegacyFilter);
@@ -263,7 +274,7 @@ public sealed partial class ComparisonPane
                     BaseReadOnly = project.BaseArchiveInput is not null || baseRo.IsChecked == true,
                     RightReadOnly = project.RightArchiveInput is not null || rightRo.IsChecked == true,
                     LegacyFilter = filter.Text, TableDelimiter = delimiterValue, TableQuote = quoteValue, TableAllowNewlinesInQuotes = multiline.IsChecked == true };
-                LeftEditor.IsReadOnly = !_textSaveAllowed || _projectMetadata.LeftReadOnly; RightEditor.IsReadOnly = !_textSaveAllowed || _projectMetadata.RightReadOnly;
+                RefreshTextReadOnly();
                 SpecializedViews.SetProjectReadOnly(_specialTab.Content as Control, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, _projectMetadata.BaseReadOnly);
                 _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
                 if (_owner is MainWindow owner) owner.RefreshSessionHeaders();

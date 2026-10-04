@@ -40,8 +40,9 @@ public sealed class TextDocument
     }
 
     // 別文書の出力で読込み元のPath/Textを変更しない。
-    public Task SaveCopyAsync(string path, string text, CancellationToken cancellationToken = default) =>
-        new TextDocument(Path, Text, encoding, preamble).SaveAsync(path, text, cancellationToken);
+    public Task SaveCopyAsync(string path, string text, CancellationToken cancellationToken = default,
+        Func<string, string, CancellationToken, Task>? publish = null) =>
+        new TextDocument(Path, Text, encoding, preamble).SaveAsync(path, text, cancellationToken, publish);
 
     public static async Task<TextDocument> LoadAsync(string path, TextLoadOptions options,
         CancellationToken cancellationToken = default)
@@ -62,7 +63,8 @@ public sealed class TextDocument
         return new(absolute, text, encoding, bytes[..preambleLength]);
     }
 
-    public async Task SaveAsync(string path, string text, CancellationToken cancellationToken = default)
+    public async Task SaveAsync(string path, string text, CancellationToken cancellationToken = default,
+        Func<string, string, CancellationToken, Task>? publish = null)
     {
         ArgumentNullException.ThrowIfNull(text);
         if (text.Contains('\0')) throw new InvalidDataException("テキストに NUL を保存できません。");
@@ -93,10 +95,15 @@ public sealed class TextDocument
                 var preserved = attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Archive | FileAttributes.NotContentIndexed);
                 File.SetAttributes(temporary, preserved == 0 ? FileAttributes.Normal : preserved);
             }
-            if (File.Exists(absolute) && (File.GetAttributes(absolute) & FileAttributes.ReadOnly) != 0)
-                throw new UnauthorizedAccessException("読み取り専用のファイルは保存できません。");
-            // 同じディレクトリ内で置換するため、書込み途中の内容を公開しない。
-            File.Move(temporary, absolute, true);
+            if (publish is not null) await publish(temporary, absolute, cancellationToken).ConfigureAwait(false);
+            else
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (File.Exists(absolute) && (File.GetAttributes(absolute) & FileAttributes.ReadOnly) != 0)
+                    throw new UnauthorizedAccessException("読み取り専用のファイルは保存できません。");
+                // 同じディレクトリ内で置換し、書込み途中の内容を公開しない。
+                File.Move(temporary, absolute, true);
+            }
             Path = absolute;
             Text = text;
         }

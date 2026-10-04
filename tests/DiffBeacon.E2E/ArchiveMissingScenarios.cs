@@ -78,6 +78,21 @@ internal static class ArchiveMissingScenarios
             proof.Add(new { name = item.Name, source, copy, html, package, extracted, reopened });
         }
         var valid = cases[0].Project;
+        foreach (var inherited in new[] { false, true })
+        {
+            var descriptor = valid.DeepClone().AsObject();
+            Leaf(descriptor)["inheritedReadOnly"] = inherited;
+            var source = Save("inherited-readonly-" + inherited, descriptor);
+            var before = Hash(source);
+            var target = Path.Combine(work, "inherited-readonly-" + inherited + "-copy.json");
+            await run("archive-missing-inherited-readonly-" + inherited, 0, true, ["--project-copy", source, target]);
+            using var saved = JsonDocument.Parse(File.ReadAllBytes(target));
+            var entry = saved.RootElement.GetProperty("entries")[0];
+            check("archive missing inherited readonly roundtrip " + inherited,
+                entry.GetProperty("leftArchiveInput").GetProperty("inheritedReadOnly").GetBoolean() == inherited
+                && entry.GetProperty("leftReadOnly").GetBoolean(), "");
+            check("archive missing inherited readonly input retained " + inherited, Hash(source) == before, "");
+        }
         foreach (var (name, change) in new (string, Action<JsonObject>)[]
         {
             ("version2", json => json["formatVersion"] = 2),
@@ -88,7 +103,10 @@ internal static class ArchiveMissingScenarios
             ("absolute", json => Leaf(json)["missingEntryChain"] = new JsonArray("/escape.zip")),
             ("too-deep", json => Leaf(json)["missingEntryChain"] = JsonSerializer.SerializeToNode(Enumerable.Repeat("virtual.zip", 10).ToArray())),
             ("also-leaf", json => Leaf(json)["leafEntry"] = "leaf.txt"),
-            ("writable", json => json["entries"]![0]!["leftReadOnly"] = false)
+            ("writable", json => json["entries"]![0]!["leftReadOnly"] = false),
+            ("inherited-string", json => Leaf(json)["inheritedReadOnly"] = "false"),
+            ("inherited-number", json => Leaf(json)["inheritedReadOnly"] = 0),
+            ("inherited-object", json => Leaf(json)["inheritedReadOnly"] = new JsonObject())
         })
         {
             var json = valid.DeepClone().AsObject(); change(json); await Reject("schema-" + name, Save("invalid-" + name, json), true);
@@ -128,6 +146,40 @@ internal static class ArchiveMissingScenarios
             }
         }
         check("archive missing fixed roots unchanged", originals.All(pair => Hash(pair.Key) == pair.Value), "");
+        var gui = Path.Combine(work, "draft-gui");
+        await run("archive-missing-draft-gui", 0, false, ["--self-test", gui, "--archive-sources-only"]);
+        var draftInfo = new System.Diagnostics.ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
+        draftInfo.ArgumentList.Add("-X"); draftInfo.ArgumentList.Add("utf8");
+        draftInfo.ArgumentList.Add(Path.GetFullPath("tests/Fixtures/ArchiveDraft/verify.py")); draftInfo.ArgumentList.Add(gui);
+        using var draftProcess = System.Diagnostics.Process.Start(draftInfo)!;
+        var draftOut = draftProcess.StandardOutput.ReadToEndAsync(); var draftError = draftProcess.StandardError.ReadToEndAsync();
+        await draftProcess.WaitForExitAsync(); var draftOutput = await draftOut; var draftErrors = await draftError;
+        File.WriteAllText(Path.Combine(work, "draft-independent.stdout.txt"), draftOutput);
+        File.WriteAllText(Path.Combine(work, "draft-independent.stderr.txt"), draftErrors);
+        check("archive missing draft independent reader", draftProcess.ExitCode == 0, draftOutput + draftErrors);
+        if (draftProcess.ExitCode == 0)
+        {
+            using var draft = JsonDocument.Parse(draftOutput);
+            var source = draft.RootElement.GetProperty("patchSource").GetString()!;
+            var expected = draft.RootElement.GetProperty("patchExpected").GetString()!;
+            var patch = draft.RootElement.GetProperty("patch").GetString()!;
+            var archive = draft.RootElement.GetProperty("package").GetString()!;
+            var extractedDraft = Path.Combine(work, "draft-package-extracted");
+            await run("archive-missing-draft-package-extract", 0, true, ["--archive-extract", archive, extractedDraft]);
+            var reopenedDraft = Path.Combine(work, "draft-package-reopened.html");
+            await run("archive-missing-draft-package-reopen", 0, true, ["--report-project", Path.Combine(extractedDraft, "project.json"), reopenedDraft]);
+            draftInfo.ArgumentList.Add(reopenedDraft);
+            using var reopenedProcess = System.Diagnostics.Process.Start(draftInfo)!;
+            var reopenedOut = reopenedProcess.StandardOutput.ReadToEndAsync(); var reopenedError = reopenedProcess.StandardError.ReadToEndAsync();
+            await reopenedProcess.WaitForExitAsync(); var reopenedOutput = await reopenedOut; var reopenedErrors = await reopenedError;
+            File.WriteAllText(Path.Combine(work, "draft-reopened-independent.stdout.txt"), reopenedOutput);
+            File.WriteAllText(Path.Combine(work, "draft-reopened-independent.stderr.txt"), reopenedErrors);
+            check("archive missing saved draft package independent reopen", reopenedProcess.ExitCode == 0, reopenedOutput + reopenedErrors);
+            var target = Path.Combine(work, "draft-patch-applied.txt"); var beforeSource = Hash(source); var beforePatch = Hash(patch);
+            await run("archive-missing-draft-packaged-patch-apply", 0, true, ["--patch-apply", source, patch, target]);
+            check("archive missing draft packaged patch independent bytes", File.Exists(target) && Hash(target) == Hash(expected), "");
+            check("archive missing draft packaged patch inputs retained", Hash(source) == beforeSource && Hash(patch) == beforePatch, "");
+        }
 
         async Task Reject(string name, string descriptor, bool schema)
         {

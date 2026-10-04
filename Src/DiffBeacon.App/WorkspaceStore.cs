@@ -247,8 +247,10 @@ public static class WorkspaceStore
             var fields = new HashSet<string>(StringComparer.Ordinal);
             foreach (var field in side.Value.EnumerateObject())
             {
-                if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256" or "missingEntryChain") || !fields.Add(field.Name))
+                if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256" or "missingEntryChain" or "inheritedReadOnly") || !fields.Add(field.Name))
                     throw new InvalidDataException("内包入力に未対応または重複した項目があります。");
+                if (field.Name == "inheritedReadOnly" && field.Value.ValueKind is not (JsonValueKind.True or JsonValueKind.False or JsonValueKind.Null))
+                    throw new InvalidDataException("内包入力の読取り専用継承には真偽値を指定してください。");
                 if (field.Name == "entryChain" && (field.Value.ValueKind != JsonValueKind.Array || field.Value.GetArrayLength() > 8))
                     throw new InvalidDataException("内包入力の格納階層が不正です。");
                 if (field.Name == "missingEntryChain" && (field.Value.ValueKind != JsonValueKind.Array ||

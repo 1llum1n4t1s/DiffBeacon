@@ -13,6 +13,9 @@ public sealed record ArchiveProjectInput
     public string? RootSha256 { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string[]? MissingEntryChain { get; set; }
+    // 原本の固定readonlyとは別に、最初に開いた側の編集指定を保持する。
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? InheritedReadOnly { get; set; }
 
     internal ArchiveProjectInput Copy() => this with { EntryChain = EntryChain.ToArray(), MissingEntryChain = MissingEntryChain?.ToArray() };
     internal ArchiveSource ToSource() => new(RootPath, EntryChain, RootSha256);

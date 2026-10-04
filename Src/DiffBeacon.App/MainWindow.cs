@@ -186,7 +186,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "アーカイブ作成", CreateArchiveAsync);
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
-        AddAction(actions, "中止", () => { _operation?.Cancel(); _reportOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
+        AddAction(actions, "中止", () => { _operation?.Cancel(); _reportOperation?.Cancel(); _textSaveOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
         top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", OpenProjectAsync);
@@ -222,6 +222,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _ancestorEditor.IsReadOnly = true;
         ResultEditor.TextChanged += (_, _) => { if (_resultPreview.Text != ResultEditor.Text) _resultPreview.Text = ResultEditor.Text; };
         _resultPreview.TextChanged += (_, _) => { if (ResultEditor.Text != _resultPreview.Text) ResultEditor.Text = _resultPreview.Text; };
+        LeftEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
+        RightEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
         UpdateEditorLayout(false);
         _resultTab = new TabItem { Header = "マージ結果", Content = CreateMergeResultView() };
         _views.ItemsSource = new[] { _diffTab, new TabItem { Header = "編集 / 4ペイン", Content = _editGrid }, _resultTab, _specialTab };
@@ -288,6 +290,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
         (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
         ResetMergeSession();
+        InvalidateTextSave();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         (_specialTab.Content as ArchivePanel)?.CancelOperation();
         var operation = _operation; var token = operation.Token;
@@ -456,6 +459,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        InvalidateTextSave();
         _owner.Closed -= _ownerClosedHandler;
         _operation?.Cancel(); _operation?.Dispose();
         _reportOperation?.Cancel();
@@ -496,7 +500,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var path = await SavePathAsync("比較プロジェクトを保存", "comparison.diffbeacon.json");
         if (path is null) return;
         if (_owner is MainWindow window) await window.SaveWorkspaceAsync(path);
-        else await WorkspaceStore.SaveAsync(path, CaptureProject());
+        else { EnsureArchiveDraftSaved(); await WorkspaceStore.SaveAsync(path, CaptureProject()); }
         _status.Text = "すべての比較タブをプロジェクトへ保存しました。編集本文は元ファイルへ別途保存してください。";
     }
     private async Task OpenProjectAsync()
@@ -532,7 +536,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         EnsureNoPendingTableEdit();
         if (_reportOperation is not null) throw new InvalidOperationException("HTMLレポートを生成しています。");
-        var project = CaptureProject();
+        var project = CaptureTextReportProject();
         if (ProjectInputs.HasArchives(project) || !string.IsNullOrWhiteSpace(project.LeftPath) || !string.IsNullOrWhiteSpace(project.RightPath)) EnsureComparedForPackaging();
         var workspaceWindow = _owner as MainWindow;
         var panes = workspaceWindow?.SessionPanes ?? [this];
@@ -582,27 +586,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _status.Text = "検索語が見つかりませんでした。";
     }
 
-    public async Task SaveAsync(bool right)
-    {
-        EnsureNoPendingTableEdit();
-        EnsureSideWritable(right);
-        if (!_textSaveAllowed) throw new InvalidOperationException("この比較はテキスト保存の対象ではありません。形式別ビューの保存操作を使用してください。");
-        var path = right ? RightPath.Text : LeftPath.Text;
-        var document = right ? _rightDocument : _leftDocument;
-        if (document is not null && !string.IsNullOrWhiteSpace(path) && !Path.GetFullPath(path).Equals(document.Path, OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal))
-            throw new InvalidOperationException("パスが読込み後に変更されています。比較して文書を開き直してから保存してください。");
-        if (document is null && !string.IsNullOrWhiteSpace(path))
-            throw new InvalidOperationException("このパスの文書はまだ読み込まれていません。比較してから保存してください。");
-        if (string.IsNullOrWhiteSpace(path)) path = await SavePathAsync("テキストを保存", "untitled.txt");
-        if (path is null) return;
-        EnsureProjectOutputWritable(path);
-        var text = (right ? RightEditor.Text : LeftEditor.Text) ?? "";
-        if (document is not null) await document.SaveAsync(path, text, CancellationToken.None);
-        else await File.WriteAllTextAsync(path, text, new System.Text.UTF8Encoding(false));
-        if (right) { RightPath.Text = path; _savedRight = text; _rightDocument = await TextDocument.LoadAsync(path, CancellationToken.None); }
-        else { LeftPath.Text = path; _savedLeft = text; _leftDocument = await TextDocument.LoadAsync(path, CancellationToken.None); }
-        _status.Text = $"保存しました: {path}";
-    }
+    public Task SaveAsync(bool right) => SaveTextCoreAsync(right, null, CancellationToken.None);
     private async Task<string?> SavePathAsync(string title, string suggested) => (await _owner.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = title, SuggestedFileName = suggested, ShowOverwritePrompt = true }))?.TryGetLocalPath();
     private async Task ExportPatchAsync()
     {

@@ -1,10 +1,16 @@
 # .NET 10 / Avalonia 移行の到達点
 
-## 片側不在の内包入力（ローカル検証済み）
+## 不在側の未命名文書と外部保存（実装・検証中）
+
+不在Text側の元のreadonly指定を、実在アーカイブの固定readonlyとは別に保存・多段継承する。同じ比較側で直接編集と選択差分コピーを行い、初回保存は外部SaveAsへ進む。原子的公開と再読込みの成功後だけ保存した側を通常ファイルへ切り替え、保存中に増えた編集はdirtyのまま保持する。親タブをすべて閉じた後も原本を保護し、取消・古い完了・公開後の採用失敗では本文と不在証拠を保持する。未保存の不在本文をworkspace／包装へ黙って落とさず拒否し、単体HTMLへ未保存表示と本文を反映する。継承情報のない既存projectは保守的にreadonlyとして復元する。実在entryの編集と展開作業文書への通常保存は未完了。旧通常Saveは展開した実ファイルを更新し、元アーカイブへの自動書戻しは行わない（`Src/MergeDoc.cpp:1096`、`Src/7zCommon.h:27`）。
+
+GUI限定検証は94成功・0失敗。保存側に実在するcontainer階層がある場合のSaveAs後再比較を実行再現し、採用成功時だけ保存側のpassword cacheを新しい階層へ更新した。対向側と原本を保持する。元root保護の脱落を実アプリで再現し、外部保存後・親閉鎖後・パス消去後の再指定を拒否する回帰検証を追加した。公開前の新入力タブとreadonly変更も既存出力を保持する。独立したPython標準readerで、二段ZIPの全entry・CRC・全byte、取消／古い完了の既存出力、保存・公開後の採用失敗・実在0byteの本文、未保存／包装HTMLの全文と改行、包装の全fileと相対参照を照合した。実アプリE2Eは240成功・0失敗で、同じGUI経路・包装展開・CLI HTML再読込み・独立した本文への包装patch適用まで確認した。管理者実行の通常版とWindows x64 Native AOTの全体E2Eは各158606成功・0失敗・3skip、5626命令と11252ログの全byteが一致した。両方の全UIは10215成功・0失敗、各520PNGを独立復号した。ソース355fileのうち353fileは不変で、2つのcompiler lockだけが既存GitのAOT graphへ復帰し、製品依存関係と検証driverは不変。Native発行12file・3licenseのSHAとサイズも一致した。新しい文脈の独立出荷レビューで見つかった保存後再比較の不具合は実行再現・修正・再検証し、修正確認で追加指摘はなかった。4RIDのGitHub検証を進めている。証拠は `artifacts/local/archive-unnamed-editing`。ネイティブ保存ダイアログの測定とは区別する。
+
+## 片側不在の内包入力（4RID検証済み）
 
 実在する親rootと不在の格納名を分けるversion 3のtyped入力を追加した。片側だけのText／Binary／Archiveを開き、不在containerを空一覧として二段先のleafまで進める。実在する0byte fileと不在を保存・HTML・包装patchで区別し、全親containerのCRC・EOF・SHAと不在の起点を再検証する。不在側を実在する親の再梱包・全件展開へ渡さない。元アーカイブへの書戻しは未対応のまま固定readonlyを維持する。
 
-追加した実アプリE2Eは203成功・0失敗（81命令）、独立readerは8比較の原本・本文・全包装fileを照合し、6patchの適用結果を独立本文の全byteと照合した。GUI限定検証は62成功・0失敗で二段の不在階層・readonly・原本保持・出力保護を確認した。不在captionを本文見出しにも表示し、実controlとPNGで確認した。全UI検証は10,183成功・0失敗、518PNGと元container・HTMLの独立照合も成功した。証拠は `artifacts/local/archive-missing-input`。管理者実行の通常版とWindows x64 Native AOTは、全体E2Eが各158,569成功・0失敗・3skip、5,611命令と11,222ログの全byte照合に成功した。Nativeの全UIも10,183成功・0失敗、518PNGと原本・HTMLを独立照合し、12発行file・3ライセンスとソース351fileを照合した。2つのcompiler lockだけが既存GitのAOT graphへ戻り、製品依存関係と検証driverは不変。最初の非管理者実行はリンク保護など12skipのため採用せず、原本を全22,580file照合した約58MBのZIPへ保持した。ごみ箱の完全消去は中断し、約818MBと管理情報が残るため清掃完了とは扱わない。今回の変更を含む4RID CI、通常desktop・ネイティブ保存ダイアログ、新しい文脈の独立出荷レビューは未完了。未命名側の直接編集・SaveAsも次工程であり、全機能移植の完了ではない。
+追加した実アプリE2Eは203成功・0失敗（81命令）、独立readerは8比較の原本・本文・全包装fileを照合し、6patchの適用結果を独立本文の全byteと照合した。GUI限定検証は62成功・0失敗で二段の不在階層・readonly・原本保持・出力保護を確認した。不在captionを本文見出しにも表示し、実controlとPNGで確認した。全UI検証は10,183成功・0失敗、518PNGと元container・HTMLの独立照合も成功した。証拠は `artifacts/local/archive-missing-input`。管理者実行の通常版とWindows x64 Native AOTは、全体E2Eが各158,569成功・0失敗・3skip、5,611命令と11,222ログの全byte照合に成功した。Nativeの全UIも10,183成功・0失敗、518PNGと原本・HTMLを独立照合し、12発行file・3ライセンスとソース351fileを照合した。2つのcompiler lockだけが既存GitのAOT graphへ戻り、製品依存関係と検証driverは不変。最初の非管理者実行はリンク保護など12skipのため採用せず、原本を全22,580file照合した約58MBのZIPへ保持した。ごみ箱の完全消去は中断し、約818MBと管理情報が残るため清掃完了とは扱わない。SHA `545d3a674a73ed3ac3d41f3648b4aa24b191858f` の4RID CI `37167958727`とCodeQL `37167958698`は成功した。Windows各158569成功・0失敗・3skip／5611命令、Mac各158578成功・0失敗・2skip／5614命令。各UI10183成功・0失敗／518PNG、8比較と6適用patch、全発行物・3license・Mac bundleと別processの実OS clipboardを再照合した。8ZIP・677587837bytes・98646entryの全CRC／SHA／サイズと公式digestが一致し、展開量は0。証拠は `artifacts/github/37167958727/terminal-summary.json`。このSHAは未命名側の編集・SaveAs追加前のcheckpointであり、後続変更の検証を含めない。通常desktop・ネイティブ保存ダイアログ、新しい文脈の独立出荷レビューは未完了。全機能移植の完了ではない。
 
 ## 内包アーカイブの子比較・保存・包装
 

@@ -35,6 +35,9 @@ internal static class HeadlessArchiveSourceChecks
         Select(panel, "inner.zip"); pump(panel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
         var innerPane = window.ActivePane; var inner = innerPane.GetVisualDescendants().OfType<ArchivePanel>().Single();
         var innerProject = innerPane.CaptureProject();
+        Verify("nested source preserves original editable intention without unlocking archive",
+            innerProject.LeftArchiveInput?.InheritedReadOnly == false && innerProject.RightArchiveInput?.InheritedReadOnly == false
+            && innerProject.LeftReadOnly && innerProject.RightReadOnly);
         Verify("nested container opens after complete preparation", count + 1 == window.SessionPanes.Count && inner.Rows.Count == 4
             && innerProject.LeftPath == "" && innerProject.LeftArchiveInput?.RootPath == roots[0]
             && innerProject.LeftArchiveInput.EntryChain.SequenceEqual(new[] { "inner.zip" }) && innerProject.LeftArchiveInput.RootSha256 == hashes[0]);
@@ -93,6 +96,10 @@ internal static class HeadlessArchiveSourceChecks
             var restored = restore.ActivePane;
             Verify("workspace source restore waits for explicit comparison", restored.LeftEditor.Text == "" && restored.CurrentDiff is null
                 && restored.CaptureProject().LeftArchiveInput?.EntryChain[0] == "inner.zip");
+            Verify("workspace restores inherited intention separately from fixed source readonly",
+                restored.CaptureProject().LeftArchiveInput?.InheritedReadOnly == false
+                && restored.CaptureProject().RightArchiveInput?.InheritedReadOnly == false
+                && restored.LeftEditor.IsReadOnly && restored.RightEditor.IsReadOnly);
             var retained = Path.Combine(folder, "pending-report.html"); File.WriteAllText(retained, "keep pending output"); var retainedHash = HashFile(retained);
             Verify("restored pending source cannot emit blank HTML", Refused(() => pump(restored.SaveReportAsync(retained))) && HashFile(retained) == retainedHash);
             pump(restored.ComparePathsAsync());
@@ -172,7 +179,7 @@ internal static class HeadlessArchiveSourceChecks
         var missingLeft = Path.Combine(folder, "missing-left.zip"); var missingRight = Path.Combine(folder, "missing-right.zip");
         File.WriteAllBytes(missingLeft, Zip(("one.zip", Zip(("two.zip", Zip(("leaf.txt", Encoding.UTF8.GetBytes(leftText)), ("empty.txt", [])))))));
         File.WriteAllBytes(missingRight, Zip()); var missingHashes = new[] { HashFile(missingLeft), HashFile(missingRight) };
-        var missingParent = window.AddSession(); missingParent.ApplyProject(new() { LeftPath = missingLeft, RightPath = missingRight, Mode = "Archive" });
+        var missingParent = window.AddSession(); missingParent.ApplyProject(new() { LeftPath = missingLeft, RightPath = missingRight, Mode = "Archive", LeftReadOnly = true });
         pump(missingParent.ComparePathsAsync());
         var missingPanel = missingParent.GetVisualDescendants().OfType<ArchivePanel>().Single();
         Select(missingPanel, "one.zip"); pump(missingPanel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
@@ -189,23 +196,30 @@ internal static class HeadlessArchiveSourceChecks
             && deeperPane.CaptureProject().RightArchiveInput is { EntryChain.Length: 0, MissingEntryChain: ["one.zip", "two.zip"] });
         Select(deeperPanel, "leaf.txt"); deeperPanel.EntryKind.SelectedIndex = 1; pump(deeperPanel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
         var missingText = window.ActivePane; var missingProject = missingText.CaptureProject();
-        Verify("virtual leaf text keeps original and empty readonly document", missingText.LeftEditor.Text == leftText && missingText.RightEditor.Text == ""
-            && missingText.LeftEditor.IsReadOnly && missingText.RightEditor.IsReadOnly
+        Verify("virtual two-level child keeps original readonly intention",
+            missingProject.LeftArchiveInput?.InheritedReadOnly == true && missingProject.RightArchiveInput?.InheritedReadOnly == false
+            && missingProject.LeftReadOnly && missingProject.RightReadOnly);
+        Verify("virtual leaf text keeps readonly original and empty editable missing document", missingText.LeftEditor.Text == leftText && missingText.RightEditor.Text == ""
+            && missingText.LeftEditor.IsReadOnly && !missingText.RightEditor.IsReadOnly
             && missingProject.RightArchiveInput?.MissingEntryChain is ["one.zip", "two.zip", "leaf.txt"]);
         missingProject.RightArchiveInput!.MissingEntryChain![0] = "changed.zip";
         Verify("missing chain capture is a deep copy", missingText.CaptureProject().RightArchiveInput!.MissingEntryChain![0] == "one.zip");
         var missingHtml = Path.Combine(folder, "missing.html"); pump(missingText.SaveReportAsync(missingHtml));
         Verify("missing GUI report identifies absent side", System.Net.WebUtility.HtmlDecode(File.ReadAllText(missingHtml)).Contains("（存在しない）", StringComparison.Ordinal));
         Verify("missing GUI visible caption identifies absent side", missingText.GetVisualDescendants().OfType<TextBlock>()
-            .Any(label => label.Text == "leaf.txt（存在しない）（読取り専用）"));
+            .Any(label => label.Text == "leaf.txt（存在しない）"));
         screenshot("archive-source-missing.png");
         Activate(deeperPane); Select(deeperPanel, "empty.txt"); pump(deeperPanel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
         var emptyMissingPane = window.ActivePane;
         Verify("empty existing leaf remains distinct from absent leaf", emptyMissingPane.LeftEditor.Text == "" && emptyMissingPane.RightEditor.Text == ""
             && emptyMissingPane.CaptureProject().LeftArchiveInput?.MissingEntryChain is null
             && emptyMissingPane.CaptureProject().RightArchiveInput?.MissingEntryChain is ["one.zip", "two.zip", "empty.txt"]);
+        ClosePane(emptyMissingPane); ClosePane(deeperPane); ClosePane(virtualPane); ClosePane(missingParent); Activate(missingText);
+        Verify("missing leaf remains open after all archive parents close", window.SessionPanes.Contains(missingText)
+            && !window.SessionPanes.Contains(missingParent) && !window.SessionPanes.Contains(virtualPane) && !window.SessionPanes.Contains(deeperPane));
+        HeadlessArchiveDraftChecks.Run(window, missingText, folder, [missingLeft, missingRight], missingHashes, pump, check, screenshot);
         Verify("missing navigation preserves both physical roots", HashFile(missingLeft) == missingHashes[0] && HashFile(missingRight) == missingHashes[1]);
-        ClosePane(emptyMissingPane); ClosePane(missingText); ClosePane(deeperPane); ClosePane(virtualPane); ClosePane(missingParent); Activate(parent);
+        ClosePane(missingText); Activate(parent);
         Select(panel, "bad.zip"); pump(panel.PreviewAsync(panel.Rows.Single(row => row.Path == "bad.zip")));
         var stableRows = panel.Rows; var stablePreview = panel.PreviewText; var stableTabs = window.SessionPanes.Count;
         parent.ArchiveSourceRetryShown = dialog => dialog.Cancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
