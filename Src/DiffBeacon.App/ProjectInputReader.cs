@@ -24,7 +24,12 @@ internal static class ProjectInputReader
         var bytes = await Task.Run(() => new ManagedArchive().ResolveEntry(source, input.LeafEntry,
             checked((int)options.MaxFileSize), passwords, token), token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
-        return TextDocument.FromSnapshot(bytes, options);
+        var working = input.WorkingTexts?.SingleOrDefault(copy => copy.EntryChain.SequenceEqual(input.EntryChain) && copy.LeafEntry == input.LeafEntry);
+        var original = TextDocument.FromSnapshot(bytes, options);
+        if (working is null) return original;
+        if (working.EncodingName != original.EncodingName || working.HasBom != original.HasBom)
+            throw new InvalidDataException("作業版の文字コード／BOMが原本と一致しません。");
+        return working.Document();
     }
 
     internal static async Task<byte[]> ReadBytesAsync(ComparisonProject project, int side, int maximumBytes,
@@ -39,8 +44,12 @@ internal static class ProjectInputReader
                 token.ThrowIfCancellationRequested(); return [];
             }
             if (input.LeafEntry is null) throw new InvalidDataException("内包ファイルを指定してください。");
-            return await Task.Run(() => new ManagedArchive().ResolveEntry(input.ToSource(), input.LeafEntry,
+            var original = await Task.Run(() => new ManagedArchive().ResolveEntry(input.ToSource(), input.LeafEntry,
                 maximumBytes, passwords, token), token).ConfigureAwait(false);
+            var working = input.WorkingTexts?.SingleOrDefault(copy => copy.EntryChain.SequenceEqual(input.EntryChain) && copy.LeafEntry == input.LeafEntry);
+            if (working is null) return original;
+            if (working.Bytes is null || working.Bytes.Length > maximumBytes) throw new InvalidDataException("作業版の保持サイズ上限を超えました。");
+            return working.Bytes.ToArray();
         }
         var path = ArchiveActions.ValidatePath(ProjectInputs.PathFor(project, side));
         if (new FileInfo(path).Length > maximumBytes) throw new InvalidDataException("内包比較の保持サイズ上限を超えました。");
@@ -57,6 +66,28 @@ internal static class ProjectInputReader
         var leaf = captured.LeafEntry is null ? null : new ArchiveSource(Path.GetFullPath(captured.RootPath), [captured.LeafEntry]).EntryChain[0];
         if (leaf is not null && !result.Manifest.Entries.Any(entry => entry.Path == leaf && !entry.IsDirectory))
             throw new InvalidDataException("包装する内包ファイルが存在しないか、ディレクトリです。");
+        ValidateWorkingSources(captured, null, token);
+    }
+
+    internal static void ValidateWorkingSources(ArchiveProjectInput input, IReadOnlyList<string?>? passwords, CancellationToken token)
+    {
+        foreach (var copy in input.WorkingTexts ?? [])
+        {
+            var passwordChain = passwords is null ? null : passwords.Take(copy.EntryChain.Length + 1).ToArray();
+            try { ValidateWorkingSource(input, copy, passwordChain, token); }
+            finally { if (passwordChain is not null) Array.Clear(passwordChain); }
+        }
+    }
+
+    internal static void ValidateWorkingSource(ArchiveProjectInput input, ArchiveTextSnapshot copy,
+        IReadOnlyList<string?>? passwords, CancellationToken token)
+    {
+        copy.Validate(input.RootPath);
+        // 作業版でも全CRC/SHAと元leafの存在、文字コード/BOMを完全階層で検証する。
+        var source = new ArchiveSource(Path.GetFullPath(input.RootPath), copy.EntryChain, input.RootSha256);
+        var original = TextDocument.FromSnapshot(new ManagedArchive().ResolveEntry(source, copy.LeafEntry, 64 * 1024 * 1024, passwords, token));
+        if (original.EncodingName != copy.EncodingName || original.HasBom != copy.HasBom)
+            throw new InvalidDataException("作業版の文字コード／BOMが原本と一致しません。");
     }
 
     internal static ManagedArchiveSourceManifest ResolveMissingManifest(ArchiveProjectInput input,

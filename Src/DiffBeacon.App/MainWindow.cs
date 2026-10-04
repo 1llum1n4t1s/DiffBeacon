@@ -16,6 +16,8 @@ public sealed partial class MainWindow : Window
     private readonly TabControl _tabs = new();
     private readonly List<TabItem> _sessions = [];
     internal ImageApplicationOptionsStore ImageOptions { get; }
+    internal ArchiveTextWorkingStore ArchiveTexts { get; private set; } = new();
+    internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
     public ComparisonPane ActivePane => (ComparisonPane)((TabItem)_tabs.SelectedItem!).Content!;
 
     public MainWindow(string[]? arguments = null) : this(arguments, new ImageApplicationOptionsStore()) { }
@@ -23,6 +25,7 @@ public sealed partial class MainWindow : Window
     internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions)
     {
         ImageOptions = imageOptions;
+        Closed += (_, _) => { ArchiveTexts.Clear(); ArchiveLifetime.Clear(); };
         Title = "DiffBeacon";
         Width = 1280;
         Height = 850;
@@ -157,8 +160,11 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     // 実GUI自己検証で、有効な比較操作の読込み開始時に中止ボタンを押す。
     internal Action? ArchiveReadStarting { get; set; }
 
-    public ComparisonPane(Window owner)
+    public ComparisonPane(Window owner) : this(owner, (owner as MainWindow)?.ArchiveTexts ?? new()) { }
+
+    internal ComparisonPane(Window owner, ArchiveTextWorkingStore workingTexts)
     {
+        _workingTexts = workingTexts;
         _owner = owner;
         var root = new DockPanel { Margin = new Thickness(12) };
         var top = new StackPanel { Spacing = 8 };
@@ -180,6 +186,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "次の差分", () => { NavigateDifference(1); return Task.CompletedTask; });
         AddAction(actions, "左を保存", () => SaveAsync(false));
         AddAction(actions, "右を保存", () => SaveAsync(true));
+        AddAction(actions, "左を外部保存", () => SaveTextAsAsync(false));
+        AddAction(actions, "右を外部保存", () => SaveTextAsAsync(true));
         AddAction(actions, "パッチ出力", ExportPatchAsync);
         AddAction(actions, "自動マージ", MergeThreeWayAsync);
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));

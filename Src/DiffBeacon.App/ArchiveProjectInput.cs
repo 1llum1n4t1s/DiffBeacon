@@ -3,7 +3,7 @@ using DiffBeacon.Providers;
 
 namespace DiffBeacon.App;
 
-/// <summary>保存する物理rootと格納名。passwordと復号した内容は保存しない。</summary>
+/// <summary>物理rootと格納名。JSONにpasswordや本文を含めず、保存した作業本文は明示的な外部assetで参照する。</summary>
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ArchiveProjectInput
 {
@@ -16,8 +16,15 @@ public sealed record ArchiveProjectInput
     // 原本の固定readonlyとは別に、最初に開いた側の編集指定を保持する。
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public bool? InheritedReadOnly { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ArchiveTextSnapshot[]? WorkingTexts { get; set; }
 
-    internal ArchiveProjectInput Copy() => this with { EntryChain = EntryChain.ToArray(), MissingEntryChain = MissingEntryChain?.ToArray() };
+    internal ArchiveProjectInput Copy() => this with
+    {
+        EntryChain = EntryChain.Select(CanonicalEntry).ToArray(), LeafEntry = LeafEntry is null ? null : CanonicalEntry(LeafEntry),
+        MissingEntryChain = MissingEntryChain?.Select(CanonicalEntry).ToArray(), WorkingTexts = WorkingTexts?.Select(copy => copy.Copy()).ToArray()
+    };
+    internal static string CanonicalEntry(string value) => value.Replace('\\', '/').TrimEnd('/');
     internal ArchiveSource ToSource() => new(RootPath, EntryChain, RootSha256);
 
     internal void Validate(bool container, bool readOnly)
@@ -39,6 +46,22 @@ public sealed record ArchiveProjectInput
         if (LeafEntry is not null) _ = new ArchiveSource(Path.GetFullPath(RootPath), [LeafEntry]);
         if (RootSha256 is null) throw new InvalidDataException("保存する内包入力には確定rootのSHA-256が必要です。");
         if (!readOnly) throw new InvalidDataException("内包入力は読取り専用で開いてください。");
+        if (WorkingTexts is { } copies)
+        {
+            if (MissingEntryChain is not null || copies.Length is < 1 or > ArchiveTextWorkingStore.MaximumDocuments
+                || copies.Sum(copy => (long)(copy?.Bytes?.Length ?? 0)) > ArchiveTextWorkingStore.MaximumBytes)
+                throw new InvalidDataException("作業文書の件数または容量が不正です。");
+            var keys = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var copy in copies)
+            {
+                if (copy is null) throw new InvalidDataException("作業文書がnullです。");
+                copy.Validate(RootPath);
+                if (!keys.Add(string.Concat(copy.EntryChain.Append(copy.LeafEntry).Select(CanonicalEntry).Select(part => part.Length + ":" + part)))
+                    || (container ? !copy.EntryChain.Take(EntryChain.Length).SequenceEqual(EntryChain)
+                        : !copy.EntryChain.SequenceEqual(EntryChain) || copy.LeafEntry != LeafEntry))
+                    throw new InvalidDataException("作業文書が入力の格納階層と一致しないか、重複しています。");
+            }
+        }
     }
 }
 
@@ -55,7 +78,9 @@ internal static class ProjectInputs
         _ => throw new ArgumentOutOfRangeException(nameof(side))
     };
     internal static IEnumerable<string> PhysicalPaths(ComparisonProject project)
-        => Enumerable.Range(0, 3).Select(side => PathFor(project, side)).Append(project.FileFilterPath ?? "");
+        => Enumerable.Range(0, 3).Select(side => PathFor(project, side)).Append(project.FileFilterPath ?? "").Concat(project.ProtectedArchiveAssets)
+            .Concat(Enumerable.Range(0, 3).SelectMany(side => Archive(project, side)?.WorkingTexts ?? [])
+                .Select(copy => copy.SnapshotPath ?? ""));
     internal static bool HasArchives(ComparisonProject project)
         => project.LeftArchiveInput is not null || project.BaseArchiveInput is not null || project.RightArchiveInput is not null;
     internal static bool HasMissing(ComparisonProject project)

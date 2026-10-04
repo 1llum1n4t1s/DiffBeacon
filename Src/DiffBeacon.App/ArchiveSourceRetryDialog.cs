@@ -8,6 +8,7 @@ namespace DiffBeacon.App;
 internal sealed class ArchiveSourceRetryDialog : Window
 {
     private readonly TextBox[][] _passwords;
+    internal ComparisonProject RequestedProject { get; }
     internal IReadOnlyList<TextBox> LeftPasswords => _passwords[0];
     internal IReadOnlyList<TextBox> BasePasswords => _passwords[1];
     internal IReadOnlyList<TextBox> RightPasswords => _passwords[2];
@@ -15,6 +16,7 @@ internal sealed class ArchiveSourceRetryDialog : Window
     internal Button Cancel { get; } = new() { Content = "キャンセル", Margin = new Thickness(4) };
     internal ArchiveSourceRetryDialog(ComparisonProject project, string?[][] passwords)
     {
+        RequestedProject = WorkspaceStore.CloneProject(project);
         Title = "内包項目を開けませんでした"; Width = 650; Height = 600;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         var root = new DockPanel { Margin = new Thickness(16) };

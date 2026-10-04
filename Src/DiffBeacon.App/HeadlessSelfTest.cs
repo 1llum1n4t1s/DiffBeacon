@@ -16,7 +16,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false)
     {
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
@@ -60,10 +60,18 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (archiveWorkingReviewOnly)
+            {
+                Progress("HeadlessArchiveWorkingReviewChecks", "start");
+                RunArchiveWorkingReview();
+                Progress("HeadlessArchiveWorkingReviewChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (archiveSourcesOnly)
             {
                 Progress("HeadlessArchiveSourceChecks", "start");
                 HeadlessArchiveSourceChecks.Run(window, pane, output, Pump, Check, Screenshot);
+                RunArchiveWorkingReview();
                 Progress("HeadlessArchiveSourceChecks", "complete");
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
@@ -1182,6 +1190,7 @@ internal static class HeadlessSelfTest
             Progress("HeadlessTableSearchTests", "start");
             HeadlessTableSearchTests.Run(window, reportPane, output, Check, Screenshot, Pump);
             Progress("HeadlessTableSearchTests", "complete");
+            RunArchiveWorkingReview();
             Progress("finalize", "complete");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
@@ -1191,7 +1200,7 @@ internal static class HeadlessSelfTest
             using var stream = File.Create(Path.Combine(artifactOutput, "ui-report.json"));
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
-            writer.WriteString("scope", archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -1199,6 +1208,21 @@ internal static class HeadlessSelfTest
             window?.Close();
         }
         void Check(string name, bool passed, string detail = "") { assertions.Add((name, passed, detail)); if (!passed) throw new InvalidOperationException(name + (detail.Length > 0 ? ": " + detail : "")); }
+        void RunArchiveWorkingReview()
+        {
+            var prior = window;
+            var review = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "review-image-options.json"))) { Width = 1280, Height = 850 };
+            try
+            {
+                window = review; review.Show(); HeadlessArchiveWorkingReviewChecks.Run(review, output, Pump, Check, Screenshot);
+            }
+            finally
+            {
+                foreach (var session in review.SessionPanes) session.DiscardChanges();
+                review.Close(); window = prior;
+            }
+            Check("archive window close releases asset registry and route credentials", review.ArchiveLifetime.Assets.Length == 0 && review.ArchiveLifetime.CredentialCount == 0);
+        }
         void TwoWay(string leftText, string rightText)
         {
             var currentPane = paneForTests(); currentPane.BasePath.Text = ""; currentPane.DiscardChanges();

@@ -142,8 +142,26 @@ public static class ComparisonPackage
                     if (IsUrl(filter)) throw new InvalidDataException("ファイルフィルターはローカルのファイルを指定してください。");
                     filter = Snapshot(filter, $"filters/{i + 1}-" + Path.GetFileName(filter)).Name;
                 }
-                ArchiveProjectInput? PackedInput(int side) => ProjectInputs.Archive(project, side) is { } input
-                    ? input with { RootPath = paths[side], EntryChain = input.EntryChain.ToArray(), MissingEntryChain = input.MissingEntryChain?.ToArray() } : null;
+                ArchiveProjectInput? PackedInput(int side)
+                {
+                    if (ProjectInputs.Archive(project, side) is not { } input) return null;
+                    var savedInput = input.Copy(); savedInput.RootPath = paths[side];
+                    foreach (var copy in savedInput.WorkingTexts ?? [])
+                    {
+                        var bytes = copy.Bytes ?? throw new InvalidDataException("作業文書のsnapshotを読み込んでください。");
+                        var name = "working/" + copy.Sha256 + ".text";
+                        if (!names.ContainsKey(name))
+                        {
+                            if (bytes.Length > MaximumInputBytes - total) throw new InvalidDataException("包装する入力の合計は1 GiBまでです。");
+                            var savedPath = Path.Combine(stage, "working-" + copy.Sha256 + ".tmp"); owned.Add(savedPath);
+                            using (var stream = new FileStream(savedPath, FileMode.CreateNew, FileAccess.Write, FileShare.None)) stream.Write(bytes);
+                            var workingInput = new Input("", name, savedPath, DateTime.UnixEpoch, bytes.Length, copy.Sha256);
+                            names.Add(name, workingInput); inputs.Add(workingInput); total += bytes.Length;
+                        }
+                        copy.SnapshotPath = name;
+                    }
+                    return savedInput;
+                }
                 packed[i] = project with
                 {
                     LeftPath = project.LeftArchiveInput is null ? paths[0] : "", BasePath = project.BaseArchiveInput is null ? paths[1] : "",
@@ -237,7 +255,8 @@ public static class ComparisonPackage
                 foreach (var input in inputs)
                 {
                     token.ThrowIfCancellationRequested();
-                    if (!options.IncludeDocuments && !input.Name.StartsWith("filters/", StringComparison.Ordinal)) continue;
+                    if (!options.IncludeDocuments && !input.Name.StartsWith("filters/", StringComparison.Ordinal)
+                        && !(options.IncludeProject && input.Name.StartsWith("working/", StringComparison.Ordinal))) continue;
                     yield return new(input.Name, File.ReadAllBytes(input.Snapshot), input.Modified);
                 }
                 foreach (var entry in generated) { token.ThrowIfCancellationRequested(); yield return new(entry.Name, File.ReadAllBytes(entry.Snapshot)); }

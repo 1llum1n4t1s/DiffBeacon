@@ -78,6 +78,7 @@ public sealed partial class ComparisonPane
 
     private void BindArchivePanel(ArchivePanel panel)
     {
+        panel.SetWorkingTexts(_workingTexts);
         panel.OpenEntryRequested = (source, request) => _owner is MainWindow window
             ? window.OpenArchiveChildAsync(this, source, request)
             : throw new InvalidOperationException("内包比較を開くウィンドウがありません。");
@@ -131,6 +132,8 @@ public sealed partial class ComparisonPane
             throw new InvalidDataException("内包入力の比較形式または祖先指定が不正です。");
         var options = ProjectReport.Options(project);
         var requestedIdentity = ArchiveComparisonIdentity(project);
+        var workingGeneration = _workingTexts.Generation;
+        var initialText = (LeftEditor.Text, RightEditor.Text, ResultEditor.Text);
         InvalidateTextSave();
         _operation?.Cancel(); _operation?.Dispose();
         (_specialTab.Content as ArchivePanel)?.CancelOperation();
@@ -147,7 +150,8 @@ public sealed partial class ComparisonPane
                 var count = (ProjectInputs.Archive(project, side)?.EntryChain.Length ?? 0) + 1;
                 var provided = side == 0 ? leftPasswords : side == 2 ? rightPasswords : null;
                 var cached = _archivePasswords?[side];
-                var copied = (provided ?? (IReadOnlyList<string?>?)cached)?.ToArray() ?? new string?[count];
+                var copied = (provided ?? (IReadOnlyList<string?>?)cached)?.ToArray()
+                    ?? (ProjectInputs.Archive(project, side) is { } input ? (_owner as MainWindow)?.ArchiveLifetime.Find(input) : null) ?? new string?[count];
                 if (copied.Length != count || copied.Any(value => value?.Length > 4096))
                 { Array.Clear(copied); throw new ArgumentException("内包入力のパスワード階層が不正です。"); }
                 passwords[side] = copied;
@@ -161,6 +165,9 @@ public sealed partial class ComparisonPane
                 {
                     if (project.Mode == "Archive")
                     {
+                        foreach (var side in new[] { 0, 2 })
+                            if (ProjectInputs.Archive(project, side) is { WorkingTexts: not null } savedInput)
+                                await ValidateWorkingRoutesAsync(savedInput, passwords[side], side);
                         ArchiveSource Source(int side) => ProjectInputs.Archive(project, side)?.ToSource()
                             ?? new(Path.GetFullPath(ProjectInputs.PathFor(project, side)));
                         candidate = await ArchivePanel.CreateForSourcesAsync(Source(0), Source(2), token, EnsureArchiveOutputWritable,
@@ -175,7 +182,11 @@ public sealed partial class ComparisonPane
                         var b = await ProjectInputReader.ReadBytesAsync(project, 2, maximum, token, passwords[2]);
                         if (autoLeaf)
                         {
-                            try { left = TextDocument.FromSnapshot(a); right = TextDocument.FromSnapshot(b); }
+                            try
+                            {
+                                left = await ProjectInputReader.ReadTextAsync(project, 0, token, passwords: passwords[0]);
+                                right = await ProjectInputReader.ReadTextAsync(project, 2, token, passwords: passwords[2]);
+                            }
                             catch (Exception exception) when (exception is InvalidDataException or System.Text.DecoderFallbackException)
                             { left = right = null; project.Mode = "Binary"; }
                         }
@@ -219,7 +230,8 @@ public sealed partial class ComparisonPane
                 }
             }
             ArchiveSourceReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
-            if (_disposed || !ReferenceEquals(_operation, operation) || ArchiveComparisonIdentity(CaptureProject()) != requestedIdentity) return false;
+            if (_disposed || !ReferenceEquals(_operation, operation) || ArchiveComparisonIdentity(CaptureProject()) != requestedIdentity
+                || workingGeneration != _workingTexts.Generation || initialText != (LeftEditor.Text, RightEditor.Text, ResultEditor.Text)) return false;
             ResetMergeSession();
             if (candidate is not null)
             {
@@ -233,7 +245,8 @@ public sealed partial class ComparisonPane
                 _leftDocument = left; _rightDocument = right; _baseDocument = ancestor; _baseText = ancestor?.Text;
                 LeftEditor.Text = _savedLeft = left!.Text; RightEditor.Text = _savedRight = right!.Text;
                 _ancestorEditor.Text = _baseText ?? ""; UpdateEditorLayout(ancestor is not null); _textSaveAllowed = true;
-                ApplyDiff(diff!); _status.Text += " · 実在する内包入力は読取り専用です。";
+                _lastArchiveComparison = ArchiveComparisonIdentity(project);
+                ApplyDiff(diff!); _status.Text += " · 実在する内包Textは作業版へ保存し、原本アーカイブは保持します。";
                 if (ProjectInputs.HasMissing(project)) _status.Text += " · 不在側は未作成の文書です。編集できる側は外部ファイルへ保存してください。";
             }
             _projectMetadata.Mode = project.Mode; _mode.SelectedIndex = project.Mode switch { "Text" => 1, "Binary" => 3, _ => 7 };
@@ -242,9 +255,70 @@ public sealed partial class ComparisonPane
             RightEditor.IsReadOnly = project.RightReadOnly || project.RightArchiveInput is not null || !_textSaveAllowed;
             _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? "";
             ClearArchivePasswords(); _archivePasswords = passwords.Select(side => side.ToArray()).ToArray();
+            if (_owner is MainWindow window)
+                foreach (var side in Enumerable.Range(0, 3))
+                    if (ProjectInputs.Archive(project, side) is { } input) window.ArchiveLifetime.Remember(input, passwords[side]);
             _lastArchiveComparison = ArchiveComparisonIdentity(CaptureProject());
+            for (var side = 0; side < 3; side++)
+                _workingTextRevisions[side] = ProjectInputs.Archive(project, side) is { } input ? _workingTexts.Revision(input) : 0;
             RefreshTextReadOnly(); UpdateEditorLayout(ancestor is not null);
+            RefreshArchiveDraftCaptions();
             return true;
+
+            async Task ValidateWorkingRoutesAsync(ArchiveProjectInput input, string?[] parentPasswords, int side)
+            {
+                foreach (var snapshot in input.WorkingTexts ?? [])
+                {
+                    var route = input.Copy() with { EntryChain = snapshot.EntryChain.ToArray(), LeafEntry = snapshot.LeafEntry, WorkingTexts = null };
+                    var values = (_owner as MainWindow)?.ArchiveLifetime.Find(route) ?? new string?[route.EntryChain.Length + 1];
+                    // 親と同一routeのprefixだけ継承し、別枝の同じ深さへpasswordを流用しない。
+                    if (route.EntryChain.Take(input.EntryChain.Length).SequenceEqual(input.EntryChain))
+                        for (var layer = 0; layer < parentPasswords.Length; layer++) values[layer] ??= parentPasswords[layer];
+                    try
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                await Task.Run(() => ProjectInputReader.ValidateWorkingSource(input, snapshot, values, token), token);
+                                if (_owner is MainWindow owner) owner.ArchiveLifetime.Remember(route, values);
+                                // 成功した完全routeの同一親prefixだけを戻す。
+                                for (var layer = 0; layer < parentPasswords.Length; layer++) parentPasswords[layer] = values[layer];
+                                break;
+                            }
+                            catch (OperationCanceledException) { throw; }
+                            catch (Exception exception) when (exception is not OutOfMemoryException)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                if (_disposed || !ReferenceEquals(_operation, operation)) throw new OperationCanceledException(token);
+                                var request = new ComparisonProject { Mode = "Text", LeftReadOnly = true, BaseReadOnly = true, RightReadOnly = true };
+                                if (side == 0) request.LeftArchiveInput = route;
+                                else if (side == 1) request.BaseArchiveInput = route;
+                                else request.RightArchiveInput = route;
+                                string?[][] fields = [new string?[1], new string?[1], new string?[1]]; fields[side] = values.ToArray();
+                                var dialog = new ArchiveSourceRetryDialog(request, fields); string?[][]? retry = null;
+                                try
+                                {
+                                    var task = dialog.ShowDialog<string?[][]?>(_owner);
+                                    using var registration = token.Register(() => Avalonia.Threading.Dispatcher.UIThread.Post(dialog.Close));
+                                    ArchiveSourceRetryShown?.Invoke(dialog); retry = await task;
+                                    token.ThrowIfCancellationRequested();
+                                    if (_disposed || !ReferenceEquals(_operation, operation)) throw new OperationCanceledException(token);
+                                    if (retry is null) throw new OperationCanceledException("内包作業版の検証を中止しました。", token);
+                                    Array.Clear(values); values = retry[side].ToArray();
+                                }
+                                finally
+                                {
+                                    foreach (var field in fields) Array.Clear(field);
+                                    if (retry is not null) foreach (var field in retry) Array.Clear(field);
+                                    dialog.ClearPasswords(); dialog.Close();
+                                }
+                            }
+                        }
+                    }
+                    finally { Array.Clear(values); }
+                }
+            }
         }
         catch (OperationCanceledException) { if (!_disposed && ReferenceEquals(_operation, operation)) _status.Text = "内包比較を中止しました。"; throw; }
         finally

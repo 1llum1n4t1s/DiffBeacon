@@ -11,6 +11,8 @@ namespace DiffBeacon.App;
 
 public sealed record ComparisonProject
 {
+    [JsonIgnore]
+    internal string[] ProtectedArchiveAssets { get; set; } = [];
     // set を使い、source generation が省略された init 項目を default で上書きすることを防ぐ。
     public string LeftPath { get; set; } = "";
     public string BasePath { get; set; } = "";
@@ -58,6 +60,7 @@ public sealed record ComparisonWorkspace
 [JsonSerializable(typeof(ComparisonProject))]
 [JsonSerializable(typeof(ComparisonWorkspace))]
 [JsonSerializable(typeof(ArchiveProjectInput))]
+[JsonSerializable(typeof(ArchiveTextSnapshot))]
 internal partial class ProjectJsonContext : JsonSerializerContext { }
 
 internal sealed class SubstitutionRuleJsonConverter : JsonConverter<SubstitutionRule>
@@ -120,20 +123,67 @@ public static class WorkspaceStore
         return SaveBytesAsync(path, JsonSerializer.SerializeToUtf8Bytes(snapshot, ProjectJsonContext.Default.ComparisonProject), token, [snapshot], sourceProject);
     }
 
-    public static Task SaveWorkspaceAsync(string path, ComparisonWorkspace workspace, CancellationToken token = default, string? sourceProject = null)
+    public static async Task SaveWorkspaceAsync(string path, ComparisonWorkspace workspace, CancellationToken token = default, string? sourceProject = null, Action<string>? publishedAsset = null)
     {
         token.ThrowIfCancellationRequested();
         _ = SerializeWorkspace(workspace);
         var snapshot = workspace with { Entries = workspace.Entries.Select(CloneProject).ToArray() };
-        return SaveBytesAsync(path, SerializeWorkspace(snapshot), token, snapshot.Entries, sourceProject);
+        var fullPath = Path.GetFullPath(path);
+        ProjectInputs.EnsureOutput(fullPath, snapshot.Entries, sourceProject); EnsureNoLinks(fullPath);
+        if (File.Exists(fullPath) && (File.GetAttributes(fullPath) & FileAttributes.ReadOnly) != 0)
+            throw new UnauthorizedAccessException("読み取り専用の比較プロジェクトは保存できません。");
+        var directory = Path.GetDirectoryName(fullPath)!;
+        foreach (var input in snapshot.Entries.SelectMany(project => Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side))).OfType<ArchiveProjectInput>())
+            foreach (var copy in input.WorkingTexts ?? [])
+            {
+                var bytes = copy.Bytes ?? throw new InvalidDataException("作業文書のsnapshotを読み込んでください。");
+                var asset = Path.Combine(directory, Path.GetFileName(fullPath) + ".assets", copy.Sha256 + ".text");
+                EnsureNoLinks(asset);
+                if (File.Exists(asset))
+                {
+                    var existing = await ReadWorkingSnapshotAsync(asset, copy, token);
+                    if (!existing.SequenceEqual(bytes)) throw new InvalidDataException("保存先の既存作業snapshotが一致しません。");
+                }
+                else
+                {
+                    ProjectInputs.EnsureOutput(asset, snapshot.Entries, sourceProject);
+                    Directory.CreateDirectory(Path.GetDirectoryName(asset)!);
+                    var temporary = Path.Combine(Path.GetDirectoryName(asset)!, ".working-" + Guid.NewGuid().ToString("N") + ".tmp");
+                    try
+                    {
+                        await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 65536, FileOptions.Asynchronous | FileOptions.WriteThrough))
+                        { await stream.WriteAsync(bytes, token); await stream.FlushAsync(token); stream.Flush(true); }
+                        token.ThrowIfCancellationRequested(); EnsureNoLinks(asset);
+                        ProjectInputs.EnsureOutput(asset, snapshot.Entries, sourceProject);
+                        File.Move(temporary, asset, overwrite: false);
+                    }
+                    finally { if (File.Exists(temporary)) File.Delete(temporary); }
+                }
+                // JSON公開の成功を待たず、不変assetの所有保護を呼び出し元へ渡す。
+                publishedAsset?.Invoke(asset);
+                copy.SnapshotPath = Path.GetRelativePath(directory, asset);
+            }
+        // 不変snapshotを先に公開し、既存projectは最後のatomic置換まで保持する。
+        // project公開前に取消／失敗したassetは同じ保存先に保持し、次回SHA照合して再利用する。
+        await SaveBytesAsync(path, SerializeWorkspace(snapshot), token, snapshot.Entries, sourceProject);
+    }
+
+    internal static async Task<byte[]> ReadWorkingSnapshotAsync(string path, ArchiveTextSnapshot copy, CancellationToken token)
+    {
+        var absolute = ArchiveActions.ValidatePath(path);
+        if (new FileInfo(absolute).Length > new TextLoadOptions().MaxFileSize) throw new InvalidDataException("作業文書がサイズ上限を超えています。");
+        var bytes = await File.ReadAllBytesAsync(absolute, token);
+        (copy with { Bytes = bytes }).Validate(absolute);
+        return bytes;
     }
 
     internal static byte[] SerializeWorkspace(ComparisonWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        if (workspace.FormatVersion is not (1 or 2 or 3)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        if (workspace.FormatVersion is not (1 or 2 or 3 or 4)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
         if (workspace.Entries?.Any(project => project is not null && ProjectInputs.HasArchives(project)) == true)
-            workspace = workspace with { FormatVersion = workspace.Entries.Any(project => project is not null && ProjectInputs.HasMissing(project)) ? 3 : 2 };
+            workspace = workspace with { FormatVersion = workspace.Entries.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side)?.WorkingTexts is not null))
+                ? 4 : workspace.Entries.Any(project => project is not null && ProjectInputs.HasMissing(project)) ? 3 : 2 };
         Validate(workspace);
         var bytes = JsonSerializer.SerializeToUtf8Bytes(workspace, ProjectJsonContext.Default.ComparisonWorkspace);
         if (bytes.Length > MaxFileBytes) throw new InvalidDataException("比較プロジェクトは 4 MiB 以下にしてください。");
@@ -144,7 +194,8 @@ public static class WorkspaceStore
     {
         SubstitutionRules = project.SubstitutionRules.ToArray(), LegacySettings = new(project.LegacySettings),
         ImageSettings = project.ImageSettings with { }, LeftArchiveInput = project.LeftArchiveInput?.Copy(),
-        BaseArchiveInput = project.BaseArchiveInput?.Copy(), RightArchiveInput = project.RightArchiveInput?.Copy()
+        BaseArchiveInput = project.BaseArchiveInput?.Copy(), RightArchiveInput = project.RightArchiveInput?.Copy(),
+        ProtectedArchiveAssets = project.ProtectedArchiveAssets.ToArray()
     };
 
     private static async Task SaveBytesAsync(string path, byte[] bytes, CancellationToken token,
@@ -227,6 +278,36 @@ public static class WorkspaceStore
                 FileFilterPath = ResolveJsonPath(project.FileFilterPath, directory)
             }).ToArray()
         };
+        var readAssets = new Dictionary<string, byte[]>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+        long retainedAssetBytes = 0;
+        foreach (var input in workspace.Entries.SelectMany(project => Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side))).OfType<ArchiveProjectInput>())
+            foreach (var copy in input.WorkingTexts ?? [])
+            {
+                if (string.IsNullOrWhiteSpace(copy.SnapshotPath) || Path.IsPathRooted(copy.SnapshotPath)
+                    || copy.SnapshotPath.StartsWith('/') || copy.SnapshotPath.StartsWith('\\') || copy.SnapshotPath.Contains(':'))
+                    throw new InvalidDataException("作業snapshotはプロジェクト内の相対pathで指定してください。");
+                var relativeAsset = copy.SnapshotPath.Replace('\\', Path.DirectorySeparatorChar);
+                var resolvedAsset = Path.GetFullPath(relativeAsset, directory);
+                var boundary = Path.GetRelativePath(directory, resolvedAsset);
+                if (boundary == ".." || boundary.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) || Path.IsPathRooted(boundary))
+                    throw new InvalidDataException("作業snapshotをプロジェクトの外へ参照できません。");
+                copy.SnapshotPath = ResolveJsonPath(copy.SnapshotPath, directory)!;
+                if (!readAssets.TryGetValue(copy.SnapshotPath, out var assetBytes))
+                {
+                    var assetPath = ArchiveActions.ValidatePath(copy.SnapshotPath);
+                    var length = new FileInfo(assetPath).Length;
+                    if (length > new TextLoadOptions().MaxFileSize || length > ArchiveTextWorkingStore.MaximumBytes - retainedAssetBytes)
+                        throw new InvalidDataException("復元する作業snapshotは各64 MiB、合計128 MiBまでです。");
+                    assetBytes = await ReadWorkingSnapshotAsync(assetPath, copy, token);
+                    if (assetBytes.Length > ArchiveTextWorkingStore.MaximumBytes - retainedAssetBytes)
+                        throw new InvalidDataException("復元する作業snapshotの合計上限を超えました。");
+                    retainedAssetBytes += assetBytes.Length; readAssets.Add(copy.SnapshotPath, assetBytes);
+                }
+                // 共有byte配列はruntime内部だけに公開し、すべての利用者が不変snapshotとして扱う。
+                copy.Bytes = assetBytes; copy.Validate(input.RootPath);
+            }
+        var restoredStore = new ArchiveTextWorkingStore();
+        foreach (var input in workspace.Entries.SelectMany(project => Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side))).OfType<ArchiveProjectInput>()) restoredStore.Import(input);
         token.ThrowIfCancellationRequested();
         return workspace;
     }
@@ -247,7 +328,7 @@ public static class WorkspaceStore
             var fields = new HashSet<string>(StringComparer.Ordinal);
             foreach (var field in side.Value.EnumerateObject())
             {
-                if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256" or "missingEntryChain" or "inheritedReadOnly") || !fields.Add(field.Name))
+                if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256" or "missingEntryChain" or "inheritedReadOnly" or "workingTexts") || !fields.Add(field.Name))
                     throw new InvalidDataException("内包入力に未対応または重複した項目があります。");
                 if (field.Name == "inheritedReadOnly" && field.Value.ValueKind is not (JsonValueKind.True or JsonValueKind.False or JsonValueKind.Null))
                     throw new InvalidDataException("内包入力の読取り専用継承には真偽値を指定してください。");
@@ -256,6 +337,20 @@ public static class WorkspaceStore
                 if (field.Name == "missingEntryChain" && (field.Value.ValueKind != JsonValueKind.Array ||
                     field.Value.GetArrayLength() is < 1 or > 9))
                     throw new InvalidDataException("不在入力の格納階層が不正です。");
+                if (field.Name == "workingTexts" && field.Value.ValueKind != JsonValueKind.Null)
+                {
+                    if (field.Value.ValueKind != JsonValueKind.Array || field.Value.GetArrayLength() is < 1 or > ArchiveTextWorkingStore.MaximumDocuments)
+                        throw new InvalidDataException("作業文書の配列が不正です。");
+                    foreach (var snapshot in field.Value.EnumerateArray())
+                    {
+                        if (snapshot.ValueKind != JsonValueKind.Object) throw new InvalidDataException("作業文書はobjectで指定してください。");
+                        var snapshotFields = new HashSet<string>(StringComparer.Ordinal);
+                        foreach (var item in snapshot.EnumerateObject())
+                            if (item.Name is not ("entryChain" or "leafEntry" or "snapshotPath" or "sha256" or "encodingName" or "hasBom") || !snapshotFields.Add(item.Name))
+                                throw new InvalidDataException("作業文書に未対応または重複した項目があります。");
+                        if (snapshotFields.Count != 6) throw new InvalidDataException("作業文書の必須項目がありません。");
+                    }
+                }
             }
         }
     }
@@ -284,7 +379,7 @@ public static class WorkspaceStore
     private static void Validate(ComparisonWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        if (workspace.FormatVersion is not (1 or 2 or 3)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        if (workspace.FormatVersion is not (1 or 2 or 3 or 4)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
         if (workspace.Entries is null || workspace.Entries.Length is < 1 or > MaxEntries)
             throw new InvalidDataException($"比較は 1 ～ {MaxEntries} 件を指定してください。");
         if (workspace.ActiveEntryIndex < 0 || workspace.ActiveEntryIndex >= workspace.Entries.Length)
@@ -301,8 +396,8 @@ public static class WorkspaceStore
                 throw new InvalidDataException("フォルダー比較方式が不正です。");
             if (ProjectInputs.HasArchives(project))
             {
-                if (workspace.FormatVersion is not (2 or 3)) throw new InvalidDataException("内包入力には形式バージョン2以降のワークスペースが必要です。");
-                if (ProjectInputs.HasMissing(project) && workspace.FormatVersion != 3)
+                if (workspace.FormatVersion is not (2 or 3 or 4)) throw new InvalidDataException("内包入力には形式バージョン2以降のワークスペースが必要です。");
+                if (ProjectInputs.HasMissing(project) && workspace.FormatVersion is not (3 or 4))
                     throw new InvalidDataException("不在入力には形式バージョン3のワークスペースが必要です。");
                 var mode = project.Mode.ToLowerInvariant();
                 if (mode is not ("text" or "1" or "binary" or "3" or "archive" or "7"))
@@ -313,6 +408,8 @@ public static class WorkspaceStore
                 {
                     var input = ProjectInputs.Archive(project, side);
                     if (input is null) continue;
+                    if (input.WorkingTexts is not null && (workspace.FormatVersion != 4 || mode is not ("text" or "1" or "archive" or "7")))
+                        throw new InvalidDataException("作業Textには形式バージョン4とText／Archive比較が必要です。");
                     var oldPath = side switch { 0 => project.LeftPath, 1 => project.BasePath, _ => project.RightPath };
                     if (!string.IsNullOrEmpty(oldPath)) throw new InvalidDataException("物理pathと内包入力を同じ側へ指定できません。");
                     if (side == 1 && mode is not ("text" or "1")) throw new InvalidDataException("中央の内包入力はText比較だけで使用できます。");

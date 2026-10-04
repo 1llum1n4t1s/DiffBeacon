@@ -20,7 +20,7 @@ public sealed partial class MainWindow
         foreach (var pane in SessionPanes) pane.EnsureArchiveDraftSaved();
         foreach (var pane in SessionPanes) pane.EnsureProjectOutputWritable(path);
         await WorkspaceStore.SaveWorkspaceAsync(target,
-            new ComparisonWorkspace { Entries = SessionPanes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = _sessions.IndexOf((TabItem)_tabs.SelectedItem!) }, token);
+            new ComparisonWorkspace { Entries = SessionPanes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = _sessions.IndexOf((TabItem)_tabs.SelectedItem!) }, token, publishedAsset: ArchiveLifetime.RegisterAsset);
         WorkspaceSourcePath = target;
     }
 
@@ -34,9 +34,10 @@ public sealed partial class MainWindow
             // 全設定を検証してから既存タブを置換し、読込み失敗では編集内容を残す。
             var source = Path.GetFullPath(path);
             var workspace = await WorkspaceStore.LoadWorkspaceAsync(source, token);
+            var workingTexts = new ArchiveTextWorkingStore();
             foreach (var project in workspace.Entries)
             {
-                var pane = new ComparisonPane(this);
+                var pane = new ComparisonPane(this, workingTexts);
                 prepared.Add(pane); pane.ApplyProject(project);
             }
             token.ThrowIfCancellationRequested();
@@ -44,6 +45,7 @@ public sealed partial class MainWindow
                 && !await Dialogs.ConfirmAsync(this, "未保存の変更", "すべての比較タブをプロジェクトで置き換えます。編集内容を破棄しますか？")) return false;
             token.ThrowIfCancellationRequested();
             foreach (var old in SessionPanes) old.Dispose();
+            ArchiveTexts.Clear(); ArchiveTexts = workingTexts;
             _sessions.Clear(); _tabs.ItemsSource = null;
             foreach (var pane in prepared) AttachProjectSession(pane);
             prepared.Clear();
@@ -67,7 +69,7 @@ public sealed partial class MainWindow
         {
             if (pane.HasUnsavedChanges && !await Dialogs.ConfirmAsync(this, "未保存の変更", "変更を保存せずにタブを閉じますか？")) return;
             _sessions.Remove(item); pane.Dispose(); _tabs.ItemsSource = _sessions.ToArray();
-            if (_sessions.Count == 0) AddSession(); else _tabs.SelectedItem = _sessions[^1];
+            if (_sessions.Count == 0) { ArchiveTexts.Clear(); AddSession(); } else _tabs.SelectedItem = _sessions[^1];
         };
         _sessions.Add(item); _tabs.ItemsSource = _sessions.ToArray();
     }
@@ -86,7 +88,7 @@ public sealed partial class ComparisonPane
     private ComparisonProject _projectMetadata = new();
     private static readonly string[] ModeNames = ["Auto", "Text", "Folder", "Binary", "Image", "Json", "Table", "Archive", "Provider"];
 
-    public ComparisonProject CaptureProject() => WorkspaceStore.CloneProject(_projectMetadata with
+    public ComparisonProject CaptureProject() => CaptureWorkingProject(WorkspaceStore.CloneProject(_projectMetadata with
     {
         LeftPath = _projectMetadata.LeftArchiveInput is null ? LeftPath.Text ?? "" : "",
         BasePath = _projectMetadata.BaseArchiveInput is null ? BasePath.Text ?? "" : "",
@@ -100,7 +102,7 @@ public sealed partial class ComparisonPane
         IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex,
         Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions.ToArray(),
         ImageSettings = CaptureImageSettings()
-    });
+    }));
 
     public void ApplyProject(ComparisonProject project)
     {
@@ -119,6 +121,10 @@ public sealed partial class ComparisonPane
         }
         foreach (var side in Enumerable.Range(0, 3))
             ProjectInputs.Archive(project, side)?.Validate(project.Mode == "Archive", side == 0 ? project.LeftReadOnly : side == 1 ? project.BaseReadOnly : project.RightReadOnly);
+        _workingTexts.Import(Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side)).OfType<ArchiveProjectInput>());
+        if (_owner is MainWindow window)
+            foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => ProjectInputs.Archive(project, side)?.WorkingTexts ?? []))
+                if (copy.SnapshotPath is { } asset && Path.IsPathFullyQualified(asset)) window.ArchiveLifetime.RegisterAsset(asset);
         _tableSyntax = null;
         InvalidateTextSave();
         _operation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelChildOperation();
@@ -180,7 +186,7 @@ public sealed partial class ComparisonPane
 
     private void EnsureSideWritable(bool right)
     {
-        if (CanEditMissingText(right)) return;
+        if (CanEditArchiveText(right)) return;
         if ((right ? _projectMetadata.RightArchiveInput : _projectMetadata.LeftArchiveInput) is not null)
             throw new InvalidOperationException("内包入力は読取り専用です。元アーカイブへ保存できません。");
         if (right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly)
@@ -191,7 +197,7 @@ public sealed partial class ComparisonPane
     {
         var description = right ? _projectMetadata.RightDescription : _projectMetadata.LeftDescription;
         var readOnly = right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly;
-        if (CanEditMissingText(right)) readOnly = false;
+        if (CanEditArchiveText(right)) readOnly = false;
         var caption = string.IsNullOrWhiteSpace(description) ? right ? "右" : "左" : description;
         if (ProjectInputs.Archive(_projectMetadata, right ? 2 : 0)?.MissingEntryChain is not null
             && !caption.Contains("（存在しない）", StringComparison.Ordinal)) caption += "（存在しない）";
@@ -201,6 +207,7 @@ public sealed partial class ComparisonPane
 
     internal void EnsureProjectOutputWritable(string path)
     {
+        (_owner as MainWindow)?.ArchiveLifetime.EnsureOutput(path);
         foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this])
             foreach (var root in pane._detachedArchiveRoots)
                 if (ArchivePaths.SameFile(root, path))

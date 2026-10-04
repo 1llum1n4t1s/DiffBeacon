@@ -39,6 +39,43 @@ public sealed class TextDocument
         return FromBytes("", bytes, options ?? new TextLoadOptions());
     }
 
+    /// <summary>保存済みの作業版を、原本から確定した文字コードで復号する。</summary>
+    public static TextDocument FromSavedSnapshot(byte[] bytes, string encodingName, bool hasBom)
+    {
+        ArgumentNullException.ThrowIfNull(bytes);
+        if (bytes.LongLength > new TextLoadOptions().MaxFileSize) throw new InvalidDataException("作業文書がサイズ上限を超えています。");
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        Encoding selected = encodingName switch
+        {
+            "utf-8" => new UTF8Encoding(hasBom, true),
+            "utf-16" => new UnicodeEncoding(false, hasBom, true),
+            "utf-16BE" => new UnicodeEncoding(true, hasBom, true),
+            "utf-32" => new UTF32Encoding(false, hasBom, true),
+            "utf-32BE" => new UTF32Encoding(true, hasBom, true),
+            "windows-1252" when !hasBom => Encoding.GetEncoding(1252, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback),
+            _ => throw new InvalidDataException("作業文書の文字コードが不正です。")
+        };
+        var bom = hasBom ? selected.GetPreamble() : [];
+        if (!bytes.AsSpan().StartsWith(bom)) throw new InvalidDataException("作業文書のBOMが一致しません。");
+        var text = selected.GetString(bytes, bom.Length, bytes.Length - bom.Length);
+        if (text.Contains('\0')) throw new InvalidDataException("NULを含む作業文書は保存できません。");
+        return new("", text, selected, bom);
+    }
+
+    public byte[] CaptureBytes(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        if (text.Contains('\0')) throw new InvalidDataException("テキストに NUL を保存できません。");
+        var size = checked(encoding.GetByteCount(text) + preamble.Length);
+        if (size > new TextLoadOptions().MaxFileSize) throw new InvalidDataException("テキストファイルがサイズ上限を超えています。");
+        var bytes = new byte[size]; preamble.CopyTo(bytes, 0);
+        encoding.GetBytes(text.AsSpan(), bytes.AsSpan(preamble.Length));
+        return bytes;
+    }
+
+    public TextDocument SavedCopy(string path, string text)
+        => new(System.IO.Path.GetFullPath(path), text, encoding, preamble.ToArray());
+
     // 別文書の出力で読込み元のPath/Textを変更しない。
     public Task SaveCopyAsync(string path, string text, CancellationToken cancellationToken = default,
         Func<string, string, CancellationToken, Task>? publish = null) =>
@@ -82,8 +119,7 @@ public sealed class TextDocument
             await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write,
                 FileShare.None, 64 * 1024, FileOptions.Asynchronous | FileOptions.WriteThrough))
             {
-                await stream.WriteAsync(preamble, cancellationToken).ConfigureAwait(false);
-                var bytes = encoding.GetBytes(text);
+                var bytes = CaptureBytes(text);
                 await stream.WriteAsync(bytes, cancellationToken).ConfigureAwait(false);
                 await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
                 stream.Flush(true);

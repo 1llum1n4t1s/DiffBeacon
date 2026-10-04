@@ -13,6 +13,8 @@ public sealed partial class ComparisonPane
     public MergeSession? CurrentMergeSession { get; private set; }
     private TextDocument? _baseDocument;
     private bool _updatingMerge;
+    private bool _mergeSourcesStale;
+    internal bool MergeSourcesStale => _mergeSourcesStale;
     private readonly ComboBox _mergeSections = new() { Width = 260, Margin = new Thickness(4) };
     private readonly TextBlock _mergeState = new() { Margin = new Thickness(8), VerticalAlignment = VerticalAlignment.Center };
     private readonly TextBlock _mergeProvenance = new() { Margin = new Thickness(8), TextWrapping = Avalonia.Media.TextWrapping.Wrap };
@@ -65,9 +67,11 @@ public sealed partial class ComparisonPane
 
     public void StartMergeSession(bool autoResolve = true)
     {
-        CurrentMergeSession = _baseText is null
+        var candidate = _baseText is null
             ? MergeSession.CreateTwoWay(LeftEditor.Text ?? "", RightEditor.Text ?? "", Options())
             : MergeSession.CreateThreeWay(_baseText, LeftEditor.Text ?? "", RightEditor.Text ?? "", Options(), autoResolve);
+        // 候補の検証失敗では、旧入力の結果・履歴とstale保護を保持する。
+        CurrentMergeSession = candidate; _mergeSourcesStale = false;
         UpdateMergeView(); _views.SelectedItem = _resultTab;
     }
 
@@ -79,6 +83,7 @@ public sealed partial class ComparisonPane
 
     public void ChooseMergeSources(params MergeSource[] sources)
     {
+        if (_mergeSourcesStale) throw new InvalidOperationException("入力が更新されました。旧入力のマージ結果を保存するか、マージを開始し直してください。");
         SynchronizeMergeText();
         var session = CurrentMergeSession ?? throw new InvalidOperationException("先にマージを開始してください。");
         var id = (_mergeSections.SelectedItem as SectionChoice)?.Id ?? session.Sections.FirstOrDefault(section => section.Section.IsPending)?.Section.Id
@@ -105,7 +110,7 @@ public sealed partial class ComparisonPane
             _mergeSections.ItemsSource = items;
             _mergeSections.SelectedItem = items.FirstOrDefault(item => item.Id == selectedId)
                 ?? items.FirstOrDefault(item => session.Sections.Single(range => range.Section.Id == item.Id).Section.IsPending) ?? items.FirstOrDefault();
-            _mergeState.Text = $"未解決 {session.UnresolvedCount} · 競合 {session.ConflictCount}";
+            _mergeState.Text = (_mergeSourcesStale ? "入力更新 · 旧入力の結果 · 保存またはマージ再開始 / " : "") + $"未解決 {session.UnresolvedCount} · 競合 {session.ConflictCount}";
             var provenance = session.LineProvenance;
             _mergeProvenance.Text = "行の採用元（1=左、2=祖先、3=右、?=未解決、m=手編集）: "
                 + string.Join(" ", provenance.Take(120).Select(line => $"{line.Line}:{line.Source}"))
@@ -130,7 +135,7 @@ public sealed partial class ComparisonPane
     private void ResetMergeSession()
     {
         _updatingMerge = true;
-        try { CurrentMergeSession = null; ResultEditor.Text = _savedResult = ""; _resultPreview.Text = ""; _baseDocument = null; if (_mergeToolbar is not null) _mergeToolbar.IsVisible = false; }
+        try { _mergeSourcesStale = false; CurrentMergeSession = null; ResultEditor.Text = _savedResult = ""; _resultPreview.Text = ""; _baseDocument = null; if (_mergeToolbar is not null) _mergeToolbar.IsVisible = false; }
         finally { _updatingMerge = false; }
     }
     public async Task SaveMergeResultToAsync(string path, bool allowUnresolved = false, CancellationToken token = default)

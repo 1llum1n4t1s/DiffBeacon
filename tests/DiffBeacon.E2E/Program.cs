@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
+    "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
     "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
@@ -1110,7 +1110,7 @@ async Task ProjectWorkspaceCases()
         ("null-replacement", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":null}]}"),
         ("null-rule-flag", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":\"y\",\"enabled\":null}]}"),
         ("null-legacy-value", "{\"legacySettings\":{\"unpacker\":null}}"),
-        ("unknown-version", "{\"formatVersion\":4,\"entries\":[{}],\"activeEntryIndex\":0}"),
+        ("unknown-version", "{\"formatVersion\":5,\"entries\":[{}],\"activeEntryIndex\":0}"),
         ("negative-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":-1}"),
         ("large-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":1}"),
         ("too-many", "{\"formatVersion\":1,\"entries\":[" + string.Join(',', Enumerable.Repeat("{}", 257)) + "],\"activeEntryIndex\":0}"),
@@ -1735,7 +1735,9 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--archive-missing-only", StringComparer.Ordinal))
+    if (args.Contains("--archive-present-only", StringComparer.Ordinal))
+        await ArchivePresentTextScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--archive-missing-only", StringComparer.Ordinal))
         await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--archive-project-only", StringComparer.Ordinal))
         await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
@@ -1852,6 +1854,7 @@ try
     else if (args.Contains("--archives-only", StringComparer.Ordinal))
     {
         await ArchiveCases();
+        await ArchivePresentTextScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
@@ -1873,6 +1876,7 @@ try
     else
     {
     await ArchiveCases();
+    await ArchivePresentTextScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");

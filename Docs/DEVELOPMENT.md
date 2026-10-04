@@ -23,6 +23,12 @@ python -c $verifyFixtureGitBytes 'tests/Fixtures/Archives/TarZ/manifest.json' ':
 
 commit後も第2引数を`HEAD:tests/Fixtures/Archives/TarZ/manifest.json`へ替えて照合する。CIはそのcommitの固定SHAを検査し、ローカル作業中のbytesと区別する。
 
+## 内包テキストの作業保存
+
+実在する内包Textの通常保存・相対アセット・包装・復元はE2Eの `--archive-present-only` で限定確認する。[独立検証の契約](../tests/Fixtures/ArchiveWorkingText/README.md)に従い、Python標準ライブラリで原本ZIPの全CRC・保存bytes・HTML原文と改行・workspaceのSHA・包装全entryを照合する。通常の全体E2EとUI自己検証にも含み、限定成功だけを全体成功として扱わない。
+
+`--self-test-archive-working-review <output>` は保存済みアセットの上書き拒否、JSON公開失敗後の保護、異なる暗号化枝のmasked再入力、三者の祖先同期、手動マージの履歴・dirty保持と古い入力の採用拒否、最終配置後の実captionを再現する。出力のJSON・PNG・原本・workspace・HTMLを保持する。保存ダイアログはpath picker注入であり、ネイティブダイアログの操作検証とは区別する。実行時の認証情報と出力保護registryは専用windowを閉じて解放する。
+
 ## 検証成果物の容量管理
 
 画像変換のGUI自己検証では固定goldenをgzipで同梱し、約2.46 MBのJSONを約71 KBへ圧縮する。`python build/Generate-ImageTransformUiFixture.py`で再生成し、展開後の全bytesと正本SHAを照合する。E2Eは同じ正本をそのまま読み、通常の画像処理にはgoldenを使わない。

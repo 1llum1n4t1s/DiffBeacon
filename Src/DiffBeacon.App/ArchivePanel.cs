@@ -26,6 +26,17 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private int _previewVersion;
     private int _refreshVersion;
     private bool _disposed;
+    private ArchiveTextWorkingStore? _workingTexts;
+    private ManagedArchiveManifest? _leftManifest, _rightManifest;
+    internal void SetWorkingTexts(ArchiveTextWorkingStore store) { _workingTexts = store; RefreshWorkingRows(); }
+    internal void RefreshWorkingRows()
+    {
+        if (_disposed || _leftManifest is null || _rightManifest is null) return;
+        _previewVersion++; _previewOperation?.Cancel();
+        ManagedArchiveManifest Overlay(ManagedArchiveManifest manifest, ArchiveSource source) => _workingTexts?.Overlay(manifest, source) ?? manifest;
+        Rows = ArchiveComparison.Compare(Overlay(_leftManifest, _confirmedLeft), Overlay(_rightManifest, _confirmedRight));
+        EntryList.ItemsSource = Rows;
+    }
     private readonly TextBlock _status = new() { Margin = new Thickness(8), TextWrapping = TextWrapping.Wrap };
     private readonly TextBox _preview = new() { Name = "archive-preview", IsReadOnly = true, AcceptsReturn = true, FontFamily = new FontFamily("Cascadia Mono, Menlo, monospace") };
     private readonly ScrollViewer _toolbar;
@@ -148,7 +159,9 @@ public sealed class ArchivePanel : UserControl, IDisposable
             RefreshReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested(); if (_disposed || version != _refreshVersion) return;
             _confirmedLeft = left.Source; _confirmedRight = right.Source;
+            _leftManifest = left.Manifest; _rightManifest = right.Manifest;
             Rows = candidate; EntryList.ItemsSource = Rows; _preview.Text = "";
+            RefreshWorkingRows();
             _status.Text = $"{left.Manifest.Format} / {right.Manifest.Format}: {Rows.Count} 項目、差分 {Rows.Count(row => row.Status != "Equal")} 件。格納名・型・サイズ・SHA-256で比較します。暗号化アーカイブはパスワードを入力して再比較してください。再梱包の出力は暗号化されません。全件展開は選択した親フォルダー内の新しいフォルダーへ保存します。";
         }
         catch (Exception exception) when (exception is not OutOfMemoryException && version != _refreshVersion) { }
@@ -171,6 +184,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
             var passwords = Passwords(side); byte[] bytes;
             try { bytes = await Task.Run(() => service.ResolveEntryPreview(source, row.Path, passwords, token), token); }
             finally { Array.Clear(passwords); }
+            if (_workingTexts?.Find(source, row.Path) is { } saved) bytes = saved.Bytes![..Math.Min(4096, saved.Bytes.Length)];
             for (var index = 0; index < bytes.Length; index += 16)
             {
                 text.Append(index.ToString("X8")).Append("  ");

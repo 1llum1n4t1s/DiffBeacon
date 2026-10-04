@@ -70,11 +70,14 @@ internal static class HeadlessArchiveSourceChecks
         Select(inner, "folder"); Verify("directory cannot open a file comparison", !inner.OpenEntryButton.IsEnabled && Refused(() => pump(inner.OpenSelectedAsync())));
         Select(inner, "leaf.txt"); pump(inner.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
         var leaf = window.ActivePane; var leafProject = leaf.CaptureProject();
-        Verify("inner text uses original decoded leaf and readonly editors", leaf.LeftEditor.Text == leftText && leaf.RightEditor.Text == rightText
-            && leaf.CurrentDiff is { Blocks.Count: > 0 } && leaf.LeftEditor.IsReadOnly && leaf.RightEditor.IsReadOnly
+        Verify("inner text uses original decoded leaf and inherited editable editors", leaf.LeftEditor.Text == leftText && leaf.RightEditor.Text == rightText
+            && leaf.CurrentDiff is { Blocks.Count: > 0 } && !leaf.LeftEditor.IsReadOnly && !leaf.RightEditor.IsReadOnly
             && leaf.LeftPath.IsReadOnly && leafProject.LeftArchiveInput?.LeafEntry == "leaf.txt" && leafProject.LeftPath == "");
         leafProject.LeftArchiveInput!.EntryChain[0] = "mutated.zip";
         Verify("captured DTO does not mutate active source", leaf.CaptureProject().LeftArchiveInput!.EntryChain[0] == "inner.zip");
+        var protectedLeaf = leaf.CaptureProject();
+        protectedLeaf.LeftArchiveInput!.InheritedReadOnly = protectedLeaf.RightArchiveInput!.InheritedReadOnly = true;
+        leaf.ApplyProject(protectedLeaf); pump(leaf.ComparePathsAsync());
         Verify("source readonly and mode cannot be changed through ApplyProject", Refused(() => leaf.ApplyProject(leaf.CaptureProject() with { LeftReadOnly = false }))
             && Refused(() => leaf.ApplyProject(leaf.CaptureProject() with { Mode = "Image" })) && leaf.CaptureProject().LeftReadOnly && leaf.CaptureProject().Mode == "Text");
         leaf.ApplyProject(leaf.CaptureProject() with { Mode = "1" }); pump(leaf.ComparePathsAsync());
@@ -97,8 +100,8 @@ internal static class HeadlessArchiveSourceChecks
             Verify("workspace source restore waits for explicit comparison", restored.LeftEditor.Text == "" && restored.CurrentDiff is null
                 && restored.CaptureProject().LeftArchiveInput?.EntryChain[0] == "inner.zip");
             Verify("workspace restores inherited intention separately from fixed source readonly",
-                restored.CaptureProject().LeftArchiveInput?.InheritedReadOnly == false
-                && restored.CaptureProject().RightArchiveInput?.InheritedReadOnly == false
+                restored.CaptureProject().LeftArchiveInput?.InheritedReadOnly == true
+                && restored.CaptureProject().RightArchiveInput?.InheritedReadOnly == true
                 && restored.LeftEditor.IsReadOnly && restored.RightEditor.IsReadOnly);
             var retained = Path.Combine(folder, "pending-report.html"); File.WriteAllText(retained, "keep pending output"); var retainedHash = HashFile(retained);
             Verify("restored pending source cannot emit blank HTML", Refused(() => pump(restored.SaveReportAsync(retained))) && HashFile(retained) == retainedHash);
@@ -259,6 +262,7 @@ internal static class HeadlessArchiveSourceChecks
             foreach (var row in observations) { writer.WriteStartObject(); writer.WriteString("stage", row.Stage); writer.WriteBoolean("rowsPreserved", row.Rows); writer.WriteBoolean("previewPreserved", row.Preview); writer.WriteBoolean("activeParent", row.Active); writer.WriteNumber("tabs", row.Tabs); writer.WriteEndObject(); }
             writer.WriteEndArray(); writer.WriteEndObject();
         }
+        HeadlessArchiveWorkingTextChecks.Run(window, folder, pump, check, screenshot);
         Activate(original);
 
         void Verify(string label, bool result, string detail = "real public service, controls and session controller") => check("archive Source GUI " + label, result, detail);

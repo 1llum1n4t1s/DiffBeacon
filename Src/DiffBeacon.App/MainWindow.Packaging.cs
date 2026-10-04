@@ -111,6 +111,8 @@ public sealed partial class ComparisonPane
         var project = CaptureProject();
         if (ProjectInputs.HasArchives(project))
         {
+            var physical = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
+            if (!ProjectInputs.HasArchives(_projectMetadata) && _specialTab.Content is ArchivePanel && _lastPackageComparison == physical && CompareButton.IsEnabled) return;
             if (_lastArchiveComparison != ArchiveComparisonIdentity(project) || !CompareButton.IsEnabled)
                 throw new InvalidOperationException("包装・レポートの前に現在の内包入力で比較してください。");
             return;
