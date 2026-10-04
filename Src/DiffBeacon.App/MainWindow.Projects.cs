@@ -188,7 +188,10 @@ public sealed partial class ComparisonPane
     {
         var description = right ? _projectMetadata.RightDescription : _projectMetadata.LeftDescription;
         var readOnly = right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly;
-        return (string.IsNullOrWhiteSpace(description) ? right ? "右" : "左" : description) + (readOnly ? "（読取り専用）" : "");
+        var caption = string.IsNullOrWhiteSpace(description) ? right ? "右" : "左" : description;
+        if (ProjectInputs.Archive(_projectMetadata, right ? 2 : 0)?.MissingEntryChain is not null
+            && !caption.Contains("（存在しない）", StringComparison.Ordinal)) caption += "（存在しない）";
+        return caption + (readOnly ? "（読取り専用）" : "");
     }
 
     internal void EnsureProjectOutputWritable(string path)

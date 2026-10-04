@@ -9,11 +9,24 @@ public sealed record PatchApplyResult(bool Success, string Text, string? Error);
 public static class UnifiedPatch
 {
     public static string Create(string leftText, string rightText, string leftPath = "a/file",
-        string rightPath = "b/file", int contextLines = 3)
+        string rightPath = "b/file", int contextLines = 3, bool leftExists = true, bool rightExists = true)
     {
         if (contextLines < 0) throw new ArgumentOutOfRangeException(nameof(contextLines));
         if (leftPath.IndexOfAny(['\r', '\n']) >= 0 || rightPath.IndexOfAny(['\r', '\n']) >= 0)
             throw new ArgumentException("パッチのパスには改行を指定できません。");
+        if (!leftExists && leftText.Length != 0 || !rightExists && rightText.Length != 0)
+            throw new ArgumentException("不在入力に本文を指定できません。");
+        if (leftExists != rightExists && leftText.Length == 0 && rightText.Length == 0)
+        {
+            var path = leftExists ? leftPath : rightPath;
+            if (path.StartsWith(leftExists ? "a/" : "b/", StringComparison.Ordinal)) path = path[2..];
+            if (string.IsNullOrWhiteSpace(path) || path == "/dev/null") throw new ArgumentException("実在側のパッチ名を指定してください。");
+            static string Quote(string value) => "\"" + value.Replace("\\", "\\\\", StringComparison.Ordinal)
+                .Replace("\"", "\\\"", StringComparison.Ordinal).Replace("\t", "\\t", StringComparison.Ordinal) + "\"";
+            // 通常のzero-length hunkでは空fileの存在変更を表せない。
+            return "diff --git " + Quote("a/" + path) + " " + Quote("b/" + path) + "\n"
+                + (leftExists ? "deleted file mode 100644\nindex e69de29..0000000\n" : "new file mode 100644\nindex 0000000..e69de29\n");
+        }
         var diff = TextDiffer.Compare(leftText, rightText, new ComparisonOptions { CompareLineEndings = true });
         if (!diff.HasDifferences) return "";
         var a = TextLines.Parse(leftText);
@@ -140,10 +153,66 @@ public static class UnifiedPatch
             if (removed != oldCount || added != newCount) throw new FormatException("パッチの行数が hunk ヘッダーと一致しません。");
             hunks++;
         }
-        if (hunks == 0) throw new FormatException("適用する hunk がありません。");
+        if (hunks == 0)
+        {
+            if (!IsEmptyFileStatePatch(lines)) throw new FormatException("適用する hunk がありません。");
+            if (text.Length != 0) throw new InvalidOperationException("空fileの存在変更を本文のある入力へ適用できません。");
+            return "";
+        }
         output.AddRange(original.Skip(cursor));
         for (var position = 0; position < output.Count - 1; position++)
             if (output[position].Ending.Length == 0) throw new FormatException("最終行以外に改行なしマーカーがあります。");
         return TextLines.Join(output);
+    }
+
+    private static bool IsEmptyFileStatePatch(IReadOnlyList<TextLine> lines)
+    {
+        if (lines.Count != 3 || !lines[0].Content.StartsWith("diff --git ", StringComparison.Ordinal)) return false;
+        var creation = lines[1].Content is "new file mode 100644" or "new file mode 100755";
+        var deletion = lines[1].Content is "deleted file mode 100644" or "deleted file mode 100755";
+        if (!creation && !deletion || !lines[2].Content.StartsWith("index ", StringComparison.Ordinal)) return false;
+        var hashes = lines[2].Content[6..].Split("..", StringSplitOptions.None);
+        const string empty = "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391";
+        static bool Zero(string value) => value.Length is >= 7 and <= 40 && value.All(character => character == '0');
+        static bool Empty(string value) => value.Length is >= 7 and <= 40 && empty.StartsWith(value, StringComparison.OrdinalIgnoreCase);
+        if (hashes.Length != 2 || !(creation ? Zero(hashes[0]) && Empty(hashes[1]) : Empty(hashes[0]) && Zero(hashes[1]))) return false;
+        var header = lines[0].Content.AsSpan(11); var position = 0;
+        var left = Token(header, ref position); var right = Token(header, ref position);
+        while (position < header.Length && char.IsWhiteSpace(header[position])) position++;
+        return position == header.Length && left is not null && right is not null && left.Length > 2
+            && left.StartsWith("a/", StringComparison.Ordinal) && right.StartsWith("b/", StringComparison.Ordinal)
+            && StringComparer.Ordinal.Equals(left[2..], right[2..]);
+
+        static string? Token(ReadOnlySpan<char> header, ref int position)
+        {
+            while (position < header.Length && char.IsWhiteSpace(header[position])) position++;
+            if (position == header.Length) return null;
+            if (header[position] != '"')
+            {
+                var start = position; while (position < header.Length && !char.IsWhiteSpace(header[position])) position++;
+                return header[start..position].ToString();
+            }
+            position++; var value = new StringBuilder();
+            while (position < header.Length)
+            {
+                var current = header[position++];
+                if (current == '"') return position == header.Length || char.IsWhiteSpace(header[position]) ? value.ToString() : null;
+                if (current != '\\') { value.Append(current); continue; }
+                if (position == header.Length) return null;
+                current = header[position++];
+                if (current is '\\' or '"') value.Append(current);
+                else if (current == 't') value.Append('\t');
+                else if (current is >= '0' and <= '7')
+                {
+                    var octal = current - '0'; var count = 1;
+                    while (count < 3 && position < header.Length && header[position] is >= '0' and <= '7')
+                    { octal = octal * 8 + header[position++] - '0'; count++; }
+                    if (octal > 255) return null;
+                    value.Append((char)octal);
+                }
+                else return null;
+            }
+            return null;
+        }
     }
 }

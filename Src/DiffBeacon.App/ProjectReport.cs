@@ -32,9 +32,15 @@ public static class ProjectReport
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         static string Title(string? description, string? name, string path, string fallback) =>
             !string.IsNullOrWhiteSpace(description) ? description : name ?? (string.IsNullOrWhiteSpace(path) ? fallback : path);
-        var documents = new List<ReportDocument> { new(Title(project.LeftDescription, leftName, ProjectInputs.Caption(project, 0), "左"), left) };
-        if (ancestor is not null) documents.Add(new(Title(project.BaseDescription, baseName, ProjectInputs.Caption(project, 1), "共通の祖先"), ancestor));
-        documents.Add(new(Title(project.RightDescription, rightName, ProjectInputs.Caption(project, 2), "右"), right));
+        string InputTitle(int side, string? description, string? name, string fallback)
+        {
+            var title = Title(description, name, ProjectInputs.Caption(project, side), fallback);
+            return ProjectInputs.Archive(project, side)?.MissingEntryChain is not null && !title.EndsWith("（存在しない）", StringComparison.Ordinal)
+                ? title + "（存在しない）" : title;
+        }
+        var documents = new List<ReportDocument> { new(InputTitle(0, project.LeftDescription, leftName, "左"), left) };
+        if (ancestor is not null) documents.Add(new(InputTitle(1, project.BaseDescription, baseName, "共通の祖先"), ancestor));
+        documents.Add(new(InputTitle(2, project.RightDescription, rightName, "右"), right));
         var settings = Options(project);
         var html = project.Mode.ToLowerInvariant() switch
         {

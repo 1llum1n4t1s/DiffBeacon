@@ -160,7 +160,52 @@ internal static class HeadlessArchiveSourceChecks
             Verify("workspace never saves password or decrypted contents", !saved.Contains("outer-source-fixture", StringComparison.Ordinal) && !saved.Contains("inner-source-fixture", StringComparison.Ordinal)
                 && !saved.Contains("wrong-test-password", StringComparison.Ordinal) && !saved.Contains("nested archive leaf", StringComparison.Ordinal));
         }
-        Activate(parent); Select(panel, "only.txt"); Verify("single-side entry is explicitly disabled", !panel.OpenEntryButton.IsEnabled && Refused(() => pump(panel.OpenSelectedAsync())));
+        Activate(parent); Select(panel, "only.txt"); panel.EntryKind.SelectedIndex = 2;
+        pump(panel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var onlyPane = window.ActivePane!; var onlyProject = onlyPane.CaptureProject();
+        Verify("single-side binary entry retains typed absence", panel.OpenEntryButton.IsEnabled && !ReferenceEquals(onlyPane, parent)
+            && onlyProject.Mode == "Binary" && onlyProject.LeftArchiveInput?.LeafEntry == "only.txt"
+            && onlyProject.RightArchiveInput?.MissingEntryChain is ["only.txt"] && onlyProject.RightPath == ""
+            && onlyProject.LeftReadOnly && onlyProject.RightReadOnly);
+        ClosePane(onlyPane); Activate(parent); panel.EntryKind.SelectedIndex = 0;
+        // 実在する親と不在の仮想containerを分け、二段先のTextまで実controlで開く。
+        var missingLeft = Path.Combine(folder, "missing-left.zip"); var missingRight = Path.Combine(folder, "missing-right.zip");
+        File.WriteAllBytes(missingLeft, Zip(("one.zip", Zip(("two.zip", Zip(("leaf.txt", Encoding.UTF8.GetBytes(leftText)), ("empty.txt", [])))))));
+        File.WriteAllBytes(missingRight, Zip()); var missingHashes = new[] { HashFile(missingLeft), HashFile(missingRight) };
+        var missingParent = window.AddSession(); missingParent.ApplyProject(new() { LeftPath = missingLeft, RightPath = missingRight, Mode = "Archive" });
+        pump(missingParent.ComparePathsAsync());
+        var missingPanel = missingParent.GetVisualDescendants().OfType<ArchivePanel>().Single();
+        Select(missingPanel, "one.zip"); pump(missingPanel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var virtualPane = window.ActivePane; var virtualPanel = virtualPane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+        Verify("one-sided archive opens validated empty counterpart", virtualPanel.Rows.Count == 1 && virtualPanel.Rows[0].Right is null
+            && virtualPane.CaptureProject().RightArchiveInput?.MissingEntryChain is ["one.zip"]);
+        var prohibited = Path.Combine(folder, "missing-export.bin"); File.WriteAllText(prohibited, "keep output"); var prohibitedHash = HashFile(prohibited);
+        Verify("virtual archive cannot export repack or extract its real parent", Refused(() => pump(virtualPanel.ExportToAsync(true, "two.zip", prohibited)))
+            && Refused(() => pump(virtualPanel.RepackToAsync(true, prohibited))) && Refused(() => pump(virtualPanel.ExtractToAsync(true, folder)))
+            && HashFile(prohibited) == prohibitedHash);
+        Select(virtualPanel, "two.zip"); pump(virtualPanel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var deeperPane = window.ActivePane; var deeperPanel = deeperPane.GetVisualDescendants().OfType<ArchivePanel>().Single();
+        Verify("second virtual container retains only actual parent source", deeperPanel.Rows.Count == 2
+            && deeperPane.CaptureProject().RightArchiveInput is { EntryChain.Length: 0, MissingEntryChain: ["one.zip", "two.zip"] });
+        Select(deeperPanel, "leaf.txt"); deeperPanel.EntryKind.SelectedIndex = 1; pump(deeperPanel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var missingText = window.ActivePane; var missingProject = missingText.CaptureProject();
+        Verify("virtual leaf text keeps original and empty readonly document", missingText.LeftEditor.Text == leftText && missingText.RightEditor.Text == ""
+            && missingText.LeftEditor.IsReadOnly && missingText.RightEditor.IsReadOnly
+            && missingProject.RightArchiveInput?.MissingEntryChain is ["one.zip", "two.zip", "leaf.txt"]);
+        missingProject.RightArchiveInput!.MissingEntryChain![0] = "changed.zip";
+        Verify("missing chain capture is a deep copy", missingText.CaptureProject().RightArchiveInput!.MissingEntryChain![0] == "one.zip");
+        var missingHtml = Path.Combine(folder, "missing.html"); pump(missingText.SaveReportAsync(missingHtml));
+        Verify("missing GUI report identifies absent side", System.Net.WebUtility.HtmlDecode(File.ReadAllText(missingHtml)).Contains("（存在しない）", StringComparison.Ordinal));
+        Verify("missing GUI visible caption identifies absent side", missingText.GetVisualDescendants().OfType<TextBlock>()
+            .Any(label => label.Text == "leaf.txt（存在しない）（読取り専用）"));
+        screenshot("archive-source-missing.png");
+        Activate(deeperPane); Select(deeperPanel, "empty.txt"); pump(deeperPanel.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var emptyMissingPane = window.ActivePane;
+        Verify("empty existing leaf remains distinct from absent leaf", emptyMissingPane.LeftEditor.Text == "" && emptyMissingPane.RightEditor.Text == ""
+            && emptyMissingPane.CaptureProject().LeftArchiveInput?.MissingEntryChain is null
+            && emptyMissingPane.CaptureProject().RightArchiveInput?.MissingEntryChain is ["one.zip", "two.zip", "empty.txt"]);
+        Verify("missing navigation preserves both physical roots", HashFile(missingLeft) == missingHashes[0] && HashFile(missingRight) == missingHashes[1]);
+        ClosePane(emptyMissingPane); ClosePane(missingText); ClosePane(deeperPane); ClosePane(virtualPane); ClosePane(missingParent); Activate(parent);
         Select(panel, "bad.zip"); pump(panel.PreviewAsync(panel.Rows.Single(row => row.Path == "bad.zip")));
         var stableRows = panel.Rows; var stablePreview = panel.PreviewText; var stableTabs = window.SessionPanes.Count;
         parent.ArchiveSourceRetryShown = dialog => dialog.Cancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));

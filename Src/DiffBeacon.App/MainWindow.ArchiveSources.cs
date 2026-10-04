@@ -15,14 +15,17 @@ public sealed partial class MainWindow
         var container = request.Mode == ArchiveEntryOpenMode.Archive
             || request.Mode == ArchiveEntryOpenMode.Auto && ArchivePanel.Supports(request.Row.Path);
         var mode = container ? "Archive" : request.Mode == ArchiveEntryOpenMode.Binary ? "Binary" : "Text";
-        ArchiveProjectInput Input(ArchiveSource source) => new()
+        ArchiveProjectInput Input(ArchiveSource source, IReadOnlyList<string>? missing, bool present) => new()
         {
-            RootPath = source.RootPath, EntryChain = container ? source.EntryChain.Append(request.Row.Path).ToArray() : source.EntryChain.ToArray(),
-            LeafEntry = container ? null : request.Row.Path, RootSha256 = source.RootSha256
+            RootPath = source.RootPath,
+            EntryChain = missing is null && present && container ? source.EntryChain.Append(request.Row.Path).ToArray() : source.EntryChain.ToArray(),
+            LeafEntry = missing is null && present && !container ? request.Row.Path : null, RootSha256 = source.RootSha256,
+            MissingEntryChain = missing is not null ? missing.Append(request.Row.Path).ToArray() : present ? null : [request.Row.Path]
         };
         var project = new ComparisonProject
         {
-            Mode = mode, LeftArchiveInput = Input(request.LeftSource), RightArchiveInput = Input(request.RightSource),
+            Mode = mode, LeftArchiveInput = Input(request.LeftSource, request.LeftMissingEntryChain, request.Row.Left is not null),
+            RightArchiveInput = Input(request.RightSource, request.RightMissingEntryChain, request.Row.Right is not null),
             LeftReadOnly = true, RightReadOnly = true, LeftDescription = request.Row.Path, RightDescription = request.Row.Path
         };
         ComparisonPane? candidate = new(this);
@@ -31,8 +34,10 @@ public sealed partial class MainWindow
         {
             candidate.ApplyProject(project);
             candidate.ArchiveSourceRetryShown = parent.ArchiveSourceRetryShown;
-            left = container ? [.. request.LeftPasswords, null] : request.LeftPasswords.ToArray();
-            right = container ? [.. request.RightPasswords, null] : request.RightPasswords.ToArray();
+            string?[] Passwords(IReadOnlyList<string?> values, ArchiveProjectInput input)
+                => values.Concat(Enumerable.Repeat<string?>(null, input.EntryChain.Length + 1 - values.Count)).ToArray();
+            left = Passwords(request.LeftPasswords, project.LeftArchiveInput!);
+            right = Passwords(request.RightPasswords, project.RightArchiveInput!);
             parent.ArchiveChildReadStarting?.Invoke(); request.Token.ThrowIfCancellationRequested();
             if (!Current()) return;
             if (!await candidate.CompareArchiveProjectAsync(request.Token, left, right, request.Mode == ArchiveEntryOpenMode.Auto && !container)) return;
@@ -86,6 +91,8 @@ public sealed partial class ComparisonPane
             Part(ProjectInputs.PathFor(project, side)); Part(input?.RootSha256); Part(input?.LeafEntry);
             result.Append(input?.EntryChain.Length ?? -1).Append(':');
             if (input is not null) foreach (var hop in input.EntryChain) Part(hop);
+            result.Append(input?.MissingEntryChain?.Length ?? -1).Append(':');
+            if (input?.MissingEntryChain is { } missing) foreach (var hop in missing) Part(hop);
         }
         return result.ToString();
     }
@@ -104,7 +111,7 @@ public sealed partial class ComparisonPane
             var fixedInput = input is not null || ReferenceEquals(box, BasePath) && hasArchives && _projectMetadata.Mode != "Text";
             box.IsReadOnly = fixedInput;
             if (box.Parent is Panel row) foreach (var button in row.Children.OfType<Button>()) button.IsEnabled = !fixedInput;
-            if (input is not null) ToolTip.SetTip(box, input.RootPath + "\n" + string.Join(" / ", input.EntryChain.Concat(input.LeafEntry is null ? [] : new[] { input.LeafEntry })));
+            if (input is not null) ToolTip.SetTip(box, input.RootPath + "\n" + string.Join(" / ", input.EntryChain.Concat(input.MissingEntryChain ?? (input.LeafEntry is null ? [] : new[] { input.LeafEntry }))));
             else ToolTip.SetTip(box, null);
         }
     }
@@ -151,7 +158,8 @@ public sealed partial class ComparisonPane
                         ArchiveSource Source(int side) => ProjectInputs.Archive(project, side)?.ToSource()
                             ?? new(Path.GetFullPath(ProjectInputs.PathFor(project, side)));
                         candidate = await ArchivePanel.CreateForSourcesAsync(Source(0), Source(2), token, EnsureArchiveOutputWritable,
-                            passwords[0][..^1], passwords[2][..^1], passwords[0][^1], passwords[2][^1]);
+                            passwords[0][..^1], passwords[2][..^1], passwords[0][^1], passwords[2][^1],
+                            project.LeftArchiveInput?.MissingEntryChain, project.RightArchiveInput?.MissingEntryChain);
                         BindArchivePanel((ArchivePanel)candidate);
                     }
                     else if (project.Mode == "Binary" || autoLeaf)
@@ -220,6 +228,7 @@ public sealed partial class ComparisonPane
                 LeftEditor.Text = _savedLeft = left!.Text; RightEditor.Text = _savedRight = right!.Text;
                 _ancestorEditor.Text = _baseText ?? ""; UpdateEditorLayout(ancestor is not null); _textSaveAllowed = true;
                 ApplyDiff(diff!); _status.Text += " · 内包入力は読取り専用です。";
+                if (ProjectInputs.HasMissing(project)) _status.Text += " · 存在しない内包入力は未作成の空文書として比較しています。";
             }
             _projectMetadata.Mode = project.Mode; _mode.SelectedIndex = project.Mode switch { "Text" => 1, "Binary" => 3, _ => 7 };
             ConfigureArchiveInputControls();

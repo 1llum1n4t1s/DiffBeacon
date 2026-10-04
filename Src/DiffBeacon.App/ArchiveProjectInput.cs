@@ -11,8 +11,10 @@ public sealed record ArchiveProjectInput
     public string[] EntryChain { get; set; } = [];
     public string? LeafEntry { get; set; }
     public string? RootSha256 { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? MissingEntryChain { get; set; }
 
-    internal ArchiveProjectInput Copy() => this with { EntryChain = EntryChain.ToArray() };
+    internal ArchiveProjectInput Copy() => this with { EntryChain = EntryChain.ToArray(), MissingEntryChain = MissingEntryChain?.ToArray() };
     internal ArchiveSource ToSource() => new(RootPath, EntryChain, RootSha256);
 
     internal void Validate(bool container, bool readOnly)
@@ -22,7 +24,14 @@ public sealed record ArchiveProjectInput
             throw new InvalidDataException("内包入力の物理rootと格納階層が不正です。");
         // 相対rootを保存可能にし、格納名はruntimeのimmutable型と同じ規則で検証する。
         _ = new ArchiveSource(Path.GetFullPath(RootPath), EntryChain, RootSha256);
-        if (container ? LeafEntry is not null : string.IsNullOrWhiteSpace(LeafEntry))
+        if (MissingEntryChain is { } missing)
+        {
+            if (missing.Length == 0 || missing.Length > 9 || LeafEntry is not null ||
+                EntryChain.Length + missing.Length - (container ? 0 : 1) > 8)
+                throw new InvalidDataException("不在入力の格納階層またはleaf指定が不正です。");
+            _ = new ArchiveSource(Path.GetFullPath(RootPath), missing);
+        }
+        else if (container ? LeafEntry is not null : string.IsNullOrWhiteSpace(LeafEntry))
             throw new InvalidDataException("内包入力のcontainer／leaf指定が比較形式と一致しません。");
         if (LeafEntry is not null) _ = new ArchiveSource(Path.GetFullPath(RootPath), [LeafEntry]);
         if (RootSha256 is null) throw new InvalidDataException("保存する内包入力には確定rootのSHA-256が必要です。");
@@ -46,12 +55,16 @@ internal static class ProjectInputs
         => Enumerable.Range(0, 3).Select(side => PathFor(project, side)).Append(project.FileFilterPath ?? "");
     internal static bool HasArchives(ComparisonProject project)
         => project.LeftArchiveInput is not null || project.BaseArchiveInput is not null || project.RightArchiveInput is not null;
+    internal static bool HasMissing(ComparisonProject project)
+        => Enumerable.Range(0, 3).Any(side => Archive(project, side)?.MissingEntryChain is not null);
     internal static bool HasBase(ComparisonProject project) => !string.IsNullOrWhiteSpace(PathFor(project, 1));
     internal static string Caption(ComparisonProject project, int side)
     {
         var input = Archive(project, side);
         return input is null ? PathFor(project, side) : string.Join(" / ",
-            new[] { System.IO.Path.GetFileName(input.RootPath) }.Concat(input.EntryChain).Concat(input.LeafEntry is null ? [] : new[] { input.LeafEntry }));
+            new[] { System.IO.Path.GetFileName(input.RootPath) }.Concat(input.EntryChain)
+                .Concat(input.MissingEntryChain ?? (input.LeafEntry is null ? [] : new[] { input.LeafEntry })))
+            + (input.MissingEntryChain is null ? "" : "（存在しない）");
     }
 
     internal static void EnsureOutput(string output, IEnumerable<ComparisonProject> projects, string? sourceProject = null)

@@ -131,9 +131,9 @@ public static class WorkspaceStore
     internal static byte[] SerializeWorkspace(ComparisonWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        if (workspace.FormatVersion is not (1 or 2)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        if (workspace.FormatVersion is not (1 or 2 or 3)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
         if (workspace.Entries?.Any(project => project is not null && ProjectInputs.HasArchives(project)) == true)
-            workspace = workspace with { FormatVersion = 2 };
+            workspace = workspace with { FormatVersion = workspace.Entries.Any(project => project is not null && ProjectInputs.HasMissing(project)) ? 3 : 2 };
         Validate(workspace);
         var bytes = JsonSerializer.SerializeToUtf8Bytes(workspace, ProjectJsonContext.Default.ComparisonWorkspace);
         if (bytes.Length > MaxFileBytes) throw new InvalidDataException("比較プロジェクトは 4 MiB 以下にしてください。");
@@ -247,10 +247,13 @@ public static class WorkspaceStore
             var fields = new HashSet<string>(StringComparer.Ordinal);
             foreach (var field in side.Value.EnumerateObject())
             {
-                if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256") || !fields.Add(field.Name))
+                if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256" or "missingEntryChain") || !fields.Add(field.Name))
                     throw new InvalidDataException("内包入力に未対応または重複した項目があります。");
                 if (field.Name == "entryChain" && (field.Value.ValueKind != JsonValueKind.Array || field.Value.GetArrayLength() > 8))
                     throw new InvalidDataException("内包入力の格納階層が不正です。");
+                if (field.Name == "missingEntryChain" && (field.Value.ValueKind != JsonValueKind.Array ||
+                    field.Value.GetArrayLength() is < 1 or > 9))
+                    throw new InvalidDataException("不在入力の格納階層が不正です。");
             }
         }
     }
@@ -279,7 +282,7 @@ public static class WorkspaceStore
     private static void Validate(ComparisonWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        if (workspace.FormatVersion is not (1 or 2)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        if (workspace.FormatVersion is not (1 or 2 or 3)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
         if (workspace.Entries is null || workspace.Entries.Length is < 1 or > MaxEntries)
             throw new InvalidDataException($"比較は 1 ～ {MaxEntries} 件を指定してください。");
         if (workspace.ActiveEntryIndex < 0 || workspace.ActiveEntryIndex >= workspace.Entries.Length)
@@ -296,7 +299,9 @@ public static class WorkspaceStore
                 throw new InvalidDataException("フォルダー比較方式が不正です。");
             if (ProjectInputs.HasArchives(project))
             {
-                if (workspace.FormatVersion != 2) throw new InvalidDataException("内包入力には形式バージョン2のワークスペースが必要です。");
+                if (workspace.FormatVersion is not (2 or 3)) throw new InvalidDataException("内包入力には形式バージョン2以降のワークスペースが必要です。");
+                if (ProjectInputs.HasMissing(project) && workspace.FormatVersion != 3)
+                    throw new InvalidDataException("不在入力には形式バージョン3のワークスペースが必要です。");
                 var mode = project.Mode.ToLowerInvariant();
                 if (mode is not ("text" or "1" or "binary" or "3" or "archive" or "7"))
                     throw new InvalidDataException("内包入力はText／Binary／Archiveの明示形式で開いてください。");

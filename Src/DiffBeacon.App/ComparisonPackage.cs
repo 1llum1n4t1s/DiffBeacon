@@ -143,7 +143,7 @@ public static class ComparisonPackage
                     filter = Snapshot(filter, $"filters/{i + 1}-" + Path.GetFileName(filter)).Name;
                 }
                 ArchiveProjectInput? PackedInput(int side) => ProjectInputs.Archive(project, side) is { } input
-                    ? input with { RootPath = paths[side], EntryChain = input.EntryChain.ToArray() } : null;
+                    ? input with { RootPath = paths[side], EntryChain = input.EntryChain.ToArray(), MissingEntryChain = input.MissingEntryChain?.ToArray() } : null;
                 packed[i] = project with
                 {
                     LeftPath = project.LeftArchiveInput is null ? paths[0] : "", BasePath = project.BaseArchiveInput is null ? paths[1] : "",
@@ -181,9 +181,12 @@ public static class ComparisonPackage
                 }
                 if (options.IncludePatch && textMode && project.Mode.ToLowerInvariant() is not ("json" or "5"))
                 {
-                    string PatchName(int side, Input input) => ProjectInputs.Archive(project, side)?.LeafEntry is { } leaf
-                        ? (side == 0 ? "original/" : "altered/") + leaf : input.Name;
-                    patches.Append(UnifiedPatch.Create(a!, b!, PatchName(0, left!), PatchName(2, right!)));
+                    string PatchName(int side, Input input) => ProjectInputs.Archive(project, side)?.MissingEntryChain is not null
+                        ? "/dev/null" : ProjectInputs.Archive(project, side)?.LeafEntry is { } leaf
+                            ? (side == 0 ? "original/" : "altered/") + leaf : input.Name;
+                    patches.Append(UnifiedPatch.Create(a!, b!, PatchName(0, left!), PatchName(2, right!),
+                        leftExists: ProjectInputs.Archive(project, 0)?.MissingEntryChain is null,
+                        rightExists: ProjectInputs.Archive(project, 2)?.MissingEntryChain is null));
                     if (patches.Length > MaximumGeneratedBytes) throw new InvalidDataException("パッチの上限を超えました。");
                 }
                 if (options.IncludeReport)

@@ -1,12 +1,20 @@
 # .NET 10 / Avalonia 移行の到達点
 
+## 片側不在の内包入力（ローカル検証済み）
+
+実在する親rootと不在の格納名を分けるversion 3のtyped入力を追加した。片側だけのText／Binary／Archiveを開き、不在containerを空一覧として二段先のleafまで進める。実在する0byte fileと不在を保存・HTML・包装patchで区別し、全親containerのCRC・EOF・SHAと不在の起点を再検証する。不在側を実在する親の再梱包・全件展開へ渡さない。元アーカイブへの書戻しは未対応のまま固定readonlyを維持する。
+
+追加した実アプリE2Eは203成功・0失敗（81命令）、独立readerは8比較の原本・本文・全包装fileを照合し、6patchの適用結果を独立本文の全byteと照合した。GUI限定検証は62成功・0失敗で二段の不在階層・readonly・原本保持・出力保護を確認した。不在captionを本文見出しにも表示し、実controlとPNGで確認した。全UI検証は10,183成功・0失敗、518PNGと元container・HTMLの独立照合も成功した。証拠は `artifacts/local/archive-missing-input`。管理者実行の通常版とWindows x64 Native AOTは、全体E2Eが各158,569成功・0失敗・3skip、5,611命令と11,222ログの全byte照合に成功した。Nativeの全UIも10,183成功・0失敗、518PNGと原本・HTMLを独立照合し、12発行file・3ライセンスとソース351fileを照合した。2つのcompiler lockだけが既存GitのAOT graphへ戻り、製品依存関係と検証driverは不変。最初の非管理者実行はリンク保護など12skipのため採用せず、原本を全22,580file照合した約58MBのZIPへ保持した。ごみ箱の完全消去は中断し、約818MBと管理情報が残るため清掃完了とは扱わない。今回の変更を含む4RID CI、通常desktop・ネイティブ保存ダイアログ、新しい文脈の独立出荷レビューは未完了。未命名側の直接編集・SaveAsも次工程であり、全機能移植の完了ではない。
+
 ## 内包アーカイブの子比較・保存・包装
 
 左右に実在するentryを子タブのText／Binary／Archiveとして開く。自動判定、別名書出し、三者・通常文書との混在Text比較、version 2のtyped workspace、leaf本文の単体HTML、root snapshotを含む包装・leafパッチを接続した。物理rootと格納名・leaf・確定SHAを分け、固定readonlyと全タブの入力・filter・workspace出力保護を維持する。復元後は「比較」の明示操作を待ち、各階層のpasswordをmasked欄で再入力する。passwordと復号本文は保存しない。候補は準備後に親・世代・token・activeタブを照合して追加し、取消・別タブ・refresh・親closeで古い完了を破棄する。
 
 通常版のRelease buildは警告0・エラー0、全体E2Eは158367成功・0失敗・3skip、5530命令・11060 stdout/stderr fileを照合した。全UIは10174成功・0失敗で、Sourceの実操作53件を含み、517PNGのCRC・寸法・復号長・filterを独立照合した。通常／最小windowの一覧・previewは291／93px、scroll後の比較button到達も確認した。全container CRC・leaf／全byte書出し・二者／三者HTMLの原文と改行、暗号化workspaceへのpassword／復号本文の不在をPythonで再照合した。プロジェクトは110命令、独立した7比較・3外部leafパッチ適用と、包装全file・展開・相対参照再読込みを確認した。ソース348件・managed App payload551件・driverの検証前後一致を保持する。
 
-Windows x64 Native AOTも全体E2E 158367成功・0失敗・3skip、5530命令、UI 10174成功・0失敗、517PNGの独立照合が成功した。payload12件／3licenseのSHA・サイズ、source348件の照合、既存compiler graphへ復帰した2lockfile以外の346件のbyte不変とdriver2件の不変を確認した。通常デスクトップと実OS clipboardはこのローカル検証に含めない。最新変更の4RID CIはこれから実行する。
+Windows x64 Native AOTも全体E2E 158367成功・0失敗・3skip、5530命令、UI 10174成功・0失敗、517PNGの独立照合が成功した。payload12件／3licenseのSHA・サイズ、source348件の照合、既存compiler graphへ復帰した2lockfile以外の346件のbyte不変とdriver2件の不変を確認した。通常デスクトップと実OS clipboardはこのローカル検証に含めない。
+
+このGUI／typed workspace／包装を含むcommit `417e574d2cf81d5c87acd2cf49e7e9a5f28af6c8` の[4RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37160106400)と[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37160106402)が成功した。Windows両構成はE2E 158367成功・0失敗・3skip、5530命令、Mac両構成は158376成功・0失敗・2skip、5533命令。全4構成でUI 10174成功・0失敗、各517PNGを独立復号し、Sourceの全byte／CRC・本文と改行・7包装・3外部leafパッチを再照合した。実OS clipboardは各構成の別writer／reader processで一致した。8ZIP／676298066bytes／97338entryの全CRC・SHA・サイズとGitHub digest、Native payload・3license・Mac bundleの13内部fileと実行属性も確認した。証拠は `artifacts/github/37160106400/terminal-summary.json`。全4RIDは展開保持していない。通常interactive desktop・ネイティブダイアログと、新しい文脈の独立出荷レビューは未完了である。
 
 初回全体の旧workspace検証が新たに有効になったformatVersion 2を未知としていたため、未知versionを3へ修正した。全UIでown archiveの上書き拒否が共通guardに先取りされ例外型が変わったため、own rootsのIOException検査を先にし全入力保護を後段へ維持した。失敗入力・ログ・JSONと、その修正後の全体／UI再実行を分けて保持する。独立PNG照合の初回がtop levelだけ148枚を列挙していたため、既存契約と同じ再帰・fixture除外で517枚を確認した。
 

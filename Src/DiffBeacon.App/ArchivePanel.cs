@@ -15,6 +15,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private readonly ArchiveSource _requestedLeft, _requestedRight;
     private ArchiveSource _confirmedLeft, _confirmedRight;
     private readonly string?[] _leftAncestors, _rightAncestors;
+    private readonly IReadOnlyList<string>? _leftMissing, _rightMissing;
     private readonly Action<string>? _guardOutput;
     private readonly CancellationTokenSource _lifetime;
     private CancellationTokenSource? _operation;
@@ -49,23 +50,25 @@ public sealed class ArchivePanel : UserControl, IDisposable
     internal Func<ArchivePanel, ArchiveOpenRequest, Task>? OpenEntryRequested { get; set; }
 
     private ArchivePanel(ArchiveSource left, ArchiveSource right, Action<string>? guardOutput,
-        IReadOnlyList<string?>? leftAncestors = null, IReadOnlyList<string?>? rightAncestors = null)
+        IReadOnlyList<string?>? leftAncestors = null, IReadOnlyList<string?>? rightAncestors = null,
+        IReadOnlyList<string>? leftMissing = null, IReadOnlyList<string>? rightMissing = null)
     {
         _leftPath = left.RootPath; _rightPath = right.RootPath; _requestedLeft = _confirmedLeft = left; _requestedRight = _confirmedRight = right;
+        _leftMissing = Missing(left, leftMissing); _rightMissing = Missing(right, rightMissing);
         _leftAncestors = Ancestors(left, leftAncestors);
         try { _rightAncestors = Ancestors(right, rightAncestors); }
         catch { Array.Clear(_leftAncestors); throw; }
         _guardOutput = guardOutput; _lifetime = new CancellationTokenSource();
         var panel = new DockPanel(); var actions = new WrapPanel(); actions.Children.Add(LeftPassword); actions.Children.Add(RightPassword);
-        var sources = new TextBlock { Name = "archive-confirmed-sources", Text = $"左: {SourceCaption(left)}\n右: {SourceCaption(right)}", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(8, 4) };
+        var sources = new TextBlock { Name = "archive-confirmed-sources", Text = $"左: {SourceCaption(left, _leftMissing)}\n右: {SourceCaption(right, _rightMissing)}", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(8, 4) };
         Button("アーカイブを再比較", RefreshAsync);
         actions.Children.Add(EntryKind); actions.Children.Add(OpenEntryButton);
         OpenEntryButton.Click += async (_, _) => await GuardAsync(OpenSelectedAsync);
         EntryList.DoubleTapped += async (_, _) => await GuardAsync(OpenSelectedAsync);
         Button("左エントリを書き出す", () => ExportAsync(false)); Button("右エントリを書き出す", () => ExportAsync(true));
-        Button("左を再梱包", () => RepackAsync(false), left.EntryChain.Count == 0); Button("右を再梱包", () => RepackAsync(true), right.EntryChain.Count == 0);
+        Button("左を再梱包", () => RepackAsync(false), left.EntryChain.Count == 0 && _leftMissing is null); Button("右を再梱包", () => RepackAsync(true), right.EntryChain.Count == 0 && _rightMissing is null);
         actions.Children.Add(ExtractionName);
-        Button("左をすべて展開", () => ExtractAsync(false), left.EntryChain.Count == 0); Button("右をすべて展開", () => ExtractAsync(true), right.EntryChain.Count == 0);
+        Button("左をすべて展開", () => ExtractAsync(false), left.EntryChain.Count == 0 && _leftMissing is null); Button("右をすべて展開", () => ExtractAsync(true), right.EntryChain.Count == 0 && _rightMissing is null);
         EntryList.ItemTemplate = new FuncDataTemplate<ArchiveEntryDifference>((row, _) => new TextBlock
         {
             Text = row is null ? "" : $"{Label(row.Status),-7} {row.Path}   左 {row.Left?.Size.ToString("N0") ?? "—"} / 右 {row.Right?.Size.ToString("N0") ?? "—"}",
@@ -73,7 +76,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
         });
         EntryList.SelectionChanged += async (_, _) =>
         {
-            OpenEntryButton.IsEnabled = EntryList.SelectedItem is ArchiveEntryDifference selected && selected.Left is { IsDirectory: false } && selected.Right is { IsDirectory: false };
+            OpenEntryButton.IsEnabled = EntryList.SelectedItem is ArchiveEntryDifference selected && CanOpen(selected);
             if (EntryList.SelectedItem is ArchiveEntryDifference row) await GuardAsync(() => PreviewAsync(row));
         };
         var toolbarContent = new StackPanel(); toolbarContent.Children.Add(sources); toolbarContent.Children.Add(actions);
@@ -110,9 +113,10 @@ public sealed class ArchivePanel : UserControl, IDisposable
     }
     internal static async Task<ArchivePanel> CreateForSourcesAsync(ArchiveSource left, ArchiveSource right, CancellationToken token,
         Action<string>? guardOutput, IReadOnlyList<string?> leftAncestors, IReadOnlyList<string?> rightAncestors,
-        string? leftPassword = null, string? rightPassword = null)
+        string? leftPassword = null, string? rightPassword = null,
+        IReadOnlyList<string>? leftMissing = null, IReadOnlyList<string>? rightMissing = null)
     {
-        var panel = new ArchivePanel(left, right, guardOutput, leftAncestors, rightAncestors);
+        var panel = new ArchivePanel(left, right, guardOutput, leftAncestors, rightAncestors, leftMissing, rightMissing);
         try
         {
             panel.LeftPassword.Text = leftPassword; panel.RightPassword.Text = rightPassword;
@@ -138,6 +142,8 @@ public sealed class ArchivePanel : UserControl, IDisposable
             leftPasswords = Passwords(false); rightPasswords = Passwords(true);
             var left = await Task.Run(() => service.ResolveManifest(_requestedLeft, leftPasswords, token), token);
             var right = await Task.Run(() => service.ResolveManifest(_requestedRight, rightPasswords, token), token);
+            if (_leftMissing is not null) { ProjectInputReader.EnsureAbsent(left.Manifest, _leftMissing[0], token); left = left with { Manifest = new("不在", []) }; }
+            if (_rightMissing is not null) { ProjectInputReader.EnsureAbsent(right.Manifest, _rightMissing[0], token); right = right with { Manifest = new("不在", []) }; }
             var candidate = ArchiveComparison.Compare(left.Manifest, right.Manifest);
             RefreshReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested(); if (_disposed || version != _refreshVersion) return;
@@ -180,6 +186,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     }
     public Task ExportToAsync(bool rightSide, string entry, string output, CancellationToken token = default)
     {
+        EnsurePresentSide(rightSide);
         EnsureNewOutput(output);
         return RunWriteAsync(cancellation => ExportSourceAsync(rightSide, entry, output, cancellation), token);
     }
@@ -195,6 +202,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     }
     public Task RepackToAsync(bool rightSide, string output, CancellationToken token = default)
     {
+        EnsurePresentSide(rightSide);
         if ((rightSide ? _requestedRight : _requestedLeft).EntryChain.Count != 0) throw new InvalidOperationException("内側アーカイブの再梱包は未対応です。");
         EnsureNewOutput(output);
         var input = rightSide ? _rightPath : _leftPath; var password = Password(rightSide);
@@ -202,6 +210,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     }
     public Task ExtractToAsync(bool rightSide, string directory, CancellationToken token = default)
     {
+        EnsurePresentSide(rightSide);
         if ((rightSide ? _requestedRight : _requestedLeft).EntryChain.Count != 0) throw new InvalidOperationException("内側アーカイブの全件展開は未対応です。");
         _guardOutput?.Invoke(directory);
         var input = rightSide ? _rightPath : _leftPath; var password = Password(rightSide);
@@ -261,16 +270,30 @@ public sealed class ArchivePanel : UserControl, IDisposable
             throw new ArgumentException("格納階層のパスワード指定が不正です。");
         return passwords?.ToArray() ?? new string?[source.EntryChain.Count];
     }
-    private static string SourceCaption(ArchiveSource source)
-        => string.Join(" / ", new[] { source.RootPath }.Concat(source.EntryChain));
+    private static string SourceCaption(ArchiveSource source, IReadOnlyList<string>? missing = null)
+        => string.Join(" / ", new[] { source.RootPath }.Concat(source.EntryChain).Concat(missing ?? [])) + (missing is null ? "" : "（存在しない）");
+    private static IReadOnlyList<string>? Missing(ArchiveSource source, IReadOnlyList<string>? missing)
+    {
+        if (missing is null) return null;
+        if (missing.Count == 0 || missing.Count + source.EntryChain.Count > 8)
+            throw new InvalidDataException("不在アーカイブの格納階層が不正です。");
+        return new ArchiveSource(source.RootPath, missing).EntryChain;
+    }
+    private void EnsurePresentSide(bool rightSide)
+    {
+        if ((rightSide ? _rightMissing : _leftMissing) is not null)
+            throw new InvalidOperationException("存在しない側の書出し・再梱包・展開はできません。");
+    }
+    private static bool CanOpen(ArchiveEntryDifference row)
+        => (row.Left is { IsDirectory: false } || row.Right is { IsDirectory: false })
+            && row.Left is not { IsDirectory: true } && row.Right is not { IsDirectory: true };
     internal bool IsCurrent(ArchiveOpenRequest request) => !_disposed && request.Generation == _childGeneration
         && !request.Token.IsCancellationRequested && ReferenceEquals(request.LeftSource, _confirmedLeft) && ReferenceEquals(request.RightSource, _confirmedRight);
     public async Task OpenSelectedAsync()
     {
         if (_disposed || EntryList.SelectedItem is not ArchiveEntryDifference row || !Rows.Any(item => ReferenceEquals(item, row)))
             throw new InvalidOperationException("現在の一覧からファイルを選択してください。");
-        if (row.Left is not { IsDirectory: false } || row.Right is not { IsDirectory: false })
-            throw new InvalidOperationException("左右に存在するファイルを選択してください。");
+        if (!CanOpen(row)) throw new InvalidOperationException("比較するファイルを選択してください。ディレクトリは開けません。");
         var callback = OpenEntryRequested ?? throw new InvalidOperationException("比較タブから内包項目を開いてください。");
         _childOperation?.Cancel(); _childOperation?.Dispose();
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
@@ -281,7 +304,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
             left = Passwords(false); right = Passwords(true);
             var mode = (ArchiveEntryOpenMode)EntryKind.SelectedIndex;
             if (!Enum.IsDefined(mode)) throw new InvalidOperationException("内包項目の比較形式を選択してください。");
-            await callback(this, new(_confirmedLeft, _confirmedRight, row, mode, left, right, generation, operation.Token));
+            await callback(this, new(_confirmedLeft, _confirmedRight, row, mode, left, right, generation, operation.Token, _leftMissing, _rightMissing));
         }
         finally { if (left is not null) Array.Clear(left); if (right is not null) Array.Clear(right); if (ReferenceEquals(_childOperation, operation)) _childOperation = null; }
     }
