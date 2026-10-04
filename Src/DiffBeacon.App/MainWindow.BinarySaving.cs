@@ -24,6 +24,24 @@ public sealed partial class ComparisonPane
         var project = CaptureProject();
         foreach (var side in panel.ProjectSides) panel.SetCaption(side, (side switch { 0 => project.LeftDescription, 1 => project.BaseDescription, _ => project.RightDescription }) ?? ProjectInputs.Caption(project, side));
         panel.RequiredReadOnly = BinaryReadOnly;
+        panel.CopyAllContent = async (source, destination) =>
+        {
+            var stamp = panel.StateStamp; var generation = _binarySaveGeneration; var operation = _operation;
+            var identity = ArchiveComparisonIdentity(CaptureProject());
+            var inputs = (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
+            var readOnly = panel.ProjectSides.Select(panel.ReadOnly).ToArray();
+            bool Current() => !_disposed && !panel.IsDisposed && ReferenceEquals(_specialTab.Content, panel)
+                && generation == _binarySaveGeneration && ReferenceEquals(operation, _operation) && operation?.IsCancellationRequested != true
+                && stamp == panel.StateStamp && identity == ArchiveComparisonIdentity(CaptureProject())
+                && inputs == (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem)
+                && panel.ProjectSides.Select(panel.ReadOnly).SequenceEqual(readOnly);
+            if (!Current() || identity != _binaryLoadedIdentity) throw new InvalidOperationException("コピー元の比較が変更されています。");
+            panel.EnsureApplied(); panel.ApplyReadOnly?.Invoke();
+            if (panel.ReadOnly(destination)) throw new InvalidOperationException("この側は読取り専用です。");
+            if (!await Dialogs.ConfirmAsync(_owner, "バイナリの全体コピー", "指定した側の全バイトをコピーします。短いコピー元の場合、コピー先の末尾は保持します。続行しますか？")) return;
+            if (!Current()) throw new OperationCanceledException("確認中に比較が変更されたため、コピーしませんでした。");
+            panel.CopyAll(source, destination);
+        };
         panel.SaveContent = (side, path, token) => SaveBinaryAsync(panel, side, path, token);
         panel.SavePathPicker = side => BinarySavePathPicker is { } picker ? picker(side) : SavePathAsync("バイナリを別名保存", side switch { 0 => "left.bin", 1 => "middle.bin", _ => "right.bin" });
         panel.ApplyReadOnly?.Invoke();

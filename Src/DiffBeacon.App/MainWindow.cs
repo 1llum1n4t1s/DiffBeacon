@@ -826,6 +826,7 @@ internal sealed class ArchiveRetryDialog : Window
 
 internal static class Dialogs
 {
+    internal static Action<Window>? ConfirmationShown { get; set; }
     public static Task MessageAsync(Window owner, string title, string message) => ShowAsync(owner, title, message, false);
     public static Task<bool> ConfirmAsync(Window owner, string title, string message) => ShowAsync(owner, title, message, true);
     private static Task<bool> ShowAsync(Window owner, string title, string message, bool confirm)
@@ -837,6 +838,8 @@ internal static class Dialogs
         if (confirm) { var cancel = new Button { Content = "キャンセル" }; cancel.Click += (_, _) => dialog.Close(false); buttons.Children.Add(cancel); }
         var ok = new Button { Content = confirm ? "続行" : "閉じる" }; ok.Click += (_, _) => dialog.Close(true); buttons.Children.Add(ok);
         panel.Children.Add(buttons); dialog.Content = panel;
-        return dialog.ShowDialog<bool>(owner);
+        var result = dialog.ShowDialog<bool>(owner);
+        if (confirm) ConfirmationShown?.Invoke(dialog);
+        return result;
     }
 }

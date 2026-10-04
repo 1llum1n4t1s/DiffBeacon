@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
+    "--binary-copy-all-only", "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
     "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
@@ -1738,6 +1738,8 @@ try
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
     if (args.Contains("--archive-tar-wrappers-only", StringComparer.Ordinal))
         await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--binary-copy-all-only", StringComparer.Ordinal))
+        await BinaryCopyAllScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-threeway-only", StringComparer.Ordinal))
         await BinaryThreeWayScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--archive-binary-only", StringComparer.Ordinal))
@@ -1888,6 +1890,7 @@ try
     await ArchivePresentTextScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveBinaryWorkingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryThreeWayScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    await BinaryCopyAllScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");

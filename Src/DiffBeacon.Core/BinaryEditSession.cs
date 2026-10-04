@@ -73,6 +73,9 @@ public sealed class BinaryEditSession : IDisposable
         if (replacement.Length != length) throw new FormatException("編集前と同じバイト数を入力してください。");
         var candidate = _bytes[side].ToArray(); replacement.CopyTo(candidate, offset); Commit(side, candidate);
     }
+    // Frhedの全体コピーは短いsourceでdestination末尾を切り詰めない。
+    public void CopyAll(int source, int destination)
+    { ValidateSide(source); CopyRange(source, destination, 0, _bytes[source].Length); }
     public void CopyRange(int source, int destination, int start, int length)
     {
         ValidateSide(source); Writable(destination);

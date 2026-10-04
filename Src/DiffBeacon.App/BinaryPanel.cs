@@ -41,6 +41,7 @@ public static partial class SpecializedViews
         public Action? ApplyReadOnly { get; }
         internal Func<int, string?, CancellationToken, Task>? SaveContent { get; set; }
         internal Func<int, Task<string?>>? SavePathPicker { get; set; }
+        internal Func<int, int, Task>? CopyAllContent { get; set; }
         public Func<bool>? IsDirty { get; }
         public Action? MarkClean { get; }
         internal long StateVersion { get; private set; }
@@ -93,6 +94,9 @@ public static partial class SpecializedViews
                 AddButton(actions, "← 選択範囲", () => Run(() => CopySelected(2, 0)));
             }
             AddButton(actions, "元に戻す", () => Run(() => Undo()));
+            foreach (var source in ProjectSides)
+                foreach (var destination in ProjectSides.Where(side => side != source))
+                    AddButton(actions, Name(source) + "→" + Name(destination) + " 全体コピー", () => RunAsync(() => CopyAllAsync(source, destination)));
             AddButton(actions, "やり直す", () => Run(() => Redo()));
             foreach (var side in ProjectSides)
             {
@@ -122,6 +126,12 @@ public static partial class SpecializedViews
         }
         private Task Run(Action action)
         { try { action(); } catch (Exception exception) when (exception is InvalidOperationException or InvalidDataException or FormatException or ArgumentException) { _status.Text = exception.Message; } return Task.CompletedTask; }
+        private async Task RunAsync(Func<Task> action)
+        { try { await action(); } catch (Exception exception) when (exception is InvalidOperationException or InvalidDataException or FormatException or ArgumentException or OperationCanceledException) { if (!_disposed) _status.Text = exception.Message; } }
+        internal Task CopyAllAsync(int source, int destination)
+        { ThrowDisposed(); EnsureApplied(); _ = LocalSide(source); _ = LocalSide(destination); return CopyAllContent?.Invoke(source, destination) ?? throw new InvalidOperationException("コピー元の比較がありません。"); }
+        internal void CopyAll(int source, int destination)
+        { ThrowDisposed(); EnsureApplied(); ApplyReadOnly?.Invoke(); var revision = Session.Revision(LocalSide(destination)); Session.CopyAll(LocalSide(source), LocalSide(destination)); if (revision != Session.Revision(LocalSide(destination))) { StateVersion++; Render(); } }
         public void Apply(int side)
         {
             ThrowDisposed(); ApplyReadOnly?.Invoke();
@@ -169,6 +179,6 @@ public static partial class SpecializedViews
                 + $" · 差分範囲 {total:N0} · 表示先頭 0x{_pageStart:X8}（最大4096 bytes）。同じ長さの16進値を入力して適用します。";
             _updating = false;
         }
-        public void Dispose() { if (_disposed) return; _disposed = true; SaveContent = null; SavePathPicker = null; RequiredReadOnly = null; Session.Dispose(); }
+        public void Dispose() { if (_disposed) return; _disposed = true; SaveContent = null; SavePathPicker = null; CopyAllContent = null; RequiredReadOnly = null; Session.Dispose(); }
     }
 }

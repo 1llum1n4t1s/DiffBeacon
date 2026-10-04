@@ -1,12 +1,22 @@
 # .NET 10 / Avalonia 移行の到達点
 
-## 中央も編集・保存する三者バイナリ（ローカル全体検証済）
+## バイナリ全体コピー（managed／Windows x64 Native AOT全体実測）
 
-通常ファイルと内包Sourceの左・中央・右を独立編集し、全6方向の差分範囲コピー、共有Undo／Redo、側別保存点、中央の通常保存／外部SaveAsへ接続した。workspace version 5の中央相対assetとレポートなし包装も復元できる。各入力16MiB、履歴合計64MiB／256操作を維持し、コピー範囲は対象pairだけで検査する。中央は編集する第三入力であり、祖先に対する競合分類は追加しない。未適用Hexを比較候補の採用で失わないよう、世代と全editor textを同期照合する。
+二者両方向と三者全6方向の「全体コピー」を追加した。旧Frhed `copy_all_from` に合わせ、先頭からsource全byteを上書きし、destination長はmax(source,destination)、短いsourceでは末尾保持、空／同一bytesでは履歴を増やさない。未適用Hexは有効／不正とも明示適用前に拒否する。実確認dialogのキャンセル／続行と待機中の破棄・再比較・owner交代・編集世代・readonly変更を検査し、古い確認で変更しない。
+
+Releaseビルドは警告0／エラー0、限定E2Eは12成功／0失敗／0skip、限定headless GUIは66成功／0失敗、同じApp SHAの全体UIは10,658成功／0失敗。全8方向の保存byteとUndo／Redo・保存点、16MiB入力／共有64MiB／256操作の拒否、内包Binary作業保存・workspace／包装のassetと展開再読込みを実アプリで確認した。固定期待byte・原本ZIP entry／CRC・全assetはPython標準readerで独立照合した。成果物は `artifacts/local/binary-copy-all/handoff.json` と限定runのPNG／JSON／stdout／stderr。ネイティブ保存dialog、実OS pointer、Native AOT／全4RIDはこの限定実測に含まない（後続の全体実測は次段落）。通常保存経路と内包原本への非書戻しの境界は維持する。
+
+後続の最終版でmanagedとWindows x64 Native AOTの全体E2Eは各160,129成功／0失敗／3skip、全体UIは各10,658成功／0失敗。各6,187 commandの12,374 stdout／stderr、544 PNG、Native発行物13fileを独立照合した。261 sourceのうち2 lockはNative restore後にHEAD依存graphへ一致し、残り259fileのbyte保持を確認した。証拠は `artifacts/local/binary-copy-all-parent/full-managed01-independent.json` と `native01-independent.json`。実際の最小850×550・45タブで中央SaveAsと3Hexへの到達を確認した。今回の全体コピー版の全4RID検証と通常デスクトップ・ネイティブ保存dialogは後続である。
+
+## 中央も編集・保存する三者バイナリ（ローカル／全4RID検証済）
+
+三者編集・候補採用保護のcommit `a87f4e8ae3e914f78ef1ef56f9e1be6947cc39e0` は [GitHub run 37201634956](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37201634956) の全4RIDとCodeQLで成功した。Windows各160,118成功／0失敗／3skip、Mac各160,127成功／0失敗／2skip、UI各10,592成功／0失敗。公式API digestと8 ZIP全entryを照合し、固定GUI reader・発行物・別writer／readerのOSクリップボード記録・runner採取inventoryを確認した。Mac両構成の通常／最小850×550 PNGを目視し、前回の重なりは再現しなかった。証拠は `artifacts/local/binary-threeway-parent/ci/all-four-receipt.json`。このCIは後続の全体コピー変更を含まない。headless描画と通常デスクトップ・ネイティブ保存dialogは区別する。
+
+通常ファイルと内包Sourceの左・中央・右を独立編集し、全6方向の差分範囲／全体コピー、共有Undo／Redo、側別保存点、中央の通常保存／外部SaveAsへ接続した。workspace version 5の中央相対assetとレポートなし包装も復元できる。各入力16MiB、履歴合計64MiB／256操作を維持し、コピー範囲は対象pairだけで検査する。中央は編集する第三入力であり、祖先に対する競合分類は追加しない。未適用Hexを比較候補の採用で失わないよう、世代と全editor textを同期照合する。
 
 Archive／Image／Folder／Tableの完成候補も読込み前のBinary `StateStamp`・操作・取消・入力・mode・providerで採用を検査する。拒否時は旧panel、中央Hexの未適用入力、適用済bytes、共有履歴と文書・保存点を保持し、候補を解放する。Tableはlocal文書snapshotで初回比較を完了してから同期採用する。修正前のArchive実操作で編集保持・共有状態・候補解放の3失敗を再現し、採用拒否後の状態表示も現在の操作だけへ反映する。全体GUIの多数45タブ・900×600で見出し9行が本文を押し出す2失敗を再現し、見出し欄を縦スクロールへ制限した。選択中タブの縮小後到達も1失敗を再現して単一postの位置更新で修正した。修正後の限定GUIは111成功／0失敗、同じ最終版の全体GUIは10,592成功／0失敗となった。多数45タブを保持した実際の最小850×550でも全3Hexの高さ・差分一覧の非重なり・中央SaveAsへのスクロール・選択見出しへの到達を確認した。三者Binary／既存Binary／内包projectの限定E2Eは22／57／278成功・失敗0・skip0で、物理中央入力もPython標準readerで全bytesを照合した。全runnerは実管理者・終端0・実行前後binary SHA一致を確認した。証拠は `artifacts/local/binary-adoption-repair/handoff.json` と同runのPNG／JSON。通常物理BasePathと内包左右を組み合わせた三者BinaryのDTOは保存・包装でき、旧schema拒否検証を全中央bytesの独立読込みと展開再読込みへ移行した。
 
-同じ最終build13で三者限定E2E22成功／0失敗／0skip・GUI66成功／0失敗、既存二者Binary57成功／0失敗・GUI65成功／0失敗、内包Text67成功／0失敗・GUI138成功／0失敗となった。原本3 ZIPの全entry／CRC／bytes、全6方向保存、中央asset、CLI複製・包装・展開再読込みをPython標準readerで独立照合した。実管理者token、各終端0、App／driverの前後SHA一致と5 lockのHEAD graph同値を確認した。証拠は `artifacts/local/binary-threeway/completion-receipt.json`。多tab・900×600・長い出力pathでHexと差分一覧の非重なり、scroll後の中央SaveAs到達を実PNGとBoundsで確認した。前回CIで観測したMacフォントの重なりは次CIで再確認する。最終修正後のmanagedとWindows x64 Native AOTは、それぞれ全体E2E160,118成功／0失敗／3skip・全体UI10,592成功／0失敗となった。各6,182 commandの12,364 stdout／stderrと542 PNG、発行物13fileを独立照合した。実管理者・終端0・実行前後のbinary一致を確認し、257 sourceのうちNative restoreで2 lockの改行だけが変わり、全lockのHEAD依存graph同値と残り255fileのbyte保持を確認した。証拠は `artifacts/local/binary-threeway-parent/full-managed02-independent.json` と `native02-independent.json`。新しい全4RIDのGitHub検証は後続で、任意位置の挿入削除・旧Hex全操作・Binary HTML／patchは未完了。
+同じ最終build13で三者限定E2E22成功／0失敗／0skip・GUI66成功／0失敗、既存二者Binary57成功／0失敗・GUI65成功／0失敗、内包Text67成功／0失敗・GUI138成功／0失敗となった。原本3 ZIPの全entry／CRC／bytes、全6方向保存、中央asset、CLI複製・包装・展開再読込みをPython標準readerで独立照合した。実管理者token、各終端0、App／driverの前後SHA一致と5 lockのHEAD graph同値を確認した。証拠は `artifacts/local/binary-threeway/completion-receipt.json`。多tab・900×600・長い出力pathでHexと差分一覧の非重なり、scroll後の中央SaveAs到達を実PNGとBoundsで確認した。前回CIで観測したMacフォントの重なりは後続CIで再確認した（本節冒頭）。最終修正後のmanagedとWindows x64 Native AOTは、それぞれ全体E2E160,118成功／0失敗／3skip・全体UI10,592成功／0失敗となった。各6,182 commandの12,364 stdout／stderrと542 PNG、発行物13fileを独立照合した。実管理者・終端0・実行前後のbinary一致を確認し、257 sourceのうちNative restoreで2 lockの改行だけが変わり、全lockのHEAD依存graph同値と残り255fileのbyte保持を確認した。証拠は `artifacts/local/binary-threeway-parent/full-managed02-independent.json` と `native02-independent.json`。後続の全4RID GitHub検証は本節冒頭に記載した。任意位置の挿入削除・旧Hex全操作・Binaryレポートの共通メタデータ経路は未完了。旧GenerateReportは本文を生成しないstubのため、byte本文HTML／patchを旧実装済み機能として扱わない。
 
 ## 内包バイナリの作業編集・保存（ローカル全体検証済）
 
