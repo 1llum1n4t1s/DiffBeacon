@@ -24,6 +24,50 @@ public sealed partial class ComparisonPane
         var project = CaptureProject();
         foreach (var side in panel.ProjectSides) panel.SetCaption(side, (side switch { 0 => project.LeftDescription, 1 => project.BaseDescription, _ => project.RightDescription }) ?? ProjectInputs.Caption(project, side));
         panel.RequiredReadOnly = BinaryReadOnly;
+        panel.EditingCurrent = () => !_disposed && !panel.IsDisposed && ReferenceEquals(_specialTab.Content, panel)
+            && ArchiveComparisonIdentity(CaptureProject()) == _binaryLoadedIdentity;
+        panel.ClipboardContent = async (side, command) =>
+        {
+            var stamp = panel.StateStamp; var generation = _binarySaveGeneration; var operation = _operation;
+            var identity = ArchiveComparisonIdentity(CaptureProject());
+            var inputs = (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
+            var readOnly = panel.ProjectSides.Select(panel.ReadOnly).ToArray();
+            var revisions = panel.ProjectSides.Select(value => panel.Session.Revision(panel.LocalSide(value))).ToArray();
+            var token = operation?.Token ?? CancellationToken.None;
+            void Current()
+            {
+                token.ThrowIfCancellationRequested();
+                if (_disposed || panel.IsDisposed || !ReferenceEquals(_specialTab.Content, panel)
+                    || generation != _binarySaveGeneration || !ReferenceEquals(operation, _operation) || operation?.IsCancellationRequested == true
+                    || stamp != panel.StateStamp || identity != ArchiveComparisonIdentity(CaptureProject()) || identity != _binaryLoadedIdentity
+                    || inputs != (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem)
+                    || !panel.ProjectSides.Select(panel.ReadOnly).SequenceEqual(readOnly)
+                    || !panel.ProjectSides.Select(value => panel.Session.Revision(panel.LocalSide(value))).SequenceEqual(revisions))
+                    throw new OperationCanceledException("操作中に比較、本文、選択または読取り専用の状態が変更されました。元のバイトを保持しています。");
+            }
+            Current(); panel.EnsureApplied(); panel.ApplyReadOnly?.Invoke();
+            var modifies = command is BinaryClipboardCommand.Cut or BinaryClipboardCommand.Paste or BinaryClipboardCommand.FastPaste;
+            if (modifies && panel.ReadOnly(side)) throw new InvalidOperationException("この側は読取り専用です。");
+            var selection = panel.Selection(side); var start = selection.Start; var count = selection.Count; var local = panel.LocalSide(side);
+            var clipboard = panel.ClipboardOverride ?? new BinaryClipboard(() => _owner.Clipboard, () => _owner.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero);
+            IReadOnlyList<BinaryClipboardValue>? formats = null;
+            if (command is BinaryClipboardCommand.Paste or BinaryClipboardCommand.FastPaste)
+            { formats = await clipboard.ReadAsync(token); Current(); }
+            var request = await BinaryClipboardDialog.ShowAsync(_owner, command, panel.Session.Length(local), start, count, selection.Insert, formats);
+            if (request is null) return; Current();
+            if (command == BinaryClipboardCommand.Select) { panel.SelectBytes(side, request.Start, request.Start + request.Count - 1); return; }
+            if (command is BinaryClipboardCommand.Copy or BinaryClipboardCommand.Cut)
+            {
+                var bytes = panel.Session.Page(local, request.Start, request.Count); var text = BinaryBytecode.Encode(bytes);
+                var candidate = command == BinaryClipboardCommand.Cut ? panel.Session.PrepareReplaceRange(local, request.Start, request.Count, []) : null;
+                Current(); await clipboard.WriteAsync(bytes, text, token); Current();
+                if (candidate is not null) panel.CommitBytes(side, candidate, request.Start);
+                else panel.SetStatus($"{bytes.Length:N0} バイトをコピーしました。");
+                return;
+            }
+            var paste = panel.Session.PreparePaste(local, request.Start, request.Count, request.Payload, request.Insert, request.Repeat, request.Skip);
+            Current(); panel.CommitBytes(side, paste, checked(request.Start + (int)((request.Repeat - 1) * (request.Payload.Length + request.Skip) + request.Payload.Length)));
+        };
         panel.CopyAllContent = async (source, destination) =>
         {
             var stamp = panel.StateStamp; var generation = _binarySaveGeneration; var operation = _operation;

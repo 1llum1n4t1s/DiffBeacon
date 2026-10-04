@@ -7,7 +7,7 @@ namespace DiffBeacon.App;
 
 public static partial class SpecializedViews
 {
-    public sealed class BinaryPanel : DockPanel, IDisposable
+    public sealed partial class BinaryPanel : DockPanel, IDisposable
     {
         internal BinaryEditSession Session { get; }
         internal ScrollViewer Viewport { get; }
@@ -47,8 +47,8 @@ public static partial class SpecializedViews
         public Action? MarkClean { get; }
         internal long StateVersion { get; private set; }
         // TextChangedの通知前でも未適用draftを古い候補で置き換えない。
-        internal (long Version, string? Left, string? Middle, string? Right) StateStamp
-            => (StateVersion, LeftHex.Text, HasMiddle ? MiddleHex.Text : null, RightHex.Text);
+        internal (long Version, long Selection, string? Left, string? Middle, string? Right) StateStamp
+            => (StateVersion, SelectionVersion, LeftHex.Text, HasMiddle ? MiddleHex.Text : null, RightHex.Text);
         internal bool IsDisposed => _disposed;
         internal bool Pending(int side) => (Editor(side).Text ?? "") != _baseline[side];
         internal bool Pending(bool right) => Pending(right ? 2 : 0);
@@ -71,6 +71,7 @@ public static partial class SpecializedViews
             MarkClean = () => { Session.MarkClean(); foreach (var side in ProjectSides) _baseline[side] = Editor(side).Text ?? ""; };
             ApplyReadOnly = () => { foreach (var side in ProjectSides) { Session.SetReadOnly(LocalSide(side), ReadOnly(side)); Editor(side).IsReadOnly = ReadOnly(side); } };
             foreach (var side in ProjectSides) Editor(side).TextChanged += (_, _) => { if (!_updating) StateVersion++; };
+            InitializeByteEditing();
             _offset.ValueChanged += (_, _) =>
             {
                 if (_updating) return;
@@ -101,6 +102,9 @@ public static partial class SpecializedViews
             AddButton(actions, "やり直す", () => Run(() => Redo()));
             foreach (var side in ProjectSides)
             {
+                foreach (var command in Enum.GetValues<BinaryClipboardCommand>())
+                    AddButton(actions, Name(side) + " " + BinaryClipboardDialog.Label(command), () => RunAsync(() => ClipboardAsync(side, command)));
+                AddByteModes(actions, side);
                 foreach (var kind in Enum.GetValues<BinaryRangeKind>())
                     AddButton(actions, Name(side) + " " + BinaryRangeDialog.Label(kind), () => RunAsync(() => RangeEditAsync(side, kind)));
                 AddButton(actions, Name(side) + "を保存", () => SaveAsync(side));
@@ -110,27 +114,28 @@ public static partial class SpecializedViews
             var content = new StackPanel();
             Viewport = new ScrollViewer { Content = content, VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
             content.Children.Add(actions); content.Children.Add(_status);
-            var grid = new Grid { ColumnDefinitions = new ColumnDefinitions(HasMiddle ? "*,*,*" : "*,*"), ColumnSpacing = 8, Height = 140 };
+            var grid = new Grid { ColumnDefinitions = new ColumnDefinitions(HasMiddle ? "*,*,*" : "*,*"), ColumnSpacing = 8, Height = 220 };
             var column = 0; foreach (var side in ProjectSides)
             {
                 var editorPane = new DockPanel(); _captions[side].Text = Name(side); _captions[side].Margin = new Thickness(4);
-                DockPanel.SetDock(_captions[side], Dock.Top); editorPane.Children.Add(_captions[side]); editorPane.Children.Add(Editor(side));
+                DockPanel.SetDock(_captions[side], Dock.Top); editorPane.Children.Add(_captions[side]);
+                var ascii = AsciiEditor(side); DockPanel.SetDock(ascii, Dock.Bottom); editorPane.Children.Add(ascii); editorPane.Children.Add(Editor(side));
                 Grid.SetColumn(editorPane, column++); grid.Children.Add(editorPane);
             }
             content.Children.Add(grid); content.Children.Add(Differences); Children.Add(Viewport);
             LayoutUpdated += (_, _) =>
             {
                 // 操作・長い保存先・フォントの実寸を先に確保し、Hex本文は140px以上で自然高さへ足す。
-                var desired = Math.Max(140, Viewport.Bounds.Height - actions.Bounds.Height - _status.Bounds.Height
+                var desired = Math.Max(220, Viewport.Bounds.Height - actions.Bounds.Height - _status.Bounds.Height
                     - _status.Margin.Top - _status.Margin.Bottom - Differences.Bounds.Height);
                 if (Math.Abs(grid.Height - desired) > .5) grid.Height = desired;
             };
             ApplyReadOnly(); Render();
         }
         private Task Run(Action action)
-        { try { action(); } catch (Exception exception) when (exception is InvalidOperationException or InvalidDataException or FormatException or ArgumentException) { _status.Text = exception.Message; } return Task.CompletedTask; }
+        { try { action(); } catch (Exception exception) when (exception is InvalidOperationException or IOException or FormatException or ArgumentException or OperationCanceledException or UnauthorizedAccessException) { if (!_disposed) _status.Text = exception.Message; } return Task.CompletedTask; }
         private async Task RunAsync(Func<Task> action)
-        { try { await action(); } catch (Exception exception) when (exception is InvalidOperationException or InvalidDataException or FormatException or ArgumentException or OperationCanceledException) { if (!_disposed) _status.Text = exception.Message; } }
+        { try { await action(); } catch (Exception exception) when (exception is InvalidOperationException or IOException or FormatException or ArgumentException or OperationCanceledException or UnauthorizedAccessException) { if (!_disposed) _status.Text = exception.Message; } }
         internal Task CopyAllAsync(int source, int destination)
         { ThrowDisposed(); EnsureApplied(); _ = LocalSide(source); _ = LocalSide(destination); return CopyAllContent?.Invoke(source, destination) ?? throw new InvalidOperationException("コピー元の比較がありません。"); }
         internal void CopyAll(int source, int destination)
@@ -186,13 +191,14 @@ public static partial class SpecializedViews
                 if (Pending(side)) continue;
                 var editor = Editor(side); editor.Text = Hex(Session.Page(LocalSide(side), _pageStart)); _baseline[side] = editor.Text ?? "";
                 editor.CaretIndex = Math.Min(editor.CaretIndex, editor.Text?.Length ?? 0);
+                RenderByteSelection(side);
             }
             _ranges = Session.Differences(10_000, out var total);
             Differences.ItemsSource = _ranges.Select(range => $"0x{range.Start:X8} · {range.Length:N0} bytes").ToArray();
             _status.Text = string.Join(" / ", ProjectSides.Select(side => $"{(side switch { 0 => "左", 1 => "中央", _ => "右" })} {Session.Length(LocalSide(side)):N0} bytes"))
-                + $" · 差分範囲 {total:N0} · 表示先頭 0x{_pageStart:X8}（最大4096 bytes）。同じ長さの16進値を入力して適用します。";
+                + $" · 差分範囲 {total:N0} · 表示先頭 0x{_pageStart:X8}（最大4096 bytes）。Hexは1桁ずつ、下欄は文字入力。Shiftで選択、Insertで挿入/上書き切替。";
             _updating = false;
         }
-        public void Dispose() { if (_disposed) return; _disposed = true; SaveContent = null; SavePathPicker = null; CopyAllContent = null; RangeEditContent = null; RequiredReadOnly = null; Session.Dispose(); }
+        public void Dispose() { if (_disposed) return; _disposed = true; SaveContent = null; SavePathPicker = null; CopyAllContent = null; RangeEditContent = null; ClipboardContent = null; RequiredReadOnly = null; Session.Dispose(); }
     }
 }

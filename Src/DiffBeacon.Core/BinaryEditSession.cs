@@ -16,7 +16,7 @@ public sealed class BinaryCapture
     public byte[] CopyBytes() => _bytes.ToArray();
 }
 
-public sealed class BinaryEditSession : IDisposable
+public sealed partial class BinaryEditSession : IDisposable
 {
     public const int MaximumFileBytes = 16 * 1024 * 1024;
     public const int MaximumHistoryBytes = 64 * 1024 * 1024;
@@ -30,7 +30,8 @@ public sealed class BinaryEditSession : IDisposable
     private readonly List<Change> _history = [];
     private int _cursor, _historyBytes;
     private bool _disposed;
-    private sealed record Change(int Side, int Start, byte[] Before, byte[] After);
+    private long _mutation;
+    internal sealed record Change(int Side, int Start, byte[] Before, byte[] After);
 
     public BinaryEditSession(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
         : this([BoundedCopy(left), BoundedCopy(right)]) { }
@@ -50,7 +51,7 @@ public sealed class BinaryEditSession : IDisposable
     public int Length(int side) { ValidateSide(side); return _bytes[side].Length; }
     public long Revision(int side) { ValidateSide(side); return _revisions[side]; }
     public bool IsReadOnly(int side) { ValidateSide(side); return _readOnly[side]; }
-    public void SetReadOnly(int side, bool value) { ValidateSide(side); _readOnly[side] = value; }
+    public void SetReadOnly(int side, bool value) { ValidateSide(side); if (_readOnly[side] != value) { _readOnly[side] = value; _mutation++; } }
     private void Writable(int side) { ValidateSide(side); if (_readOnly[side]) throw new InvalidOperationException("この側は読取り専用です。"); }
     private string CurrentSha(int side) => _currentSha[side] ??= Convert.ToHexString(SHA256.HashData(_bytes[side]));
     public bool IsDirty(int side) { ValidateSide(side); return CurrentSha(side) != _savedSha[side]; }
@@ -128,18 +129,21 @@ public sealed class BinaryEditSession : IDisposable
     }
     private void Commit(int side, byte[] candidate)
     {
-        var current = _bytes[side]; if (current.AsSpan().SequenceEqual(candidate)) return;
+        CommitPrepared(PrepareCandidate(side, candidate));
+    }
+    private Change? DescribeChange(int side, byte[] candidate)
+    {
+        var current = _bytes[side]; if (current.AsSpan().SequenceEqual(candidate)) return null;
         var prefix = 0; while (prefix < current.Length && prefix < candidate.Length && current[prefix] == candidate[prefix]) prefix++;
         var suffix = 0; while (suffix < current.Length - prefix && suffix < candidate.Length - prefix && current[^(suffix + 1)] == candidate[^(suffix + 1)]) suffix++;
         var change = new Change(side, prefix, current.AsSpan(prefix, current.Length - prefix - suffix).ToArray(), candidate.AsSpan(prefix, candidate.Length - prefix - suffix).ToArray());
         var retainedBytes = _history.Take(_cursor).Sum(Cost);
         if (_cursor >= MaximumHistoryActions || (long)retainedBytes + Cost(change) > MaximumHistoryBytes)
             throw new InvalidDataException("バイナリ履歴は共有64 MiB、256操作までです。履歴と本文は変更していません。");
-        for (var index = _history.Count - 1; index >= _cursor; index--) { _historyBytes -= Cost(_history[index]); _history.RemoveAt(index); }
-        _history.Add(change); _cursor++; _historyBytes += Cost(change); SetBytes(side, candidate);
+        return change;
     }
     private static int Cost(Change change) => checked(change.Before.Length + change.After.Length);
-    private void SetBytes(int side, byte[] bytes) { _bytes[side] = bytes; _currentSha[side] = null; _revisions[side]++; }
+    private void SetBytes(int side, byte[] bytes) { _bytes[side] = bytes; _currentSha[side] = null; _revisions[side]++; _mutation++; }
     private void Restore(Change change, bool undo)
     {
         Writable(change.Side); var removed = undo ? change.After : change.Before; var inserted = undo ? change.Before : change.After;

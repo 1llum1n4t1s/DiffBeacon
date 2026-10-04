@@ -1,0 +1,28 @@
+{
+  "compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+  "compilerFileVersion": "19.51.36260.0",
+  "arguments": [
+    "/nologo",
+    "/Bv",
+    "/EHsc",
+    "/Od",
+    "/W3",
+    "/MT",
+    "/std:c++17",
+    "/FoC:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\binary-clipboard-reference/adapter.obj",
+    "/FeC:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\binary-clipboard-reference/reference.exe",
+    "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\binary-clipboard-reference/adapter.cpp",
+    "user32.lib",
+    "/link",
+    "/INCREMENTAL:NO"
+  ],
+  "cwd": "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\binary-clipboard-reference",
+  "command": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe /nologo /Bv /EHsc /Od /W3 /MT /std:c++17 /FoC:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\binary-clipboard-reference/adapter.obj /FeC:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\binary-clipboard-reference/reference.exe C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\local\\binary-clipboard-reference/adapter.cpp user32.lib /link /INCREMENTAL:NO",
+  "pid": 35296,
+  "creationUtc": "2026-10-04T14:02:31.8199128Z",
+  "architecture": "amd64",
+  "devShell": "VS18 Community",
+  "shellPid": 3116,
+  "exitCode": 0,
+  "exitUtc": "2026-10-04T14:02:32.9221414Z"
+}

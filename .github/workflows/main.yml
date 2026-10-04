@@ -59,6 +59,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-clipboard' --read
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-binary-clipboard' --binary-write
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-binary-clipboard' --binary-read
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Record evidence directories and file hashes before upload
         if: always()
         run: |

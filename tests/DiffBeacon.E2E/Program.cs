@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
+    "--binary-clipboard-only",
     "--binary-range-edits-only", "--binary-copy-all-only", "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
@@ -1692,9 +1693,11 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
     var stdout = "";
     var stderr = "";
     var timedOut = false;
+    var launchUtc = DateTime.UtcNow; var pid = 0; DateTime? creationUtc = null; DateTime? exitObservedUtc = null;
     try
     {
         process.Start();
+        pid = process.Id; creationUtc = process.StartTime.ToUniversalTime();
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
         var stderrTask = process.StandardError.ReadToEndAsync();
         if (standardInput is not null)
@@ -1715,10 +1718,11 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
         stdout = await stdoutTask;
         stderr += await stderrTask;
         exit = timedOut ? -2 : process.ExitCode;
+        exitObservedUtc = DateTime.UtcNow;
     }
     catch (Exception exception) { stderr += exception.ToString(); }
     timer.Stop();
-    var result = new CommandResult(name, arguments, exit, stdout, stderr, timer.ElapsedMilliseconds);
+    var result = new CommandResult(name, arguments, exit, stdout, stderr, timer.ElapsedMilliseconds, pid, creationUtc, launchUtc, exitObservedUtc);
     commands.Add(result);
     var prefix = Path.Combine(output, $"{++commandIndex:D2}-{name}");
     await File.WriteAllTextAsync(prefix + ".stdout.txt", stdout, utf8);
@@ -1738,6 +1742,8 @@ try
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
     if (args.Contains("--archive-tar-wrappers-only", StringComparer.Ordinal))
         await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--binary-clipboard-only", StringComparer.Ordinal))
+        await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-range-edits-only", StringComparer.Ordinal))
         await BinaryRangeEditScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-copy-all-only", StringComparer.Ordinal))
@@ -1894,6 +1900,7 @@ try
     await BinaryThreeWayScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryCopyAllScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryRangeEditScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
@@ -2213,7 +2220,7 @@ Console.WriteLine($"E2E: passed={assertions.Count(a => a.Status == "passed")}, f
 return assertions.Any(a => a.Status == "failed") ? 1 : 0;
 
 sealed record Assertion(string Name, string Status, string Detail);
-sealed record CommandResult(string Name, string[] Arguments, int ExitCode, string Stdout, string Stderr, long DurationMilliseconds);
+sealed record CommandResult(string Name, string[] Arguments, int ExitCode, string Stdout, string Stderr, long DurationMilliseconds, int Pid = 0, DateTime? CreationUtc = null, DateTime? LaunchUtc = null, DateTime? ExitObservedUtc = null);
 sealed record SeededCase(int Seed, string Source, string Target, string Patch, string Applied);
 sealed record LinkEvidence(string Path, string Target, bool Removed, bool IsDirectory = true);
 sealed record ArchiveFile(string Path, bool Directory, long Size, string Sha256, bool Encrypted);

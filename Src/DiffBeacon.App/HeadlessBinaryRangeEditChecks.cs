@@ -51,8 +51,8 @@ internal static class HeadlessBinaryRangeEditChecks
                     if (three && side == 1)
                     {
                         window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs(); screenshot("binary-range-normal.png");
-                        window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs(); panel.Viewport.Offset = new Avalonia.Vector(0, panel.Viewport.Extent.Height); Dispatcher.UIThread.RunJobs(); screenshot("binary-range-minimum.png");
-                        var viewport = panel.Viewport; var content = (Control)viewport.Content!;
+                        window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs(); var viewport = panel.Viewport; var content = (Control)viewport.Content!;
+                        viewport.Offset = new Vector(0, panel.MiddleHex.TranslatePoint(default, content)!.Value.Y); Dispatcher.UIThread.RunJobs(); screenshot("binary-range-minimum.png");
                         var editorPosition = panel.MiddleHex.TranslatePoint(new Point(0, 0), viewport)!.Value;
                         Report("minimum Hex reachable", panel.ProjectSides.All(value => panel.Editor(value).Bounds.Height >= 100) && editorPosition.Y >= -1 && editorPosition.Y + panel.MiddleHex.Bounds.Height <= viewport.Bounds.Height + 1);
                         var save = panel.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中央を保存"));

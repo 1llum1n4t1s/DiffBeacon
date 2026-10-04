@@ -26,12 +26,14 @@ internal static class DesktopClipboardSelfTest
             Console.Error.WriteLine("実OSクリップボード検証はGitHubのWindows/macOS runnerだけで実行します。");
             return 2;
         }
-        if (phase is not ("--write" or "--read"))
+        if (phase is not ("--write" or "--read" or "--binary-write" or "--binary-read"))
         {
             Console.Error.WriteLine("--clipboard-self-test OUTPUT --write|--read を指定してください。");
             return 2;
         }
 
+        var binary = phase.StartsWith("--binary-", StringComparison.Ordinal); var writing = phase is "--write" or "--binary-write";
+        var binaryBytes = Enumerable.Range(0, 256).Select(value => (byte)value).Concat(new byte[] { 0, 65, 255 }).ToArray();
         var destination = Path.GetFullPath(output);
         Directory.CreateDirectory(destination);
         var checks = new List<(string Name, bool Passed, string Detail)>();
@@ -47,19 +49,20 @@ internal static class DesktopClipboardSelfTest
         using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(60));
         try
         {
-            var source = Path.Combine(destination, "source.bgra");
-            if (phase == "--write")
+            var source = Path.Combine(destination, binary ? "source.bin" : "source.bgra"); var sourceBytes = binary ? binaryBytes : SourcePixels;
+            var writerReport = Path.Combine(destination, binary ? "binary-write-report.json" : "write-report.json");
+            if (writing)
             {
                 using var stream = new FileStream(source, FileMode.CreateNew, FileAccess.Write);
-                stream.Write(SourcePixels);
+                stream.Write(sourceBytes);
             }
             else
             {
-                if (!File.ReadAllBytes(source).AsSpan().SequenceEqual(SourcePixels))
+                if (!File.ReadAllBytes(source).AsSpan().SequenceEqual(sourceBytes))
                     throw new InvalidDataException("同じ採取先のwriter入力がありません。");
-                if (!File.Exists(Path.Combine(destination, "write-report.json")))
+                if (!File.Exists(writerReport))
                     throw new InvalidDataException("writerの実行記録がありません。");
-                using var previous = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(destination, "write-report.json")));
+                using var previous = JsonDocument.Parse(File.ReadAllBytes(writerReport));
                 Check("separate successful writer process", previous.RootElement.GetProperty("failed").GetInt32() == 0
                     && previous.RootElement.GetProperty("pid").GetInt32() != Environment.ProcessId);
             }
@@ -75,7 +78,7 @@ internal static class DesktopClipboardSelfTest
             Check("native window exists", handle is not null && handle.Handle != IntPtr.Zero, handle?.HandleDescriptor ?? "none");
             var ownedWindow = window;
             var clipboard = new ImageClipboard(() => ownedWindow.Clipboard, () => ownedWindow.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero);
-            Dispatcher.UIThread.Post(() => operation = VerifyAsync(clipboard, ownedWindow, destination, phase, stop.Token));
+            Dispatcher.UIThread.Post(() => operation = binary ? VerifyBinaryAsync(ownedWindow, destination, stop.Token) : VerifyAsync(clipboard, ownedWindow, destination, phase, stop.Token));
             Dispatcher.UIThread.MainLoop(stop.Token);
             if (operation is null || !operation.IsCompleted)
                 throw new TimeoutException("実OSクリップボード操作が60秒以内に完了しませんでした。");
@@ -99,7 +102,8 @@ internal static class DesktopClipboardSelfTest
             writer.WriteString("os", RuntimeInformation.OSDescription);
             writer.WriteString("architecture", RuntimeInformation.ProcessArchitecture.ToString());
             writer.WriteNumber("pid", Environment.ProcessId);
-            writer.WriteString("sourceSha256", Convert.ToHexString(SHA256.HashData(SourcePixels)));
+            writer.WriteString("sourceSha256", Convert.ToHexString(SHA256.HashData(binary ? binaryBytes : SourcePixels)));
+            writer.WriteString("processCreationUtc", System.Diagnostics.Process.GetCurrentProcess().StartTime.ToUniversalTime());
             writer.WriteNumber("passed", checks.Count(check => check.Passed));
             writer.WriteNumber("failed", checks.Count(check => !check.Passed));
             writer.WriteStartArray("assertions");
@@ -117,6 +121,27 @@ internal static class DesktopClipboardSelfTest
         {
             checks.Add((name, passed, detail));
             if (!passed) throw new InvalidDataException(name + ": " + detail);
+        }
+        async Task VerifyBinaryAsync(Window nativeWindow, string directory, CancellationToken token)
+        {
+            try
+            {
+                var binaryClipboard = new BinaryClipboard(() => nativeWindow.Clipboard, () => nativeWindow.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero);
+                var bytecode = DiffBeacon.Core.BinaryBytecode.Encode(binaryBytes);
+                if (writing) { await binaryClipboard.WriteAsync(binaryBytes, bytecode, token); Check("native binary writer publication completed", true); }
+                var formats = await binaryClipboard.ReadAsync(token);
+                var rawName = OperatingSystem.IsWindows() ? BinaryClipboard.RawFormat.ToSystemName("avn-app-fmt:") : BinaryClipboard.RawFormat.Identifier;
+                var raw = formats.SingleOrDefault(value => value.Name == rawName);
+                Check("native raw binary full bytes including NUL", raw is not null && raw.Bytes.AsSpan().SequenceEqual(binaryBytes));
+                var text = OperatingSystem.IsWindows() ? formats.SingleOrDefault(value => value.Name == "CF_TEXT") : formats.FirstOrDefault(value => value.Kind == BinaryClipboardKind.PlatformText);
+                Check("native standard bytecode text full value", text is not null && text.PlainText() == bytecode);
+                Check("native standard text decode all256", text is not null && text.Decode(false, false, false).AsSpan().SequenceEqual(binaryBytes));
+                if (OperatingSystem.IsWindows()) Check("native CF_UNICODETEXT exact value", formats.SingleOrDefault(value => value.Name == "CF_UNICODETEXT")?.PlainText() == bytecode);
+                await File.WriteAllBytesAsync(Path.Combine(directory, mode + "-clipboard.bin"), raw!.Bytes, token);
+                await File.WriteAllTextAsync(Path.Combine(directory, mode + "-clipboard.txt"), text!.PlainText(), new System.Text.UTF8Encoding(false), token);
+                File.WriteAllText(Path.Combine(directory, mode + "-formats.json"), "[" + string.Join(",", formats.Select(value => "\"" + value.Name.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal) + "\"")) + "]");
+            }
+            finally { stop.Cancel(); }
         }
 
         async Task VerifyAsync(ImageClipboard clipboard, Window nativeWindow, string directory, string action, CancellationToken token)

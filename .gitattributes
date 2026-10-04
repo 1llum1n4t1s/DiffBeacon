@@ -64,3 +64,5 @@ tests/Fixtures/ImageOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
 # 時刻依存overlay原本のclock mock核と全BGRA採取データを保護する。
 tests/Fixtures/ImageTemporalOverlays/golden.json.gz -text -whitespace
 tests/Fixtures/ImageTemporalOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
+# Frhed clipboard原本、全634採取入力とgoldenのSHAを維持する。
+tests/Fixtures/BinaryClipboard/** -text

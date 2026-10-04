@@ -200,4 +200,10 @@ GUIは全体 `--self-test <出力先>` の `HeadlessArchiveSourceChecks` で実c
 
 ### バイナリ範囲編集の限定検証
 
+`--binary-clipboard-only` は固定Frhed codec634件を実アプリの別プロセスで出力し、[独立reader](../Fixtures/BinaryClipboard/README.md)でraw/原関数SHA、全input/golden/output bytesと4件のIEEE独立値を照合する。実AvaloniaのCopy/Cut/Paste/FastPaste/選択dialog、Hex nibble/文字/キー/pointer、4096ページ跨ぎ、repeat/skip、公開／flush失敗、古い完了、readonly、未適用Hex、共有履歴とRedo、通常／内包全側保存・workspace・包装・展開再読込みも検証する。GUI限定は `--self-test <output> --binary-clipboard-only`。PNG、設定/入力、stdout/stderr、assertions、保存bytesと独立reader出力を保持する。全体E2E/全体UIへ含め、限定成功を全機能完了へ読み替えない。
+
+OEMはWindowsの実ACP/OEMCPと全256入力の有界1byte `CharToOemBuffA` 結果を独立readerで採取し、別processの製品decoderと実FastPaste形式dialogの保存byteへ照合する。macOSは1252/437互換値の検証と区別する。Ctrl/Command+Shift+ZのRedoも実key注入で確認する。
+
+実OSのBinary clipboardは `--clipboard-self-test <output> --binary-write` と別processの `--binary-read`。GitHub clean runner以外で拒否する。Windows CF_TEXT/CF_UNICODETEXT/custom raw、macOS標準text/custom rawと全256bytesを記録し、既存画像clipboard検証を維持する。ローカル利用者clipboardは操作せず、ネイティブpointer・保存dialogの操作証拠とheadless注入を区別する。
+
 `--binary-range-edits-only` は実アプリ別プロセスの実ダイアログ、全二者／三者側、訂正・取消・古い結果拒否、境界・上限・共有Undo／Redo・保存点・保存中の後発編集を検証する。内包作業保存・workspace／包装・CLI複製／展開再読込みを `tests/Fixtures/BinaryRangeEdits/verify.py` の固定期待bytesとZIP CRCで独立照合する。GUI限定は `--self-test <output> --binary-range-edits-only`。全体E2Eと全体UIにも含み、限定実行は全体検証の代替にしない。
