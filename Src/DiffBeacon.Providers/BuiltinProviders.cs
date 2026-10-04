@@ -421,6 +421,7 @@ public static class BuiltinComparisonProviders
         while (await reader.GetNextEntryAsync(false, token) is { } entry)
         {
             token.ThrowIfCancellationRequested();
+            session.ChargeProviderEntry(entry.Name);
             if (entry.EntryType != TarEntryType.GlobalExtendedAttributes && entry.Length != session.EntryLength)
                 throw new InvalidDataException("TARの補助metadataとヘッダーのサイズが一致しません。");
             if (rows.Count >= 100_000 || entry.Length > EntryLimit || contentTotal > ArchiveLimit - entry.Length) throw new InvalidDataException("tarは10万エントリ、各256 MiB、非圧縮合計1 GiBまでです。");

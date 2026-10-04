@@ -1,0 +1,1544 @@
+{
+  "schema": 1,
+  "provenance": "CC0 TarZ fixed original/literal; Python stdlib wrappers",
+  "cases": [
+    {
+      "name": "payload.tar.gz.bz2",
+      "bytes": 361,
+      "sha256": "CCF929B297877794ACB4360618C212BE8D818A3C4DF5F088C24090AD4B3792D2",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.gz.bz2"
+    },
+    {
+      "name": "payload.tar.bz2.gz",
+      "bytes": 280,
+      "sha256": "EB86CED3E6FC69D9755B0C1BAC4E7A65D17B5CB97A7B2B8A2C88BC53D64A42A6",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.gz"
+    },
+    {
+      "name": "payload.tar.Z.gz",
+      "bytes": 306,
+      "sha256": "839E42ED7BA40141D53B7A1ACE830D5C3881CB50AA52DC03B4D6D38AB24C32C2",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 23043,
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D"
+        },
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.Z.gz"
+    },
+    {
+      "name": "payload.tar.gz.Z",
+      "bytes": 270,
+      "sha256": "CCCF54D1D210A78378972BC247B2CB0A663C379B939940E6CFAD1C32BBC36019",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.gz.Z"
+    },
+    {
+      "name": "payload.tar.gz.gz",
+      "bytes": 248,
+      "sha256": "FF033D4AF287ACCBC60962BD7EF3830D8E73209347E6C84C21C656CEF9995A96",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.gz.gz"
+    },
+    {
+      "name": "payload.tar.bz2.bz2",
+      "bytes": 406,
+      "sha256": "EC25CAEF596C6012D0D26E1C065E34B16C2A3B6825A31120B0709C0D6D5B9041",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.bz2"
+    },
+    {
+      "name": "payload.tar.Z.Z",
+      "bytes": 25927,
+      "sha256": "41D17B315A85E7ABD46CB134F2305A2ECD3BA97A0F9FDD915AFE1EFF8407C175",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 23043,
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D"
+        },
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.Z.Z"
+    },
+    {
+      "name": "payload.tar.Z.bz2.gz",
+      "bytes": 354,
+      "sha256": "CA9B88CD9672673BACD47F60C0629F2D154926761FAB70F9DEE1D361CF46A563",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 331,
+          "decodedSha256": "467448D524C7255ECCE65198F46BF414952059DEF6CEFB6BDE9C18FAD0667D1B"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 23043,
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D"
+        },
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.Z.bz2.gz"
+    },
+    {
+      "name": "payload.tar.gz.gz.gz.gz.gz.gz.gz.gz",
+      "bytes": 374,
+      "sha256": "A910D938BB3B648FEBDB4CCC93108A8A7ECA3A9D5EDEAD8D81348D2425211881",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 354,
+          "decodedSha256": "4A61A4244D60E4009B212A06714A833056C9B9B3474A03D35E684AFB279122E4"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 331,
+          "decodedSha256": "E686EC45A4BCE80A824C130155674895EAD993F3CBAA7BE0E7584C2381F95B19"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 308,
+          "decodedSha256": "0054064297CB8080063CA908B030F38AC65B4F7873B3CF48A1110929CD53E6F4"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 294,
+          "decodedSha256": "249328D4D2A2767128241F1E165625208177DB5F05519EA1B3E6B3AD16BE11EF"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 271,
+          "decodedSha256": "63A0743DD72A748F08A9C65DDD051A96B84963B124A88D2F935A949FA0CEEA6A"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 248,
+          "decodedSha256": "FF033D4AF287ACCBC60962BD7EF3830D8E73209347E6C84C21C656CEF9995A96"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.gz.gz.gz.gz.gz.gz.gz.gz"
+    },
+    {
+      "name": "payload.tgz.gz",
+      "bytes": 248,
+      "sha256": "FF033D4AF287ACCBC60962BD7EF3830D8E73209347E6C84C21C656CEF9995A96",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.gz.gz"
+    },
+    {
+      "name": "payload.tgz.bz2",
+      "bytes": 361,
+      "sha256": "CCF929B297877794ACB4360618C212BE8D818A3C4DF5F088C24090AD4B3792D2",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.gz.bz2"
+    },
+    {
+      "name": "payload.tgz.Z",
+      "bytes": 270,
+      "sha256": "CCCF54D1D210A78378972BC247B2CB0A663C379B939940E6CFAD1C32BBC36019",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.gz.Z"
+    },
+    {
+      "name": "payload.tbz.gz",
+      "bytes": 280,
+      "sha256": "EB86CED3E6FC69D9755B0C1BAC4E7A65D17B5CB97A7B2B8A2C88BC53D64A42A6",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.gz"
+    },
+    {
+      "name": "payload.tbz.bz2",
+      "bytes": 406,
+      "sha256": "EC25CAEF596C6012D0D26E1C065E34B16C2A3B6825A31120B0709C0D6D5B9041",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.bz2"
+    },
+    {
+      "name": "payload.tbz.Z",
+      "bytes": 293,
+      "sha256": "9388F854926B40B79F8EDBA0C4D73081E2E441F0D197C13E2912767BD311376F",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.Z"
+    },
+    {
+      "name": "payload.tbz2.gz",
+      "bytes": 280,
+      "sha256": "EB86CED3E6FC69D9755B0C1BAC4E7A65D17B5CB97A7B2B8A2C88BC53D64A42A6",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.gz"
+    },
+    {
+      "name": "payload.tbz2.bz2",
+      "bytes": 406,
+      "sha256": "EC25CAEF596C6012D0D26E1C065E34B16C2A3B6825A31120B0709C0D6D5B9041",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.bz2"
+    },
+    {
+      "name": "payload.tbz2.Z",
+      "bytes": 293,
+      "sha256": "9388F854926B40B79F8EDBA0C4D73081E2E441F0D197C13E2912767BD311376F",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 257,
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93"
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.bz2.Z"
+    },
+    {
+      "name": "payload.taz.gz",
+      "bytes": 306,
+      "sha256": "839E42ED7BA40141D53B7A1ACE830D5C3881CB50AA52DC03B4D6D38AB24C32C2",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 23043,
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D"
+        },
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.Z.gz"
+    },
+    {
+      "name": "payload.taz.bz2",
+      "bytes": 331,
+      "sha256": "467448D524C7255ECCE65198F46BF414952059DEF6CEFB6BDE9C18FAD0667D1B",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 23043,
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D"
+        },
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.Z.bz2"
+    },
+    {
+      "name": "payload.taz.Z",
+      "bytes": 25927,
+      "sha256": "41D17B315A85E7ABD46CB134F2305A2ECD3BA97A0F9FDD915AFE1EFF8407C175",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 23043,
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D"
+        },
+        {
+          "wrapper": ".Z",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "tarSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+      "entries": [
+        {
+          "path": "data.bin",
+          "directory": false,
+          "size": 8192,
+          "sha256": "D00834538607730E786C6C634CB0B02DD74264413DD39DBE999337F304E07A21",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "empty",
+          "directory": true,
+          "size": 0,
+          "sha256": "",
+          "mode": 493,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        },
+        {
+          "path": "日本語.txt",
+          "directory": false,
+          "size": 25,
+          "sha256": "02965601A99C47B9F7D3EAA7093BFCDF073DD7775FC875E4A486AC49B1B2B88D",
+          "mode": 420,
+          "uid": 0,
+          "gid": 0,
+          "mtime": 0
+        }
+      ],
+      "format": "tar.Z.Z"
+    },
+    {
+      "name": "empty.tar.gz.bz2",
+      "bytes": 95,
+      "sha256": "CA18918CF14DE12BF02D483240B87AAF56557695A86A64EDA9325075234DEB39",
+      "valid": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 45,
+          "decodedSha256": "272ADECCAFE73E7009D51F2EC2BE9871DB5E0EB14239F483EA429BE26C3C6402"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 10240,
+          "decodedSha256": "84FF92691F909A05B224E1C56ABB4864F01B4F8E3C854E4BB4C7BAF1D3F6D652"
+        }
+      ],
+      "tarSha256": "84FF92691F909A05B224E1C56ABB4864F01B4F8E3C854E4BB4C7BAF1D3F6D652",
+      "entries": [],
+      "format": "tar.gz.bz2"
+    },
+    {
+      "name": "bad-depth.tar.gz.gz.gz.gz.gz.gz.gz.gz.gz",
+      "bytes": 397,
+      "sha256": "E37315B6AF559AF8888D63458452BE02BFE11D0D4C3A1A3A29A2D579B406A11D",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 374,
+          "decodedSha256": "A910D938BB3B648FEBDB4CCC93108A8A7ECA3A9D5EDEAD8D81348D2425211881"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 354,
+          "decodedSha256": "4A61A4244D60E4009B212A06714A833056C9B9B3474A03D35E684AFB279122E4"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 331,
+          "decodedSha256": "E686EC45A4BCE80A824C130155674895EAD993F3CBAA7BE0E7584C2381F95B19"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 308,
+          "decodedSha256": "0054064297CB8080063CA908B030F38AC65B4F7873B3CF48A1110929CD53E6F4"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 294,
+          "decodedSha256": "249328D4D2A2767128241F1E165625208177DB5F05519EA1B3E6B3AD16BE11EF"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 271,
+          "decodedSha256": "63A0743DD72A748F08A9C65DDD051A96B84963B124A88D2F935A949FA0CEEA6A"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 248,
+          "decodedSha256": "FF033D4AF287ACCBC60962BD7EF3830D8E73209347E6C84C21C656CEF9995A96"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 237,
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E"
+        }
+      ],
+      "reason": "shared wrapper depth"
+    },
+    {
+      "name": "bad-inner.tar.gz.gz",
+      "bytes": 248,
+      "sha256": "46462B062EDFEBE689FFE7A273EB4EA6256C471BEC73C1432525D469B21D8A28",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 237,
+          "decodedSha256": "26E5DDA0E7335387654F4994175019CE24DA2716744820E7EECCB80515C6EAC0"
+        }
+      ],
+      "reason": "inner .gz integrity"
+    },
+    {
+      "name": "bad-outer.tar.gz.gz",
+      "bytes": 248,
+      "sha256": "F1C608534608B95839109839D3BCF675E9C921049DDC2FDEB4DD8591A0422FC6",
+      "valid": false,
+      "layers": [],
+      "reason": "outer .gz integrity"
+    },
+    {
+      "name": "bad-magic.tar.gz.gz",
+      "bytes": 33,
+      "sha256": "97C4BDD32BBE37D192C236553654E025139803A52B476FF30F2F84326C6E6C95",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 13,
+          "decodedSha256": "9A6AD1C538ADAB95ABFB6D96873362369BF8D5CDA0FA513C2F0FF14BDCEAEADB"
+        }
+      ],
+      "reason": "inner wrapper format mismatch"
+    },
+    {
+      "name": "bad-inner-short.tar.gz.gz",
+      "bytes": 243,
+      "sha256": "4FCE180B6D6830767EFBA350B6233E728EC75764BE615D2E8D873BFB20D1F162",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 232,
+          "decodedSha256": "3BA6939312EB379F0FF364B9A13B4762024AA9107EAE9C9CC852864DCCD8F939"
+        }
+      ],
+      "reason": "inner .gz EOF"
+    },
+    {
+      "name": "bad-inner-trailing.tar.gz.gz",
+      "bytes": 260,
+      "sha256": "E141516A318D93EFE76DC7A781358A4D5BDA844088EF9D85A5A784F883251B11",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 249,
+          "decodedSha256": "074854E444379EA58DEAF7897CF54B4ECA221CA496CBBA485D7AC583EF8E6A0E"
+        }
+      ],
+      "reason": "inner .gz trailing content"
+    },
+    {
+      "name": "bad-outer-short.tar.gz.gz",
+      "bytes": 243,
+      "sha256": "40A59BE4793393A4ADD07915CA096D20BA71034146A2437552BB1E2F569EB715",
+      "valid": false,
+      "layers": [],
+      "reason": "outer .gz EOF"
+    },
+    {
+      "name": "bad-inner.tar.bz2.gz",
+      "bytes": 280,
+      "sha256": "1752B7F464C030E0CF6B9063A85C2A5CD9DAD9FE46B045E315897E22C2700F2B",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 257,
+          "decodedSha256": "0F9DFCC89E0F9C1D62D6CF4442A573F7784D39C1F231880963BAE8A3EE18DA23"
+        }
+      ],
+      "reason": "inner .bz2 integrity"
+    },
+    {
+      "name": "bad-outer.tar.gz.bz2",
+      "bytes": 361,
+      "sha256": "088101BFB70EACE8652413A6B5DD0CC328AABC350904A9696A19308B4FA8660D",
+      "valid": false,
+      "layers": [],
+      "reason": "outer .bz2 integrity"
+    },
+    {
+      "name": "bad-magic.tar.bz2.gz",
+      "bytes": 33,
+      "sha256": "97C4BDD32BBE37D192C236553654E025139803A52B476FF30F2F84326C6E6C95",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 13,
+          "decodedSha256": "9A6AD1C538ADAB95ABFB6D96873362369BF8D5CDA0FA513C2F0FF14BDCEAEADB"
+        }
+      ],
+      "reason": "inner wrapper format mismatch"
+    },
+    {
+      "name": "bad-inner-short.tar.bz2.gz",
+      "bytes": 275,
+      "sha256": "4F6A017083E3150B6E9DAD5A54DDE0AD1F3802BB4D8636698D86A678397209A9",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 252,
+          "decodedSha256": "C496629D8FD5BEBCFA251AF486669AAA8D2D9AED89EADA474BEC96E08779C22B"
+        }
+      ],
+      "reason": "inner .bz2 EOF"
+    },
+    {
+      "name": "bad-inner-trailing.tar.bz2.gz",
+      "bytes": 292,
+      "sha256": "BAF0253A9BC83E0E3DB9B0ECD6F7478ADEB8658E2633408DFA86D39E033525A7",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 269,
+          "decodedSha256": "30ACCED63E3C1F4C66330BCF16BF1737CC351DE305BC22E7B18477582BA3F3DE"
+        }
+      ],
+      "reason": "inner .bz2 trailing content"
+    },
+    {
+      "name": "bad-outer-short.tar.gz.bz2",
+      "bytes": 356,
+      "sha256": "41395C521467812E40E2B24FAA1D5023810213AFDB822A995DD2452E62669DDE",
+      "valid": false,
+      "layers": [],
+      "reason": "outer .bz2 EOF"
+    },
+    {
+      "name": "bad-inner.tar.Z.gz",
+      "bytes": 306,
+      "sha256": "91E04ADE9EF7D02278E1233AFB7EA5DD34985DB1B7428E5F24B299FAF1867372",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 23043,
+          "decodedSha256": "40B2FBCBA715C1AABBCDEA2C3DC421617C4B4C07B20FE8A21542B0D05BE85BAB"
+        }
+      ],
+      "reason": "inner .Z integrity"
+    },
+    {
+      "name": "bad-outer.tar.gz.Z",
+      "bytes": 270,
+      "sha256": "B5A9A59F89331D74072F9FB90CEDA9231881B555F6605A7EA1B4DA988FF0C247",
+      "valid": false,
+      "layers": [],
+      "reason": "outer .Z integrity"
+    },
+    {
+      "name": "bad-magic.tar.Z.gz",
+      "bytes": 33,
+      "sha256": "97C4BDD32BBE37D192C236553654E025139803A52B476FF30F2F84326C6E6C95",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 13,
+          "decodedSha256": "9A6AD1C538ADAB95ABFB6D96873362369BF8D5CDA0FA513C2F0FF14BDCEAEADB"
+        }
+      ],
+      "reason": "inner wrapper format mismatch"
+    },
+    {
+      "name": "bad-middle.tar.gz.bz2.gz",
+      "bytes": 384,
+      "sha256": "8D8C7AE156580160DAF15B7B4BBAE70EAED50116F24730ADAC8D6F377D7E929F",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 361,
+          "decodedSha256": "088101BFB70EACE8652413A6B5DD0CC328AABC350904A9696A19308B4FA8660D"
+        }
+      ],
+      "reason": "middle bzip2 integrity"
+    },
+    {
+      "name": "bad-checksum.tar.gz.bz2",
+      "bytes": 363,
+      "sha256": "F49C822E035549A38ABC2D5524B1775144DC11BF62AA5FE5EAC14ABE1F68E6A6",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 237,
+          "decodedSha256": "D66517C818AD7CE209CB23332BAFC94CFD8FC2300D42540EBC7383CAC31B8622"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20480,
+          "decodedSha256": "76AE56C243C1CFEBC54F083147DBAAE58CB1A0249E93E41EC203646BC8030203"
+        }
+      ],
+      "reason": "TAR header checksum"
+    },
+    {
+      "name": "bad-footer.tar.gz.bz2",
+      "bytes": 327,
+      "sha256": "78C986127036EF3AD3086206F5685A90706CE03FAF6256DFADB220F9B9285D0C",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 212,
+          "decodedSha256": "9EB1710ABEF4F132BE3499A22F7BE15EA88DEEC10455CD8AEE1E050C8012FA3A"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 9753,
+          "decodedSha256": "B061C264875E415F3934ED351361320F89F89119E6055F76086B2DA41CA58E1B"
+        }
+      ],
+      "reason": "TAR truncated body/footer"
+    },
+    {
+      "name": "bad-trailing.tar.gz.bz2",
+      "bytes": 375,
+      "sha256": "74C0E8918E5A51F82010C6FDFB2CC8688DC119A365AA9B3E10AC0E1E17344D63",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 246,
+          "decodedSha256": "EF47D202201E67800CC64958D6D5B4572CBEA81168144EE5D94614942E6FD340"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 20488,
+          "decodedSha256": "BB90AFEB950F4EAF41D36AE0DE87D1487CA8067FBD7050BD77C8320031C34F06"
+        }
+      ],
+      "reason": "TAR trailing content"
+    },
+    {
+      "name": "bad-empty.tar.gz.bz2",
+      "bytes": 52,
+      "sha256": "785B6D44168CC9F83087E58AF206DB0BBBD5C4940BD5BEB7CE76B3592D5F8C09",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 20,
+          "decodedSha256": "9CEFFB7310338057CFE71A4AE1E2C98D2C485D81CDEF906532A801F457A38D64"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 0,
+          "decodedSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        }
+      ],
+      "reason": "empty wrapper terminal"
+    },
+    {
+      "name": "bad-disguised.tar.gz.bz2",
+      "bytes": 885,
+      "sha256": "6B479085190DB48B4E0802E0E650720DF8A7F88650C7F3AA0883F009D3D9F20B",
+      "valid": false,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedBytes": 666,
+          "decodedSha256": "9A2B48AE892326CB61838E3C24133619E784430C3A6FFBB7CD36BFE3B85A6CE9"
+        },
+        {
+          "wrapper": ".gz",
+          "decodedBytes": 955,
+          "decodedSha256": "5BEFEB5C806BA2F23E76536AA3E0137E6094DCCF18897C7E3E82C15530DC9CFB"
+        }
+      ],
+      "reason": "ZIP masquerading as TAR"
+    }
+  ],
+  "sources": [
+    {
+      "name": "source-payload.tar.gz.bz2.zip",
+      "entry": "nested/payload.tar.gz.bz2",
+      "fixture": "payload.tar.gz.bz2",
+      "bytes": 509,
+      "sha256": "EC125B67E637C22C75EFDBD04B36B27A0081D0C38AED2FFD8F01691C8392E58F"
+    },
+    {
+      "name": "source-payload.taz.gz.zip",
+      "entry": "nested/payload.taz.gz",
+      "fixture": "payload.taz.gz",
+      "bytes": 446,
+      "sha256": "49B91A420845E7EF8DDDB29A111BC68D72A8C18F7D345F10887F12F3D0783E12"
+    },
+    {
+      "name": "source-bad-checksum.tar.gz.bz2.zip",
+      "entry": "nested/bad-checksum.tar.gz.bz2",
+      "fixture": "bad-checksum.tar.gz.bz2",
+      "bytes": 521,
+      "sha256": "B43EF2D747A1DC328197151B8018227D2856BA8E2E237BB73B301194B73A24A7"
+    },
+    {
+      "name": "source-payload.tar.gz.gz.gz.gz.gz.gz.gz.gz.zip",
+      "entry": "nested/payload.tar.gz.gz.gz.gz.gz.gz.gz.gz",
+      "fixture": "payload.tar.gz.gz.gz.gz.gz.gz.gz.gz",
+      "bytes": 556,
+      "sha256": "A71AB55B40C0ADDF6DDBAD10A0D1FAFBE99879E71E6330F74195CD27AE460BEE"
+    }
+  ],
+  "budgetCases": [
+    {
+      "fixture": "payload.tar.gz.bz2",
+      "maximumEntryBytes": 20479,
+      "reason": "intermediate size"
+    },
+    {
+      "fixture": "payload.tar.gz.bz2",
+      "maximumDecodedBytes": 20480,
+      "reason": "cumulative decoded"
+    },
+    {
+      "fixture": "payload.tar.gz.bz2",
+      "maximumWorkBytes": 64,
+      "reason": "cumulative work"
+    }
+  ]
+}

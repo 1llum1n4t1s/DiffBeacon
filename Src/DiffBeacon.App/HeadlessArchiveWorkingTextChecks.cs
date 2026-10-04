@@ -40,19 +40,19 @@ internal static class HeadlessArchiveWorkingTextChecks
             && Refused(() => pump(window.PackageWorkspaceAsync(protectedPackage))) && File.ReadAllText(protectedPackage) == "keep package");
         leaf.TextSaveBeforePublish = () => { leaf.RightEditor.Text = latestRight; return Task.CompletedTask; };
         pump(leaf.SaveAsync(true)); leaf.TextSaveBeforePublish = null;
-        Verify("ordinary save commits captured bytes and retains later dirty edit", leaf.RightEditor.Text == latestRight && leaf.HasUnsavedChanges && leaf.CaptureProject().RightArchiveInput?.WorkingTexts is [{ HasBom: true, EncodingName: "utf-8" }]);
+        Verify("ordinary save commits captured bytes and retains later dirty edit", leaf.RightEditor.Text == latestRight && leaf.HasUnsavedChanges && leaf.CaptureProject().RightArchiveInput?.WorkingDocuments is [{ HasBom: true, EncodingName: "utf-8" }]);
         pump(leaf.SaveAsync(true)); pump(leaf.SaveAsync(false));
-        Verify("ordinary save retains typed source and independent encoding", !leaf.HasUnsavedChanges && leaf.CaptureProject().LeftArchiveInput?.WorkingTexts is [{ HasBom: false, EncodingName: "windows-1252" }]
+        Verify("ordinary save retains typed source and independent encoding", !leaf.HasUnsavedChanges && leaf.CaptureProject().LeftArchiveInput?.WorkingDocuments is [{ HasBom: false, EncodingName: "windows-1252" }]
             && roots.Select(Hash).SequenceEqual(hashes));
         pump(leaf.ComparePathsAsync());
         Verify("recompare reads saved working bytes and known legacy encoding", leaf.LeftEditor.Text == savedLeft && leaf.RightEditor.Text == latestRight
-            && leaf.CaptureProject().LeftArchiveInput?.WorkingTexts![0].EncodingName == "windows-1252");
+            && leaf.CaptureProject().LeftArchiveInput?.WorkingDocuments![0].EncodingName == "windows-1252");
         pump(innerPanel.PreviewAsync(innerPanel.Rows.Single(row => row.Path == "leaf.txt")));
         var previewBytes = innerPanel.PreviewText.Split('\n').Where(line => line.StartsWith("0000", StringComparison.Ordinal))
             .SelectMany(line => line[10..].Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(value => Convert.ToByte(value, 16))).ToArray();
         Verify("parent preview reads saved working bytes", previewBytes.SequenceEqual(cp1252.GetBytes(savedLeft).Concat(utf8.GetPreamble()).Concat(utf8.GetBytes(latestRight))));
-        Verify("ancestor project captures descendant working snapshots", parent.CaptureProject().LeftArchiveInput?.WorkingTexts is { Length: 1 }
-            && inner.CaptureProject().LeftArchiveInput?.WorkingTexts is { Length: 1 });
+        Verify("ancestor project captures descendant working snapshots", parent.CaptureProject().LeftArchiveInput?.WorkingDocuments is { Length: 1 }
+            && inner.CaptureProject().LeftArchiveInput?.WorkingDocuments is { Length: 1 });
         Activate(inner); Open(innerPanel, "leaf.txt"); var sibling = window.ActivePane;
         sibling.RightEditor.Text = "sibling dirty\n"; leaf.RightEditor.Text = "new saved 日本\n"; pump(leaf.SaveAsync(true));
         Verify("same entry dirty sibling is retained and stale save refuses", sibling.RightEditor.Text == "sibling dirty\n" && sibling.HasUnsavedChanges
@@ -73,13 +73,13 @@ internal static class HeadlessArchiveWorkingTextChecks
         leaf.TextSaveReadyForAdoption = null;
         var priorProject = leaf.CaptureProject(); var priorGeneration = window.ArchiveTexts.Generation;
         var conflicted = inner.CaptureProject();
-        var existing = conflicted.LeftArchiveInput!.WorkingTexts![0];
+        var existing = conflicted.LeftArchiveInput!.WorkingDocuments![0];
         var extraBytes = "new empty leaf work\n"u8.ToArray();
-        conflicted.LeftArchiveInput.WorkingTexts = [new() { EntryChain = ["inner.zip"], LeafEntry = "empty.txt", Bytes = extraBytes,
+        conflicted.LeftArchiveInput.WorkingDocuments = [new() { EntryChain = ["inner.zip"], LeafEntry = "empty.txt", Bytes = extraBytes,
             Sha256 = Convert.ToHexString(SHA256.HashData(extraBytes)), EncodingName = "utf-8" }, existing with
             { Bytes = "conflict\n"u8.ToArray(), Sha256 = Convert.ToHexString(SHA256.HashData("conflict\n"u8)) }];
         Verify("two entry import failure leaves shared revision and pane unchanged", Refused(() => inner.ApplyProject(conflicted))
-            && window.ArchiveTexts.Generation == priorGeneration && inner.CaptureProject().LeftArchiveInput?.WorkingTexts is { Length: 1 }
+            && window.ArchiveTexts.Generation == priorGeneration && inner.CaptureProject().LeftArchiveInput?.WorkingDocuments is { Length: 1 }
             && leaf.RightEditor.Text == savedRight);
         leaf.TextSaveBeforePublish = () =>
         {
@@ -125,14 +125,14 @@ internal static class HeadlessArchiveWorkingTextChecks
         var largeWorkspace = Path.Combine(folder, "large-working.json"); pump(WorkspaceStore.SaveWorkspaceAsync(largeWorkspace, new() { Entries = [restoredPane.CaptureProject()] }));
         var largeLoaded = Load(largeWorkspace);
         Verify("4MiB plus saved text restores through small metadata", new FileInfo(largeWorkspace).Length < WorkspaceStore.MaxFileBytes
-            && largeLoaded.RightArchiveInput!.WorkingTexts![0].Document().Text == largeText);
+            && largeLoaded.RightArchiveInput!.WorkingDocuments![0].Document().Text == largeText);
         var largePackage = Path.Combine(folder, "large-working-package.zip"); pump(ComparisonPackage.CreateAsync(new() { Entries = [largeLoaded] }, largePackage, new(true, false, false, true)));
         var retainedProject = Path.Combine(folder, "failed-working.json"); File.WriteAllText(retainedProject, "keep failed project");
         File.SetAttributes(retainedProject, File.GetAttributes(retainedProject) | FileAttributes.ReadOnly);
         try { Verify("workspace publication failure preserves existing project", Refused(() => pump(WorkspaceStore.SaveWorkspaceAsync(retainedProject, new() { Entries = [largeLoaded] }))) && File.ReadAllText(retainedProject) == "keep failed project"); }
         finally { File.SetAttributes(retainedProject, File.GetAttributes(retainedProject) & ~FileAttributes.ReadOnly); }
         var anotherRoot = Path.Combine(folder, "other-identical-left.zip"); File.WriteAllBytes(anotherRoot, File.ReadAllBytes(roots[0]));
-        var distinct = leaf.CaptureProject(); distinct.LeftArchiveInput!.RootPath = anotherRoot; distinct.LeftArchiveInput.WorkingTexts = null;
+        var distinct = leaf.CaptureProject(); distinct.LeftArchiveInput!.RootPath = anotherRoot; distinct.LeftArchiveInput.WorkingDocuments = null;
         var other = window.AddSession(); other.ApplyProject(distinct); pump(other.ComparePathsAsync());
         Verify("identical hash under another root keeps independent original", other.LeftEditor.Text == originalLeft);
         using (var proofFile = File.Create(Path.Combine(folder, "proof.json")))

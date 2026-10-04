@@ -84,7 +84,7 @@ internal static class HeadlessArchiveWorkingReviewChecks
         using (var resource = typeof(HeadlessArchiveSourceChecks).Assembly.GetManifestResourceStream("DiffBeacon.SelfTest.Sources.two-passwords.zip")!) using (var file = File.Create(encrypted)) resource.CopyTo(file);
         var bytes = Encoding.UTF8.GetBytes("saved encrypted work\n");
         var parent = window.AddSession(); parent.ApplyProject(new() { Mode = "Archive", LeftArchiveInput = new() { RootPath = encrypted, RootSha256 = Hash(encrypted), InheritedReadOnly = false,
-            WorkingTexts = [new() { EntryChain = ["inner.zip"], LeafEntry = "leaf.txt", Bytes = bytes, Sha256 = Convert.ToHexString(SHA256.HashData(bytes)), EncodingName = "utf-8" }] }, RightPath = root, LeftReadOnly = true });
+            WorkingDocuments = [new() { EntryChain = ["inner.zip"], LeafEntry = "leaf.txt", Bytes = bytes, Sha256 = Convert.ToHexString(SHA256.HashData(bytes)), EncodingName = "utf-8" }] }, RightPath = root, LeftReadOnly = true });
         var fullRoute = false; var dialogs = 0;
         parent.ArchiveSourceRetryShown = dialog =>
         {
@@ -100,9 +100,9 @@ internal static class HeadlessArchiveWorkingReviewChecks
         var branches = Path.Combine(folder, "branches.zip");
         File.WriteAllBytes(branches, Zip(("a.zip", EncryptedZip("leaf.txt", "branch a original\n"u8.ToArray(), "branch-a-fixture")),
             ("b.zip", EncryptedZip("leaf.txt", "branch b original\n"u8.ToArray(), "branch-b-fixture"))));
-        ArchiveTextSnapshot Snapshot(string branch) { var data = Encoding.UTF8.GetBytes("working " + branch + "\n"); return new() { EntryChain = [branch], LeafEntry = "leaf.txt", Bytes = data, Sha256 = Convert.ToHexString(SHA256.HashData(data)), EncodingName = "utf-8" }; }
+        ArchiveWorkingSnapshot Snapshot(string branch) { var data = Encoding.UTF8.GetBytes("working " + branch + "\n"); return new() { EntryChain = [branch], LeafEntry = "leaf.txt", Bytes = data, Sha256 = Convert.ToHexString(SHA256.HashData(data)), EncodingName = "utf-8" }; }
         var branched = window.AddSession(); branched.ApplyProject(new() { Mode = "Archive", LeftReadOnly = true, RightPath = root,
-            LeftArchiveInput = new() { RootPath = branches, RootSha256 = Hash(branches), InheritedReadOnly = false, WorkingTexts = [Snapshot("a.zip"), Snapshot("b.zip")] } });
+            LeftArchiveInput = new() { RootPath = branches, RootSha256 = Hash(branches), InheritedReadOnly = false, WorkingDocuments = [Snapshot("a.zip"), Snapshot("b.zip")] } });
         var requested = new List<string>(); var branchMasks = true; var isolated = true;
         branched.ArchiveSourceRetryShown = dialog =>
         {

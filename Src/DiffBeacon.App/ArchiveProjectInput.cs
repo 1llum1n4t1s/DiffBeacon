@@ -17,12 +17,13 @@ public sealed record ArchiveProjectInput
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public bool? InheritedReadOnly { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public ArchiveTextSnapshot[]? WorkingTexts { get; set; }
+    [JsonPropertyName("workingTexts")]
+    public ArchiveWorkingSnapshot[]? WorkingDocuments { get; set; }
 
     internal ArchiveProjectInput Copy() => this with
     {
         EntryChain = EntryChain.Select(CanonicalEntry).ToArray(), LeafEntry = LeafEntry is null ? null : CanonicalEntry(LeafEntry),
-        MissingEntryChain = MissingEntryChain?.Select(CanonicalEntry).ToArray(), WorkingTexts = WorkingTexts?.Select(copy => copy.Copy()).ToArray()
+        MissingEntryChain = MissingEntryChain?.Select(CanonicalEntry).ToArray(), WorkingDocuments = WorkingDocuments?.Select(copy => copy.Copy()).ToArray()
     };
     internal static string CanonicalEntry(string value) => value.Replace('\\', '/').TrimEnd('/');
     internal ArchiveSource ToSource() => new(RootPath, EntryChain, RootSha256);
@@ -46,10 +47,10 @@ public sealed record ArchiveProjectInput
         if (LeafEntry is not null) _ = new ArchiveSource(Path.GetFullPath(RootPath), [LeafEntry]);
         if (RootSha256 is null) throw new InvalidDataException("保存する内包入力には確定rootのSHA-256が必要です。");
         if (!readOnly) throw new InvalidDataException("内包入力は読取り専用で開いてください。");
-        if (WorkingTexts is { } copies)
+        if (WorkingDocuments is { } copies)
         {
-            if (MissingEntryChain is not null || copies.Length is < 1 or > ArchiveTextWorkingStore.MaximumDocuments
-                || copies.Sum(copy => (long)(copy?.Bytes?.Length ?? 0)) > ArchiveTextWorkingStore.MaximumBytes)
+            if (MissingEntryChain is not null || copies.Length is < 1 or > ArchiveWorkingStore.MaximumDocuments
+                || copies.Sum(copy => (long)(copy?.Bytes?.Length ?? 0)) > ArchiveWorkingStore.MaximumBytes)
                 throw new InvalidDataException("作業文書の件数または容量が不正です。");
             var keys = new HashSet<string>(StringComparer.Ordinal);
             foreach (var copy in copies)
@@ -79,10 +80,20 @@ internal static class ProjectInputs
     };
     internal static IEnumerable<string> PhysicalPaths(ComparisonProject project)
         => Enumerable.Range(0, 3).Select(side => PathFor(project, side)).Append(project.FileFilterPath ?? "").Concat(project.ProtectedArchiveAssets)
-            .Concat(Enumerable.Range(0, 3).SelectMany(side => Archive(project, side)?.WorkingTexts ?? [])
+            .Concat(Enumerable.Range(0, 3).SelectMany(side => Archive(project, side)?.WorkingDocuments ?? [])
                 .Select(copy => copy.SnapshotPath ?? ""));
     internal static bool HasArchives(ComparisonProject project)
         => project.LeftArchiveInput is not null || project.BaseArchiveInput is not null || project.RightArchiveInput is not null;
+    internal static void EnsureWorkingFormat(ComparisonProject project)
+    {
+        var mode = project.Mode.ToLowerInvariant();
+        foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => Archive(project, side)?.WorkingDocuments ?? []))
+        {
+            if (mode is "text" or "1" && copy.IsBinary) throw new InvalidDataException("Binary作業版はBinary形式で開き直してください。");
+            if (mode is "binary" or "3" && copy.Bytes is { Length: > DiffBeacon.Core.BinaryEditSession.MaximumFileBytes })
+                throw new InvalidDataException("Binary作業版の上限は各16 MiBです。");
+        }
+    }
     internal static bool HasMissing(ComparisonProject project)
         => Enumerable.Range(0, 3).Any(side => Archive(project, side)?.MissingEntryChain is not null);
     internal static bool HasBase(ComparisonProject project) => !string.IsNullOrWhiteSpace(PathFor(project, 1));

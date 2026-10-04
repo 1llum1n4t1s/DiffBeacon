@@ -120,7 +120,9 @@ public sealed partial class ManagedArchive
         long? captureLimit, bool prefixOnly, ArchiveReadBudget? budget = null, ArchiveType? expectedType = null,
         OwnedEntryCapture? ownedCapture = null, bool inputAlreadyDecoded = false)
     {
-            var tarFormat = expectedType is null ? DetectTarFormat(input, logicalName) : null;
+            // 明示TAR終端は再sniffせず、全ヘッダー・body・footerの検証へ渡す。
+            var tarFormat = expectedType == ArchiveType.Tar ? "tar" :
+                expectedType is null ? DetectTarFormat(input, logicalName) : null;
             if (tarFormat is not null)
                 return ReadTar(input, tarFormat, token, capture, consume, captureLimit, prefixOnly,
                     budget, ownedCapture, inputAlreadyDecoded);

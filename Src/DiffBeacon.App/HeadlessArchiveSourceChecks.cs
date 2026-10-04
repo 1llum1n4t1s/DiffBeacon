@@ -129,7 +129,7 @@ internal static class HeadlessArchiveSourceChecks
         Activate(innerPane); Select(inner, "binary.bin"); inner.EntryKind.SelectedIndex = 0; pump(inner.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
         var binaryPane = window.ActivePane; var binary = binaryPane.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().Single();
         SpecializedViews.SetProjectReadOnly(binary, false, false);
-        Verify("auto binary cannot unlock fixed source readonly", binaryPane.CaptureProject().Mode == "Binary" && binary.LeftReadOnly && binary.RightReadOnly);
+        Verify("auto binary restores inherited editable intention", binaryPane.CaptureProject().Mode == "Binary" && !binary.LeftReadOnly && !binary.RightReadOnly);
         var binaryOutput = Path.Combine(folder, "binary-snapshot.bin"); pump(binary.SaveToAsync(false, binaryOutput));
         Verify("binary snapshot export retains leaf and protects all source roots", File.ReadAllBytes(binaryOutput).SequenceEqual(large)
             && Refused(() => pump(binary.SaveToAsync(false, roots[1]))) && Refused(() => pump(binary.SaveToAsync(false, workspace)))

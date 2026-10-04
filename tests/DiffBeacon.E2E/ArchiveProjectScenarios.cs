@@ -99,7 +99,7 @@ internal static class ArchiveProjectScenarios
         foreach (var (name, change) in new (string, Action<JsonObject>)[]
         {
             ("old-version", json => json["formatVersion"] = 1),
-            ("unknown-version", json => json["formatVersion"] = 5),
+            ("unknown-version", json => json["formatVersion"] = 6),
             ("mixed-path", json => Entry(json)["leftPath"] = "root-a.zip"),
             ("writable", json => Entry(json)["leftReadOnly"] = false),
             ("auto-mode", json => Entry(json)["mode"] = "Auto"),

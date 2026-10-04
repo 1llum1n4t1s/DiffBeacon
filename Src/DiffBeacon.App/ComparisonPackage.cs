@@ -146,10 +146,10 @@ public static class ComparisonPackage
                 {
                     if (ProjectInputs.Archive(project, side) is not { } input) return null;
                     var savedInput = input.Copy(); savedInput.RootPath = paths[side];
-                    foreach (var copy in savedInput.WorkingTexts ?? [])
+                    foreach (var copy in savedInput.WorkingDocuments ?? [])
                     {
                         var bytes = copy.Bytes ?? throw new InvalidDataException("作業文書のsnapshotを読み込んでください。");
-                        var name = "working/" + copy.Sha256 + ".text";
+                        var name = "working/" + copy.Sha256 + copy.AssetExtension;
                         if (!names.ContainsKey(name))
                         {
                             if (bytes.Length > MaximumInputBytes - total) throw new InvalidDataException("包装する入力の合計は1 GiBまでです。");

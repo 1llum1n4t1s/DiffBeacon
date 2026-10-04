@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
+    "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
     "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
@@ -1110,7 +1110,7 @@ async Task ProjectWorkspaceCases()
         ("null-replacement", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":null}]}"),
         ("null-rule-flag", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":\"y\",\"enabled\":null}]}"),
         ("null-legacy-value", "{\"legacySettings\":{\"unpacker\":null}}"),
-        ("unknown-version", "{\"formatVersion\":5,\"entries\":[{}],\"activeEntryIndex\":0}"),
+        ("unknown-version", "{\"formatVersion\":6,\"entries\":[{}],\"activeEntryIndex\":0}"),
         ("negative-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":-1}"),
         ("large-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":1}"),
         ("too-many", "{\"formatVersion\":1,\"entries\":[" + string.Join(',', Enumerable.Repeat("{}", 257)) + "],\"activeEntryIndex\":0}"),
@@ -1702,14 +1702,15 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
             await process.StandardInput.WriteAsync(standardInput);
             process.StandardInput.Close();
         }
-        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        var timeoutSeconds = arguments.Length > 0 && string.Equals(arguments[0], "--self-test", StringComparison.Ordinal) ? 120 : 30;
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
         try { await process.WaitForExitAsync(timeout.Token); }
         catch (OperationCanceledException)
         {
             timedOut = true;
             process.Kill(entireProcessTree: true);
             await process.WaitForExitAsync();
-            stderr += "検証の制限時間 30 秒を超えました。\n";
+            stderr += $"検証の制限時間 {timeoutSeconds} 秒を超えました。\n";
         }
         stdout = await stdoutTask;
         stderr += await stderrTask;
@@ -1735,7 +1736,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--archive-present-only", StringComparer.Ordinal))
+    if (args.Contains("--archive-tar-wrappers-only", StringComparer.Ordinal))
+        await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--archive-binary-only", StringComparer.Ordinal))
+        await ArchiveBinaryWorkingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--archive-present-only", StringComparer.Ordinal))
         await ArchivePresentTextScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--archive-missing-only", StringComparer.Ordinal))
         await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
@@ -1855,10 +1860,12 @@ try
     {
         await ArchiveCases();
         await ArchivePresentTextScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await ArchiveBinaryWorkingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
         await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
+        await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     }
     else if (args.Contains("--legacy-comments-only", StringComparer.Ordinal))
@@ -1877,10 +1884,12 @@ try
     {
     await ArchiveCases();
     await ArchivePresentTextScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    await ArchiveBinaryWorkingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
     await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
+        await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);

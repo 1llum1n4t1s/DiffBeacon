@@ -7,7 +7,7 @@ namespace DiffBeacon.App;
 
 public sealed partial class ComparisonPane
 {
-    private readonly ArchiveTextWorkingStore _workingTexts;
+    private readonly ArchiveWorkingStore _workingTexts;
     private readonly long[] _workingTextRevisions = new long[3];
     private CancellationTokenSource? _textSaveOperation;
     private long _textSaveGeneration;
@@ -36,7 +36,7 @@ public sealed partial class ComparisonPane
                 var source = side == 0 ? panel.ConfirmedLeft : panel.ConfirmedRight;
                 var captured = _workingTexts.Capture(new() { RootPath = source.RootPath, RootSha256 = source.RootSha256,
                     EntryChain = source.EntryChain.ToArray(), InheritedReadOnly = side == 0 ? project.LeftReadOnly : project.RightReadOnly });
-                if (captured.WorkingTexts is not null) input = captured;
+                if (captured.WorkingDocuments is not null) input = captured;
             }
             return input is null ? null : _workingTexts.Capture(input);
         }
@@ -54,9 +54,24 @@ public sealed partial class ComparisonPane
         for (var side = 0; side <= 2; side++)
         {
             var right = side == 2; var input = ProjectInputs.Archive(_projectMetadata, side);
-            if (input?.LeafEntry is null || side != 1 && HasArchiveDraft(right) || _workingTexts.Revision(input) == _workingTextRevisions[side]) continue;
+            if (input?.LeafEntry is null || _workingTexts.Revision(input) == _workingTextRevisions[side]) continue;
             var snapshot = _workingTexts.Find(input.ToSource(), input.LeafEntry);
             if (snapshot is null) continue;
+            if (_specialTab.Content is SpecializedViews.BinaryPanel binary && side != 1)
+            {
+                if (snapshot.Bytes!.Length > BinaryEditSession.MaximumFileBytes)
+                { _workingDocumentStale = true; binary.SetStatus("新しい作業版はBinaryの16MiB上限を超えています。表示bytesは保持しています。形式を選んで開き直してください。"); continue; }
+                if (binary.Dirty(right)) { binary.SetStatus("別tabに新しい作業版があります。編集中のbytesは保持しています。比較し直してください。"); continue; }
+                binary.AdoptSavedBytes(right, snapshot.Bytes!); _workingTextRevisions[side] = _workingTexts.Revision(input); continue;
+            }
+            if (_specialTab.Content is ArchivePanel) continue;
+            if (snapshot.IsBinary)
+            {
+                _workingDocumentStale = true;
+                _status.Text = "別tabでBinary作業版が保存されています。Text本文と未保存の編集は保持しています。形式を選んで開き直してください。";
+                continue;
+            }
+            if (side != 1 && HasArchiveDraft(right)) continue;
             var document = snapshot.Document();
             if (right) { _rightDocument = document; RightEditor.Text = _savedRight = document.Text; }
             else if (side == 1) { _baseDocument = document; _baseText = document.Text; _ancestorEditor.Text = document.Text; }
@@ -81,7 +96,7 @@ public sealed partial class ComparisonPane
             && (_projectMetadata.RightReadOnly || _projectMetadata.RightArchiveInput is not null);
     }
 
-    private void InvalidateTextSave() { _textSaveGeneration++; _textSaveOperation?.Cancel(); }
+    private void InvalidateTextSave() { _textSaveGeneration++; _textSaveOperation?.Cancel(); InvalidateBinarySave(); }
     private bool HasArchiveDraft(bool right) => ProjectInputs.Archive(_projectMetadata, right ? 2 : 0) is not null
         && (right ? RightEditor.Text != _savedRight : LeftEditor.Text != _savedLeft);
 
@@ -99,6 +114,7 @@ public sealed partial class ComparisonPane
 
     private ComparisonProject CaptureTextReportProject()
     {
+        if (_workingDocumentStale) throw new InvalidOperationException("作業版の形式が変更されています。比較し直してください。");
         var project = CaptureProject();
         if (HasArchiveDraft(false)) project = project with { LeftDescription = (project.LeftDescription ?? "左") + "（未保存の編集）" };
         if (HasArchiveDraft(true)) project = project with { RightDescription = (project.RightDescription ?? "右") + "（未保存の編集）" };
@@ -107,6 +123,9 @@ public sealed partial class ComparisonPane
 
     internal void EnsureArchiveDraftSaved()
     {
+        if (_workingDocumentStale) throw new InvalidOperationException("別tabで作業版の形式が変更されています。本文を退避して開き直してください。");
+        if (_specialTab.Content is SpecializedViews.BinaryPanel binary && binary.IsDirty?.Invoke() == true)
+            throw new InvalidOperationException("未保存／未適用のバイナリ編集があります。保存してからプロジェクトを保存してください。");
         if (HasArchiveDraft(false) || HasArchiveDraft(true))
             throw new InvalidOperationException("未保存の内包文書があります。実在する側は通常保存、不在の側は外部保存してからプロジェクトを保存してください。");
     }
@@ -117,6 +136,8 @@ public sealed partial class ComparisonPane
 
     public async Task SaveTextAsAsync(bool right)
     {
+        if (_specialTab.Content is SpecializedViews.BinaryPanel binary)
+        { var chosen = await binary.SavePathPicker!(right); if (chosen is not null) await binary.SaveToAsync(right, chosen); return; }
         EnsureSideWritable(right);
         var target = TextSavePathPicker is { } picker ? await picker(right) : await SavePathAsync("テキストを外部保存", "untitled.txt");
         if (target is not null) await SaveTextCoreAsync(right, target, CancellationToken.None);
@@ -124,11 +145,14 @@ public sealed partial class ComparisonPane
 
     private async Task SaveTextCoreAsync(bool right, string? selectedPath, CancellationToken callerToken)
     {
+        if (_workingDocumentStale) throw new InvalidOperationException("別tabで作業版の形式が変更されています。本文を退避して開き直してください。");
         EnsureNoPendingTableEdit(); EnsureSideWritable(right);
         if (!_textSaveAllowed || _disposed) throw new InvalidOperationException("この比較はテキスト保存の対象ではありません。");
         if (_textSaveOperation is not null) throw new InvalidOperationException("テキストを保存しています。");
         var missing = CanEditMissingText(right);
         var archive = ProjectInputs.Archive(_projectMetadata, right ? 2 : 0)?.Copy();
+        if (archive is not null && _lastArchiveComparison != ArchiveComparisonIdentity(CaptureProject()))
+            throw new InvalidOperationException("内包入力の形式が変更されています。比較して開き直してから保存してください。");
         if (archive is { MissingEntryChain: null } && selectedPath is null)
         { await SaveArchiveWorkingTextAsync(right, archive, callerToken); return; }
         var sourceDocument = right ? _rightDocument : _leftDocument;
@@ -210,7 +234,7 @@ public sealed partial class ComparisonPane
                 if (archive is not null) _projectMetadata = _projectMetadata with { LeftArchiveInput = null, LeftReadOnly = false, LeftDescription = Path.GetFileName(target) };
                 LeftPath.Text = target; _savedLeft = text; _leftDocument = loaded;
             }
-            ConfigureArchiveInputControls(); _mode.IsEnabled = _provider.IsEnabled = !ProjectInputs.HasArchives(_projectMetadata);
+            ConfigureArchiveInputControls(); _provider.IsEnabled = !ProjectInputs.HasArchives(_projectMetadata);
             if (ProjectInputs.HasArchives(_projectMetadata)) _lastArchiveComparison = ArchiveComparisonIdentity(CaptureProject());
             else _lastPackageComparison = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
             RefreshTextReadOnly(); _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
@@ -251,7 +275,7 @@ public sealed partial class ComparisonPane
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 Guard(); TextSaveReadyForAdoption?.Invoke(); Guard();
-                var snapshot = new ArchiveTextSnapshot { EntryChain = input.EntryChain.ToArray(), LeafEntry = input.LeafEntry!, Bytes = bytes,
+                var snapshot = new ArchiveWorkingSnapshot { EntryChain = input.EntryChain.ToArray(), LeafEntry = input.LeafEntry!, Bytes = bytes,
                     Sha256 = Convert.ToHexString(SHA256.HashData(bytes)), EncodingName = document.EncodingName, HasBom = document.HasBom };
                 _workingTexts.Save(input, revision, snapshot);
                 if (right) { _rightDocument = snapshot.Document(); _savedRight = text; }

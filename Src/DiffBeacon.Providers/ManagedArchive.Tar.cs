@@ -111,7 +111,22 @@ public sealed partial class ManagedArchive
     // 構造検証は共有し、リンク等のentry許可は各consumerで判断する。
     internal static TarReadSession OpenTarSession(Stream input, string path, long maximumDecoded,
         long maximumEntry, int maximumEntries, CancellationToken token)
-        => new(input, DetectTarFormat(input, path) ?? "tar", maximumDecoded, maximumEntry, maximumEntries, token);
+    {
+        if (!TryGetWrapperChain(path, out _, out var terminalType, out var depth) || terminalType != SharpCompress.Common.ArchiveType.Tar)
+            return new(input, DetectTarFormat(input, path) ?? "tar", maximumDecoded, maximumEntry, maximumEntries, token);
+        var limits = new ManagedArchiveLimits(MaximumEntries: maximumEntries, MaximumEntryBytes: maximumEntry,
+            MaximumDecodedBytes: maximumDecoded);
+        var service = new ManagedArchive(limits);
+        var budget = new ArchiveReadBudget(limits);
+        var decoded = service.DecodeWrappers(input, path, depth, token, budget, out _);
+        try
+        {
+            // 全層検証済みのTARを所有し、metadataの読込みも共有作業量へ計上する。
+            return new(new WorkReadStream(decoded, budget, token), "tar", maximumDecoded, maximumEntry,
+                maximumEntries, token, budget, inputAlreadyDecoded: true, ownedInput: decoded);
+        }
+        catch { decoded.Dispose(); throw; }
+    }
 
     internal sealed class TarReadSession : IDisposable
     {
@@ -119,13 +134,18 @@ public sealed partial class ManagedArchive
         private readonly SequentialLimitStream _decoded;
         private readonly TarValidationStream _verified;
         private readonly CancellationToken _token;
+        private readonly Stream? _ownedInput;
+        private readonly ArchiveReadBudget? _budget;
         private bool _complete;
         public TarReader Reader { get; }
         public long EntryLength => _verified.EntryLength;
         internal TarReadSession(Stream input, string format, long maximumDecoded, long maximumEntry,
-            int maximumEntries, CancellationToken token, ArchiveReadBudget? budget = null, bool inputAlreadyDecoded = false)
+            int maximumEntries, CancellationToken token, ArchiveReadBudget? budget = null, bool inputAlreadyDecoded = false,
+            Stream? ownedInput = null)
         {
             _token = token;
+            _ownedInput = ownedInput;
+            _budget = budget;
             _compression = format switch
             {
                 "tar.gz" => new VerifiedGZipStream(input, token, maximumEntries, budget),
@@ -139,6 +159,12 @@ public sealed partial class ManagedArchive
                 chargeDecoded: _compression is not null || !inputAlreadyDecoded);
             _verified = new TarValidationStream(_decoded, maximumEntry, maximumEntries, budget);
             Reader = new TarReader(_verified, leaveOpen: true);
+        }
+        internal void ChargeProviderEntry(string name)
+        {
+            _budget?.Item();
+            _budget?.PathCharacters(name.Length);
+            _budget?.Work(64);
         }
         public void CompleteRead()
         {
@@ -154,7 +180,10 @@ public sealed partial class ManagedArchive
             _token.ThrowIfCancellationRequested(); _complete = true;
         }
         public void Dispose()
-        { Reader.Dispose(); _verified.Dispose(); _decoded.Dispose(); _compression?.Dispose(); }
+        {
+            try { Reader.Dispose(); _verified.Dispose(); _decoded.Dispose(); _compression?.Dispose(); }
+            finally { _ownedInput?.Dispose(); }
+        }
     }
 
     private sealed class SequentialLimitStream(Stream inner, long limit, CancellationToken token,

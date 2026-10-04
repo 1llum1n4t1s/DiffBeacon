@@ -8,6 +8,7 @@ internal static class ProjectInputReader
     internal static async Task<TextDocument> ReadTextAsync(ComparisonProject project, int side,
         CancellationToken token, string? physicalSnapshot = null, IReadOnlyList<string?>? passwords = null)
     {
+        ProjectInputs.EnsureWorkingFormat(project);
         var input = ProjectInputs.Archive(project, side)?.Copy();
         if (input is null)
             return await TextDocument.LoadAsync(ArchiveActions.ValidatePath(physicalSnapshot ?? ProjectInputs.PathFor(project, side)), token).ConfigureAwait(false);
@@ -24,7 +25,8 @@ internal static class ProjectInputReader
         var bytes = await Task.Run(() => new ManagedArchive().ResolveEntry(source, input.LeafEntry,
             checked((int)options.MaxFileSize), passwords, token), token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
-        var working = input.WorkingTexts?.SingleOrDefault(copy => copy.EntryChain.SequenceEqual(input.EntryChain) && copy.LeafEntry == input.LeafEntry);
+        var working = input.WorkingDocuments?.SingleOrDefault(copy => copy.EntryChain.SequenceEqual(input.EntryChain) && copy.LeafEntry == input.LeafEntry);
+        if (working?.IsBinary == true) throw new InvalidDataException("Binary作業版はBinary形式で開き直してください。");
         var original = TextDocument.FromSnapshot(bytes, options);
         if (working is null) return original;
         if (working.EncodingName != original.EncodingName || working.HasBom != original.HasBom)
@@ -35,6 +37,7 @@ internal static class ProjectInputReader
     internal static async Task<byte[]> ReadBytesAsync(ComparisonProject project, int side, int maximumBytes,
         CancellationToken token, IReadOnlyList<string?>? passwords = null)
     {
+        ProjectInputs.EnsureWorkingFormat(project);
         var input = ProjectInputs.Archive(project, side)?.Copy();
         if (input is not null)
         {
@@ -46,7 +49,7 @@ internal static class ProjectInputReader
             if (input.LeafEntry is null) throw new InvalidDataException("内包ファイルを指定してください。");
             var original = await Task.Run(() => new ManagedArchive().ResolveEntry(input.ToSource(), input.LeafEntry,
                 maximumBytes, passwords, token), token).ConfigureAwait(false);
-            var working = input.WorkingTexts?.SingleOrDefault(copy => copy.EntryChain.SequenceEqual(input.EntryChain) && copy.LeafEntry == input.LeafEntry);
+            var working = input.WorkingDocuments?.SingleOrDefault(copy => copy.EntryChain.SequenceEqual(input.EntryChain) && copy.LeafEntry == input.LeafEntry);
             if (working is null) return original;
             if (working.Bytes is null || working.Bytes.Length > maximumBytes) throw new InvalidDataException("作業版の保持サイズ上限を超えました。");
             return working.Bytes.ToArray();
@@ -71,7 +74,7 @@ internal static class ProjectInputReader
 
     internal static void ValidateWorkingSources(ArchiveProjectInput input, IReadOnlyList<string?>? passwords, CancellationToken token)
     {
-        foreach (var copy in input.WorkingTexts ?? [])
+        foreach (var copy in input.WorkingDocuments ?? [])
         {
             var passwordChain = passwords is null ? null : passwords.Take(copy.EntryChain.Length + 1).ToArray();
             try { ValidateWorkingSource(input, copy, passwordChain, token); }
@@ -79,13 +82,15 @@ internal static class ProjectInputReader
         }
     }
 
-    internal static void ValidateWorkingSource(ArchiveProjectInput input, ArchiveTextSnapshot copy,
+    internal static void ValidateWorkingSource(ArchiveProjectInput input, ArchiveWorkingSnapshot copy,
         IReadOnlyList<string?>? passwords, CancellationToken token)
     {
         copy.Validate(input.RootPath);
         // 作業版でも全CRC/SHAと元leafの存在、文字コード/BOMを完全階層で検証する。
         var source = new ArchiveSource(Path.GetFullPath(input.RootPath), copy.EntryChain, input.RootSha256);
-        var original = TextDocument.FromSnapshot(new ManagedArchive().ResolveEntry(source, copy.LeafEntry, 64 * 1024 * 1024, passwords, token));
+        var bytes = new ManagedArchive().ResolveEntry(source, copy.LeafEntry, copy.MaximumFileBytes, passwords, token);
+        if (copy.IsBinary) return;
+        var original = TextDocument.FromSnapshot(bytes);
         if (original.EncodingName != copy.EncodingName || original.HasBom != copy.HasBom)
             throw new InvalidDataException("作業版の文字コード／BOMが原本と一致しません。");
     }

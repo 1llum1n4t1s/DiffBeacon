@@ -1,0 +1,3 @@
+Fixture inputs and independent reader: CC0-1.0.
+Existing TAR/Z source bytes: ../TarZ/README.md (CC0 deterministic data).
+Python standard library is used only for collection and independent verification.

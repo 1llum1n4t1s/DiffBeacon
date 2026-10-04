@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+実アプリの子プロセスは、通常CLIを30秒、`--self-test`で始まる描画・操作自己検証を120秒の上限で実行する。自己検証は複数の実画面操作と原本照合を含むため、通常CLIとは予算を分ける。時間超過では子プロセス群を終了し、終了コード`-2`と選択した制限時間をstdout／stderr・`assertions.json`へ残す。上限を延ばしただけで検証成功とは扱わず、実行完了と全条件の合格を確認する。
+
 TAR.Zは`--tar-z-only`で限定実行し、`--archives-only`と全体E2Eにも含む。全39固定原本（block9–16、nonblock10–16、独立literal nonblock9）の全entry bytes・型・サイズ、通常CLI全操作と標準archive／tar metadata provider、壊れたheader/code/TAR、既存出力保護、包装と相対入力再読込みを照合する。[固定原本・出典](../Fixtures/Archives/TarZ/README.md)を参照する。writer出力は`build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local`で別buildした公式decoderを`--z-reference <decoder>`へ明示し、Python標準tarfileで全内容・時刻・writer metadataを独立検証する。Windowsは`ncompress.exe`、macOSは`ncompress`。`--z-sevenzip <full7z>`はローカル第二decoderの追加照合。reference toolとC/compilerは製品・通常.NET buildの依存ではない。入力・出力・独立復号TAR・proof・exit・stdout/stderr・assertionsを保持する。限定は全体の代替ではない。
 
 画像重ね合わせの限定実行は`--image-overlay-only`（核と通常CLI）、`--image-overlay-reports-only`（通常CLI）を使う。`--image-overlay-script`へ期待値を除いた入力を送り、[静的原本](../Fixtures/ImageOverlays/README.md)49ケースと[時間原本](../Fixtures/ImageTemporalOverlays/README.md)77ケース83状態の全BGRA・個別clock読取り・blend alpha・分類／原画保持を照合する。通常CLIは適合する原本を単体HTML30ケース、領域診断25ケース、画像比較6ケースへ接続し、独立PNG復号・Alpha優先順位・無指定payload・不正引数・32MiB超過時のstdout空と入力／既存HTML保持を確認する。通常UTCのANIM出力のdigest検証と、固定原本clockの全画素照合を区別する。限定実行は全体E2Eの代替にしない。
@@ -175,6 +177,8 @@ dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-
 E2E harnessは未知option、値欠損、同じoptionの重複、複数selectorをoutput作成/App起動前に終了コード2で拒否します。wrapper限定はこの前処理もharness別プロセスで検証し、11組のstdout/stderrを保持します。
 
 ### 明示した内包アーカイブ
+
+`--archive-tar-wrappers-only` は [TAR多層wrapper原本](../Fixtures/Archives/TarWrappers/README.md) の正常22件・拒否22件とSource用ZIP4件を実アプリで照合します。通常list・entry・展開・repack、標準プロバイダー、typed root／Sourceを確認し、独立readerは正常ケースのID集合・一意性と各typed-root成果物を必須にします。共有作業量は入力SHAの上限拒否と、SHA確認後のアーカイブ処理中の上限拒否を別々に検証します。通常全体と `--archives-only` にも含み、限定実行は全体E2Eの代替にしません。
 
 `--archive-sources-only` は実アプリのSource専用CLIへdescriptorを渡します。通常全体と `--archives-only` にも含みます。[固定入力](../Fixtures/Archives/Sources/README.md)を変更せず、ZIP内ZIP、raw TAR、未知名gzip／bzip2 TAR、内側wrapper、深度8／9、二層の異なるpasswordとplaintext空行を検証します。最終全entryのsize／SHA、empty file、directory／missing拒否、後続sibling／内側CRC破損、root同サイズ・同mtime差替え、共有復号量の正確なbyte境界、件数・名前・深度・作業量、descriptor／root／readonly／link出力保護を確認します。
 

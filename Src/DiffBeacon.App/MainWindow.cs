@@ -16,7 +16,7 @@ public sealed partial class MainWindow : Window
     private readonly TabControl _tabs = new();
     private readonly List<TabItem> _sessions = [];
     internal ImageApplicationOptionsStore ImageOptions { get; }
-    internal ArchiveTextWorkingStore ArchiveTexts { get; private set; } = new();
+    internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
     public ComparisonPane ActivePane => (ComparisonPane)((TabItem)_tabs.SelectedItem!).Content!;
 
@@ -162,7 +162,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public ComparisonPane(Window owner) : this(owner, (owner as MainWindow)?.ArchiveTexts ?? new()) { }
 
-    internal ComparisonPane(Window owner, ArchiveTextWorkingStore workingTexts)
+    internal ComparisonPane(Window owner, ArchiveWorkingStore workingTexts)
     {
         _workingTexts = workingTexts;
         _owner = owner;
@@ -317,13 +317,19 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             CurrentDiff = null;
             if (mode == 8)
             {
+                var providerBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
+                var providerBinaryVersion = providerBinary?.StateVersion;
                 var provider = _providers.Get((string)_provider.SelectedItem!);
                 var result = await provider.CompareAsync(new ComparisonRequest(left, right, provider.Formats[0]), token);
                 ProviderResultReadyForAdoption?.Invoke(result);
+                var providerOptions = Options();
+                var providerDiff = await Task.Run(() => TextDiffer.Compare(result.LeftText, result.RightText, providerOptions, token), token);
                 token.ThrowIfCancellationRequested();
+                if (_disposed || !ReferenceEquals(_operation, operation) || providerBinary?.StateVersion != providerBinaryVersion
+                    || comparisonForPackaging != (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string)) return;
                 LeftEditor.Text = _savedLeft = result.LeftText; RightEditor.Text = _savedRight = result.RightText;
                 LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
-                await CompareEditorsAsync();
+                SetSpecialView(null); ApplyDiff(providerDiff);
                 _status.Text = result.Summary + " · 変換後の内容です。元のファイルへのテキスト保存はできません。";
                 _lastPackageComparison = comparisonForPackaging;
                 return;
@@ -346,7 +352,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             }
             if (mode == 3)
             {
-                SetSpecialView(await SpecializedViews.BinaryAsync(left, right, token, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, EnsureProjectOutputWritable));
+                var oldBinary = _specialTab.Content as SpecializedViews.BinaryPanel; var oldVersion = oldBinary?.StateVersion;
+                var candidate = await SpecializedViews.BinaryAsync(left, right, token, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, EnsureProjectOutputWritable);
+                if (token.IsCancellationRequested || _disposed || !ReferenceEquals(_operation, operation) || oldBinary?.StateVersion != oldVersion
+                    || comparisonForPackaging != (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string))
+                { SpecializedViews.Release(candidate); return; }
+                SetSpecialView(candidate); _workingDocumentStale = false;
                 _views.SelectedItem = _specialTab; _status.Text = "バイナリを比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
             if (mode == 7 || (mode == 0 && ArchivePanel.Supports(left) && ArchivePanel.Supports(right)))
@@ -388,20 +399,32 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 finally { candidate?.Dispose(); leftPassword = rightPassword = null; }
                 _views.SelectedItem = _specialTab; _status.Text = "アーカイブビューを開きました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
-            _leftDocument = await TextDocument.LoadAsync(left, token);
-            _rightDocument = await TextDocument.LoadAsync(right, token);
+            var previousBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
+            var previousBinaryVersion = previousBinary?.StateVersion;
+            var leftDocument = await TextDocument.LoadAsync(left, token);
+            var rightDocument = await TextDocument.LoadAsync(right, token);
+            var baseDocument = !string.IsNullOrWhiteSpace(BasePath.Text) ? await TextDocument.LoadAsync(BasePath.Text, token) : null;
+            var textOptions = Options();
+            var textDiff = mode is 5 or 6 ? null : await Task.Run(() => TextDiffer.Compare(leftDocument.Text, rightDocument.Text, textOptions, token), token);
+            token.ThrowIfCancellationRequested();
+            if (_disposed || !ReferenceEquals(_operation, operation) || previousBinary?.StateVersion != previousBinaryVersion
+                || comparisonForPackaging != (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string)) return;
+            _leftDocument = leftDocument; _rightDocument = rightDocument; _baseDocument = baseDocument;
             LeftEditor.IsReadOnly = _projectMetadata.LeftReadOnly;
             RightEditor.IsReadOnly = _projectMetadata.RightReadOnly;
             LeftEditor.Text = _savedLeft = _leftDocument.Text;
             RightEditor.Text = _savedRight = _rightDocument.Text;
-            _baseDocument = !string.IsNullOrWhiteSpace(BasePath.Text) ? await TextDocument.LoadAsync(BasePath.Text, token) : null;
             _baseText = _baseDocument?.Text;
             _ancestorEditor.Text = _baseText ?? "";
             UpdateEditorLayout(_baseText is not null);
             _textSaveAllowed = true;
             if (mode == 6) await OpenTableAsync();
             else if (mode == 5) { SetSpecialView(SpecializedViews.StructuredJson(LeftEditor.Text, RightEditor.Text)); _views.SelectedItem = _specialTab; }
-            else await CompareEditorsAsync();
+            else
+            {
+                // Text採用後に旧形式の保存・通知へdispatchしない。読込み失敗中は旧ownerを保持する。
+                SetSpecialView(null); _workingDocumentStale = false; ApplyDiff(textDiff!);
+            }
             if (mode is 5 or 6) _status.Text = mode == 5 ? "JSONの構造を比較しました。" : "表の区切り・引用符設定で比較しました。";
             _lastPackageComparison = comparisonForPackaging;
         }
@@ -479,10 +502,11 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (_specialTab.Content is SpecializedViews.ImagePanel image)
             image.SetDisplayActive(active && ReferenceEquals(_views.SelectedItem, _specialTab));
     }
-    private void SetSpecialView(Control view)
+    private void SetSpecialView(Control? view)
     {
         SpecializedViews.Release(_specialTab.Content as Control);
         _specialTab.Content = view;
+        if (view is SpecializedViews.BinaryPanel binary) BindBinaryPanel(binary);
         (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         UpdateComparisonToolbarHeight();
     }
@@ -594,7 +618,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _status.Text = "検索語が見つかりませんでした。";
     }
 
-    public Task SaveAsync(bool right) => SaveTextCoreAsync(right, null, CancellationToken.None);
+    public Task SaveAsync(bool right) => _specialTab.Content is SpecializedViews.BinaryPanel binary ? binary.SaveAsync(right) : SaveTextCoreAsync(right, null, CancellationToken.None);
     private async Task<string?> SavePathAsync(string title, string suggested) => (await _owner.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = title, SuggestedFileName = suggested, ShowOverwritePrompt = true }))?.TryGetLocalPath();
     private async Task ExportPatchAsync()
     {

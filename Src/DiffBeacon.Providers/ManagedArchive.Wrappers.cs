@@ -20,13 +20,30 @@ public sealed partial class ManagedArchive
             depth++;
         }
         var terminal = path.AsSpan(0, terminalLength);
+        var aliasWrapper = TarAliasWrapper(terminal);
+        if (aliasWrapper is not null)
+        {
+            terminalType = ArchiveType.Tar;
+            // 単層aliasは従来のTAR経路を維持し、外層があるときだけ共通鎖へ渡す。
+            if (depth == 0) return false;
+            depth++;
+            return true;
+        }
         terminalType = terminal.EndsWith(".7z", StringComparison.OrdinalIgnoreCase) ? ArchiveType.SevenZip :
-            terminal.EndsWith(".rar", StringComparison.OrdinalIgnoreCase) ? ArchiveType.Rar : ArchiveType.Zip;
+            terminal.EndsWith(".rar", StringComparison.OrdinalIgnoreCase) ? ArchiveType.Rar :
+            terminal.EndsWith(".tar", StringComparison.OrdinalIgnoreCase) ? ArchiveType.Tar : ArchiveType.Zip;
+        // 単層TAR圧縮は既存の逐次読込み・サイズ境界を維持する。
+        if (terminalType == ArchiveType.Tar) return depth > 1;
         return depth > 0 && (terminalType != ArchiveType.Zip ||
             terminal.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) || terminal.EndsWith(".jar", StringComparison.OrdinalIgnoreCase) ||
             terminal.EndsWith(".ear", StringComparison.OrdinalIgnoreCase) || terminal.EndsWith(".war", StringComparison.OrdinalIgnoreCase) ||
             terminal.EndsWith(".xpi", StringComparison.OrdinalIgnoreCase));
     }
+
+    private static string? TarAliasWrapper(ReadOnlySpan<char> name) =>
+        name.EndsWith(".tgz", StringComparison.OrdinalIgnoreCase) ? ".gz" :
+        name.EndsWith(".tbz", StringComparison.OrdinalIgnoreCase) || name.EndsWith(".tbz2", StringComparison.OrdinalIgnoreCase) ? ".bz2" :
+        name.EndsWith(".taz", StringComparison.OrdinalIgnoreCase) ? ".Z" : null;
 
     private static string? WrapperSuffix(ReadOnlySpan<char> name) =>
         name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) ? ".gz" :
@@ -38,14 +55,25 @@ public sealed partial class ManagedArchive
         Func<ManagedArchiveEntry, bool>? capture, Action<ManagedArchiveEntry, MemoryStream?>? consume,
         long? captureLimit, bool prefixOnly, ArchiveReadBudget? sharedBudget = null, OwnedEntryCapture? ownedCapture = null)
     {
+        var budget = sharedBudget ?? new ArchiveReadBudget(_limits);
+        using var decoded = DecodeWrappers(physicalInput, logicalName, depth, token, budget, out var suffixes);
+        using var terminalInput = new WorkReadStream(decoded, budget, token);
+        var manifest = ReadCore(terminalInput, logicalName[..terminalLength], password, token,
+            capture, consume, captureLimit, prefixOnly, budget, terminalType, ownedCapture, inputAlreadyDecoded: true);
+        return manifest with { Format = manifest.Format + string.Concat(suffixes) };
+    }
+
+    // managed一覧・typed Source・TAR metadataの各consumerで同じ全層検証と予算を使う。
+    private MemoryStream DecodeWrappers(Stream physicalInput, string logicalName, int depth,
+        CancellationToken token, ArchiveReadBudget budget, out string[] suffixes)
+    {
         if (depth > _limits.MaximumWrapperDepth)
             throw new InvalidDataException("アーカイブ wrapper の深度上限を超えました。");
-        var budget = sharedBudget ?? new ArchiveReadBudget(_limits);
         budget.Layers(depth);
         Stream current = physicalInput;
         MemoryStream? owned = null;
         var nameLength = logicalName.Length;
-        var suffixes = new string[depth];
+        suffixes = new string[depth];
         var buffer = new byte[64 * 1024];
         try
         {
@@ -53,9 +81,11 @@ public sealed partial class ManagedArchive
             {
                 token.ThrowIfCancellationRequested();
                 budget.Item(); // 次段の確保・decoder 構築より前に共有残量を確認する。
-                var suffix = WrapperSuffix(logicalName.AsSpan(0, nameLength))!;
+                var suffix = WrapperSuffix(logicalName.AsSpan(0, nameLength));
+                var alias = suffix is null;
+                suffix ??= TarAliasWrapper(logicalName.AsSpan(0, nameLength))!;
                 suffixes[depth - layer - 1] = suffix;
-                nameLength -= suffix.Length;
+                if (!alias) nameLength -= suffix.Length;
                 budget.PathCharacters(suffix.Length);
                 using var workInput = new WorkReadStream(current, budget, token);
                 VerifyWrapperMagic(workInput, suffix);
@@ -95,12 +125,9 @@ public sealed partial class ManagedArchive
                 }
                 catch { next.Dispose(); throw; }
             }
-            using var terminalInput = new WorkReadStream(current, budget, token);
-            var manifest = ReadCore(terminalInput, logicalName[..terminalLength], password, token,
-                capture, consume, captureLimit, prefixOnly, budget, terminalType, ownedCapture, inputAlreadyDecoded: true);
-            return manifest with { Format = manifest.Format + string.Concat(suffixes) };
+            return owned!;
         }
-        finally { owned?.Dispose(); }
+        catch { owned?.Dispose(); throw; }
     }
 
     private static void VerifyWrapperMagic(Stream input, string suffix)

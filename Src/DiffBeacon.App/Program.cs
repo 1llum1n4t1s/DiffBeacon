@@ -17,6 +17,8 @@ public static class Program
             return HeadlessSelfTest.Run(args[1], archiveSourcesOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--archive-working-review-only")
             return HeadlessSelfTest.Run(args[1], archiveWorkingReviewOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-working-only")
+            return HeadlessSelfTest.Run(args[1], binaryWorkingOnly: true);
         if (args.Length == 3 && args[0] == "--clipboard-self-test")
             return DesktopClipboardSelfTest.Run(args[1], args[2]);
         if (args.Length > 0 && args[0].StartsWith("--", StringComparison.Ordinal))

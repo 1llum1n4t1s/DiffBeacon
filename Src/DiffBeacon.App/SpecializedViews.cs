@@ -55,116 +55,8 @@ public static partial class SpecializedViews
         bool leftReadOnly, bool rightReadOnly, Action<string>? guardOutput = null,
         string? leftProtectedPath = null, string? rightProtectedPath = null, bool fixedLeftReadOnly = false, bool fixedRightReadOnly = false)
     {
-        if (a.Length > 16 * 1024 * 1024 || b.Length > 16 * 1024 * 1024) throw new InvalidOperationException("16進比較の上限は各16 MiBです。");
-        var root = new BinaryPanel { FixedLeftReadOnly = fixedLeftReadOnly, FixedRightReadOnly = fixedRightReadOnly, LeftReadOnly = leftReadOnly, RightReadOnly = rightReadOnly };
-        var actions = new WrapPanel();
-        var offset = new NumericUpDown { Minimum = 0, Maximum = Math.Max(a.Length, b.Length), Increment = 4096, Value = 0, Width = 140 };
-        var status = new TextBlock { Margin = new Thickness(8), TextWrapping = TextWrapping.Wrap };
-        var leftEditor = HexEditor(); var rightEditor = HexEditor();
-        root.ApplyReadOnly = () => { leftEditor.IsReadOnly = root.LeftReadOnly; rightEditor.IsReadOnly = root.RightReadOnly; };
-        root.ApplyReadOnly();
-        var differences = new ListBox { MaxHeight = 160, FontFamily = Mono };
-        var pageStart = 0; var updating = false;
-        var leftDirty = false; var rightDirty = false;
-        var leftBaseline = ""; var rightBaseline = "";
-        bool PendingEdits() => leftEditor.Text != leftBaseline || rightEditor.Text != rightBaseline;
-        root.IsDirty = () => leftDirty || rightDirty || PendingEdits();
-        root.MarkClean = () => { leftDirty = false; rightDirty = false; leftBaseline = leftEditor.Text ?? ""; rightBaseline = rightEditor.Text ?? ""; };
-        var ranges = new List<(int Start, int Length)>();
-        var totalRanges = 0;
-        void Refresh(bool rebuildRanges = true)
-        {
-            updating = true;
-            pageStart = (int)(offset.Value ?? 0);
-            leftEditor.Text = Hex(a.AsSpan(Math.Min(pageStart, a.Length), Math.Min(4096, Math.Max(0, a.Length - pageStart))));
-            rightEditor.Text = Hex(b.AsSpan(Math.Min(pageStart, b.Length), Math.Min(4096, Math.Max(0, b.Length - pageStart))));
-            leftBaseline = leftEditor.Text ?? ""; rightBaseline = rightEditor.Text ?? "";
-            if (rebuildRanges)
-            {
-                ranges.Clear();
-                totalRanges = 0;
-                var n = Math.Max(a.Length, b.Length);
-                for (var i = 0; i < n; i++)
-                {
-                    if (i < a.Length && i < b.Length && a[i] == b[i]) continue;
-                    var start = i;
-                    while (i + 1 < n && (i + 1 >= a.Length || i + 1 >= b.Length || a[i + 1] != b[i + 1])) i++;
-                    totalRanges++;
-                    if (ranges.Count < 10_000) ranges.Add((start, i - start + 1));
-                }
-                differences.ItemsSource = ranges.Select(x => $"0x{x.Start:X8} · {x.Length:N0} bytes").ToArray();
-            }
-            status.Text = $"左 {a.Length:N0} bytes / 右 {b.Length:N0} bytes · 差分範囲 {totalRanges:N0}（一覧は先頭1万範囲まで）· 表示先頭 0x{pageStart:X8}（最大4096 bytes）。編集は同じ長さの16進値を入力し適用します。保存は別名保存です。";
-            updating = false;
-        }
-        void Apply(bool toRight)
-        {
-            if (toRight ? root.RightReadOnly : root.LeftReadOnly) { status.Text = "この側はプロジェクトで読取り専用に指定されています。"; return; }
-            var editor = toRight ? rightEditor : leftEditor;
-            var bytes = toRight ? b : a;
-            try
-            {
-                var compact = string.Concat((editor.Text ?? "").Where(c => !char.IsWhiteSpace(c)));
-                var replacement = Convert.FromHexString(compact);
-                var length = Math.Min(4096, Math.Max(0, bytes.Length - pageStart));
-                if (replacement.Length != length) throw new FormatException("編集前と同じバイト数を入力してください。");
-                var start = Math.Min(pageStart, bytes.Length);
-                if (toRight) { rightDirty |= !replacement.AsSpan().SequenceEqual(bytes.AsSpan(start, length)); rightBaseline = editor.Text ?? ""; }
-                else { leftDirty |= !replacement.AsSpan().SequenceEqual(bytes.AsSpan(start, length)); leftBaseline = editor.Text ?? ""; }
-                replacement.CopyTo(bytes, start);
-                if (!PendingEdits()) Refresh(); else status.Text = "適用しました。もう一方の編集中の値も適用してください。";
-            }
-            catch (Exception ex) when (ex is FormatException or ArgumentException) { status.Text = ex.Message; }
-        }
-        void Merge(bool toRight)
-        {
-            if (toRight ? root.RightReadOnly : root.LeftReadOnly) { status.Text = "この側はプロジェクトで読取り専用に指定されています。"; return; }
-            if (PendingEdits()) { status.Text = "先に16進編集を適用してください。"; return; }
-            if (differences.SelectedIndex < 0 || differences.SelectedIndex >= ranges.Count) return;
-            var range = ranges[differences.SelectedIndex];
-            var source = toRight ? a : b; var target = toRight ? b : a;
-            // オフセット整列を保つため、末尾の長さ差以外は挿入・削除しない。
-            var sourceLength = Math.Min(range.Length, Math.Max(0, source.Length - range.Start));
-            if (range.Start + range.Length >= target.Length && range.Start + range.Length >= source.Length)
-                Array.Resize(ref target, range.Start + sourceLength);
-            source.AsSpan(Math.Min(range.Start, source.Length), sourceLength).CopyTo(target.AsSpan(Math.Min(range.Start, target.Length)));
-            if (toRight) { b = target; rightDirty = true; } else { a = target; leftDirty = true; }
-            offset.Maximum = Math.Max(a.Length, b.Length); Refresh();
-        }
-        actions.Children.Add(new TextBlock { Text = "表示オフセット", Margin = new Thickness(8) }); actions.Children.Add(offset);
-        AddButton(actions, "左編集を適用", () => { Apply(false); return Task.CompletedTask; });
-        AddButton(actions, "右編集を適用", () => { Apply(true); return Task.CompletedTask; });
-        AddButton(actions, "選択範囲 →", () => { Merge(true); return Task.CompletedTask; });
-        AddButton(actions, "← 選択範囲", () => { Merge(false); return Task.CompletedTask; });
-        root.SaveContent = async (rightSide, path, token) =>
-        {
-            if (PendingEdits()) throw new InvalidOperationException("先に16進編集を適用してください。");
-            GuardOutput(path);
-            await WriteBinaryCopyAsync(path, rightSide ? b : a, token);
-            if (rightSide) rightDirty = false; else leftDirty = false;
-            status.Text = "バイナリを保存しました。";
-        };
-        AddButton(actions, "左を別名保存", () => PickBinaryOutputAsync(root, false, Path.GetFileName(left)));
-        AddButton(actions, "右を別名保存", () => PickBinaryOutputAsync(root, true, Path.GetFileName(right)));
-        void GuardOutput(string path)
-        {
-            guardOutput?.Invoke(path);
-            if ((root.LeftReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(leftProtectedPath ?? left, path)) || (root.RightReadOnly && DiffBeacon.Providers.ArchivePaths.SameFile(rightProtectedPath ?? right, path)))
-                throw new InvalidOperationException("読取り専用に指定された入力を上書きできません。");
-        }
-        offset.ValueChanged += (_, _) =>
-        {
-            if (updating) return;
-            if (PendingEdits()) { updating = true; offset.Value = pageStart; updating = false; status.Text = "先に16進編集を適用してください。"; return; }
-            Refresh(false);
-        };
-        differences.SelectionChanged += (_, _) => { if (!updating && differences.SelectedIndex >= 0 && differences.SelectedIndex < ranges.Count) offset.Value = ranges[differences.SelectedIndex].Start; };
-        DockPanel.SetDock(actions, Dock.Top); root.Children.Add(actions);
-        DockPanel.SetDock(status, Dock.Bottom); root.Children.Add(status);
-        DockPanel.SetDock(differences, Dock.Bottom); root.Children.Add(differences);
-        root.Children.Add(Pair(leftEditor, rightEditor)); Refresh(); return root;
+        return new BinaryPanel(a, b, leftReadOnly, rightReadOnly) { FixedLeftReadOnly = fixedLeftReadOnly, FixedRightReadOnly = fixedRightReadOnly };
     }
-
     public static Control StructuredJson(string leftText, string rightText)
     {
         var a = StructuredComparer.NormalizeJson(leftText); var b = StructuredComparer.NormalizeJson(rightText);
@@ -180,19 +72,6 @@ public static partial class SpecializedViews
         foreach (var text in new[] { a, b })
         { var quoted = false; foreach (var c in text) { if (c == '"') quoted = !quoted; if (!quoted && c == '\t') return '\t'; if (!quoted && c is '\r' or '\n') break; } }
         return ',';
-    }
-    public sealed class BinaryPanel : DockPanel
-    {
-        private bool _leftReadOnly, _rightReadOnly;
-        internal bool FixedLeftReadOnly { get; init; }
-        internal bool FixedRightReadOnly { get; init; }
-        public bool LeftReadOnly { get => FixedLeftReadOnly || _leftReadOnly; set => _leftReadOnly = value; }
-        public bool RightReadOnly { get => FixedRightReadOnly || _rightReadOnly; set => _rightReadOnly = value; }
-        public Action? ApplyReadOnly { get; set; }
-        internal Func<bool, string, CancellationToken, Task>? SaveContent { get; set; }
-        public Task SaveToAsync(bool rightSide, string path, CancellationToken token = default) => SaveContent?.Invoke(rightSide, path, token) ?? throw new InvalidOperationException("バイナリを読み込んでいません。");
-        public Func<bool>? IsDirty { get; set; }
-        public Action? MarkClean { get; set; }
     }
     private static async Task<byte[]> ReadBinaryAsync(string path, int limit, CancellationToken token)
     {
@@ -237,44 +116,12 @@ public static partial class SpecializedViews
     }
     private static async Task PickBinaryOutputAsync(BinaryPanel control, bool rightSide, string name)
     {
+        if (control.SavePathPicker is { } picker)
+        { var chosen = await picker(rightSide); if (chosen is not null) await control.SaveToAsync(rightSide, chosen); return; }
         var top = TopLevel.GetTopLevel(control); if (top is null) return;
         var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { SuggestedFileName = name, Title = "バイナリを別名保存" });
         if (file is null) return;
         if (file.TryGetLocalPath() is not string path) throw new IOException("ローカルの保存先を選択してください。");
         await control.SaveToAsync(rightSide, path);
-    }
-    private static async Task WriteBinaryCopyAsync(string path, byte[] bytes, CancellationToken token)
-    {
-        var fullPath = Path.GetFullPath(path);
-        void ValidateOutput()
-        {
-            for (var current = fullPath; current is not null; current = Path.GetDirectoryName(current))
-            {
-                try
-                {
-                    var attributes = File.GetAttributes(current);
-                    if ((attributes & FileAttributes.ReparsePoint) != 0) throw new IOException("リンクを経由して保存できません。");
-                    if (current == fullPath && (attributes & FileAttributes.ReadOnly) != 0) throw new UnauthorizedAccessException("読取り専用ファイルへ保存できません。");
-                }
-                catch (FileNotFoundException) { }
-                catch (DirectoryNotFoundException) { }
-            }
-        }
-        token.ThrowIfCancellationRequested(); ValidateOutput();
-        var exists = File.Exists(fullPath);
-        var attributes = exists ? File.GetAttributes(fullPath) : FileAttributes.Normal;
-        UnixFileMode? mode = exists && !OperatingSystem.IsWindows() ? File.GetUnixFileMode(fullPath) : null;
-        var temporary = Path.Combine(Path.GetDirectoryName(fullPath)!, ".diffbeacon-binary-" + Guid.NewGuid().ToString("N") + ".tmp");
-        try
-        {
-            await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 64 * 1024, FileOptions.Asynchronous))
-            { await stream.WriteAsync(bytes, token); await stream.FlushAsync(token); stream.Flush(true); }
-            if (mode.HasValue && !OperatingSystem.IsWindows()) File.SetUnixFileMode(temporary, mode.Value);
-            if (OperatingSystem.IsWindows() && exists)
-            { var preserved = attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Archive | FileAttributes.NotContentIndexed); File.SetAttributes(temporary, preserved == 0 ? FileAttributes.Normal : preserved); }
-            ValidateOutput(); token.ThrowIfCancellationRequested();
-            if (File.Exists(fullPath)) File.Replace(temporary, fullPath, null); else File.Move(temporary, fullPath);
-        }
-        finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
 }

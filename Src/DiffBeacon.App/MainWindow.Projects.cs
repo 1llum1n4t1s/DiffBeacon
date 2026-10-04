@@ -34,7 +34,7 @@ public sealed partial class MainWindow
             // 全設定を検証してから既存タブを置換し、読込み失敗では編集内容を残す。
             var source = Path.GetFullPath(path);
             var workspace = await WorkspaceStore.LoadWorkspaceAsync(source, token);
-            var workingTexts = new ArchiveTextWorkingStore();
+            var workingTexts = new ArchiveWorkingStore();
             foreach (var project in workspace.Entries)
             {
                 var pane = new ComparisonPane(this, workingTexts);
@@ -121,9 +121,10 @@ public sealed partial class ComparisonPane
         }
         foreach (var side in Enumerable.Range(0, 3))
             ProjectInputs.Archive(project, side)?.Validate(project.Mode == "Archive", side == 0 ? project.LeftReadOnly : side == 1 ? project.BaseReadOnly : project.RightReadOnly);
+        ProjectInputs.EnsureWorkingFormat(project);
         _workingTexts.Import(Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side)).OfType<ArchiveProjectInput>());
         if (_owner is MainWindow window)
-            foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => ProjectInputs.Archive(project, side)?.WorkingTexts ?? []))
+            foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => ProjectInputs.Archive(project, side)?.WorkingDocuments ?? []))
                 if (copy.SnapshotPath is { } asset && Path.IsPathFullyQualified(asset)) window.ArchiveLifetime.RegisterAsset(asset);
         _tableSyntax = null;
         InvalidateTextSave();
@@ -132,7 +133,7 @@ public sealed partial class ComparisonPane
         _projectMetadata = WorkspaceStore.CloneProject(project);
         LeftPath.Text = ProjectInputs.Caption(project, 0); BasePath.Text = ProjectInputs.Caption(project, 1); RightPath.Text = ProjectInputs.Caption(project, 2);
         ConfigureArchiveInputControls();
-        _mode.IsEnabled = _provider.IsEnabled = !ProjectInputs.HasArchives(project);
+        _provider.IsEnabled = !ProjectInputs.HasArchives(project);
         var mode = Array.FindIndex(ModeNames, name => name.Equals(project.Mode, StringComparison.OrdinalIgnoreCase));
         if (project.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase)) mode = 8;
         if (mode < 0 && int.TryParse(project.Mode, out var oldIndex) && oldIndex is >= 0 and <= 8) mode = oldIndex;
@@ -282,7 +283,10 @@ public sealed partial class ComparisonPane
                     RightReadOnly = project.RightArchiveInput is not null || rightRo.IsChecked == true,
                     LegacyFilter = filter.Text, TableDelimiter = delimiterValue, TableQuote = quoteValue, TableAllowNewlinesInQuotes = multiline.IsChecked == true };
                 RefreshTextReadOnly();
-                SpecializedViews.SetProjectReadOnly(_specialTab.Content as Control, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, _projectMetadata.BaseReadOnly);
+                var binary = _specialTab.Content is SpecializedViews.BinaryPanel;
+                SpecializedViews.SetProjectReadOnly(_specialTab.Content as Control,
+                    binary ? BinaryReadOnly(false) : _projectMetadata.LeftReadOnly,
+                    binary ? BinaryReadOnly(true) : _projectMetadata.RightReadOnly, _projectMetadata.BaseReadOnly);
                 _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
                 if (_owner is MainWindow owner) owner.RefreshSessionHeaders();
                 UpdateEditorLayout(_baseText is not null); _status.Text = "比較の設定を適用しました。表・フィルターの変更は再比較で反映されます。";

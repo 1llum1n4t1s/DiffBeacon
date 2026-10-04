@@ -26,9 +26,9 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private int _previewVersion;
     private int _refreshVersion;
     private bool _disposed;
-    private ArchiveTextWorkingStore? _workingTexts;
+    private ArchiveWorkingStore? _workingTexts;
     private ManagedArchiveManifest? _leftManifest, _rightManifest;
-    internal void SetWorkingTexts(ArchiveTextWorkingStore store) { _workingTexts = store; RefreshWorkingRows(); }
+    internal void SetWorkingDocuments(ArchiveWorkingStore store) { _workingTexts = store; RefreshWorkingRows(); }
     internal void RefreshWorkingRows()
     {
         if (_disposed || _leftManifest is null || _rightManifest is null) return;
