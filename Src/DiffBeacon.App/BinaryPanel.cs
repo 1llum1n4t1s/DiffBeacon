@@ -42,6 +42,7 @@ public static partial class SpecializedViews
         internal Func<int, string?, CancellationToken, Task>? SaveContent { get; set; }
         internal Func<int, Task<string?>>? SavePathPicker { get; set; }
         internal Func<int, int, Task>? CopyAllContent { get; set; }
+        internal Func<int, BinaryRangeKind, Task>? RangeEditContent { get; set; }
         public Func<bool>? IsDirty { get; }
         public Action? MarkClean { get; }
         internal long StateVersion { get; private set; }
@@ -100,6 +101,8 @@ public static partial class SpecializedViews
             AddButton(actions, "やり直す", () => Run(() => Redo()));
             foreach (var side in ProjectSides)
             {
+                foreach (var kind in Enum.GetValues<BinaryRangeKind>())
+                    AddButton(actions, Name(side) + " " + BinaryRangeDialog.Label(kind), () => RunAsync(() => RangeEditAsync(side, kind)));
                 AddButton(actions, Name(side) + "を保存", () => SaveAsync(side));
                 AddButton(actions, Name(side) + "を別名保存", () => PickBinaryOutputAsync(this, side, side switch { 0 => "left.bin", 1 => "middle.bin", _ => "right.bin" }));
             }
@@ -132,6 +135,15 @@ public static partial class SpecializedViews
         { ThrowDisposed(); EnsureApplied(); _ = LocalSide(source); _ = LocalSide(destination); return CopyAllContent?.Invoke(source, destination) ?? throw new InvalidOperationException("コピー元の比較がありません。"); }
         internal void CopyAll(int source, int destination)
         { ThrowDisposed(); EnsureApplied(); ApplyReadOnly?.Invoke(); var revision = Session.Revision(LocalSide(destination)); Session.CopyAll(LocalSide(source), LocalSide(destination)); if (revision != Session.Revision(LocalSide(destination))) { StateVersion++; Render(); } }
+        internal Task RangeEditAsync(int side, BinaryRangeKind kind)
+        { ThrowDisposed(); EnsureApplied(); _ = LocalSide(side); return RangeEditContent?.Invoke(side, kind) ?? throw new InvalidOperationException("編集元の比較がありません。"); }
+        internal void EditRange(int side, BinaryRangeRequest request)
+        {
+            ThrowDisposed(); EnsureApplied(); ApplyReadOnly?.Invoke();
+            var local = LocalSide(side); var revision = Session.Revision(local);
+            Session.EditRange(local, request.Start, request.Count, request.Hex, request.Kind == BinaryRangeKind.Insert, request.Kind == BinaryRangeKind.Delete);
+            if (revision != Session.Revision(local)) { StateVersion++; Render(); }
+        }
         public void Apply(int side)
         {
             ThrowDisposed(); ApplyReadOnly?.Invoke();
@@ -168,10 +180,12 @@ public static partial class SpecializedViews
         {
             _updating = true;
             _offset.Maximum = ProjectSides.Max(side => Session.Length(LocalSide(side)));
+            _pageStart = Math.Min(_pageStart, (int)_offset.Maximum); _offset.Value = _pageStart;
             foreach (var side in ProjectSides)
             {
                 if (Pending(side)) continue;
                 var editor = Editor(side); editor.Text = Hex(Session.Page(LocalSide(side), _pageStart)); _baseline[side] = editor.Text ?? "";
+                editor.CaretIndex = Math.Min(editor.CaretIndex, editor.Text?.Length ?? 0);
             }
             _ranges = Session.Differences(10_000, out var total);
             Differences.ItemsSource = _ranges.Select(range => $"0x{range.Start:X8} · {range.Length:N0} bytes").ToArray();
@@ -179,6 +193,6 @@ public static partial class SpecializedViews
                 + $" · 差分範囲 {total:N0} · 表示先頭 0x{_pageStart:X8}（最大4096 bytes）。同じ長さの16進値を入力して適用します。";
             _updating = false;
         }
-        public void Dispose() { if (_disposed) return; _disposed = true; SaveContent = null; SavePathPicker = null; CopyAllContent = null; RequiredReadOnly = null; Session.Dispose(); }
+        public void Dispose() { if (_disposed) return; _disposed = true; SaveContent = null; SavePathPicker = null; CopyAllContent = null; RangeEditContent = null; RequiredReadOnly = null; Session.Dispose(); }
     }
 }

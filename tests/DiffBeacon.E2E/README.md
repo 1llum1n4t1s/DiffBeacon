@@ -197,3 +197,7 @@ GUIは全体 `--self-test <出力先>` の `HeadlessArchiveSourceChecks` で実c
 ### Binary Copy All
 
 `--binary-copy-all-only` は実アプリ別プロセスの `--self-test <output> --binary-copy-all-only` を起動し、二者両方向と三者全6方向の実ボタン・実確認dialogのキャンセル／続行を検証します。短いsourceの末尾保持・空／同一bytesのno-op・読取り専用・未適用Hex拒否・確認中のowner／StateStamp／再比較／readonly変更・共有履歴上限を確認します。通常保存、内包Binaryの作業保存、project-copy・包装展開／再読込みも実行します。[独立reader](../Fixtures/BinaryCopyAll/README.md)が固定期待bytesと元入力・ZIP entry／CRC・workspace／包装assetを全byte照合します。PNG・facts.json・assertions.json・各プロセスstdout／stderrを保持します。全体E2Eと全体UI自己検証にも含まれます。ネイティブ保存dialog・実OSpointerはこのheadless検証に含みません。
+
+### バイナリ範囲編集の限定検証
+
+`--binary-range-edits-only` は実アプリ別プロセスの実ダイアログ、全二者／三者側、訂正・取消・古い結果拒否、境界・上限・共有Undo／Redo・保存点・保存中の後発編集を検証する。内包作業保存・workspace／包装・CLI複製／展開再読込みを `tests/Fixtures/BinaryRangeEdits/verify.py` の固定期待bytesとZIP CRCで独立照合する。GUI限定は `--self-test <output> --binary-range-edits-only`。全体E2Eと全体UIにも含み、限定実行は全体検証の代替にしない。

@@ -42,6 +42,25 @@ public sealed partial class ComparisonPane
             if (!Current()) throw new OperationCanceledException("確認中に比較が変更されたため、コピーしませんでした。");
             panel.CopyAll(source, destination);
         };
+        panel.RangeEditContent = async (side, kind) =>
+        {
+            var stamp = panel.StateStamp; var generation = _binarySaveGeneration; var operation = _operation;
+            var identity = ArchiveComparisonIdentity(CaptureProject());
+            var inputs = (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
+            var readOnly = panel.ProjectSides.Select(panel.ReadOnly).ToArray();
+            bool Current() => !_disposed && !panel.IsDisposed && ReferenceEquals(_specialTab.Content, panel)
+                && generation == _binarySaveGeneration && ReferenceEquals(operation, _operation) && operation?.IsCancellationRequested != true
+                && stamp == panel.StateStamp && identity == ArchiveComparisonIdentity(CaptureProject())
+                && inputs == (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem)
+                && panel.ProjectSides.Select(panel.ReadOnly).SequenceEqual(readOnly);
+            if (!Current() || identity != _binaryLoadedIdentity) throw new InvalidOperationException("編集元の比較が変更されています。");
+            panel.EnsureApplied(); panel.ApplyReadOnly?.Invoke();
+            if (panel.ReadOnly(side)) throw new InvalidOperationException("この側は読取り専用です。");
+            var request = await BinaryRangeDialog.ShowAsync(_owner, kind, panel.Session.Length(panel.LocalSide(side)));
+            if (request is null) return;
+            if (!Current()) throw new OperationCanceledException("入力中に比較が変更されたため、編集しませんでした。");
+            panel.EditRange(side, request);
+        };
         panel.SaveContent = (side, path, token) => SaveBinaryAsync(panel, side, path, token);
         panel.SavePathPicker = side => BinarySavePathPicker is { } picker ? picker(side) : SavePathAsync("バイナリを別名保存", side switch { 0 => "left.bin", 1 => "middle.bin", _ => "right.bin" });
         panel.ApplyReadOnly?.Invoke();

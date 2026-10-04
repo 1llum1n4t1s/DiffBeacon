@@ -73,6 +73,43 @@ public sealed class BinaryEditSession : IDisposable
         if (replacement.Length != length) throw new FormatException("編集前と同じバイト数を入力してください。");
         var candidate = _bytes[side].ToArray(); replacement.CopyTo(candidate, offset); Commit(side, candidate);
     }
+    // 範囲と候補サイズをlongで検査してから配列を確保する。
+    public void EditRange(int side, long start, long count, string hex, bool insert, bool delete)
+    {
+        Writable(side);
+        var replacement = ValidateRange(_bytes[side].Length, start, count, hex, insert, delete);
+        var removed = delete ? (int)count : insert ? 0 : replacement.Length;
+        var offset = (int)start;
+        var candidate = new byte[checked(_bytes[side].Length - removed + replacement.Length)];
+        _bytes[side].AsSpan(0, offset).CopyTo(candidate);
+        replacement.CopyTo(candidate, offset);
+        _bytes[side].AsSpan(offset + removed).CopyTo(candidate.AsSpan(offset + replacement.Length));
+        Commit(side, candidate);
+    }
+    public static byte[] ValidateRange(int length, long start, long count, string hex, bool insert, bool delete)
+    {
+        ArgumentNullException.ThrowIfNull(hex);
+        if (start < 0 || start > length || count < 0 || insert && delete) throw new ArgumentOutOfRangeException(nameof(start));
+        if (delete)
+        {
+            if (count > length - start) throw new ArgumentOutOfRangeException(nameof(count));
+            return [];
+        }
+        // 空白込みの入力も上限を設け、無制限の正規化用bufferを作らない。
+        if (hex.Length > MaximumFileBytes * 3) throw new FormatException("16進入力は各16 MiBまでです。");
+        var digits = 0;
+        foreach (var value in hex)
+            if (!char.IsWhiteSpace(value))
+            {
+                if (!Uri.IsHexDigit(value)) throw new FormatException("16進値を入力してください。");
+                digits++;
+            }
+        if (digits % 2 != 0) throw new FormatException("16進値は2桁で1バイトです。");
+        var size = digits / 2;
+        if (insert ? (long)length + size > MaximumFileBytes : size > length - start)
+            throw new InvalidDataException(insert ? "バイナリ編集の上限は各16 MiBです。" : "上書き範囲が末尾を超えています。");
+        return Convert.FromHexString(string.Concat(hex.Where(value => !char.IsWhiteSpace(value))));
+    }
     // Frhedの全体コピーは短いsourceでdestination末尾を切り詰めない。
     public void CopyAll(int source, int destination)
     { ValidateSide(source); CopyRange(source, destination, 0, _bytes[source].Length); }
