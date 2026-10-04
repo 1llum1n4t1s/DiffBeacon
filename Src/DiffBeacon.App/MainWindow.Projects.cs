@@ -114,7 +114,7 @@ public sealed partial class ComparisonPane
         {
             project = project with { Mode = project.Mode.ToLowerInvariant() switch
             { "text" or "1" => "Text", "binary" or "3" => "Binary", "archive" or "7" => "Archive", _ => project.Mode } };
-            if (project.Mode is not ("Text" or "Binary" or "Archive") || project.Mode != "Text" && ProjectInputs.HasBase(project))
+            if (project.Mode is not ("Text" or "Binary" or "Archive") || project.Mode == "Archive" && ProjectInputs.HasBase(project))
                 throw new InvalidDataException("内包入力の比較形式または祖先指定が不正です。");
             foreach (var (path, input) in new[] { (project.LeftPath, project.LeftArchiveInput), (project.BasePath, project.BaseArchiveInput), (project.RightPath, project.RightArchiveInput) })
                 if (input is not null && !string.IsNullOrWhiteSpace(path)) throw new InvalidDataException("同じ側に物理pathと内包入力を重ねて指定できません。");
@@ -252,9 +252,9 @@ public sealed partial class ComparisonPane
         var dialog = new Window { Title = "比較の設定", Width = 540, Height = 590, WindowStartupLocation = WindowStartupLocation.CenterOwner };
         var panel = new StackPanel { Margin = new Thickness(20), Spacing = 8 };
         TextBox Field(string title, string? value) { panel.Children.Add(new TextBlock { Text = title }); var box = new TextBox { Text = value }; panel.Children.Add(box); return box; }
-        var left = Field("左の説明", project.LeftDescription); var middle = Field("祖先の説明", project.BaseDescription); var right = Field("右の説明", project.RightDescription);
+        var left = Field("左の説明", project.LeftDescription); var middle = Field(project.Mode == "Binary" ? "中央の説明" : "祖先の説明", project.BaseDescription); var right = Field("右の説明", project.RightDescription);
         var leftRo = new CheckBox { Content = "左を読取り専用にする", IsChecked = project.LeftReadOnly };
-        var baseRo = new CheckBox { Content = "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
+        var baseRo = new CheckBox { Content = project.Mode == "Binary" ? "中央を読取り専用にする" : "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
         var rightRo = new CheckBox { Content = "右を読取り専用にする", IsChecked = project.RightReadOnly };
         if (project.LeftArchiveInput is { MissingEntryChain: not null } leftMissing) leftRo.IsChecked = leftMissing.InheritedReadOnly ?? true;
         if (project.RightArchiveInput is { MissingEntryChain: not null } rightMissing) rightRo.IsChecked = rightMissing.InheritedReadOnly ?? true;
@@ -285,8 +285,10 @@ public sealed partial class ComparisonPane
                 RefreshTextReadOnly();
                 var binary = _specialTab.Content is SpecializedViews.BinaryPanel;
                 SpecializedViews.SetProjectReadOnly(_specialTab.Content as Control,
-                    binary ? BinaryReadOnly(false) : _projectMetadata.LeftReadOnly,
-                    binary ? BinaryReadOnly(true) : _projectMetadata.RightReadOnly, _projectMetadata.BaseReadOnly);
+                    binary ? BinaryReadOnly(0) : _projectMetadata.LeftReadOnly,
+                    binary ? BinaryReadOnly(2) : _projectMetadata.RightReadOnly, binary ? BinaryReadOnly(1) : _projectMetadata.BaseReadOnly);
+                if (_specialTab.Content is SpecializedViews.BinaryPanel binaryPanel)
+                    foreach (var side in binaryPanel.ProjectSides) binaryPanel.SetCaption(side, (side switch { 0 => _projectMetadata.LeftDescription, 1 => _projectMetadata.BaseDescription, _ => _projectMetadata.RightDescription }) ?? ProjectInputs.Caption(CaptureProject(), side));
                 _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
                 if (_owner is MainWindow owner) owner.RefreshSessionHeaders();
                 UpdateEditorLayout(_baseText is not null); _status.Text = "比較の設定を適用しました。表・フィルターの変更は再比較で反映されます。";

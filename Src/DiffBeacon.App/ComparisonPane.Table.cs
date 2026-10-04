@@ -46,22 +46,25 @@ public sealed partial class ComparisonPane
         return result;
     }
 
-    private async Task OpenTableAsync()
+    private async Task<(Avalonia.Controls.Control View, DelimitedSyntax? Syntax)> CreateTableViewAsync(
+        TextDocument left, TextDocument right, TextDocument? ancestor, CancellationToken token)
     {
         try
         {
-            _tableSyntax = null;
-            var comparison = await CompareTableAsync();
-            _tableSyntax = comparison.Documents[0].Syntax;
+            var sources = ancestor is null ? new[] { left.Text, right.Text } : new[] { left.Text, ancestor.Text, right.Text };
+            var syntax = new DelimitedSyntax(_projectMetadata.TableDelimiter ?? SpecializedViews.DetectSeparator(sources[0], sources[^1]),
+                _projectMetadata.TableQuote ?? '"', _projectMetadata.TableAllowNewlinesInQuotes ?? true);
+            var options = Options();
+            var comparison = await Task.Run(() => StructuredComparer.CompareTables(sources, syntax, options, token), token);
+            TableReadyForAdoption?.Invoke();
             string Caption(string? value, string fallback) => string.IsNullOrWhiteSpace(value) ? fallback : value;
-            var names = _baseText is null
+            var names = ancestor is null
                 ? new[] { Caption(_projectMetadata.LeftDescription, "左"), Caption(_projectMetadata.RightDescription, "右") }
                 : new[] { Caption(_projectMetadata.LeftDescription, "左"), Caption(_projectMetadata.BaseDescription, "祖先（読取り専用）"), Caption(_projectMetadata.RightDescription, "右") };
-            SetSpecialView(new TablePanel(comparison, TableSource, TableReadOnly, WriteTableSource, RestoreTableSource, CompareTableAsync, names,
-                () => _operation?.Token ?? CancellationToken.None));
+            return (new TablePanel(comparison, TableSource, TableReadOnly, WriteTableSource, RestoreTableSource, CompareTableAsync, names,
+                () => _operation?.Token ?? CancellationToken.None), comparison.Documents[0].Syntax);
         }
         catch (FormatException exception)
-        { SetSpecialView(new Avalonia.Controls.TextBlock { Text = exception.Message, TextWrapping = Avalonia.Media.TextWrapping.Wrap }); }
-        _views.SelectedItem = _specialTab;
+        { return (new Avalonia.Controls.TextBlock { Text = exception.Message, TextWrapping = Avalonia.Media.TextWrapping.Wrap }, null); }
     }
 }

@@ -14,9 +14,11 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 | `tests/DiffBeacon.E2E` / `DiffBeacon.FakeProvider` | 実アプリの CLI とファイル入出力、外部プロセス契約の検証。FakeProvider は検証専用 |
 | `build/Publish.ps1` / `.github/workflows/` | 同 OS での AOT 発行、macOS バンドル生成、対象構成での検証と成果物保存 |
 
+比較タブの見出しはFluentの既存presenterを最大110pxの縦スクロールへ入れ、多数のタブでも本文を確保する。選択変更・見出しviewportのサイズ変更・template再適用で選択中の見出しを表示範囲へ戻す。再配置後の単一postへ集約し、常時LayoutUpdatedでスクロールを繰り返さない。
+
 ## データフロー
 
-バイナリ編集はCoreの `BinaryEditSession` が各側のbyteと保存点、共有Undo／Redoを所有する。保存に渡す `BinaryCapture` はowner・side・全byteのSHAを固定し、保存中に増えた編集を保存済み扱いにしない。各入力16 MiB、共有履歴64 MiB／256操作を上限とし、拒否時に本文と履歴を変更しない。通常ファイル保存と外部SaveAsは `BinaryFileStore` の一時出力と公開前検査を使い、成功した側だけを採用する。内包入力の作業保存・永続化は後述の共通storeとworkspaceの契約に従う。読取り専用の別名保存は変更しない複製だけを公開し、入力パスと保存点を更新しない。形式を切り替えた未保存本文は自動変換せず、古い比較の保存を拒否する。
+バイナリ編集はCoreの `BinaryEditSession` が二者／三者の各側のbyteと保存点、共有Undo／Redoを所有する。project側は左0・中央1・右2で、二者Coreの右1への変換は `BinaryPanel.LocalSide` に集約する。中央は祖先の固定本文ではなく独立編集・保存する第三入力で、差分は同offsetの全側一致から判定し、祖先に対する競合分類は行わない。全6方向の差分範囲コピーは対象pairの長さで境界を検査し、長い第三側で範囲外を許可しない。保存に渡す `BinaryCapture` はowner・side・全byteのSHAを固定し、保存中に増えた編集を保存済み扱いにしない。各入力16 MiB、共有履歴64 MiB／256操作を上限とし、拒否時に本文と履歴を変更しない。通常ファイル保存と外部SaveAsは `BinaryFileStore` の一時出力と公開前検査を使い、成功した側だけを採用する。内包入力の作業保存・永続化は後述の共通storeとworkspaceの契約に従う。読取り専用の別名保存は変更しない複製だけを公開し、入力パスと保存点を更新しない。形式を切り替えた未保存本文は自動変換せず、古い比較の保存を拒否する。比較候補の採用は読込み前に取得した `StateStamp` の世代と全editor text、操作・取消・入力path・mode・providerを同期照合し、TextChangedの通知前の未適用入力も保持する。Archive／Image／Folder／Tableも同じ境界を使い、拒否候補を解放する。共有本文・文書・マージ・保存点の変更は採用後に限定する。Tableの初回比較はlocal文書snapshotで完了させ、本文とpanelを同期採用する。採用拒否の完了理由と比較ボタンの復帰は現在の操作だけへ反映し、新しい操作や終了済みpaneの表示を書き換えない。
 
 `Program.Main` は `--self-test <出力先>` を描画自己検証へ、`--clipboard-self-test <出力先> --write|--read` をGitHub runner限定の実OS検証へ、その他の先頭が `--` の引数を CLI へ、それ以外をデスクトップ起動へ振り分ける。GUI の比較タブは選択モード・入力パスから Core、形式別ビュー、またはプロバイダーへ処理を振り分ける。比較にはキャンセルトークンを渡し、テキスト差分計算は背景タスクで行う。
 

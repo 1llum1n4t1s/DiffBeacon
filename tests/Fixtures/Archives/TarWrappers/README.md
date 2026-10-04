@@ -22,3 +22,9 @@ python -B tests/Fixtures/Archives/TarWrappers/verify.py --output artifacts/local
 単層TARとaliasの既存経路、Zip／7z／Rarの既存wrapperを退行させない。read対応は多層writer対応を意味しない。裸gz／bz2／Zやxzは本fixtureの対応範囲外。
 
 fixture固有 `.gitattributes` が全包装原本・manifest・独立reader／生成器の改行変換を禁止する。Gitへの登録は親担当。採取内容はCC0-1.0。
+
+## GUI取消と古い候補の破棄
+
+`--self-test <出力先> --tar-wrapper-gui-only` は正常22原本で実中止ボタンを押し、読取り開始時・完成候補の採用直前・Refresh採用直前の取消を確認する。確定panel・rows・previewを保持して再操作できること、新比較の結果だけを採用して旧candidateをDisposeすることを記録する。全体UIと `--archive-tar-wrappers-only` E2Eにも接続している。
+
+`verify-gui.py <facts.json>` は固定原本から全層を独立復号し、GUI候補の全63項目のpath・型・サイズ・SHA・mtime、原本全bytes、各取消観測と旧候補破棄を照合する。22件の欠落・重複を拒否する。JSON・PNG・実プロセスstdout／stderrを保持する。読取り開始時と採用直前の取消は復号中の取消とは別であり、この検証だけからdecoder処理中のタイミングを実測済みとは判断しない。

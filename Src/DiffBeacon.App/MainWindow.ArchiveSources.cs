@@ -117,7 +117,7 @@ public sealed partial class ComparisonPane
                 .All(input => input.LeafEntry is not null || input.MissingEntryChain is not null);
         foreach (var (box, input) in new[] { (LeftPath, _projectMetadata.LeftArchiveInput), (BasePath, _projectMetadata.BaseArchiveInput), (RightPath, _projectMetadata.RightArchiveInput) })
         {
-            var fixedInput = input is not null || ReferenceEquals(box, BasePath) && hasArchives && _projectMetadata.Mode != "Text";
+            var fixedInput = input is not null || ReferenceEquals(box, BasePath) && hasArchives && _projectMetadata.Mode == "Archive";
             box.IsReadOnly = fixedInput;
             if (box.Parent is Panel row) foreach (var button in row.Children.OfType<Button>()) button.IsEnabled = !fixedInput;
             if (input is not null) ToolTip.SetTip(box, input.RootPath + "\n" + string.Join(" / ", input.EntryChain.Concat(input.MissingEntryChain ?? (input.LeafEntry is null ? [] : new[] { input.LeafEntry }))));
@@ -126,12 +126,12 @@ public sealed partial class ComparisonPane
     }
 
     internal async Task<bool> CompareArchiveProjectAsync(CancellationToken callerToken = default,
-        IReadOnlyList<string?>? leftPasswords = null, IReadOnlyList<string?>? rightPasswords = null, bool autoLeaf = false)
+        IReadOnlyList<string?>? leftPasswords = null, IReadOnlyList<string?>? rightPasswords = null, bool autoLeaf = false, IReadOnlyList<string?>? middlePasswords = null)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         var project = CaptureProject();
         if (!ProjectInputs.HasArchives(project)) throw new InvalidOperationException("内包入力を指定してください。");
-        if (project.Mode is not ("Text" or "Binary" or "Archive") || project.Mode != "Text" && ProjectInputs.HasBase(project))
+        if (project.Mode is not ("Text" or "Binary" or "Archive") || project.Mode == "Archive" && ProjectInputs.HasBase(project))
             throw new InvalidDataException("内包入力の比較形式または祖先指定が不正です。");
         var options = ProjectReport.Options(project);
         ProjectInputs.EnsureWorkingFormat(project);
@@ -139,7 +139,7 @@ public sealed partial class ComparisonPane
         var workingGeneration = _workingTexts.Generation;
         var initialText = (LeftEditor.Text, RightEditor.Text, ResultEditor.Text);
         var initialBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
-        var initialBinaryVersion = initialBinary?.StateVersion;
+        var initialBinaryVersion = initialBinary?.StateStamp;
         InvalidateTextSave();
         _operation?.Cancel(); _operation?.Dispose();
         (_specialTab.Content as ArchivePanel)?.CancelOperation();
@@ -154,7 +154,7 @@ public sealed partial class ComparisonPane
             foreach (var side in Enumerable.Range(0, 3))
             {
                 var count = (ProjectInputs.Archive(project, side)?.EntryChain.Length ?? 0) + 1;
-                var provided = side == 0 ? leftPasswords : side == 2 ? rightPasswords : null;
+                var provided = side == 0 ? leftPasswords : side == 2 ? rightPasswords : middlePasswords;
                 var cached = _archivePasswords?[side];
                 var copied = (provided ?? (IReadOnlyList<string?>?)cached)?.ToArray()
                     ?? (ProjectInputs.Archive(project, side) is { } input ? (_owner as MainWindow)?.ArchiveLifetime.Find(input) : null) ?? new string?[count];
@@ -186,6 +186,7 @@ public sealed partial class ComparisonPane
                         var maximum = autoLeaf ? 64 * 1024 * 1024 : 16 * 1024 * 1024;
                         var a = await ProjectInputReader.ReadBytesAsync(project, 0, maximum, token, passwords[0]);
                         var b = await ProjectInputReader.ReadBytesAsync(project, 2, maximum, token, passwords[2]);
+                        var c = ProjectInputs.HasBase(project) ? await ProjectInputReader.ReadBytesAsync(project, 1, maximum, token, passwords[1]) : null;
                         if (autoLeaf)
                         {
                             try
@@ -201,7 +202,7 @@ public sealed partial class ComparisonPane
                             project.LeftArchiveInput is { } leftInput ? leftInput.InheritedReadOnly != false : project.LeftReadOnly,
                             project.RightArchiveInput is { } rightInput ? rightInput.InheritedReadOnly != false : project.RightReadOnly, EnsureArchiveOutputWritable,
                             ProjectInputs.PathFor(project, 0), ProjectInputs.PathFor(project, 2),
-                            false, false);
+                            false, false, c, project.BaseArchiveInput is { } middleInput ? middleInput.InheritedReadOnly != false : project.BaseReadOnly);
                     }
                     else if (project.Mode == "Text")
                     {
@@ -238,7 +239,7 @@ public sealed partial class ComparisonPane
             ArchiveSourceReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(_operation, operation) || ArchiveComparisonIdentity(CaptureProject()) != requestedIdentity
                 || workingGeneration != _workingTexts.Generation || initialText != (LeftEditor.Text, RightEditor.Text, ResultEditor.Text)
-                || initialBinary?.StateVersion != initialBinaryVersion) return false;
+                || initialBinary?.StateStamp != initialBinaryVersion) return false;
             ResetMergeSession();
             if (candidate is not null)
             {

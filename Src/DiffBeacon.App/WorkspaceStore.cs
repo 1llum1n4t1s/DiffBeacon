@@ -405,8 +405,8 @@ public static class WorkspaceStore
                 var mode = project.Mode.ToLowerInvariant();
                 if (mode is not ("text" or "1" or "binary" or "3" or "archive" or "7"))
                     throw new InvalidDataException("内包入力はText／Binary／Archiveの明示形式で開いてください。");
-                if (mode is not ("text" or "1") && ProjectInputs.HasBase(project))
-                    throw new InvalidDataException("内包入力の祖先指定はText比較だけで使用できます。");
+                if (mode is "archive" or "7" && ProjectInputs.HasBase(project))
+                    throw new InvalidDataException("内包入力の中央指定はText／Binary比較だけで使用できます。");
                 for (var side = 0; side < 3; side++)
                 {
                     var input = ProjectInputs.Archive(project, side);
@@ -415,7 +415,7 @@ public static class WorkspaceStore
                         throw new InvalidDataException("作業版には形式バージョン4以降とText／Binary／Archive比較が必要です。");
                     var oldPath = side switch { 0 => project.LeftPath, 1 => project.BasePath, _ => project.RightPath };
                     if (!string.IsNullOrEmpty(oldPath)) throw new InvalidDataException("物理pathと内包入力を同じ側へ指定できません。");
-                    if (side == 1 && mode is not ("text" or "1")) throw new InvalidDataException("中央の内包入力はText比較だけで使用できます。");
+                    if (side == 1 && mode is not ("text" or "1" or "binary" or "3")) throw new InvalidDataException("中央の内包入力はText／Binary比較だけで使用できます。");
                     if (input.WorkingDocuments?.Any(copy => copy.IsBinary) == true && (workspace.FormatVersion != 5 || mode is "text" or "1"))
                         throw new InvalidDataException("Binary作業版には形式バージョン5とBinary／Archive比較が必要です。");
                     input.Validate(mode is "archive" or "7", side switch { 0 => project.LeftReadOnly, 1 => project.BaseReadOnly, _ => project.RightReadOnly });

@@ -59,6 +59,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-clipboard' --read
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Record evidence directories and file hashes before upload
+        if: always()
+        run: |
+          python -B build/Capture-EvidenceInventory.py --root 'artifacts/e2e/${{ matrix.rid }}' --root 'artifacts/verification/${{ matrix.rid }}' --root 'artifacts/z-reference/${{ matrix.rid }}' --root 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' --output 'artifacts/evidence/${{ matrix.rid }}.json'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -69,6 +74,7 @@ jobs:
             artifacts/verification/${{ matrix.rid }}/
             artifacts/publish/${{ matrix.rid }}/publish-manifest.json
             artifacts/z-reference/${{ matrix.rid }}/
+            artifacts/evidence/${{ matrix.rid }}.json
           if-no-files-found: warn
       - name: Upload native application
         uses: actions/upload-artifact@v4

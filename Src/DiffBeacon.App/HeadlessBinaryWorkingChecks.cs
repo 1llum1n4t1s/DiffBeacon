@@ -18,6 +18,11 @@ internal static class HeadlessBinaryWorkingChecks
         var navigationLeft = new byte[8194]; var navigationRight = new byte[8194]; navigationRight[8192] = 7;
         using (var navigation = new SpecializedViews.BinaryPanel(navigationLeft, navigationRight, false, false))
         {
+            // ScrollViewerのtemplateも実Windowで作り、二者の実ボタン経路を操作する。
+            var navigationWindow = new Window { Content = navigation, Width = 1000, Height = 700 };
+            navigationWindow.Show(); Dispatcher.UIThread.RunJobs();
+            try
+            {
             navigation.Differences.SelectedIndex = 0;
             Report("difference selection navigates beyond initial Hex page", navigation.RightHex.Text?.Trim() == "07 00");
             Report("difference navigation retains selected copy range", navigation.Differences.SelectedIndex == 0);
@@ -29,6 +34,8 @@ internal static class HeadlessBinaryWorkingChecks
             navigation.Differences.SelectedIndex = -1; navigation.Differences.SelectedIndex = 0;
             Report("difference navigation retains unapplied Hex draft and page", navigation.LeftHex.Text == pending
                 && navigation.RightHex.Text?.Trim() != "07 00" && navigation.Pending(false));
+            }
+            finally { navigationWindow.Close(); }
         }
         var roots = new[] { Path.Combine(folder, "left.zip"), Path.Combine(folder, "right.zip") };
         for (var side = 0; side < 2; side++) File.WriteAllBytes(roots[side], Zip(("inner.zip", Zip(("leaf.bin", side == 0 ? a : b), ("empty.bin", []), ("ascii.txt", "original text\n"u8.ToArray())))));

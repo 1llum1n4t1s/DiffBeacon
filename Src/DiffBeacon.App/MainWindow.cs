@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Controls.Documents;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -15,6 +16,8 @@ public sealed partial class MainWindow : Window
 {
     private readonly TabControl _tabs = new();
     private readonly List<TabItem> _sessions = [];
+    private bool _headerBringQueued;
+    internal ScrollViewer? SessionHeaders { get; private set; }
     internal ImageApplicationOptionsStore ImageOptions { get; }
     internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
@@ -48,7 +51,23 @@ public sealed partial class MainWindow : Window
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
         root.Children.Add(_tabs);
-        _tabs.SelectionChanged += (_, _) => UpdateImageDisplayVisibility();
+        // 多数の比較タブでも見出しが本文を押し出さないよう、既存の見出しpresenterをスクロールする。
+        _tabs.TemplateApplied += (_, args) =>
+        {
+            if (args.NameScope.Find<ItemsPresenter>("PART_ItemsPresenter") is not { Parent: DockPanel dock } presenter) return;
+            dock.Children.Remove(presenter);
+            SessionHeaders = new ScrollViewer { Name = "SessionHeaders", MaxHeight = 110, Content = presenter,
+                HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
+            DockPanel.SetDock(SessionHeaders, Dock.Top); dock.Children.Insert(0, SessionHeaders);
+            SessionHeaders.SizeChanged += (_, _) => QueueSelectedHeader();
+            QueueSelectedHeader();
+        };
+        _tabs.SelectionChanged += (_, _) =>
+        {
+            UpdateImageDisplayVisibility();
+            QueueSelectedHeader();
+        };
         PropertyChanged += (_, args) => { if (args.Property == IsVisibleProperty) UpdateImageDisplayVisibility(); };
         Content = root;
         AddSession(arguments);
@@ -75,6 +94,17 @@ public sealed partial class MainWindow : Window
                 Close();
             }
         };
+    }
+
+    private void QueueSelectedHeader()
+    {
+        if (_headerBringQueued) return;
+        _headerBringQueued = true;
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            _headerBringQueued = false;
+            if (SessionHeaders is not null && _tabs.SelectedItem is TabItem selected) selected.BringIntoView();
+        }, Avalonia.Threading.DispatcherPriority.Background);
     }
 
     public ComparisonPane AddSession(string[]? arguments = null)
@@ -107,7 +137,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 {
     private readonly Window _owner;
     public TextBox LeftPath { get; } = new() { PlaceholderText = "左のファイル / フォルダー" };
-    public TextBox BasePath { get; } = new() { PlaceholderText = "共通の祖先 / 中央画像（3方向比較）" };
+    public TextBox BasePath { get; } = new() { PlaceholderText = "共通の祖先 / 中央画像・バイナリ（3方向比較）" };
     public TextBox RightPath { get; } = new() { PlaceholderText = "右のファイル / フォルダー" };
     public TextBox LeftEditor { get; } = Editor();
     public TextBox RightEditor { get; } = Editor();
@@ -152,10 +182,18 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private bool _textSaveAllowed = true;
     private readonly EventHandler _ownerClosedHandler;
     private bool _disposed;
+    internal string? ComparisonStatus => _status.Text;
 
     // 実GUI自己検証で、完成した変換結果の採用直前に中止操作を再現する。
     internal Action<ProviderResult>? ProviderResultReadyForAdoption { get; set; }
     internal Action<ArchivePanel>? ArchiveReadyForAdoption { get; set; }
+    internal Action<SpecializedViews.ImagePanel>? ImageReadyForAdoption { get; set; }
+    internal Action? DirectoryReadyForAdoption { get; set; }
+    internal Action? TableReadyForAdoption { get; set; }
+    // 採用を拒否したとき、前の本文・文書・保存点を実GUIから照合する。
+    internal object CaptureAdoptionState() => (_leftDocument, _rightDocument, _baseDocument, CurrentDiff, CurrentMergeSession,
+        _baseText, _textSaveAllowed, _lastPackageComparison, LeftEditor.Text, RightEditor.Text, ResultEditor.Text,
+        LeftEditor.IsReadOnly, RightEditor.IsReadOnly, _savedLeft, _savedRight, _savedResult);
     internal Action<ArchiveRetryDialog>? ArchiveRetryShown { get; set; }
     // 実GUI自己検証で、有効な比較操作の読込み開始時に中止ボタンを押す。
     internal Action? ArchiveReadStarting { get; set; }
@@ -297,36 +335,51 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
         if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
         (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
-        ResetMergeSession();
         InvalidateTextSave();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         (_specialTab.Content as ArchivePanel)?.CancelOperation();
         var operation = _operation; var token = operation.Token;
         var left = LeftPath.Text ?? ""; var right = RightPath.Text ?? "";
         var imageSettings = CaptureImageSettings();
-        _lastPackageComparison = null;
         var comparisonForPackaging = (left, BasePath.Text ?? "", right, _mode.SelectedIndex, _provider.SelectedItem as string);
-        if (string.IsNullOrWhiteSpace(left) && string.IsNullOrWhiteSpace(right)) { await CompareEditorsAsync(); return; }
+        var previousBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
+        var previousBinaryStamp = previousBinary?.StateStamp;
+        bool CanAdopt()
+        {
+            var valid = !token.IsCancellationRequested && !_disposed && ReferenceEquals(_operation, operation)
+                && previousBinary?.StateStamp == previousBinaryStamp
+                && comparisonForPackaging == (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
+            if (!valid && !_disposed && ReferenceEquals(_operation, operation))
+                _status.Text = token.IsCancellationRequested ? "比較を中止しました。" : "比較中に入力が変更されたため、前の比較を保持しました。";
+            return valid;
+        }
+        void PrepareAdoption()
+        {
+            ResetMergeSession(); _lastPackageComparison = null;
+            _textSaveAllowed = false; _baseText = null; CurrentDiff = null;
+        }
+        if (string.IsNullOrWhiteSpace(left) && string.IsNullOrWhiteSpace(right))
+        {
+            var editorLeft = LeftEditor.Text ?? ""; var editorRight = RightEditor.Text ?? ""; var editorOptions = Options();
+            var editorDiff = await Task.Run(() => TextDiffer.Compare(editorLeft, editorRight, editorOptions, token), token);
+            if (CanAdopt() && editorLeft == LeftEditor.Text && editorRight == RightEditor.Text) { ResetMergeSession(); _lastPackageComparison = null; ApplyDiff(editorDiff); }
+            return;
+        }
         _status.Text = "比較しています…";
         CompareButton.IsEnabled = false;
         try
         {
             var mode = _mode.SelectedIndex;
-            _textSaveAllowed = false;
-            _baseText = null;
-            CurrentDiff = null;
             if (mode == 8)
             {
-                var providerBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
-                var providerBinaryVersion = providerBinary?.StateVersion;
                 var provider = _providers.Get((string)_provider.SelectedItem!);
                 var result = await provider.CompareAsync(new ComparisonRequest(left, right, provider.Formats[0]), token);
                 ProviderResultReadyForAdoption?.Invoke(result);
                 var providerOptions = Options();
                 var providerDiff = await Task.Run(() => TextDiffer.Compare(result.LeftText, result.RightText, providerOptions, token), token);
                 token.ThrowIfCancellationRequested();
-                if (_disposed || !ReferenceEquals(_operation, operation) || providerBinary?.StateVersion != providerBinaryVersion
-                    || comparisonForPackaging != (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string)) return;
+                if (!CanAdopt()) return;
+                PrepareAdoption();
                 LeftEditor.Text = _savedLeft = result.LeftText; RightEditor.Text = _savedRight = result.RightText;
                 LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
                 SetSpecialView(null); ApplyDiff(providerDiff);
@@ -334,29 +387,35 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 _lastPackageComparison = comparisonForPackaging;
                 return;
             }
-            if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right))) { await CompareDirectoryAsync(left, right, token); _lastPackageComparison = comparisonForPackaging; return; }
+            if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right)))
+            {
+                if (await CompareDirectoryAsync(left, right, token, CanAdopt, PrepareAdoption)) _lastPackageComparison = comparisonForPackaging;
+                return;
+            }
             if (mode == 4 || (mode == 0 && SpecializedViews.IsImage(left) && SpecializedViews.IsImage(right)))
             {
-                var imageView = await SpecializedViews.ImagesWithOptionsAsync(left, right, token, BasePath.Text, imageSettings,
+                Control? imageView = await SpecializedViews.ImagesWithOptionsAsync(left, right, token, comparisonForPackaging.Item2, imageSettings,
                     (_owner as MainWindow)?.ImageOptions);
-                if (token.IsCancellationRequested)
+                try
                 {
-                    SpecializedViews.Release(imageView);
+                    ImageReadyForAdoption?.Invoke((SpecializedViews.ImagePanel)imageView);
                     token.ThrowIfCancellationRequested();
+                    if (!CanAdopt()) return;
+                    ConfigureImageEditing((SpecializedViews.ImagePanel)imageView);
+                    PrepareAdoption();
+                    SetSpecialView(imageView); imageView = null;
+                    _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? "";
+                    LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
+                    _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
                 }
-                SetSpecialView(imageView);
-                ConfigureImageEditing((SpecializedViews.ImagePanel)imageView);
-                _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? "";
-                LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
-                _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
+                finally { SpecializedViews.Release(imageView); }
             }
             if (mode == 3)
             {
-                var oldBinary = _specialTab.Content as SpecializedViews.BinaryPanel; var oldVersion = oldBinary?.StateVersion;
-                var candidate = await SpecializedViews.BinaryAsync(left, right, token, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, EnsureProjectOutputWritable);
-                if (token.IsCancellationRequested || _disposed || !ReferenceEquals(_operation, operation) || oldBinary?.StateVersion != oldVersion
-                    || comparisonForPackaging != (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string))
+                var candidate = await SpecializedViews.BinaryAsync(left, right, token, _projectMetadata.LeftReadOnly, _projectMetadata.RightReadOnly, EnsureProjectOutputWritable, comparisonForPackaging.Item2, _projectMetadata.BaseReadOnly);
+                if (!CanAdopt())
                 { SpecializedViews.Release(candidate); return; }
+                PrepareAdoption();
                 SetSpecialView(candidate); _workingDocumentStale = false;
                 _views.SelectedItem = _specialTab; _status.Text = "バイナリを比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
@@ -392,23 +451,23 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                     }
                     ArchiveReadyForAdoption?.Invoke(candidate);
                     token.ThrowIfCancellationRequested();
-                    if (operation != _operation) return;
+                    if (!CanAdopt()) return;
+                    PrepareAdoption();
                     BindArchivePanel(candidate);
                     SetSpecialView(candidate); candidate = null;
                 }
                 finally { candidate?.Dispose(); leftPassword = rightPassword = null; }
                 _views.SelectedItem = _specialTab; _status.Text = "アーカイブビューを開きました。"; _lastPackageComparison = comparisonForPackaging; return;
             }
-            var previousBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
-            var previousBinaryVersion = previousBinary?.StateVersion;
             var leftDocument = await TextDocument.LoadAsync(left, token);
             var rightDocument = await TextDocument.LoadAsync(right, token);
-            var baseDocument = !string.IsNullOrWhiteSpace(BasePath.Text) ? await TextDocument.LoadAsync(BasePath.Text, token) : null;
+            var baseDocument = !string.IsNullOrWhiteSpace(comparisonForPackaging.Item2) ? await TextDocument.LoadAsync(comparisonForPackaging.Item2, token) : null;
             var textOptions = Options();
             var textDiff = mode is 5 or 6 ? null : await Task.Run(() => TextDiffer.Compare(leftDocument.Text, rightDocument.Text, textOptions, token), token);
+            var tableCandidate = mode == 6 ? await CreateTableViewAsync(leftDocument, rightDocument, baseDocument, token) : default;
             token.ThrowIfCancellationRequested();
-            if (_disposed || !ReferenceEquals(_operation, operation) || previousBinary?.StateVersion != previousBinaryVersion
-                || comparisonForPackaging != (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string)) return;
+            if (!CanAdopt()) return;
+            PrepareAdoption();
             _leftDocument = leftDocument; _rightDocument = rightDocument; _baseDocument = baseDocument;
             LeftEditor.IsReadOnly = _projectMetadata.LeftReadOnly;
             RightEditor.IsReadOnly = _projectMetadata.RightReadOnly;
@@ -418,7 +477,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             _ancestorEditor.Text = _baseText ?? "";
             UpdateEditorLayout(_baseText is not null);
             _textSaveAllowed = true;
-            if (mode == 6) await OpenTableAsync();
+            if (mode == 6) { _tableSyntax = tableCandidate.Syntax; SetSpecialView(tableCandidate.View); _views.SelectedItem = _specialTab; }
             else if (mode == 5) { SetSpecialView(SpecializedViews.StructuredJson(LeftEditor.Text, RightEditor.Text)); _views.SelectedItem = _specialTab; }
             else
             {
@@ -429,8 +488,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             _lastPackageComparison = comparisonForPackaging;
         }
         catch (OperationCanceledException) when (operation != _operation) { }
-        catch (OperationCanceledException) { _status.Text = "比較を中止しました。"; throw; }
-        finally { if (operation == _operation) CompareButton.IsEnabled = true; }
+        catch (OperationCanceledException) { if (!_disposed && ReferenceEquals(operation, _operation)) _status.Text = "比較を中止しました。"; throw; }
+        finally { if (!_disposed && ReferenceEquals(operation, _operation)) CompareButton.IsEnabled = true; }
     }
 
     public void CompareEditors()
@@ -512,8 +571,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private void UpdateComparisonToolbarHeight()
     {
-        // 画像・アーカイブには独自の操作欄があるため、共通設定をスクロールして比較本文の領域を残す。
-        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel or ArchivePanel ? .2 : .5;
+        // 画像・バイナリ・アーカイブには独自の操作欄があるため、共通設定をスクロールして比較本文の領域を残す。
+        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel ? .2 : .5;
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
@@ -521,9 +580,16 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         EnsureSideWritable(toRight);
         if (_views.SelectedItem == _specialTab && _specialTab.Content == _directoryList && _directoryList.SelectedItem is DirectoryEntry entry && _directoryLeft is not null && _directoryRight is not null)
         {
+            var left = _directoryLeft; var right = _directoryRight; var operation = _operation;
+            var inputs = (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
+            var binary = _specialTab.Content as SpecializedViews.BinaryPanel; var stamp = binary?.StateStamp;
+            bool CanAdopt() => !_disposed && ReferenceEquals(_operation, operation) && operation?.IsCancellationRequested != true
+                && ReferenceEquals(_specialTab.Content, _directoryList) && binary?.StateStamp == stamp
+                && inputs == (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
             if (!await Dialogs.ConfirmAsync(_owner, "フォルダー内のコピー", $"{entry.RelativePath} を{(toRight ? "右" : "左")}へコピーします。既存ファイルは上書きされます。")) return;
-            await FolderOperations.CopyAsync(toRight ? _directoryLeft : _directoryRight, toRight ? _directoryRight : _directoryLeft, entry.RelativePath);
-            await CompareDirectoryAsync(_directoryLeft, _directoryRight, CancellationToken.None);
+            if (!CanAdopt()) return;
+            await FolderOperations.CopyAsync(toRight ? left : right, toRight ? right : left, entry.RelativePath);
+            await CompareDirectoryAsync(left, right, operation?.Token ?? CancellationToken.None, CanAdopt, () => { });
         }
         else CopySelected(toRight);
     }
@@ -680,18 +746,23 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         await SaveMergeResultToAsync(path, allowUnresolved: true);
     }
 
-    private async Task CompareDirectoryAsync(string left, string right, CancellationToken token)
+    private async Task<bool> CompareDirectoryAsync(string left, string right, CancellationToken token, Func<bool> canAdopt, Action prepareAdoption)
     {
         var textOptions = Options();
         var filtered = textOptions.IgnoreCase || textOptions.IgnoreWhitespace || textOptions.IgnoreBlankLines || textOptions.IgnoreLinePattern is not null
             || textOptions.IgnoreNumbers || textOptions.CommentSyntax != CommentSyntax.None || textOptions.Whitespace != WhitespaceMode.None || textOptions.SubstitutionRules.Any(rule => rule.Enabled);
         var filter = ResolveProjectFilter();
         var result = await DirectoryComparer.CompareAsync(left, right, new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter }, token);
+        DirectoryReadyForAdoption?.Invoke();
+        token.ThrowIfCancellationRequested();
+        if (!canAdopt()) return false;
+        prepareAdoption();
         _directoryLeft = left; _directoryRight = right;
         _directoryList.ItemsSource = result.Entries;
         _directoryList.ItemTemplate = new FuncDataTemplate<DirectoryEntry>((entry, _) => new TextBlock { Text = entry is null ? "" : $"{entry.Status,-14}  {entry.RelativePath}", FontFamily = new FontFamily("Cascadia Mono, Menlo, monospace"), Margin = new Thickness(8) }, false);
         SetSpecialView(_directoryList); _views.SelectedItem = _specialTab;
         _status.Text = $"フォルダー比較: {result.Entries.Count} 件";
+        return true;
     }
 
     private static Control BuildRow(DiffRow? row)

@@ -13,27 +13,29 @@ public sealed partial class ComparisonPane
     private bool _workingDocumentStale;
     internal Func<Task>? BinarySaveBeforePublish { get; set; }
     internal Action? BinarySaveReadyForAdoption { get; set; }
-    internal Func<bool, Task<string?>>? BinarySavePathPicker { get; set; }
+    internal Func<int, Task<string?>>? BinarySavePathPicker { get; set; }
     private void InvalidateBinarySave() { _binarySaveGeneration++; _binarySaveOperation?.Cancel(); }
-    private bool BinaryReadOnly(bool right)
-        => ProjectInputs.Archive(_projectMetadata, right ? 2 : 0) is { } input ? input.InheritedReadOnly != false
-            : right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly;
+    private bool BinaryReadOnly(int side)
+        => ProjectInputs.Archive(_projectMetadata, side) is { } input ? input.InheritedReadOnly != false
+            : side switch { 0 => _projectMetadata.LeftReadOnly, 1 => _projectMetadata.BaseReadOnly, 2 => _projectMetadata.RightReadOnly, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
     private void BindBinaryPanel(SpecializedViews.BinaryPanel panel)
     {
         _binaryLoadedIdentity = ArchiveComparisonIdentity(CaptureProject());
+        var project = CaptureProject();
+        foreach (var side in panel.ProjectSides) panel.SetCaption(side, (side switch { 0 => project.LeftDescription, 1 => project.BaseDescription, _ => project.RightDescription }) ?? ProjectInputs.Caption(project, side));
         panel.RequiredReadOnly = BinaryReadOnly;
-        panel.SaveContent = (right, path, token) => SaveBinaryAsync(panel, right, path, token);
-        panel.SavePathPicker = right => BinarySavePathPicker is { } picker ? picker(right) : SavePathAsync("バイナリを別名保存", right ? "right.bin" : "left.bin");
+        panel.SaveContent = (side, path, token) => SaveBinaryAsync(panel, side, path, token);
+        panel.SavePathPicker = side => BinarySavePathPicker is { } picker ? picker(side) : SavePathAsync("バイナリを別名保存", side switch { 0 => "left.bin", 1 => "middle.bin", _ => "right.bin" });
         panel.ApplyReadOnly?.Invoke();
     }
-    private async Task SaveBinaryAsync(SpecializedViews.BinaryPanel panel, bool right, string? selectedPath, CancellationToken callerToken)
+    private async Task SaveBinaryAsync(SpecializedViews.BinaryPanel panel, int side, string? selectedPath, CancellationToken callerToken)
     {
         if (_binarySaveOperation is not null) throw new InvalidOperationException("バイナリを保存しています。");
         if (_disposed || panel.IsDisposed || !ReferenceEquals(_specialTab.Content, panel)) throw new InvalidOperationException("保存元の比較が変更されています。");
         panel.EnsureApplied(); panel.ApplyReadOnly?.Invoke();
         if (_workingDocumentStale) throw new InvalidOperationException("別tabの作業版が現在の形式に対応していません。表示bytesを退避して開き直してください。");
-        var readOnly = right ? panel.RightReadOnly : panel.LeftReadOnly;
-        var capture = panel.Capture(right); var side = right ? 2 : 0;
+        var readOnly = panel.ReadOnly(side);
+        var capture = panel.Capture(side);
         var archive = ProjectInputs.Archive(_projectMetadata, side)?.Copy();
         var identity = ArchiveComparisonIdentity(CaptureProject()); var generation = _binarySaveGeneration;
         if (identity != _binaryLoadedIdentity) throw new InvalidOperationException("入力が変更されています。比較して開き直してから保存してください。");
@@ -46,7 +48,7 @@ public sealed partial class ComparisonPane
             token.ThrowIfCancellationRequested();
             if (_disposed || generation != _binarySaveGeneration || !ReferenceEquals(_specialTab.Content, panel) || panel.IsDisposed
                 || identity != ArchiveComparisonIdentity(CaptureProject())) throw new OperationCanceledException("保存元の比較が変更されました。", token);
-            if ((right ? panel.RightReadOnly : panel.LeftReadOnly) != readOnly) throw new OperationCanceledException("読取り専用の指定が変更されました。", token);
+            if (panel.ReadOnly(side) != readOnly) throw new OperationCanceledException("読取り専用の指定が変更されました。", token);
             if (archive is not null) { EnsureArchiveRootUnchanged(archive); _workingTexts.EnsureCurrent(archive, revision); }
         }
         try
@@ -75,22 +77,22 @@ public sealed partial class ComparisonPane
                     if ((File.GetAttributes(archive.RootPath) & FileAttributes.ReadOnly) != 0) throw new UnauthorizedAccessException("読取り専用の原本から作業保存はできません。");
                     BinarySaveReadyForAdoption?.Invoke(); Current();
                     _workingTexts.Save(archive, revision, new() { EntryChain = archive.EntryChain.ToArray(), LeafEntry = archive.LeafEntry!, Kind = "Binary", Bytes = bytes, Sha256 = capture.Sha256 });
-                    panel.MarkSaved(right, capture); _workingTextRevisions[side] = _workingTexts.Revision(archive);
+                    panel.MarkSaved(side, capture); _workingTextRevisions[side] = _workingTexts.Revision(archive);
                     foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this]) pane.WorkingTextSaved();
                     panel.SetStatus("バイナリの作業版を保存しました。原本アーカイブは保持しています。");
                 });
                 return;
             }
-            var original = right ? RightPath.Text : LeftPath.Text;
+            var original = (side switch { 0 => LeftPath, 1 => BasePath, _ => RightPath }).Text;
             var target = selectedPath ?? (archive is not null || string.IsNullOrWhiteSpace(original)
-                ? BinarySavePathPicker is { } picker ? await picker(right) : await SavePathAsync("バイナリを保存", "untitled.bin") : original);
+                ? BinarySavePathPicker is { } picker ? await picker(side) : await SavePathAsync("バイナリを保存", "untitled.bin") : original);
             Current(); if (target is null) return; target = ArchiveActions.ValidatePath(target);
             var ownOriginal = archive is null && !string.IsNullOrWhiteSpace(original) && ArchivePaths.SameFile(original, target);
             void Guard(string path)
             {
                 Current(); BinaryFileStore.ValidateOutput(path);
                 var window = _owner as MainWindow; var panes = window?.SessionPanes ?? [this]; var own = CaptureProject();
-                if (ownOriginal) own = right ? own with { RightPath = "" } : own with { LeftPath = "" };
+                if (ownOriginal) own = side switch { 0 => own with { LeftPath = "" }, 1 => own with { BasePath = "" }, _ => own with { RightPath = "" } };
                 ProjectInputs.EnsureOutput(path, panes.Where(pane => !ReferenceEquals(pane, this)).Select(pane => pane.CaptureProject()).Append(own), window?.WorkspaceSourcePath);
                 foreach (var pane in panes) pane.EnsureProjectOutputWritable(path);
             }
@@ -111,9 +113,10 @@ public sealed partial class ComparisonPane
                     _detachedArchiveRoots.Add(archive.RootPath);
                     if (_archivePasswords is not null) { Array.Clear(_archivePasswords[side]); _archivePasswords[side] = [null]; }
                 }
-                if (right) { _projectMetadata = _projectMetadata with { RightArchiveInput = null, RightReadOnly = false, RightDescription = Path.GetFileName(target) }; RightPath.Text = target; }
+                if (side == 2) { _projectMetadata = _projectMetadata with { RightArchiveInput = null, RightReadOnly = false, RightDescription = Path.GetFileName(target) }; RightPath.Text = target; }
+                else if (side == 1) { _projectMetadata = _projectMetadata with { BaseArchiveInput = null, BaseReadOnly = false, BaseDescription = Path.GetFileName(target) }; BasePath.Text = target; }
                 else { _projectMetadata = _projectMetadata with { LeftArchiveInput = null, LeftReadOnly = false, LeftDescription = Path.GetFileName(target) }; LeftPath.Text = target; }
-                panel.MarkSaved(right, capture); _workingTextRevisions[side] = 0;
+                panel.SetCaption(side, Path.GetFileName(target)); panel.MarkSaved(side, capture); _workingTextRevisions[side] = 0;
                 ConfigureArchiveInputControls(); _provider.IsEnabled = !ProjectInputs.HasArchives(_projectMetadata);
                 _binaryLoadedIdentity = ArchiveComparisonIdentity(CaptureProject());
                 if (ProjectInputs.HasArchives(_projectMetadata)) _lastArchiveComparison = _binaryLoadedIdentity;

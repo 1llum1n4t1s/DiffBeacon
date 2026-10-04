@@ -43,19 +43,21 @@ public static partial class SpecializedViews
         }
         catch { panel.Dispose(); throw; }
     }
-    public static async Task<Control> BinaryAsync(string left, string right, CancellationToken cancellationToken, bool leftReadOnly = false, bool rightReadOnly = false, Action<string>? guardOutput = null)
+    public static async Task<Control> BinaryAsync(string left, string right, CancellationToken cancellationToken, bool leftReadOnly = false, bool rightReadOnly = false, Action<string>? guardOutput = null, string? middle = null, bool middleReadOnly = false)
     {
         const int limit = 16 * 1024 * 1024;
         if (new FileInfo(left).Length > limit || new FileInfo(right).Length > limit) throw new InvalidOperationException("16進比較の上限は各16 MiBです。");
         var a = await ReadBinaryAsync(left, limit, cancellationToken);
         var b = await ReadBinaryAsync(right, limit, cancellationToken);
-        return BinarySnapshot(a, b, left, right, leftReadOnly, rightReadOnly, guardOutput);
+        var c = string.IsNullOrWhiteSpace(middle) ? null : await ReadBinaryAsync(middle, limit, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        return BinarySnapshot(a, b, left, right, leftReadOnly, rightReadOnly, guardOutput, middle: c, middleReadOnly: middleReadOnly);
     }
     internal static Control BinarySnapshot(byte[] a, byte[] b, string left, string right,
         bool leftReadOnly, bool rightReadOnly, Action<string>? guardOutput = null,
-        string? leftProtectedPath = null, string? rightProtectedPath = null, bool fixedLeftReadOnly = false, bool fixedRightReadOnly = false)
+        string? leftProtectedPath = null, string? rightProtectedPath = null, bool fixedLeftReadOnly = false, bool fixedRightReadOnly = false, byte[]? middle = null, bool middleReadOnly = false)
     {
-        return new BinaryPanel(a, b, leftReadOnly, rightReadOnly) { FixedLeftReadOnly = fixedLeftReadOnly, FixedRightReadOnly = fixedRightReadOnly };
+        return new BinaryPanel(a, b, leftReadOnly, rightReadOnly, middle, middleReadOnly) { FixedLeftReadOnly = fixedLeftReadOnly, FixedRightReadOnly = fixedRightReadOnly };
     }
     public static Control StructuredJson(string leftText, string rightText)
     {
@@ -90,7 +92,7 @@ public static partial class SpecializedViews
     }
     public static void SetProjectReadOnly(Control? control, bool left, bool right, bool middle = false)
     {
-        if (control is BinaryPanel panel) { panel.LeftReadOnly = left; panel.RightReadOnly = right; panel.ApplyReadOnly?.Invoke(); }
+        if (control is BinaryPanel panel) { panel.LeftReadOnly = left; panel.RightReadOnly = right; if (panel.HasMiddle) panel.MiddleReadOnly = middle; panel.ApplyReadOnly?.Invoke(); }
         if (control is ImagePanel image) image.SetReadOnly(image.MiddleFrameCount.HasValue ? [left, middle, right] : [left, right]);
     }
     private static TextBox HexEditor() => new() { AcceptsReturn = true, AcceptsTab = true, FontFamily = Mono, TextWrapping = TextWrapping.NoWrap, HorizontalContentAlignment = HorizontalAlignment.Stretch };
@@ -114,14 +116,14 @@ public static partial class SpecializedViews
         };
         panel.Children.Add(button);
     }
-    private static async Task PickBinaryOutputAsync(BinaryPanel control, bool rightSide, string name)
+    private static async Task PickBinaryOutputAsync(BinaryPanel control, int side, string name)
     {
         if (control.SavePathPicker is { } picker)
-        { var chosen = await picker(rightSide); if (chosen is not null) await control.SaveToAsync(rightSide, chosen); return; }
+        { var chosen = await picker(side); if (chosen is not null) await control.SaveToAsync(side, chosen); return; }
         var top = TopLevel.GetTopLevel(control); if (top is null) return;
         var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { SuggestedFileName = name, Title = "バイナリを別名保存" });
         if (file is null) return;
         if (file.TryGetLocalPath() is not string path) throw new IOException("ローカルの保存先を選択してください。");
-        await control.SaveToAsync(rightSide, path);
+        await control.SaveToAsync(side, path);
     }
 }

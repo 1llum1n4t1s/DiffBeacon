@@ -96,6 +96,21 @@ internal static class ArchiveProjectScenarios
             proofCases.Add(new { name = item.Name, source, copy, report, package, extracted, packedReport, exported, applied });
         }
         var valid = cases[0].Project;
+        // 三者Binaryでは物理BasePathも独立入力として保存・包装する。
+        var binary = valid.DeepClone().AsObject(); Entry(binary)["mode"] = "Binary"; Entry(binary)["basePath"] = Fixed("root-a.zip");
+        var binarySource = Save("binary-physical-base", binary); var binarySourceHash = Hash(binarySource);
+        var binaryCopy = Path.Combine(work, "copied", "binary-physical-base.json"); var binaryPackage = Path.Combine(work, "binary-physical-base.zip");
+        var binaryExtracted = Path.Combine(work, "binary-physical-base-extracted"); var binaryReloaded = Path.Combine(work, "binary-physical-base-reloaded.json");
+        await run("archive-project-binary-physical-base-copy", 0, true, ["--project-copy", binarySource, binaryCopy]);
+        await run("archive-project-binary-physical-base-package", 0, true, ["--package-project", binaryCopy, binaryPackage]);
+        await run("archive-project-binary-physical-base-extract", 0, true, ["--archive-extract", binaryPackage, binaryExtracted]);
+        await run("archive-project-binary-physical-base-reload", 0, true, ["--project-copy", Path.Combine(binaryExtracted, "project.json"), binaryReloaded]);
+        check("archive project physical Binary middle source retained", Hash(binarySource) == binarySourceHash, "original descriptor and fixed middle input retained");
+        proofCases.Add(new { name = "binary-physical-base", source = binarySource, copy = binaryCopy, package = binaryPackage, extracted = binaryExtracted, reloaded = binaryReloaded });
+        // BinaryのHTMLは未対応なので、正当なDTOでもreportは拒否して出力を保持する。
+        var binaryReport = Path.Combine(work, "binary-physical-base-report.html"); File.WriteAllText(binaryReport, "preserve existing report"); var binaryReportHash = Hash(binaryReport);
+        var binaryReportResult = await run("archive-project-binary-physical-base-report-refused", 2, false, ["--report-project", binarySource, binaryReport]);
+        check("archive project Binary report refusal preserves output", Hash(binaryReport) == binaryReportHash && binaryReportResult.Stdout.Length == 0 && binaryReportResult.Stderr.Length > 0, "Binary HTML remains unsupported");
         foreach (var (name, change) in new (string, Action<JsonObject>)[]
         {
             ("old-version", json => json["formatVersion"] = 1),
@@ -103,7 +118,6 @@ internal static class ArchiveProjectScenarios
             ("mixed-path", json => Entry(json)["leftPath"] = "root-a.zip"),
             ("writable", json => Entry(json)["leftReadOnly"] = false),
             ("auto-mode", json => Entry(json)["mode"] = "Auto"),
-            ("binary-physical-base", json => { Entry(json)["mode"] = "Binary"; Entry(json)["basePath"] = Fixed("root-a.zip"); }),
             ("missing-sha", json => Leaf(json).Remove("rootSha256")),
             ("bad-sha", json => Leaf(json)["rootSha256"] = "invalid"),
             ("unsafe-chain", json => Leaf(json)["entryChain"] = new JsonArray("../escape.zip")),

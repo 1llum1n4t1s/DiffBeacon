@@ -104,7 +104,7 @@ parser.add_argument('--products', type=pathlib.Path, required=True)
 parser.add_argument('--proof', type=pathlib.Path, required=True)
 options = parser.parse_args()
 products = load(options.products)
-assert len(products) == 7
+assert len(products) == 8 and {row['name'] for row in products} == {'roots', 'nested', 'raw-tar', 'wrapper', 'empty', 'three', 'mixed', 'binary-physical-base'}
 records = []
 for row in products:
     source = pathlib.Path(row['source'])
@@ -123,7 +123,11 @@ for row in products:
         if old is not None:
             assert set(new) == {'rootPath', 'entryChain', 'leafEntry', 'rootSha256'}
             assert new['entryChain'] == old['entryChain'] and new['leafEntry'] == old['leafEntry'] and new['rootSha256'] == old['rootSha256']
-    report_sha = verify_report(pathlib.Path(row['report']), bodies)
+    binary = row['name'] == 'binary-physical-base'
+    if binary:
+        assert expected['mode'] == actual['mode'] == 'Binary' and sides == ['left', 'base', 'right']
+        assert bodies[1] == (pathlib.Path(__file__).resolve().parent.parent / 'Archives' / 'Sources' / 'root-a.zip').read_bytes()
+    report_sha = None if binary else verify_report(pathlib.Path(row['report']), bodies)
     package = pathlib.Path(row['package'])
     extracted = pathlib.Path(row['extracted'])
     with zipfile.ZipFile(package) as archive:
@@ -144,6 +148,18 @@ for row in products:
                 assert descriptor['leafEntry'] == actual[side + 'ArchiveInput']['leafEntry']
                 root_bytes = archive.read(descriptor['rootPath'])
                 assert sha(root_bytes) == descriptor['rootSha256'].upper()
+        if binary:
+            assert packed_entry['mode'] == 'Binary' and packed_entry.get('baseArchiveInput') is None
+            middle = packed_entry['basePath']
+            assert not pathlib.Path(middle).is_absolute() and archive.read(middle) == bodies[1]
+            assert 'patch.diff' not in archive.namelist() and not any(name.endswith('.html') for name in archive.namelist())
+            reloaded_path = pathlib.Path(row['reloaded'])
+            reloaded = load(reloaded_path)
+            assert reloaded['formatVersion'] == 2 and reloaded['entries'][0]['mode'] == 'Binary'
+            assert all(content(reloaded['entries'][0], side, reloaded_path) == bodies[index] for index, side in enumerate(sides))
+            records.append({'name': row['name'], 'packageSha256': sha(package.read_bytes()), 'leafSha256': [sha(body) for body in bodies],
+                            'binaryMiddleFullBytesVerified': True, 'fullPackageCrcContentVerified': True, 'externalLeafPatchVerified': False})
+            continue
         verify_report(extracted / 'report.files/1.html', bodies)
         patch = archive.read('patch.diff')
         if bodies[0] == bodies[-1]:
@@ -154,6 +170,6 @@ for row in products:
             assert b'--- original/same.txt' in patch and b'+++ altered/same.txt' in patch
     reopened_sha = verify_report(pathlib.Path(row['packedReport']), bodies)
     records.append({'name': row['name'], 'reportSha256': report_sha, 'reopenedReportSha256': reopened_sha, 'packageSha256': sha(package.read_bytes()), 'leafSha256': [sha(body) for body in bodies], 'fullPackageCrcContentVerified': True, 'sourceRootAndChainRetained': True, 'externalLeafPatchVerified': patch != b''})
-proof = {'cases': records, 'casesVerified': 7, 'allPackageFilesVerified': True, 'allLeavesAndReportsVerified': True, 'allCopiedAndPackedProjectsVerified': True, 'patchesApplied': sum(row['externalLeafPatchVerified'] for row in records)}
+proof = {'cases': records, 'casesVerified': 8, 'textReportsVerified': 7, 'binaryPhysicalMiddleVerified': True, 'allPackageFilesVerified': True, 'allLeavesAndReportsVerified': True, 'allCopiedAndPackedProjectsVerified': True, 'patchesApplied': sum(row['externalLeafPatchVerified'] for row in records)}
 options.proof.write_text(json.dumps(proof, indent=2), encoding='utf-8')
 print(json.dumps({key: value for key, value in proof.items() if key != 'cases'}))

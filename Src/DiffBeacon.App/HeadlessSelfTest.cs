@@ -16,7 +16,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false)
     {
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
@@ -60,6 +60,20 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (tarWrapperGuiOnly)
+            {
+                Progress("HeadlessTarWrapperChecks", "start");
+                HeadlessTarWrapperChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessTarWrapperChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (binaryThreeWayOnly)
+            {
+                Progress("HeadlessBinaryThreeWayChecks", "start");
+                HeadlessBinaryThreeWayChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessBinaryThreeWayChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (binaryWorkingOnly)
             {
                 Progress("HeadlessBinaryWorkingChecks", "start");
@@ -732,6 +746,7 @@ internal static class HeadlessSelfTest
             Check("masked GUI passwords unlock encrypted archive contents", encryptedPanel.Rows.Count > 0 && encryptedPanel.Rows.All(row => row.Status == "Equal") && encryptedPanel.LeftPassword.PasswordChar == '●');
             Screenshot("encrypted-archives.png");
             HeadlessArchiveWrapperChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            HeadlessTarWrapperChecks.Run(window, output, Pump, Check, Screenshot);
             Progress("HeadlessArchiveSourceChecks", "start");
             HeadlessArchiveSourceChecks.Run(window, pane, output, Pump, Check, Screenshot);
             Progress("HeadlessArchiveSourceChecks", "complete");
@@ -848,8 +863,12 @@ internal static class HeadlessSelfTest
             Check("project readonly reaches binary editor", binaryEditors.Any(editor => editor.IsReadOnly && (editor.Text ?? "").Contains("01 02 03", StringComparison.Ordinal)));
             var binaryRanges = textPane.GetVisualDescendants().OfType<ListBox>().Single(list => list.Items.Count > 0 && list.Items[0]?.ToString()?.StartsWith("0x", StringComparison.Ordinal) == true);
             binaryRanges.SelectedIndex = 0;
-            textPane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "← 選択範囲")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
+            textPane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "右→左 差分範囲")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
             var binaryPanel = textPane.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().Single();
+            var middleBeforeCopy = binaryPanel.CaptureApplied(1).CopyBytes(); var middleRevisionBeforeCopy = binaryPanel.Session.Revision(1);
+            textPane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "右→中央 差分範囲")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs();
+            Check("project readonly refuses actual copy into central Binary", binaryPanel.HasMiddle && binaryPanel.MiddleReadOnly && binaryPanel.MiddleHex.IsReadOnly
+                && binaryPanel.CaptureApplied(1).CopyBytes().SequenceEqual(middleBeforeCopy) && binaryPanel.Session.Revision(1) == middleRevisionBeforeCopy && !binaryPanel.Dirty(1));
             var binarySaved = Path.Combine(output, "workspace-binary-copy.bin"); Pump(binaryPanel.SaveToAsync(false, binarySaved));
             Check("project readonly refuses binary merge into protected side", File.ReadAllBytes(binarySaved).SequenceEqual(new byte[] { 1, 2, 3 }) && !textPane.HasUnsavedChanges);
             rejected = false; try { Pump(binaryPanel.SaveToAsync(true, readOnlyAncestor)); } catch (InvalidOperationException) { rejected = true; }
@@ -1208,7 +1227,7 @@ internal static class HeadlessSelfTest
             using var stream = File.Create(Path.Combine(artifactOutput, "ui-report.json"));
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
-            writer.WriteString("scope", binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -1235,7 +1254,7 @@ internal static class HeadlessSelfTest
         {
             var prior = window;
             var binary = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "binary-image-options.json"))) { Width = 1280, Height = 850 };
-            try { window = binary; binary.Show(); HeadlessBinaryWorkingChecks.Run(binary, output, Pump, Check, Screenshot); }
+            try { window = binary; binary.Show(); HeadlessBinaryWorkingChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryThreeWayChecks.Run(binary, output, Pump, Check, Screenshot); }
             finally { foreach (var session in binary.SessionPanes) session.DiscardChanges(); binary.Close(); window = prior; }
             Check("Binary window close releases shared assets and credentials", binary.ArchiveLifetime.Assets.Length == 0 && binary.ArchiveLifetime.CredentialCount == 0);
         }

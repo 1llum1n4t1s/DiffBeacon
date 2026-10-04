@@ -22,10 +22,10 @@ public sealed class BinaryEditSession : IDisposable
     public const int MaximumHistoryBytes = 64 * 1024 * 1024;
     public const int MaximumHistoryActions = 256;
     private readonly byte[][] _bytes;
-    private readonly bool[] _readOnly = new bool[2];
-    private readonly string[] _savedSha = new string[2];
-    private readonly string?[] _currentSha = new string?[2];
-    private readonly long[] _revisions = new long[2];
+    private readonly bool[] _readOnly;
+    private readonly string[] _savedSha;
+    private readonly string?[] _currentSha;
+    private readonly long[] _revisions;
     private readonly object _identity = new();
     private readonly List<Change> _history = [];
     private int _cursor, _historyBytes;
@@ -33,12 +33,20 @@ public sealed class BinaryEditSession : IDisposable
     private sealed record Change(int Side, int Start, byte[] Before, byte[] After);
 
     public BinaryEditSession(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+        : this([BoundedCopy(left), BoundedCopy(right)]) { }
+    public BinaryEditSession(ReadOnlySpan<byte> left, ReadOnlySpan<byte> middle, ReadOnlySpan<byte> right)
+        : this([BoundedCopy(left), BoundedCopy(middle), BoundedCopy(right)]) { }
+    private static byte[] BoundedCopy(ReadOnlySpan<byte> bytes)
+    { if (bytes.Length > MaximumFileBytes) throw new InvalidDataException("16進比較の上限は各16 MiBです。"); return bytes.ToArray(); }
+    private BinaryEditSession(byte[][] bytes)
     {
-        if (left.Length > MaximumFileBytes || right.Length > MaximumFileBytes) throw new InvalidDataException("16進比較の上限は各16 MiBです。");
-        _bytes = [left.ToArray(), right.ToArray()];
-        for (var side = 0; side < 2; side++) _savedSha[side] = CurrentSha(side);
+        if (bytes.Any(value => value.Length > MaximumFileBytes)) throw new InvalidDataException("16進比較の上限は各16 MiBです。");
+        _bytes = bytes; _readOnly = new bool[bytes.Length]; _savedSha = new string[bytes.Length];
+        _currentSha = new string?[bytes.Length]; _revisions = new long[bytes.Length];
+        for (var side = 0; side < SideCount; side++) _savedSha[side] = CurrentSha(side);
     }
-    private void ValidateSide(int side) { ObjectDisposedException.ThrowIf(_disposed, this); if (side is < 0 or > 1) throw new ArgumentOutOfRangeException(nameof(side)); }
+    public int SideCount => _bytes.Length;
+    private void ValidateSide(int side) { ObjectDisposedException.ThrowIf(_disposed, this); if (side < 0 || side >= SideCount) throw new ArgumentOutOfRangeException(nameof(side)); }
     public int Length(int side) { ValidateSide(side); return _bytes[side].Length; }
     public long Revision(int side) { ValidateSide(side); return _revisions[side]; }
     public bool IsReadOnly(int side) { ValidateSide(side); return _readOnly[side]; }
@@ -46,7 +54,7 @@ public sealed class BinaryEditSession : IDisposable
     private void Writable(int side) { ValidateSide(side); if (_readOnly[side]) throw new InvalidOperationException("この側は読取り専用です。"); }
     private string CurrentSha(int side) => _currentSha[side] ??= Convert.ToHexString(SHA256.HashData(_bytes[side]));
     public bool IsDirty(int side) { ValidateSide(side); return CurrentSha(side) != _savedSha[side]; }
-    public bool HasUnsavedChanges => IsDirty(0) || IsDirty(1);
+    public bool HasUnsavedChanges => Enumerable.Range(0, SideCount).Any(IsDirty);
     public bool CanUndo => !_disposed && _cursor > 0;
     public bool CanRedo => !_disposed && _cursor < _history.Count;
     public BinaryCapture Capture(int side) { ValidateSide(side); return new(_identity, side, _bytes[side].ToArray()); }
@@ -60,7 +68,7 @@ public sealed class BinaryEditSession : IDisposable
         Writable(side); ArgumentNullException.ThrowIfNull(hex);
         if (hex.Length > 16_384) throw new FormatException("16進編集の文字数上限を超えています。");
         var replacement = Convert.FromHexString(string.Concat(hex.Where(value => !char.IsWhiteSpace(value))));
-        if (start < 0 || start > Math.Max(_bytes[0].Length, _bytes[1].Length)) throw new ArgumentOutOfRangeException(nameof(start));
+        if (start < 0 || start > _bytes.Max(bytes => bytes.Length)) throw new ArgumentOutOfRangeException(nameof(start));
         var offset = Math.Min(start, _bytes[side].Length); var length = Math.Min(4096, _bytes[side].Length - offset);
         if (replacement.Length != length) throw new FormatException("編集前と同じバイト数を入力してください。");
         var candidate = _bytes[side].ToArray(); replacement.CopyTo(candidate, offset); Commit(side, candidate);
@@ -68,7 +76,7 @@ public sealed class BinaryEditSession : IDisposable
     public void CopyRange(int source, int destination, int start, int length)
     {
         ValidateSide(source); Writable(destination);
-        if (source == destination || start < 0 || length < 0 || (long)start + length > Math.Max(_bytes[0].Length, _bytes[1].Length)) throw new ArgumentOutOfRangeException(nameof(start));
+        if (source == destination || start < 0 || length < 0 || (long)start + length > Math.Max(_bytes[source].Length, _bytes[destination].Length)) throw new ArgumentOutOfRangeException(nameof(start));
         if (length == 0) return;
         var a = _bytes[source]; var b = _bytes[destination];
         var sourceCount = Math.Min(length, Math.Max(0, a.Length - start));
@@ -107,7 +115,7 @@ public sealed class BinaryEditSession : IDisposable
         if (!ReferenceEquals(capture.Owner, _identity) || capture.Side != side) throw new InvalidOperationException("保存元のバイナリが変更されました。");
         _savedSha[side] = capture.Sha256;
     }
-    public void MarkClean() { ObjectDisposedException.ThrowIf(_disposed, this); for (var side = 0; side < 2; side++) _savedSha[side] = CurrentSha(side); }
+    public void MarkClean() { ObjectDisposedException.ThrowIf(_disposed, this); for (var side = 0; side < SideCount; side++) _savedSha[side] = CurrentSha(side); }
     public void AdoptSavedBytes(int side, ReadOnlySpan<byte> bytes)
     {
         ValidateSide(side); if (IsDirty(side)) throw new InvalidOperationException("未保存のバイナリを別tabの保存で置換できません。");
@@ -120,14 +128,23 @@ public sealed class BinaryEditSession : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         if (maximumRanges < 0) throw new ArgumentOutOfRangeException(nameof(maximumRanges));
-        var ranges = new List<(int Start, int Length)>(); total = 0; var a = _bytes[0]; var b = _bytes[1];
-        for (var index = 0; index < Math.Max(a.Length, b.Length); index++)
+        var ranges = new List<(int Start, int Length)>(); total = 0;
+        var maximumLength = _bytes.Max(bytes => bytes.Length);
+        bool EqualAt(int offset)
         {
-            if (index < a.Length && index < b.Length && a[index] == b[index]) continue;
-            var start = index; while (index + 1 < Math.Max(a.Length, b.Length) && (index + 1 >= a.Length || index + 1 >= b.Length || a[index + 1] != b[index + 1])) index++;
+            if (offset >= _bytes[0].Length) return false;
+            var value = _bytes[0][offset];
+            for (var side = 1; side < SideCount; side++)
+                if (offset >= _bytes[side].Length || _bytes[side][offset] != value) return false;
+            return true;
+        }
+        for (var index = 0; index < maximumLength; index++)
+        {
+            if (EqualAt(index)) continue;
+            var start = index; while (index + 1 < maximumLength && !EqualAt(index + 1)) index++;
             total++; if (ranges.Count < maximumRanges) ranges.Add((start, index - start + 1));
         }
         return ranges;
     }
-    public void Dispose() { if (_disposed) return; _disposed = true; _bytes[0] = []; _bytes[1] = []; _history.Clear(); _cursor = _historyBytes = 0; }
+    public void Dispose() { if (_disposed) return; _disposed = true; for (var side = 0; side < SideCount; side++) _bytes[side] = []; _history.Clear(); _cursor = _historyBytes = 0; }
 }

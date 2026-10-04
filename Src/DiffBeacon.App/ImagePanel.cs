@@ -57,6 +57,7 @@ public static partial class SpecializedViews
         private readonly List<TextBlock> _paneCaptions = [];
 
         internal int LeftFrame => _numbers[0];
+        internal bool IsDisposed => _disposed;
         internal int RightFrame => _numbers[^1];
         internal int? MiddleFrame => _numbers.Length == 3 ? _numbers[1] : null;
         internal int LeftFrameCount => _counts[0];

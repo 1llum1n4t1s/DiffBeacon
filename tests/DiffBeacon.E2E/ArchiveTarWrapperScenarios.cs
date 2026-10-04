@@ -15,6 +15,20 @@ internal static class ArchiveTarWrapperScenarios
         var manifest = Path.Combine(root, "manifest.json");
         check("tar wrapper fixed manifest SHA", Hash(manifest) == "40735306000EFE828BBA5C2348C8FCB0CB4D66215A6B03AB257547EED493ADB4", "");
         await Independent("before", null);
+        var gui = Path.Combine(work, "gui");
+        await run("tar-wrapper-gui", 0, false, ["--self-test", gui, "--tar-wrapper-gui-only"]);
+        var guiFacts = Directory.Exists(gui) ? Directory.GetFiles(gui, "facts.json", SearchOption.AllDirectories) : [];
+        check("tar wrapper GUI one complete proof", guiFacts.Length == 1, "actual completed GUI evidence required");
+        if (guiFacts.Length == 1)
+        {
+            var readerInfo = new ProcessStartInfo(python) { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
+            foreach (var argument in new[] { "-B", "-X", "utf8", Path.Combine(root, "verify-gui.py"), guiFacts[0] }) readerInfo.ArgumentList.Add(argument);
+            using var reader = Process.Start(readerInfo)!;
+            var stdout = reader.StandardOutput.ReadToEndAsync(); var stderr = reader.StandardError.ReadToEndAsync();
+            await reader.WaitForExitAsync(); var text = await stdout; var errors = await stderr;
+            File.WriteAllText(Path.Combine(work, "gui-independent.stdout.txt"), text); File.WriteAllText(Path.Combine(work, "gui-independent.stderr.txt"), errors);
+            check("tar wrapper GUI independent all 22 cases", reader.ExitCode == 0, text + errors);
+        }
         using var golden = JsonDocument.Parse(File.ReadAllBytes(manifest));
         var cases = golden.RootElement.GetProperty("cases").EnumerateArray().ToArray();
         var evidence = new List<object>();

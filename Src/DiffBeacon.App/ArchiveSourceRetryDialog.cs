@@ -36,7 +36,7 @@ internal sealed class ArchiveSourceRetryDialog : Window
                 var box = new TextBox { PasswordChar = '●', MaxLength = 4096, Text = passwords[side][layer] };
                 _passwords[side][layer] = box;
                 if (string.IsNullOrWhiteSpace(ProjectInputs.PathFor(project, side))) continue;
-                fields.Children.Add(new TextBlock { Text = $"{(side == 0 ? "左" : side == 1 ? "祖先" : "右")} · {names[layer]}" }); fields.Children.Add(box);
+                fields.Children.Add(new TextBlock { Text = $"{(side == 0 ? "左" : side == 1 ? project.Mode == "Binary" ? "中央" : "祖先" : "右")} · {names[layer]}" }); fields.Children.Add(box);
             }
         }
         root.Children.Add(new ScrollViewer { Content = fields }); Content = root;

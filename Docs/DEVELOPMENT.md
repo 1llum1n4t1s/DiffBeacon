@@ -37,6 +37,8 @@ commit後も第2引数を`HEAD:tests/Fixtures/Archives/TarZ/manifest.json`へ替
 
 GitHubから取得したZIPはそのまま保持し、entryをストリームで読みながらSHA・サイズ・CRCを照合する。確認に使うJSONと代表PNGだけを抽出し、Native AOT発行物や全体E2Eを一括展開しない。実行に展開が必要な場合は対象RIDだけを使い、用途を終えた展開物を照合後に整理してから次のRIDへ進む。
 
+GitHub artifactのZIPは空ディレクトリを保持しない。CIではアップロード直前に `build/Capture-EvidenceInventory.py` でE2E・UI・独立decoder・発行manifestの実体一覧を `artifacts/evidence/<RID>.json` へ記録し、同じverification成果物に同梱する。ファイルは全SHA／サイズ、ディレクトリは空かどうか、リンクは追跡せず参照先を記録する。失敗runの存在しないrootも明記する。受領時はZIP内の全ファイルを一覧と照合し、ZIPに残らない空ディレクトリの観測はこの一覧の記録と区別する。一覧を持たない過去runは、空ディレクトリの存在をrunner上の検証ログから確認した範囲に限定して報告する。
+
 Windowsでは[Compact-Evidence.ps1](../build/Compact-Evidence.ps1)とPython 3.11以降の標準ライブラリの[CompactEvidence.py](../build/CompactEvidence.py)で過去の検証ディレクトリをZIP64へ格納できる。ZIPは入力とは別の場所へ置く。各entryのSHA・サイズと入力の一覧・更新日時・属性が不変であることを確認し、ZIP全体のSHAも照合する。展開元の清掃はCodexの共通`Remove-CodexItem.ps1`へ対象・許可root・対象外の新規台帳を渡す。移動と消去は別結果として記録し、元パス・ごみ箱実体・管理情報の残存ゼロで完了とする。リンクと許可root外の操作は拒否し、ごみ箱全体は空にしない。失敗ログ・入力・出力・PNG・発行物も省略しない。
 
 ```powershell

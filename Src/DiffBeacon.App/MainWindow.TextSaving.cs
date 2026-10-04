@@ -57,12 +57,12 @@ public sealed partial class ComparisonPane
             if (input?.LeafEntry is null || _workingTexts.Revision(input) == _workingTextRevisions[side]) continue;
             var snapshot = _workingTexts.Find(input.ToSource(), input.LeafEntry);
             if (snapshot is null) continue;
-            if (_specialTab.Content is SpecializedViews.BinaryPanel binary && side != 1)
+            if (_specialTab.Content is SpecializedViews.BinaryPanel binary && (side != 1 || binary.HasMiddle))
             {
                 if (snapshot.Bytes!.Length > BinaryEditSession.MaximumFileBytes)
                 { _workingDocumentStale = true; binary.SetStatus("新しい作業版はBinaryの16MiB上限を超えています。表示bytesは保持しています。形式を選んで開き直してください。"); continue; }
-                if (binary.Dirty(right)) { binary.SetStatus("別tabに新しい作業版があります。編集中のbytesは保持しています。比較し直してください。"); continue; }
-                binary.AdoptSavedBytes(right, snapshot.Bytes!); _workingTextRevisions[side] = _workingTexts.Revision(input); continue;
+                if (binary.Dirty(side)) { binary.SetStatus("別tabに新しい作業版があります。編集中のbytesは保持しています。比較し直してください。"); continue; }
+                binary.AdoptSavedBytes(side, snapshot.Bytes!); _workingTextRevisions[side] = _workingTexts.Revision(input); continue;
             }
             if (_specialTab.Content is ArchivePanel) continue;
             if (snapshot.IsBinary)
@@ -137,7 +137,7 @@ public sealed partial class ComparisonPane
     public async Task SaveTextAsAsync(bool right)
     {
         if (_specialTab.Content is SpecializedViews.BinaryPanel binary)
-        { var chosen = await binary.SavePathPicker!(right); if (chosen is not null) await binary.SaveToAsync(right, chosen); return; }
+        { var chosen = await binary.SavePathPicker!(right ? 2 : 0); if (chosen is not null) await binary.SaveToAsync(right, chosen); return; }
         EnsureSideWritable(right);
         var target = TextSavePathPicker is { } picker ? await picker(right) : await SavePathAsync("テキストを外部保存", "untitled.txt");
         if (target is not null) await SaveTextCoreAsync(right, target, CancellationToken.None);
