@@ -43,7 +43,9 @@ jobs:
         if: startsWith(matrix.rid, 'osx-')
         run: pwsh -NoProfile -File build/Build-FolderMacReference.ps1 -OutputDirectory 'artifacts/folder-reference/${{ matrix.rid }}'
       - name: Publish and verify native application
-        run: ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}'
+        run: |
+          $timeoutSeconds = if ('${{ matrix.rid }}'.StartsWith('osx-')) { 1200 } else { 600 }
+          ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -VerificationTimeoutSeconds $timeoutSeconds
       - name: Build independent Z decoder for verification
         run: |
           pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory 'artifacts/z-reference/${{ matrix.rid }}'

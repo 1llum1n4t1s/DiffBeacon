@@ -579,10 +579,10 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private void UpdateComparisonToolbarHeight()
     {
         // 形式別ビューの独自操作欄と本文を残し、共通設定はスクロールで参照する。
-        var fraction = _views.SelectedItem == _specialTab
-            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel
-                || ReferenceEquals(_specialTab.Content, _folderView)) ? .2 : .5;
-        _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, 80, 400) : 400;
+        var folder = _views.SelectedItem == _specialTab && ReferenceEquals(_specialTab.Content, _folderView);
+        var fraction = folder ? .15 : _views.SelectedItem == _specialTab
+            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel) ? .2 : .5;
+        _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, folder ? 60 : 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
     {

@@ -1,5 +1,5 @@
 """独立 stdlib reader: 固定literal期待と実diskを照合し、製品DTOを使用しない。"""
-import datetime, hashlib, json, os, pathlib, stat, sys, socket, importlib.util
+import datetime, hashlib, json, os, pathlib, stat, sys, socket, importlib.util, struct, zlib
 
 def review_reader(fixture):
     path=fixture/'verify-review.py'
@@ -384,6 +384,38 @@ def cancellations(fixture, work, parent):
         assert set(before_metadata) == set(after_metadata) == expected_metadata
     return dict(cases=4, entries=entries, fullBytesAndMetadata=True, terminalStatus=True)
 
+def screenshot_size(path):
+    data = path.read_bytes()
+    assert len(data) <= 16 * 1024 * 1024 and data[:8] == b'\x89PNG\r\n\x1a\n', 'GUI actual PNG'
+    offset = 8; header = None; compressed = bytearray(); ended = False
+    while offset < len(data):
+        assert offset + 12 <= len(data), 'PNG chunk header'
+        length = struct.unpack('>I', data[offset:offset+4])[0]
+        kind = data[offset+4:offset+8]; end = offset + length + 12
+        assert end <= len(data), 'PNG chunk bounds'
+        body = data[offset+8:end-4]
+        assert zlib.crc32(kind + body) & 0xffffffff == struct.unpack('>I', data[end-4:end])[0], 'PNG CRC'
+        if kind == b'IHDR':
+            assert offset == 8 and header is None and length == 13, 'PNG IHDR'
+            header = struct.unpack('>IIBBBBB', body)
+        elif kind == b'IDAT':
+            assert header is not None and not ended, 'PNG data order'
+            compressed.extend(body)
+        elif kind == b'IEND':
+            assert length == 0 and end == len(data), 'PNG IEND'
+            ended = True
+        offset = end
+    assert header is not None and ended and compressed, 'PNG complete'
+    width, height, depth, color, compression, filtering, interlace = header
+    assert 0 < width <= 8192 and 0 < height <= 8192 and depth == 8 and color in (2, 6), 'screenshot format'
+    assert (compression, filtering, interlace) == (0, 0, 0), 'screenshot encoding'
+    stride = 1 + width * (3 if color == 2 else 4); expected = stride * height
+    assert expected <= 32 * 1024 * 1024, 'screenshot decoded bound'
+    decoder = zlib.decompressobj(); raw = decoder.decompress(compressed, expected + 1)
+    assert decoder.eof and not decoder.unused_data and not decoder.unconsumed_tail and len(raw) == expected, 'PNG full decoded scanlines'
+    assert all(raw[row * stride] <= 4 for row in range(height)), 'PNG row filters'
+    return width, height
+
 def gui(fixture, work):
     reports = list((work/'gui').rglob('folder-copy-observations.json'))
     assert len(reports) == 1, 'actual GUI observations missing or ambiguous'
@@ -461,14 +493,21 @@ def gui(fixture, work):
             with zipfile.ZipFile(destination/'a.bin') as archive:
                 assert archive.testzip() is None and archive.namelist()==['leaf.bin'] and archive.read('leaf.bin')==b'\x88'
     pngs=list((work/'gui').glob('folder-copy-*.png'))
-    assert {p.name for p in pngs}=={'folder-copy-normal.png','folder-copy-minimum.png','folder-copy-minimum-many-tabs.png'},'GUI captured PNG coverage'
-    for png in pngs:assert png.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'),'GUI actual PNG'
+    names = ['normal', 'minimum', 'minimum-many-tabs']
+    assert {p.name for p in pngs} == {'folder-copy-' + name + suffix + '.png' for name in names for suffix in ('', '-toolbar')}, 'GUI captured PNG coverage'
     for name in ['normal','minimum','minimum-many-tabs']:
         bounds=read(reports[0].parent/(name+'-bounds.json'))
         assert bounds['listHeight']>=100 and bounds['firstRowHeight']>0 and bounds['firstRowY']>=bounds['listY'] and bounds['firstRowY']+bounds['firstRowHeight']<=bounds['listY']+bounds['listHeight'],'actual first row geometry'
         if name=='minimum-many-tabs':assert bounds['tabs']==45 and bounds['width']==850 and bounds['height']==550
+        for suffix in ('', '-toolbar'):
+            assert screenshot_size(work/'gui'/('folder-copy-' + name + suffix + '.png')) == (bounds['width'], bounds['height']), 'GUI decoded PNG dimensions'
+        toolbar = read(reports[0].parent/(name+'-toolbar-bounds.json'))
+        assert [row['control'] for row in toolbar] == ['left input', 'right input', 'compare', 'excludes', 'filter'], 'toolbar exact operation coverage'
+        for row in toolbar:
+            assert row['reachable'] is True and row['height'] > 0 and row['viewportHeight'] > 0, 'toolbar operation visible'
+            assert row['y'] >= -.01 and row['y'] + row['height'] <= row['viewportHeight'] + .01, 'toolbar actual viewport geometry'
     reviews=review_reader(fixture).gui(fixture,work)
     cancelled=cancellations(fixture,work,reports[0].parent)
-    return dict(assertions=len(report['assertions']),observations=len(observations['cases']),reviewObservations=reviews,cancellationObservations=cancelled,entries=entries,files=files,bytes=byte_count,pngs=3,fullBytesAndMetadata=True)
+    return dict(assertions=len(report['assertions']),observations=len(observations['cases']),reviewObservations=reviews,cancellationObservations=cancelled,entries=entries,files=files,bytes=byte_count,pngs=6,toolbarOperations=15,fullBytesAndMetadata=True)
 
 if __name__ == '__main__': sys.exit(special_helper() if len(sys.argv)>1 and sys.argv[1]=='--special' else main())

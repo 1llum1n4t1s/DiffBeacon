@@ -607,6 +607,27 @@ internal static class HeadlessFolderCopyChecks
                 var point = button.TranslatePoint(default, window)!.Value;
                 Report(name + " reachable " + title, button.IsEffectivelyVisible && button.Bounds.Width > 0 && point.X>=0 && point.X+button.Bounds.Width<=window.Bounds.Width && point.Y >= 0 && point.Y + button.Bounds.Height <= window.Bounds.Height);
             }
+            var toolbar = pane.GetVisualDescendants().OfType<ScrollViewer>().Single(scroll =>
+                scroll.Content is Control content && content.GetVisualDescendants().Contains(pane.CompareButton));
+            var filter = pane.GetVisualDescendants().OfType<TextBox>().Single(box => Equals(box.PlaceholderText, "ファイルフィルター (.flt)"));
+            var excludes = pane.GetVisualDescendants().OfType<TextBox>().Single(box => Equals(box.PlaceholderText, "除外パス（;区切り）"));
+            using var toolbarFile = File.Create(Path.Combine(root, name + "-toolbar-bounds.json"));
+            using var toolbarJson = new Utf8JsonWriter(toolbarFile, new JsonWriterOptions { Indented = true });
+            toolbarJson.WriteStartArray();
+            foreach (var (label, control) in new (string Label, Control Control)[]
+                { ("left input", pane.LeftPath), ("right input", pane.RightPath), ("compare", pane.CompareButton), ("excludes", excludes), ("filter", filter) })
+            {
+                control.BringIntoView(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
+                var point = control.TranslatePoint(default, toolbar)!.Value;
+                var reachable = control.IsEffectivelyVisible && control.Bounds.Height > 0
+                    && point.Y >= -.01 && point.Y + control.Bounds.Height <= toolbar.Viewport.Height + .01;
+                Report(name + " common toolbar reachable " + label, reachable);
+                toolbarJson.WriteStartObject(); toolbarJson.WriteString("control", label);
+                toolbarJson.WriteNumber("y", point.Y); toolbarJson.WriteNumber("height", control.Bounds.Height);
+                toolbarJson.WriteNumber("viewportHeight", toolbar.Viewport.Height); toolbarJson.WriteBoolean("reachable", reachable); toolbarJson.WriteEndObject();
+            }
+            toolbarJson.WriteEndArray(); screenshot("folder-copy-" + name + "-toolbar.png");
+            toolbar.Offset = default; Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
         }
         void Report(string name, bool passed) { try { check("Folder Copy " + name, passed, "actual controls/buttons, fixed bytes and independent artifacts"); } catch (InvalidOperationException) { } }
     }

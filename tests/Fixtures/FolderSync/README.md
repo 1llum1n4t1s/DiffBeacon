@@ -1,5 +1,7 @@
 # Folder model / copy E2E
 
+フォルダーGUIの画像は通常／最小／多数タブの一覧3枚と、設定欄をスクロールした3枚の計6枚です。独立readerは全PNGのCRC・zlib scanline・寸法と、左右入力・比較・除外・filterの15操作の実viewport座標を確認します。最小850×550・一覧100px以上・多数タブ45件の条件と、既存44ケースの全bytes／metadataは維持します。
+
 `model-expectations.json` は自己作成のbyte literals・階層・62ケースの固定期待です。原版関数実行goldenではありません。DirScanの親DIFF/CMPERR集約・filtered登録後再帰停止と、DirActionsのSame/filtered/Error/元側不在gateを一次根拠にし、統合TypeConflictと上限/重複排除は現adapter policyとして区別します。出典とSHAは `provenance.json`。
 
 `--folder-model-only` は実アプリを別processで呼び、二者両方向all/diff・model再帰・未走査physicalcandidate・走査済み片側空と対側child・親子重複・型とsidefilter・budget/不正引数を検証します。Windowsは実FileShare.NoneでchildErrorと親Error/明示goodchild bypassを採取。ほかのOSの同等Errorは未実測skipとして保持します。
