@@ -24,6 +24,8 @@ Windowsでは専用inputの圧縮source→通常parentと4MiB+1 Sparse sourceを
 
 特殊inputの時刻設定はPythonのno-follow capabilityを成果物へ記録します。Windowsでは専用root内のlstatでregular/fileまたはdirectory、link/reparseなしを確認した項目だけ通常utimeを使い、Macでは特殊nodeのno-followを維持します。source-beforeの採取、特殊属性の実在、全logical bytesの確認を省略しません。
 
+特殊input helperの末尾引数は`plain`／`mixed`を明示的にboolへ変換し、それ以外は入力生成前に拒否します。`plain`の片側linkでは反対側のnodeを作らず、`mixed`だけ反対側に0byteの通常fileを作ります。HEAD `92c2b1a6` のMac両構成の検証では、この引数を文字列のまま真偽判定して余分な通常fileを作る不具合がありました。固定のLeftOnly／RightOnly／TypeConflictと全原本保持の期待を維持して生成helperを修正し、修正後の同OS実測はrunの証拠で確認します。
+
 出典/固定SHAとadapter範囲は `copy-provenance.json`。限定範囲の成功は、全体E2E/UI/AOT/4RIDと独立レビューの代替ではありません。CLI一般取消・temp cleanup failure・hardlink identity/portable path TOCTOU・完全Windows metadata backendを今回の受入済み範囲へ含めません。
 # freeze06後のreview回帰（sourceドラフト）
 

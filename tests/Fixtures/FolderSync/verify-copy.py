@@ -19,7 +19,9 @@ def special_snapshot(root):
     return facts
 
 def special_helper():
-    action,location,kind,side,mixed=sys.argv[2:7];root=pathlib.Path(location).resolve()
+    action,location,kind,side,mixed=sys.argv[2:7]
+    if mixed not in ('plain','mixed'):raise ValueError('special input mode must be plain or mixed')
+    mixed=mixed=='mixed';root=pathlib.Path(location).resolve()
     assert '/folder-copy/special/' in root.as_posix() and root.is_dir(), 'dedicated special root'
     nodes=[root/s/'node.bin' for s in (['left','right'] if side=='both' else [side])]
     assert all(p.parent.resolve()==root/p.parent.name for p in nodes), 'node containment'
