@@ -18,15 +18,15 @@ $zReference = (Resolve-Path -LiteralPath (Join-Path artifacts/z-reference/local 
 dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/local --z-reference $zReference
 ```
 
-UI の変更は次の描画・操作検証も実行し、出力された PNG と JSON を確認する。レイアウト変更では `HeadlessImageCopyChecks` の通常／最小ウィンドウでの三者画像viewportと、スクロール後のPNG保存ボタンへの到達も確認する。
+UI の変更は次の描画・操作検証も実行し、出力された PNG と JSON を確認する。レイアウト変更では `HeadlessImageCopyChecks` の通常／最小ウィンドウでの三者画像viewportと、スクロール後のPNG保存ボタンへの到達も確認する。フォルダー表示では `HeadlessFolderCopyChecks` の通常／最小850×550／多数タブで、一覧の100 DIP以上の高さ・先頭行とコピー操作への到達・共通設定欄をスクロールした後の入力パス／比較／除外パス／ファイルフィルターへの到達を確認する。PNGとbounds JSONを[独立reader](tests/Fixtures/FolderSync/README.md)で照合する。
 
 ```powershell
 dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifacts/verification/managed
 ```
 
 - 回帰検証は実アプリを別プロセスで呼ぶ既存 E2E に追加する。想定する失敗と期待結果を先に整理し、入力・出力・終了コード・ログ・`assertions.json` を再現可能な成果物として保持する。実行方式と限定実行は [tests/DiffBeacon.E2E/README.md](tests/DiffBeacon.E2E/README.md) を参照する。 macOS の起動経路を変える場合は `MacCommandLauncher` と固定 SHA の `process_startup_gate.py`、その `-text` 属性を照合し、`LaunchEvidence` の実終了・出力回収の完了を確認する。起動失敗や部分出力を製品の期待終了として扱わない。
-- Native AOT に影響する変更は対象と同じ OS で `./build/Publish.ps1 -Rid <RID>` を実行する。対応 RID は `win-x64`、`win-arm64`、`osx-x64`、`osx-arm64`。このスクリプトは指定 RID の既存発行物を削除するため、生成先に手作業のファイルを置かない。
-- CI は `.github/workflows/main.yml` の4構成で AOT 発行・自己検証・E2E、`codeql-analysis.yml` で C# 解析を行う。別アーキテクチャで省略された自己検証、headless UI 検証、通常デスクトップ起動を区別して報告する。`artifacts/` と `bin/`・`obj/` は Git に登録しない。
+- Native AOT に影響する変更は対象と同じ OS で `./build/Publish.ps1 -Rid <RID>` を実行する。対応 RID は `win-x64`、`win-arm64`、`osx-x64`、`osx-arm64`。生成先に手作業のファイルを置かない。既存発行物があるWindowsでは `pwsh -STA -NoProfile -File build/Publish.ps1 -Rid <RID> -OwnerAttestsQuiescentAndNoMixedWork` を、利用中プロセスと他作業の混在がないことを確認してから実行する。清掃できない場合は未使用の `-OutputRoot artifacts/native-runs/<検証名>` を指定し、旧発行物を保持する。詳細は[発行手順](Docs/DEVELOPMENT.md)を参照する。
+- CI は `.github/workflows/main.yml` の4構成で AOT 発行・自己検証・E2E、`codeql-analysis.yml` で C# 解析を行う。CIの自己検証全体の制限はWindows600秒・macOS1,200秒で、最終集計がないtimeoutを成功扱いしない。別アーキテクチャで省略された自己検証、headless UI 検証、通常デスクトップ起動を区別して報告する。`artifacts/` と `bin/`・`obj/` は Git に登録しない。
 
 ## 実装上の制約
 
