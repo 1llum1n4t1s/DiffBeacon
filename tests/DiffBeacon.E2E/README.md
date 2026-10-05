@@ -117,6 +117,8 @@ dotnet run --project tests/DiffBeacon.E2E -c Release --no-build -- --output arti
 
 `--app <実行ファイル>` で Native AOT 発行物を検証する。省略時は Release のアプリ DLL を別プロセスで実行する。`--output` の下に入力、出力、標準出力・標準エラー、コマンド、終了コード、アサーション JSON を保存する。シンボリックリンクが作成できない環境は理由付きでその検証を省略する。UI の操作・画像はアプリの `--self-test` と発行スクリプトで別途検証する。
 
+macOS のアプリ起動では、固定 SHA の `process_startup_gate.py` が nonce と実 PID を通知して待機し、harness が実 OS の開始時刻を取得してから同じ PID の `exec` でアプリを実行する。既存の検証用 Python を使い、製品の依存には追加しない。通知と native の stdout を分離し、UTF-8 stdin と EOF を引き継ぐ。30／120／180 秒の実行制限に加え、異常時の終了待機と出力回収は共通の5秒枠で扱う。実終了コード・終端の観測・部分出力を `LaunchEvidence` に保存し、launcher の初期化失敗や回収不完全をアプリの期待終了コードと同一視しない。秘密の stdin は記録しない。固定 script の `-text` 属性を維持する。Windows の起動経路は従来どおりで、実 Mac での成功は対象 SHA の GitHub runner 結果を確認して判定する。
+
 パッチ往復は 60 個の固定 seed を記録し、それぞれの入力・生成パッチ・適用結果を保持する。再実行で既存入力を消さないよう実行ごとに固有の fixture ディレクトリを作る。検証で作成した循環リンクだけは、保存した LinkTarget と一致することを確認して終了時に解除し、リンクのパス・ターゲット・解除結果を JSON に残す。
 
 `tests/DiffBeacon.FakeProvider` は外部プロバイダーの E2E 専用実行ファイル。ソリューションの Release ビルドで同時に生成し、正常応答・不正プロトコル版・応答上限を実プロセスで検証する。Web の検証は `TcpListener` を使って 127.0.0.1 の空きポートにだけ待受け、検証終了時に停止する。外部ネットワークへ接続しない。

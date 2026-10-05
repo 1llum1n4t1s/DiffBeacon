@@ -1,0 +1,4524 @@
+{
+  "schema": 1,
+  "scope": "Self-authored literal copy expectations from fixed model cases; not original runtime golden",
+  "fixedMtimeUtc": "2002-03-04T05:06:07Z",
+  "fixedDestinationDirectoryMtimeUtc": "2011-04-05T06:07:08Z",
+  "controls": {
+    "size.flt": "def: include\nfe: size > 2\n",
+    "type.flt": "def: include\nf: ^conflict$\nd: reverse-conflict$\n"
+  },
+  "cases": [
+    {
+      "id": "all-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-L"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict",
+          "unique-L"
+        ],
+        "readonly": [
+          "left/same.bin",
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "same.bin",
+        "unique-L",
+        "branch/changed.bin",
+        "branch/empty",
+        "branch/same.bin",
+        "equal-dir/x.bin"
+      ],
+      "changedDirectories": [
+        "",
+        "branch",
+        "equal-dir"
+      ],
+      "emptyDirectoryMtimes": [
+        "branch/empty",
+        "unique-L"
+      ]
+    },
+    {
+      "id": "diff-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-L"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict",
+          "unique-L"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "unique-L",
+        "branch/changed.bin"
+      ],
+      "changedDirectories": [
+        "",
+        "branch"
+      ],
+      "emptyDirectoryMtimes": [
+        "unique-L"
+      ]
+    },
+    {
+      "id": "duplicates-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "branch/changed.bin",
+        "--select",
+        "branch"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "branch/changed.bin",
+        "branch/empty",
+        "branch/same.bin"
+      ],
+      "changedDirectories": [
+        "branch"
+      ],
+      "emptyDirectoryMtimes": [
+        "branch/empty"
+      ]
+    },
+    {
+      "id": "filtered-all-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "filtered-dir",
+        "filtered-dir/deep",
+        "filtered-dir/deep/leaf.bin"
+      ],
+      "changedDirectories": [
+        "filtered-dir/deep"
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "filtered-diff-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "nonrecursive-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--no-recursive",
+        "--select",
+        "equal-dir",
+        "--select",
+        "filtered-dir",
+        "--select",
+        "branch"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "branch",
+        "equal-dir",
+        "filtered-dir",
+        "branch/changed.bin",
+        "branch/empty",
+        "branch/same.bin",
+        "equal-dir/x.bin",
+        "filtered-dir/deep",
+        "filtered-dir/deep/leaf.bin"
+      ],
+      "changedDirectories": [
+        "branch",
+        "equal-dir",
+        "filtered-dir/deep"
+      ],
+      "emptyDirectoryMtimes": [
+        "branch/empty"
+      ]
+    },
+    {
+      "id": "absent-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "unique-R",
+        "--select",
+        "right-only.bin"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "all-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-R"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict",
+          "unique-R"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin",
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "same.bin",
+        "unique-R",
+        "branch/changed.bin",
+        "branch/empty",
+        "branch/same.bin",
+        "equal-dir/x.bin"
+      ],
+      "changedDirectories": [
+        "",
+        "branch",
+        "equal-dir"
+      ],
+      "emptyDirectoryMtimes": [
+        "branch/empty",
+        "unique-R"
+      ]
+    },
+    {
+      "id": "diff-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-R"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict",
+          "unique-R"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "unique-R",
+        "branch/changed.bin"
+      ],
+      "changedDirectories": [
+        "",
+        "branch"
+      ],
+      "emptyDirectoryMtimes": [
+        "unique-R"
+      ]
+    },
+    {
+      "id": "duplicates-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "branch/changed.bin",
+        "--select",
+        "branch"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "branch/changed.bin",
+        "branch/empty",
+        "branch/same.bin"
+      ],
+      "changedDirectories": [
+        "branch"
+      ],
+      "emptyDirectoryMtimes": [
+        "branch/empty"
+      ]
+    },
+    {
+      "id": "filtered-all-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "filtered-dir",
+        "filtered-dir/deep",
+        "filtered-dir/deep/leaf.bin"
+      ],
+      "changedDirectories": [
+        "filtered-dir/deep"
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "filtered-diff-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "nonrecursive-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--no-recursive",
+        "--select",
+        "equal-dir",
+        "--select",
+        "filtered-dir",
+        "--select",
+        "branch"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "branch",
+        "equal-dir",
+        "filtered-dir",
+        "branch/changed.bin",
+        "branch/empty",
+        "branch/same.bin",
+        "equal-dir/x.bin",
+        "filtered-dir/deep",
+        "filtered-dir/deep/leaf.bin"
+      ],
+      "changedDirectories": [
+        "branch",
+        "equal-dir",
+        "filtered-dir/deep"
+      ],
+      "emptyDirectoryMtimes": [
+        "branch/empty"
+      ]
+    },
+    {
+      "id": "absent-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "unique-L",
+        "--select",
+        "left-only.bin"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "size-filtered-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--filter",
+        "{sizeFilter}",
+        "--select",
+        "size-side.bin"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "01"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "size-side.bin"
+      ],
+      "changedDirectories": [
+        ""
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "size-filtered-R",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--filter",
+        "{sizeFilter}",
+        "--select",
+        "size-side.bin"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "type-filtered-diff-L",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "type-filtered-diff-R",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": [],
+      "planCandidates": [
+        "reverse-conflict",
+        "conflict/c.bin"
+      ]
+    },
+    {
+      "id": "empty-source-left-to-right-all",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "d"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {},
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {},
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "empty-source-left-to-right-diff",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "d"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {},
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {},
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "empty-source-right-to-left-all",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "d"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {},
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "d/x.bin": "44"
+        },
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "d/x.bin"
+      ],
+      "changedDirectories": [
+        "d"
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "empty-source-right-to-left-diff",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--select",
+        "d"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {},
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "d/x.bin": "44"
+        },
+        "rightFiles": {
+          "d/x.bin": "44"
+        },
+        "leftDirs": [
+          "d"
+        ],
+        "rightDirs": [
+          "d"
+        ],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "d/x.bin"
+      ],
+      "changedDirectories": [
+        "d"
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "budget-plan-exact",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--max-entries",
+        "2",
+        "--max-depth",
+        "1",
+        "--select",
+        "a.bin",
+        "--select",
+        "b.bin"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "a.bin": "01",
+          "b.bin": "02"
+        },
+        "rightFiles": {
+          "a.bin": "01",
+          "b.bin": "02"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "a.bin": "01",
+          "b.bin": "02"
+        },
+        "rightFiles": {
+          "a.bin": "01",
+          "b.bin": "02"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "a.bin",
+        "b.bin"
+      ],
+      "changedDirectories": [
+        ""
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "type-all-L",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "type-all-R",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "type-filtered-L",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "type-filtered-R",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "source": "right",
+      "destination": "left",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "right/same.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "readonly-destination",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "changed.bin"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin",
+          "right/changed.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin",
+          "right/changed.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "legacy-physical-tree",
+      "category": "happy",
+      "args": [
+        "--folder-copy",
+        "{left}",
+        "{right}",
+        "filtered-dir"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": false,
+      "operations": [
+        "filtered-dir",
+        "filtered-dir/deep",
+        "filtered-dir/deep/leaf.bin"
+      ],
+      "changedDirectories": [
+        "filtered-dir/deep"
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "legacy-empty-root",
+      "category": "happy",
+      "args": [
+        "--folder-copy",
+        "{left}",
+        "{right}",
+        "unique-L"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict",
+          "unique-L"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": false,
+      "operations": [
+        "unique-L"
+      ],
+      "changedDirectories": [
+        ""
+      ],
+      "emptyDirectoryMtimes": [
+        "unique-L"
+      ]
+    },
+    {
+      "id": "legacy-readonly-source",
+      "category": "happy",
+      "args": [
+        "--folder-copy",
+        "{left}",
+        "{right}",
+        "same.bin"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin",
+          "right/same.bin"
+        ]
+      },
+      "exit": 0,
+      "json": false,
+      "operations": [
+        "same.bin"
+      ],
+      "changedDirectories": [
+        ""
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "invalid-select-1",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "../same.bin"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "unknown-flag",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--bogus",
+        "x"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "after": {
+        "leftFiles": {
+          "same.bin": "01",
+          "changed.bin": "aa",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "11",
+          "branch/same.bin": "55",
+          "left-only.bin": "a0",
+          "filtered-dir/deep/leaf.bin": "0123",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
+          "size-side.bin": "01"
+        },
+        "rightFiles": {
+          "same.bin": "01",
+          "changed.bin": "bb",
+          "equal-dir/x.bin": "00",
+          "branch/changed.bin": "22",
+          "branch/same.bin": "55",
+          "right-only.bin": "b0",
+          "filtered-dir/deep/leaf.bin": "4567",
+          "conflict/c.bin": "cb",
+          "reverse-conflict": "db",
+          "size-side.bin": "020304"
+        },
+        "leftDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-L",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "reverse-conflict"
+        ],
+        "rightDirs": [
+          "equal-dir",
+          "branch",
+          "branch/empty",
+          "unique-R",
+          "filtered-dir",
+          "filtered-dir/deep",
+          "conflict"
+        ],
+        "readonly": [
+          "left/same.bin"
+        ]
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "directory-budget-over",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--max-entries",
+        "2"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "a.bin": "01",
+          "b.bin": "02",
+          "c.bin": "03"
+        },
+        "rightFiles": {
+          "a.bin": "01",
+          "b.bin": "02",
+          "c.bin": "03"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "a.bin": "01",
+          "b.bin": "02",
+          "c.bin": "03"
+        },
+        "rightFiles": {
+          "a.bin": "01",
+          "b.bin": "02",
+          "c.bin": "03"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "directory-depth-over",
+      "category": "adversarial",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--max-depth",
+        "1"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "dir/leaf.bin": "01"
+        },
+        "rightFiles": {
+          "dir/leaf.bin": "01"
+        },
+        "leftDirs": [
+          "dir"
+        ],
+        "rightDirs": [
+          "dir"
+        ],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "dir/leaf.bin": "01"
+        },
+        "rightFiles": {
+          "dir/leaf.bin": "01"
+        },
+        "leftDirs": [
+          "dir"
+        ],
+        "rightDirs": [
+          "dir"
+        ],
+        "readonly": []
+      },
+      "exit": 2,
+      "json": false,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "mode-content",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "a.txt",
+        "--mode",
+        "content"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "616c7068610a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "a.txt"
+      ],
+      "changedDirectories": [
+        ""
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "mode-content-ignore-case",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "a.txt",
+        "--mode",
+        "content",
+        "--ignore-case"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "616c7068610a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "616c7068610a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "mode-hash-ignore-case",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "a.txt",
+        "--mode",
+        "hash",
+        "--ignore-case"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "616c7068610a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [
+        "a.txt"
+      ],
+      "changedDirectories": [
+        ""
+      ],
+      "emptyDirectoryMtimes": []
+    },
+    {
+      "id": "mode-timestamp",
+      "category": "happy",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "a.txt",
+        "--mode",
+        "timestamp"
+      ],
+      "source": "left",
+      "destination": "right",
+      "before": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "616c7068610a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "after": {
+        "leftFiles": {
+          "a.txt": "414c5048410a"
+        },
+        "rightFiles": {
+          "a.txt": "616c7068610a"
+        },
+        "leftDirs": [],
+        "rightDirs": [],
+        "readonly": []
+      },
+      "exit": 0,
+      "json": true,
+      "operations": [],
+      "changedDirectories": [],
+      "emptyDirectoryMtimes": []
+    }
+  ],
+  "gui": {
+    "cases": [
+      {
+        "name": "normal-L-all",
+        "source": "left",
+        "copied": [
+          "a.bin",
+          "same.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "normal-L-diff",
+        "source": "left",
+        "copied": [
+          "a.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "normal-R-all",
+        "source": "right",
+        "copied": [
+          "a.bin",
+          "same.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "normal-R-diff",
+        "source": "right",
+        "copied": [
+          "a.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "confirmation-cancel",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "readonly-revert",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "input-revert",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "mode-revert",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "setting-revert",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "tab-revert",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "cancel-button",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "same-mtime-source-change",
+        "source": "left",
+        "copied": [],
+        "sourceChange": "a.bin=91",
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "unknown-member",
+        "source": "left",
+        "copied": [],
+        "sourceChange": "tree/late.bin=77",
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "scanned-model-unknown-member",
+        "source": "left",
+        "copied": [
+          "tree/leaf.bin"
+        ],
+        "sourceChange": "tree/late.bin=77",
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "partial-output-failure",
+        "source": "left",
+        "copied": [
+          "a.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": true
+      },
+      {
+        "name": "partial-output-cancel",
+        "source": "left",
+        "copied": [
+          "a.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": true
+      },
+      {
+        "name": "refresh-adoption-rejected",
+        "source": "left",
+        "copied": [
+          "a.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "source-readonly",
+        "source": "left",
+        "copied": [
+          "a.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "legacy-single-diff",
+        "source": "left",
+        "copied": [
+          "a.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "budget-exact",
+        "source": "left",
+        "copied": [
+          "a.bin",
+          "b.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "budget-entry-over",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "budget-depth-over",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "budget-logical-over",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "budget-io-over",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "hard-limit-entries",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "hard-limit-depth",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "hard-limit-logical",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "hard-limit-io",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "budget-depth-exact",
+        "source": "left",
+        "copied": [
+          "tree/leaf.bin"
+        ],
+        "sourceChange": null,
+        "mutation": true,
+        "partial": false
+      },
+      {
+        "name": "all-tab-file-protection",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "all-tab-folder-protection",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "all-tab-filter-protection",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "all-tab-accepted-path-protection",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "all-tab-archive-protection",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "workspace-protection",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-confirmation-new-folder-cancel",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-confirmation-new-folder-continue",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-prepare-new-folder",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-confirmation-new-binary-cancel",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-confirmation-new-binary-continue",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-prepare-new-binary",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-confirmation-new-image-cancel",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-confirmation-new-image-continue",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      },
+      {
+        "name": "old-prepare-new-image",
+        "source": "left",
+        "copied": [],
+        "sourceChange": null,
+        "mutation": false,
+        "partial": false
+      }
+    ],
+    "leftFiles": {
+      "a.bin": "11",
+      "b.bin": "33",
+      "same.bin": "00",
+      "tree/leaf.bin": "55"
+    },
+    "rightFiles": {
+      "a.bin": "22",
+      "b.bin": "44",
+      "same.bin": "00",
+      "tree/leaf.bin": "66"
+    },
+    "directories": [
+      "empty",
+      "tree"
+    ]
+  },
+  "largeFile": {
+    "size": 268435457,
+    "pattern": "byte_at_offset_mod_256",
+    "sha256": "C4CC611E707A090C5B48369F4CFF5ED7726DB793317A16E602A6D6C8E18071B5"
+  },
+  "special": {
+    "windows": [
+      {
+        "id": "compressed",
+        "size": 65537,
+        "pattern": "periodic-256",
+        "sourceAttribute": 2048
+      },
+      {
+        "id": "sparse",
+        "size": 4194305,
+        "pattern": "head-tail",
+        "sourceAttribute": 512
+      }
+    ],
+    "mac": [
+      {
+        "kind": "fifo",
+        "side": "left"
+      },
+      {
+        "kind": "fifo",
+        "side": "right"
+      },
+      {
+        "kind": "fifo",
+        "side": "both"
+      },
+      {
+        "kind": "socket",
+        "side": "left"
+      },
+      {
+        "kind": "socket",
+        "side": "right"
+      },
+      {
+        "kind": "socket",
+        "side": "both"
+      },
+      {
+        "kind": "link",
+        "side": "left"
+      },
+      {
+        "kind": "link",
+        "side": "right"
+      },
+      {
+        "kind": "link",
+        "side": "both"
+      },
+      {
+        "kind": "fifo",
+        "side": "both",
+        "mode": "hash"
+      },
+      {
+        "kind": "fifo",
+        "side": "both",
+        "mode": "timestamp"
+      },
+      {
+        "kind": "fifo",
+        "side": "left",
+        "mode": "content",
+        "mixed": true
+      },
+      {
+        "kind": "fifo",
+        "side": "left",
+        "mode": "hash",
+        "mixed": true
+      },
+      {
+        "kind": "fifo",
+        "side": "left",
+        "mode": "timestamp",
+        "mixed": true
+      },
+      {
+        "kind": "fifo",
+        "side": "right",
+        "mode": "content",
+        "mixed": true
+      },
+      {
+        "kind": "fifo",
+        "side": "right",
+        "mode": "hash",
+        "mixed": true
+      },
+      {
+        "kind": "fifo",
+        "side": "right",
+        "mode": "timestamp",
+        "mixed": true
+      },
+      {
+        "kind": "case-alias",
+        "side": "left"
+      }
+    ]
+  }
+}

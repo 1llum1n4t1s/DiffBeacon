@@ -16,7 +16,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false)
     {
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
@@ -60,6 +60,13 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (folderCopyOnly)
+            {
+                Progress("HeadlessFolderCopyChecks", "start");
+                HeadlessFolderCopyChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessFolderCopyChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (binaryClipboardOnly)
             {
                 Progress("HeadlessBinaryClipboardChecks", "start");
@@ -1240,6 +1247,7 @@ internal static class HeadlessSelfTest
             RunArchiveWorkingReview();
             Progress("finalize", "complete");
             Progress("HeadlessBinaryWorkingChecks", "start"); RunBinaryWorking(); Progress("HeadlessBinaryWorkingChecks", "complete");
+            Progress("HeadlessFolderCopyChecks", "start"); RunFolderCopy(); Progress("HeadlessFolderCopyChecks", "complete");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }
@@ -1249,7 +1257,7 @@ internal static class HeadlessSelfTest
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
             writer.WriteBoolean("binaryClipboardOnly", binaryClipboardOnly);
-            writer.WriteString("scope", binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", folderCopyOnly ? "folder-copy-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -1279,6 +1287,14 @@ internal static class HeadlessSelfTest
             try { window = binary; binary.Show(); HeadlessBinaryWorkingChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryThreeWayChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryCopyAllChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryRangeEditChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryClipboardChecks.Run(binary, output, Pump, Check, Screenshot); }
             finally { foreach (var session in binary.SessionPanes) session.DiscardChanges(); binary.Close(); window = prior; }
             Check("Binary window close releases shared assets and credentials", binary.ArchiveLifetime.Assets.Length == 0 && binary.ArchiveLifetime.CredentialCount == 0);
+        }
+        void RunFolderCopy()
+        {
+            var prior = window;
+            var folder = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "folder-image-options.json"))) { Width = 1280, Height = 850 };
+            try { window = folder; folder.Show(); HeadlessFolderCopyChecks.Run(folder, output, Pump, Check, Screenshot); }
+            finally { foreach (var session in folder.SessionPanes) session.DiscardChanges(); folder.Close(); window = prior; }
+            Check("Folder copy window close releases shared assets and credentials", folder.ArchiveLifetime.Assets.Length == 0 && folder.ArchiveLifetime.CredentialCount == 0);
         }
         void TwoWay(string leftText, string rightText)
         {

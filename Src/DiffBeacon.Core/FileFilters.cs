@@ -38,9 +38,15 @@ public sealed class FileFilter
         var absolute = System.IO.Path.GetFullPath(path);
         if (new FileInfo(absolute).Length > 1_048_576) throw new FormatException("フィルターファイルは 1 MiB 以下にしてください。");
         var bytes = File.ReadAllBytes(absolute);
+        return ParseBytes(bytes, System.IO.Path.GetFileNameWithoutExtension(absolute));
+    }
+
+    public static FileFilter ParseBytes(byte[] bytes, string? name = null)
+    {
+        ArgumentNullException.ThrowIfNull(bytes);
         if (bytes.Length > 1_048_576) throw new FormatException("フィルターファイルは 1 MiB 以下にしてください。");
         var (encoding, preamble) = TextDocument.DetectEncoding(bytes, "windows-1252");
-        return Parse(encoding.GetString(bytes, preamble, bytes.Length - preamble), System.IO.Path.GetFileNameWithoutExtension(absolute));
+        return Parse(encoding.GetString(bytes, preamble, bytes.Length - preamble), name);
     }
 
     public static FileFilter Parse(string text, string? name = null)

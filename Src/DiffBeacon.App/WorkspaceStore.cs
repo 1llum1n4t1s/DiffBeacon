@@ -39,6 +39,7 @@ public sealed record ComparisonProject
     public bool RightReadOnly { get; set; }
     public bool Recursive { get; set; } = true;
     public string FolderMode { get; set; } = "Content";
+    public bool FolderShowFiltered { get; set; }
     public string? ExcludedPaths { get; set; }
     public string? LegacyFilter { get; set; }
     public char? TableDelimiter { get; set; }

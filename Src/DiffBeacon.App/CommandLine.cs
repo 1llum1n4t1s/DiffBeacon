@@ -27,10 +27,13 @@ internal static class CommandLine
                     + "画像ワイプ: --image / --image-regions / --report-project に --wipe-mode vertical|horizontal と --wipe-position N（vertical=Y、horizontal=X、非負整数）\n"
                     + "画像overlay: --image / --image-regions / --report-project に --overlay-mode none|xor|alpha|anim、--overlay-alpha X（0～1）、--overlay-blink true|false、--overlay-period N / --blink-period N（200～8000ms）\n"
                     + "画像の差分色: --image / --report-project に --highlight-alpha X（0～1、既定0.7）\n"
-                    + "--directory LEFT RIGHT\n--binary LEFT RIGHT\n--image LEFT [MIDDLE] RIGHT [--left-frame N [--middle-frame N] --right-frame N] [--threshold X] [--block-size N] [--left-orientation ANGLE,HORIZONTAL,VERTICAL] [--middle-orientation ANGLE,HORIZONTAL,VERTICAL] [--right-orientation ANGLE,HORIZONTAL,VERTICAL] [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y]\n"
+                    + "--directory LEFT RIGHT [folder options]\n--binary LEFT RIGHT\n--image LEFT [MIDDLE] RIGHT [--left-frame N [--middle-frame N] --right-frame N] [--threshold X] [--block-size N] [--left-orientation ANGLE,HORIZONTAL,VERTICAL] [--middle-orientation ANGLE,HORIZONTAL,VERTICAL] [--right-orientation ANGLE,HORIZONTAL,VERTICAL] [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y]\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
                     + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y] [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]\n"
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--package-project INPUT_PROJECT OUTPUT_ARCHIVE [--entries 1,3] [--report] [--patch] [--no-documents] [--no-project]\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"
+                    + "--folder-plan LEFT RIGHT --direction left-to-right|right-to-left --copy all|diff --select RELATIVE [--select RELATIVE ...] [folder options]\n"
+                    + "--folder-sync LEFT RIGHT --direction left-to-right|right-to-left --copy all|diff --select RELATIVE [--select RELATIVE ...] [folder options]\n"
+                    + "folder options: --mode content|hash|timestamp --exclude PATTERN --filter FILE --no-recursive --show-filtered --max-entries N --max-depth N と text comparison options\n"
                     + "--archive-list ARCHIVE [--password-stdin]\n--archive-compare LEFT RIGHT [--password-stdin]\n--archive-entry ARCHIVE ENTRY OUTPUT [--password-stdin]\n--archive-repack INPUT OUTPUT [--password-stdin]\n--archive-extract INPUT NEW_DIRECTORY [--password-stdin]\n--archive-create SOURCE_DIRECTORY OUTPUT\n"
                     + "--merge BASE LEFT RIGHT OUTPUT\n--merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"
                     + "--archive-source-list DESCRIPTOR_JSON [--password-stdin]\n--archive-source-entry DESCRIPTOR_JSON ENTRY OUTPUT [--password-stdin]\n"
@@ -127,6 +130,22 @@ internal static class CommandLine
                 await FolderOperations.CopyAsync(args[1], args[2], args[3], token);
                 WriteJson(w => w.WriteString("copied", args[3])); return 0;
             }
+            if (command == "--folder-plan")
+            {
+                var selection = await FolderCommands.PrepareSelectionAsync(args, token);
+                WriteJson(w => FolderCommands.WriteSelection(w, selection.Selection)); return 0;
+            }
+            if (command == "--folder-sync")
+            {
+                var selection = await FolderCommands.PrepareSelectionAsync(args, token);
+                selection.RequireInputsUnchanged();
+                var plan = await FolderOperations.PrepareAsync(selection.Selection, cancellationToken: token);
+                selection.RequireInputsUnchanged();
+                selection.ValidateOutputs(plan);
+                var result = await FolderOperations.ExecuteAsync(plan, selection.ValidateDestination, cancellationToken: token);
+                WriteJson(w => FolderCommands.WriteExecution(w, plan, result));
+                return result.Succeeded ? 0 : 2;
+            }
             if (command is "--json" or "--table")
             {
                 var left = await TextDocument.LoadAsync(args[1], token); var right = await TextDocument.LoadAsync(args[2], token);
@@ -217,19 +236,9 @@ internal static class CommandLine
             }
             if (command == "--directory")
             {
-                FileFilter? filter = null;
-                if (args.Length > 3)
-                {
-                    if (args.Length != 5 || args[3] != "--filter") throw new ArgumentException("--directory LEFT RIGHT [--filter FILE]");
-                    filter = FileFilter.Load(args[4]);
-                }
-                var result = await DirectoryComparer.CompareAsync(args[1], args[2], new DirectoryComparisonOptions { FileFilter = filter }, token);
-                WriteJson(w =>
-                {
-                    w.WriteStartArray("entries");
-                    foreach (var entry in result.Entries) { w.WriteStartObject(); w.WriteString("path", entry.RelativePath); w.WriteString("status", entry.Status.ToString()); w.WriteEndObject(); }
-                    w.WriteEndArray();
-                });
+                if (args.Length < 3) throw new ArgumentException("--directory LEFT RIGHT [--filter FILE] [--no-recursive] [--show-filtered] [--exclude GLOB]");
+                var result = await FolderComparisons.CompareAsync(args[1], args[2], FolderCommands.ParseOptions(args, 3), token);
+                WriteJson(w => FolderCommands.WriteModel(w, result));
                 return result.Entries.Any(x => x.Status == DirectoryDifferenceKind.Error) ? 2 : result.HasDifferences ? 1 : 0;
             }
             if (command == "--binary")
@@ -260,7 +269,7 @@ internal static class CommandLine
         }
     }
 
-    private static ComparisonOptions ParseOptions(string[] args)
+    internal static ComparisonOptions ParseOptions(string[] args)
     {
         var options = new ComparisonOptions();
         for (var index = 0; index < args.Length; index++)

@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "oracle": "Self-authored fixed literals; original static model evidence and explicit new capture/SHA/per-item safety contract, not unmodified original runtime",
+  "fixedFiles": {
+    "copy-expectations.json": "BBC56C0B012847B7D67C4C2FA249EBC8E15E21C4678BB5785F218E5CE739781B",
+    "verify-copy.py": "0EA8230AC0314E1A1C3917F90F9C732A1559FD267D7B5B4A37A5726C9849FE2B",
+    "verify-streams.py": "C32B8D1C2A32791EBCF9119C98BEBB356577A8B328DA221A98A7C304CBA83631",
+    "model-expectations.json": "0D10C226C3675622CA0560FE1332F49990AB2CFC2E818497CD596A45C0667450",
+    "verify-review.py": "130AB01A6B36A55809D691E5B3F18D5E06D7F832A2E50C410A75D5621A2B7CF4",
+    "review-expectations.json": "56619CD672D5182A0C4377E023482FB189BBB98AAEA60F8935F64C02F5AF255E"
+  },
+  "sourceEvidence": [
+    {
+      "path": "Src/DirScan.cpp",
+      "bytes": 36997,
+      "sha256": "8922828D9C668207EF19ECFE3B054CCDB532770B9266AE069C2656365D428DA9"
+    },
+    {
+      "path": "Src/DirActions.cpp",
+      "bytes": 58664,
+      "sha256": "30C59058DE259723AB7449660907729CF68E426623A3374DA16D8720DBAEEC8D"
+    },
+    {
+      "path": "Src/DirView.cpp",
+      "bytes": 168741,
+      "sha256": "3EA05B92904CDF35772D80A637518F6CB694F88E2CC3325F77174AAC74469D17"
+    },
+    {
+      "path": "artifacts/local/folder-sync-next/original-model-shell-contract.json",
+      "bytes": 1584,
+      "sha256": "8CF50247F232ECC03AC440F61E8B6C85032FE1B8497EEC3434F454EF0AA2F6D1"
+    },
+    {
+      "path": "artifacts/local/folder-sync-next/failure-matrix.md",
+      "bytes": 3709,
+      "sha256": "B6C945F26435924363E0534DCDC9B61A054F5AC2FF3BC4A3E06D50324C13D73B"
+    },
+    {
+      "path": "artifacts/local/folder-sync-next/implementation-decisions.json",
+      "bytes": 2534,
+      "sha256": "865FE7079EFD43D5801791963B79DC0D752D97425C82C967EC4652376CBDEEB6"
+    }
+  ],
+  "boundary": [
+    "Capture starts at Prepare; comparison-time SHA is not promised",
+    "Mainstream bytes and explicit writable metadata only; ADS/EFS/native full metadata remain incomplete",
+    "Mac C SDK probe is an original validation-only fixture, not product or normal build dependency",
+    "Mac special node lifecycle records lstat before/after and releases only created FIFO/socket after process termination",
+    "Copy model candidate success does not authorize physical file/directory replacement; type-filtered-diff-R keeps original candidates but execution rejects with zero mutation",
+    "CLI source/file mtime2002 and existing destination directory mtime2011 distinguish retained or natural populated directory times from forced source-time transfer",
+    "Windows special utime uses recorded capability and a dedicated regular/no-reparse lstat guard; Mac no-follow remains mandatory"
+  ],
+  "expectedCases": {
+    "macSpecial": 18,
+    "windowsSpecial": 2,
+    "gui": 44,
+    "cli": 39,
+    "additionalPlanCommands": 1
+  },
+  "verification": "Draft source; runtime outcomes belong to run receipts, not this provenance",
+  "reviewRegression": {
+    "cli": 10,
+    "additionalReadonlyPlans": 2,
+    "macCases": 5,
+    "macAliasCommandsIfAvailable": 8,
+    "macCaseSensitiveIndependentCommandsIfAliasUnavailable": 2,
+    "portableGui": 5,
+    "windowsGui": 2,
+    "scope": "Draft-only regressions for parent root overlap/kind/filter/ADS guard fixes; not executed or original Shell parity",
+    "extendedFolderBoundary": "Actual Folder root acceptance and observed normalization precede representative all-button output protection; source-only draft",
+    "filterInputCorrection": "New fixture uses valid ## comments; GUI keeps equal UTF8 size/mtime; readonlyplan success and fixed active-filter output protection stderr are mandatory"
+  }
+}

@@ -88,6 +88,8 @@ dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-
 
 E2E はアプリを別プロセスで実行し、CLI の終了コード、比較結果、マージ、パッチのバイト列、再帰比較、異常入力を確認する。`artifacts/e2e/local/assertions.json` と入力・出力・標準出力・標準エラーログが再現用成果物になる。UI は次の headless 自己検証で確認する。
 
+フォルダーのモデルとコピーはそれぞれE2Eの`--folder-model-only`／`--folder-copy-only`で限定確認できる。コピーの独立readerは固定39 CLIケース、候補と実行結果を分けた型衝突plan、256MiB超のstreamコピー、全入力・出力のbytes／metadataとGUIの44操作を照合する。GUI限定起動は`dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test artifacts/verification/folder-copy --folder-copy-only`。通常／最小850×550／多数タブのPNG・bounds JSONを確認する。MacのFIFO/socket/link/case aliasとWindowsの圧縮／Sparseは実プラットフォームの結果とskipを分ける。Macのstat ABI確認は同hostで`pwsh -NoProfile -File build/Build-FolderMacReference.ps1 -OutputDirectory artifacts/folder-reference/local`を実行し、SDKの構造体・定数と原本／compiler／probeのSHA・終了を記録する。固定期待とadapter境界は[Folder fixture](../tests/Fixtures/FolderSync/README.md)を参照する。限定成功は全体E2E／UI／AOTの代替にしない。
+
 プロバイダーの検証にはXML・HTML・DOCX・PPTX・XLSX・TAR、ループバックHTTP、外部実行ファイルのプロトコル異常と応答上限も含む。ソリューション内の`DiffBeacon.FakeProvider`がE2E用実行ファイルを生成する。UI検証は通常のウィンドウとSkia描画を使い、4ペイン・画像・バイナリ・変換後テキスト保存拒否などの結果をPNGとJSONで保存する。
 
 ```powershell

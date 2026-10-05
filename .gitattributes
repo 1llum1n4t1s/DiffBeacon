@@ -66,3 +66,5 @@ tests/Fixtures/ImageTemporalOverlays/golden.json.gz -text -whitespace
 tests/Fixtures/ImageTemporalOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
 # Frhed clipboard原本、全634採取入力とgoldenのSHAを維持する。
 tests/Fixtures/BinaryClipboard/** -text
+# フォルダーモデルの固定期待値と独立readerは採取時のSHAを維持する。
+tests/Fixtures/FolderSync/** -text -eol whitespace=cr-at-eol

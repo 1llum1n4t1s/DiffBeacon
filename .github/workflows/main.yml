@@ -39,6 +39,9 @@ jobs:
           python-version: '3.13'
       - name: Build managed projects
         run: dotnet build DiffBeacon.slnx -c Release
+      - name: Verify macOS SDK file kind ABI
+        if: startsWith(matrix.rid, 'osx-')
+        run: pwsh -NoProfile -File build/Build-FolderMacReference.ps1 -OutputDirectory 'artifacts/folder-reference/${{ matrix.rid }}'
       - name: Publish and verify native application
         run: ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}'
       - name: Build independent Z decoder for verification
@@ -66,7 +69,7 @@ jobs:
       - name: Record evidence directories and file hashes before upload
         if: always()
         run: |
-          python -B build/Capture-EvidenceInventory.py --root 'artifacts/e2e/${{ matrix.rid }}' --root 'artifacts/verification/${{ matrix.rid }}' --root 'artifacts/z-reference/${{ matrix.rid }}' --root 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' --output 'artifacts/evidence/${{ matrix.rid }}.json'
+          python -B build/Capture-EvidenceInventory.py --root 'artifacts/e2e/${{ matrix.rid }}' --root 'artifacts/verification/${{ matrix.rid }}' --root 'artifacts/z-reference/${{ matrix.rid }}' --root 'artifacts/folder-reference/${{ matrix.rid }}' --root 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' --output 'artifacts/evidence/${{ matrix.rid }}.json'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload verification evidence
         if: always()
@@ -78,6 +81,7 @@ jobs:
             artifacts/verification/${{ matrix.rid }}/
             artifacts/publish/${{ matrix.rid }}/publish-manifest.json
             artifacts/z-reference/${{ matrix.rid }}/
+            artifacts/folder-reference/${{ matrix.rid }}/
             artifacts/evidence/${{ matrix.rid }}.json
           if-no-files-found: warn
       - name: Upload native application

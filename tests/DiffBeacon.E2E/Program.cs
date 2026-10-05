@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--binary-clipboard-only",
+    "--folder-model-only", "--folder-copy-only", "--binary-clipboard-only",
     "--binary-range-edits-only", "--binary-copy-all-only", "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
@@ -1674,6 +1674,8 @@ async Task<CommandResult> Run(string name, int expectedExit, bool json, params s
 
 async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json, string? standardInput, params string[] arguments)
 {
+    if (OperatingSystem.IsMacOS())
+        return await RecordCommand(await MacCommandLauncher.RunAsync(app, Option("--python") ?? "python", name, standardInput, arguments, utf8), expectedExit, json);
     var start = new ProcessStartInfo(app.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ? "dotnet" : app)
     {
         RedirectStandardOutput = true,
@@ -1705,7 +1707,9 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
             await process.StandardInput.WriteAsync(standardInput);
             process.StandardInput.Close();
         }
-        var timeoutSeconds = arguments.Length > 0 && string.Equals(arguments[0], "--self-test", StringComparison.Ordinal) ? 120 : 30;
+        // 全streamの11 GUIケースを含む実測は約110秒。通常CLIの30秒は維持する。
+        var timeoutSeconds = name is "folder-copy-large-stream" or "folder-copy-gui" ? 180
+            : arguments.Length > 0 && string.Equals(arguments[0], "--self-test", StringComparison.Ordinal) ? 120 : 30;
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
         try { await process.WaitForExitAsync(timeout.Token); }
         catch (OperationCanceledException)
@@ -1723,6 +1727,12 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
     catch (Exception exception) { stderr += exception.ToString(); }
     timer.Stop();
     var result = new CommandResult(name, arguments, exit, stdout, stderr, timer.ElapsedMilliseconds, pid, creationUtc, launchUtc, exitObservedUtc);
+    return await RecordCommand(result, expectedExit, json);
+}
+
+async Task<CommandResult> RecordCommand(CommandResult result, int expectedExit, bool json)
+{
+    var (name, exit, stdout, stderr) = (result.Name, result.ExitCode, result.Stdout, result.Stderr);
     commands.Add(result);
     var prefix = Path.Combine(output, $"{++commandIndex:D2}-{name}");
     await File.WriteAllTextAsync(prefix + ".stdout.txt", stdout, utf8);
@@ -1740,7 +1750,11 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--archive-tar-wrappers-only", StringComparer.Ordinal))
+    if (args.Contains("--folder-model-only", StringComparer.Ordinal))
+        await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
+    else if (args.Contains("--folder-copy-only", StringComparer.Ordinal))
+        await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
+    else if (args.Contains("--archive-tar-wrappers-only", StringComparer.Ordinal))
         await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-clipboard-only", StringComparer.Ordinal))
         await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
@@ -1901,6 +1915,8 @@ try
     await BinaryCopyAllScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryRangeEditScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
+    await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
@@ -2220,7 +2236,8 @@ Console.WriteLine($"E2E: passed={assertions.Count(a => a.Status == "passed")}, f
 return assertions.Any(a => a.Status == "failed") ? 1 : 0;
 
 sealed record Assertion(string Name, string Status, string Detail);
-sealed record CommandResult(string Name, string[] Arguments, int ExitCode, string Stdout, string Stderr, long DurationMilliseconds, int Pid = 0, DateTime? CreationUtc = null, DateTime? LaunchUtc = null, DateTime? ExitObservedUtc = null);
+sealed record CommandResult(string Name, string[] Arguments, int ExitCode, string Stdout, string Stderr, long DurationMilliseconds, int Pid = 0, DateTime? CreationUtc = null, DateTime? LaunchUtc = null, DateTime? ExitObservedUtc = null, CommandLaunchEvidence? LaunchEvidence = null);
+sealed record CommandLaunchEvidence(string AppPath, string NativeExecutable, string[] NativeArguments, string LaunchExecutable, string[] LaunchArguments, string StartupGatePath, string? StartupGateSha256, bool GateReleased, DateTime? GateReleaseObservedUtc, int ActualPid, string? ActualOsBirthTimeUtc, string? ExitObservedUtc, string LaunchNonce, string? WrapperReadinessLine, bool WrapperReady, DateTime? WrapperReadyObservedUtc, int? RawExitCode, bool Terminal, int CleanupGraceSeconds, bool StdoutComplete, bool StderrComplete, bool PipesReleased, bool ProcessDisposed, string[] CleanupIssues, string ProcessIdentityScope);
 sealed record SeededCase(int Seed, string Source, string Target, string Patch, string Applied);
 sealed record LinkEvidence(string Path, string Target, bool Removed, bool IsDirectory = true);
 sealed record ArchiveFile(string Path, bool Directory, long Size, string Sha256, bool Encrypted);

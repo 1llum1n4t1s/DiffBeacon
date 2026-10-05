@@ -96,7 +96,7 @@ public sealed partial class ComparisonPane
         Mode = _mode.SelectedIndex == 8 && (_provider.SelectedItem as string == "web-text" || (_provider.SelectedItem is null && _projectMetadata.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase))) ? "Web" : ModeNames[Math.Clamp(_mode.SelectedIndex, 0, ModeNames.Length - 1)],
         TableDelimiter = _mode.SelectedIndex == 6 ? _tableSyntax?.Delimiter ?? _projectMetadata.TableDelimiter : _projectMetadata.TableDelimiter,
         ProviderId = _provider.SelectedItem as string ?? _projectMetadata.ProviderId, FileFilterPath = _fileFilter.Text,
-        Recursive = _recursive.IsChecked == true, FolderMode = _folderMode.SelectedIndex switch { 1 => "Hash", 2 => "TimestampAndSize", _ => "Content" },
+        Recursive = _recursive.IsChecked == true, FolderMode = _folderMode.SelectedIndex switch { 1 => "Hash", 2 => "TimestampAndSize", _ => "Content" }, FolderShowFiltered = _showFilteredDirectories.IsChecked == true,
         ExcludedPaths = _excludes.Text, IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true,
         IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = _ignoreRegex.Text,
         IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex,
@@ -127,7 +127,7 @@ public sealed partial class ComparisonPane
             foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => ProjectInputs.Archive(project, side)?.WorkingDocuments ?? []))
                 if (copy.SnapshotPath is { } asset && Path.IsPathFullyQualified(asset)) window.ArchiveLifetime.RegisterAsset(asset);
         _tableSyntax = null;
-        InvalidateTextSave();
+        InvalidateTextSave(); InvalidateFolderCopy();
         _operation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelChildOperation();
         ClearArchivePasswords(); _lastArchiveComparison = null;
         _projectMetadata = WorkspaceStore.CloneProject(project);
@@ -145,6 +145,7 @@ public sealed partial class ComparisonPane
         }
         else if (project.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase)) _provider.SelectedItem = "web-text";
         _fileFilter.Text = project.FileFilterPath; _recursive.IsChecked = project.Recursive; _excludes.Text = project.ExcludedPaths;
+        _showFilteredDirectories.IsChecked = project.FolderShowFiltered;
         _folderMode.SelectedIndex = project.FolderMode switch { "Content" => 0, "Hash" => 1, "TimestampAndSize" => 2, _ => throw new InvalidDataException("フォルダー比較方式が不正です。") };
         _ignoreCase.IsChecked = project.IgnoreCase; _ignoreSpace.IsChecked = project.IgnoreWhitespace;
         _ignoreBlank.IsChecked = project.IgnoreBlankLines; _ignoreRegex.Text = project.IgnoreLinePattern;
@@ -277,6 +278,7 @@ public sealed partial class ComparisonPane
                 var delimiterValue = Character(delimiter.Text); var quoteValue = Character(quote.Text);
                 StructuredComparer.ParseDelimited("", delimiterValue ?? ',', quoteValue ?? '"', multiline.IsChecked == true);
                 _tableSyntax = null;
+                InvalidateFolderCopy();
                 _projectMetadata = project with { LeftDescription = left.Text, BaseDescription = middle.Text, RightDescription = right.Text,
                     LeftReadOnly = project.LeftArchiveInput is not null || leftRo.IsChecked == true,
                     BaseReadOnly = project.BaseArchiveInput is not null || baseRo.IsChecked == true,

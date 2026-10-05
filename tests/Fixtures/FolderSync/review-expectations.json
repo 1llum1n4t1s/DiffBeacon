@@ -1,0 +1,318 @@
+{
+  "schema": 1,
+  "boundary": "New regression literals only; preserve original 39 copy cases/plan1/large/GUI44 unchanged. Source capture starts at Prepare, not comparison.",
+  "cli": [
+    {
+      "id": "nested-sync-left-to-right-a.bin",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{inner}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "nested-sync-left-to-right-Sub-a.bin",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{inner}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "Sub/a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "nested-legacy-left-to-right-a.bin",
+      "args": [
+        "--folder-copy",
+        "{left}",
+        "{inner}",
+        "a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "nested-legacy-left-to-right-Sub-a.bin",
+      "args": [
+        "--folder-copy",
+        "{left}",
+        "{inner}",
+        "Sub/a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "nested-sync-right-to-left-a.bin",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{inner}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "nested-sync-right-to-left-Sub-a.bin",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{inner}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "Sub/a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "nested-legacy-right-to-left-a.bin",
+      "args": [
+        "--folder-copy",
+        "{inner}",
+        "{left}",
+        "a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "nested-legacy-right-to-left-Sub-a.bin",
+      "args": [
+        "--folder-copy",
+        "{inner}",
+        "{left}",
+        "Sub/a.bin"
+      ],
+      "files": {
+        "left": {
+          "a.bin": "01",
+          "Sub/a.bin": "02",
+          "Sub/Sub/a.bin": "03"
+        },
+        "right": {
+          "a.bin": "11",
+          "Sub/a.bin": "12",
+          "Sub/Sub/a.bin": "13"
+        }
+      },
+      "plan": false
+    },
+    {
+      "id": "active-filter-left-to-right",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "rules.flt",
+        "--filter",
+        "{right}/rules.flt"
+      ],
+      "files": {
+        "left": {
+          "rules.flt": "6465663A20696E636C7564650A2323206C6566740A",
+          "a.bin": "01"
+        },
+        "right": {
+          "rules.flt": "6465663A20696E636C7564650A23232072696768740A",
+          "a.bin": "02"
+        }
+      },
+      "plan": true,
+      "stderrContains": "比較に使用しているフィルターファイルを上書きできません。"
+    },
+    {
+      "id": "active-filter-right-to-left",
+      "args": [
+        "--folder-sync",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "rules.flt",
+        "--filter",
+        "{left}/rules.flt"
+      ],
+      "files": {
+        "left": {
+          "rules.flt": "6465663A20696E636C7564650A2323206C6566740A",
+          "a.bin": "01"
+        },
+        "right": {
+          "rules.flt": "6465663A20696E636C7564650A23232072696768740A",
+          "a.bin": "02"
+        }
+      },
+      "plan": true,
+      "stderrContains": "比較に使用しているフィルターファイルを上書きできません。"
+    }
+  ],
+  "mac": [
+    {
+      "id": "fifo-leaf",
+      "kind": "fifo",
+      "position": "leaf"
+    },
+    {
+      "id": "fifo-ancestor",
+      "kind": "fifo",
+      "position": "ancestor"
+    },
+    {
+      "id": "socket-leaf",
+      "kind": "socket",
+      "position": "leaf"
+    },
+    {
+      "id": "socket-ancestor",
+      "kind": "socket",
+      "position": "ancestor"
+    },
+    {
+      "id": "nested-alias",
+      "kind": "alias",
+      "position": "nested"
+    }
+  ],
+  "gui": {
+    "portable": [
+      "nested-L-all",
+      "nested-L-diff",
+      "nested-R-all",
+      "nested-R-diff",
+      "active-filter-late"
+    ],
+    "windows": [
+      "central-ads-container",
+      "extended-directory-container"
+    ],
+    "nestedFiles": {
+      "left": {
+        "a.bin": "01",
+        "Sub/a.bin": "02",
+        "Sub/Sub/a.bin": "03"
+      },
+      "right": {
+        "a.bin": "11",
+        "Sub/a.bin": "12",
+        "Sub/Sub/a.bin": "13"
+      }
+    },
+    "adsHex": "0314FF",
+    "adsMainLeft": "0102",
+    "adsMainRight": "7A62",
+    "adsSupport": "1112",
+    "filterBefore": "def: include\n## original\n",
+    "filterAfter": "def: include\n## modified\n",
+    "extendedMainLeft": "0102",
+    "extendedMainRight": "7A62"
+  }
+}

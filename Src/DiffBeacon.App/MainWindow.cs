@@ -66,6 +66,7 @@ public sealed partial class MainWindow : Window
         _tabs.SelectionChanged += (_, _) =>
         {
             UpdateImageDisplayVisibility();
+            foreach (var pane in SessionPanes) pane.CancelInactiveFolderCopy(ReferenceEquals(pane, ActivePane));
             QueueSelectedHeader();
         };
         PropertyChanged += (_, args) => { if (args.Property == IsVisibleProperty) UpdateImageDisplayVisibility(); };
@@ -232,7 +233,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "アーカイブ作成", CreateArchiveAsync);
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
-        AddAction(actions, "中止", () => { _operation?.Cancel(); _reportOperation?.Cancel(); _textSaveOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
+        AddAction(actions, "中止", () => { StopFolderCopy(); _operation?.Cancel(); _reportOperation?.Cancel(); _textSaveOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
         top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", OpenProjectAsync);
@@ -241,7 +242,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(projectActions, "HTMLレポート", ExportReportAsync);
         AddAction(projectActions, "外部ツールを追加", AddExternalProviderAsync);
         projectActions.Children.Add(_externalFormat);
-        foreach (var item in new Control[] { _recursive, _folderMode, _excludes, _fileFilter }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
+        foreach (var item in new Control[] { _recursive, _folderMode, _excludes, _fileFilter, _showFilteredDirectories }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
         top.Children.Add(projectActions);
         var options = new WrapPanel { Orientation = Orientation.Horizontal };
         foreach (var control in new Control[] { _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex, _find }) { control.Margin = new Thickness(8, 4); options.Children.Add(control); }
@@ -277,6 +278,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _views.SelectionChanged += (_, _) => (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         root.Children.Add(_views);
         Content = root;
+        InitializeFolderView();
         CompareButton.Click += async (_, _) => await GuardAsync(ComparePathsAsync);
         _directoryList.DoubleTapped += async (_, _) => await GuardAsync(async () =>
         {
@@ -327,6 +329,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public async Task ComparePathsAsync()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
+        InvalidateFolderCopy();
         if (ProjectInputs.HasArchives(CaptureProject()))
         {
             if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄して内包項目を開き直しますか？")) return;
@@ -505,7 +508,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private Task RefreshEditorsAsync()
     {
-        if (ProjectInputs.HasArchives(_projectMetadata) || _specialTab.Content is ArchivePanel) return ComparePathsAsync();
+        InvalidateFolderCopy();
+        if (ProjectInputs.HasArchives(_projectMetadata) || _specialTab.Content is ArchivePanel
+            || ReferenceEquals(_specialTab.Content, _folderView)) return ComparePathsAsync();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         if (_mode.SelectedIndex == 6 && _specialTab.Content is TablePanel table) return table.RefreshAsync();
         return CompareEditorsAsync();
@@ -549,6 +554,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        InvalidateFolderCopy();
         InvalidateTextSave();
         _owner.Closed -= _ownerClosedHandler;
         _operation?.Cancel(); _operation?.Dispose();
@@ -563,6 +569,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private void SetSpecialView(Control? view)
     {
+        if (ReferenceEquals(_specialTab.Content, _folderView) && !ReferenceEquals(view, _folderView)) InvalidateFolderCopy();
         SpecializedViews.Release(_specialTab.Content as Control);
         _specialTab.Content = view;
         if (view is SpecializedViews.BinaryPanel binary) BindBinaryPanel(binary);
@@ -571,25 +578,18 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private void UpdateComparisonToolbarHeight()
     {
-        // 画像・バイナリ・アーカイブには独自の操作欄があるため、共通設定をスクロールして比較本文の領域を残す。
-        var fraction = _views.SelectedItem == _specialTab && _specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel ? .2 : .5;
+        // 形式別ビューの独自操作欄と本文を残し、共通設定はスクロールで参照する。
+        var fraction = _views.SelectedItem == _specialTab
+            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel
+                || ReferenceEquals(_specialTab.Content, _folderView)) ? .2 : .5;
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
     {
         EnsureSideWritable(toRight);
-        if (_views.SelectedItem == _specialTab && _specialTab.Content == _directoryList && _directoryList.SelectedItem is DirectoryEntry entry && _directoryLeft is not null && _directoryRight is not null)
+        if (_views.SelectedItem == _specialTab && ReferenceEquals(_specialTab.Content, _folderView))
         {
-            var left = _directoryLeft; var right = _directoryRight; var operation = _operation;
-            var inputs = (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
-            var binary = _specialTab.Content as SpecializedViews.BinaryPanel; var stamp = binary?.StateStamp;
-            bool CanAdopt() => !_disposed && ReferenceEquals(_operation, operation) && operation?.IsCancellationRequested != true
-                && ReferenceEquals(_specialTab.Content, _directoryList) && binary?.StateStamp == stamp
-                && inputs == (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
-            if (!await Dialogs.ConfirmAsync(_owner, "フォルダー内のコピー", $"{entry.RelativePath} を{(toRight ? "右" : "左")}へコピーします。既存ファイルは上書きされます。")) return;
-            if (!CanAdopt()) return;
-            await FolderOperations.CopyAsync(toRight ? left : right, toRight ? right : left, entry.RelativePath);
-            await CompareDirectoryAsync(left, right, operation?.Token ?? CancellationToken.None, CanAdopt, () => { });
+            await CopyFolderSelectionAsync(toRight, DirectoryCopyMode.DifferencesOnly);
         }
         else CopySelected(toRight);
     }
@@ -748,20 +748,18 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     private async Task<bool> CompareDirectoryAsync(string left, string right, CancellationToken token, Func<bool> canAdopt, Action prepareAdoption)
     {
+        var configuration = CaptureFolderConfiguration();
+        var filterStamp = FolderFilterStamp();
         var textOptions = Options();
         var filtered = textOptions.IgnoreCase || textOptions.IgnoreWhitespace || textOptions.IgnoreBlankLines || textOptions.IgnoreLinePattern is not null
             || textOptions.IgnoreNumbers || textOptions.CommentSyntax != CommentSyntax.None || textOptions.Whitespace != WhitespaceMode.None || textOptions.SubstitutionRules.Any(rule => rule.Enabled);
         var filter = ResolveProjectFilter();
-        var result = await DirectoryComparer.CompareAsync(left, right, new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter }, token);
+        var result = await FolderComparisons.CompareAsync(left, right, new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter, ShowFiltered = _showFilteredDirectories.IsChecked == true }, token);
         DirectoryReadyForAdoption?.Invoke();
         token.ThrowIfCancellationRequested();
-        if (!canAdopt()) return false;
+        if (!canAdopt() || !FolderConfigurationMatches(configuration) || FolderFilterStamp() != filterStamp) return false;
         prepareAdoption();
-        _directoryLeft = left; _directoryRight = right;
-        _directoryList.ItemsSource = result.Entries;
-        _directoryList.ItemTemplate = new FuncDataTemplate<DirectoryEntry>((entry, _) => new TextBlock { Text = entry is null ? "" : $"{entry.Status,-14}  {entry.RelativePath}", FontFamily = new FontFamily("Cascadia Mono, Menlo, monospace"), Margin = new Thickness(8) }, false);
-        SetSpecialView(_directoryList); _views.SelectedItem = _specialTab;
-        _status.Text = $"フォルダー比較: {result.Entries.Count} 件";
+        BindDirectoryModel(result, configuration, filterStamp);
         return true;
     }
 

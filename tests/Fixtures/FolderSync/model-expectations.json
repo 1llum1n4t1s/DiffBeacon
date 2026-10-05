@@ -1,0 +1,1798 @@
+{
+  "schemaVersion": 1,
+  "scope": "Self-authored model/selection expectations from static original evidence and explicit adapter/safety policy; no original runtime golden",
+  "fixedMtimeUtc": "2002-03-04T05:06:07Z",
+  "groups": {
+    "main": {
+      "leftFiles": {
+        "same.bin": "01",
+        "changed.bin": "aa",
+        "equal-dir/x.bin": "00",
+        "branch/changed.bin": "11",
+        "branch/same.bin": "55",
+        "left-only.bin": "a0",
+        "filtered-dir/deep/leaf.bin": "0123",
+        "conflict": "ca",
+        "reverse-conflict/c.bin": "da",
+        "size-side.bin": "01"
+      },
+      "rightFiles": {
+        "same.bin": "01",
+        "changed.bin": "bb",
+        "equal-dir/x.bin": "00",
+        "branch/changed.bin": "22",
+        "branch/same.bin": "55",
+        "right-only.bin": "b0",
+        "filtered-dir/deep/leaf.bin": "4567",
+        "conflict/c.bin": "cb",
+        "reverse-conflict": "db",
+        "size-side.bin": "020304"
+      },
+      "leftDirs": [
+        "equal-dir",
+        "branch",
+        "branch/empty",
+        "unique-L",
+        "filtered-dir",
+        "filtered-dir/deep",
+        "reverse-conflict"
+      ],
+      "rightDirs": [
+        "equal-dir",
+        "branch",
+        "branch/empty",
+        "unique-R",
+        "filtered-dir",
+        "filtered-dir/deep",
+        "conflict"
+      ],
+      "readonly": [
+        "left/same.bin",
+        "right/same.bin"
+      ]
+    },
+    "budget2": {
+      "leftFiles": {
+        "a.bin": "01",
+        "b.bin": "02"
+      },
+      "rightFiles": {
+        "a.bin": "01",
+        "b.bin": "02"
+      },
+      "leftDirs": [],
+      "rightDirs": []
+    },
+    "budget3": {
+      "leftFiles": {
+        "a.bin": "01",
+        "b.bin": "02",
+        "c.bin": "03"
+      },
+      "rightFiles": {
+        "a.bin": "01",
+        "b.bin": "02",
+        "c.bin": "03"
+      },
+      "leftDirs": [],
+      "rightDirs": []
+    },
+    "union2": {
+      "leftFiles": {
+        "a.bin": "01"
+      },
+      "rightFiles": {
+        "b.bin": "02"
+      },
+      "leftDirs": [],
+      "rightDirs": []
+    },
+    "depth2": {
+      "leftFiles": {
+        "dir/leaf.bin": "01"
+      },
+      "rightFiles": {
+        "dir/leaf.bin": "01"
+      },
+      "leftDirs": [
+        "dir"
+      ],
+      "rightDirs": [
+        "dir"
+      ]
+    },
+    "error": {
+      "leftFiles": {
+        "error/bad.bin": "01",
+        "error/good.bin": "11"
+      },
+      "rightFiles": {
+        "error/bad.bin": "01",
+        "error/good.bin": "22"
+      },
+      "leftDirs": [
+        "error"
+      ],
+      "rightDirs": [
+        "error"
+      ]
+    },
+    "empty-source": {
+      "leftFiles": {},
+      "rightFiles": {
+        "d/x.bin": "44"
+      },
+      "leftDirs": [
+        "d"
+      ],
+      "rightDirs": [
+        "d"
+      ]
+    }
+  },
+  "controls": {
+    "size.flt": "def: include\nfe: size > 2\n",
+    "type.flt": "def: include\nf: ^conflict$\nd: reverse-conflict$\n"
+  },
+  "models": {
+    "main": {
+      "statuses": {
+        "same.bin": "Equal",
+        "changed.bin": "Modified",
+        "equal-dir": "Equal",
+        "equal-dir/x.bin": "Equal",
+        "branch": "Modified",
+        "branch/changed.bin": "Modified",
+        "branch/same.bin": "Equal",
+        "branch/empty": "Equal",
+        "left-only.bin": "LeftOnly",
+        "right-only.bin": "RightOnly",
+        "unique-L": "LeftOnly",
+        "unique-R": "RightOnly",
+        "filtered-dir": "Modified",
+        "filtered-dir/deep": "Modified",
+        "filtered-dir/deep/leaf.bin": "Modified",
+        "conflict": "TypeConflict",
+        "conflict/c.bin": "RightOnly",
+        "reverse-conflict": "TypeConflict",
+        "reverse-conflict/c.bin": "LeftOnly",
+        "size-side.bin": "Modified"
+      }
+    },
+    "excluded-hidden": {
+      "statuses": {
+        "same.bin": "Equal",
+        "changed.bin": "Modified",
+        "equal-dir": "Equal",
+        "equal-dir/x.bin": "Equal",
+        "branch": "Modified",
+        "branch/changed.bin": "Modified",
+        "branch/same.bin": "Equal",
+        "branch/empty": "Equal",
+        "left-only.bin": "LeftOnly",
+        "right-only.bin": "RightOnly",
+        "unique-L": "LeftOnly",
+        "unique-R": "RightOnly",
+        "filtered-dir": "Uncompared",
+        "conflict": "TypeConflict",
+        "conflict/c.bin": "RightOnly",
+        "reverse-conflict": "TypeConflict",
+        "reverse-conflict/c.bin": "LeftOnly",
+        "size-side.bin": "Modified"
+      },
+      "filteredLeft": [
+        "filtered-dir"
+      ],
+      "filteredRight": [
+        "filtered-dir"
+      ],
+      "hideFiltered": true
+    },
+    "excluded-shown": {
+      "statuses": {
+        "same.bin": "Equal",
+        "changed.bin": "Modified",
+        "equal-dir": "Equal",
+        "equal-dir/x.bin": "Equal",
+        "branch": "Modified",
+        "branch/changed.bin": "Modified",
+        "branch/same.bin": "Equal",
+        "branch/empty": "Equal",
+        "left-only.bin": "LeftOnly",
+        "right-only.bin": "RightOnly",
+        "unique-L": "LeftOnly",
+        "unique-R": "RightOnly",
+        "filtered-dir": "Uncompared",
+        "conflict": "TypeConflict",
+        "conflict/c.bin": "RightOnly",
+        "reverse-conflict": "TypeConflict",
+        "reverse-conflict/c.bin": "LeftOnly",
+        "size-side.bin": "Modified"
+      },
+      "filteredLeft": [
+        "filtered-dir"
+      ],
+      "filteredRight": [
+        "filtered-dir"
+      ]
+    },
+    "nonrecursive": {
+      "statuses": {
+        "same.bin": "Equal",
+        "changed.bin": "Modified",
+        "equal-dir": "Uncompared",
+        "branch": "Uncompared",
+        "left-only.bin": "LeftOnly",
+        "right-only.bin": "RightOnly",
+        "unique-L": "LeftOnly",
+        "unique-R": "RightOnly",
+        "filtered-dir": "Uncompared",
+        "conflict": "TypeConflict",
+        "reverse-conflict": "TypeConflict",
+        "size-side.bin": "Modified"
+      },
+      "nonrecursive": true
+    },
+    "size-filter": {
+      "statuses": {
+        "same.bin": "Equal",
+        "changed.bin": "Modified",
+        "equal-dir": "Equal",
+        "equal-dir/x.bin": "Equal",
+        "branch": "Modified",
+        "branch/changed.bin": "Modified",
+        "branch/same.bin": "Equal",
+        "branch/empty": "Equal",
+        "left-only.bin": "LeftOnly",
+        "right-only.bin": "RightOnly",
+        "unique-L": "LeftOnly",
+        "unique-R": "RightOnly",
+        "filtered-dir": "Modified",
+        "filtered-dir/deep": "Modified",
+        "filtered-dir/deep/leaf.bin": "Modified",
+        "conflict": "TypeConflict",
+        "conflict/c.bin": "RightOnly",
+        "reverse-conflict": "TypeConflict",
+        "reverse-conflict/c.bin": "LeftOnly",
+        "size-side.bin": "LeftOnly"
+      },
+      "filteredRight": [
+        "size-side.bin"
+      ]
+    },
+    "type-filter": {
+      "statuses": {
+        "same.bin": "Equal",
+        "changed.bin": "Modified",
+        "equal-dir": "Equal",
+        "equal-dir/x.bin": "Equal",
+        "branch": "Modified",
+        "branch/changed.bin": "Modified",
+        "branch/same.bin": "Equal",
+        "branch/empty": "Equal",
+        "left-only.bin": "LeftOnly",
+        "right-only.bin": "RightOnly",
+        "unique-L": "LeftOnly",
+        "unique-R": "RightOnly",
+        "filtered-dir": "Modified",
+        "filtered-dir/deep": "Modified",
+        "filtered-dir/deep/leaf.bin": "Modified",
+        "conflict": "RightOnly",
+        "conflict/c.bin": "RightOnly",
+        "reverse-conflict": "RightOnly",
+        "size-side.bin": "Modified"
+      },
+      "filteredLeft": [
+        "conflict",
+        "reverse-conflict"
+      ]
+    },
+    "budget2": {
+      "statuses": {
+        "a.bin": "Equal",
+        "b.bin": "Equal"
+      }
+    },
+    "error": {
+      "statuses": {
+        "error": "Error",
+        "error/bad.bin": "Error",
+        "error/good.bin": "Modified"
+      }
+    },
+    "empty-source": {
+      "statuses": {
+        "d": "Modified",
+        "d/x.bin": "RightOnly"
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "main",
+      "group": "main",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}"
+      ],
+      "exit": 1,
+      "json": true,
+      "model": "main",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "filtered-hidden",
+      "group": "main",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--exclude",
+        "filtered-dir"
+      ],
+      "exit": 1,
+      "json": true,
+      "model": "excluded-hidden",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "filtered-shown",
+      "group": "main",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--exclude",
+        "filtered-dir",
+        "--show-filtered"
+      ],
+      "exit": 1,
+      "json": true,
+      "model": "excluded-shown",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "no-recursive",
+      "group": "main",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--no-recursive"
+      ],
+      "exit": 1,
+      "json": true,
+      "model": "nonrecursive",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "size-filter",
+      "group": "main",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--filter",
+        "{sizeFilter}"
+      ],
+      "exit": 1,
+      "json": true,
+      "model": "size-filter",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "type-filter",
+      "group": "main",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--filter",
+        "{typeFilter}"
+      ],
+      "exit": 1,
+      "json": true,
+      "model": "type-filter",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "budget2-depth1",
+      "group": "budget2",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--max-entries",
+        "2",
+        "--max-depth",
+        "1"
+      ],
+      "exit": 0,
+      "json": true,
+      "model": "budget2",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "empty-source-model",
+      "group": "empty-source",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}"
+      ],
+      "exit": 1,
+      "json": true,
+      "model": "empty-source",
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "empty-source-left-to-right-all",
+      "group": "empty-source",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "d"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "d"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "empty-source-left-to-right-diff",
+      "group": "empty-source",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "d"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "d"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "empty-source-right-to-left-all",
+      "group": "empty-source",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "d"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "d/x.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "all",
+      "selected": [
+        "d"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "empty-source-right-to-left-diff",
+      "group": "empty-source",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--select",
+        "d"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "d/x.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "diff",
+      "selected": [
+        "d"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "all-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-L"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "branch/empty",
+        "unique-L",
+        "same.bin",
+        "branch/changed.bin",
+        "branch/same.bin",
+        "equal-dir/x.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "branch",
+        "equal-dir",
+        "same.bin",
+        "unique-L"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "diff-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-L"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "unique-L",
+        "branch/changed.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "branch",
+        "equal-dir",
+        "same.bin",
+        "unique-L"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "duplicates-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "branch/changed.bin",
+        "--select",
+        "branch"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "branch/empty",
+        "branch/changed.bin",
+        "branch/same.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "branch",
+        "branch/changed.bin"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "filtered-all-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "filtered-dir"
+      ],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "filtered-dir"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "filtered-diff-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "filtered-dir"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "nonrecursive-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--no-recursive",
+        "--select",
+        "equal-dir",
+        "--select",
+        "filtered-dir",
+        "--select",
+        "branch"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "branch",
+        "equal-dir",
+        "filtered-dir"
+      ],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "branch",
+        "equal-dir",
+        "filtered-dir"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "absent-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "unique-R",
+        "--select",
+        "right-only.bin"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "right-only.bin",
+        "unique-R"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "type-all-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "conflict",
+        "reverse-conflict/c.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "conflict",
+        "reverse-conflict"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "type-filtered-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "conflict",
+        "reverse-conflict"
+      ],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "conflict",
+        "reverse-conflict"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "type-filtered-diff-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "conflict",
+        "reverse-conflict"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "size-filtered-L",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--filter",
+        "{sizeFilter}",
+        "--select",
+        "size-side.bin"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "size-side.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "size-side.bin"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "all-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-R"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "branch/empty",
+        "unique-R",
+        "same.bin",
+        "branch/changed.bin",
+        "branch/same.bin",
+        "equal-dir/x.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "all",
+      "selected": [
+        "branch",
+        "equal-dir",
+        "same.bin",
+        "unique-R"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "diff-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--select",
+        "branch",
+        "--select",
+        "equal-dir",
+        "--select",
+        "same.bin",
+        "--select",
+        "unique-R"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "unique-R",
+        "branch/changed.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "diff",
+      "selected": [
+        "branch",
+        "equal-dir",
+        "same.bin",
+        "unique-R"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "duplicates-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "branch",
+        "--select",
+        "branch/changed.bin",
+        "--select",
+        "branch"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "branch/empty",
+        "branch/changed.bin",
+        "branch/same.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "all",
+      "selected": [
+        "branch",
+        "branch/changed.bin"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "filtered-all-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "filtered-dir"
+      ],
+      "direction": "right-to-left",
+      "copy": "all",
+      "selected": [
+        "filtered-dir"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "filtered-diff-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--exclude",
+        "filtered-dir",
+        "--select",
+        "filtered-dir"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "right-to-left",
+      "copy": "diff",
+      "selected": [
+        "filtered-dir"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "nonrecursive-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--no-recursive",
+        "--select",
+        "equal-dir",
+        "--select",
+        "filtered-dir",
+        "--select",
+        "branch"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "branch",
+        "equal-dir",
+        "filtered-dir"
+      ],
+      "direction": "right-to-left",
+      "copy": "diff",
+      "selected": [
+        "branch",
+        "equal-dir",
+        "filtered-dir"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "absent-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "unique-L",
+        "--select",
+        "left-only.bin"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "right-to-left",
+      "copy": "all",
+      "selected": [
+        "left-only.bin",
+        "unique-L"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "type-all-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "reverse-conflict",
+        "conflict/c.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "all",
+      "selected": [
+        "conflict",
+        "reverse-conflict"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "type-filtered-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "all",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "reverse-conflict",
+        "conflict/c.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "all",
+      "selected": [
+        "conflict",
+        "reverse-conflict"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "type-filtered-diff-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--filter",
+        "{typeFilter}",
+        "--select",
+        "conflict",
+        "--select",
+        "reverse-conflict"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "reverse-conflict",
+        "conflict/c.bin"
+      ],
+      "direction": "right-to-left",
+      "copy": "diff",
+      "selected": [
+        "conflict",
+        "reverse-conflict"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "size-filtered-R",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "right-to-left",
+        "--copy",
+        "diff",
+        "--filter",
+        "{sizeFilter}",
+        "--select",
+        "size-side.bin"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "right-to-left",
+      "copy": "diff",
+      "selected": [
+        "size-side.bin"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "budget-plan-exact",
+      "group": "budget2",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--max-entries",
+        "2",
+        "--max-depth",
+        "1",
+        "--select",
+        "a.bin",
+        "--select",
+        "b.bin"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "a.bin",
+        "b.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "a.bin",
+        "b.bin"
+      ],
+      "platform": null,
+      "lock": null
+    },
+    {
+      "id": "locked-error",
+      "group": "error",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}"
+      ],
+      "exit": 2,
+      "json": true,
+      "model": "error",
+      "platform": "windows",
+      "lock": "error/bad.bin"
+    },
+    {
+      "id": "error-parent-diff",
+      "group": "error",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "error"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "error"
+      ],
+      "platform": "windows",
+      "lock": "error/bad.bin"
+    },
+    {
+      "id": "error-child-bypass",
+      "group": "error",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "diff",
+        "--select",
+        "error",
+        "--select",
+        "error/good.bin"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "error/good.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "diff",
+      "selected": [
+        "error",
+        "error/good.bin"
+      ],
+      "platform": "windows",
+      "lock": "error/bad.bin"
+    },
+    {
+      "id": "error-parent-all",
+      "group": "error",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "error"
+      ],
+      "exit": 0,
+      "json": true,
+      "candidates": [
+        "error/bad.bin",
+        "error/good.bin"
+      ],
+      "direction": "left-to-right",
+      "copy": "all",
+      "selected": [
+        "error"
+      ],
+      "platform": "windows",
+      "lock": "error/bad.bin"
+    },
+    {
+      "id": "invalid-select-0",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "missing.bin"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-1",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "../same.bin"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-2",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "/outside"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-3",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "C:/outside"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-4",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "a//b"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-5",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "./same.bin"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-6",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin."
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-7",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin "
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "invalid-select-8",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        ""
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "missing-select",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "bad-direction",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--direction",
+        "sideways"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "bad-copy",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--copy",
+        "sometimes"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "missing-direction",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "unknown-flag",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--bogus",
+        "x"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "duplicate-flag",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--no-recursive",
+        "--no-recursive"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "zero-budget",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--max-entries",
+        "0"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "bad-depth",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--max-depth",
+        "-1"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "missing-value",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin",
+        "--exclude"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "directory-budget-over",
+      "group": "budget3",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--max-entries",
+        "2"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "directory-union-over",
+      "group": "union2",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--max-entries",
+        "1"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "directory-depth-over",
+      "group": "depth2",
+      "args": [
+        "--directory",
+        "{left}",
+        "{right}",
+        "--max-depth",
+        "1"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "plan-depth-over",
+      "group": "depth2",
+      "args": [
+        "--folder-plan",
+        "{left}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "dir",
+        "--max-depth",
+        "1"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    },
+    {
+      "id": "missing-source-root",
+      "group": "main",
+      "args": [
+        "--folder-plan",
+        "{missing}",
+        "{right}",
+        "--direction",
+        "left-to-right",
+        "--copy",
+        "all",
+        "--select",
+        "same.bin"
+      ],
+      "exit": 2,
+      "json": false,
+      "reject": true
+    }
+  ]
+}

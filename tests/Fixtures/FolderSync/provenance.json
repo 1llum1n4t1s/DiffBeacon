@@ -1,0 +1,54 @@
+{
+  "readerSha256": "A20714AD82F77EF9866F685D4A874369692101FDCC6E93ED3C557AB44D1D4CC1",
+  "adapter": [
+    "Unified TypeConflict retains both raw kinds; unfiltered side representative kind",
+    "Parent gate and direct selected child bypass",
+    "Scanned empty source with opposite model child recurses and skips absent child",
+    "New budgets2entry/depth1; duplicate candidate pruning"
+  ],
+  "expectationsSha256": "0D10C226C3675622CA0560FE1332F49990AB2CFC2E818497CD596A45C0667450",
+  "oracle": "Self-authored literal expectations with static original source evidence and explicit adapter/safety policy; not unmodified original runtime",
+  "sourceEvidence": [
+    {
+      "path": "Src/DirScan.cpp",
+      "bytes": 36997,
+      "sha256": "8922828D9C668207EF19ECFE3B054CCDB532770B9266AE069C2656365D428DA9"
+    },
+    {
+      "path": "Src/DirActions.cpp",
+      "bytes": 58664,
+      "sha256": "30C59058DE259723AB7449660907729CF68E426623A3374DA16D8720DBAEEC8D"
+    },
+    {
+      "path": "Src/DirView.cpp",
+      "bytes": 168741,
+      "sha256": "3EA05B92904CDF35772D80A637518F6CB694F88E2CC3325F77174AAC74469D17"
+    },
+    {
+      "path": "artifacts/local/folder-sync-next/original-model-shell-contract.json",
+      "bytes": 1584,
+      "sha256": "8CF50247F232ECC03AC440F61E8B6C85032FE1B8497EEC3434F454EF0AA2F6D1"
+    },
+    {
+      "path": "artifacts/local/folder-sync-next/failure-matrix.md",
+      "bytes": 3709,
+      "sha256": "B6C945F26435924363E0534DCDC9B61A054F5AC2FF3BC4A3E06D50324C13D73B"
+    },
+    {
+      "path": "artifacts/local/folder-sync-next/implementation-decisions.json",
+      "bytes": 2534,
+      "sha256": "865FE7079EFD43D5801791963B79DC0D752D97425C82C967EC4652376CBDEEB6"
+    }
+  ],
+  "sourceRanges": [
+    "DirScan.cpp285-300: add filtered directory before recurse gate",
+    "DirScan.cpp535-562: parentDIFF/CMPERR",
+    "DirActions.cpp521-534: same/error/filter/source-existence gate"
+  ],
+  "scopeLimits": [
+    "Copy/executor/GUI/copy-stamp/output timestamp not measured",
+    "Generic CLI cancellation not measured",
+    "NonWindows filelock error not measured"
+  ],
+  "cases": 62
+}
