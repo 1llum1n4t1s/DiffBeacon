@@ -44,6 +44,9 @@ public static partial class FolderOperations
         var parents = new Dictionary<string, FolderCopySnapshot?>(PathComparer);
         var seen = new HashSet<string>(PathComparer);
         var budget = new CopyBudget(limits);
+        var usesWindowsMetadata = UsesLocalNtfsMetadata(sourceRoot, destinationRoot);
+        var sourceWindowsMetadata = new Dictionary<string, FolderCopyWindowsMetadata>(PathComparer);
+        var destinationWindowsMetadata = new Dictionary<string, FolderCopyWindowsMetadata>(PathComparer);
         foreach (var candidate in candidates)
         {
             token.ThrowIfCancellationRequested();
@@ -72,6 +75,13 @@ public static partial class FolderOperations
                 var target = ReadSnapshot(destination);
                 ValidateDestinationKind(destination, target, snapshot.Kind);
                 CaptureDestinationParents(destinationRoot, destination, parents);
+                if (usesWindowsMetadata)
+                {
+                    CaptureWindowsMetadataChain(source, sourceWindowsMetadata, budget, token);
+                    CaptureWindowsMetadataChain(destination, destinationWindowsMetadata, budget, token);
+                    RequireWindowsSnapshot(snapshot, sourceWindowsMetadata[source]);
+                    if (target is not null) RequireWindowsSnapshot(target, destinationWindowsMetadata[destination]);
+                }
                 FolderCopyStreamSet? sourceStreams = null;
                 FolderCopyStreamSet? destinationStreams = null;
                 var destinationSupportsNamedStreams = false;
@@ -104,23 +114,40 @@ public static partial class FolderOperations
                 }
                 RequireSourceSnapshot(source, snapshot);
                 if (snapshot.Kind == DirectoryEntryKind.Directory) RequireMembership(source, children, token);
+                if (usesWindowsMetadata)
+                {
+                    RequirePreparedWindowsChain(source, sourceRoot, sourceWindowsMetadata, budget, token);
+                    RequirePreparedWindowsChain(destination, destinationRoot, destinationWindowsMetadata, budget, token);
+                }
                 entries.Add(new(current, source, destination, snapshot, target, sourceStreams, destinationStreams,
-                    destinationSupportsNamedStreams, children));
+                    destinationSupportsNamedStreams, children,
+                    usesWindowsMetadata ? sourceWindowsMetadata[source] : null,
+                    usesWindowsMetadata && target is not null ? destinationWindowsMetadata[destination] : null));
             }
         }
         // 重複した子選択が先に来ても、親を先に実行する順序に固定する。
         var ordered = entries.OrderBy(entry => entry.RelativePath.Count(character => character == '/'))
             .ThenBy(entry => entry.RelativePath, PathComparer).ToArray();
         ValidateCrossSelectionOverlap(ordered);
+        if (usesWindowsMetadata)
+        {
+            RequirePreparedWindowsMetadata(sourceRoot, sourceWindowsMetadata, budget, token);
+            RequirePreparedWindowsMetadata(destinationRoot, destinationWindowsMetadata, budget, token);
+        }
         return new(sourceRoot, destinationRoot, started, limits, ordered, parents, budget.LogicalBytes,
-            budget.DestinationBytes, budget.PlannedIoBytes, budget.StreamDescriptors, budget.StreamNameCharacters, budget.ReadBytes);
+            budget.DestinationBytes, budget.PlannedIoBytes, budget.StreamDescriptors, budget.StreamNameCharacters, budget.ReadBytes,
+            usesWindowsMetadata, WindowsMetadataQualification(usesWindowsMetadata), sourceWindowsMetadata, destinationWindowsMetadata,
+            budget.MetadataRetainedBytes, budget.MetadataQueryBytes, budget.MetadataNativeOperations);
     }
 
     private static void ValidateLimits(FolderCopyLimits limits)
     {
         if (limits.MaximumEntries is < 1 or > 100_000 || limits.MaximumDepth is < 1 or > 256
             || limits.MaximumStreamDescriptors is < 1 or > 200_000 || limits.MaximumStreamNameCharacters is < 7 or > 4_000_000
-            || limits.MaximumLogicalBytes is < 0 or > (1L << 40) || limits.MaximumIoBytes is < 0 or > (5L << 40))
+            || limits.MaximumLogicalBytes is < 0 or > (1L << 40) || limits.MaximumIoBytes is < 0 or > (5L << 40)
+            || limits.MaximumMetadataRetainedBytes is < 0 or > (512L << 20)
+            || limits.MaximumMetadataQueryBytes is < 0 or > (256L << 30)
+            || limits.MaximumMetadataNativeOperations is < 0 or > 128_000_000)
             throw new ArgumentOutOfRangeException(nameof(limits), "コピー予算は既定上限以下で指定してください。");
     }
 
@@ -285,7 +312,9 @@ public static partial class FolderOperations
         }
     }
 
-    private sealed class CopyBudget(FolderCopyLimits limits, long previousReadBytes = 0)
+    private sealed class CopyBudget(FolderCopyLimits limits, long previousReadBytes = 0,
+        long previousMetadataRetainedBytes = 0, long previousMetadataQueryBytes = 0,
+        int previousMetadataNativeOperations = 0) : IFolderCopyWindowsMetadataBudget
     {
         public long LogicalBytes { get; private set; }
         public long DestinationBytes { get; private set; }
@@ -296,6 +325,28 @@ public static partial class FolderOperations
         public int RemainingStreamNameCharacters => limits.MaximumStreamNameCharacters - StreamNameCharacters;
         public long ReadBytes { get; private set; } = previousReadBytes;
         public long WriteBytes { get; private set; }
+        public long MetadataRetainedBytes { get; private set; } = previousMetadataRetainedBytes;
+        public long MetadataQueryBytes { get; private set; } = previousMetadataQueryBytes;
+        public int MetadataNativeOperations { get; private set; } = previousMetadataNativeOperations;
+
+        public void ReserveRetainedBytes(long bytes)
+        {
+            var next = checked(MetadataRetainedBytes + bytes);
+            if (bytes < 0 || MetadataRetainedBytes < 0 || next > limits.MaximumMetadataRetainedBytes)
+                throw new IOException("全コピー計画のWindows metadata保持予算が上限を超えています。");
+            MetadataRetainedBytes = next;
+        }
+
+        public void ReserveQueryWork(long bytes, int nativeQueries)
+        {
+            var nextBytes = checked(MetadataQueryBytes + bytes);
+            var nextOperations = checked(MetadataNativeOperations + nativeQueries);
+            if (bytes < 0 || nativeQueries < 0 || MetadataQueryBytes < 0 || MetadataNativeOperations < 0
+                || nextBytes > limits.MaximumMetadataQueryBytes || nextOperations > limits.MaximumMetadataNativeOperations)
+                throw new IOException("全コピー計画のWindows metadata照合量またはnative操作予算が上限を超えています。");
+            MetadataQueryBytes = nextBytes;
+            MetadataNativeOperations = nextOperations;
+        }
 
         public void ReserveFile(long sourceBytes, long destinationBytes)
         {

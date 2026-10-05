@@ -264,7 +264,7 @@ internal static class CommandLine
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            Console.Error.WriteLine(ex.Message);
+            Console.Error.WriteLine(FolderOperations.DescribeFailure(ex));
             return 2;
         }
     }

@@ -138,6 +138,11 @@ internal static class FolderCommands
         writer.WriteNumber("logicalBytes", plan.LogicalBytes); writer.WriteNumber("readBytes", result.ReadBytes); writer.WriteNumber("writeBytes", result.WriteBytes);
         writer.WriteNumber("destinationBytes", plan.DestinationBytes); writer.WriteNumber("plannedIoBytes", plan.PlannedIoBytes);
         writer.WriteNumber("streamDescriptors", plan.StreamDescriptors); writer.WriteNumber("streamNameCharacters", plan.StreamNameCharacters);
+        writer.WriteBoolean("usesWindowsMetadata", plan.UsesWindowsMetadata);
+        writer.WriteString("windowsMetadataQualification", plan.WindowsMetadataQualification);
+        writer.WriteNumber("metadataRetainedBytes", result.MetadataRetainedBytes);
+        writer.WriteNumber("metadataQueryBytes", result.MetadataQueryBytes);
+        writer.WriteNumber("metadataNativeOperations", result.MetadataNativeOperations);
         if (result.Reason is { } reason) writer.WriteString("reason", reason);
         writer.WriteStartArray("entries");
         foreach (var entry in result.Entries)
@@ -147,8 +152,32 @@ internal static class FolderCommands
             writer.WriteBoolean("mutationOccurred", entry.MutationOccurred);
             if (entry.Reason is { } failure) writer.WriteString("reason", failure);
             if (entry.CleanupFailure is { } cleanup) writer.WriteString("cleanupFailure", cleanup);
+            if (entry.Metadata?.Windows is { } windows)
+            {
+                writer.WriteStartObject("windowsMetadata");
+                writer.WriteBoolean("verified", windows.Verified);
+                writer.WriteString("qualificationScope", windows.QualificationScope);
+                WriteWindowsMetadataSnapshot(writer, "expected", windows.Expected);
+                if (windows.Observed is { } observed) WriteWindowsMetadataSnapshot(writer, "observed", observed);
+                else writer.WriteNull("observed");
+                writer.WriteEndObject();
+            }
             writer.WriteEndObject();
         }
         writer.WriteEndArray();
+    }
+
+    private static void WriteWindowsMetadataSnapshot(Utf8JsonWriter writer, string name, FolderCopyWindowsMetadataSnapshot value)
+    {
+        writer.WriteStartObject(name);
+        // FILETIMEと64bit IDは、JSONの浮動小数点readerでも丸めない十進文字列にする。
+        writer.WriteString("creationFileTime", value.CreationTime.ToString(CultureInfo.InvariantCulture));
+        writer.WriteString("lastWriteFileTime", value.LastWriteTime.ToString(CultureInfo.InvariantCulture));
+        writer.WriteString("fileIndex", value.FileIndex.ToString(CultureInfo.InvariantCulture));
+        writer.WriteNumber("volumeSerial", value.VolumeSerial);
+        writer.WriteNumber("size", value.Size); writer.WriteNumber("attributes", (uint)value.Attributes);
+        writer.WriteNumber("securityControl", value.SecurityControl);
+        writer.WriteString("securitySha256", value.SecuritySha256); writer.WriteString("eaSha256", value.EaSha256);
+        writer.WriteEndObject();
     }
 }

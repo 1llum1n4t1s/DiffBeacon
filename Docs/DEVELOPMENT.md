@@ -155,3 +155,9 @@ Windowsのシンボリックリンク検証は作成権限が必要。権限が�
 検証成果物は直近の確認に必要なものだけ展開して保持する。完了済みの入力・出力・ログ・PNGは `build/Compact-Evidence.ps1` で ZIP 化し、全 entry の SHA-256・サイズと元ファイルの一致を確認してから展開元を除去する。過去の記載先が圧縮済みの場合は `artifacts/retention/index.json` から保存 ZIP と照合記録を確認する。GitHub の成果物は同じものを重複取得せず、ZIP 内で検査し、確認に必要な JSON と代表 PNG のみ展開する。生成物・検証 ZIP は Git に登録しない。
 
 機能の対応状況と保留事項は [MIGRATION.md](MIGRATION.md) を参照する。
+
+### Windowsフォルダーmetadataの限定観測
+
+同じ限定実行は `FolderWindowsMetadataScenarios` から実主アプリの16コピーを起動します。固定SHAの `verify-metadata-copy.py` が普通／圧縮親、新規／既存DACL、4属性の入力を別processで生成し、コピー後の全DATA／ADS・EA・security・creation・mtime・identity・Close後の属性を別reader processで照合します。主アプリのJSON出力は独立観測へ照合する対象です。生成／検証readerのPID・birth・実終了・stdout／stderr、入力とreader SHAは `windows-metadata-main` 配下に残します。圧縮能力のない環境では圧縮8ケースを専用skipとし、通常8ケースは実行します。再現手順と資格の境界は[固定fixture](../tests/Fixtures/FolderSync/README.md)を参照してください。
+
+Windows NTFSの `--folder-copy-only` は `folder-windows-metadata-observations.json` の5拒否GUIを、固定SHAの `tests/Fixtures/FolderSync/verify-metadata.py` に別processで照合します。`windows-metadata-independent-process.json` に実PID・birth・Wait完了・exitと入力/reader SHA、proofに5拒否＋2診断GUIの全literal・creation・98件のnative closeを保存します。本文/属性/mtimeが同じでcreationだけが確認後に変更された場合も公開0と入力保持を要求します。保持/query/native予算0は確認前の拒否を要求します。他OS/filesystemのskip、部品harness、全体E2E/UI、同OS主App AOT、4RID CIを別々に記録してください。owned stagingは取得前にcloseと未公開破棄の処理を予約し、後続の予算拒否や取消後の清掃を予約内で行います。全entryの属性に加えたSACL/任意owner/SMBの完全保持や、通常OS pointer/native dialogの実測へ資格を拡張しません。

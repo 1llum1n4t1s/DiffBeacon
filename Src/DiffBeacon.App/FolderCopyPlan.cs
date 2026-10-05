@@ -10,6 +10,9 @@ public sealed record FolderCopyLimits
     public int MaximumStreamNameCharacters { get; init; } = 4_000_000;
     public long MaximumLogicalBytes { get; init; } = 1L << 40;
     public long MaximumIoBytes { get; init; } = 5L << 40;
+    public long MaximumMetadataRetainedBytes { get; init; } = 512L << 20;
+    public long MaximumMetadataQueryBytes { get; init; } = 256L << 30;
+    public int MaximumMetadataNativeOperations { get; init; } = 128_000_000;
 }
 
 public sealed record FolderCopySnapshot(DirectoryEntryKind Kind, long Size,
@@ -40,7 +43,8 @@ public sealed class FolderCopyEntry
 {
     internal FolderCopyEntry(string relativePath, string sourcePath, string destinationPath,
         FolderCopySnapshot source, FolderCopySnapshot? destination, FolderCopyStreamSet? sourceStreams,
-        FolderCopyStreamSet? destinationStreams, bool destinationSupportsNamedStreams, IEnumerable<string> children)
+        FolderCopyStreamSet? destinationStreams, bool destinationSupportsNamedStreams, IEnumerable<string> children,
+        FolderCopyWindowsMetadata? sourceWindowsMetadata = null, FolderCopyWindowsMetadata? destinationWindowsMetadata = null)
     {
         RelativePath = relativePath;
         SourcePath = sourcePath;
@@ -51,6 +55,8 @@ public sealed class FolderCopyEntry
         DestinationStreams = destinationStreams;
         DestinationSupportsNamedStreams = destinationSupportsNamedStreams;
         Children = Array.AsReadOnly(children.ToArray());
+        SourceWindowsMetadata = sourceWindowsMetadata;
+        DestinationWindowsMetadata = destinationWindowsMetadata;
     }
 
     public string RelativePath { get; }
@@ -68,6 +74,8 @@ public sealed class FolderCopyEntry
     public bool DestinationSupportsNamedStreams { get; }
     public string? Sha256 => SourceStreams?.Streams[0].Sha256;
     public IReadOnlyList<string> Children { get; }
+    internal FolderCopyWindowsMetadata? SourceWindowsMetadata { get; }
+    internal FolderCopyWindowsMetadata? DestinationWindowsMetadata { get; }
 }
 
 public sealed class FolderCopyPlan
@@ -76,7 +84,11 @@ public sealed class FolderCopyPlan
         FolderCopyLimits limits, IEnumerable<FolderCopyEntry> entries,
         IEnumerable<KeyValuePair<string, FolderCopySnapshot?>> destinationParents,
         long logicalBytes, long destinationBytes, long plannedIoBytes, int streamDescriptors,
-        int streamNameCharacters, long preparationReadBytes)
+        int streamNameCharacters, long preparationReadBytes,
+        bool usesWindowsMetadata, string windowsMetadataQualification,
+        IEnumerable<KeyValuePair<string, FolderCopyWindowsMetadata>> sourceWindowsMetadata,
+        IEnumerable<KeyValuePair<string, FolderCopyWindowsMetadata>> destinationWindowsMetadata,
+        long metadataRetainedBytes, long metadataQueryBytes, int metadataNativeOperations)
     {
         SourceRoot = sourceRoot;
         DestinationRoot = destinationRoot;
@@ -90,6 +102,13 @@ public sealed class FolderCopyPlan
         StreamDescriptors = streamDescriptors;
         StreamNameCharacters = streamNameCharacters;
         PreparationReadBytes = preparationReadBytes;
+        UsesWindowsMetadata = usesWindowsMetadata;
+        WindowsMetadataQualification = windowsMetadataQualification;
+        SourceWindowsMetadata = Array.AsReadOnly(sourceWindowsMetadata.ToArray());
+        DestinationWindowsMetadata = Array.AsReadOnly(destinationWindowsMetadata.ToArray());
+        MetadataRetainedBytes = metadataRetainedBytes;
+        PreparationMetadataQueryBytes = metadataQueryBytes;
+        PreparationMetadataNativeOperations = metadataNativeOperations;
     }
 
     public string SourceRoot { get; }
@@ -103,13 +122,28 @@ public sealed class FolderCopyPlan
     public int StreamDescriptors { get; }
     public int StreamNameCharacters { get; }
     public long PreparationReadBytes { get; }
+    public bool UsesWindowsMetadata { get; }
+    public string WindowsMetadataQualification { get; }
+    public long MetadataRetainedBytes { get; }
+    public long PreparationMetadataQueryBytes { get; }
+    public int PreparationMetadataNativeOperations { get; }
     internal IReadOnlyList<KeyValuePair<string, FolderCopySnapshot?>> DestinationParents { get; }
+    internal IReadOnlyList<KeyValuePair<string, FolderCopyWindowsMetadata>> SourceWindowsMetadata { get; }
+    internal IReadOnlyList<KeyValuePair<string, FolderCopyWindowsMetadata>> DestinationWindowsMetadata { get; }
 }
 
 public enum FolderCopyEntryStatus { Published, Failed, Cancelled, NotExecuted }
 
+public sealed record FolderCopyWindowsMetadataSnapshot(ulong CreationTime, ulong LastWriteTime,
+    long Size, FileAttributes Attributes, uint VolumeSerial, ulong FileIndex, ushort SecurityControl,
+    string SecuritySha256, string EaSha256);
+
+public sealed record FolderCopyWindowsMetadataVerification(FolderCopyWindowsMetadataSnapshot Expected,
+    FolderCopyWindowsMetadataSnapshot? Observed, bool Verified, string QualificationScope);
+
 public sealed record FolderCopyMetadataResult(FolderCopySnapshot Source, FolderCopySnapshot? Destination,
-    FileAttributes ExplicitWindowsAttributes, FileAttributes SourceWindowsAttributesNotExplicitlySet);
+    FileAttributes ExplicitWindowsAttributes, FileAttributes SourceWindowsAttributesNotExplicitlySet,
+    FolderCopyWindowsMetadataVerification? Windows = null);
 
 public sealed record FolderCopyEntryResult(string RelativePath, string DestinationPath,
     FolderCopyEntryStatus Status, bool MutationOccurred, string? Reason = null, string? CleanupFailure = null,
@@ -118,7 +152,8 @@ public sealed record FolderCopyEntryResult(string RelativePath, string Destinati
 public sealed class FolderCopyResult
 {
     internal FolderCopyResult(IEnumerable<FolderCopyEntryResult> entries, string? reason,
-        bool cancelled, bool mutationOccurred, long readBytes, long writeBytes)
+        bool cancelled, bool mutationOccurred, long readBytes, long writeBytes,
+        long metadataRetainedBytes = 0, long metadataQueryBytes = 0, int metadataNativeOperations = 0)
     {
         Entries = Array.AsReadOnly(entries.ToArray());
         Reason = reason;
@@ -126,6 +161,9 @@ public sealed class FolderCopyResult
         MutationOccurred = mutationOccurred;
         ReadBytes = readBytes;
         WriteBytes = writeBytes;
+        MetadataRetainedBytes = metadataRetainedBytes;
+        MetadataQueryBytes = metadataQueryBytes;
+        MetadataNativeOperations = metadataNativeOperations;
     }
 
     public IReadOnlyList<FolderCopyEntryResult> Entries { get; }
@@ -136,4 +174,7 @@ public sealed class FolderCopyResult
     public int PublishedCount => Entries.Count(entry => entry.Published);
     public long ReadBytes { get; }
     public long WriteBytes { get; }
+    public long MetadataRetainedBytes { get; }
+    public long MetadataQueryBytes { get; }
+    public int MetadataNativeOperations { get; }
 }

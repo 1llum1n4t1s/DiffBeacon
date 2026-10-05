@@ -25,6 +25,8 @@ public sealed partial class ComparisonPane
     private string? _directoryFilterStamp;
     internal Task? PendingFolderCopy { get; private set; }
     internal FolderCopyResult? LastFolderCopyResult { get; private set; }
+    internal string FolderCopySummaryText => _folderCopySummary.Text ?? "";
+    internal string FolderCopyStatusText => _status.Text ?? "";
     internal Action<FolderCopyPlan>? FolderPlanReady { get; set; }
     internal Action<FolderCopyPlan>? FolderExecutionStarting { get; set; }
     internal Action<string>? FolderOutputChecking { get; set; }
@@ -149,16 +151,21 @@ public sealed partial class ComparisonPane
         var model = _directoryComparison;
         var generation = _folderContextGeneration;
         try { await CopyFolderSelectionCoreAsync(toRight, mode); }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException error)
         {
-            if (CanReport()) _status.Text = "フォルダーコピーを中止しました。";
+            if (CanReport())
+            {
+                var detail = FolderOperations.DescribeFailure(error);
+                _status.Text = "フォルダーコピーを中止しました。" + (detail == error.Message ? "" : " · " + detail);
+            }
         }
         catch (Exception error)
         {
             if (CanReport())
             {
-                _status.Text = error.Message;
-                await Dialogs.MessageAsync(_owner, "コピーを完了できませんでした", error.Message);
+                var detail = FolderOperations.DescribeFailure(error);
+                _status.Text = detail;
+                await Dialogs.MessageAsync(_owner, "コピーを完了できませんでした", detail);
             }
         }
 
@@ -205,6 +212,9 @@ public sealed partial class ComparisonPane
             var resultGeneration = generation;
             var summary = $"コピー結果: 公開 {result.PublishedCount} 件 / 全 {result.Entries.Count} 件"
                 + (result.Reason is { } reason ? " · " + reason : "");
+            foreach (var entry in result.Entries)
+                if (!string.IsNullOrEmpty(entry.CleanupFailure))
+                    summary += $" · {entry.RelativePath}: 一時ファイルの清掃またはハンドル終了を確認できませんでした: {entry.CleanupFailure}";
             if (result.MutationOccurred)
             {
                 if (ReferenceEquals(_directoryComparison, model)) _folderModelStale = true;

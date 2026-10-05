@@ -176,7 +176,7 @@ internal static partial class FolderCopyWindowsStreams
         }
     }
 
-    private static string ExtendedPath(string path)
+    internal static string ExtendedPath(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
         if (path.IndexOf('\0') >= 0 || path.IndexOf('/') >= 0 || path.IndexOf('*') >= 0)

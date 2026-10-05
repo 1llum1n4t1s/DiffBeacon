@@ -26,8 +26,8 @@ public static partial class FolderOperations
         }
         catch (Exception exception) when (NativeCloseFailure(exception) is not null)
         {
-            // Prepareの外側も通常はMessageだけを表示するため、close診断を本文にも伝える。
-            throw WithStreamCloseDiagnostic(exception);
+            // cleanup診断はDataへ保持し、一次例外の型を変えない。
+            throw;
         }
     }
 
@@ -47,7 +47,7 @@ public static partial class FolderOperations
             bool supported;
             try { supported = FolderCopyWindowsStreams.SupportsNamedStreams(parent, token); }
             catch (Exception exception) when (NativeCloseFailure(exception) is not null)
-            { throw WithStreamCloseDiagnostic(exception); }
+            { throw; }
             RequireSnapshot(parent, snapshot);
             return supported;
         }
@@ -147,12 +147,14 @@ public static partial class FolderOperations
 
     private static async Task CopyStreamsToTemporaryAsync(FolderCopyEntry entry, string temporary, string parent,
         CopyBudget budget, Dictionary<string, FolderCopySnapshot?> state, CopyMutation item,
-        CancellationToken token, Action? validateContext)
+        CancellationToken token, Action? validateContext, WindowsExecutionState? windows = null)
     {
         foreach (var stream in entry.SourceStreams!.Streams)
         {
             Guard(token, validateContext);
             RequireSourceSnapshot(entry.SourcePath, entry.Source);
+            windows?.RequireSourceChain(entry.SourcePath, token, validateContext);
+            windows?.RequireDestinationChain(entry.DestinationPath, token, validateContext);
             RejectLinks(temporary);
             using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
             await using var input = new FileStream(FileStreamPath(entry.SourcePath, stream.Name), FileMode.Open,
@@ -165,7 +167,8 @@ public static partial class FolderOperations
                 // defaultのCreateNew成功後だけ所有tempとする。
                 item.TemporaryPath = temporary;
                 item.Mutated = true;
-                RefreshDestinationState(parent, state);
+                if (windows is null) RefreshDestinationState(parent, state);
+                else windows.RefreshKnownParentMtime(parent, token, validateContext);
             }
             var buffer = new byte[StreamBufferSize];
             long length = 0;
@@ -191,17 +194,14 @@ public static partial class FolderOperations
     }
 
     private static string? NativeCloseFailure(Exception exception)
-        => exception.Data[FolderCopyWindowsStreams.CloseFailureDataKey] is Exception closeFailure ? closeFailure.Message : null;
+        => JoinCleanupFailures(
+            JoinCleanupFailures(
+                exception.Data[FolderCopyWindowsStreams.CloseFailureDataKey] is Exception streamClose ? streamClose.Message : null,
+                exception.Data[FolderCopyWindowsMetadata.StagingCleanupFailureDataKey] is Exception stagingCleanup ? stagingCleanup.Message : null),
+            exception.Data[FolderCopyWindowsMetadata.CloseFailureDataKey] is Exception metadataClose ? metadataClose.Message : null);
 
-    private static Exception WithStreamCloseDiagnostic(Exception primary)
-    {
-        var message = primary.Message + Environment.NewLine + NativeCloseFailure(primary);
-        Exception diagnostic = primary is OperationCanceledException cancelled
-            ? new OperationCanceledException(message, primary, cancelled.CancellationToken)
-            : new IOException(message, primary);
-        diagnostic.Data[FolderCopyWindowsStreams.CloseFailureDataKey] = primary.Data[FolderCopyWindowsStreams.CloseFailureDataKey];
-        return diagnostic;
-    }
+    internal static string DescribeFailure(Exception exception)
+        => JoinCleanupFailures(exception.Message, NativeCloseFailure(exception))!;
 
     private static string? JoinCleanupFailures(string? first, string? second)
         => first is null ? second : second is null ? first : first + Environment.NewLine + second;

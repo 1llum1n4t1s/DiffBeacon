@@ -12,7 +12,7 @@ using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
-internal static class HeadlessFolderCopyChecks
+internal static partial class HeadlessFolderCopyChecks
 {
     private static readonly DateTime FixedTime = new(2002, 3, 4, 5, 6, 7, DateTimeKind.Utc);
     internal static void Run(MainWindow window, string output, Action<Task> pump,
@@ -81,6 +81,11 @@ internal static class HeadlessFolderCopyChecks
 
             WindowsStreamCases();
             WindowsStreamBudgetCases();
+            RunWindowsMetadata(root, (name, limits) =>
+            {
+                var pane = Create(name, out var left, out var right, limits: limits);
+                return (pane, left, right);
+            }, Wait, Report, screenshot);
 
             var layout = Create("layout", out var layoutLeft, out var layoutRight);
             Select(layout, ["a.bin", "b.bin"]); window.Width = 1280; window.Height = 850;

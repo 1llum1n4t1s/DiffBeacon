@@ -19,6 +19,8 @@ Ctrl／Shiftで複数項目を選び、方向とコピー対象を指定しま�
 
 通常fileのmtimeと対応属性、コピー対象となった空のコピー元directoryのmtimeを保持します。実行計画に含まれた空directoryの日時は、既存のコピー先に子があっても転写します。コピー元に子があるdirectoryの日時は強制転写しません。Windowsの圧縮／Sparseは通常データをコピーする経路で、元の属性・物理割当量を保持する保証はありません。Windowsでは主本文とすべての名前付きデータストリーム（ADS）を一つの一時ファイルへコピーし、全内容の読戻し後に一度だけ公開する経路を追加しています。空のADS・Unicode・末尾空白を含む名前を保持し、既存コピー先だけにあるファイルADSは置換で除去します。コピー元directoryのADSは転送せず、既存コピー先directoryのADSを保持します。Windows通常版で6CLIと11GUIの全streamを独立照合し、共有予算の境界4GUIと中止の4GUIも確認しました。全体E2E・UIはWindows通常版とWindows x64 Native AOTで完了し、いずれも失敗0と全streamの独立照合を確認しました。最新変更のMac／ARM検証は進行中です。EFSやACLなど完全なShellメタデータ保持は未対応で、元または既存コピー先がEFSなら準備時に拒否します。現在の未実装範囲は[移行一覧](MIGRATION.md)を参照してください。
 
+Windowsの双方がlocal NTFSの場合、コピー元fileのEAを転写し、既存コピー先のcreationとDACLを保持する経路を追加しています。新規fileは親のsecurityを継承し、コピー元のcreation／ACLは転写しません。owner/groupの変更が必要な置換は拒否します。確認後の元／既存出力のidentity・creation・security・EA変更と共有metadata予算超過も拒否します。独立した副handleで公開用handleのClose後に最終属性を確定し、両Closeが成功するまでmetadata検証完了とは報告しません。途中で失敗しても公開済み出力は保持し、公開済みであることと失敗理由を返します。未公開の一時fileは、取得時に予約した処理予算と所有handleで破棄し、取消や予算枯渇後も清掃を試みます。清掃失敗はコピーの失敗理由へ残します。完全なShell metadata、SACL、ネットワーク上の権限保持は引き続き対象外です。最終属性の修正は通常版／Native AOT部品で各40ケースを独立照合しました。修正後の主アプリ限定E2Eは126成功／0失敗／1OS専用skip、限定GUIは239成功／0失敗です。普通／圧縮親・新規／既存DACL・4属性の16コピーを実行し、最終Close後の全属性・EA・security・DATA／ADSを独立照合しました。変更後の全体E2E／UI／同OS主アプリAOT／4RIDは検証待ちです。
+
 CLIでは比較モデルのコピー候補だけを見る`--folder-plan`と、実際に準備・実行する`--folder-sync`を使います。候補が存在しても、物理コピー先の種別衝突などで実行を拒否することがあります。
 
 ```powershell
@@ -31,3 +33,5 @@ DiffBeacon --folder-sync left right --direction left-to-right --copy diff --sele
 `--folder-sync`は使用中の`--filter`ファイルを一件も書き込む前に保護し、公開直前にもコピー先との重複を確認します。準備が終わるまではフィルター全体のSHA-256を照合し、実行開始後は準備で確定した比較条件を使います。実行中の外部フィルター編集は条件へ反映しません。読取り専用の`--folder-plan`はフィルター自身を含む候補も表示できます。
 
 再現検証と実測範囲は[開発手順](DEVELOPMENT.md)と[固定fixture](../tests/Fixtures/FolderSync/README.md)を参照してください。
+
+通常版／Windows x64 Native AOTの同一コード全体検証は、各E2E161,675成功・失敗0、各headless UI11,159成功・失敗0で完了しました。対応OS・実OS操作・未実測境界は[移行記録](MIGRATION.md#windows-ntfsコピーの同一コードによる全体検証)を参照してください。

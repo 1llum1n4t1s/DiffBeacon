@@ -145,9 +145,52 @@ internal static class FolderCopyScenarios
             readerSha256 = Hash(Path.Combine(fixture, "verify-copy.py")), expectedSha256 = Hash(expectedPath) });
         check("Folder copy independent full bytes metadata and GUI", process.ExitCode == 0, text + error);
         await WindowsStreams();
+        await WindowsMetadata();
+        await FolderWindowsMetadataScenarios.RunAsync(work, fixture, run, check, skip, python);
         if (!OperatingSystem.IsMacOS()) skip("Folder copy Mac FIFO/socket actual app", "Mac lstat/非regularの実OS拒否とCSDK ABIはMac RID実検証工程。");
         if (!OperatingSystem.IsWindows()) skip("Folder copy Windows compressed sparse actual app", "NTFS圧縮/Sparse mainstream bytesはWindows実測工程。ADS/EFS完全保持ではありません。");
 
+
+        async Task WindowsMetadata()
+        {
+            if (!OperatingSystem.IsWindows() || !new DriveInfo(Path.GetPathRoot(Path.GetFullPath(work))!).DriveFormat.Equals("NTFS", StringComparison.OrdinalIgnoreCase))
+            {
+                skip("Folder Windows metadata rejection GUI", "Windows NTFSでの実GUI・Win32 handle照合専用。");
+                return;
+            }
+            var reports = Directory.GetFiles(Path.Combine(work, "gui"), "folder-windows-metadata-observations.json", SearchOption.AllDirectories);
+            check("Folder Windows metadata GUI exact producer", reports.Length == 1, "観測JSON数=" + reports.Length);
+            if (reports.Length != 1) return;
+            var reader = Path.Combine(fixture, "verify-metadata.py");
+            using var provenance = JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(fixture, "copy-provenance.json")));
+            var expectedSha = provenance.RootElement.GetProperty("fixedFiles").GetProperty("verify-metadata.py").GetString();
+            var readerSha = Hash(reader);
+            check("Folder Windows metadata fixed reader", readerSha == expectedSha, readerSha);
+            if (readerSha != expectedSha) return;
+            var diagnostics = Path.Combine(Path.GetDirectoryName(reports[0])!, "folder-windows-metadata-diagnostic-observations.json");
+            var inputSha = Hash(reports[0]); var diagnosticsSha = Hash(diagnostics);
+            var proof = Path.Combine(work, "windows-metadata-independent.json");
+            var readerInfo = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
+            foreach (var argument in new[] { "-B", "-X", "utf8", reader, reports[0], proof }) readerInfo.ArgumentList.Add(argument);
+            using var readerProcess = Process.Start(readerInfo)!;
+            var creationUtc = readerProcess.StartTime.ToUniversalTime();
+            var readerStdout = readerProcess.StandardOutput.ReadToEndAsync();
+            var readerStderr = readerProcess.StandardError.ReadToEndAsync();
+            await readerProcess.WaitForExitAsync();
+            var readerText = await readerStdout; var readerError = await readerStderr;
+            var readerUnchanged = Hash(reader) == readerSha;
+            var inputsUnchanged = Hash(reports[0]) == inputSha && Hash(diagnostics) == diagnosticsSha;
+            await File.WriteAllTextAsync(Path.Combine(work, "windows-metadata-independent.stdout.json"), readerText, new UTF8Encoding(false));
+            await File.WriteAllTextAsync(Path.Combine(work, "windows-metadata-independent.stderr.txt"), readerError, new UTF8Encoding(false));
+            await WriteJson(work, "windows-metadata-independent-process.json", new
+            {
+                pid = readerProcess.Id, creationUtc, exitObservedUtc = DateTime.UtcNow, actualExit = readerProcess.ExitCode,
+                waitForExitComplete = true, readerSha256 = readerSha, inputSha256 = inputSha, diagnosticsInputSha256 = diagnosticsSha,
+                readerUnchanged, inputsUnchanged
+            });
+            check("Folder Windows metadata independent literals creation and checked closes", readerProcess.ExitCode == 0 && readerUnchanged && inputsUnchanged,
+                readerText + readerError + $" reader保持={readerUnchanged} inputs保持={inputsUnchanged}");
+        }
 
         async Task WindowsStreams()
         {

@@ -1,5 +1,11 @@
 # Folder model / copy E2E
 
+Windows NTFSのmetadata拒否は、別の `folder-windows-metadata-observations.json` に5 GUIケースを保存します。保持量／query量／native操作の予算0は確認前に拒否し、確認後のsource／既存targetのcreation変更だけでも公開を拒否します。`verify-metadata.py OBSERVATIONS OUTPUT_JSON` は固定literal・全membership・bytes/SHA・mtime/attrs・creationと5拒否＋2診断GUIの98件のWin32 handle closeを独立照合します。`--folder-copy-only` と全体E2Eは固定SHAを照合して別reader processを起動し、実PID・birth・終了・ログとproofを保持します。他OS／filesystemは専用skipです。通常OS pointer/dialogやSACL・任意owner/groupを検証したとは扱いません。
+
+2診断GUIはoutput guardへ一次失敗＋cleanup診断、PlanReadyへ取消＋close診断を注入し、実ボタンから表示まで確認します。`folder-windows-metadata-diagnostic-observations.json` と2 PNGに公開0・全入力保持・表示文を保存します。この注入は実OSのCloseHandle／disposition失敗の再現とは別の検証です。既存5件の原本期待を変更しません。
+
+`verify-metadata-copy.py prepare ROOT` は固定byte・EA・時刻・属性からWindows local NTFS用の16ケースを生成します。普通／圧縮親、新規／置換、Normal／Hidden／Readonly／Archiveの組合せを主アプリの `--folder-sync` へ渡し、`verify-metadata-copy.py verify ROOT` で全DATA／ADS、EA、creation／mtime、identity、最終属性、既存DACLまたは親からの継承securityを独立したWin32 readerで照合します。既存出力はWRITE_ATTRIBUTES拒否DACLを持ち、コピー元の保持と旧出力だけのADS除去も確認します。製品JSONのmetadata検証値は実OSの照合結果と比較し、期待byteや時刻の原本にはしません。固定reader SHAは `copy-provenance.json` に保持し、両reader processの実PID・birth・Wait完了・exit・stdout／stderrと起動前後の入力SHAをrun内に保存します。圧縮設定が利用できない環境は該当8ケースを理由付きでskipします。このfixtureはWinMerge原版goldenではなく、Shellメタデータ契約を独立検証するadapterです。任意owner／SACL／EFS／SMB／外部FILE_OBJECTの競合やnative Close失敗注入は検証範囲に含めません。
+
 フォルダーGUIの画像は通常／最小／多数タブの一覧3枚と、設定欄をスクロールした3枚の計6枚です。独立readerは全PNGのCRC・zlib scanline・寸法と、左右入力・比較・除外・filterの15操作の実viewport座標を確認します。最小850×550・一覧100px以上・多数タブ45件の条件と、既存44ケースの全bytes／metadataは維持します。
 
 `model-expectations.json` は自己作成のbyte literals・階層・62ケースの固定期待です。原版関数実行goldenではありません。DirScanの親DIFF/CMPERR集約・filtered登録後再帰停止と、DirActionsのSame/filtered/Error/元側不在gateを一次根拠にし、統合TypeConflictと上限/重複排除は現adapter policyとして区別します。出典とSHAは `provenance.json`。
