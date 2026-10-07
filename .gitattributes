@@ -71,3 +71,22 @@ tests/Fixtures/FolderSync/** -text -eol whitespace=cr-at-eol
 # 三者フォルダーの採取原本・sliceは改行変換せずSHAを保持する。
 tests/Fixtures/FolderThreeWay/original/** -text -eol -whitespace
 tests/Fixtures/FolderThreeWay/verify.py -text -eol
+
+# 固定原本の採取元はOSの改行変換を避け、provenanceに記録したraw bytesを保持する。
+Src/DiffWrapper.cpp -text -eol -whitespace
+Src/CompareEngines/FullQuickCompare.cpp -text -eol -whitespace
+Src/DiffList.cpp -text -eol -whitespace
+Src/DiffList.h -text -eol -whitespace
+Src/Diff3.h -text -eol -whitespace
+Src/COPYING -text -eol -whitespace
+build/LegacyGnuReference/OriginalTranslationUnit.c -text -eol -whitespace
+build/LegacyGnuReference/UnsupportedPaths.c -text -eol -whitespace
+Src/diffutils/src/analyze.c -text -eol -whitespace
+Src/diffutils/src/io.c -text -eol -whitespace
+Src/diffutils/src/util.c -text -eol -whitespace
+Src/diffutils/lib/cmpbuf.c -text -eol -whitespace
+Src/diffutils/src/diff.h -text -eol -whitespace
+Src/diffutils/src/system.h -text -eol -whitespace
+Src/diffutils/config.h -text -eol -whitespace
+Src/diffutils/lib/cmpbuf.h -text -eol -whitespace
+Src/DiffItem.h -text -eol -whitespace

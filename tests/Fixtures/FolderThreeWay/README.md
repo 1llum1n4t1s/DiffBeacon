@@ -27,3 +27,5 @@ Windowsの追加動的fixtureは標準rootが270文字以上、各componentが80
 対象は既定GNU・変換済みUTF-8の葉63ケースです。親helper12061だけでscanner/Errorを検証したとは扱いません。任意filter/plugins/moved/encoding/binary・全入力互換・Native AOT/4RID・実OSのpointer/dialogはこのfixtureの資格範囲外です。GUI取消はheadless注入経路です。
 
 Windowsでは比較していない別タブに長いDOS形式のrootを読取り専用で指定するGUI回帰も4条件追加しています。`folder-threeway-long-readonly.json`と全3側の実bytes、RAW入力の保持・確認1・公開0を独立readerで照合します。既存の全タブ保護は確認後の公開直前に働きます。
+
+採取元を列挙した `original/provenance.json` の17ファイルもルート `.gitattributes` で `-text -eol` に固定する。旧C++／GNU原文のCRLFと、adapter CのLFを混在した原bytesのまま保持する。OSのcheckout改行変換を適用しない。原文・slice・copy・goldenのSHAは再生成で変更せず、Git blobとWindows／Macのcheckout bytesの双方をprovenanceへ照合する。初回CIのWindowsではadapter2件、Mac checkoutでは旧原文15件が変換されたため、原文採取元にも保護を追加した。
