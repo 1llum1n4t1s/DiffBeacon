@@ -29,17 +29,21 @@ internal static class HeadlessIndependentArchiveTextChecks
         var observations = new List<(string Name, string?[] Texts, bool[] Dirty)>();
         void Verify(string name, bool passed, string detail = "") => check("Independent Archive Text " + name, passed, detail);
         var opened = 0;
-        ComparisonProject Load(string? inputPath = null)
+        var tamperSetupTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(1234567);
+        ComparisonProject Load(string? inputPath = null, int? prepareTamperSide = null)
         {
             ComparisonProject? project = null;
             async Task Read() { project = await WorkspaceStore.LoadAsync(inputPath ?? Path.Combine(folder, "workspace-original.json")); }
             pump(Read());
             // 独立caseの保存点が共有storeを通じて次caseの初期本文へ混入しないようroot identityを分ける。
-            if (opened++ > 0)
+            if (opened++ > 0 || prepareTamperSide is not null)
                 for (var side = 0; side < 3; side++)
                 {
                     var root = Path.Combine(folder, $"case-{opened}-{roles[side]}.zip");
-                    File.WriteAllBytes(root, rootBytes[side]); ProjectInputs.Archive(project!, side)!.RootPath = root;
+                    File.WriteAllBytes(root, rootBytes[side]);
+                    // tamper専用の生成rootは初回読込み前に100nsで表現可能な時刻へ設定し、APFSのns端数を残さない。
+                    if (prepareTamperSide == side) File.SetLastWriteTimeUtc(root, tamperSetupTime);
+                    ProjectInputs.Archive(project!, side)!.RootPath = root;
                 }
             return project!;
         }
@@ -235,7 +239,7 @@ internal static class HeadlessIndependentArchiveTextChecks
             evidence.WriteStartArray();
             for (var changedSide = 0; changedSide < 3; changedSide++)
             {
-                var tampered = Open(); var source = ProjectInputs.Archive(tampered.CaptureProject(), changedSide)!;
+                var tampered = Open(Load(prepareTamperSide: changedSide)); var source = ProjectInputs.Archive(tampered.CaptureProject(), changedSide)!;
                 var workspace = Path.Combine(folder, $"tamper-{roles[changedSide]}.json");
                 pump(WorkspaceStore.SaveWorkspaceAsync(workspace, new() { Entries = [tampered.CaptureProject()] }));
                 var beforeTime = File.GetLastWriteTimeUtc(source.RootPath); var beforeBytes = File.ReadAllBytes(source.RootPath);
@@ -262,6 +266,8 @@ internal static class HeadlessIndependentArchiveTextChecks
                 evidence.WriteStartObject(); evidence.WriteNumber("side", changedSide); evidence.WriteString("rootPath", source.RootPath); evidence.WriteString("backupPath", backup);
                 evidence.WriteString("restore", "Copy backupPath to rootPath and restore beforeMtimeUtc; preserve original attributes.");
                 evidence.WriteString("attributes", File.GetAttributes(backup).ToString()); evidence.WriteNumber("beforeSize", beforeBytes.Length); evidence.WriteNumber("afterSize", replacement.Length);
+                evidence.WriteString("setupMtimeUtc", tamperSetupTime);
+                evidence.WriteString("setupProvenance", "Fresh generated case ZIP; timestamp set before initial ComparePathsAsync, root read, workspace save and backup capture.");
                 evidence.WriteString("beforeMtimeUtc", beforeTime); evidence.WriteString("afterMtimeUtc", File.GetLastWriteTimeUtc(source.RootPath));
                 evidence.WriteString("beforeSha256", Convert.ToHexString(SHA256.HashData(beforeBytes))); evidence.WriteString("afterSha256", Convert.ToHexString(SHA256.HashData(replacement))); evidence.WriteEndObject();
             }
