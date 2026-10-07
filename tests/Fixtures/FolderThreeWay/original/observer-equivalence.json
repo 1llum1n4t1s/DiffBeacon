@@ -1,0 +1,10 @@
+{
+  "complete": true,
+  "cases": 63,
+  "sameExecutableSha256": "ce7ea9ddf3213178e4b8c3c33a3374d4388264363c2a7e6350aba225d7a68bd8",
+  "separateProcess": true,
+  "mergedFlagsCountsRawScriptsIdentical": true,
+  "observerPairRangesExcludedFromEquivalence": "plain intentionally does not run observer pass",
+  "observedExpectedSha256": "c9b4165f49d74704828734e47d3ab7073233b301a733e96d0739302de92978ab",
+  "plainExpectedSha256": "99f5014368401593594ee47ab510b4e7a9f8c3340eeb1d6d7e4c42570937852a"
+}

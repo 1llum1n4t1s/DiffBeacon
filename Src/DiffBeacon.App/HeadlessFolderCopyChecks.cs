@@ -19,6 +19,9 @@ internal static partial class HeadlessFolderCopyChecks
         Action<string, bool, string> check, Action<string> screenshot)
     {
         var root = Path.Combine(output, "folder-copy"); Directory.CreateDirectory(root);
+        var verificationClock = Stopwatch.StartNew();
+        var progressPath = Path.Combine(root, "folder-copy-progress.ndjson");
+        Trace("start");
         var observations = new List<Observation>();
         var cancellationRows = new List<(Observation Row, string? Status, string Png, StreamMetadata[] Before, StreamMetadata[] After)>();
         var reviewRows = new List<(string Id, string Work, Entry[] Before, Entry[] After, bool Rejected, bool AdsAccepted, bool CopyAttempted, string? AdsPath, string? AdsBefore, string? AdsAfter)>();
@@ -79,32 +82,54 @@ internal static partial class HeadlessFolderCopyChecks
             if (OperatingSystem.IsWindows()) ReviewCentralAds();
             if (OperatingSystem.IsWindows()) ReviewExtendedDirectory();
 
-            WindowsStreamCases();
-            WindowsStreamBudgetCases();
+            Trace("streams-start"); WindowsStreamCases(); Trace("streams-complete");
+            WindowsStreamBudgetCases(); Trace("stream-budgets-complete");
             RunWindowsMetadata(root, (name, limits) =>
             {
                 var pane = Create(name, out var left, out var right, limits: limits);
                 return (pane, left, right);
             }, Wait, Report, screenshot);
+            Trace("metadata-complete");
 
             var layout = Create("layout", out var layoutLeft, out var layoutRight);
             Select(layout, ["a.bin", "b.bin"]); window.Width = 1280; window.Height = 850;
             Dispatcher.UIThread.RunJobs(); Layout(layout, "normal"); screenshot("folder-copy-normal.png");
             window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs(); Layout(layout, "minimum"); screenshot("folder-copy-minimum.png");
+            Trace("layout-minimum-complete");
             while(window.SessionPanes.Count>45)
             {
                 var paneToClose=window.SessionPanes.First(p=>!ReferenceEquals(p,layout));
+                var countBefore = window.SessionPanes.Count;
+                Trace("tab-close-start", paneToClose.LeftPath.Text);
+                // 結果を記録済みの検証タブだけを破棄し、実ボタンの閉鎖を一度ずつ待つ。
+                paneToClose.DiscardChanges();
                 var tab=window.GetVisualDescendants().OfType<TabControl>().Single(t=>t.Items.OfType<TabItem>().Any(i=>ReferenceEquals(i.Content,paneToClose)));
                 var item=tab.Items.OfType<TabItem>().Single(i=>ReferenceEquals(i.Content,paneToClose));
-                ((StackPanel)item.Header!).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));Dispatcher.UIThread.RunJobs();
+                ((StackPanel)item.Header!).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                var closeClock = Stopwatch.StartNew();
+                while (window.SessionPanes.Contains(paneToClose))
+                {
+                    Dispatcher.UIThread.RunJobs();
+                    if (closeClock.Elapsed > TimeSpan.FromSeconds(5))
+                    {
+                        Trace("tab-close-timeout", paneToClose.LeftPath.Text);
+                        throw new TimeoutException("検証済みフォルダータブの閉鎖が完了しませんでした。");
+                    }
+                    Thread.Sleep(2);
+                }
+                Dispatcher.UIThread.RunJobs();
+                Report("completed tab closed once " + countBefore, window.SessionPanes.Count == countBefore - 1);
+                Trace("tab-close-complete");
             }
             while (window.SessionPanes.Count < 45) window.AddSession(); Activate(layout); Dispatcher.UIThread.RunJobs();
             Report("minimum exact 45 tabs",window.SessionPanes.Count==45);
             Layout(layout, "minimum-many-tabs"); screenshot("folder-copy-minimum-many-tabs.png");
+            Trace("layout-many-tabs-complete");
             window.Width = 1280; window.Height = 850;
         }
         finally
         {
+            Trace("finally");
             Dialogs.ConfirmationShown = null;
             foreach (var pane in window.SessionPanes) { pane.FolderPlanReady = null; pane.FolderExecutionStarting = null; pane.FolderOutputChecking = null; pane.DirectoryReadyForAdoption = null; pane.DiscardChanges(); }
             using var file = File.Create(Path.Combine(root, "folder-copy-observations.json"));
@@ -502,6 +527,7 @@ internal static partial class HeadlessFolderCopyChecks
             if (name is not ("cancel-preflight" or "cancel-refresh")) observations.Add(observation);
             if (checksCancellation) cancellationRows.Add((observation, cancellationStatus, cancellationPng, cancellationBefore, CaptureStreamMetadata(Path.GetDirectoryName(source)!)));
             pane.FolderPlanReady = null; pane.FolderOutputChecking = null; pane.DirectoryReadyForAdoption = null; Dialogs.ConfirmationShown = null;
+            Trace("case-complete", name);
         }
 
         void StaleConfirmation(string mode, bool accept)
@@ -552,6 +578,7 @@ internal static partial class HeadlessFolderCopyChecks
 
         ComparisonPane Create(string name, out string left, out string right, bool readonlySource = false, FolderCopyLimits? limits = null, bool recursive = true)
         {
+            Trace("case-start", name);
             var folder = Path.Combine(root, name); left = Path.Combine(folder, "left"); right = Path.Combine(folder, "right");
             foreach (var side in new[] { left, right })
             {
@@ -564,24 +591,21 @@ internal static partial class HeadlessFolderCopyChecks
             foreach (var side in new[] { left, right }) foreach (var path in Directory.EnumerateFileSystemEntries(side, "*", SearchOption.AllDirectories).Prepend(side))
                 if (Directory.Exists(path)) Directory.SetLastWriteTimeUtc(path, FixedTime); else File.SetLastWriteTimeUtc(path, FixedTime);
             var pane = window.AddSession(); pane.FolderCopyVerificationLimits = limits;
-            pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, Recursive=recursive }); Wait(pane.ComparePathsAsync()); return pane;
+            pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, Recursive=recursive }); Wait(pane.ComparePathsAsync()); Trace("compare-complete", name); return pane;
         }
-        void Wait(Task task)
+        void Trace(string phase, string? name = null)
         {
-            var clock = Stopwatch.StartNew();
-            while (!task.IsCompleted)
-            {
-                Dispatcher.UIThread.RunJobs(); CloseMessages();
-                if (clock.Elapsed > TimeSpan.FromSeconds(45)) throw new TimeoutException("Folder copy実GUI操作が完了しませんでした。");
-                Thread.Sleep(2);
-            }
-            task.GetAwaiter().GetResult(); Dispatcher.UIThread.RunJobs(); CloseMessages();
+            using var stream = new FileStream(progressPath, FileMode.Append, FileAccess.Write, FileShare.Read);
+            using var json = new Utf8JsonWriter(stream);
+            json.WriteStartObject(); json.WriteString("phase", phase); json.WriteString("name", name);
+            json.WriteNumber("elapsedMilliseconds", verificationClock.ElapsedMilliseconds);
+            json.WriteNumber("tabs", window.SessionPanes.Count);
+            json.WriteNumber("dirtyTabs", window.SessionPanes.Count(p => p.HasUnsavedChanges));
+            json.WriteStartArray("dialogs"); foreach (var dialog in window.OwnedWindows) json.WriteStringValue(dialog.Title);
+            json.WriteEndArray(); json.WriteEndObject(); json.Flush(); stream.WriteByte((byte)'\n');
         }
-        void CloseMessages()
-        {
-            foreach (var dialog in window.OwnedWindows.Where(d => d.Title is "操作を完了できませんでした" or "コピーを完了できませんでした").ToArray())
-                dialog.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "閉じる")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-        }
+        void Wait(Task task) => WaitFolderOperation(window, task);
+        void CloseMessages() => CloseFolderMessages(window);
         void Activate(ComparisonPane pane) { window.SelectSession(Array.IndexOf(window.SessionPanes.ToArray(), pane)); Dispatcher.UIThread.RunJobs(); }
         void Settings(ComparisonPane pane, bool readOnly)
         {

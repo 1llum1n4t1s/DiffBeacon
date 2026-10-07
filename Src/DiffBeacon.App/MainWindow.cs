@@ -138,7 +138,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 {
     private readonly Window _owner;
     public TextBox LeftPath { get; } = new() { PlaceholderText = "左のファイル / フォルダー" };
-    public TextBox BasePath { get; } = new() { PlaceholderText = "共通の祖先 / 中央画像・バイナリ（3方向比較）" };
+    public TextBox BasePath { get; } = new() { PlaceholderText = "祖先 / 中央フォルダー・画像・バイナリ（3方向比較）" };
     public TextBox RightPath { get; } = new() { PlaceholderText = "右のファイル / フォルダー" };
     public TextBox LeftEditor { get; } = Editor();
     public TextBox RightEditor { get; } = Editor();
@@ -178,7 +178,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private CancellationTokenSource? _reportOperation;
     private string? _baseText;
     private string _savedLeft = "", _savedRight = "", _savedResult = "";
-    private string? _directoryLeft, _directoryRight;
+    private string? _directoryLeft, _directoryMiddle, _directoryRight;
     private int _diffIndex = -1;
     private bool _textSaveAllowed = true;
     private readonly EventHandler _ownerClosedHandler;
@@ -284,7 +284,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         {
             if (_directoryList.SelectedItem is not DirectoryEntry entry || _directoryLeft is null || _directoryRight is null) return;
             var l = Path.Combine(_directoryLeft, entry.RelativePath); var r = Path.Combine(_directoryRight, entry.RelativePath);
-            if (File.Exists(l) && File.Exists(r)) { LeftPath.Text = l; RightPath.Text = r; _mode.SelectedIndex = 0; await ComparePathsAsync(); }
+            var middle = _directoryMiddle is null ? null : Path.Combine(_directoryMiddle, entry.RelativePath);
+            if (File.Exists(l) && File.Exists(r) && (middle is null || File.Exists(middle)))
+            {
+                LeftPath.Text = l; BasePath.Text = middle ?? ""; RightPath.Text = r;
+                _mode.SelectedIndex = 0; await ComparePathsAsync();
+            }
         });
         _ownerClosedHandler = (_, _) => Dispose();
         _owner.Closed += _ownerClosedHandler;
@@ -390,9 +395,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 _lastPackageComparison = comparisonForPackaging;
                 return;
             }
-            if (mode == 2 || (Directory.Exists(left) && Directory.Exists(right)))
+            if (mode == 2 || (FolderComparisons.IsDirectory(left) && FolderComparisons.IsDirectory(right)))
             {
-                if (await CompareDirectoryAsync(left, right, token, CanAdopt, PrepareAdoption)) _lastPackageComparison = comparisonForPackaging;
+                if (await CompareDirectoryAsync(left, right, token, CanAdopt, PrepareAdoption, comparisonForPackaging.Item2)) _lastPackageComparison = comparisonForPackaging;
                 return;
             }
             if (mode == 4 || (mode == 0 && SpecializedViews.IsImage(left) && SpecializedViews.IsImage(right)))
@@ -746,7 +751,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         await SaveMergeResultToAsync(path, allowUnresolved: true);
     }
 
-    private async Task<bool> CompareDirectoryAsync(string left, string right, CancellationToken token, Func<bool> canAdopt, Action prepareAdoption)
+    private async Task<bool> CompareDirectoryAsync(string left, string right, CancellationToken token, Func<bool> canAdopt, Action prepareAdoption,
+        string? middle = null)
     {
         var configuration = CaptureFolderConfiguration();
         var filterStamp = FolderFilterStamp();
@@ -754,7 +760,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var filtered = textOptions.IgnoreCase || textOptions.IgnoreWhitespace || textOptions.IgnoreBlankLines || textOptions.IgnoreLinePattern is not null
             || textOptions.IgnoreNumbers || textOptions.CommentSyntax != CommentSyntax.None || textOptions.Whitespace != WhitespaceMode.None || textOptions.SubstitutionRules.Any(rule => rule.Enabled);
         var filter = ResolveProjectFilter();
-        var result = await FolderComparisons.CompareAsync(left, right, new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter, ShowFiltered = _showFilteredDirectories.IsChecked == true }, token);
+        var options = new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter, ShowFiltered = _showFilteredDirectories.IsChecked == true };
+        var result = string.IsNullOrWhiteSpace(middle) ? await FolderComparisons.CompareAsync(left, right, options, token)
+            : await FolderComparisons.CompareAsync(left, middle, right, options, token);
         DirectoryReadyForAdoption?.Invoke();
         token.ThrowIfCancellationRequested();
         if (!canAdopt() || !FolderConfigurationMatches(configuration) || FolderFilterStamp() != filterStamp) return false;

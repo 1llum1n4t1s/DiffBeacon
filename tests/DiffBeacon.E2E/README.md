@@ -1,5 +1,7 @@
 # 実行経路の検証
 
+三者フォルダーは`--folder-threeway-only`で限定実行します。実アプリの`--directory LEFT RIGHT --middle MIDDLE`、全6方向コピー、三者全体statusを使う差分gate、不在／除外、非コピー先rootへの出力保護、読込予算と相対中央path／readonlyのproject往復を[固定原本と独立reader](../Fixtures/FolderThreeWay/README.md)へ照合します。GUIは別プロセスの`--self-test OUTPUT --folder-threeway-only`で16ケースと通常／最小PNGを保存し、既存二者の`--folder-copy-only`と分けて各120秒の枠を維持します。全体E2E・全体UIは両方を含みます。限定成功を全体／Native AOT／4RIDの完了とは扱いません。
+
 実アプリの子プロセスは、通常CLIを30秒、`--self-test`で始まる描画・操作自己検証を120秒の上限で実行する。自己検証は複数の実画面操作と原本照合を含むため、通常CLIとは予算を分ける。時間超過では子プロセス群を終了し、終了コード`-2`と選択した制限時間をstdout／stderr・`assertions.json`へ残す。上限を延ばしただけで検証成功とは扱わず、実行完了と全条件の合格を確認する。
 
 TAR.Zは`--tar-z-only`で限定実行し、`--archives-only`と全体E2Eにも含む。全39固定原本（block9–16、nonblock10–16、独立literal nonblock9）の全entry bytes・型・サイズ、通常CLI全操作と標準archive／tar metadata provider、壊れたheader/code/TAR、既存出力保護、包装と相対入力再読込みを照合する。[固定原本・出典](../Fixtures/Archives/TarZ/README.md)を参照する。writer出力は`build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local`で別buildした公式decoderを`--z-reference <decoder>`へ明示し、Python標準tarfileで全内容・時刻・writer metadataを独立検証する。Windowsは`ncompress.exe`、macOSは`ncompress`。`--z-sevenzip <full7z>`はローカル第二decoderの追加照合。reference toolとC/compilerは製品・通常.NET buildの依存ではない。入力・出力・独立復号TAR・proof・exit・stdout/stderr・assertionsを保持する。限定は全体の代替ではない。

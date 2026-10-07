@@ -1,0 +1,117 @@
+[
+  {
+    "bytes": 285,
+    "sha256": "D2E4BE62B173A3B5A431E2C97E8BC4D9CCE918F4A9B08F5211691F78561F16FB",
+    "path": "capture-reader.json"
+  },
+  {
+    "bytes": 456,
+    "sha256": "630C1CD46B9DDAFB5A0B8FDE0A536814E1BFCAF924BEB12520A4293721AD3D0D",
+    "path": "capture-status.json"
+  },
+  {
+    "bytes": 4992,
+    "sha256": "AD846EF5C290368B43F97B113D63DB2411E43D545577CC4D2BEF8C76D288E22D",
+    "path": "capture.py"
+  },
+  {
+    "bytes": 6248,
+    "sha256": "7537AB2E18174FB974D7919EDFAABBEB68C269FBC66C77CFB6B55FABD467D908",
+    "path": "compile.ps1"
+  },
+  {
+    "bytes": 18353,
+    "sha256": "134F05B0E93A7981F1CF5F535242E326B2D85BA7D6E3DD69C3514AE25ADA4900",
+    "path": "COPYING"
+  },
+  {
+    "bytes": 5063,
+    "sha256": "79DFBC373AAF491680F4EAC98894E35CC15D6525346CEB86FFB0DA2801ACBEAB",
+    "path": "Diff3.h"
+  },
+  {
+    "bytes": 24104,
+    "sha256": "ED86F1271214BC261E1A77B888ACE22253B0FAB0E539CBE460E965DBC1884803",
+    "path": "DiffList.cpp"
+  },
+  {
+    "bytes": 7209,
+    "sha256": "436099FB13A1B7C5708CA4F78F01C51C353E19B1E46BEBF5CE003E99320B6AF4",
+    "path": "DiffList.h"
+  },
+  {
+    "bytes": 48378,
+    "sha256": "C9B4165F49D74704828734E47D3AB7073233B301A733E96D0739302DE92978AB",
+    "path": "expected.ndjson"
+  },
+  {
+    "bytes": 501,
+    "sha256": "EE5AD478A8B2FB82B54B98ED292E6C0DFD7A7AE50B2616B4F0A75246AC7394FE",
+    "path": "observer-equivalence.json"
+  },
+  {
+    "bytes": 458,
+    "sha256": "BF0E9A7748AC6FF2C2ADC71C11DF9E905979E317128AAE08A89555511904A0A1",
+    "path": "original-add.inc"
+  },
+  {
+    "bytes": 884,
+    "sha256": "C36C3FEF70DF846A4CF50267E54418E461FB3A474F9B76770066E3CABF1E0022",
+    "path": "original-comp02.inc"
+  },
+  {
+    "bytes": 515,
+    "sha256": "2FE17D8436643F24836A39784D71B1BE91437684FA73F1338E7FFCE2AF458212",
+    "path": "original-correction.inc"
+  },
+  {
+    "bytes": 5612,
+    "sha256": "BA340F28D36E4C929CC1801976D65A3FD18A78E49396F6C6CA798046B72A734D",
+    "path": "original-diffcode.inc"
+  },
+  {
+    "bytes": 1325,
+    "sha256": "3D70BF0F1EE490F075416E2FF4D805E53BBEAF26ABE8AEE7FEED2F4311491C28",
+    "path": "original-full-flags.inc"
+  },
+  {
+    "bytes": 250,
+    "sha256": "EC089D03BF75467A081EEE04561BA8BBF9ABF05AFE8F70C7A44600C49AD8841F",
+    "path": "original-identical.inc"
+  },
+  {
+    "bytes": 4658,
+    "sha256": "32D3F5E5870CAAF2CD2442BC9A33E8D6E68B938D6A9A116537A8E9CB36919D05",
+    "path": "original-load3.inc"
+  },
+  {
+    "bytes": 176,
+    "sha256": "E24837FB85C840DE03E5786A6C0037F87D0D602450CFF7B1A4D4F5266AB7962B",
+    "path": "pch.h"
+  },
+  {
+    "bytes": 5944,
+    "sha256": "C70857517BB2134DC5D805409870B5A9C19F621419E5D3862210D06AEA2B5DD0",
+    "path": "producer.cpp"
+  },
+  {
+    "bytes": 5099,
+    "sha256": "21A44F7F9D55778F6E4A40C4109416FB9CEED1C0930276FFEADF337AC61B61D9",
+    "path": "provenance.json"
+  },
+  {
+    "bytes": 25302,
+    "sha256": "A251B307151D073AA6F36B5A7434F9EBFDC99386D20744C20A240DF4C742FEE7",
+    "path": "transport.ndjson"
+  },
+  {
+    "bytes": 2007,
+    "sha256": "9CE98558AFDF742DB314AD58948A874512CFF36D06AA6D4737A9E669D3B00027",
+    "path": "verify-variants.py"
+  },
+  {
+    "bytes": 6709,
+    "sha256": "2442198EC1FDEBFDDE520FE2E1271FB8D24A81395906C33021C3927CEE5D437B",
+    "path": "verify.py"
+  }
+]

@@ -16,7 +16,7 @@ public static class ProjectReport
         || project.Mode.ToLowerInvariant() is "auto" or "0"
         && !(SpecializedViews.IsImage(project.LeftPath) && SpecializedViews.IsImage(project.RightPath))
         && !(ArchivePanel.Supports(project.LeftPath) && ArchivePanel.Supports(project.RightPath))
-        && !(Directory.Exists(project.LeftPath) && Directory.Exists(project.RightPath));
+        && !(FolderComparisons.IsDirectory(project.LeftPath) && FolderComparisons.IsDirectory(project.RightPath));
 
     internal static ComparisonOptions Options(ComparisonProject project) => new()
     {

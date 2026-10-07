@@ -209,25 +209,47 @@ public sealed partial class ComparisonPane
 
     internal void EnsureProjectOutputWritable(string path)
     {
-        (_owner as MainWindow)?.ArchiveLifetime.EnsureOutput(path);
+        EnsureWindowProjectOutputWritable(path);
+        EnsurePaneProjectOutputWritable(path);
+    }
+
+    private void EnsureWindowProjectOutputWritable(string path, FolderPathProtection.ProtectionContext? protection = null)
+    {
+        var lifetime = (_owner as MainWindow)?.ArchiveLifetime;
+        if (protection is null) lifetime?.EnsureOutput(path);
+        else foreach (var asset in lifetime?.Assets ?? [])
+            if (protection.SameContainer(asset, path))
+                throw new InvalidOperationException("公開または読込み済みの作業snapshotを上書きできません。");
         foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this])
             foreach (var root in pane._detachedArchiveRoots)
-                if (ArchivePaths.SameFile(root, path))
+                if (Same(root, path))
                     throw new InvalidOperationException("外部保存した文書のアーカイブ原本を上書きできません。");
         var archiveProjects = (_owner as MainWindow)?.SessionPanes.Select(pane => pane.CaptureProject()) ?? [CaptureProject()];
         foreach (var project in archiveProjects)
             foreach (var side in Enumerable.Range(0, 3))
-                if (ProjectInputs.Archive(project, side) is { } input && ArchivePaths.SameFile(input.RootPath, path))
+                if (ProjectInputs.Archive(project, side) is { } input && Same(input.RootPath, path))
                     throw new InvalidOperationException("比較中のアーカイブ原本を上書きできません。");
+        bool Same(string first, string second) => protection?.SameContainer(first, second) ?? ArchivePaths.SameFile(first, second);
+    }
+
+    private void EnsurePaneProjectOutputWritable(string path, FolderPathProtection.ProtectionContext? protection = null)
+    {
         foreach (var (source, readOnly) in new[] { (LeftPath.Text, _projectMetadata.LeftReadOnly), (BasePath.Text, _projectMetadata.BaseReadOnly), (RightPath.Text, _projectMetadata.RightReadOnly) })
         {
             if (!readOnly || string.IsNullOrWhiteSpace(source)) continue;
             if (Uri.TryCreate(source, UriKind.Absolute, out var uri) && !uri.IsFile) continue;
-            if (ArchivePaths.SameFile(source, path))
+            var protectedSource = protection is not null && uri is { IsFile: true } ? uri.LocalPath : source;
+            if (protection?.SameContainer(protectedSource, path) ?? ArchivePaths.SameFile(source, path))
                 throw new InvalidOperationException("読取り専用に指定された入力を上書きできません。");
-            if (Directory.Exists(source))
-                for (var current = Path.GetDirectoryName(Path.GetFullPath(path)); current is not null; current = Path.GetDirectoryName(current))
-                    if (ArchivePaths.SameFile(source, current)) throw new InvalidOperationException("読取り専用に指定されたフォルダー内へ保存できません。");
+            if (protection is not null)
+            {
+                if (FolderComparisons.IsDirectory(protectedSource) && protection.Within(path, protectedSource))
+                    throw new InvalidOperationException("読取り専用に指定されたフォルダー内へ保存できません。");
+                continue;
+            }
+            if (FolderComparisons.IsDirectory(source))
+                for (var current = Path.GetDirectoryName(DirectoryComparer.NormalizeRootPath(path)); current is not null; current = Path.GetDirectoryName(current))
+                    if (ArchivePaths.SameFile(DirectoryComparer.NormalizeRootPath(source), current)) throw new InvalidOperationException("読取り専用に指定されたフォルダー内へ保存できません。");
         }
     }
 
@@ -255,7 +277,7 @@ public sealed partial class ComparisonPane
         TextBox Field(string title, string? value) { panel.Children.Add(new TextBlock { Text = title }); var box = new TextBox { Text = value }; panel.Children.Add(box); return box; }
         var left = Field("左の説明", project.LeftDescription); var middle = Field(project.Mode == "Binary" ? "中央の説明" : "祖先の説明", project.BaseDescription); var right = Field("右の説明", project.RightDescription);
         var leftRo = new CheckBox { Content = "左を読取り専用にする", IsChecked = project.LeftReadOnly };
-        var baseRo = new CheckBox { Content = project.Mode == "Binary" ? "中央を読取り専用にする" : "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
+        var baseRo = new CheckBox { Content = project.Mode is "Binary" or "Folder" ? "中央を読取り専用にする" : "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
         var rightRo = new CheckBox { Content = "右を読取り専用にする", IsChecked = project.RightReadOnly };
         if (project.LeftArchiveInput is { MissingEntryChain: not null } leftMissing) leftRo.IsChecked = leftMissing.InheritedReadOnly ?? true;
         if (project.RightArchiveInput is { MissingEntryChain: not null } rightMissing) rightRo.IsChecked = rightMissing.InheritedReadOnly ?? true;

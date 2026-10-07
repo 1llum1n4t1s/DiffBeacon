@@ -10,9 +10,16 @@ internal static class GnuLineMatcher
     internal static GnuLineMatches Match(GnuLineKey[] left, GnuLineKey[] right,
         IReadOnlyList<TextLine> sourceLeft, IReadOnlyList<TextLine> sourceRight,
         int[] activeLeft, int[] activeRight, ComparisonOptions options, CancellationToken token)
+        => Match(left, right, sourceLeft, sourceRight, activeLeft, activeRight, options,
+            new LineBudget(options.MaxFallbackComparisons, token), token);
+
+    internal static GnuLineMatches Match(GnuLineKey[] left, GnuLineKey[] right,
+        IReadOnlyList<TextLine> sourceLeft, IReadOnlyList<TextLine> sourceRight,
+        int[] activeLeft, int[] activeRight, ComparisonOptions options, LineBudget budget,
+        CancellationToken token)
     {
         return MatchCore(left, 0, left.Length, right, 0, right.Length,
-            options.MaxFallbackComparisons, token, BoundaryEqual);
+            budget, token, BoundaryEqual);
 
         bool BoundaryEqual(int ai, int bi)
         {
@@ -37,16 +44,16 @@ internal static class GnuLineMatcher
             throw new ArgumentOutOfRangeException(nameof(leftStart));
         if (rightStart < 0 || rightEnd < rightStart || rightEnd > right.Length)
             throw new ArgumentOutOfRangeException(nameof(rightStart));
-        return MatchCore(left, leftStart, leftEnd, right, rightStart, rightEnd, maxWork, token,
+        return MatchCore(left, leftStart, leftEnd, right, rightStart, rightEnd, new LineBudget(maxWork, token), token,
             (ai, bi) => EqualKey(left[ai], right[bi], token));
     }
 
     private static GnuLineMatches MatchCore(GnuLineKey[] left, int leftStart, int leftEnd,
-        GnuLineKey[] right, int rightStart, int rightEnd, int maxWork, CancellationToken token,
+        GnuLineKey[] right, int rightStart, int rightEnd, LineBudget budget, CancellationToken token,
         Func<int, int, bool> boundaryEqual)
     {
         token.ThrowIfCancellationRequested();
-        var budget = new Budget(Math.Clamp(maxWork, 0, GnuLineDiffer.MaximumWork), token);
+        var initialUsed = budget.Used;
         var pairs = new List<(int A, int B)>();
         if (leftEnd - leftStart == rightEnd - rightStart && FullyEqual())
         {
@@ -150,7 +157,7 @@ internal static class GnuLineMatcher
             token.ThrowIfCancellationRequested();
             pairs.Add((endLeft++, endRight++));
         }
-        return new(pairs.AsReadOnly(), budget.Used, fallback, reason);
+        return new(pairs.AsReadOnly(), budget.Used - initialUsed, fallback, reason);
 
         bool FullyEqual()
         {
@@ -163,7 +170,7 @@ internal static class GnuLineMatcher
         }
     }
 
-    private static bool EqualKey(GnuLineKey left, GnuLineKey right, CancellationToken token)
+    internal static bool EqualKey(GnuLineKey left, GnuLineKey right, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         return left.MissingFinalNewline == right.MissingFinalNewline &&
@@ -183,10 +190,16 @@ internal static class GnuLineMatcher
     }
 
     private sealed class LimitException(string reason) : Exception(reason);
-    private sealed class Budget(int initial, CancellationToken token)
+    internal sealed class LineBudget
     {
-        private readonly int limit = initial;
-        internal int Remaining { get; private set; } = initial;
+        private readonly int limit;
+        private readonly CancellationToken token;
+        internal LineBudget(int initial, CancellationToken token)
+        {
+            limit = Remaining = Math.Clamp(initial, 0, GnuLineDiffer.MaximumWork);
+            this.token = token;
+        }
+        internal int Remaining { get; private set; }
         internal int Used => limit - Remaining;
         internal void Spend(long amount = 1)
         {
@@ -201,7 +214,7 @@ internal static class GnuLineMatcher
     }
 
     // ハッシュ衝突時の文字比較にも同じ予算を適用し、巨大な一行を上限外にしない。
-    private sealed class KeyComparer(Budget budget) : IEqualityComparer<GnuLineKey>
+    private sealed class KeyComparer(LineBudget budget) : IEqualityComparer<GnuLineKey>
     {
         public bool Equals(GnuLineKey a, GnuLineKey b)
             => a.MissingFinalNewline == b.MissingFinalNewline && Same(a.Content, b.Content) && Same(a.Ending, b.Ending);

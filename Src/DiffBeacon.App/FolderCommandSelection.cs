@@ -3,9 +3,11 @@ using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
-internal sealed class FolderCommandSelection(DirectoryCopySelection selection, FolderFilterInput? filter)
+internal sealed class FolderCommandSelection(DirectoryCopySelection selection, FolderFilterInput? filter,
+    IReadOnlyList<string>? protectedRoots = null)
 {
     internal DirectoryCopySelection Selection { get; } = selection;
+    private readonly string[] additionalProtectedRoots = protectedRoots?.ToArray() ?? [];
 
     internal void RequireInputsUnchanged() => filter?.RequireUnchanged();
 
@@ -17,8 +19,12 @@ internal sealed class FolderCommandSelection(DirectoryCopySelection selection, F
 
     internal void ValidateDestination(string destination)
     {
-        if (filter is not null && FolderPathProtection.SameContainer(filter.Path, destination))
+        var protection = FolderPathProtection.CreateContext();
+        if (filter is not null && protection.SameContainer(filter.Path, destination))
             throw new IOException("比較に使用しているフィルターファイルを上書きできません。");
+        foreach (var root in additionalProtectedRoots)
+            if (protection.Within(destination, root))
+                throw new IOException("コピー先以外の比較フォルダーへは書き込めません。");
     }
 }
 

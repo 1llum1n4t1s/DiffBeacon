@@ -1,0 +1,135 @@
+[
+  {
+    "sourceSha256": "A9AD49C8A9AE7A213F32D2E15A2544D1089D410A1FAEBF85947CB029C6E7CD4E",
+    "last": 1027,
+    "first": 1008,
+    "slice": "original-add.inc",
+    "sliceSha256": "BF0E9A7748AC6FF2C2ADC71C11DF9E905979E317128AAE08A89555511904A0A1",
+    "source": "Src/DiffWrapper.cpp"
+  },
+  {
+    "sourceSha256": "A9AD49C8A9AE7A213F32D2E15A2544D1089D410A1FAEBF85947CB029C6E7CD4E",
+    "last": 1218,
+    "first": 1207,
+    "slice": "original-identical.inc",
+    "sliceSha256": "EC089D03BF75467A081EEE04561BA8BBF9ABF05AFE8F70C7A44600C49AD8841F",
+    "source": "Src/DiffWrapper.cpp"
+  },
+  {
+    "sourceSha256": "A9AD49C8A9AE7A213F32D2E15A2544D1089D410A1FAEBF85947CB029C6E7CD4E",
+    "last": 1457,
+    "first": 1430,
+    "slice": "original-comp02.inc",
+    "sliceSha256": "C36C3FEF70DF846A4CF50267E54418E461FB3A474F9B76770066E3CABF1E0022",
+    "source": "Src/DiffWrapper.cpp"
+  },
+  {
+    "sourceSha256": "A9AD49C8A9AE7A213F32D2E15A2544D1089D410A1FAEBF85947CB029C6E7CD4E",
+    "last": 1610,
+    "first": 1462,
+    "slice": "original-load3.inc",
+    "sliceSha256": "32D3F5E5870CAAF2CD2442BC9A33E8D6E68B938D6A9A116537A8E9CB36919D05",
+    "source": "Src/DiffWrapper.cpp"
+  },
+  {
+    "sourceSha256": "7AEA65923B801CCF5C8FB28A7B1ABB90F6F5977EE856DB53D4F3AA0DA5F7731F",
+    "last": 250,
+    "first": 209,
+    "slice": "original-full-flags.inc",
+    "sliceSha256": "3D70BF0F1EE490F075416E2FF4D805E53BBEAF26ABE8AEE7FEED2F4311491C28",
+    "source": "Src/CompareEngines/FullQuickCompare.cpp"
+  },
+  {
+    "sourceSha256": "7AEA65923B801CCF5C8FB28A7B1ABB90F6F5977EE856DB53D4F3AA0DA5F7731F",
+    "last": 352,
+    "first": 348,
+    "slice": "original-correction.inc",
+    "sliceSha256": "2FE17D8436643F24836A39784D71B1BE91437684FA73F1338E7FFCE2AF458212",
+    "source": "Src/CompareEngines/FullQuickCompare.cpp"
+  },
+  {
+    "source": "Src/DiffList.cpp",
+    "copy": "DiffList.cpp",
+    "sourceSha256": "ED86F1271214BC261E1A77B888ACE22253B0FAB0E539CBE460E965DBC1884803"
+  },
+  {
+    "source": "Src/DiffList.h",
+    "copy": "DiffList.h",
+    "sourceSha256": "436099FB13A1B7C5708CA4F78F01C51C353E19B1E46BEBF5CE003E99320B6AF4"
+  },
+  {
+    "source": "Src/Diff3.h",
+    "copy": "Diff3.h",
+    "sourceSha256": "79DFBC373AAF491680F4EAC98894E35CC15D6525346CEB86FFB0DA2801ACBEAB"
+  },
+  {
+    "source": "Src/COPYING",
+    "copy": "COPYING",
+    "sourceSha256": "134F05B0E93A7981F1CF5F535242E326B2D85BA7D6E3DD69C3514AE25ADA4900"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "build/LegacyGnuReference/OriginalTranslationUnit.c",
+    "sourceSha256": "BA27BFDC0C66A49B575181E8F7E7FDADA4A5F56253B901D9C045E96398BD70DE"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "build/LegacyGnuReference/UnsupportedPaths.c",
+    "sourceSha256": "F4AEDBC4B05AAEF0421A481D26C1F591ABF6CE7597D9EBA7BA25EF2431447080"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/src/analyze.c",
+    "sourceSha256": "D874081200325D7A24AE40C141CB106CB4BB953FAFFCDBF6D74BA93BAC534685"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/src/io.c",
+    "sourceSha256": "1FE0A8FA9701E90FF65DF8538BEFE228D6787712A6F2DA77F456BDDC91B17FDE"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/src/util.c",
+    "sourceSha256": "79507D8F97C4F7718C84C422B94A3C052719D22A36DF3DA206B92F5B7C747600"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/lib/cmpbuf.c",
+    "sourceSha256": "DB087B3D93518EB5B0FEA4C1FEAEC008C7CBFED954757F9B6550C37E76FB8FA5"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/src/diff.h",
+    "sourceSha256": "6374816AD946E0DDD0D0E97FE91291D40FA7308F44A91C7BB3792C2012F6A587"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/src/system.h",
+    "sourceSha256": "4B074D552540A59251B39A102483CA62EE8AE10C039DA742F33AF64EE5C83123"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/config.h",
+    "sourceSha256": "5751AD4DF2A99A4587C603180800D7A54851B41BA793959FC36BB9D483E0C7A2"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/diffutils/lib/cmpbuf.h",
+    "sourceSha256": "3C31C200426B97FB0C34A902B670EF1FEAE67ED5D16325B14DA24E9D4435388F"
+  },
+  {
+    "role": "unmodified original include or adapter input",
+    "source": "Src/DiffItem.h",
+    "sourceSha256": "4997170656F87E34F6DE0BDFC6BD94C4F680C7E0EF30ED738DC9D05D09E6C0D8"
+  },
+  {
+    "slice": "original-diffcode.inc",
+    "first": 44,
+    "source": "Src/DiffItem.h",
+    "sliceSha256": "BA340F28D36E4C929CC1801976D65A3FD18A78E49396F6C6CA798046B72A734D",
+    "sourceSha256": "4997170656F87E34F6DE0BDFC6BD94C4F680C7E0EF30ED738DC9D05D09E6C0D8",
+    "last": 168,
+    "byteStart": 1426,
+    "byteLength": 5612
+  }
+]

@@ -18,6 +18,10 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 ## データフロー
 
+三者フォルダーは左0・中央1・右2を一度ずつ走査した共通階層モデルを持つ。中央には既存projectの`BasePath`・`BaseReadOnly`を使用し、テキストの祖先マージとは入力形式で区別する。presence、側別kind／除外／走査状態、三つのpairと全体status、旧原本に基づくOnlyLeft／OnlyMiddle／OnlyRight／AllChanged分類を分けて保持する。不在側はFullの空本文に相当するが、実在する空fileとはpresenceが異なり、存在補正は全体statusだけへ適用する。各file組の内容は一側256 MiB・三側共通768 MiB以内で一度ずつ読み、三つのGNU照合で一つの作業予算を共有する。上限時の近似や途中結果をEqualとして採用せず比較Errorとする。既定原本の同等性と、任意コメント／正規表現／置換の全旧互換を区別する。
+
+フォルダーの三者コピーは`DirectorySideMapping`で全6方向のsource／destination／root／stateを一元化し、既存の準備・確認・公開・取消経路を共有する。DifferencesOnlyのgateは三者全体のstatusを使用するため、選択pairだけがEqualでも第三側が異なれば候補になる。コピー元の不在・元側除外・Errorを拒否し、コピー先のreadonlyと非コピー先全rootへの出力保護を確認する。GUIの中央変更や方向変更も世代を無効化し、確認中の変更で旧コピーを実行しない。再比較とproject保存・復元は中央を保持する。FolderのHTML／包装、不在側を含む子fileのオープン、旧Shell全操作はこのモデル追加の検証範囲に含めない。
+
 バイナリ編集はCoreの `BinaryEditSession` が二者／三者の各側のbyteと保存点、共有Undo／Redoを所有する。project側は左0・中央1・右2で、二者Coreの右1への変換は `BinaryPanel.LocalSide` に集約する。中央は祖先の固定本文ではなく独立編集・保存する第三入力で、差分は同offsetの全側一致から判定し、祖先に対する競合分類は行わない。全6方向の差分範囲コピーは対象pairの長さで境界を検査し、長い第三側で範囲外を許可しない。全体コピーはFrhedの `copy_all_from` に合わせ、コピー先の長さをmax(source,destination)とし、短いsourceでは末尾を保持する。空または同一bytesは履歴を作らない。未適用Hexは有効／不正とも確認前に拒否し、明示適用を要求する。確認の前後でowner・StateStamp・比較世代・取消・入力path・mode・provider・全側readonlyを照合し、古い確認で本文を変更しない。保存に渡す `BinaryCapture` はowner・side・全byteのSHAを固定し、保存中に増えた編集を保存済み扱いにしない。各入力16 MiB、共有履歴64 MiB／256操作を上限とし、拒否時に本文・revision・Redo・保存点を含む履歴を変更しない。通常ファイル保存と外部SaveAsは `BinaryFileStore` の一時出力と公開前検査を使い、成功した側だけを採用する。内包入力の作業保存・永続化は後述の共通storeとworkspaceの契約に従う。読取り専用の別名保存は変更しない複製だけを公開し、入力パスと保存点を更新しない。形式を切り替えた未保存本文は自動変換せず、古い比較の保存を拒否する。
 
 `BinaryEditSession.EditRange` は開始位置・削除数をlongで受け取り、範囲・Hex・編集後16 MiB上限を候補確保前に検査する。末尾までの挿入、既存範囲内の上書き、後続を詰める削除を共有Commitへ渡し、固定長の `ApplyHexPage` と同じ履歴・保存点を使う。読取り専用は無変更の操作より先に拒否する。範囲ダイアログと全体コピーの確定前には、前述の確認境界に加えて保存世代・project identity・panelの寿命を照合し、入力中の保存や比較変更で古くなった結果を採用しない。短縮後は共通最大長へ表示オフセットを収め、全側のcaretを表示文字数内へ戻す。未適用の他側入力は保持する。

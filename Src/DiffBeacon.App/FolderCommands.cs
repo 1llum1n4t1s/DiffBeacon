@@ -8,7 +8,7 @@ internal static class FolderCommands
 {
     internal static DirectoryComparisonOptions ParseOptions(string[] args, int start,
         List<string>? selections = null, Action<string, string>? planOption = null,
-        Func<string, FileFilter>? filterOption = null)
+        Func<string, FileFilter>? filterOption = null, Action<string>? middleOption = null)
     {
         var options = new DirectoryComparisonOptions();
         var excludes = new List<string>();
@@ -45,6 +45,13 @@ internal static class FolderCommands
                 case "--exclude": excludes.Add(value); break;
                 case "--max-entries": options = options with { MaximumEntries = Positive(value) }; break;
                 case "--max-depth": options = options with { MaximumDepth = Positive(value) }; break;
+                case "--max-content-bytes": options = options with { MaximumContentBytes =
+                    long.TryParse(value, NumberStyles.None, CultureInfo.InvariantCulture, out var bytes) && bytes > 0
+                        ? bytes : throw new ArgumentException("共有読込上限は正数で指定してください。") }; break;
+                case "--middle" when middleOption is not null:
+                    if (string.IsNullOrWhiteSpace(value) || value.StartsWith("--", StringComparison.Ordinal))
+                        throw new ArgumentException("中央フォルダーのパスが必要です。");
+                    middleOption(Path.GetFullPath(value)); break;
                 case "--mode": options = options with { Mode = value switch
                 {
                     "content" => DirectoryComparisonMode.Content,
@@ -64,36 +71,64 @@ internal static class FolderCommands
             ? number : throw new ArgumentException("項目数・深度の上限は正数で指定してください。");
     }
 
+    internal static Task<DirectoryComparisonResult> CompareAsync(string[] args, CancellationToken token)
+    {
+        if (args.Length < 3) throw new ArgumentException("--directory LEFT RIGHT [--middle MIDDLE] [folder options]");
+        string? middle = null;
+        var options = ParseOptions(args, 3, middleOption: value => middle = value);
+        RequireContentLimitScope(args, middle, options);
+        return middle is null ? FolderComparisons.CompareAsync(args[1], args[2], options, token)
+            : FolderComparisons.CompareAsync(args[1], middle, args[2], options, token);
+    }
+
+    private static void RequireContentLimitScope(string[] args, string? middle, DirectoryComparisonOptions options)
+    {
+        if (args.Contains("--max-content-bytes", StringComparer.Ordinal)
+            && (middle is null || options.Mode != DirectoryComparisonMode.Content))
+            throw new ArgumentException("共有読込上限は中央フォルダーを指定した三者の内容比較で使用してください。");
+    }
+
     internal static async Task<FolderCommandSelection> PrepareSelectionAsync(string[] args, CancellationToken token)
     {
-        if (args.Length < 3) throw new ArgumentException("--folder-plan / --folder-sync LEFT RIGHT --direction left-to-right|right-to-left --copy all|diff --select RELATIVE [...]");
+        if (args.Length < 3) throw new ArgumentException("--folder-plan / --folder-sync LEFT RIGHT [--middle MIDDLE] --direction DIRECTION --copy all|diff --select RELATIVE [...]");
         DirectoryCopyDirection? direction = null;
         DirectoryCopyMode? mode = null;
         var selected = new List<string>();
         FolderFilterInput? filter = null;
+        string? middle = null;
         var options = ParseOptions(args, 3, selected, (flag, value) =>
         {
             if (flag == "--direction") direction = value switch
             {
                 "left-to-right" => DirectoryCopyDirection.LeftToRight, "right-to-left" => DirectoryCopyDirection.RightToLeft,
-                _ => throw new ArgumentException("コピー方向はleft-to-rightまたはright-to-leftです。")
+                "left-to-middle" => DirectoryCopyDirection.LeftToMiddle, "middle-to-left" => DirectoryCopyDirection.MiddleToLeft,
+                "middle-to-right" => DirectoryCopyDirection.MiddleToRight, "right-to-middle" => DirectoryCopyDirection.RightToMiddle,
+                _ => throw new ArgumentException("コピー方向は左・中央・右の異なる二側を指定してください。")
             };
             else mode = value switch
             {
                 "all" => DirectoryCopyMode.All, "diff" => DirectoryCopyMode.DifferencesOnly,
                 _ => throw new ArgumentException("コピー条件はallまたはdiffです。")
             };
-        }, path => { token.ThrowIfCancellationRequested(); filter = new(path); return filter.Filter; });
+        }, path => { token.ThrowIfCancellationRequested(); filter = new(path); return filter.Filter; }, value => middle = value);
         if (direction is null || mode is null) throw new ArgumentException("コピー方向とall/diffを明示してください。");
         filter?.RequireUnchanged();
-        var model = await FolderComparisons.CompareAsync(args[1], args[2], options, token);
+        RequireContentLimitScope(args, middle, options);
+        var model = middle is null ? await FolderComparisons.CompareAsync(args[1], args[2], options, token)
+            : await FolderComparisons.CompareAsync(args[1], middle, args[2], options, token);
         filter?.RequireUnchanged();
-        return new(DirectoryCopyPlanner.Create(model, selected, direction.Value, mode.Value, token), filter);
+        var selection = DirectoryCopyPlanner.Create(model, selected, direction.Value, mode.Value, token);
+        var (_, destinationSide) = DirectorySideMapping.GetSides(direction.Value);
+        var roots = model.IsThreeWay ? new[] { DirectorySide.Left, DirectorySide.Middle, DirectorySide.Right }
+            : [DirectorySide.Left, DirectorySide.Right];
+        return new(selection, filter, roots.Where(side => side != destinationSide)
+            .Select(side => DirectorySideMapping.GetRoot(model, side)).ToArray());
     }
 
     internal static void WriteModel(Utf8JsonWriter writer, DirectoryComparisonResult model)
     {
         writer.WriteNumber("allEntryCount", model.AllEntries.Count);
+        if (model.IsThreeWay) { writer.WriteBoolean("threeWay", true); writer.WriteString("middleRoot", model.MiddlePath); }
         writer.WriteStartArray("entries");
         foreach (var entry in model.Entries)
         {
@@ -101,11 +136,26 @@ internal static class FolderCommands
             writer.WriteString("kind", entry.EntryKind.ToString()); writer.WriteString("differenceKind", entry.Kind.ToString());
             writer.WriteBoolean("filtered", entry.IsFiltered);
             WriteSide(writer, "left", entry.LeftState); WriteSide(writer, "right", entry.RightState);
+            if (entry.ThreeWay is { } three)
+            {
+                WriteSide(writer, "middle", entry.MiddleState);
+                writer.WriteNumber("presence", (int)three.Presence);
+                if (three.Classification is { } classification) writer.WriteString("classification", classification.ToString());
+                else writer.WriteNull("classification");
+                WritePair("middleLeft", three.MiddleLeft); WritePair("middleRight", three.MiddleRight); WritePair("leftRight", three.LeftRight);
+            }
             writer.WriteStartArray("children"); foreach (var child in entry.Children) writer.WriteStringValue(child.RelativePath); writer.WriteEndArray();
             if (entry.Error is not null) writer.WriteString("error", entry.Error);
             writer.WriteEndObject();
         }
         writer.WriteEndArray();
+
+        void WritePair(string name, DirectoryPairComparison pair)
+        {
+            writer.WriteStartObject(name); writer.WriteString("status", pair.Status.ToString());
+            if (pair.Error is not null) writer.WriteString("error", pair.Error);
+            writer.WriteEndObject();
+        }
     }
 
     internal static void WriteSelection(Utf8JsonWriter writer, DirectoryCopySelection selection)

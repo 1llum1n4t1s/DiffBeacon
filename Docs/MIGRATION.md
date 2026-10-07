@@ -532,3 +532,19 @@ Frhedの挿入／既存範囲内の上書き（EOF越え拒否）／start-count�
 Native発行物12 filesのSHA／size、SharpCompress・TiffLibrary・JpegLibraryのlicense同梱、AMD64 PE・CLR directory不在を確認した。発行の全体UI自己検証は600秒枠で409.56秒・実終了0。同発行でsource変更とlock差分はなく、同じexeの後続全体E2Eも実終了0のため、同一UI検証を重複実行しない。初回は既定のリンカー探索で失敗し、NuGetによるCore／Providers lockの工具・RID graph追加だけを実controllerのメモリ原byteへ復元した。失敗cohortと成功cohortは別directoryに保持する。成功cohortは既存VS DevShellと実MSVC14.51.36231／SDK10.0.28000.0、process内の `IlcUseEnvironmentalTools=true` を使用し、製品projectや利用者の設定を変更していない。
 
 この観測は最新のWindows x64のみ。最新コードのWindows ARM64／macOS Intel／macOS ARM64と実OS clipboardは次のGitHub CIで確認する。以前の4RID成功SHA `5cce1a13235da96c6c813e902b52936b0613a930` を、この追加metadataコードの成功へ流用しない。ネイティブ保存dialog、実OS pointer、native Close失敗注入、任意owner／SACL／EFS／SMB／敵対的な外部FILE_OBJECT競合の資格も追加しない。
+
+## 三者フォルダー比較と長いWindowsパス（managed／Windows x64 Native AOT全体実測）
+
+中央フォルダーを含む三側の存在状態と、中央↔左・中央↔右・左↔右の三組を一覧へ表示し、全6方向へ選択をすべて／差分だけコピーできるようにした。内容比較は三側を一度ずつ読み、GNU行算法の共通予算を使う。旧固定SHA `74c2ae18765f644786c386cb4c4adc58e6de9ced` から採取した既定GNU・UTF-8の63原本、378組の比較と独立readerを保持する。採取用C++／MSVCを通常buildや製品の依存へ追加していない。中央も編集できる三者Text、任意文字コード／フィルター／pluginの全旧互換を、このフォルダー検証の成功には含めない。
+
+Windowsの既知DOS drive／UNCルートは標準絶対パスへ正規化してSystem.IOへ渡し、UIに入力した原表記を保持する。最初のNative検証はcanonical 266文字・raw 272文字のDOS中央ルートで実際に失敗した。修正後、同じ原入力を新Nativeの別processへ渡して通常の差分終了1を得て、全比較データが原normal-path結果と一致し、入力bytes・属性・mtimeを保持した。270文字以上のcanonical rootとlong DOS UNCも恒久E2Eへ追加した。未知のデバイス名前空間の書込み拒否、第三側・別タブreadonly・全入力／workspace／asset／linkの出力保護と取消・古い完了の破棄を維持する。
+
+2026-10-07 JST、Release buildは警告0／エラー0。通常版とWindows x64 Native AOTの全体E2Eは各161,762成功／0失敗／5skip、各7,030命令の実PID・birth・実終了と14,060 stdout／stderrの全byteを独立照合した。同じsource inventory 1,996記録（unique 1,995 files）へ結合し、通常版runtime551／Native runtime13 filesは各実行前後不変。両版の三者独立結果は63原本／378比較、22公開、46 CLI・うちlong alias14、16 GUIコピー・5保護、GUI103 assertion成功。共有の可用性はCLIとGUIそれぞれの記録へ結合し、共有不可の場合に省略する条件を区別する。
+
+両版の全体headless UIは各11,303成功／0失敗、45stageの全順序と最後のThreeWay完了、212 root PNGのCRC・有界zlib復号・寸法を照合した。この件数はlocalhost管理共有が利用可能なローカルWindows結果であり、CIで同数を無条件に要求しない。通常版379.756秒、別計測Native509.252秒で、Nativeの実PID22096・birth・実終了0も記録した。通常／最小850×550／多数タブで三入力、全方向・コピー、先頭行と100 DIP以上の一覧へ到達でき、設定欄のスクロール後に各入力・比較・除外／filterへ到達することを実controlsとbounds／PNGで確認した。Native最小画面も親が目視した。
+
+Native発行の自動UIは11,303成功／0失敗・454.911秒で600秒枠内。発行時のCore／Providers lockへの同版10.0.12工具graph追加2件だけをcontrollerの原byteへ復元し、復元後source全件と21保護fileを照合した。App lockは不変、他のsource変更と未知lockは0件、managed runtimeの差分6件は別境界として記録する。独立readerは工具nodeを固定Appの同TFM／RID graphへ全field完全一致させる。発行exeのAMD64 PE・CLR directory不在、payload全12 filesとmanifest、SharpCompress／TiffLibrary／JpegLibraryのlicense同梱を確認した。自動UIと別計測UIの資格を区別し、同exeの全体Native E2Eへ結合した。
+
+通常版全体の証拠は `artifacts/local/folder-threeway-next/whole53/fullui53-parent-acceptance.json` と `full-e2e53-parent-acceptance.json`。Nativeは `native53/publish57-parent-acceptance.json`（SHA `405F627CB0D653F5FB63447CFDA058108240CC601592D756A8342973D9E4B7A6`）、`native-ui57-parent-acceptance.json`（SHA `6273CA82B72EA570237AE3B213D036E194356454006721A3A29C0A1AE6A75F60`）、`native-e2e59-parent-acceptance.json`（SHA `B48FBCBE1BA520A197DBD61E9909A7412C09AE30FC728401A1F717497A6E90D0`）。通常App DLL SHAは `17F622008A10220170AC0E4FD16375E0CF4D501AC820BBF540766801AF5A7A32`、Native exeは `9C32A201454F26FD40A5237B182D30F9DD5E02CE81C2430E9E00608990BFF05B`。Native初回失敗、独立readerのgraph文脈不一致による拒否、原入力・ログ・バックアップも別recordとして保持する。
+
+最新sourceのWindows ARM64／macOS Intel／macOS ARM64、実OS clipboardは次の同SHA GitHub CIで検証する。以前の4RID成功を今回の三者／長いpath修正へ流用しない。通常デスクトップのpointer・native保存dialog、SMB／非NTFS／任意owner・SACL・EFS・敵対的外部FILE_OBJECT競合、folderコピーのUndo／Binary HTMLなど未対応項目もこの資格へ含めない。Windowsの5skipはOS／filesystem固有項目と三者の実desktop・全入力互換の範囲外を理由付きで保持した。今回のコードはまだ全WinMerge機能の移植完了を意味しない。

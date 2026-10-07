@@ -62,7 +62,7 @@ public static class ComparisonPackage
             foreach (var source in sources[i].Where(path => !IsUrl(path)))
             {
                 ValidateLocal(source);
-                if (Directory.Exists(source)) throw new InvalidOperationException("フォルダー比較の包装は未対応です。フォルダーのアーカイブ作成を使用してください。");
+                if (FolderComparisons.IsDirectory(source)) throw new InvalidOperationException("フォルダー比較の包装は未対応です。フォルダーのアーカイブ作成を使用してください。");
                 if (!File.Exists(source)) throw new FileNotFoundException("包装する文書がありません。", source);
                 if (new FileInfo(source).Length > MaximumFileBytes) throw new InvalidDataException("包装するファイルは256 MiBまでです。");
             }

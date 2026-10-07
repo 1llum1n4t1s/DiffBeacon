@@ -1,0 +1,10 @@
+{
+  "complete": true,
+  "cases": 63,
+  "allInputBytes": true,
+  "allProcessBodies": true,
+  "allSourceSlices": true,
+  "threewayPresenceFlags": true,
+  "originalExpectedBodies": true,
+  "scope": "structural/original-public-value checks; no independent line algorithm oracle"
+}

@@ -18,6 +18,8 @@ public static class Program
         if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-copy-only")
             return HeadlessSelfTest.Run(args[1], folderCopyOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-threeway-only")
+            return HeadlessSelfTest.Run(args[1], folderThreeWayOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-range-edits-only")
             return HeadlessSelfTest.Run(args[1], binaryRangeEditsOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-copy-all-only")

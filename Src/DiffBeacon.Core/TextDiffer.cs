@@ -14,31 +14,15 @@ public static class TextDiffer
         var a = TextLines.Parse(left, cancellationToken);
         var b = TextLines.Parse(right, cancellationToken);
         var preprocessor = new TextPreprocessor(options, cancellationToken);
-        var filteredA = preprocessor.Process(a);
-        var filteredB = preprocessor.Process(b);
         var ignoredPattern = options.CreateIgnoredLineRegex();
-        bool[] Ignored(IReadOnlyList<TextLine> lines, bool[] commentOnly)
-        {
-            var result = new bool[lines.Count];
-            for (var index = 0; index < lines.Count; index++)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var content = lines[index].Content;
-                if (ignoredPattern is not null) TextPreprocessor.CheckRegexInput(content);
-                result[index] = commentOnly[index] || (options.IgnoreBlankLines && string.IsNullOrWhiteSpace(content)) ||
-                    (ignoredPattern?.IsMatch(content) ?? false);
-            }
-            return result;
-        }
-        var ignoredA = Ignored(a, filteredA.CommentOnly);
-        var ignoredB = Ignored(b, filteredB.CommentOnly);
-        var activeA = Enumerable.Range(0, a.Count).Where(index => !ignoredA[index]).ToArray();
-        var activeB = Enumerable.Range(0, b.Count).Where(index => !ignoredB[index]).ToArray();
-        GnuLineKey Key(string content, TextLine line, bool last) => new(content,
-            options.CompareLineEndings ? line.Ending : "",
-            !options.IgnoreFinalNewLine && last && line.Ending.Length == 0);
-        var keysA = activeA.Select(index => Key(filteredA.Keys[index], a[index], index == a.Count - 1)).ToArray();
-        var keysB = activeB.Select(index => Key(filteredB.Keys[index], b[index], index == b.Count - 1)).ToArray();
+        var preparedA = Prepare(a, options, preprocessor, ignoredPattern, cancellationToken);
+        var preparedB = Prepare(b, options, preprocessor, ignoredPattern, cancellationToken);
+        var ignoredA = preparedA.Ignored;
+        var ignoredB = preparedB.Ignored;
+        var activeA = preparedA.Active;
+        var activeB = preparedB.Active;
+        var keysA = preparedA.Keys;
+        var keysB = preparedB.Keys;
         var lineMatches = GnuLineMatcher.Match(keysA, keysB, a, b, activeA, activeB, options, cancellationToken);
         var matches = lineMatches.Pairs;
         var rows = new List<DiffRow>();
@@ -208,4 +192,28 @@ public static class TextDiffer
         };
     }
 
+    // 通常比較とfolder Fullで、構文状態・無視行・原文座標・終端キーを共用する。
+    internal static PreparedText Prepare(IReadOnlyList<TextLine> lines, ComparisonOptions options,
+        TextPreprocessor preprocessor, System.Text.RegularExpressions.Regex? ignoredPattern,
+        CancellationToken cancellationToken)
+    {
+        var filtered = preprocessor.Process(lines);
+        var ignored = new bool[lines.Count];
+        var active = new List<int>();
+        var keys = new List<GnuLineKey>();
+        for (var index = 0; index < lines.Count; index++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var line = lines[index];
+            if (ignoredPattern is not null) TextPreprocessor.CheckRegexInput(line.Content);
+            ignored[index] = filtered.CommentOnly[index] ||
+                (options.IgnoreBlankLines && string.IsNullOrWhiteSpace(line.Content)) ||
+                (ignoredPattern?.IsMatch(line.Content) ?? false);
+            if (ignored[index]) continue;
+            active.Add(index);
+            keys.Add(new(filtered.Keys[index], options.CompareLineEndings ? line.Ending : "",
+                !options.IgnoreFinalNewLine && index == lines.Count - 1 && line.Ending.Length == 0));
+        }
+        return new(lines, ignored, active.ToArray(), keys.ToArray());
+    }
 }

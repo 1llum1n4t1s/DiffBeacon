@@ -1,7 +1,7 @@
 namespace DiffBeacon.Core;
 
 public enum DirectoryCopyMode { All, DifferencesOnly }
-public enum DirectoryCopyDirection { LeftToRight, RightToLeft }
+public enum DirectoryCopyDirection { LeftToRight = 0, RightToLeft = 1, LeftToMiddle = 2, MiddleToLeft = 3, MiddleToRight = 4, RightToMiddle = 5 }
 public sealed record DirectoryCopyCandidate(string RelativePath, DirectorySideSnapshot Source,
     DirectorySideSnapshot? Destination, bool ExpandPhysicalDirectory);
 public sealed record DirectoryCopySelection(string SourceRoot, string DestinationRoot,
@@ -17,6 +17,9 @@ public static class DirectoryCopyPlanner
         ArgumentNullException.ThrowIfNull(comparison);
         ArgumentNullException.ThrowIfNull(selectedPaths);
         if (!Enum.IsDefined(direction) || !Enum.IsDefined(mode)) throw new ArgumentOutOfRangeException(nameof(direction));
+        var (sourceSide, destinationSide) = DirectorySideMapping.GetSides(direction);
+        var sourceRoot = DirectorySideMapping.GetRoot(comparison, sourceSide);
+        var destinationRoot = DirectorySideMapping.GetRoot(comparison, destinationSide);
         var comparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
         var selected = selectedPaths.Select(path => path.Replace('\\', '/')).Distinct(comparer).Order(comparer).ToArray();
         if (selected.Length == 0 || selected.Length > comparison.Options.MaximumEntries)
@@ -32,8 +35,8 @@ public static class DirectoryCopyPlanner
             while (pending.TryPop(out var current))
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var source = direction == DirectoryCopyDirection.LeftToRight ? current.LeftState : current.RightState;
-                var destination = direction == DirectoryCopyDirection.LeftToRight ? current.RightState : current.LeftState;
+                var source = DirectorySideMapping.GetState(current, sourceSide);
+                var destination = DirectorySideMapping.GetState(current, destinationSide);
                 if (source is null) continue;
                 if (mode == DirectoryCopyMode.DifferencesOnly
                     && (source.IsFiltered || current.Status is DirectoryDifferenceKind.Equal or DirectoryDifferenceKind.Error)) continue;
@@ -70,8 +73,7 @@ public static class DirectoryCopyPlanner
             result.Add(candidate);
             if (candidate.ExpandPhysicalDirectory) physicalAncestors.Add(relative);
         }
-        return new(direction == DirectoryCopyDirection.LeftToRight ? comparison.LeftPath : comparison.RightPath,
-            direction == DirectoryCopyDirection.LeftToRight ? comparison.RightPath : comparison.LeftPath,
+        return new(sourceRoot, destinationRoot,
             direction, mode, Array.AsReadOnly(selected), result.AsReadOnly());
     }
 
