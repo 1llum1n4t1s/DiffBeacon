@@ -2,15 +2,21 @@
 
 ## 中央も編集する独立三者テキスト
 
-三側のPhysical／Untitledと選択pairをv6 projectに保持し、六方向の差分コピー、中央編集・保存、三側原文HTMLとpristine Untitledの包装を実装しています。操作は[README](../README.md)、意味と保存・採用の境界は[設計のデータフロー](../DESIGN.md#データフロー)、再現入力と別processの照合は[独立Text E2E](../tests/Fixtures/IndependentText/README.md)を参照してください。独立内包入力・provider変換・マージ結果・patch包装、旧エディター全操作の移植は残っています。先行11bfの4RID検証はフォルダーまでの実測であり、この追加Text実装を検証済みとは扱いません。
+三側のPhysical／Untitled／実在Archive葉と選択pairをv6 projectに保持し、全6方向の差分コピー、全3側の編集・保存、三側原文HTMLとパッチなしの包装を実装しています。内包の通常保存は原本を保持した作業版へ保存し、外部保存した側だけPhysicalへ切り替えます。継承readonlyはfalseの明示だけ編集を許可し、未保存の内包本文／dirty Untitledはworkspace保存と包装を拒否します。操作は[README](../README.md)、保存・採用の境界は[設計のデータフロー](../DESIGN.md#データフロー)、再現入力と別processの照合は[独立Text](../tests/Fixtures/IndependentText/README.md)と[実在Archive Text](../tests/Fixtures/IndependentArchiveText/README.md)を参照してください。独立不在入力・provider変換・マージ結果・patch包装、旧エディター全操作の移植は残っています。
 
-ローカルの最終通常版はReleaseビルド警告0／エラー0、限定E2E95成功／0失敗／0skip、GUI66成功／0失敗です。別Python readerは783条件と全40コマンドの実PID・UTC・終了値・生stdout／stderr、保存bytes・BOM・改行・ZIP全entry／CRC・三側HTML原文・PNG全画素とboundsを照合しました。同じApp SHAの全体UIは11,369成功／0失敗、47進捗イベント（23開始・24完了、24種類の段階）と214画面PNGを確認しています。全体E2Eの先行実行は161,844成功／12失敗／5skipでした。失敗は新known v6を旧fixtureがunknown版としていた6コマンドで、未知版をv7へ更新し、各入口の終了2・stdout空・入力／既存出力保持を再実測しました。更新後の全体E2EとNative AOT／4RIDはこの記録時点で未完了です。証拠は `artifacts/local/folder-threeway-next/text-next73` の `limited105`、`accept108`、`version7-repro115`、build receiptsです。通常デスクトップ・ネイティブ保存ダイアログと実OS pointerは含みません。
+Physical／Untitledまでの基準版SHA `cb666d5b2c59af1b854cc5caef2b6a26fc1090b0` は [4RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37625308016) と [CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37625307942) が成功し、4RIDのNative AOT・全体E2E・headless UIを独立に照合済みです。Windows各構成はE2E161,856成功／0失敗／5skip・7,070命令・UI11,369成功、macOS各構成はE2E161,927成功／0失敗／11skip・7,089命令・UI11,275成功でした。公式ZIP・固定source・実行receiptと全822 root PNGの照合根拠は `artifacts/local/folder-threeway-next/text-next73/ci135/accept147/run167/receipt.json` と同directoryの `runtime-summary167.json` です。基準版の通常全体E2E成功は `whole131` にも保持しています。先行全体実行の未知version fixture不一致はv7での拒否検証へ更新後に解消しており、失敗原本は保持しています。
+
+今回追加した実在Archive葉はWindows managedで測定済みです。通常Releaseの `whole200/build-20261007T1534081404032` は実終了0・警告0／エラー0。限定 `limited208` はE2E87成功／0失敗・42命令、GUI163成功／0失敗、stdlib reader（SHA先頭B588）は2,295条件を照合しました。全体E2Eは161,942成功／0失敗／5skip・7,112命令で、実PID15808・実終了0、source／runtimeの前後不変を確認しています。証拠は `artifacts/local/folder-threeway-next/text-next73` の `limited208-parent-accept209.json` と `accept215/acceptance-e2e200.json`・`accept215/facts.json` です。
+
+全体headless UIは11,532成功／0失敗（新Archive GUI163成功）・217 root PNGです。旧固定reader（SHA先頭D99）は独立160条件、新B588の関数を使うGUI専用helperは4,146条件と全217PNGの全画素bytesを独立照合し、通常／最小850×550／多数tabで三者本文と中央保存ボタンへの到達を確認しました。証拠は `whole-ui-parent-accept217.json` と `accept212/archive-whole-gui-final-retry2-receipt.json` です。全体E2Eのsource snapshotは2,050行・2,049固有path（build/Publish.ps1の重複1行）、GUI snapshotはsource1,992行／runtime551件であり、行数と固有path・runtime件数を区別しています。古いauxiliary／decoderのPIDやcompilerのPID・生成時刻は元記録にないため補完していません。
+
+この追加機能の4RID Native AOT・CI／CodeQLはまだ未実測です。上記cb666基準版の4RID合格はPhysical／Untitledまでの旧scopeに限ります。通常デスクトップ・ネイティブ保存ダイアログ・実OS pointerは今回のmanaged測定にも旧基準版の資格にも含みません。readonly null／省略を分けたCLIcaseと親一覧の競合分類等の残りは [検証範囲](../tests/Fixtures/IndependentArchiveText/coverage.md) に保持しています。
 
 ## macOS E2E の起動記録
 
-SHA `32b8cce957bf12a21fb8aec7706d1590aeb43550` の [4RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37226617858) は Windows 両構成と Mac ARM64 が成功し、Mac Intel は E2E の `Process.StartTime` 取得で例外となった。Mac Intel の Native AOT 発行と UI10,919成功／0失敗は完了したが、E2Eは161,456成功／1失敗／2skipで、対象アプリの実終了コードを回収できていない。圧縮原本と失敗 assertion は `artifacts/local/folder-sync-next/github-current-head-inspection-01` に保持する。
+以前のSHA `32b8cce957bf12a21fb8aec7706d1590aeb43550` のMac Intel E2Eは `Process.StartTime` 取得例外で実終了を回収できず、採用しませんでした。圧縮原本と失敗assertionは `artifacts/local/folder-sync-next/github-current-head-inspection-01` に保持しています。
 
-検証用 launcher の待機中に nonce／実PIDを照合して実OSの開始時刻を取得し、同PIDのexecでアプリを起動する経路へ変更した。部分出力と完了フラグを同一の確定スナップショットへ揃え、回収失敗をnativeの成功に置き換えない。製品コード・Windowsの起動処理は変更しない。独立したソース確認は通過したが、この変更を含む実Macの実行、取消・pipe解放の実時間と4RID CIは未検証である。操作・記録の契約は [E2Eの手順](../tests/DiffBeacon.E2E/README.md) を参照する。
+検証用launcherは固定startup gateのnonce／実PIDを照合して実OSの開始時刻を取得し、同PIDのexecでアプリを起動します。部分出力と完了フラグを同一の確定snapshotへ揃え、回収失敗をnativeの成功へ置き換えません。上記基準版の4RID資格では両Macの実LaunchEvidence・実終了・全stream回収を独立照合済みです。任意の取消／pipe解放の実時間まで検証したことは意味しません。操作・記録の契約は [E2Eの手順](../tests/DiffBeacon.E2E/README.md) を参照してください。
 
 ## バイナリの任意byte選択・clipboardと直接入力（managed／全4RID Native AOT実測）
 

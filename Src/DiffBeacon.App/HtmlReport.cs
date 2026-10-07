@@ -79,10 +79,13 @@ public static class HtmlReport
     }
 
     internal static string CreateIndependentText(IReadOnlyList<ReportDocument> documents, string pair,
-        ComparisonOptions options, int maxCharacters, CancellationToken token)
+        ComparisonOptions options, int maxCharacters, CancellationToken token,
+        IReadOnlyList<TextDocument>? snapshots = null, IReadOnlyList<string>? sources = null)
     {
         ValidateDocuments(documents, token);
         if (documents.Count != 3) throw new ArgumentException("独立三者Textには三本文が必要です。");
+        if (snapshots is not null && snapshots.Count != 3 || sources is not null && sources.Count != 3)
+            throw new ArgumentException("独立三者Textのmetadataには三側が必要です。");
         ValidateOptions(options);
         var (first, second) = IndependentTextReport.PairSides(pair);
         var html = new BoundedHtml(maxCharacters, token);
@@ -97,9 +100,20 @@ public static class HtmlReport
         for (var side = 0; side < 3; side++)
         {
             token.ThrowIfCancellationRequested();
-            html.Append("<section data-input-role=\""); html.Escape(IndependentTextReport.Role(side)); html.Append("\"><h2>");
+            html.Append("<section data-input-role=\""); html.Escape(IndependentTextReport.Role(side)); html.Append("\"");
+            if (snapshots is not null)
+            {
+                html.Append(" data-encoding=\""); html.Escape(snapshots[side].EncodingName);
+                html.Append("\" data-bom=\""); html.Boolean(snapshots[side].HasBom); html.Append("\"");
+            }
+            html.Append("><h2>");
             html.Escape(IndependentTextReport.Role(side)); html.Append(": "); html.Escape(documents[side].Name);
-            html.Append("</h2><pre class=\"input-snapshot\">"); html.Escape(documents[side].Text); html.Append("</pre></section>");
+            html.Append("</h2>");
+            if (sources is not null)
+            {
+                html.Append("<p class=\"input-source\">"); html.Escape(sources[side]); html.Append("</p>");
+            }
+            html.Append("<pre class=\"input-snapshot\">"); html.Escape(documents[side].Text); html.Append("</pre></section>");
         }
         return Finish(html);
     }

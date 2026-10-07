@@ -206,10 +206,12 @@ public static class ComparisonPackage
                 var left = pairInputs[i][0]; var right = pairInputs[i][2];
                 var textMode = ProjectReport.IsTextual(project);
                 string? a = null, b = null;
+                TextDocument? leftText = null, rightText = null;
                 if (textMode && (options.IncludePatch || options.IncludeReport))
                 {
-                    a = ProjectInputReader.ReadTextAsync(project, 0, token, left?.Snapshot).GetAwaiter().GetResult().Text;
-                    b = ProjectInputReader.ReadTextAsync(project, 2, token, right?.Snapshot).GetAwaiter().GetResult().Text;
+                    leftText = ProjectInputReader.ReadTextAsync(project, 0, token, left?.Snapshot).GetAwaiter().GetResult();
+                    rightText = ProjectInputReader.ReadTextAsync(project, 2, token, right?.Snapshot).GetAwaiter().GetResult();
+                    a = leftText.Text; b = rightText.Text;
                 }
                 if (options.IncludePatch && textMode && project.Mode.ToLowerInvariant() is not ("json" or "5"))
                 {
@@ -226,8 +228,9 @@ public static class ComparisonPackage
                     var title = project.LeftDescription ?? (project.LeftArchiveInput is null
                         ? Path.GetFileName(project.LeftPath) : ProjectInputs.Caption(project, 0));
                     indexReport.Append("<li><a href=\"report.files/").Append(i + 1).Append(".html\">").Append(WebUtility.HtmlEncode(title)).Append("</a></li>");
-                    var ancestor = textMode && ProjectInputs.HasBase(project)
-                        ? ProjectInputReader.ReadTextAsync(project, 1, token, pairInputs[i][1]?.Snapshot).GetAwaiter().GetResult().Text : null;
+                    var ancestorDocument = textMode && ProjectInputs.HasBase(project)
+                        ? ProjectInputReader.ReadTextAsync(project, 1, token, pairInputs[i][1]?.Snapshot).GetAwaiter().GetResult() : null;
+                    var ancestor = ancestorDocument?.Text;
                     string report;
                     if (ProjectReport.IsImage(project))
                     {
@@ -252,7 +255,8 @@ public static class ComparisonPackage
                             middleImage is null ? [project.LeftDescription ?? left.Name, project.RightDescription ?? right.Name]
                                 : [project.LeftDescription ?? left.Name, project.BaseDescription ?? middleInput!.Name, project.RightDescription ?? right.Name], token);
                     }
-                    else report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left?.Name, pairInputs[i][1]?.Name, right?.Name)
+                    else report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left?.Name, pairInputs[i][1]?.Name, right?.Name,
+                        ProjectInputs.IsIndependentText(project) ? new[] { leftText!, ancestorDocument!, rightText! } : null)
                         : MetadataReport(project, pairInputs[i]);
                     Generated($"report.files/{i + 1}.html", report);
                 }

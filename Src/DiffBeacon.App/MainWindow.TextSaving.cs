@@ -18,9 +18,11 @@ public sealed partial class ComparisonPane
     internal (string? Left, string? Right) ArchiveDiffCaptions => (_leftCaption.Text, _rightCaption.Text);
     internal string? ArchiveAncestorText => _ancestorEditor.Text;
 
-    private bool CanEditArchiveText(bool right) => !_disposed && _textSaveAllowed && _projectMetadata.Mode == "Text"
-        && ProjectInputs.Archive(_projectMetadata, right ? 2 : 0) is { InheritedReadOnly: false }
-        && (right ? _rightDocument : _leftDocument) is not null
+    private bool CanEditArchiveText(bool right) => CanEditArchiveText(right ? 2 : 0);
+    internal bool CanEditArchiveText(int side) => !_disposed && _textSaveAllowed && _projectMetadata.Mode == "Text"
+        && (side != 1 || IndependentText)
+        && ProjectInputs.Archive(_projectMetadata, side) is { InheritedReadOnly: false }
+        && TextInputDocument(side) is not null
         && _lastArchiveComparison == ArchiveComparisonIdentity(CaptureProject());
 
     private bool CanEditMissingText(bool right) => CanEditArchiveText(right)
@@ -71,10 +73,10 @@ public sealed partial class ComparisonPane
                 _status.Text = "別tabでBinary作業版が保存されています。Text本文と未保存の編集は保持しています。形式を選んで開き直してください。";
                 continue;
             }
-            if (side != 1 && HasArchiveDraft(right)) continue;
+            if (IndependentText ? TextDirty(side) : side != 1 && HasArchiveDraft(right)) continue;
             var document = snapshot.Document();
             if (right) { _rightDocument = document; RightEditor.Text = _savedRight = document.Text; }
-            else if (side == 1) { _baseDocument = document; _baseText = document.Text; _ancestorEditor.Text = document.Text; }
+            else if (side == 1) { _baseDocument = document; _baseText = document.Text; _ancestorEditor.Text = document.Text; if (IndependentText) _savedMiddle = document.Text; }
             else { _leftDocument = document; LeftEditor.Text = _savedLeft = document.Text; }
             _workingTextRevisions[side] = _workingTexts.Revision(input);
             changed = true;
@@ -90,7 +92,7 @@ public sealed partial class ComparisonPane
 
     private void RefreshTextReadOnly()
     {
-        MiddleEditor.IsReadOnly = !IndependentText || !_textSaveAllowed || _projectMetadata.BaseReadOnly;
+        MiddleEditor.IsReadOnly = !IndependentText || !_textSaveAllowed || TextReadOnly(1);
         LeftEditor.IsReadOnly = !_textSaveAllowed || !CanEditArchiveText(false)
             && (_projectMetadata.LeftReadOnly || _projectMetadata.LeftArchiveInput is not null);
         RightEditor.IsReadOnly = !_textSaveAllowed || !CanEditArchiveText(true)
@@ -98,12 +100,13 @@ public sealed partial class ComparisonPane
     }
 
     private void InvalidateTextSave() { _textSaveGeneration++; _textSaveOperation?.Cancel(); InvalidateBinarySave(); }
-    private bool HasArchiveDraft(bool right) => ProjectInputs.Archive(_projectMetadata, right ? 2 : 0) is not null
-        && (right ? RightEditor.Text != _savedRight : LeftEditor.Text != _savedLeft);
+    private bool HasArchiveDraft(bool right) => HasArchiveDraft(right ? 2 : 0);
+    internal bool HasArchiveDraft(int side) => ProjectInputs.Archive(_projectMetadata, side) is not null && TextDirty(side);
 
     private void RefreshArchiveDraftCaptions()
     {
         if (!ProjectInputs.HasArchives(_projectMetadata)) return;
+        if (IndependentText) { RefreshIndependentTextCaptions(); return; }
         _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
         var labels = ProjectInputs.HasBase(_projectMetadata)
             ? new[] { ProjectCaption(false), _projectMetadata.BaseDescription ?? "共通の祖先", ProjectCaption(true), "マージ結果" }
@@ -118,6 +121,7 @@ public sealed partial class ComparisonPane
         if (_workingDocumentStale) throw new InvalidOperationException("作業版の形式が変更されています。比較し直してください。");
         var project = CaptureProject();
         if (HasArchiveDraft(false)) project = project with { LeftDescription = (project.LeftDescription ?? "左") + "（未保存の編集）" };
+        if (IndependentText && HasArchiveDraft(1)) project = project with { BaseDescription = (project.BaseDescription ?? "中央") + "（未保存の編集）" };
         if (HasArchiveDraft(true)) project = project with { RightDescription = (project.RightDescription ?? "右") + "（未保存の編集）" };
         return project;
     }
@@ -128,7 +132,7 @@ public sealed partial class ComparisonPane
         if (_workingDocumentStale) throw new InvalidOperationException("別tabで作業版の形式が変更されています。本文を退避して開き直してください。");
         if (_specialTab.Content is SpecializedViews.BinaryPanel binary && binary.IsDirty?.Invoke() == true)
             throw new InvalidOperationException("未保存／未適用のバイナリ編集があります。保存してからプロジェクトを保存してください。");
-        if (HasArchiveDraft(false) || HasArchiveDraft(true))
+        if (HasArchiveDraft(false) || HasArchiveDraft(true) || IndependentText && HasArchiveDraft(1))
             throw new InvalidOperationException("未保存の内包文書があります。実在する側は通常保存、不在の側は外部保存してからプロジェクトを保存してください。");
     }
 
@@ -248,20 +252,26 @@ public sealed partial class ComparisonPane
         finally { if (ReferenceEquals(_textSaveOperation, operation)) _textSaveOperation = null; }
     }
 
-    private async Task SaveArchiveWorkingTextAsync(bool right, ArchiveProjectInput input, CancellationToken callerToken)
+    private Task SaveArchiveWorkingTextAsync(bool right, ArchiveProjectInput input, CancellationToken callerToken)
+        => SaveArchiveWorkingTextAsync(right ? 2 : 0, input, callerToken);
+
+    private async Task SaveArchiveWorkingTextAsync(int side, ArchiveProjectInput input, CancellationToken callerToken)
     {
-        var side = right ? 2 : 0; var document = right ? _rightDocument! : _leftDocument!;
-        var text = (right ? RightEditor.Text : LeftEditor.Text) ?? "";
+        var document = TextInputDocument(side)!;
+        var text = TextEditor(side).Text ?? "";
         var generation = _textSaveGeneration; var identity = ArchiveComparisonIdentity(CaptureProject());
-        var revision = _workingTextRevisions[side];
+        var revision = _workingTextRevisions[side]; var activeAtStart = (_owner as MainWindow)?.ActivePane;
+        var textIdentity = IndependentText ? TextInputIdentity() : null; var descriptor = _projectMetadata.TextInputs;
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
         _textSaveOperation = operation; var token = operation.Token;
         void Guard()
         {
             token.ThrowIfCancellationRequested();
             if (_disposed || generation != _textSaveGeneration || identity != ArchiveComparisonIdentity(CaptureProject())
-                || !ReferenceEquals(document, right ? _rightDocument : _leftDocument)) throw new OperationCanceledException("保存元の比較が変更されました。", token);
-            EnsureSideWritable(right); _workingTexts.EnsureCurrent(input, revision);
+                || !ReferenceEquals(document, TextInputDocument(side))
+                || textIdentity is not null && (textIdentity != TextInputIdentity() || _textRole.SelectedIndex != 1
+                    || !ReferenceEquals(activeAtStart, (_owner as MainWindow)?.ActivePane) || !ReferenceEquals(descriptor, _projectMetadata.TextInputs))) throw new OperationCanceledException("保存元の比較が変更されました。", token);
+            EnsureTextSideWritable(side); _workingTexts.EnsureCurrent(input, revision);
             ArchiveActions.ValidatePath(input.RootPath);
             if ((File.GetAttributes(input.RootPath) & FileAttributes.ReadOnly) != 0)
                 throw new UnauthorizedAccessException("読み取り専用の原本から作業保存はできません。");
@@ -282,8 +292,7 @@ public sealed partial class ComparisonPane
                 var snapshot = new ArchiveWorkingSnapshot { EntryChain = input.EntryChain.ToArray(), LeafEntry = input.LeafEntry!, Bytes = bytes,
                     Sha256 = Convert.ToHexString(SHA256.HashData(bytes)), EncodingName = document.EncodingName, HasBom = document.HasBom };
                 _workingTexts.Save(input, revision, snapshot);
-                if (right) { _rightDocument = snapshot.Document(); _savedRight = text; }
-                else { _leftDocument = snapshot.Document(); _savedLeft = text; }
+                SetSavedTextInput(side, snapshot.Document(), text);
                 _workingTextRevisions[side] = _workingTexts.Revision(input);
                 foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this]) pane.WorkingTextSaved();
                 RefreshArchiveDraftCaptions(); _status.Text = "内包文書の作業版を保存しました。原本アーカイブは保持しています。";

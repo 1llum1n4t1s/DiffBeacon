@@ -137,7 +137,7 @@ public sealed partial class ComparisonPane
         ProjectInputs.EnsureWorkingFormat(project);
         var requestedIdentity = ArchiveComparisonIdentity(project);
         var workingGeneration = _workingTexts.Generation;
-        var initialText = (LeftEditor.Text, RightEditor.Text, ResultEditor.Text);
+        var initialText = (LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, ResultEditor.Text);
         var initialBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
         var initialBinaryVersion = initialBinary?.StateStamp;
         InvalidateTextSave();
@@ -145,6 +145,8 @@ public sealed partial class ComparisonPane
         (_specialTab.Content as ArchivePanel)?.CancelOperation();
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
         _operation = operation; var token = operation.Token;
+        var candidateTextRole = _textRole.SelectedIndex;
+        var inheritedIndependentStamp = IndependentText ? TextAdoptionStamp() : null;
         CompareButton.IsEnabled = false; _status.Text = "内包項目を比較しています…";
         string?[][]? passwords = null;
         Control? candidate = null;
@@ -238,8 +240,15 @@ public sealed partial class ComparisonPane
             }
             ArchiveSourceReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(_operation, operation) || ArchiveComparisonIdentity(CaptureProject()) != requestedIdentity
-                || workingGeneration != _workingTexts.Generation || initialText != (LeftEditor.Text, RightEditor.Text, ResultEditor.Text)
-                || initialBinary?.StateStamp != initialBinaryVersion) return false;
+                || workingGeneration != _workingTexts.Generation || initialText != (LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, ResultEditor.Text)
+                || initialBinary?.StateStamp != initialBinaryVersion || candidateTextRole != _textRole.SelectedIndex
+                || inheritedIndependentStamp is not null && !Equals(inheritedIndependentStamp, TextAdoptionStamp()))
+            {
+                if (!_disposed && ReferenceEquals(_operation, operation))
+                    _status.Text = "比較中に入力・役割または三側の状態が変更されました。前の比較と本文を保持しました。";
+                return false;
+            }
+            AdoptLegacyTextRole();
             ResetMergeSession();
             if (candidate is not null)
             {

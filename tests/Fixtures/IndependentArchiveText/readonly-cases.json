@@ -1,0 +1,56 @@
+[
+  {
+    "path": "readonly/left-true.json",
+    "blockedDestination": "left",
+    "inheritedReadOnly": true,
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/left-none.json",
+    "blockedDestination": "left",
+    "inheritedReadOnly": null,
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/left-omitted.json",
+    "blockedDestination": "left",
+    "inheritedReadOnly": "omitted",
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/middle-true.json",
+    "blockedDestination": "middle",
+    "inheritedReadOnly": true,
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/middle-none.json",
+    "blockedDestination": "middle",
+    "inheritedReadOnly": null,
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/middle-omitted.json",
+    "blockedDestination": "middle",
+    "inheritedReadOnly": "omitted",
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/right-true.json",
+    "blockedDestination": "right",
+    "inheritedReadOnly": true,
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/right-none.json",
+    "blockedDestination": "right",
+    "inheritedReadOnly": null,
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  },
+  {
+    "path": "readonly/right-omitted.json",
+    "blockedDestination": "right",
+    "inheritedReadOnly": "omitted",
+    "expected": "reject edit/copy-to/working-save, preserve all bytes/history/savepoints"
+  }
+]

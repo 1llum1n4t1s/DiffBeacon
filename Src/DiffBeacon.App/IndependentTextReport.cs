@@ -17,10 +17,14 @@ internal static class IndependentTextReport
         0 => "left", 1 => "middle", 2 => "right", _ => throw new ArgumentOutOfRangeException(nameof(side))
     };
 
-    internal static string Create(ComparisonProject project, IReadOnlyList<ReportDocument> documents, CancellationToken token)
+    internal static string Create(ComparisonProject project, IReadOnlyList<ReportDocument> documents, CancellationToken token,
+        IReadOnlyList<TextDocument>? snapshots = null)
     {
         project.TextInputs?.Validate(project);
         if (!ProjectInputs.IsIndependentText(project)) throw new InvalidDataException("独立三者Textの明示入力が必要です。");
-        return HtmlReport.CreateIndependentText(documents, Pair(project), ProjectReport.Options(project), ProjectReport.MaximumBytes, token);
+        if (snapshots is not null && snapshots.Count != 3)
+            throw new InvalidDataException("独立三者Textの文字コードsnapshotには三側が必要です。");
+        return HtmlReport.CreateIndependentText(documents, Pair(project), ProjectReport.Options(project), ProjectReport.MaximumBytes, token,
+            snapshots, Enumerable.Range(0, 3).Select(side => ProjectInputs.Caption(project, side)).ToArray());
     }
 }

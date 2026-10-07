@@ -35,8 +35,12 @@ public sealed partial class ComparisonPane
     {
         IsWorkspaceCandidate = false;
         if (_owner is MainWindow window)
+            for (var side = 0; side < 3; side++)
+                if (ProjectInputs.Archive(_projectMetadata, side) is { } input && _archivePasswords is not null)
+                    window.ArchiveLifetime.Remember(input, _archivePasswords[side]);
+        if (_owner is MainWindow owner)
             foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => ProjectInputs.Archive(_projectMetadata, side)?.WorkingDocuments ?? []))
-                if (copy.SnapshotPath is { } asset && Path.IsPathFullyQualified(asset)) window.ArchiveLifetime.RegisterAsset(asset);
+                if (copy.SnapshotPath is { } asset && Path.IsPathFullyQualified(asset)) owner.ArchiveLifetime.RegisterAsset(asset);
     }
     private bool IndependentText => ProjectInputs.IsIndependentText(_projectMetadata);
 
@@ -50,7 +54,7 @@ public sealed partial class ComparisonPane
     { 0 => _savedLeft, 1 => _savedMiddle, 2 => _savedRight, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
     public bool TextDirty(int side) => (TextEditor(side).Text ?? "") != TextSaved(side);
     private bool TextReadOnly(int side) => side switch
-    { 0 => _projectMetadata.LeftReadOnly, 1 => _projectMetadata.BaseReadOnly, 2 => _projectMetadata.RightReadOnly, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
+    { 0 => !CanEditArchiveText(0) && _projectMetadata.LeftReadOnly, 1 => !CanEditArchiveText(1) && _projectMetadata.BaseReadOnly, 2 => !CanEditArchiveText(2) && _projectMetadata.RightReadOnly, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
     private void SetSavedTextInput(int side, TextDocument document, string saved)
     {
         switch (side)
@@ -84,13 +88,14 @@ public sealed partial class ComparisonPane
             var capturedSide = side;
             // TextChangedの遅延通知で初期値を後発編集として数えず、実際のproperty変更を同期追跡する。
             TextEditor(side).PropertyChanged += (_, change) =>
-            { if (change.Property == TextBox.TextProperty) _textRevisions[capturedSide]++; };
+            { if (change.Property == TextBox.TextProperty) { _textRevisions[capturedSide]++; RefreshArchiveDraftCaptions(); } };
         }
     }
     private void RefreshIndependentControls()
     {
         _textPair.IsVisible = _middleSave.IsVisible = _middleSaveAs.IsVisible = _textRole.SelectedIndex == 1;
-        MiddleEditor.IsReadOnly = !IndependentText || _projectMetadata.BaseReadOnly;
+        MiddleEditor.IsReadOnly = !IndependentText || !_textSaveAllowed || TextReadOnly(1);
+        _middleSave.Content = ProjectInputs.Archive(_projectMetadata, 1) is not null ? "中央の作業版を保存" : "中央を保存";
     }
     private void AdoptLegacyTextRole()
     {
@@ -103,7 +108,12 @@ public sealed partial class ComparisonPane
     private TextInputDescriptor? CaptureTextInputDescriptor()
     {
         if (_textRole.SelectedIndex != 1) return _projectMetadata.TextInputs?.Copy();
-        TextInputSide Side(int side) => new() { Kind = string.IsNullOrEmpty(TextPath(side).Text) ? "Untitled" : "Physical" };
+        TextInputSide Side(int side) => new()
+        {
+            Kind = ProjectInputs.Archive(_projectMetadata, side) is not null ? "Archive"
+                : !string.IsNullOrEmpty(TextPath(side).Text) ? "Physical"
+                : _projectMetadata.TextInputs?.Side(side).Kind == "Absent" ? "Absent" : "Untitled"
+        };
         return new() { Semantics = "Independent", Left = Side(0), Middle = Side(1), Right = Side(2) };
     }
     private string TextInputIdentity() => JsonSerializer.Serialize(CaptureProject(), ProjectJsonContext.Default.ComparisonProject);
@@ -111,9 +121,9 @@ public sealed partial class ComparisonPane
     {
         var project = CaptureProject();
         return (project.LeftPath, project.BasePath, project.RightPath, project.Mode, project.ProviderId, project.TextInputs?.Semantics,
-            project.TextInputs?.Left?.Kind, project.TextInputs?.Middle?.Kind, project.TextInputs?.Right?.Kind);
+            project.TextInputs?.Left?.Kind, project.TextInputs?.Middle?.Kind, project.TextInputs?.Right?.Kind, ArchiveComparisonIdentity(project));
     }
-    private object TextAdoptionStamp() => (TextInputIdentity(), _projectMetadata.TextInputs, _textSaveGeneration, _leftDocument, _baseDocument, _rightDocument,
+    private object TextAdoptionStamp() => (TextInputIdentity(), _projectMetadata.TextInputs, _textSaveGeneration, _workingTexts.Generation, ArchiveComparisonIdentity(CaptureProject()), _leftDocument, _baseDocument, _rightDocument,
         _textPair.SelectedIndex, _textRevisions[0], _textRevisions[1], _textRevisions[2], LeftEditor.Text, MiddleEditor.Text, RightEditor.Text,
         LeftEditor.IsReadOnly, MiddleEditor.IsReadOnly, RightEditor.IsReadOnly, (_owner as MainWindow)?.ActivePane);
     private string DescribeTextAdoptionState() => $"generation={_textSaveGeneration}; revisions={string.Join(",", _textRevisions)}; role={_textRole.SelectedIndex}; pair={_textPair.SelectedIndex}; "
@@ -134,7 +144,7 @@ public sealed partial class ComparisonPane
         var project = CaptureProject();
         if (_mode.SelectedIndex != 1 || project.TextInputs?.Semantics != "Independent")
             throw new InvalidOperationException("独立三者入力はText形式で比較してください。提供元変換にはまだ対応していません。");
-        if (ProjectInputs.HasArchives(project)) throw new InvalidOperationException("独立三者Textの内包アーカイブ入力にはまだ対応していません。");
+        ProjectInputs.EnsureWorkingFormat(project);
         project.TextInputs.Validate(project);
         var confirmationIdentity = TextInputIdentity();
         if (confirmDiscard && HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "三側の編集内容を破棄してファイルを開き直しますか？")) return false;
@@ -149,12 +159,14 @@ public sealed partial class ComparisonPane
         CompareButton.IsEnabled = false; _status.Text = "三側のTextを読み込んでいます…";
         try
         {
-            var documents = new TextDocument[3];
-            for (var side = 0; side < 3; side++)
-                documents[side] = await ProjectInputReader.ReadTextAsync(project, side, token);
+            using var read = await ReadIndependentTextInputsAsync(project, operation, token);
+            var documents = read.Documents;
             var diff = await Task.Run(() => TextDiffer.Compare(documents[pair.Left].Text, documents[pair.Right].Text, options, token), token);
             IndependentTextReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested();
+            // 同size/mtimeの差替えも、候補を採用する前に原本SHAで拒否する。
+            foreach (var input in Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side)).OfType<ArchiveProjectInput>())
+                await Task.Run(() => EnsureArchiveRootUnchanged(input), token);
             if (_disposed || !ReferenceEquals(_operation, operation) || !Equals(stamp, TextAdoptionStamp()) || oldBinary?.StateStamp != oldBinaryStamp)
             {
                 IndependentTextAdoptionDiagnostic = $"before: {diagnosticBefore}; after: {DescribeTextAdoptionState()}; disposed={_disposed}; sameOperation={ReferenceEquals(_operation, operation)}; sameBinaryStamp={oldBinary?.StateStamp == oldBinaryStamp}";
@@ -163,17 +175,24 @@ public sealed partial class ComparisonPane
             ResetMergeSession(); _lastPackageComparison = null; SetSpecialView(null);
             _projectMetadata = WorkspaceStore.CloneProject(project);
             _textSaveAllowed = true; _workingDocumentStale = false;
+            _lastArchiveComparison = ProjectInputs.HasArchives(project) ? ArchiveComparisonIdentity(project) : null;
             for (var side = 0; side < 3; side++)
             {
                 SetSavedTextInput(side, documents[side], documents[side].Text);
                 TextEditor(side).Text = documents[side].Text; TextEditor(side).IsReadOnly = TextReadOnly(side);
             }
+            AdoptIndependentArchiveInputs(project, read);
+            RefreshTextReadOnly(); ConfigureArchiveInputControls();
+            _provider.IsEnabled = !ProjectInputs.HasArchives(project);
             RefreshIndependentControls(); UpdateIndependentEditorLayout();
             _independentInputIdentity = TextSourceIdentity();
             _lastPackageComparison = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
             ApplyIndependentDiff(diff); return true;
         }
-        finally { if (!_disposed && ReferenceEquals(_operation, operation)) CompareButton.IsEnabled = true; }
+        finally
+        {
+            if (!_disposed && ReferenceEquals(_operation, operation)) CompareButton.IsEnabled = true;
+        }
     }
     private (int Left, int Right) TextPair() => _textPair.SelectedIndex switch
     { 0 => (0, 1), 1 => (1, 2), 2 => (0, 2), _ => throw new InvalidOperationException("比較する二側を選択してください。") };
@@ -234,7 +253,7 @@ public sealed partial class ComparisonPane
     }
     private void EnsureIndependentTextSource()
     {
-        if (_disposed || !IndependentText || _textRole.SelectedIndex != 1 || _mode.SelectedIndex != 1 || !Equals(_independentInputIdentity, TextSourceIdentity()))
+        if (_disposed || _workingDocumentStale || !IndependentText || _textRole.SelectedIndex != 1 || _mode.SelectedIndex != 1 || !Equals(_independentInputIdentity, TextSourceIdentity()))
             throw new InvalidOperationException("入力が変更されています。独立Textを比較し直してください。前の差分と三側本文を保持しています。");
     }
     private bool IndependentDiffIsCurrent((int Left, int Right) pair) => CurrentDiff is not null && _comparedTextPair == _textPair.SelectedIndex
@@ -290,7 +309,7 @@ public sealed partial class ComparisonPane
     private void EnsureTextSideWritable(int side)
     {
         if (!IndependentText) { if (side == 1) throw new InvalidOperationException("祖先は読取り専用です。"); EnsureSideWritable(side == 2); return; }
-        if (TextReadOnly(side) || TextEditor(side).IsReadOnly) throw new InvalidOperationException($"{TextSideCaption(side)}は読取り専用です。");
+        if (_workingDocumentStale || TextReadOnly(side) || TextEditor(side).IsReadOnly) throw new InvalidOperationException($"{TextSideCaption(side)}は読取り専用です。");
     }
     private void CopyIndependentSelected(bool forward)
     {
@@ -314,7 +333,7 @@ public sealed partial class ComparisonPane
     {
         var description = side switch { 0 => _projectMetadata.LeftDescription, 1 => _projectMetadata.BaseDescription, _ => _projectMetadata.RightDescription };
         return (string.IsNullOrWhiteSpace(description) ? new[] { "左", "中央", "右" }[side] : description)
-            + (ProjectInputs.IsUntitled(_projectMetadata, side) ? "（無題）" : "") + (TextReadOnly(side) ? "（読取り専用）" : "");
+            + (ProjectInputs.IsUntitled(_projectMetadata, side) ? "（無題）" : "") + (HasArchiveDraft(side) ? "（未保存）" : "") + (TextReadOnly(side) ? "（読取り専用）" : "");
     }
     private void UpdateIndependentEditorLayout()
     {
@@ -366,25 +385,34 @@ public sealed partial class ComparisonPane
     {
         EnsureNoPendingTableEdit();
         if (!explicitSaveAs) EnsureTextSideWritable(side);
-        if (_disposed || !_textSaveAllowed || !IndependentText || _mode.SelectedIndex != 1 || _textRole.SelectedIndex != 1)
+        if (_disposed || _workingDocumentStale || !_textSaveAllowed || !IndependentText || _mode.SelectedIndex != 1 || _textRole.SelectedIndex != 1)
             throw new InvalidOperationException("独立Textを比較してから保存してください。");
         if (_textSaveOperation is not null) throw new InvalidOperationException("テキストを保存しています。");
         var source = TextInputDocument(side) ?? throw new InvalidOperationException("Textを読み込んでください。");
         if (!Equals(_independentInputIdentity, TextSourceIdentity())) throw new InvalidOperationException("入力が変更されています。比較してから保存してください。");
+        var archive = ProjectInputs.Archive(_projectMetadata, side)?.Copy();
+        if (archive is not null) EnsureTextSideWritable(side);
+        if (archive is not null && _lastArchiveComparison != ArchiveComparisonIdentity(CaptureProject()))
+            throw new InvalidOperationException("内包入力が変更されています。比較してから保存してください。");
+        if (archive is not null && selectedPath is null && !explicitSaveAs)
+        { await SaveArchiveWorkingTextAsync(side, archive, callerToken); return; }
         var originalPath = TextPath(side).Text ?? "";
-        if (!string.IsNullOrEmpty(originalPath) && !ArchivePaths.SameFile(originalPath, source.Path))
+        if (archive is null && !string.IsNullOrEmpty(originalPath) && !ArchivePaths.SameFile(originalPath, source.Path))
             throw new InvalidOperationException("保存元の物理pathが読込み後に変更されています。");
         var identity = TextInputIdentity(); var descriptor = _projectMetadata.TextInputs; var generation = _textSaveGeneration;
         var readonlyAtStart = TextReadOnly(side); var editorReadonlyAtStart = TextEditor(side).IsReadOnly;
+        var activeAtStart = (_owner as MainWindow)?.ActivePane; var revision = _workingTextRevisions[side];
         var text = TextEditor(side).Text ?? ""; var published = false;
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(callerToken); _textSaveOperation = operation; var token = operation.Token;
         void Current()
         {
             token.ThrowIfCancellationRequested();
             if (_disposed || generation != _textSaveGeneration || identity != TextInputIdentity() || !ReferenceEquals(descriptor, _projectMetadata.TextInputs)
-                || !ReferenceEquals(source, TextInputDocument(side)) || readonlyAtStart != TextReadOnly(side) || editorReadonlyAtStart != TextEditor(side).IsReadOnly)
+                || !ReferenceEquals(source, TextInputDocument(side)) || readonlyAtStart != TextReadOnly(side) || editorReadonlyAtStart != TextEditor(side).IsReadOnly
+                || !ReferenceEquals(activeAtStart, (_owner as MainWindow)?.ActivePane))
                 throw new OperationCanceledException("保存元の比較または権限が変更されました。", token);
-            if (!explicitSaveAs) EnsureTextSideWritable(side);
+            if (!explicitSaveAs || archive is not null) EnsureTextSideWritable(side);
+            if (archive is not null) { _workingTexts.EnsureCurrent(archive, revision); EnsureArchiveRootUnchanged(archive); }
         }
         try
         {
@@ -417,11 +445,25 @@ public sealed partial class ComparisonPane
             TextSaveReadyForAdoption?.Invoke(); Guard(target);
             var captured = CaptureProject(); var updated = captured.TextInputs!.Copy(); updated.Side(side).Kind = "Physical";
             captured = side switch { 0 => captured with { LeftPath = target }, 1 => captured with { BasePath = target }, _ => captured with { RightPath = target } };
+            if (archive is not null)
+            {
+                _detachedArchiveRoots.Add(archive.RootPath);
+                if (_archivePasswords is not null) { Array.Clear(_archivePasswords[side]); _archivePasswords[side] = [null]; }
+                captured = side switch
+                {
+                    0 => captured with { LeftArchiveInput = null, LeftReadOnly = false, LeftDescription = Path.GetFileName(target) },
+                    1 => captured with { BaseArchiveInput = null, BaseReadOnly = false, BaseDescription = Path.GetFileName(target) },
+                    _ => captured with { RightArchiveInput = null, RightReadOnly = false, RightDescription = Path.GetFileName(target) }
+                };
+                _workingTextRevisions[side] = 0;
+            }
             _projectMetadata = captured with { TextInputs = updated };
             TextPath(side).Text = target; SetSavedTextInput(side, source.SavedCopy(target, text), text);
             _independentInputIdentity = TextSourceIdentity();
             _lastPackageComparison = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
-            RefreshIndependentControls(); UpdateIndependentEditorLayout(); _status.Text = $"保存しました: {target}";
+            _lastArchiveComparison = ProjectInputs.HasArchives(_projectMetadata) ? ArchiveComparisonIdentity(CaptureProject()) : null;
+            ConfigureArchiveInputControls(); _provider.IsEnabled = !ProjectInputs.HasArchives(_projectMetadata);
+            RefreshTextReadOnly(); RefreshIndependentControls(); UpdateIndependentEditorLayout(); _status.Text = $"保存しました: {target}";
         }
         catch (Exception exception) when (published && exception is not OutOfMemoryException)
         { _status.Text = "ファイルは公開済みですが、表示の保存点と入力は採用できませんでした。"; throw new IOException(_status.Text, exception); }

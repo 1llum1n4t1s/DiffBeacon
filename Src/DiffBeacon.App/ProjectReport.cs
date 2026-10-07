@@ -27,7 +27,8 @@ public static class ProjectReport
     };
 
     public static string Create(ComparisonProject project, string left, string? ancestor, string right,
-        CancellationToken token = default, string? leftName = null, string? baseName = null, string? rightName = null)
+        CancellationToken token = default, string? leftName = null, string? baseName = null, string? rightName = null,
+        IReadOnlyList<TextDocument>? snapshots = null)
     {
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         static string Title(string? description, string? name, string path, string fallback) =>
@@ -44,7 +45,7 @@ public static class ProjectReport
             var independent = IndependentTextReport.Create(project,
                 [new(InputTitle(0, project.LeftDescription, leftName, "左"), left),
                  new(InputTitle(1, project.BaseDescription, baseName, "中央"), ancestor),
-                 new(InputTitle(2, project.RightDescription, rightName, "右"), right)], token);
+                 new(InputTitle(2, project.RightDescription, rightName, "右"), right)], token, snapshots);
             ValidateSize(independent);
             return independent;
         }
@@ -117,10 +118,11 @@ public static class ProjectReport
             || leftOffset.HasValue || middleOffset.HasValue || rightOffset.HasValue || insertionDeletionMode.HasValue || highlightAlpha.HasValue || wipe is not null || displayOptions?.Specified == true)
             throw new ArgumentException("フレーム・閾値のレポート指定は画像比較にだけ使用できます。");
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
-        var left = (await ProjectInputReader.ReadTextAsync(project, 0, token).ConfigureAwait(false)).Text;
-        var ancestor = !ProjectInputs.HasBase(project) ? null : (await ProjectInputReader.ReadTextAsync(project, 1, token).ConfigureAwait(false)).Text;
-        var right = (await ProjectInputReader.ReadTextAsync(project, 2, token).ConfigureAwait(false)).Text;
-        var html = await Task.Run(() => Create(project, left, ancestor, right, token), token).ConfigureAwait(false);
+        var left = await ProjectInputReader.ReadTextAsync(project, 0, token).ConfigureAwait(false);
+        var ancestor = !ProjectInputs.HasBase(project) ? null : await ProjectInputReader.ReadTextAsync(project, 1, token).ConfigureAwait(false);
+        var right = await ProjectInputReader.ReadTextAsync(project, 2, token).ConfigureAwait(false);
+        var snapshots = ProjectInputs.IsIndependentText(project) ? new[] { left, ancestor!, right } : null;
+        var html = await Task.Run(() => Create(project, left.Text, ancestor?.Text, right.Text, token, snapshots: snapshots), token).ConfigureAwait(false);
         await SaveAsync(target, html, entries, sourceProject, token).ConfigureAwait(false);
     }
 

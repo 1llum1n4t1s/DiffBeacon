@@ -340,7 +340,11 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         InvalidateFolderCopy();
         if (ProjectInputs.HasArchives(CaptureProject()))
         {
+            var requestedTextRole = _textRole.SelectedIndex;
+            var confirmationStamp = IndependentText ? TextAdoptionStamp() : null;
             if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄して内包項目を開き直しますか？")) return;
+            if (requestedTextRole != _textRole.SelectedIndex || confirmationStamp is not null && !Equals(confirmationStamp, TextAdoptionStamp()))
+            { _status.Text = "確認中に役割または三側の状態が変更されました。前の比較と本文を保持しました。"; return; }
             await CompareArchiveProjectAsync(); return;
         }
         (_specialTab.Content as SpecializedViews.ImagePanel)?.EnsureNotSaving();
@@ -662,6 +666,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         foreach (var pane in panes) pane.EnsureProjectOutputWritable(path);
         var protectedEntries = panes.Select(pane => pane.CaptureProject()).ToArray();
         var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var ancestor = IndependentText ? MiddleEditor.Text ?? "" : _baseText;
+        var textSnapshots = IndependentText ? CaptureIndependentTextDocuments() : null;
         ImageComparisonEngine.ReportInput? imageInput = null;
         if (ProjectReport.IsImage(project))
         {
@@ -681,7 +686,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 : project.Mode is "Provider" or "Web"
                 ? HtmlReport.CreateText([new((project.LeftDescription ?? project.LeftPath) + "（変換後のテキスト）", left),
                     new((project.RightDescription ?? project.RightPath) + "（変換後のテキスト）", right)], ProjectReport.Options(project), ProjectReport.MaximumBytes, cancellation)
-                : ProjectReport.Create(project, left, ancestor, right, cancellation), cancellation);
+                : ProjectReport.Create(project, left, ancestor, right, cancellation, snapshots: textSnapshots), cancellation);
             // 生成開始時の入力と、生成中に開いた・保存した現行プロジェクトの両方を保護する。
             var currentPanes = workspaceWindow?.SessionPanes ?? [this];
             var currentSource = new ComparisonProject { LeftPath = workspaceWindow?.WorkspaceSourcePath ?? "" };

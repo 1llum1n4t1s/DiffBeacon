@@ -2,6 +2,15 @@
 
 独立三者Textは`--independent-text-only`で限定実行します。実アプリの三つの文字コード／改行・全3pair、v6 Physical／pristine Untitledのproject往復、HTML三側原文と包装・展開再読込み、旧version／不正descriptor・未対応固定祖先Untitledの拒否、独立CLI JSONの32 MiB上限時のstdout空と入力保持を確認します。`--self-test-independent-text OUTPUT`は実画面の六方向コピー、中央編集・保存・Undo／Redo、readonly・取消・後発編集・役割／pair切替、通常／最小850×550の多数タブと操作到達を検査します。[独立reader](../Fixtures/IndependentText/README.md)を別Pythonプロセスで集計前に呼び、固定literalの全bytes／BOM／改行、ZIP全entry CRC／SHA、HTML原文、PNG全画素とboundsを照合します。入力・出力・commands／process receipt・生stdout/stderr・assertionsを保持します。限定成功は全体E2E・全体UI・4RID Native AOTの代替ではありません。
 
+実在Archive葉を含む独立三者Textは `--independent-archive-text-only`、限定UIは `--self-test-independent-archive-text OUTPUT` で実行します。全体E2Eにも同じscenarioを含みます。v6 original／saved projectの `--project-copy`・`--report-project`・パッチなしの `--package-project`、展開再読込み、Archive／Physical／Untitled混在を[固定synthetic入力と独立reader](../Fixtures/IndependentArchiveText/README.md)へ照合します。GUIの全6方向コピー・3pairと役割metadata、全3側のworking保存、文字コード／BOM／混在改行、指定側だけの外部保存とPhysical化、元rootとZIP全entry／CRC／SHA、相対asset・三側HTML原文を確認します。readonly true／null／省略の拒否とfalse明示だけの編集、未保存本文でのworkspace／包装拒否、取消・後発編集・兄弟revision競合、通常／最小850×550／多数タブのPNGとboundsを保持します。追加境界caseの実測範囲はrunのassertionsとreader receiptで確認し、限定成功を全体E2E・全体UI・4RID Native AOTの完了として扱いません。
+
+```powershell
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output <新しいrun> --independent-archive-text-only
+dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-archive-text <新しいUIrun>
+```
+
+E2E harnessは `verify-products.py` を別Python processで呼び、PID・OS生成時刻・実終了・stdout／stderrの全回収とreader SHAをreceiptへ保存します。固定入力のreaderは製品出力から期待値を作りません。未実装の独立Absent／不在Archive葉・provider変換・merge結果・patch包装、ネイティブ保存dialog／実OS pointerは検証済みに含めません。CLIの内包独立入力は保存projectから使い、専用の `--compare-source` 独立入力flagsがあるとは扱いません。
+
 三者フォルダーは`--folder-threeway-only`で限定実行します。実アプリの`--directory LEFT RIGHT --middle MIDDLE`、全6方向コピー、三者全体statusを使う差分gate、不在／除外、非コピー先rootへの出力保護、読込予算と相対中央path／readonlyのproject往復を[固定原本と独立reader](../Fixtures/FolderThreeWay/README.md)へ照合します。GUIは別プロセスの`--self-test OUTPUT --folder-threeway-only`で16ケースと通常／最小PNGを保存し、既存二者の`--folder-copy-only`と分けて各120秒の枠を維持します。全体E2E・全体UIは両方を含みます。限定成功を全体／Native AOT／4RIDの完了とは扱いません。
 
 実アプリの子プロセスは、通常CLIを30秒、`--self-test`で始まる描画・操作自己検証を120秒の上限で実行する。自己検証は複数の実画面操作と原本照合を含むため、通常CLIとは予算を分ける。時間超過では子プロセス群を終了し、終了コード`-2`と選択した制限時間をstdout／stderr・`assertions.json`へ残す。上限を延ばしただけで検証成功とは扱わず、実行完了と全条件の合格を確認する。

@@ -91,3 +91,4 @@ Src/diffutils/config.h -text -eol -whitespace
 Src/diffutils/lib/cmpbuf.h -text -eol -whitespace
 Src/DiffItem.h -text -eol -whitespace
 tests/Fixtures/IndependentText/verify.py -text
+tests/Fixtures/IndependentArchiveText/** -text

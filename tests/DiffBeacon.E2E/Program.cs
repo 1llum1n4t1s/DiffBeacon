@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--folder-model-only", "--folder-copy-only", "--folder-threeway-only", "--independent-text-only", "--binary-clipboard-only",
+    "--folder-model-only", "--folder-copy-only", "--folder-threeway-only", "--independent-text-only", "--independent-archive-text-only", "--binary-clipboard-only",
     "--binary-range-edits-only", "--binary-copy-all-only", "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
@@ -1709,7 +1709,7 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
         }
         // 全streamの11 GUIケースを含む実測は約110秒。通常CLIの30秒は維持する。
         var timeoutSeconds = name is "folder-copy-large-stream" or "folder-copy-gui" ? 180
-            : arguments.Length > 0 && (arguments[0] is "--self-test" or "--self-test-independent-text") ? 120 : 30;
+            : arguments.Length > 0 && (arguments[0] is "--self-test" or "--self-test-independent-text" or "--self-test-independent-archive-text") ? 120 : 30;
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
         try { await process.WaitForExitAsync(timeout.Token); }
         catch (OperationCanceledException)
@@ -1754,6 +1754,8 @@ try
         await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     else if (args.Contains("--folder-copy-only", StringComparer.Ordinal))
         await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
+    else if (args.Contains("--independent-archive-text-only", StringComparer.Ordinal))
+        await IndependentArchiveTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
     else if (args.Contains("--independent-text-only", StringComparer.Ordinal))
         await IndependentTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
     else if (args.Contains("--folder-threeway-only", StringComparer.Ordinal))
@@ -1922,6 +1924,7 @@ try
     await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await IndependentTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
+    await IndependentArchiveTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
     await FolderThreeWayScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");

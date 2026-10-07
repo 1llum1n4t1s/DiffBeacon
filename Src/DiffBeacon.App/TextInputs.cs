@@ -38,8 +38,15 @@ public sealed record TextInputDescriptor
             var archive = ProjectInputs.Archive(project, side);
             if (kind is not ("Physical" or "Untitled" or "Archive" or "Absent"))
                 throw new InvalidDataException("Text入力の種類が不正です。");
-            if (Semantics == "Independent" && kind is not ("Physical" or "Untitled"))
-                throw new InvalidDataException("独立三者Textの内包入力と不在入力にはまだ対応していません。");
+            if (Semantics == "Independent" && kind is not ("Physical" or "Untitled" or "Archive"))
+                throw new InvalidDataException("独立三者Textの不在入力にはまだ対応していません。");
+            if (Semantics == "Independent" && kind == "Archive")
+            {
+                if (archive?.LeafEntry is null || archive.MissingEntryChain is not null)
+                    throw new InvalidDataException("独立三者Textには実在する内包ファイルを指定してください。");
+                var readOnly = side switch { 0 => project.LeftReadOnly, 1 => project.BaseReadOnly, _ => project.RightReadOnly };
+                if (!readOnly) throw new InvalidDataException("内包原本は読取り専用で開いてください。");
+            }
             if (Semantics == "FixedAncestor" && kind == "Untitled")
                 throw new InvalidDataException("固定祖先Textの無題入力にはまだ対応していません。");
             if (kind == "Absent" && side != 1)

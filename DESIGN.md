@@ -18,9 +18,11 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 ## データフロー
 
-独立三者Textはproject format v6の`TextInputs`で`Independent`と三側の`Physical`／`Untitled`を明示し、空pathの無題文書を不在と区別する。descriptorなしのv1–5は固定祖先の既存意味を保つ。新descriptorの`FixedAncestor`では`Untitled`を拒否し、中央の`Absent`と物理／内包祖先は既存経路へ渡す。独立三者は左0・中央1・右2を各々読み、選択したpairだけを既存GNU／WordDiffで比較する。祖先に対する競合分類を混ぜない。三側の本文・revision・保存点・readonlyを保持し、候補の読込み／再比較は共有operationの取消・役割／pair／入力／設定／全三側の状態を再検査して採用する。UIのpair変更と再比較は非同期で、設定不正・取消・古い完了では採用済み差分と本文を保持する。
+独立三者Textはproject format v6の`TextInputs`で`Independent`と三側の`Physical`／`Untitled`／実在葉の`Archive`を明示し、空pathの無題文書を不在と区別する。descriptorなしのv1–5は固定祖先の既存意味を保つ。新descriptorの`FixedAncestor`では`Untitled`を拒否し、中央の`Absent`と物理／内包祖先は既存経路へ渡す。独立三者は左0・中央1・右2を各々読み、選択したpairだけを既存GNU／WordDiffで比較する。祖先に対する競合分類を混ぜない。三側の本文・revision・保存点・readonlyを保持し、候補の読込み／再比較は共有operationの取消・役割／pair／入力／設定／全三側の状態を再検査して採用する。UIのpair変更と再比較は非同期で、設定不正・取消・古い完了では採用済み差分と本文を保持する。
 
-独立Textの保存は側を明示し、原文の文字コード・BOM・改行と既存属性を維持する。保存中の後発編集は保存済みにしない。外部保存は成功した側だけのpath・kind・保存点を更新し、公開済みと画面への採用完了を区別する。読取り専用の通常保存／編集／コピー先を拒否し、明示した外部保存はreadonlyを保つ。全タブ入力・filter・workspace・asset・linkの出力保護を共有する。dirty Untitledと未採用の役割変更はworkspace保存／包装を拒否する。pristine Untitledはv6 descriptorのまま包装し、物理snapshotへ変換しない。HTMLは三側の原文と選択pairを保存し、CLIは選択二側本文と三側metadataを出す。新独立CLI JSONは取消と32 MiB上限をserialization中に検査し、全成功後だけstdoutを公開する。独立Archive／provider変換／merge結果／patch包装はこの段階で明示拒否する。
+独立Textの保存は側を明示し、原文の文字コード・BOM・改行と既存属性を維持する。保存中の後発編集は保存済みにしない。外部保存は成功した側だけのpath・kind・保存点を更新し、公開済みと画面への採用完了を区別する。読取り専用の通常保存／編集／コピー先を拒否し、明示した外部保存はreadonlyを保つ。全タブ入力・filter・workspace・asset・linkの出力保護を共有する。dirty Untitled・未保存の内包本文・未採用の役割変更はworkspace保存／包装を拒否する。pristine Untitledはv6 descriptorのまま包装し、物理snapshotへ変換しない。HTMLは三側の原文と選択pairを保存し、CLIは選択二側本文と三側metadataを出す。新独立CLI JSONは取消と32 MiB上限をserialization中に検査し、全成功後だけstdoutを公開する。独立Absent／不在Archive葉／provider変換／merge結果／patch包装は明示拒否する。
+
+独立Archive Textは三側を既存の内包入力readerと共有working storeへ接続し、Physical／Untitledとの混在でもpairと全6方向コピーを保つ。元rootは固定読取り専用で、InheritedReadOnlyがfalseと明示された葉だけ作業本文を編集できる。true／null／省略では編集・コピー先・作業保存・外部保存を拒否する。全三側の通常保存は原本とは別のassetへ文字コード・BOM・改行を保持し、revision競合と共有容量上限を検査する。外部保存は公開・採用に成功した指定側だけPhysicalへ移し、他側のkind・保存点・元root保護を保持する。内包階層と作業版metadata、相対asset、三側原文HTMLをv6 project／パッチなしの包装へ保持し、展開・再読込みは元rootと全entryを再検証する。passwordは永続化しない。
 
 三者フォルダーは左0・中央1・右2を一度ずつ走査した共通階層モデルを持つ。中央には既存projectの`BasePath`・`BaseReadOnly`を使用し、テキストの祖先マージとは入力形式で区別する。presence、側別kind／除外／走査状態、三つのpairと全体status、旧原本に基づくOnlyLeft／OnlyMiddle／OnlyRight／AllChanged分類を分けて保持する。不在側はFullの空本文に相当するが、実在する空fileとはpresenceが異なり、存在補正は全体statusだけへ適用する。各file組の内容は一側256 MiB・三側共通768 MiB以内で一度ずつ読み、三つのGNU照合で一つの作業予算を共有する。上限時の近似や途中結果をEqualとして採用せず比較Errorとする。既定原本の同等性と、任意コメント／正規表現／置換の全旧互換を区別する。
 

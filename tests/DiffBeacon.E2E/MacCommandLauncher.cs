@@ -24,7 +24,7 @@ internal static class MacCommandLauncher
         var process = new Process { StartInfo = start };
         var timer = Stopwatch.StartNew();
         var timeoutSeconds = name is "folder-copy-large-stream" or "folder-copy-gui" ? 180
-            : arguments.Length > 0 && (arguments[0] is "--self-test" or "--self-test-independent-text") ? 120 : 30;
+            : arguments.Length > 0 && (arguments[0] is "--self-test" or "--self-test-independent-text" or "--self-test-independent-archive-text") ? 120 : 30;
         const int cleanupGraceSeconds = 5;
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
         using var captureCancellation = new CancellationTokenSource();
