@@ -78,6 +78,32 @@ public static class HtmlReport
         return Finish(html);
     }
 
+    internal static string CreateIndependentText(IReadOnlyList<ReportDocument> documents, string pair,
+        ComparisonOptions options, int maxCharacters, CancellationToken token)
+    {
+        ValidateDocuments(documents, token);
+        if (documents.Count != 3) throw new ArgumentException("独立三者Textには三本文が必要です。");
+        ValidateOptions(options);
+        var (first, second) = IndependentTextReport.PairSides(pair);
+        var html = new BoundedHtml(maxCharacters, token);
+        var position = Begin(html, "IndependentText", true);
+        var result = TextDiffer.Compare(documents[first].Text, documents[second].Text, options, token);
+        html.SetDifferent(position, result.HasDifferences);
+        RenderOptions(html, options);
+        html.Append("<p data-text-semantics=\"Independent\" data-comparison-pair=\""); html.Escape(pair); html.Append("\">比較ペア: ");
+        html.Escape(IndependentTextReport.Role(first)); html.Append(" / "); html.Escape(IndependentTextReport.Role(second)); html.Append("</p>");
+        RenderText(html, [documents[first] with { Name = IndependentTextReport.Role(first) + ": " + documents[first].Name },
+            documents[second] with { Name = IndependentTextReport.Role(second) + ": " + documents[second].Name }], TwoRows(result, token), token, [IndependentTextReport.Role(first), IndependentTextReport.Role(second)]);
+        for (var side = 0; side < 3; side++)
+        {
+            token.ThrowIfCancellationRequested();
+            html.Append("<section data-input-role=\""); html.Escape(IndependentTextReport.Role(side)); html.Append("\"><h2>");
+            html.Escape(IndependentTextReport.Role(side)); html.Append(": "); html.Escape(documents[side].Name);
+            html.Append("</h2><pre class=\"input-snapshot\">"); html.Escape(documents[side].Text); html.Append("</pre></section>");
+        }
+        return Finish(html);
+    }
+
     public static string CreateDelimited(IReadOnlyList<ReportDocument> documents, char delimiter = ',', char quote = '"',
         bool allowNewlinesInQuotes = true, ComparisonOptions? options = null, int maxCharacters = int.MaxValue,
         CancellationToken cancellationToken = default)
@@ -276,10 +302,11 @@ public static class HtmlReport
         return result;
     }
 
-    private static void RenderText(BoundedHtml html, IReadOnlyList<ReportDocument> documents, IEnumerable<TextReportRow> rows, CancellationToken token)
+    private static void RenderText(BoundedHtml html, IReadOnlyList<ReportDocument> documents, IEnumerable<TextReportRow> rows, CancellationToken token,
+        string[]? inputRoles = null)
     {
-        TableHeader(html, documents, false);
-        var sides = documents.Count == 2 ? TwoSides : ThreeSides;
+        TableHeader(html, documents, false, inputRoles);
+        var sides = inputRoles ?? (documents.Count == 2 ? TwoSides : ThreeSides);
         var endings = documents.Select(document => LineEndings(document.Text, token)).ToArray();
         foreach (var row in rows)
         {
@@ -341,11 +368,11 @@ public static class HtmlReport
         return position;
     }
 
-    private static void TableHeader(BoundedHtml html, IReadOnlyList<ReportDocument> documents, bool coordinates)
+    private static void TableHeader(BoundedHtml html, IReadOnlyList<ReportDocument> documents, bool coordinates, string[]? inputRoles = null)
     {
         html.Append("<table><thead><tr>");
         if (coordinates) html.Append("<th>行 / 列</th>");
-        var sides = documents.Count == 2 ? TwoSides : ThreeSides;
+        var sides = inputRoles ?? (documents.Count == 2 ? TwoSides : ThreeSides);
         for (var index = 0; index < documents.Count; index++)
         {
             html.Append("<th data-side=\""); html.Append(sides[index]); html.Append("\">"); html.Escape(documents[index].Name); html.Append("</th>");

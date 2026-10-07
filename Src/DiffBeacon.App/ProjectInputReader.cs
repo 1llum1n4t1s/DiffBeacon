@@ -8,6 +8,15 @@ internal static class ProjectInputReader
     internal static async Task<TextDocument> ReadTextAsync(ComparisonProject project, int side,
         CancellationToken token, string? physicalSnapshot = null, IReadOnlyList<string?>? passwords = null)
     {
+        token.ThrowIfCancellationRequested();
+        project.TextInputs?.Validate(project);
+        if (ProjectInputs.IsUntitled(project, side))
+        {
+            if (physicalSnapshot is not null) throw new InvalidDataException("無題入力には物理snapshotを指定できません。");
+            return TextDocument.Create();
+        }
+        if (project.TextInputs is not null && !ProjectInputs.HasSide(project, side))
+            throw new InvalidDataException("不在のText入力には文書がありません。");
         ProjectInputs.EnsureWorkingFormat(project);
         var input = ProjectInputs.Archive(project, side)?.Copy();
         if (input is null)

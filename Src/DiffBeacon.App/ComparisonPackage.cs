@@ -17,14 +17,25 @@ public static class ComparisonPackage
     private sealed record Input(string Source, string Name, string Snapshot, DateTime Modified, long Size, string Hash);
 
     public static Task CreateAsync(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
-        IReadOnlyList<int>? selectedIndices = null, CancellationToken token = default, string? sourceProject = null)
-        => CreateWithImageDisplaysAsync(workspace, output, options, selectedIndices, token, sourceProject, null);
+        IReadOnlyList<int>? selectedIndices = null, CancellationToken token = default, string? sourceProject = null,
+        IReadOnlyDictionary<int, IReadOnlyList<string>>? textSnapshots = null)
+        => CreateWithImageDisplaysAsync(workspace, output, options, selectedIndices, token, sourceProject, null, textSnapshots);
 
     internal static Task CreateWithImageDisplaysAsync(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
-        IReadOnlyList<int>? selectedIndices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplayCapture>? displays)
+        IReadOnlyList<int>? selectedIndices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplayCapture>? displays,
+        IReadOnlyDictionary<int, IReadOnlyList<string>>? textSnapshots = null)
     {
         // UI の値を await 前に確定し、編集中の配列・辞書をバックグラウンドで共有しない。
         WorkspaceStore.SerializeWorkspace(workspace);
+        // DTOは本文を持たない。捕捉本文を渡すcallerの未保存無題を空入力として包装しない。
+        foreach (var capture in textSnapshots ?? new Dictionary<int, IReadOnlyList<string>>())
+        {
+            if (capture.Key < 0 || capture.Key >= workspace.Entries.Length || capture.Value is null || capture.Value.Count != 3)
+                throw new InvalidDataException("包装のText本文snapshotが不正です。");
+            for (var side = 0; side < 3; side++)
+                if (capture.Value[side] is null || ProjectInputs.IsUntitled(workspace.Entries[capture.Key], side) && capture.Value[side].Length != 0)
+                    throw new InvalidOperationException("未保存の無題Textはファイルへ保存してから包装してください。");
+        }
         var clone = workspace with { Entries = workspace.Entries.Select(WorkspaceStore.CloneProject).ToArray() };
         var indices = selectedIndices?.ToArray() ?? Enumerable.Range(0, clone.Entries.Length).ToArray();
         if (indices.Length == 0 || indices.Distinct().Count() != indices.Length || indices.Any(index => index < 0 || index >= clone.Entries.Length))
@@ -54,11 +65,14 @@ public static class ComparisonPackage
         for (var i = 0; i < selected.Length; i++)
         {
             var project = selected[i];
-            if (string.IsNullOrWhiteSpace(SidePath(project, 0)) || string.IsNullOrWhiteSpace(SidePath(project, 2)))
+            if (options.IncludePatch && (ProjectInputs.IsIndependentText(project) || Enumerable.Range(0, 3).Any(side => ProjectInputs.IsUntitled(project, side))))
+                throw new InvalidOperationException("独立三者Textのパッチ包装は未対応です。");
+            if (!ProjectInputs.IsUntitled(project, 0) && string.IsNullOrWhiteSpace(SidePath(project, 0))
+                || !ProjectInputs.IsUntitled(project, 2) && string.IsNullOrWhiteSpace(SidePath(project, 2)))
                 throw new InvalidOperationException("包装前に左右の文書をファイルへ保存してください。");
             if (ProjectInputs.HasArchives(project) && !ProjectReport.IsTextual(project) && (options.IncludeReport || options.IncludePatch))
                 throw new InvalidOperationException("内包Binary／ArchiveのHTML・パッチ包装は未対応です。");
-            sources[i] = Paths(project).ToArray();
+            sources[i] = Paths(project).Where(path => !string.IsNullOrWhiteSpace(path)).ToArray();
             foreach (var source in sources[i].Where(path => !IsUrl(path)))
             {
                 ValidateLocal(source);
@@ -194,8 +208,8 @@ public static class ComparisonPackage
                 string? a = null, b = null;
                 if (textMode && (options.IncludePatch || options.IncludeReport))
                 {
-                    a = ProjectInputReader.ReadTextAsync(project, 0, token, left!.Snapshot).GetAwaiter().GetResult().Text;
-                    b = ProjectInputReader.ReadTextAsync(project, 2, token, right!.Snapshot).GetAwaiter().GetResult().Text;
+                    a = ProjectInputReader.ReadTextAsync(project, 0, token, left?.Snapshot).GetAwaiter().GetResult().Text;
+                    b = ProjectInputReader.ReadTextAsync(project, 2, token, right?.Snapshot).GetAwaiter().GetResult().Text;
                 }
                 if (options.IncludePatch && textMode && project.Mode.ToLowerInvariant() is not ("json" or "5"))
                 {
@@ -212,8 +226,8 @@ public static class ComparisonPackage
                     var title = project.LeftDescription ?? (project.LeftArchiveInput is null
                         ? Path.GetFileName(project.LeftPath) : ProjectInputs.Caption(project, 0));
                     indexReport.Append("<li><a href=\"report.files/").Append(i + 1).Append(".html\">").Append(WebUtility.HtmlEncode(title)).Append("</a></li>");
-                    var ancestor = textMode && pairInputs[i][1] is { } middle
-                        ? ProjectInputReader.ReadTextAsync(project, 1, token, middle.Snapshot).GetAwaiter().GetResult().Text : null;
+                    var ancestor = textMode && ProjectInputs.HasBase(project)
+                        ? ProjectInputReader.ReadTextAsync(project, 1, token, pairInputs[i][1]?.Snapshot).GetAwaiter().GetResult().Text : null;
                     string report;
                     if (ProjectReport.IsImage(project))
                     {
@@ -238,7 +252,7 @@ public static class ComparisonPackage
                             middleImage is null ? [project.LeftDescription ?? left.Name, project.RightDescription ?? right.Name]
                                 : [project.LeftDescription ?? left.Name, project.BaseDescription ?? middleInput!.Name, project.RightDescription ?? right.Name], token);
                     }
-                    else report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left!.Name, pairInputs[i][1]?.Name, right!.Name)
+                    else report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left?.Name, pairInputs[i][1]?.Name, right?.Name)
                         : MetadataReport(project, pairInputs[i]);
                     Generated($"report.files/{i + 1}.html", report);
                 }

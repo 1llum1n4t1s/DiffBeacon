@@ -38,6 +38,16 @@ public static class ProjectReport
             return ProjectInputs.Archive(project, side)?.MissingEntryChain is not null && !title.EndsWith("（存在しない）", StringComparison.Ordinal)
                 ? title + "（存在しない）" : title;
         }
+        if (ProjectInputs.IsIndependentText(project))
+        {
+            if (ancestor is null) throw new InvalidDataException("独立三者Textの中央本文がありません。");
+            var independent = IndependentTextReport.Create(project,
+                [new(InputTitle(0, project.LeftDescription, leftName, "左"), left),
+                 new(InputTitle(1, project.BaseDescription, baseName, "中央"), ancestor),
+                 new(InputTitle(2, project.RightDescription, rightName, "右"), right)], token);
+            ValidateSize(independent);
+            return independent;
+        }
         var documents = new List<ReportDocument> { new(InputTitle(0, project.LeftDescription, leftName, "左"), left) };
         if (ancestor is not null) documents.Add(new(InputTitle(1, project.BaseDescription, baseName, "共通の祖先"), ancestor));
         documents.Add(new(InputTitle(2, project.RightDescription, rightName, "右"), right));

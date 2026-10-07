@@ -147,7 +147,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public Button CopyRightButton { get; } = new() { Content = "選択差分 →" };
     public ListBox DiffList { get; } = new() { SelectionMode = SelectionMode.Single };
     public DiffResult? CurrentDiff { get; private set; }
-    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || ResultEditor.Text != _savedResult || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
+    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || ResultEditor.Text != _savedResult || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
     private readonly CheckBox _ignoreCase = new() { Content = "大文字小文字を無視" };
     private readonly CheckBox _ignoreSpace = new() { Content = "空白を無視" };
     private readonly CheckBox _ignoreBlank = new() { Content = "空行を無視" };
@@ -216,6 +216,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         actions.Children.Add(_mode);
         _provider.ItemsSource = _providers.Providers.Select(x => x.Id).ToArray(); _provider.SelectedIndex = 0;
         actions.Children.Add(_provider);
+        InitializeTextInputs(actions);
         actions.Children.Add(CompareButton);
         AddAction(actions, "再比較", RefreshEditorsAsync);
         AddAction(actions, "← 選択差分", () => CopySelectionAsync(false));
@@ -334,6 +335,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public async Task ComparePathsAsync()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_textRole.SelectedIndex == 1)
+        { await CompareIndependentTextAsync(); return; }
         InvalidateFolderCopy();
         if (ProjectInputs.HasArchives(CaptureProject()))
         {
@@ -352,10 +355,14 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var comparisonForPackaging = (left, BasePath.Text ?? "", right, _mode.SelectedIndex, _provider.SelectedItem as string);
         var previousBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
         var previousBinaryStamp = previousBinary?.StateStamp;
+        var candidateTextRole = _textRole.SelectedIndex;
+        var inheritedIndependentStamp = IndependentText ? TextAdoptionStamp() : null;
         bool CanAdopt()
         {
             var valid = !token.IsCancellationRequested && !_disposed && ReferenceEquals(_operation, operation)
                 && previousBinary?.StateStamp == previousBinaryStamp
+                && candidateTextRole == _textRole.SelectedIndex
+                && (inheritedIndependentStamp is null || Equals(inheritedIndependentStamp, TextAdoptionStamp()))
                 && comparisonForPackaging == (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
             if (!valid && !_disposed && ReferenceEquals(_operation, operation))
                 _status.Text = token.IsCancellationRequested ? "比較を中止しました。" : "比較中に入力が変更されたため、前の比較を保持しました。";
@@ -363,6 +370,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         }
         void PrepareAdoption()
         {
+            AdoptLegacyTextRole();
             ResetMergeSession(); _lastPackageComparison = null;
             _textSaveAllowed = false; _baseText = null; CurrentDiff = null;
         }
@@ -370,7 +378,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         {
             var editorLeft = LeftEditor.Text ?? ""; var editorRight = RightEditor.Text ?? ""; var editorOptions = Options();
             var editorDiff = await Task.Run(() => TextDiffer.Compare(editorLeft, editorRight, editorOptions, token), token);
-            if (CanAdopt() && editorLeft == LeftEditor.Text && editorRight == RightEditor.Text) { ResetMergeSession(); _lastPackageComparison = null; ApplyDiff(editorDiff); }
+            if (CanAdopt() && editorLeft == LeftEditor.Text && editorRight == RightEditor.Text) { AdoptLegacyTextRole(); ResetMergeSession(); _lastPackageComparison = null; ApplyDiff(editorDiff); }
             return;
         }
         _status.Text = "比較しています…";
@@ -473,6 +481,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             var textOptions = Options();
             var textDiff = mode is 5 or 6 ? null : await Task.Run(() => TextDiffer.Compare(leftDocument.Text, rightDocument.Text, textOptions, token), token);
             var tableCandidate = mode == 6 ? await CreateTableViewAsync(leftDocument, rightDocument, baseDocument, token) : default;
+            LegacyTextReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested();
             if (!CanAdopt()) return;
             PrepareAdoption();
@@ -502,10 +511,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public void CompareEditors()
     {
+        if (IndependentText) { CompareIndependentEditors(); return; }
         ApplyDiff(TextDiffer.Compare(LeftEditor.Text ?? "", RightEditor.Text ?? "", Options()));
     }
     private async Task CompareEditorsAsync()
     {
+        if (IndependentText) { await StartIndependentEditorComparisonAsync(); return; }
         var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var options = Options();
         var token = _operation?.Token ?? CancellationToken.None;
         var diff = await Task.Run(() => TextDiffer.Compare(left, right, options, token), token);
@@ -514,6 +525,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private Task RefreshEditorsAsync()
     {
         InvalidateFolderCopy();
+        if (IndependentText) return CompareEditorsAsync();
         if (ProjectInputs.HasArchives(_projectMetadata) || _specialTab.Content is ArchivePanel
             || ReferenceEquals(_specialTab.Content, _folderView)) return ComparePathsAsync();
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
@@ -542,6 +554,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public void CopySelected(bool leftToRight)
     {
+        if (IndependentText) { CopyIndependentSelected(leftToRight); return; }
         EnsureSideWritable(leftToRight);
         if (CurrentDiff is null) return;
         // 編集後の古い差分座標で上書きしない。
@@ -554,7 +567,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         CompareEditors();
     }
 
-    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? ""; SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
+    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? ""; SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
     public void SelectMode(int mode) => _mode.SelectedIndex = mode;
     public void Dispose()
     {
@@ -585,12 +598,14 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         // 形式別ビューの独自操作欄と本文を残し、共通設定はスクロールで参照する。
         var folder = _views.SelectedItem == _specialTab && ReferenceEquals(_specialTab.Content, _folderView);
-        var fraction = folder ? .15 : _views.SelectedItem == _specialTab
+        var independentText = IndependentText && _views.SelectedItem != _specialTab;
+        var fraction = independentText ? .25 : folder ? .15 : _views.SelectedItem == _specialTab
             && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel) ? .2 : .5;
-        _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, folder ? 60 : 80, 400) : 400;
+        _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, independentText ? 100 : folder ? 60 : 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
     {
+        if (IndependentText) { await StartIndependentTextCopyAsync(toRight); return; }
         EnsureSideWritable(toRight);
         if (_views.SelectedItem == _specialTab && ReferenceEquals(_specialTab.Content, _folderView))
         {
@@ -646,7 +661,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var sourceProject = workspaceWindow?.WorkspaceSourcePath;
         foreach (var pane in panes) pane.EnsureProjectOutputWritable(path);
         var protectedEntries = panes.Select(pane => pane.CaptureProject()).ToArray();
-        var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var ancestor = _baseText;
+        var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var ancestor = IndependentText ? MiddleEditor.Text ?? "" : _baseText;
         ImageComparisonEngine.ReportInput? imageInput = null;
         if (ProjectReport.IsImage(project))
         {
@@ -693,6 +708,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private async Task<string?> SavePathAsync(string title, string suggested) => (await _owner.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = title, SuggestedFileName = suggested, ShowOverwritePrompt = true }))?.TryGetLocalPath();
     private async Task ExportPatchAsync()
     {
+        if (IndependentText) throw new InvalidOperationException("独立三者Textのパッチ出力にはまだ対応していません。");
         var path = await SavePathAsync("Unifiedパッチを保存", "changes.patch");
         if (path is null) return;
         EnsureProjectOutputWritable(path);
@@ -702,6 +718,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private Task MergeThreeWayAsync() => RestartMergeAsync(true);
     private void UpdateEditorLayout(bool fourPanes)
     {
+        if (IndependentText) { UpdateIndependentEditorLayout(); return; }
+        if (_views.ItemsSource is IEnumerable<TabItem> tabs)
+            foreach (var tab in tabs.Where(tab => ReferenceEquals(tab.Content, _editGrid))) tab.Header = "編集 / 4ペイン";
         foreach (var oldPane in _editGrid.Children.OfType<DockPanel>()) oldPane.Children.Clear();
         _editGrid.Children.Clear();
         _editGrid.ColumnDefinitions = new ColumnDefinitions(fourPanes ? "*,6,*,6,*,6,*" : "*,6,*");
@@ -744,6 +763,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private async Task SaveResultAsync()
     {
+        if (IndependentText) throw new InvalidOperationException("独立三者Textのマージ結果保存にはまだ対応していません。");
         var unresolved = CurrentMergeSession?.UnresolvedCount ?? ((ResultEditor.Text ?? "").Contains("<<<<<<<", StringComparison.Ordinal) ? 1 : 0);
         if (unresolved > 0 && !await Dialogs.ConfirmAsync(_owner, "競合が残っています", "未解決の差分を含む結果を保存しますか？")) return;
         var path = await SavePathAsync("マージ結果を保存", "merged.txt");

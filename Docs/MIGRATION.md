@@ -1,5 +1,11 @@
 # .NET 10 / Avalonia 移行の到達点
 
+## 中央も編集する独立三者テキスト
+
+三側のPhysical／Untitledと選択pairをv6 projectに保持し、六方向の差分コピー、中央編集・保存、三側原文HTMLとpristine Untitledの包装を実装しています。操作は[README](../README.md)、意味と保存・採用の境界は[設計のデータフロー](../DESIGN.md#データフロー)、再現入力と別processの照合は[独立Text E2E](../tests/Fixtures/IndependentText/README.md)を参照してください。独立内包入力・provider変換・マージ結果・patch包装、旧エディター全操作の移植は残っています。先行11bfの4RID検証はフォルダーまでの実測であり、この追加Text実装を検証済みとは扱いません。
+
+ローカルの最終通常版はReleaseビルド警告0／エラー0、限定E2E95成功／0失敗／0skip、GUI66成功／0失敗です。別Python readerは783条件と全40コマンドの実PID・UTC・終了値・生stdout／stderr、保存bytes・BOM・改行・ZIP全entry／CRC・三側HTML原文・PNG全画素とboundsを照合しました。同じApp SHAの全体UIは11,369成功／0失敗、47進捗イベント（23開始・24完了、24種類の段階）と214画面PNGを確認しています。全体E2Eの先行実行は161,844成功／12失敗／5skipでした。失敗は新known v6を旧fixtureがunknown版としていた6コマンドで、未知版をv7へ更新し、各入口の終了2・stdout空・入力／既存出力保持を再実測しました。更新後の全体E2EとNative AOT／4RIDはこの記録時点で未完了です。証拠は `artifacts/local/folder-threeway-next/text-next73` の `limited105`、`accept108`、`version7-repro115`、build receiptsです。通常デスクトップ・ネイティブ保存ダイアログと実OS pointerは含みません。
+
 ## macOS E2E の起動記録
 
 SHA `32b8cce957bf12a21fb8aec7706d1590aeb43550` の [4RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37226617858) は Windows 両構成と Mac ARM64 が成功し、Mac Intel は E2E の `Process.StartTime` 取得で例外となった。Mac Intel の Native AOT 発行と UI10,919成功／0失敗は完了したが、E2Eは161,456成功／1失敗／2skipで、対象アプリの実終了コードを回収できていない。圧縮原本と失敗 assertion は `artifacts/local/folder-sync-next/github-current-head-inspection-01` に保持する。
@@ -547,6 +553,15 @@ Native発行の自動UIは11,303成功／0失敗・454.911秒で600秒枠内。�
 
 通常版全体の証拠は `artifacts/local/folder-threeway-next/whole53/fullui53-parent-acceptance.json` と `full-e2e53-parent-acceptance.json`。Nativeは `native53/publish57-parent-acceptance.json`（SHA `405F627CB0D653F5FB63447CFDA058108240CC601592D756A8342973D9E4B7A6`）、`native-ui57-parent-acceptance.json`（SHA `6273CA82B72EA570237AE3B213D036E194356454006721A3A29C0A1AE6A75F60`）、`native-e2e59-parent-acceptance.json`（SHA `B48FBCBE1BA520A197DBD61E9909A7412C09AE30FC728401A1F717497A6E90D0`）。通常App DLL SHAは `17F622008A10220170AC0E4FD16375E0CF4D501AC820BBF540766801AF5A7A32`、Native exeは `9C32A201454F26FD40A5237B182D30F9DD5E02CE81C2430E9E00608990BFF05B`。Native初回失敗、独立readerのgraph文脈不一致による拒否、原入力・ログ・バックアップも別recordとして保持する。
 
-最新sourceのWindows ARM64／macOS Intel／macOS ARM64、実OS clipboardは次の同SHA GitHub CIで検証する。以前の4RID成功を今回の三者／長いpath修正へ流用しない。通常デスクトップのpointer・native保存dialog、SMB／非NTFS／任意owner・SACL・EFS・敵対的外部FILE_OBJECT競合、folderコピーのUndo／Binary HTMLなど未対応項目もこの資格へ含めない。Windowsの5skipはOS／filesystem固有項目と三者の実desktop・全入力互換の範囲外を理由付きで保持した。今回のコードはまだ全WinMerge機能の移植完了を意味しない。
+三者フォルダー実装のコミット`11bfca9215aa41417d028691972898e01adfc0e5`は、[4RID CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37591140044)と[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37591140026)が成功した。同じheadの全8ZIP（計763,064,165 bytes）を圧縮状態で保持し、公式digest・サイズと全entryのCRC／SHAを照合した。親readerは実PID20816／終了0で4RIDすべてを受理し、各18固定reader・26 phase、Windowsのmetadata原計算、macOSの実起動gateと全出力回収へ結合した。各RIDの実OS clipboardは画像とBinaryの別writer／readerプロセスで成功した。
 
-最初の同SHA CI `f26b0c0147236c306742665f5d2a343a81f5e032` では、Windows二構成の全体E2Eが原文SHA検査1件で失敗した。win-x64は161,761成功／1失敗／5skip・7,030命令で、参照adapter `build/LegacyGnuReference/OriginalTranslationUnit.c` のcheckout改行変換が原因だった。固定sourceのcheckout filterを再現すると、WindowsではLFのadapter2件、MacではCRLFの採取元15件が記録SHAと不一致になる。provenanceの17採取元を無変換属性へ固定し、staged Git blobと両OS filterで全17件一致を確認した。本文・原本・slice・golden・provenanceと通常C# codeは変更していない。修正後の同じNative exeによる限定三者E2Eは88成功／0失敗／1範囲外skip。新SHAの4RID CI資格は再検証して確定する。失敗した旧runの全体成功や省略されたOS clipboard／native artifactを資格に流用しない。
+| RID | 全体E2E成功／失敗／skip | headless UI成功／失敗 | UI全体時間 | 実アプリ命令数 |
+| --- | --- | --- | --- | --- |
+| win-x64 | 161,762／0／5 | 11,303／0 | 410.618秒 | 7,030 |
+| win-arm64 | 161,762／0／5 | 11,303／0 | 452.343秒 | 7,030 |
+| osx-x64 | 161,833／0／11 | 11,209／0 | 490.622秒 | 7,049 |
+| osx-arm64 | 161,833／0／11 | 11,209／0 | 452.197秒 | 7,049 |
+
+全45段階と最終集計が存在し、Windows600秒／macOS1,200秒の枠内だった。814枚のPNGを画素まで独立復号し、三者の通常／最小画面と全6方向の固定原本コピー・保護を照合した。証拠は`artifacts/local/folder-threeway-next/ci65/config70.json`、`accept70-receipt.json`（SHA `B1A59F4EF13624459BEF318ABBA155AC39928B9B7C430E7EB733F8FBB85F6BB3`）、`accept70.stdout.json`（SHA `751069BA4B39B50AC5AD7D98E88E7413DE8C9A74A14BCC10AA067F0708E4A753`）。独立レビューでも実Git全2009 blob・採取138 source・計28,158命令の生stream・Mac LaunchEvidence・親readerの実終了と出力SHAに不一致はなかった。元producerが記録しない旧Python readerのPIDは捏造せず、固定sourceの実終了0述語と保存rawstreamへ結合した。独立readerのローカル再実行はしていない。通常デスクトップのpointer・native保存dialog、SMB／非NTFS／任意owner・SACL・EFS・敵対的外部FILE_OBJECT競合、folderコピーのUndo／Binary HTMLなど未対応項目もこの資格へ含めない。Windowsの5skipはOS／filesystem固有項目と三者の実desktop・全入力互換の範囲外を理由付きで保持した。今回のコードはまだ全WinMerge機能の移植完了を意味しない。
+
+最初の同SHA CI `f26b0c0147236c306742665f5d2a343a81f5e032` では、Windows二構成の全体E2Eが原文SHA検査1件で失敗した。win-x64は161,761成功／1失敗／5skip・7,030命令で、参照adapter `build/LegacyGnuReference/OriginalTranslationUnit.c` のcheckout改行変換が原因だった。固定sourceのcheckout filterを再現すると、WindowsではLFのadapter2件、MacではCRLFの採取元15件が記録SHAと不一致になる。provenanceの17採取元を無変換属性へ固定し、staged Git blobと両OS filterで全17件一致を確認した。本文・原本・slice・golden・provenanceと通常C# codeは変更していない。修正後の同じNative exeによる限定三者E2Eは88成功／0失敗／1範囲外skip。修正後の`11bfca921`の4RID CIは上表のとおり成功し、原文17件のGit blobもprovenance SHAと一致した。失敗した旧runの全体成功や省略されたOS clipboard／native artifactを資格に流用しない。

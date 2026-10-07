@@ -96,11 +96,15 @@ internal static class ProjectInputs
     }
     internal static bool HasMissing(ComparisonProject project)
         => Enumerable.Range(0, 3).Any(side => Archive(project, side)?.MissingEntryChain is not null);
-    internal static bool HasBase(ComparisonProject project) => !string.IsNullOrWhiteSpace(PathFor(project, 1));
+    internal static bool IsIndependentText(ComparisonProject project) => project.TextInputs?.Semantics == "Independent";
+    internal static bool IsUntitled(ComparisonProject project, int side) => project.TextInputs?.Side(side).Kind == "Untitled";
+    internal static bool HasSide(ComparisonProject project, int side) => project.TextInputs is { } descriptor
+        ? descriptor.Side(side).Kind != "Absent" : !string.IsNullOrWhiteSpace(PathFor(project, side));
+    internal static bool HasBase(ComparisonProject project) => HasSide(project, 1);
     internal static string Caption(ComparisonProject project, int side)
     {
         var input = Archive(project, side);
-        return input is null ? PathFor(project, side) : string.Join(" / ",
+        return input is null ? IsUntitled(project, side) ? "無題" : PathFor(project, side) : string.Join(" / ",
             new[] { System.IO.Path.GetFileName(input.RootPath) }.Concat(input.EntryChain)
                 .Concat(input.MissingEntryChain ?? (input.LeafEntry is null ? [] : new[] { input.LeafEntry })))
             + (input.MissingEntryChain is null ? "" : "（存在しない）");

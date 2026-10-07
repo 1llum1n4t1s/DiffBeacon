@@ -37,8 +37,10 @@ public sealed partial class MainWindow
             var workingTexts = new ArchiveWorkingStore();
             foreach (var project in workspace.Entries)
             {
-                var pane = new ComparisonPane(this, workingTexts);
+                var pane = new ComparisonPane(this, workingTexts) { IsWorkspaceCandidate = true };
                 prepared.Add(pane); pane.ApplyProject(project);
+                if (ProjectInputs.IsIndependentText(project))
+                    await pane.PrepareIndependentProjectAsync(token);
             }
             token.ThrowIfCancellationRequested();
             if (!discardChanges && SessionPanes.Any(pane => pane.HasUnsavedChanges)
@@ -47,11 +49,12 @@ public sealed partial class MainWindow
             foreach (var old in SessionPanes) old.Dispose();
             ArchiveTexts.Clear(); ArchiveTexts = workingTexts;
             _sessions.Clear(); _tabs.ItemsSource = null;
-            foreach (var pane in prepared) AttachProjectSession(pane);
+            foreach (var pane in prepared) { pane.ActivateWorkspaceCandidate(); AttachProjectSession(pane); }
             prepared.Clear();
             _tabs.SelectedItem = _sessions[workspace.ActiveEntryIndex];
             WorkspaceSourcePath = source;
-            foreach (var pane in SessionPanes) await pane.CompareProjectAsync();
+            foreach (var pane in SessionPanes)
+                if (!ProjectInputs.IsIndependentText(pane.CaptureProject())) await pane.CompareProjectAsync();
             return true;
         }
         finally { foreach (var pane in prepared) pane.Dispose(); _openingWorkspace = false; }
@@ -101,12 +104,16 @@ public sealed partial class ComparisonPane
         IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = _ignoreRegex.Text,
         IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex,
         Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions.ToArray(),
-        ImageSettings = CaptureImageSettings()
+        ImageSettings = CaptureImageSettings(), TextInputs = CaptureTextInputDescriptor(),
+        TextComparisonPair = _textRole.SelectedIndex == 1 || IndependentText ? _textPair.SelectedIndex switch { 0 => "LeftMiddle", 1 => "MiddleRight", 2 => "LeftRight", _ => null } : null
     }));
 
     public void ApplyProject(ComparisonProject project)
     {
         ArgumentNullException.ThrowIfNull(project);
+        project.TextInputs?.Validate(project);
+        if (project.TextComparisonPair is not null && (!ProjectInputs.IsIndependentText(project) || project.TextComparisonPair is not ("LeftMiddle" or "MiddleRight" or "LeftRight")))
+            throw new InvalidDataException("Textの比較ペアが比較役割と一致しません。");
         ImageViewSettings.Validate(project.ImageSettings);
         if (!ProjectInputs.HasBase(project) && (project.ImageSettings.MiddleFrame != 1 || !project.ImageSettings.MiddleOrientation.IsIdentity || project.ImageSettings.MiddleOffset != default))
             throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
@@ -123,7 +130,7 @@ public sealed partial class ComparisonPane
             ProjectInputs.Archive(project, side)?.Validate(project.Mode == "Archive", side == 0 ? project.LeftReadOnly : side == 1 ? project.BaseReadOnly : project.RightReadOnly);
         ProjectInputs.EnsureWorkingFormat(project);
         _workingTexts.Import(Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side)).OfType<ArchiveProjectInput>());
-        if (_owner is MainWindow window)
+        if (_owner is MainWindow window && !IsWorkspaceCandidate)
             foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => ProjectInputs.Archive(project, side)?.WorkingDocuments ?? []))
                 if (copy.SnapshotPath is { } asset && Path.IsPathFullyQualified(asset)) window.ArchiveLifetime.RegisterAsset(asset);
         _tableSyntax = null;
@@ -131,13 +138,18 @@ public sealed partial class ComparisonPane
         _operation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelChildOperation();
         ClearArchivePasswords(); _lastArchiveComparison = null;
         _projectMetadata = WorkspaceStore.CloneProject(project);
-        LeftPath.Text = ProjectInputs.Caption(project, 0); BasePath.Text = ProjectInputs.Caption(project, 1); RightPath.Text = ProjectInputs.Caption(project, 2);
+        LeftPath.Text = ProjectInputs.IsUntitled(project, 0) ? "" : ProjectInputs.Caption(project, 0);
+        BasePath.Text = ProjectInputs.IsUntitled(project, 1) ? "" : ProjectInputs.Caption(project, 1);
+        RightPath.Text = ProjectInputs.IsUntitled(project, 2) ? "" : ProjectInputs.Caption(project, 2);
         ConfigureArchiveInputControls();
         _provider.IsEnabled = !ProjectInputs.HasArchives(project);
         var mode = Array.FindIndex(ModeNames, name => name.Equals(project.Mode, StringComparison.OrdinalIgnoreCase));
         if (project.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase)) mode = 8;
         if (mode < 0 && int.TryParse(project.Mode, out var oldIndex) && oldIndex is >= 0 and <= 8) mode = oldIndex;
         _mode.SelectedIndex = mode >= 0 ? mode : throw new InvalidDataException($"未対応の比較形式です: {project.Mode}");
+        _textRole.SelectedIndex = ProjectInputs.IsIndependentText(project) ? 1 : 0;
+        _textPair.SelectedIndex = project.TextComparisonPair switch { null or "LeftMiddle" => 0, "MiddleRight" => 1, "LeftRight" => 2, _ => throw new InvalidDataException("Textの比較ペアが不正です。") };
+        RefreshIndependentControls();
         if (project.ProviderId is not null)
         {
             if (_providers.Providers.Any(provider => provider.Id == project.ProviderId)) _provider.SelectedItem = project.ProviderId;
@@ -172,6 +184,7 @@ public sealed partial class ComparisonPane
 
     public async Task CompareProjectAsync()
     {
+        if (IndependentText) { await PrepareIndependentProjectAsync(CancellationToken.None); return; }
         if (ProjectInputs.HasArchives(_projectMetadata))
         { _status.Text = "内包入力を復元しました。「比較」で明示的に読み込んでください。パスワードは保存されません。"; return; }
         try
@@ -275,9 +288,9 @@ public sealed partial class ComparisonPane
         var dialog = new Window { Title = "比較の設定", Width = 540, Height = 590, WindowStartupLocation = WindowStartupLocation.CenterOwner };
         var panel = new StackPanel { Margin = new Thickness(20), Spacing = 8 };
         TextBox Field(string title, string? value) { panel.Children.Add(new TextBlock { Text = title }); var box = new TextBox { Text = value }; panel.Children.Add(box); return box; }
-        var left = Field("左の説明", project.LeftDescription); var middle = Field(project.Mode == "Binary" ? "中央の説明" : "祖先の説明", project.BaseDescription); var right = Field("右の説明", project.RightDescription);
+        var left = Field("左の説明", project.LeftDescription); var middle = Field(project.Mode == "Binary" || ProjectInputs.IsIndependentText(project) ? "中央の説明" : "祖先の説明", project.BaseDescription); var right = Field("右の説明", project.RightDescription);
         var leftRo = new CheckBox { Content = "左を読取り専用にする", IsChecked = project.LeftReadOnly };
-        var baseRo = new CheckBox { Content = project.Mode is "Binary" or "Folder" ? "中央を読取り専用にする" : "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
+        var baseRo = new CheckBox { Content = project.Mode is "Binary" or "Folder" || ProjectInputs.IsIndependentText(project) ? "中央を読取り専用にする" : "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
         var rightRo = new CheckBox { Content = "右を読取り専用にする", IsChecked = project.RightReadOnly };
         if (project.LeftArchiveInput is { MissingEntryChain: not null } leftMissing) leftRo.IsChecked = leftMissing.InheritedReadOnly ?? true;
         if (project.RightArchiveInput is { MissingEntryChain: not null } rightMissing) rightRo.IsChecked = rightMissing.InheritedReadOnly ?? true;

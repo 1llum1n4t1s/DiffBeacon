@@ -16,7 +16,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false)
     {
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
@@ -60,6 +60,13 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (independentTextOnly)
+            {
+                Progress("HeadlessIndependentTextChecks", "start");
+                HeadlessIndependentTextChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (folderThreeWayOnly)
             {
                 Progress("HeadlessFolderThreeWayChecks", "start");
@@ -1256,6 +1263,7 @@ internal static class HeadlessSelfTest
             Progress("HeadlessBinaryWorkingChecks", "start"); RunBinaryWorking(); Progress("HeadlessBinaryWorkingChecks", "complete");
             Progress("HeadlessFolderCopyChecks", "start"); RunFolderCopy(); Progress("HeadlessFolderCopyChecks", "complete");
             Progress("HeadlessFolderThreeWayChecks", "start"); RunFolderThreeWay(); Progress("HeadlessFolderThreeWayChecks", "complete");
+            Progress("HeadlessIndependentTextChecks", "start"); RunIndependentText(); Progress("HeadlessIndependentTextChecks", "complete");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }
@@ -1265,7 +1273,7 @@ internal static class HeadlessSelfTest
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
             writer.WriteBoolean("binaryClipboardOnly", binaryClipboardOnly);
-            writer.WriteString("scope", folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -1311,6 +1319,13 @@ internal static class HeadlessSelfTest
             try { window = folder; folder.Show(); HeadlessFolderCopyChecks.RunThreeWayOnly(folder, output, Pump, Check, Screenshot); }
             finally { foreach (var session in folder.SessionPanes) session.DiscardChanges(); folder.Close(); window = prior; }
             Check("Folder threeway window close releases shared assets and credentials", folder.ArchiveLifetime.Assets.Length == 0 && folder.ArchiveLifetime.CredentialCount == 0);
+        }
+        void RunIndependentText()
+        {
+            var prior = window;
+            var text = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "independent-text-image-options.json"))) { Width = 1280, Height = 850 };
+            try { window = text; text.Show(); HeadlessIndependentTextChecks.Run(text, output, Pump, Check, Screenshot); }
+            finally { foreach (var session in text.SessionPanes) session.DiscardChanges(); text.Close(); window = prior; }
         }
         void TwoWay(string leftText, string rightText)
         {

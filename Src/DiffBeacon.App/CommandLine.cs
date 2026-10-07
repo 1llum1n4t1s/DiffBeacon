@@ -16,6 +16,7 @@ internal static class CommandLine
                 Console.WriteLine("DiffBeacon · .NET 10 / Avalonia\n"
                     + "GUI: DiffBeacon LEFT [BASE] RIGHT\n"
                     + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT] [--max-work N]\n"
+                    + "独立三者Text: --compare LEFT RIGHT --middle MIDDLE --independent-text [--pair left-middle|middle-right|left-right] [comparison options]\n"
                     + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
                     + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
                     + "開発用: --image-line-script INPUT_JSON [--max-work N]\n"
@@ -72,12 +73,80 @@ internal static class CommandLine
             }
             if (command == "--compare")
             {
-                var options = ParseOptions(args.Skip(3).ToArray());
-                var left = await TextDocument.LoadAsync(args[1], token);
-                var right = await TextDocument.LoadAsync(args[2], token);
-                var result = TextDiffer.Compare(left.Text, right.Text, options, token);
-                WriteJson(writer =>
+                var comparisonArguments = new List<string>();
+                string? middlePath = null, selectedPair = null;
+                var independent = false;
+                for (var index = 3; index < args.Length; index++)
                 {
+                    if (args[index] == "--independent-text")
+                    {
+                        if (independent) throw new ArgumentException("独立三者Textの指定が重複しています。");
+                        independent = true;
+                    }
+                    else if (args[index] is "--middle" or "--pair")
+                    {
+                        var option = args[index];
+                        if (++index == args.Length || args[index].StartsWith("--", StringComparison.Ordinal))
+                            throw new ArgumentException("中央入力または比較ペアの値がありません。");
+                        if (option == "--middle")
+                        {
+                            if (middlePath is not null) throw new ArgumentException("中央入力の指定が重複しています。");
+                            middlePath = args[index];
+                        }
+                        else
+                        {
+                            if (selectedPair is not null) throw new ArgumentException("比較ペアの指定が重複しています。");
+                            selectedPair = args[index] switch
+                            {
+                                "left-middle" => "LeftMiddle", "middle-right" => "MiddleRight", "left-right" => "LeftRight",
+                                _ => throw new ArgumentException("比較ペアはleft-middle、middle-right、left-rightです。")
+                            };
+                        }
+                    }
+                    else
+                    {
+                        // 値を含む既存比較オプションは従来parserへ一組のまま渡す。
+                        var option = args[index]; comparisonArguments.Add(option);
+                        var count = option == "--substitute" ? 2 : option is "--eol" or "--comments" or "--whitespace"
+                            or "--ignore-regex" or "--max-work" ? 1 : 0;
+                        while (count-- > 0 && index + 1 < args.Length) comparisonArguments.Add(args[++index]);
+                    }
+                }
+                if (independent && string.IsNullOrWhiteSpace(middlePath) || !independent && (middlePath is not null || selectedPair is not null))
+                    throw new ArgumentException("--middle と --pair は --independent-text と三つの物理Text入力を指定してください。");
+                var options = ParseOptions(comparisonArguments.ToArray());
+                var left = await TextDocument.LoadAsync(independent ? ArchiveActions.ValidatePath(args[1]) : args[1], token);
+                var right = await TextDocument.LoadAsync(independent ? ArchiveActions.ValidatePath(args[2]) : args[2], token);
+                var middle = independent ? await TextDocument.LoadAsync(ArchiveActions.ValidatePath(middlePath!), token) : null;
+                TextDocument[] documents = middle is null ? [left, right] : [left, middle, right];
+                var pair = selectedPair ?? "LeftMiddle";
+                var (first, second) = independent ? IndependentTextReport.PairSides(pair) : (0, 1);
+                var result = TextDiffer.Compare(documents[first].Text, documents[second].Text, options, token);
+                Action<Utf8JsonWriter> writeComparison = writer =>
+                {
+                    if (independent)
+                    {
+                        writer.WriteString("mode", "Text"); writer.WriteString("textSemantics", "Independent"); writer.WriteString("comparisonPair", pair);
+                        writer.WriteString("semantics", "Independent"); writer.WriteString("pair", pair);
+                        writer.WriteString("leftPath", Path.GetFullPath(args[1])); writer.WriteString("middlePath", Path.GetFullPath(middlePath!));
+                        writer.WriteString("rightPath", Path.GetFullPath(args[2]));
+                        token.ThrowIfCancellationRequested();
+                        writer.WriteString("firstText", documents[first].Text); writer.Flush();
+                        token.ThrowIfCancellationRequested();
+                        writer.WriteString("secondText", documents[second].Text); writer.Flush();
+                        writer.WriteString("firstRole", IndependentTextReport.Role(first)); writer.WriteString("secondRole", IndependentTextReport.Role(second));
+                        writer.Flush();
+                        writer.WriteStartArray("inputs");
+                        var paths = new[] { args[1], middlePath!, args[2] };
+                        for (var side = 0; side < 3; side++)
+                        {
+                            writer.WriteStartObject(); writer.WriteString("role", IndependentTextReport.Role(side));
+                            writer.WriteString("kind", "Physical"); writer.WriteString("path", Path.GetFullPath(paths[side]));
+                            writer.WriteString("description", paths[side]); writer.WriteBoolean("exists", true);
+                            writer.WriteString("encoding", documents[side].EncodingName); writer.WriteEndObject();
+                        }
+                        writer.WriteEndArray();
+                    }
                     writer.WriteBoolean("different", result.HasDifferences);
                     writer.WriteNumber("blocks", result.Blocks.Count);
                     writer.WriteNumber("inlineWorkUsed", result.InlineWorkUsed);
@@ -85,11 +154,12 @@ internal static class CommandLine
                     writer.WriteNumber("lineWorkUsed", result.LineWorkUsed);
                     writer.WriteBoolean("lineFallback", result.LineFallback);
                     writer.WriteString("lineFallbackReason", result.LineFallbackReason);
-                    writer.WriteString("leftEncoding", left.EncodingName);
-                    writer.WriteString("rightEncoding", right.EncodingName);
+                    writer.WriteString("leftEncoding", documents[first].EncodingName);
+                    writer.WriteString("rightEncoding", documents[second].EncodingName);
                     writer.WriteStartArray("rows");
                     foreach (var row in result.Rows)
                     {
+                        if (independent) token.ThrowIfCancellationRequested();
                         writer.WriteStartObject(); writer.WriteString("kind", row.Kind.ToString());
                         writer.WriteString("left", row.LeftText); writer.WriteString("right", row.RightText);
                         if (row.LeftLineNumber is int ln) writer.WriteNumber("leftLine", ln);
@@ -106,9 +176,12 @@ internal static class CommandLine
                         }
                         Spans("leftSpans", row.LeftSpans); Spans("rightSpans", row.RightSpans);
                         writer.WriteEndObject();
+                        if (independent) writer.Flush();
                     }
                     writer.WriteEndArray();
-                });
+                };
+                if (independent) WriteIndependentJson(writeComparison, token);
+                else WriteJson(writeComparison);
                 return result.HasDifferences ? 1 : 0;
             }
             if (command == "--project-copy")
@@ -291,6 +364,7 @@ internal static class CommandLine
                 "--substitute" when index + 2 < args.Length => options with { SubstitutionRules = [.. options.SubstitutionRules, new SubstitutionRule(args[++index], args[++index])] },
                 "--ignore-regex" when index + 1 < args.Length => options with { IgnoreLinePattern = args[++index] },
                 "--max-work" when index + 1 < args.Length => options with { MaxFallbackComparisons = ParseMaxWork(args[++index]) },
+                "--independent-text" or "--pair" => throw new ArgumentException("独立三者Textと比較ペアは --compare にだけ指定できます。"),
                 _ => throw new ArgumentException($"不明な比較オプション: {args[index]}")
             };
         }
@@ -307,6 +381,39 @@ internal static class CommandLine
         "none" => WhitespaceMode.None, "trim" => WhitespaceMode.Trim, "changes" => WhitespaceMode.IgnoreChanges, "all" => WhitespaceMode.IgnoreAll,
         _ => throw new ArgumentException("空白モードはnone、trim、changes、allです。")
     };
+
+    private static void WriteIndependentJson(Action<Utf8JsonWriter> content, CancellationToken token)
+    {
+        using var stream = new BoundedIndependentOutput(token);
+        using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true }))
+        {
+            writer.WriteStartObject(); content(writer); writer.WriteEndObject(); writer.Flush();
+        }
+        stream.Write(Encoding.UTF8.GetBytes(Environment.NewLine));
+        token.ThrowIfCancellationRequested();
+        // 全本文の直列化・上限確認が成功するまでstdoutを公開しない。
+        var json = Encoding.UTF8.GetString(stream.GetBuffer(), 0, checked((int)stream.Length));
+        token.ThrowIfCancellationRequested();
+        Console.Write(json);
+    }
+
+    private sealed class BoundedIndependentOutput(CancellationToken token) : MemoryStream
+    {
+        private void Check(int count)
+        {
+            token.ThrowIfCancellationRequested();
+            if (count > ProjectReport.MaximumBytes - Length)
+                throw new InvalidDataException("独立三者TextのJSONは32 MiBまでです。");
+            var required = checked((int)(Length + count));
+            // MemoryStreamの自動倍増も32 MiBを越えないよう、書込み前に容量を確定する。
+            if (required > Capacity)
+                Capacity = (int)Math.Min(ProjectReport.MaximumBytes, Math.Max(required, (long)Capacity * 2));
+        }
+
+        public override void Write(byte[] buffer, int offset, int count) { Check(count); base.Write(buffer, offset, count); }
+        public override void Write(ReadOnlySpan<byte> buffer) { Check(buffer.Length); base.Write(buffer); }
+        public override void WriteByte(byte value) { Check(1); base.WriteByte(value); }
+    }
 
     internal static void WriteJson(Action<Utf8JsonWriter> content)
     {

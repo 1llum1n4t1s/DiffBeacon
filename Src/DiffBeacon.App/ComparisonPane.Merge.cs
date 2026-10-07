@@ -67,6 +67,7 @@ public sealed partial class ComparisonPane
 
     public void StartMergeSession(bool autoResolve = true)
     {
+        if (IndependentText) throw new InvalidOperationException("独立三者Textのマージにはまだ対応していません。中央を祖先として解釈することはできません。");
         var candidate = _baseText is null
             ? MergeSession.CreateTwoWay(LeftEditor.Text ?? "", RightEditor.Text ?? "", Options())
             : MergeSession.CreateThreeWay(_baseText, LeftEditor.Text ?? "", RightEditor.Text ?? "", Options(), autoResolve);
@@ -140,6 +141,7 @@ public sealed partial class ComparisonPane
     }
     public async Task SaveMergeResultToAsync(string path, bool allowUnresolved = false, CancellationToken token = default)
     {
+        if (IndependentText) throw new InvalidOperationException("独立三者Textのマージ結果保存にはまだ対応していません。");
         SynchronizeMergeText();
         if (CurrentMergeSession is { UnresolvedCount: > 0 } && !allowUnresolved) throw new InvalidOperationException("未解決の差分が残っています。");
         var output = Path.GetFullPath(path);

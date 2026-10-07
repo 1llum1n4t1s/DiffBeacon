@@ -90,6 +90,7 @@ public sealed partial class ComparisonPane
 
     private void RefreshTextReadOnly()
     {
+        MiddleEditor.IsReadOnly = !IndependentText || !_textSaveAllowed || _projectMetadata.BaseReadOnly;
         LeftEditor.IsReadOnly = !_textSaveAllowed || !CanEditArchiveText(false)
             && (_projectMetadata.LeftReadOnly || _projectMetadata.LeftArchiveInput is not null);
         RightEditor.IsReadOnly = !_textSaveAllowed || !CanEditArchiveText(true)
@@ -123,6 +124,7 @@ public sealed partial class ComparisonPane
 
     internal void EnsureArchiveDraftSaved()
     {
+        EnsureUntitledTextSaved();
         if (_workingDocumentStale) throw new InvalidOperationException("別tabで作業版の形式が変更されています。本文を退避して開き直してください。");
         if (_specialTab.Content is SpecializedViews.BinaryPanel binary && binary.IsDirty?.Invoke() == true)
             throw new InvalidOperationException("未保存／未適用のバイナリ編集があります。保存してからプロジェクトを保存してください。");
@@ -131,11 +133,12 @@ public sealed partial class ComparisonPane
     }
 
     public Task SaveTextToAsync(bool right, string path, CancellationToken token = default)
-        => SaveTextCoreAsync(right, path, token);
-    public Task SaveWorkingTextAsync(bool right, CancellationToken token = default) => SaveTextCoreAsync(right, null, token);
+        => SaveTextToAsync(right ? 2 : 0, path, token);
+    public Task SaveWorkingTextAsync(bool right, CancellationToken token = default) => SaveWorkingTextAsync(right ? 2 : 0, token);
 
     public async Task SaveTextAsAsync(bool right)
     {
+        if (IndependentText) { await SaveTextAsAsync(right ? 2 : 0); return; }
         if (_specialTab.Content is SpecializedViews.BinaryPanel binary)
         { var chosen = await binary.SavePathPicker!(right ? 2 : 0); if (chosen is not null) await binary.SaveToAsync(right, chosen); return; }
         EnsureSideWritable(right);
@@ -145,6 +148,7 @@ public sealed partial class ComparisonPane
 
     private async Task SaveTextCoreAsync(bool right, string? selectedPath, CancellationToken callerToken)
     {
+        if (IndependentText) { await SaveIndependentTextCoreAsync(right ? 2 : 0, selectedPath, false, callerToken); return; }
         if (_workingDocumentStale) throw new InvalidOperationException("別tabで作業版の形式が変更されています。本文を退避して開き直してください。");
         EnsureNoPendingTableEdit(); EnsureSideWritable(right);
         if (!_textSaveAllowed || _disposed) throw new InvalidOperationException("この比較はテキスト保存の対象ではありません。");

@@ -23,7 +23,7 @@ internal static class ArchiveBinaryWorkingScenarios
             var input = doc["entries"]![0]!["leftArchiveInput"]!; var snapshot = input["workingTexts"]![0]!;
             switch (kind)
             {
-                case "unknown-version": doc["formatVersion"] = 6; break;
+                case "unknown-version": doc["formatVersion"] = 7; break;
                 case "v4-kind": doc["formatVersion"] = 4; break;
                 case "v4-null-kind": doc["formatVersion"] = 4; snapshot["kind"] = null; break;
                 case "unknown-kind": snapshot["kind"] = "Text"; break;

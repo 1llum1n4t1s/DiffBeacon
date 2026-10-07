@@ -12,6 +12,8 @@ public static class Program
         Console.OutputEncoding = new System.Text.UTF8Encoding(false);
         if (Console.IsInputRedirected) Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
         Arguments = args;
+        if (args.Length == 2 && args[0] == "--self-test-independent-text")
+            return HeadlessSelfTest.Run(args[1], independentTextOnly: true);
         if (args.Length == 5 && args[0] == "--binary-bytecode-self-test") return BinaryBytecodeSelfTest(args);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-clipboard-only")
             return HeadlessSelfTest.Run(args[1], binaryClipboardOnly: true);
