@@ -274,11 +274,12 @@ internal static class HeadlessIndependentTextChecks
         var historyOriginal = history.MiddleEditor.Text; history.MiddleEditor.Focus(); history.MiddleEditor.CaretIndex = history.MiddleEditor.Text?.Length ?? 0;
         window.KeyTextInput("typed-middle"); Dispatcher.UIThread.RunJobs(); var historyEdited = history.MiddleEditor.Text;
         var historyOutput = Path.Combine(folder, "middle-history.txt"); pump(history.SaveTextToAsync(1, historyOutput));
-        var commandModifier = OperatingSystem.IsMacOS() ? RawInputModifiers.Meta : RawInputModifiers.Control;
+        // Headless は OS にかかわらず既定の Control ジェスチャーを登録する。
+        var commandModifier = RawInputModifiers.Control;
         history.MiddleEditor.Focus(); window.KeyPress(Key.Z, commandModifier, PhysicalKey.Z, null); window.KeyRelease(Key.Z, commandModifier, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
         Check("real middle Undo after save preserves history and marks dirty", history.MiddleEditor.Text == historyOriginal && history.TextDirty(1) && historyEdited != historyOriginal);
         window.KeyPress(Key.Z, commandModifier | RawInputModifiers.Shift, PhysicalKey.Z, null); window.KeyRelease(Key.Z, commandModifier | RawInputModifiers.Shift, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
-        if (!OperatingSystem.IsMacOS() && history.MiddleEditor.Text != historyEdited)
+        if (history.MiddleEditor.Text != historyEdited)
         { window.KeyPress(Key.Y, commandModifier, PhysicalKey.Y, null); window.KeyRelease(Key.Y, commandModifier, PhysicalKey.Y, null); Dispatcher.UIThread.RunJobs(); }
         Check("real middle Redo returns to saved point", history.MiddleEditor.Text == historyEdited && !history.TextDirty(1));
         Check("independent merge explicitly refused", Refused(() => { stale.StartMergeSession(); return Task.CompletedTask; }));
