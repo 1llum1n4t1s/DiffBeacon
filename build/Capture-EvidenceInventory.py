@@ -15,7 +15,7 @@ def capture(repository, roots):
 
     def visit(path):
         metadata = path.lstat()
-        row = {"path": path.relative_to(repository).as_posix()}
+        row = {"path": path.relative_to(repository).as_posix(), "mtimeNs": metadata.st_mtime_ns}
         if stat.S_ISLNK(metadata.st_mode) or getattr(metadata, "st_file_attributes", 0) & 0x400:
             row.update(kind="link", target=os.readlink(path))
         elif stat.S_ISDIR(metadata.st_mode):
