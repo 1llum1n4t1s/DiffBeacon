@@ -316,11 +316,11 @@ internal static class HeadlessIndependentTextInputSelectionChecks
                 dialog.Width = size.Item1; dialog.Height = size.Item2;
                 for (var side = 0; side < 3; side++)
                 {
-                    dialog.SideTabs.SelectedIndex = side; Jobs(); var browser = dialog.Side(side);
+                    dialog.SideTabs.SelectedIndex = side; var browser = dialog.Side(side);
                     Capture(dialog, id + "-dialog-" + size.Item1 + "-" + side + "-list", [("list", browser.Entries), ("pair", dialog.Pair), ("compare", dialog.Compare), ("abort", dialog.Abort), ("cancel", dialog.Cancel)]);
                     foreach (var item in new[] { ("kind", (Control)browser.Kind), ("root", browser.RootPath), ("pick", browser.Pick), ("load", browser.Load), ("open", browser.OpenContainer), ("back", browser.Back), ("edit", browser.AllowWorkingEdit) })
                     {
-                        item.Item2.BringIntoView(); Jobs(); Capture(dialog, id + "-dialog-" + size.Item1 + "-" + side + "-" + item.Item1, [item]);
+                        item.Item2.BringIntoView(); Capture(dialog, id + "-dialog-" + size.Item1 + "-" + side + "-" + item.Item1, [item]);
                     }
                 }
             }
@@ -332,18 +332,18 @@ internal static class HeadlessIndependentTextInputSelectionChecks
             foreach (var size in new[] { (1000, 680), (850, 550) })
             {
                 host.Width = size.Item1; host.Height = size.Item2; host.SelectSession(host.SessionPanes.ToList().IndexOf(target));
-                target.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 1; Jobs();
+                target.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 1;
                 Capture(host, id + "-pane-" + host.SessionPanes.ToList().IndexOf(target) + "-" + size.Item1, Enumerable.Range(0, 3).Select(side => ("editor" + side, (Control)target.TextEditor(side))).ToArray());
                 foreach (var button in target.GetVisualDescendants().OfType<Button>().Where(b => b.Content is string s && s.Contains("保存", StringComparison.Ordinal)))
                 {
-                    button.BringIntoView(); Jobs(); Capture(host, id + "-save-" + layouts.Count, [("save", button)]);
+                    button.BringIntoView(); Capture(host, id + "-save-" + layouts.Count, [("save", button)]);
                 }
             }
             host.SelectSession(host.SessionPanes.ToList().IndexOf(pane)); Jobs();
         }
         void Capture(Window owner, string name, (string Name, Control Control)[] controls)
         {
-            Jobs(); var safe = name.Replace(':', '-'); var png = safe + ".png";
+            var safe = name.Replace(':', '-'); var png = safe + ".png";
             using (var frame = owner.CaptureRenderedFrame() ?? throw new InvalidOperationException("PNGを取得できません。"))
             using (var file = File.Create(Path.Combine(folder, png))) frame.Save(file, new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
             var width = owner.Bounds.Width; var height = owner.Bounds.Height;

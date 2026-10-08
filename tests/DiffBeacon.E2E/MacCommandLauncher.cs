@@ -23,8 +23,7 @@ internal static class MacCommandLauncher
         // 未終端/読込み未完了の場合にusingの暗黙Disposeへ進まない。
         var process = new Process { StartInfo = start };
         var timer = Stopwatch.StartNew();
-        var timeoutSeconds = name is "folder-copy-large-stream" or "folder-copy-gui" ? 180
-            : arguments.Length > 0 && (arguments[0] is "--self-test" or "--self-test-independent-text" or "--self-test-independent-archive-text") ? 120 : 30;
+        var timeoutSeconds = CommandTimeoutPolicy.GetSeconds(name, arguments);
         const int cleanupGraceSeconds = 5;
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
         using var captureCancellation = new CancellationTokenSource();

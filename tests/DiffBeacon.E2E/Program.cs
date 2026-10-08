@@ -1708,8 +1708,7 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
             process.StandardInput.Close();
         }
         // 全streamの11 GUIケースを含む実測は約110秒。通常CLIの30秒は維持する。
-        var timeoutSeconds = name is "folder-copy-large-stream" or "folder-copy-gui" ? 180
-            : arguments.Length > 0 && (arguments[0] is "--self-test" or "--self-test-independent-text" or "--self-test-independent-archive-text" or "--self-test-independent-text-inputs" or "--self-test-independent-text-input-archives" or "--self-test-independent-text-input-cipher" or "--self-test-independent-text-input-saved-archives" or "--self-test-independent-text-input-routes" or "--self-test-independent-text-input-lifetime") ? 120 : 30;
+        var timeoutSeconds = CommandTimeoutPolicy.GetSeconds(name, arguments);
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));
         try { await process.WaitForExitAsync(timeout.Token); }
         catch (OperationCanceledException)
