@@ -1,0 +1,9 @@
+CC0 1.0 Universal
+
+The input306 multi-entry ZipCrypto fixture encoder, reader, literal expectations,
+and all generated input bytes are dedicated to the public domain under CC0-1.0.
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The encoder extends the existing CC0 single-entry reference at
+tests/Fixtures/Archives/Sources/regenerate.py:35-71 to local/central record loops.
+The original source remains unchanged and its raw SHA-256 is pinned in manifest.json.

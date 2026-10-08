@@ -1,5 +1,29 @@
 # 実行経路の検証
 
+## 独立三側Textの入力選択GUI
+
+新しいCドライブrunを使う。次の限定E2Eは実アプリを別processで起動し、対応する独立Python readerを集計前に実行する。全体E2E／全体UIにも登録されるが、限定成功を全体実行や4RID Native AOTの資格へ読み替えない。
+
+| 担当範囲 | E2E限定flag | アプリ自己検証flag | 独立fixture |
+| --- | --- | --- | --- |
+| Basic32＋Critical16 | `--independent-text-inputs-only` | `--self-test-independent-text-inputs` | `IndependentTextInputSelection`／`IndependentTextInputSelectionCritical` |
+| Archive15 | `--independent-text-input-archives-only` | `--self-test-independent-text-input-archives` | `IndependentTextInputSelectionArchives` |
+| Cipher1 | `--independent-text-input-cipher-only` | `--self-test-independent-text-input-cipher` | `IndependentTextInputSelectionCipher` |
+| Lifetime9 | `--independent-text-input-lifetime-only` | `--self-test-independent-text-input-lifetime` | `IndependentTextInputLifetime` |
+| Route8 | `--independent-text-input-routes-only` | `--self-test-independent-text-input-routes` | [Route](../Fixtures/IndependentTextInputSelectionRoutes/README.md) |
+| Saved Archives2 | `--independent-text-input-saved-archives-only` | `--self-test-independent-text-input-saved-archives` | [Saved Archives](../Fixtures/IndependentTextInputSavedArchives/README.md) |
+
+```powershell
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/new-saved-archives --independent-text-input-saved-archives-only
+dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-text-input-saved-archives artifacts/verification/new-saved-archives
+python -B -X utf8 tests/Fixtures/IndependentTextInputSavedArchives/verify.py --gui-report artifacts/verification/new-saved-archives/ui-report.json --output artifacts/verification/new-saved-archives-reader.json
+```
+
+他の限定実行は表のflagへ置き換える。Basic readerは `--fixture tests/Fixtures/IndependentTextInputSelection --repo . --gui-report <run>/ui-report.json --output <new-receipt>.json`、Archive／Cipher／Lifetimeは各fixture READMEの追加引数に従う。Criticalは同reportのfixtures配下の `independent-text-input-selection-critical` を `verify.py --run <path> --output <new-receipt>.json` で照合する。Route／Saved Archivesは `verify.py --gui-report <run>/ui-report.json --output <new-receipt>.json` を使う。Basic／Route／Saved Archivesに全体UIのreportを渡す場合は `--full-ui` を追加する。reportのscopeを自動的に限定扱いへ置き換えない。
+
+入力・出力・実ボタンの元Task・PID／生成時刻／実終了・全stdout／stderr・assertions・reader receipt・PNGを保持する。固定literalの全bytes／BOM／CRLF・LF・CR、全container／leaf／assetのSHAとZIP全entry／CRC、PNG全scanlineとboundsを独立照合する。Saved Archivesはflatと二重内包の両方で、三側作業保存、project再読込み、包装を通常Archiveとして開いて全展開し、展開projectを再読込みするところまで必要とする。ネイティブpicker／実OS pointer／暗号化されたSaved Archives／macOS／AOTはこの限定実測に含めない。再生成と原本保護は各fixture READMEに従う。
+
+
 独立三者Textは`--independent-text-only`で限定実行します。実アプリの三つの文字コード／改行・全3pair、v6 Physical／pristine Untitledのproject往復、HTML三側原文と包装・展開再読込み、旧version／不正descriptor・未対応固定祖先Untitledの拒否、独立CLI JSONの32 MiB上限時のstdout空と入力保持を確認します。`--self-test-independent-text OUTPUT`は実画面の六方向コピー、中央編集・保存・Undo／Redo、readonly・取消・後発編集・役割／pair切替、通常／最小850×550の多数タブと操作到達を検査します。[独立reader](../Fixtures/IndependentText/README.md)を別Pythonプロセスで集計前に呼び、固定literalの全bytes／BOM／改行、ZIP全entry CRC／SHA、HTML原文、PNG全画素とboundsを照合します。入力・出力・commands／process receipt・生stdout/stderr・assertionsを保持します。限定成功は全体E2E・全体UI・4RID Native AOTの代替ではありません。
 
 実在Archive葉を含む独立三者Textは `--independent-archive-text-only`、限定UIは `--self-test-independent-archive-text OUTPUT` で実行します。全体E2Eにも同じscenarioを含みます。v6 original／saved projectの `--project-copy`・`--report-project`・パッチなしの `--package-project`、展開再読込み、Archive／Physical／Untitled混在を[固定synthetic入力と独立reader](../Fixtures/IndependentArchiveText/README.md)へ照合します。GUIの全6方向コピー・3pairと役割metadata、全3側のworking保存、文字コード／BOM／混在改行、指定側だけの外部保存とPhysical化、元rootとZIP全entry／CRC／SHA、相対asset・三側HTML原文を確認します。readonly true／null／省略の拒否とfalse明示だけの編集、未保存本文でのworkspace／包装拒否、取消・後発編集・兄弟revision競合、通常／最小850×550／多数タブのPNGとboundsを保持します。追加境界caseの実測範囲はrunのassertionsとreader receiptで確認し、限定成功を全体E2E・全体UI・4RID Native AOTの完了として扱いません。

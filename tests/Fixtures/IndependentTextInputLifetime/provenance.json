@@ -1,0 +1,18 @@
+{
+  "source": {
+    "path": "generate.py",
+    "sha256": "B099CCC1EF29D727CE2B0DD5E23B95CF0C2711B1696F21957520BF451BE5E9B1"
+  },
+  "reader": {
+    "path": "verify.py",
+    "sha256": "54B4CD587619D0E1AC9BA37557A8C0828B319792884A3CF25086C8B49CE5601C"
+  },
+  "license": {
+    "path": "LICENSE",
+    "sha256": "7A04D94AABC637A0216287CC94AB8778205AC45A022987224472C1B85B60D73F"
+  },
+  "sourceClass": {
+    "path": "Src/DiffBeacon.App/HeadlessIndependentTextInputLifetimeChecks.cs",
+    "sha256": "83F92964E96B0A0B7EAE7AED477A8F945362C638B6F8CFC6182AA54DCAF638DB"
+  }
+}

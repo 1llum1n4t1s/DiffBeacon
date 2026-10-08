@@ -1,0 +1,81 @@
+{
+  "schema": "input301-integration-proposal-v1",
+  "note": "Parent applies after shared source backup; normalized source newline is CRLF. Default ReadLimits null preserves product behavior.",
+  "replacements": [
+    {
+      "path": "Src/DiffBeacon.App/IndependentTextArchiveBrowser.cs",
+      "old": "    internal Action<string, Task>? OperationTaskObserved { get; set; }",
+      "new": "    internal Action<string, Task>? OperationTaskObserved { get; set; }\r\n    internal ManagedArchiveLimits? ReadLimits { get; set; }",
+      "sourceSha256": "12C53B38EF98DB7582AE4B5C642F2A090910125597BE52732EF5186EF6B14058"
+    },
+    {
+      "path": "Src/DiffBeacon.App/IndependentTextArchiveBrowser.cs",
+      "old": "new ManagedArchive().ResolveManifest(request, passwords, read.Token)",
+      "new": "new ManagedArchive(ReadLimits).ResolveManifest(request, passwords, read.Token)",
+      "sourceSha256": "12C53B38EF98DB7582AE4B5C642F2A090910125597BE52732EF5186EF6B14058"
+    },
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "bool independentTextInputsOnly = false)",
+      "new": "bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false)",
+      "sourceSha256": "3717B184203E531AFF0370659061A2781D03584E92635DB09D5E0485313EDFD6"
+    },
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "            if (independentTextInputsOnly)",
+      "new": "            if (independentTextInputArchivesOnly)\r\n            {\r\n                Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"start\");\r\n                HeadlessIndependentTextInputSelectionArchiveChecks.Run(window, output, Pump, Check, Screenshot);\r\n                Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"complete\");\r\n                return assertions.All(item => item.Passed) ? 0 : 2;\r\n            }\r\n            if (independentTextInputsOnly)",
+      "sourceSha256": "3717B184203E531AFF0370659061A2781D03584E92635DB09D5E0485313EDFD6"
+    },
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "writer.WriteString(\"scope\", independentTextInputsOnly ?",
+      "new": "writer.WriteString(\"scope\", independentTextInputArchivesOnly ? \"independent-text-input-archives-only\" : independentTextInputsOnly ?",
+      "sourceSha256": "3717B184203E531AFF0370659061A2781D03584E92635DB09D5E0485313EDFD6"
+    },
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "            Progress(\"HeadlessIndependentTextInputSelectionChecks\", \"start\"); HeadlessIndependentTextInputSelectionChecks.Run(window, output, Pump, Check, Screenshot); Progress(\"HeadlessIndependentTextInputSelectionChecks\", \"complete\");",
+      "new": "            Progress(\"HeadlessIndependentTextInputSelectionChecks\", \"start\"); HeadlessIndependentTextInputSelectionChecks.Run(window, output, Pump, Check, Screenshot); Progress(\"HeadlessIndependentTextInputSelectionChecks\", \"complete\");\r\n            Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"start\"); HeadlessIndependentTextInputSelectionArchiveChecks.Run(window, output, Pump, Check, Screenshot); Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"complete\");",
+      "sourceSha256": "3717B184203E531AFF0370659061A2781D03584E92635DB09D5E0485313EDFD6"
+    },
+    {
+      "path": "Src/DiffBeacon.App/Program.cs",
+      "old": "        if (args.Length == 2 && args[0] == \"--self-test-independent-text-inputs\")",
+      "new": "        if (args.Length == 2 && args[0] == \"--self-test-independent-text-input-archives\")\r\n            return HeadlessSelfTest.Run(args[1], independentTextInputArchivesOnly: true);\r\n        if (args.Length == 2 && args[0] == \"--self-test-independent-text-inputs\")",
+      "sourceSha256": "09C02D9744D54A69C67741313B8C8F787F04401EDB1BC503A2C6D95D23D87147"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "\"--independent-text-inputs-only\", \"--independent-text-only\",",
+      "new": "\"--independent-text-inputs-only\", \"--independent-text-input-archives-only\", \"--independent-text-only\",",
+      "sourceSha256": "F8AEB32303D3E957C2996C8EA43B029B94FB1325CBE8FCE815111DA3A14FDC0B"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "or \"--self-test-independent-text-inputs\") ? 120",
+      "new": "or \"--self-test-independent-text-inputs\" or \"--self-test-independent-text-input-archives\") ? 120",
+      "sourceSha256": "F8AEB32303D3E957C2996C8EA43B029B94FB1325CBE8FCE815111DA3A14FDC0B"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "    else if (args.Contains(\"--independent-text-inputs-only\", StringComparer.Ordinal))",
+      "new": "    else if (args.Contains(\"--independent-text-input-archives-only\", StringComparer.Ordinal))\r\n        await IndependentTextInputSelectionArchiveScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", Run, Check);\r\n    else if (args.Contains(\"--independent-text-inputs-only\", StringComparer.Ordinal))",
+      "sourceSha256": "F8AEB32303D3E957C2996C8EA43B029B94FB1325CBE8FCE815111DA3A14FDC0B"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "\r\n    await IndependentTextInputSelectionScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", Run, Check);",
+      "new": "\r\n    await IndependentTextInputSelectionScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", Run, Check);\r\n    await IndependentTextInputSelectionArchiveScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", Run, Check);",
+      "sourceSha256": "F8AEB32303D3E957C2996C8EA43B029B94FB1325CBE8FCE815111DA3A14FDC0B"
+    }
+  ],
+  "newFile": {
+    "from": "tests/Fixtures/IndependentTextInputSelectionArchives/IndependentTextInputSelectionArchiveScenarios.cs.proposal",
+    "to": "tests/DiffBeacon.E2E/IndependentTextInputSelectionArchiveScenarios.cs"
+  },
+  "attrsProposal": {
+    "path": ".gitattributes",
+    "append": "tests/Fixtures/IndependentTextInputSelectionArchives/** -text !eol",
+    "near": "The owned new fixture .gitattributes already protects binary/manifest/reader. Check closest attrs before staging; no shared attrs were edited."
+  }
+}

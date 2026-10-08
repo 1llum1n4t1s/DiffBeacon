@@ -1,0 +1,34 @@
+{
+  "schema": "input306-fixture-v1",
+  "license": "CC0-1.0",
+  "root": {
+    "path": "inputs/cipher-siblings.zip",
+    "bytes": 1142,
+    "sha256": "2F21B10F8EA7BA6A9D0DE923657DEFBA52CA06672BAA17011877382A204384A4"
+  },
+  "leftContainer": {
+    "bytes": 387,
+    "sha256": "1EF84F7A2D2BBADF3AACC255C420B2FDA4EF730F23F947341D2355216E449822"
+  },
+  "rightContainer": {
+    "bytes": 387,
+    "sha256": "C2D6FA860BFEAFCDE76490970D10110C906BCDB7A51A248ECA47058D6B81A062"
+  },
+  "leftLiteralHex": "6c65667420636970686572206c6561660d0a5554462d383a20e697a5e69cac0a",
+  "rightLiteralHex": "726967687420636970686572206c6561660a5554462d383a20e58fb30d0a",
+  "source": {
+    "path": "tests/Fixtures/Archives/Sources/regenerate.py",
+    "bytes": 14253,
+    "sha256": "A5E0CB0B2F9E0E610EFB9367CEA4D634AD38B1A6DA27FFEA72087E34C7D2BE74",
+    "license": "CC0-1.0",
+    "referenceLines": "35-71;172"
+  },
+  "case": {
+    "id": "encrypted-outer-different-inner-siblings",
+    "chain": [
+      "right.zip"
+    ],
+    "leaf": "leaf.txt",
+    "accepted": true
+  }
+}

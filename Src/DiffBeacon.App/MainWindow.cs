@@ -28,7 +28,7 @@ public sealed partial class MainWindow : Window
     internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions)
     {
         ImageOptions = imageOptions;
-        Closed += (_, _) => { ArchiveTexts.Clear(); ArchiveLifetime.Clear(); };
+        Closed += (_, _) => { _independentTextInputWindowClosed = true; ArchiveTexts.Clear(); ArchiveLifetime.Clear(); };
         Title = "DiffBeacon";
         Width = 1280;
         Height = 850;
@@ -218,16 +218,16 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         actions.Children.Add(_provider);
         InitializeTextInputs(actions);
         actions.Children.Add(CompareButton);
-        AddAction(actions, "再比較", RefreshEditorsAsync);
+        AddAction(actions, "再比較", () => ObserveCriticalTextSaveTask("route-compare", RefreshEditorsAsync()));
         AddAction(actions, "← 選択差分", () => CopySelectionAsync(false));
         actions.Children.Add(CopyRightButton);
         CopyRightButton.Click += async (_, _) => await GuardAsync(() => CopySelectionAsync(true));
         AddAction(actions, "前の差分", () => { NavigateDifference(-1); return Task.CompletedTask; });
         AddAction(actions, "次の差分", () => { NavigateDifference(1); return Task.CompletedTask; });
-        AddAction(actions, "左を保存", () => SaveAsync(false));
-        AddAction(actions, "右を保存", () => SaveAsync(true));
-        AddAction(actions, "左を外部保存", () => SaveTextAsAsync(false));
-        AddAction(actions, "右を外部保存", () => SaveTextAsAsync(true));
+        AddAction(actions, "左を保存", () => ObserveCriticalTextSaveTask("左を保存", SaveAsync(false)));
+        AddAction(actions, "右を保存", () => ObserveCriticalTextSaveTask("右を保存", SaveAsync(true)));
+        AddAction(actions, "左を外部保存", () => ObserveCriticalTextSaveTask("左を外部保存", SaveTextAsAsync(false)));
+        AddAction(actions, "右を外部保存", () => ObserveCriticalTextSaveTask("右を外部保存", SaveTextAsAsync(true)));
         AddAction(actions, "パッチ出力", ExportPatchAsync);
         AddAction(actions, "自動マージ", MergeThreeWayAsync);
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
@@ -237,8 +237,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "中止", () => { StopFolderCopy(); _operation?.Cancel(); _reportOperation?.Cancel(); _textSaveOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
         top.Children.Add(actions);
         var projectActions = new WrapPanel();
-        AddAction(projectActions, "プロジェクトを開く", OpenProjectAsync);
-        AddAction(projectActions, "プロジェクトを保存", SaveProjectAsync);
+        AddAction(projectActions, "プロジェクトを開く", () => ObserveCriticalTextSaveTask("project-open", OpenProjectAsync()));
+        AddAction(projectActions, "プロジェクトを保存", () => ObserveCriticalTextSaveTask("project-save", SaveProjectAsync()));
         AddAction(projectActions, "比較の設定…", EditProjectOptionsAsync);
         AddAction(projectActions, "HTMLレポート", ExportReportAsync);
         AddAction(projectActions, "外部ツールを追加", AddExternalProviderAsync);
@@ -280,7 +280,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         root.Children.Add(_views);
         Content = root;
         InitializeFolderView();
-        CompareButton.Click += async (_, _) => await GuardAsync(ComparePathsAsync);
+        CompareButton.Click += async (_, _) => await GuardAsync(() => ObserveCriticalTextSaveTask("path-compare", ComparePathsAsync()));
         _directoryList.DoubleTapped += async (_, _) => await GuardAsync(async () =>
         {
             if (_directoryList.SelectedItem is not DirectoryEntry entry || _directoryLeft is null || _directoryRight is null) return;
@@ -576,6 +576,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        IndependentTextInputParentDisposed?.Invoke(); IndependentTextInputParentDisposed = null;
         InvalidateFolderCopy();
         InvalidateTextSave();
         _owner.Closed -= _ownerClosedHandler;
@@ -619,7 +620,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private async Task SaveProjectAsync()
     {
-        var path = await SavePathAsync("比較プロジェクトを保存", "comparison.diffbeacon.json");
+        var path = ProjectPathPicker is { } picker ? await picker(false) : await SavePathAsync("比較プロジェクトを保存", "comparison.diffbeacon.json");
         if (path is null) return;
         if (_owner is MainWindow window) await window.SaveWorkspaceAsync(path);
         else { EnsureArchiveDraftSaved(); await WorkspaceStore.SaveAsync(path, CaptureProject()); }
@@ -627,8 +628,14 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private async Task OpenProjectAsync()
     {
-        var paths = await _owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions { Title = "比較プロジェクトを開く" });
-        if (paths.Count == 0 || paths[0].TryGetLocalPath() is not string path) return;
+        string? path;
+        if (ProjectPathPicker is { } picker) path = await picker(true);
+        else
+        {
+            var paths = await _owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions { Title = "比較プロジェクトを開く" });
+            path = paths.Count > 0 ? paths[0].TryGetLocalPath() : null;
+        }
+        if (path is null) return;
         if (_owner is MainWindow window) await window.OpenWorkspaceAsync(path);
         else
         {

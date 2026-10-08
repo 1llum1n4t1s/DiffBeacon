@@ -92,3 +92,20 @@ Src/diffutils/lib/cmpbuf.h -text -eol -whitespace
 Src/DiffItem.h -text -eol -whitespace
 tests/Fixtures/IndependentText/verify.py -text
 tests/Fixtures/IndependentArchiveText/** -text
+tests/Fixtures/IndependentTextInputSelection/** -text
+tests/Fixtures/IndependentTextInputSelectionCritical/** -text
+tests/Fixtures/IndependentTextInputLifetime/** -text
+tests/Fixtures/IndependentTextInputSelectionRoutes/** -text
+tests/Fixtures/IndependentTextInputSavedArchives/** -text
+Src/DiffBeacon.App/HeadlessIndependentTextInputSelectionCriticalChecks.cs -text !eol
+Src/DiffBeacon.App/HeadlessIndependentTextInputLifetimeChecks.cs -text !eol
+Src/DiffBeacon.App/HeadlessIndependentTextInputSelectionRouteChecks.cs -text !eol
+Src/DiffBeacon.App/HeadlessIndependentTextInputSavedArchiveChecks.cs -text !eol
+tests/Fixtures/BinaryThreeWay/verify.py -text !eol
+tests/Fixtures/BinaryCopyAll/verify.py -text !eol
+tests/Fixtures/BinaryRangeEdits/verify.py -text !eol
+tests/Fixtures/ArchiveDraft/verify.py -text !eol
+tests/Fixtures/Archives/Sources/regenerate.py -text !eol
+tests/DiffBeacon.E2E/archive_wrapper_verifier.py -text !eol
+tests/Fixtures/IndependentTextInputSelectionArchives/** -text !eol
+tests/Fixtures/IndependentTextInputSelectionCipher/** -text !eol

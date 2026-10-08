@@ -20,8 +20,9 @@ public sealed partial class ComparisonPane
     }
 
     private async Task<IndependentArchiveTextRead> ReadIndependentTextInputsAsync(ComparisonProject project,
-        CancellationTokenSource operation, CancellationToken token)
+        CancellationTokenSource operation, CancellationToken token, string?[][]? candidatePasswords = null)
     {
+        var seed = candidatePasswords is null ? null : CopyIndependentCandidatePasswords(project, candidatePasswords);
         var result = new IndependentArchiveTextRead();
         try
         {
@@ -29,6 +30,12 @@ public sealed partial class ComparisonPane
             {
                 var input = ProjectInputs.Archive(project, side);
                 var count = (input?.EntryChain.Length ?? 0) + 1;
+                if (seed is not null)
+                {
+                    // Physical/Untitledの選択は0要素。既存retry内部の1要素null契約は保持する。
+                    result.Passwords[side] = input is null ? new string?[count] : seed[side].ToArray();
+                    continue;
+                }
                 var cached = input is null ? null : (_owner as MainWindow)?.ArchiveLifetime.Find(input);
                 var current = input is not null && _lastArchiveComparison == ArchiveComparisonIdentity(project)
                     ? _archivePasswords?[side] : null;
@@ -44,7 +51,9 @@ public sealed partial class ComparisonPane
                     ArchiveSourceReadStarting?.Invoke(); token.ThrowIfCancellationRequested();
                     try
                     {
-                        result.Documents[side] = await ProjectInputReader.ReadTextAsync(project, side, token, passwords: result.Passwords[side]);
+                        result.Documents[side] = seed is not null && ProjectInputs.Archive(project, side) is null && !ProjectInputs.IsUntitled(project, side)
+                            ? await ReadIndependentCandidatePhysicalTextAsync(project, side, token)
+                            : await ProjectInputReader.ReadTextAsync(project, side, token, passwords: result.Passwords[side]);
                         break;
                     }
                     catch (OperationCanceledException) { throw; }
@@ -105,6 +114,7 @@ public sealed partial class ComparisonPane
             return result;
         }
         catch { result.Dispose(); throw; }
+        finally { ClearIndependentCandidatePasswords(seed); }
     }
 
     private async Task<string?[][]> RetryIndependentArchivePasswordsAsync(ComparisonProject project, string?[][] passwords,

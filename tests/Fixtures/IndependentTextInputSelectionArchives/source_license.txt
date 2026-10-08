@@ -1,0 +1,8 @@
+New input301 synthetic wrappers, literal expectations, generator and reader: CC0-1.0.
+Reused encrypted/archive originals: tests/Fixtures/Archives/Sources (CC0-1.0).
+Source generator: tests/Fixtures/Archives/Sources/regenerate.py (Python standard library).
+Source SHA/license authority: tests/Fixtures/Archives/Sources/manifest.json and README.md.
+Original root and source-document byte sizes and SHA-256: manifest.json reusedPins.
+No user credential, external secret, product decoder, AppData or clipboard is used.
+All reused ZipCrypto containers are independently decoded by Python zipfile;
+there are no unsupported/encrypted-undecoded formats in this test set.

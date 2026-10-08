@@ -1,0 +1,19 @@
+{
+  "source": {
+    "path": "generate.py",
+    "sha256": "AD1EB1149AB5ECDAE1EB86C91B70BC9968E16B5537BA07D839B92DDE31C79B77"
+  },
+  "reader": {
+    "path": "verify.py",
+    "sha256": "301E25DACF9CFF367FE15D7CAFED0CFF579EB47E97CA5DFBAB0792513FFA647E"
+  },
+  "license": {
+    "path": "LICENSE",
+    "sha256": "7A04D94AABC637A0216287CC94AB8778205AC45A022987224472C1B85B60D73F"
+  },
+  "sourceClass": {
+    "path": "Src/DiffBeacon.App/HeadlessIndependentTextInputSelectionCriticalChecks.cs",
+    "sha256": "876A54ABE5393DA12515DF4DFE9380FDB72C5C00EC54936E63C4E10284C429BD"
+  },
+  "scope": "critical-subset-only; parent build and product execution pending"
+}

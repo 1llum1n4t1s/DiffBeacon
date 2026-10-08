@@ -1,0 +1,70 @@
+{
+  "schema": "input301-pins-v1",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 174,
+      "sha256": "2205E45DD4606259861EB03E3CD7ED4063F86E135B37EB4D40E259C3C0A2E379"
+    },
+    {
+      "path": "coverage.md",
+      "bytes": 4020,
+      "sha256": "18543D8FD1C6C22660469E535F561119A755FAC8FA9C4B0F0BD6A25375579670"
+    },
+    {
+      "path": "failure-spec.md",
+      "bytes": 2573,
+      "sha256": "8E867A87FDC2E62A3804FE76458317B7772213EAAB9D37B0B23916AF3A2DA4AF"
+    },
+    {
+      "path": "generate.py",
+      "bytes": 3660,
+      "sha256": "A2AC36A1768CBD900A58F3009C213624EC0759E7229C4E78EC317F9A986EBCB3"
+    },
+    {
+      "path": "IndependentTextInputSelectionArchiveScenarios.cs.proposal",
+      "bytes": 3784,
+      "sha256": "C0498D4110AB544C9AACC866F5132962BF282CEF55D6D48365F4442134C7CAD8"
+    },
+    {
+      "path": "inputs/dangerous.zip",
+      "bytes": 239,
+      "sha256": "2EE62112E87B98E2C1B94F735316AA873EACC3456E953FCC641229A080A9876F"
+    },
+    {
+      "path": "inputs/siblings.zip",
+      "bytes": 637,
+      "sha256": "CDCFC6A7B8E0F0E25764909D91F4D430E1AA93A9F27838BEEAABAD780C9D1BB5"
+    },
+    {
+      "path": "integration-proposal.json",
+      "bytes": 6379,
+      "sha256": "ED6520700665B93333771B1733CE5DD33CF297105AE68D2A16E1618697687349"
+    },
+    {
+      "path": "LICENSE.txt",
+      "bytes": 444,
+      "sha256": "DE3DDF19FD30C6F87C9BED969B11D1CE9484F79B6B0E53B2588A9904720CB529"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 4013,
+      "sha256": "D9D304AA9FABD34D4CE436AC9C012CDA718843E9AC6BB25FBABA23978856D5CC"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1665,
+      "sha256": "01E87DCA039C08E621661D83086889A741F3AC75166E799E28B7FD18AD2A44A3"
+    },
+    {
+      "path": "source_license.txt",
+      "bytes": 663,
+      "sha256": "1B23D22A413AC5BE8AD55A397C4410119144BFB7F5CAC4B0F8B9F541F99CAA5A"
+    },
+    {
+      "path": "verify.py",
+      "bytes": 17284,
+      "sha256": "B481DC1578F5A6FF122433E4C4354081712C8DA2E1FA0BC4A6210E67F9C3C840"
+    }
+  ]
+}

@@ -50,6 +50,8 @@ public sealed class ArchivePanel : UserControl, IDisposable
     public IReadOnlyList<ArchiveEntryDifference> Rows { get; private set; } = [];
     public string PreviewText => _preview.Text ?? "";
     public string StatusText => _status.Text ?? "";
+    internal Func<Task<string?>>? ExtractionParentPathPicker { get; set; }
+    internal Action<string, Task>? ButtonTaskObserved { get; set; }
     internal Action? RefreshReadyForAdoption { get; set; }
     internal Action? ExportReadStarting { get; set; }
     internal Action? ExportReadyForPublication { get; set; }
@@ -111,7 +113,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
         void Button(string title, Func<Task> action, bool enabled = true)
         {
             var button = new Button { Content = title, Margin = new Thickness(4), IsEnabled = enabled };
-            button.Click += async (_, _) => await GuardAsync(action); actions.Children.Add(button);
+            button.Click += async (_, _) => await GuardAsync(() => { var task = action(); ButtonTaskObserved?.Invoke(title, task); return task; }); actions.Children.Add(button);
         }
     }
     public static bool Supports(string path) => ManagedArchive.SupportsInput(path);
@@ -260,8 +262,14 @@ public sealed class ArchivePanel : UserControl, IDisposable
         if (string.IsNullOrEmpty(name) || name is "." or ".." || name.IndexOfAny(['/', '\\']) >= 0 || Path.IsPathRooted(name))
             throw new ArgumentException("展開フォルダー名には一つの名前を指定してください。");
         var top = TopLevel.GetTopLevel(this); if (top is null) return;
-        var parents = await top.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions { Title = "新しい展開フォルダーを作る親フォルダーを選択" });
-        if (parents.Count == 0 || parents[0].TryGetLocalPath() is not string parent) return;
+        string? parent;
+        if (ExtractionParentPathPicker is { } picker) parent = await picker();
+        else
+        {
+            var parents = await top.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions { Title = "新しい展開フォルダーを作る親フォルダーを選択" });
+            parent = parents.Count > 0 ? parents[0].TryGetLocalPath() : null;
+        }
+        if (parent is null) return;
         var output = Path.Combine(parent, name);
         await ExtractToAsync(rightSide, output, _lifetime.Token); _status.Text = $"すべてのエントリを展開しました: {output}";
     }

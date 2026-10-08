@@ -1,0 +1,68 @@
+{
+  "schema": "input306-integration-proposal-v1",
+  "replacements": [
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "bool independentTextInputArchivesOnly = false)",
+      "new": "bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false)",
+      "sourceSha256": "4429D3F82E753BE6660A4CF373BFEA1C0857F39945032AD9691BE01A858F50EA"
+    },
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "            if (independentTextInputArchivesOnly)",
+      "new": "            if (independentTextInputCipherOnly)\r\n            {\r\n                Progress(\"HeadlessIndependentTextInputSelectionCipherChecks\", \"start\");\r\n                HeadlessIndependentTextInputSelectionCipherChecks.Run(window, output, Pump, Check, Screenshot);\r\n                Progress(\"HeadlessIndependentTextInputSelectionCipherChecks\", \"complete\");\r\n                return assertions.All(item => item.Passed) ? 0 : 2;\r\n            }\r\n            if (independentTextInputArchivesOnly)",
+      "sourceSha256": "4429D3F82E753BE6660A4CF373BFEA1C0857F39945032AD9691BE01A858F50EA"
+    },
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "writer.WriteString(\"scope\", independentTextInputArchivesOnly ?",
+      "new": "writer.WriteString(\"scope\", independentTextInputCipherOnly ? \"independent-text-input-cipher-only\" : independentTextInputArchivesOnly ?",
+      "sourceSha256": "4429D3F82E753BE6660A4CF373BFEA1C0857F39945032AD9691BE01A858F50EA"
+    },
+    {
+      "path": "Src/DiffBeacon.App/HeadlessSelfTest.cs",
+      "old": "            Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"start\"); HeadlessIndependentTextInputSelectionArchiveChecks.Run(window, output, Pump, Check, Screenshot); Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"complete\");",
+      "new": "            Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"start\"); HeadlessIndependentTextInputSelectionArchiveChecks.Run(window, output, Pump, Check, Screenshot); Progress(\"HeadlessIndependentTextInputSelectionArchiveChecks\", \"complete\");\r\n            Progress(\"HeadlessIndependentTextInputSelectionCipherChecks\", \"start\"); HeadlessIndependentTextInputSelectionCipherChecks.Run(window, output, Pump, Check, Screenshot); Progress(\"HeadlessIndependentTextInputSelectionCipherChecks\", \"complete\");",
+      "sourceSha256": "4429D3F82E753BE6660A4CF373BFEA1C0857F39945032AD9691BE01A858F50EA"
+    },
+    {
+      "path": "Src/DiffBeacon.App/Program.cs",
+      "old": "        if (args.Length == 2 && args[0] == \"--self-test-independent-text-input-archives\")",
+      "new": "        if (args.Length == 2 && args[0] == \"--self-test-independent-text-input-cipher\")\r\n            return HeadlessSelfTest.Run(args[1], independentTextInputCipherOnly: true);\r\n        if (args.Length == 2 && args[0] == \"--self-test-independent-text-input-archives\")",
+      "sourceSha256": "884AA50808541B009A90F1C3C60C88F22591F3F6B05E88B40EA49DB3D9C707BE"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "\"--independent-text-input-archives-only\", \"--independent-text-only\",",
+      "new": "\"--independent-text-input-archives-only\", \"--independent-text-input-cipher-only\", \"--independent-text-only\",",
+      "sourceSha256": "C56695674B526301496C6028F8E59ABF0E62A86CD9E4573E759E10AEC374C2C1"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "or \"--self-test-independent-text-input-archives\") ? 120",
+      "new": "or \"--self-test-independent-text-input-archives\" or \"--self-test-independent-text-input-cipher\") ? 120",
+      "sourceSha256": "C56695674B526301496C6028F8E59ABF0E62A86CD9E4573E759E10AEC374C2C1"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "    else if (args.Contains(\"--independent-text-input-archives-only\", StringComparer.Ordinal))",
+      "new": "    else if (args.Contains(\"--independent-text-input-cipher-only\", StringComparer.Ordinal))\r\n        await IndependentTextInputSelectionCipherScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", new Func<string, int, bool, string[], Task<CommandResult>>(Run), new Action<string, bool, string>(Check));\r\n    else if (args.Contains(\"--independent-text-input-archives-only\", StringComparer.Ordinal))",
+      "sourceSha256": "C56695674B526301496C6028F8E59ABF0E62A86CD9E4573E759E10AEC374C2C1"
+    },
+    {
+      "path": "tests/DiffBeacon.E2E/Program.cs",
+      "old": "\r\n    await IndependentTextInputSelectionArchiveScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", Run, Check);",
+      "new": "\r\n    await IndependentTextInputSelectionArchiveScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", Run, Check);\r\n    await IndependentTextInputSelectionCipherScenarios.RunAsync(fixtures, output, Option(\"--python\") ?? \"python\", new Func<string, int, bool, string[], Task<CommandResult>>(Run), new Action<string, bool, string>(Check));",
+      "sourceSha256": "C56695674B526301496C6028F8E59ABF0E62A86CD9E4573E759E10AEC374C2C1"
+    }
+  ],
+  "newFile": {
+    "from": "tests/Fixtures/IndependentTextInputSelectionCipher/IndependentTextInputSelectionCipherScenarios.cs.proposal",
+    "to": "tests/DiffBeacon.E2E/IndependentTextInputSelectionCipherScenarios.cs"
+  },
+  "nearAttrs": {
+    "from": "tests/Fixtures/IndependentTextInputSelectionCipher/.gitattributes.proposal",
+    "to": "tests/Fixtures/IndependentTextInputSelectionCipher/.gitattributes"
+  },
+  "note": "Explicit typed Func/Action in both E2E call sites avoids extra method-group inference in the existing large top-level program. Parent applies after raw source backup."
+}

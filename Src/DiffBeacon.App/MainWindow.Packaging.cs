@@ -15,7 +15,7 @@ public sealed partial class MainWindow
     private Button PackagingButton()
     {
         var button = new Button { Content = "比較を包装…", Margin = new Thickness(8, 0), Name = "package-comparisons" };
-        button.Click += async (_, _) => await CreatePackagingDialog().ShowDialog(this);
+        button.Click += async (_, _) => await ShowPackagingDialogAsync();
         Closed += (_, _) => { _packagingOperation?.Cancel(); };
         return button;
     }
@@ -42,10 +42,10 @@ public sealed partial class MainWindow
         save.Click += async (_, _) =>
         {
             if (_packaging) return;
-            var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = "比較文書の包装先", SuggestedFileName = "comparison.zip", FileTypeChoices = ArchivePickers.FileTypes, ShowOverwritePrompt = true });
-            if (file?.TryGetLocalPath() is not string path) return;
+            var path = await PickPackagingPathAsync();
+            if (path is null) return;
             save.IsEnabled = false; cancel.Content = "中止"; status.Text = "比較文書を包装しています…";
-            try { await PackageFromDialogAsync(dialog, path); status.Text = $"保存しました: {path}"; }
+            try { var task = PackageFromDialogAsync(dialog, path); PackageTaskObserved?.Invoke(task); await task; status.Text = $"保存しました: {path}"; }
             catch (Exception ex) { status.Text = ex is OperationCanceledException ? "包装を中止しました。" : ex.Message; }
             finally { save.IsEnabled = true; cancel.Content = "閉じる"; }
         };

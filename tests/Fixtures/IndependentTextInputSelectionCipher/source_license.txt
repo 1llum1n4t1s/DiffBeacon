@@ -1,0 +1,9 @@
+New input306 generator, reader, all literal expectations and generated input: CC0-1.0.
+Reference: tests/Fixtures/Archives/Sources/regenerate.py:35-71;172 (CC0 source header).
+Original encoder source raw SHA-256 and byte length: manifest.json source.
+The multi-entry encoder resets ZipCrypto keys per entry, writes local and central
+offsets, and encrypts every outer and inner entry with public fixture-only values.
+The independent reader uses only Python standard zipfile/hashlib/zlib/struct;
+it verifies every entry CRC, SHA, literal, local/central encryption flag and
+missing/wrong/cross-value rejection. No product decoder creates expectations.
+No production/user credential, AppData, clipboard, external service or new package.

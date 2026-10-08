@@ -12,6 +12,18 @@ public static class Program
         Console.OutputEncoding = new System.Text.UTF8Encoding(false);
         if (Console.IsInputRedirected) Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
         Arguments = args;
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-saved-archives")
+            return HeadlessSelfTest.Run(args[1], independentTextInputSavedArchivesOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-routes")
+            return HeadlessSelfTest.Run(args[1], independentTextInputRoutesOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-lifetime")
+            return HeadlessSelfTest.Run(args[1], independentTextInputLifetimeOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-cipher")
+            return HeadlessSelfTest.Run(args[1], independentTextInputCipherOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-archives")
+            return HeadlessSelfTest.Run(args[1], independentTextInputArchivesOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-inputs")
+            return HeadlessSelfTest.Run(args[1], independentTextInputsOnly: true);
         if (args.Length == 2 && args[0] == "--self-test-independent-archive-text")
             return HeadlessSelfTest.Run(args[1], independentArchiveTextOnly: true);
         if (args.Length == 2 && args[0] == "--self-test-independent-text")

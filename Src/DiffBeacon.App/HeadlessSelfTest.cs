@@ -16,7 +16,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false)
     {
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
@@ -60,6 +60,51 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (independentTextInputSavedArchivesOnly)
+            {
+                Progress("HeadlessIndependentTextInputSavedArchiveChecks", "start");
+                HeadlessIndependentTextInputSavedArchiveChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextInputSavedArchiveChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (independentTextInputRoutesOnly)
+            {
+                Progress("HeadlessIndependentTextInputSelectionRouteChecks", "start");
+                HeadlessIndependentTextInputSelectionRouteChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextInputSelectionRouteChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (independentTextInputLifetimeOnly)
+            {
+                Progress("HeadlessIndependentTextInputLifetimeChecks", "start");
+                HeadlessIndependentTextInputLifetimeChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextInputLifetimeChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (independentTextInputCipherOnly)
+            {
+                Progress("HeadlessIndependentTextInputSelectionCipherChecks", "start");
+                HeadlessIndependentTextInputSelectionCipherChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextInputSelectionCipherChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (independentTextInputArchivesOnly)
+            {
+                Progress("HeadlessIndependentTextInputSelectionArchiveChecks", "start");
+                HeadlessIndependentTextInputSelectionArchiveChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextInputSelectionArchiveChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (independentTextInputsOnly)
+            {
+                Progress("HeadlessIndependentTextInputSelectionChecks", "start");
+                HeadlessIndependentTextInputSelectionChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextInputSelectionChecks", "complete");
+                Progress("HeadlessIndependentTextInputSelectionCriticalChecks", "start");
+                HeadlessIndependentTextInputSelectionCriticalChecks.Run(window, output, Pump, Check, Screenshot);
+                Progress("HeadlessIndependentTextInputSelectionCriticalChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (independentArchiveTextOnly)
             {
                 Progress("HeadlessIndependentArchiveTextChecks", "start");
@@ -1272,6 +1317,13 @@ internal static class HeadlessSelfTest
             Progress("HeadlessFolderThreeWayChecks", "start"); RunFolderThreeWay(); Progress("HeadlessFolderThreeWayChecks", "complete");
             Progress("HeadlessIndependentTextChecks", "start"); RunIndependentText(); Progress("HeadlessIndependentTextChecks", "complete");
             Progress("HeadlessIndependentArchiveTextChecks", "start"); RunIndependentArchiveText(); Progress("HeadlessIndependentArchiveTextChecks", "complete");
+            Progress("HeadlessIndependentTextInputSelectionChecks", "start"); HeadlessIndependentTextInputSelectionChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputSelectionChecks", "complete");
+            Progress("HeadlessIndependentTextInputSelectionCriticalChecks", "start"); HeadlessIndependentTextInputSelectionCriticalChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputSelectionCriticalChecks", "complete");
+            Progress("HeadlessIndependentTextInputLifetimeChecks", "start"); HeadlessIndependentTextInputLifetimeChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputLifetimeChecks", "complete");
+            Progress("HeadlessIndependentTextInputSelectionArchiveChecks", "start"); HeadlessIndependentTextInputSelectionArchiveChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputSelectionArchiveChecks", "complete");
+            Progress("HeadlessIndependentTextInputSelectionCipherChecks", "start"); HeadlessIndependentTextInputSelectionCipherChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputSelectionCipherChecks", "complete");
+            Progress("HeadlessIndependentTextInputSelectionRouteChecks", "start"); HeadlessIndependentTextInputSelectionRouteChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputSelectionRouteChecks", "complete");
+            Progress("HeadlessIndependentTextInputSavedArchiveChecks", "start"); HeadlessIndependentTextInputSavedArchiveChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputSavedArchiveChecks", "complete");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
         catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }
@@ -1281,7 +1333,7 @@ internal static class HeadlessSelfTest
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
             writer.WriteBoolean("binaryClipboardOnly", binaryClipboardOnly);
-            writer.WriteString("scope", independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }

@@ -1,0 +1,1183 @@
+{
+  "schema": "input-selection-fixture-v1",
+  "source": "synthetic-input266 literal; not original WinMerge output",
+  "license": "MIT; tests/Fixtures/IndependentArchiveText/LICENSE retained by reference",
+  "files": [
+    {
+      "path": "inputs/left.txt",
+      "size": 36,
+      "sha256": "A2735922BA1BDB25E81B9B7838D31C7558D8CEF0695EE5AFEF6FBBCA8A64702A"
+    },
+    {
+      "path": "inputs/left.zip",
+      "size": 654,
+      "sha256": "8012B80ADC6FD27D808D447E046488EF86DC4AFA723315C5488A81F18CDFDA4C"
+    },
+    {
+      "path": "inputs/middle.txt",
+      "size": 70,
+      "sha256": "C7377C9FB5A05ACB010807B9789BBC78DC683129E84C968B333A074D39FFE137"
+    },
+    {
+      "path": "inputs/middle.zip",
+      "size": 692,
+      "sha256": "D60E2348BB329D8450D55002488D3D05E70CBE4606E6A799A5AFBA6A41C5EFB5"
+    },
+    {
+      "path": "inputs/right.txt",
+      "size": 43,
+      "sha256": "FE51F832C87D8D41A70BFD9154F13D2BC1FB96B722D5D0E6749B8EF8C821D9B8"
+    },
+    {
+      "path": "inputs/right.zip",
+      "size": 663,
+      "sha256": "329D788E3EBDE15F6F8633A83604DB668408A557CE5A5B316E636C15BB118BBB"
+    },
+    {
+      "path": "inputs/combined.zip",
+      "size": 453,
+      "sha256": "2CDEF2F0AD7AA31ED57DD30845D2E58FF59B0238AF4C350EF82466B6B728A5ED"
+    },
+    {
+      "path": "inputs/left-alternate.zip",
+      "size": 654,
+      "sha256": "5FAF6FAC1F374944348FDF2E553ACEF09B94351B196A579D1053C0159CC9259F"
+    },
+    {
+      "path": "inputs/left-alternate.txt",
+      "size": 36,
+      "sha256": "376FF466F1CD520D6ADFC496FD3D4D2AB6084A70B5A32C9DD88147EEB4BF93E2"
+    }
+  ],
+  "zipEntries": [
+    {
+      "path": "inputs/left.zip",
+      "chain": [
+        "nested.zip"
+      ],
+      "entries": [
+        {
+          "name": "docs/",
+          "size": 0,
+          "crc32": "00000000",
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "directory": true
+        },
+        {
+          "name": "docs/left.txt",
+          "size": 36,
+          "crc32": "9022311E",
+          "sha256": "A2735922BA1BDB25E81B9B7838D31C7558D8CEF0695EE5AFEF6FBBCA8A64702A",
+          "directory": false
+        },
+        {
+          "name": "untouched.bin",
+          "size": 3,
+          "crc32": "CB5807DE",
+          "sha256": "26A66B061E8F48F39927C312F25293959729EEE95978E2892D49D3512A5CC092",
+          "directory": false
+        }
+      ]
+    },
+    {
+      "path": "inputs/left.zip",
+      "chain": [],
+      "entries": [
+        {
+          "name": "folder/",
+          "size": 0,
+          "crc32": "00000000",
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "directory": true
+        },
+        {
+          "name": "nested.zip",
+          "size": 351,
+          "crc32": "7E291AA7",
+          "sha256": "EBF8A882AFB13DC2BC2DA60F00A0EFE1B04B2615E62981C661FC1214ECF58C89",
+          "directory": false
+        },
+        {
+          "name": "top.txt",
+          "size": 5,
+          "crc32": "F1016F9E",
+          "sha256": "110A823C65F972FD557E143FE83C3025FFAFFE0583563750F17A181C4F09CF4E",
+          "directory": false
+        }
+      ]
+    },
+    {
+      "path": "inputs/middle.zip",
+      "chain": [
+        "nested.zip"
+      ],
+      "entries": [
+        {
+          "name": "docs/",
+          "size": 0,
+          "crc32": "00000000",
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "directory": true
+        },
+        {
+          "name": "docs/middle.txt",
+          "size": 70,
+          "crc32": "163782F1",
+          "sha256": "C7377C9FB5A05ACB010807B9789BBC78DC683129E84C968B333A074D39FFE137",
+          "directory": false
+        },
+        {
+          "name": "untouched.bin",
+          "size": 3,
+          "crc32": "CB5807DE",
+          "sha256": "26A66B061E8F48F39927C312F25293959729EEE95978E2892D49D3512A5CC092",
+          "directory": false
+        }
+      ]
+    },
+    {
+      "path": "inputs/middle.zip",
+      "chain": [],
+      "entries": [
+        {
+          "name": "folder/",
+          "size": 0,
+          "crc32": "00000000",
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "directory": true
+        },
+        {
+          "name": "nested.zip",
+          "size": 389,
+          "crc32": "E2EAEEFA",
+          "sha256": "0400DCBE724548A91AC1B15ED9C24E8B96F0070607C9A2C250AC7BEBC4FB565D",
+          "directory": false
+        },
+        {
+          "name": "top.txt",
+          "size": 5,
+          "crc32": "F1016F9E",
+          "sha256": "110A823C65F972FD557E143FE83C3025FFAFFE0583563750F17A181C4F09CF4E",
+          "directory": false
+        }
+      ]
+    },
+    {
+      "path": "inputs/right.zip",
+      "chain": [
+        "nested.zip"
+      ],
+      "entries": [
+        {
+          "name": "docs/",
+          "size": 0,
+          "crc32": "00000000",
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "directory": true
+        },
+        {
+          "name": "docs/right.txt",
+          "size": 43,
+          "crc32": "8EB82B5D",
+          "sha256": "FE51F832C87D8D41A70BFD9154F13D2BC1FB96B722D5D0E6749B8EF8C821D9B8",
+          "directory": false
+        },
+        {
+          "name": "untouched.bin",
+          "size": 3,
+          "crc32": "CB5807DE",
+          "sha256": "26A66B061E8F48F39927C312F25293959729EEE95978E2892D49D3512A5CC092",
+          "directory": false
+        }
+      ]
+    },
+    {
+      "path": "inputs/right.zip",
+      "chain": [],
+      "entries": [
+        {
+          "name": "folder/",
+          "size": 0,
+          "crc32": "00000000",
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+          "directory": true
+        },
+        {
+          "name": "nested.zip",
+          "size": 360,
+          "crc32": "46C0AAEC",
+          "sha256": "8FF8D87D0042C996526F8DA7E5ADAE4423615C573614FB7E63E791F051765666",
+          "directory": false
+        },
+        {
+          "name": "top.txt",
+          "size": 5,
+          "crc32": "F1016F9E",
+          "sha256": "110A823C65F972FD557E143FE83C3025FFAFFE0583563750F17A181C4F09CF4E",
+          "directory": false
+        }
+      ]
+    },
+    {
+      "path": "inputs/combined.zip",
+      "chain": [],
+      "entries": [
+        {
+          "name": "left.txt",
+          "size": 36,
+          "crc32": "9022311E",
+          "sha256": "A2735922BA1BDB25E81B9B7838D31C7558D8CEF0695EE5AFEF6FBBCA8A64702A",
+          "directory": false
+        },
+        {
+          "name": "middle.txt",
+          "size": 70,
+          "crc32": "163782F1",
+          "sha256": "C7377C9FB5A05ACB010807B9789BBC78DC683129E84C968B333A074D39FFE137",
+          "directory": false
+        },
+        {
+          "name": "right.txt",
+          "size": 43,
+          "crc32": "8EB82B5D",
+          "sha256": "FE51F832C87D8D41A70BFD9154F13D2BC1FB96B722D5D0E6749B8EF8C821D9B8",
+          "directory": false
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "physical-0",
+      "pair": "LeftMiddle",
+      "pairIndex": 0,
+      "sides": [
+        {
+          "kind": "Physical",
+          "source": "inputs/left.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/middle.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/right.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "physical-1",
+      "pair": "MiddleRight",
+      "pairIndex": 1,
+      "sides": [
+        {
+          "kind": "Physical",
+          "source": "inputs/left.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/middle.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/right.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "physical-2",
+      "pair": "LeftRight",
+      "pairIndex": 2,
+      "sides": [
+        {
+          "kind": "Physical",
+          "source": "inputs/left.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/middle.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/right.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "untitled-0",
+      "pair": "LeftMiddle",
+      "pairIndex": 0,
+      "sides": [
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        },
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        },
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "untitled-1",
+      "pair": "MiddleRight",
+      "pairIndex": 1,
+      "sides": [
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        },
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        },
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "untitled-2",
+      "pair": "LeftRight",
+      "pairIndex": 2,
+      "sides": [
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        },
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        },
+        {
+          "kind": "Untitled",
+          "source": "",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "",
+          "bytesBase64": "",
+          "encoding": null,
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "archives-0",
+      "pair": "LeftMiddle",
+      "pairIndex": 0,
+      "sides": [
+        {
+          "kind": "Archive",
+          "source": "inputs/left.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/left.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/middle.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/right.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/right.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "archives-1",
+      "pair": "MiddleRight",
+      "pairIndex": 1,
+      "sides": [
+        {
+          "kind": "Archive",
+          "source": "inputs/left.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/left.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/middle.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/right.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/right.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "archives-2",
+      "pair": "LeftRight",
+      "pairIndex": 2,
+      "sides": [
+        {
+          "kind": "Archive",
+          "source": "inputs/left.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/left.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/middle.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/right.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/right.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "mixed-0",
+      "pair": "LeftMiddle",
+      "pairIndex": 0,
+      "sides": [
+        {
+          "kind": "Physical",
+          "source": "inputs/left.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/middle.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/right.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "mixed-1",
+      "pair": "MiddleRight",
+      "pairIndex": 1,
+      "sides": [
+        {
+          "kind": "Physical",
+          "source": "inputs/left.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/middle.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/right.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "mixed-2",
+      "pair": "LeftRight",
+      "pairIndex": 2,
+      "sides": [
+        {
+          "kind": "Physical",
+          "source": "inputs/left.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/middle.zip",
+          "chain": [
+            "nested.zip"
+          ],
+          "leaf": "docs/middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Physical",
+          "source": "inputs/right.txt",
+          "chain": [],
+          "leaf": null,
+          "readOnly": false,
+          "inheritedReadOnly": null,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "same-root-0",
+      "pair": "LeftMiddle",
+      "pairIndex": 0,
+      "sides": [
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "left.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "right.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "same-root-1",
+      "pair": "MiddleRight",
+      "pairIndex": 1,
+      "sides": [
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "left.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "right.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    },
+    {
+      "id": "same-root-2",
+      "pair": "LeftRight",
+      "pairIndex": 2,
+      "sides": [
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "left.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nLEFT €\nlast-left\r",
+          "bytesBase64": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApsYXN0LWxlZnQN",
+          "encoding": "utf-8",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "middle.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nMIDDLE £\nlast-middle\r",
+          "bytesBase64": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGwAYQBzAHQALQBtAGkAZABkAGwAZQANAA==",
+          "encoding": "utf-16-le",
+          "bom": true
+        },
+        {
+          "kind": "Archive",
+          "source": "inputs/combined.zip",
+          "chain": [],
+          "leaf": "right.txt",
+          "readOnly": true,
+          "inheritedReadOnly": false,
+          "editorReadOnly": false,
+          "text": "shared café\r\nRIGHT “quote”\nlast-right\r",
+          "bytesBase64": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpsYXN0LXJpZ2h0DQ==",
+          "encoding": "utf-8",
+          "bom": false
+        }
+      ]
+    }
+  ],
+  "reusedFixedScope": {
+    "path": "tests/Fixtures/IndependentArchiveText",
+    "manifestSha256": "9EF4C602232BB7DD9331B3D1C776C8A34180000317D90E08F95BC74242028943",
+    "files": [
+      {
+        "path": "LICENSE",
+        "size": 1064,
+        "sha256": "7A04D94AABC637A0216287CC94AB8778205AC45A022987224472C1B85B60D73F"
+      },
+      {
+        "path": "README.md",
+        "size": 4874,
+        "sha256": "84BCC673EA4E2E97AACC516CBE359B15280199551CA655A238E662F8B4D31CB6"
+      },
+      {
+        "path": "copy-cases.json",
+        "size": 3513,
+        "sha256": "64D015B37D2D952AF0909911C0CB1A4B431BA71A49F37403611922E3ACE0B0DE"
+      },
+      {
+        "path": "coverage.md",
+        "size": 4203,
+        "sha256": "0A69AB20974609CCFD7175520C00ACBCDC48D11A101262B13FA6837105EE38B6"
+      },
+      {
+        "path": "critical-failure-spec.md",
+        "size": 1749,
+        "sha256": "81E0E04ADB9B38FF16A497D2EABCCE22270D2F73381B285BED87F86096FC87DA"
+      },
+      {
+        "path": "expected-manifest.json",
+        "size": 23621,
+        "sha256": "55EC004CB6CB818AB895BCCAD31956FA035D3F9F5F728F97CA9D643C339F23FB"
+      },
+      {
+        "path": "expected/copy-left-to-middle.text",
+        "size": 120,
+        "sha256": "3EC4AC5330556C38D8F01E433ED0DC4BF1CFB7CFA1ABE1D4A38356C66FB2A5A5"
+      },
+      {
+        "path": "expected/copy-left-to-right.text",
+        "size": 59,
+        "sha256": "F8C0BEDAEDDCC696923465BCDE5648C38D2B59A99F089708E4BB0CE6220C8526"
+      },
+      {
+        "path": "expected/copy-middle-to-left.text",
+        "size": 69,
+        "sha256": "9465CF7B98241BD658DB17891E3B68A78551C5F72A68BD3428659B2794310852"
+      },
+      {
+        "path": "expected/copy-middle-to-right.text",
+        "size": 67,
+        "sha256": "8A93D93C12A082134762CF3E04B20C3C6F25C20352FC71BABDAD73135C1702A2"
+      },
+      {
+        "path": "expected/copy-right-to-left.text",
+        "size": 74,
+        "sha256": "382A7C168ECBC6B41AE8D181A2AE246F5194371426B52046B27A9C28DFA53712"
+      },
+      {
+        "path": "expected/copy-right-to-middle.text",
+        "size": 140,
+        "sha256": "A86888ED2977294EC5EC401468C709192D1C52F9C7A8933DC7B6CB07CA4218CF"
+      },
+      {
+        "path": "expected/left-edited.text",
+        "size": 62,
+        "sha256": "82043DC209B112E6FD57546A70578AE47FB8D04EA7FEBFBBAFF56CE98C1FB23E"
+      },
+      {
+        "path": "expected/left-original.text",
+        "size": 52,
+        "sha256": "187D865032AB4B93D9BD8D9424BCB139A504648C3BA890F54D261812C260DF50"
+      },
+      {
+        "path": "expected/middle-edited.text",
+        "size": 136,
+        "sha256": "95368149D9AC9BA3E8D9575318697E6C0D4AE62596F81D35633BA9800659B6AB"
+      },
+      {
+        "path": "expected/middle-original.text",
+        "size": 112,
+        "sha256": "C71E0616366F520FDF2F7A2D3ED97CECA689794EFAFD95C4A3BA871B5D0089BF"
+      },
+      {
+        "path": "expected/right-edited.text",
+        "size": 69,
+        "sha256": "08856C7C050D9C4080D073528A0629B9F1FD23666651CA1F98EA09398321E3E9"
+      },
+      {
+        "path": "expected/right-original.text",
+        "size": 58,
+        "sha256": "7B9DB7D0B6C919F1B3DECC1194BEE5B873483BE6650D1B5C6BBB2839F53A20BE"
+      },
+      {
+        "path": "failure-spec.md",
+        "size": 4611,
+        "sha256": "375574288DC95042207F64DCBFB4CC58DD08C5FB5E64E0869E4C9412C7B31F01"
+      },
+      {
+        "path": "generate.py",
+        "size": 9480,
+        "sha256": "0D00344DEED28B603A1328C8102B8BDA108D7DB89BAD28F39427FB02BB3218E2"
+      },
+      {
+        "path": "inputs/left.zip",
+        "size": 1223,
+        "sha256": "1FA7AA8D2329C5CCCD54403834E046E67106670512E700E79ACAF10D04A13B88"
+      },
+      {
+        "path": "inputs/middle.zip",
+        "size": 1317,
+        "sha256": "8F5750B666FF7ED364B3DBCB7E26CD53BD3CC1A0F1C25FBEB671F669762833C0"
+      },
+      {
+        "path": "inputs/right.zip",
+        "size": 1229,
+        "sha256": "9C849047318AD3A5036BE7A759914158BC24E8D5691B5E542D6685AC34A98308"
+      },
+      {
+        "path": "readonly-cases.json",
+        "size": 1872,
+        "sha256": "619EAD423B38041829B421BA2098114A7D12B4C9AA314937EA51313175E5A0AA"
+      },
+      {
+        "path": "readonly/left-none.json",
+        "size": 1458,
+        "sha256": "60C188AF0AE036AE0D6569B9547D5E2CB353B398DACE8E66E7EB717E2D66D687"
+      },
+      {
+        "path": "readonly/left-omitted.json",
+        "size": 1423,
+        "sha256": "E057DBF3B67A1347734E0ECF1BDE6B9FEA9312D08FE49DC571DFECE92091EC16"
+      },
+      {
+        "path": "readonly/left-true.json",
+        "size": 1458,
+        "sha256": "E6CE4515FFD5C397C73C21F53AF3BFEDEC914738BD0B906D33EECA1EF7BF46C9"
+      },
+      {
+        "path": "readonly/middle-none.json",
+        "size": 1458,
+        "sha256": "41D2AD013473A2AC98359774D4289C360AA4A4BDAE56A4FB5A77AF32EE3CB34B"
+      },
+      {
+        "path": "readonly/middle-omitted.json",
+        "size": 1423,
+        "sha256": "ECF657215943F22478FDFD25A2B2D3249C473C5E4C67514E0761D56106DB243D"
+      },
+      {
+        "path": "readonly/middle-true.json",
+        "size": 1458,
+        "sha256": "CB406278463ACC229AD9FEFD679964004429D9970F41EA1092A97CABA9222D30"
+      },
+      {
+        "path": "readonly/right-none.json",
+        "size": 1458,
+        "sha256": "D441B13DED12D1476915FA1DF3B3362685041BE029CD2CFF73BAF264FB5AB216"
+      },
+      {
+        "path": "readonly/right-omitted.json",
+        "size": 1423,
+        "sha256": "17012D27F4D1BEDA515E94B2EED28C652853CD45661F038E9F5EFAD0290D1A1D"
+      },
+      {
+        "path": "readonly/right-true.json",
+        "size": 1458,
+        "sha256": "8A8BD8132F20A286D0A93615004A8F6DAAF478B867FBE3A47DBAD895A80CA5FA"
+      },
+      {
+        "path": "save-report-package-contract.json",
+        "size": 1416,
+        "sha256": "02DEF41E6F4F3D0AB96C378102058D6D4983EEE74CFCB37A183E20DAFABFE695"
+      },
+      {
+        "path": "verification.json",
+        "size": 7437,
+        "sha256": "22E33F534D8FBD484236EF11704F92C3B0211E0057C01041ED4E2D196D2BFDEB"
+      },
+      {
+        "path": "verify-products.py",
+        "size": 32522,
+        "sha256": "B58845054B0E456DACA9B4294ECD0501BA6F4319FE9B927B01FE653E2DCC38A9"
+      },
+      {
+        "path": "verify.py",
+        "size": 7179,
+        "sha256": "AE30898A0FAB0981D22A142B850231B60BD45D6AFBB04BA81D3E6646F0AE41A6"
+      },
+      {
+        "path": "workspace-original.json",
+        "size": 1459,
+        "sha256": "A7BB66334CA91CA552F71E988EC6A8E4B9C787C62369EFF3079E6805F0B979E6"
+      },
+      {
+        "path": "workspace-saved.json",
+        "size": 2918,
+        "sha256": "28FE2C9B0FE668DB965BC5E5D2A946E9C5EA1E3EBA701BADB44954E410B10DFB"
+      },
+      {
+        "path": "workspace-saved.json.assets/08856C7C050D9C4080D073528A0629B9F1FD23666651CA1F98EA09398321E3E9.text",
+        "size": 69,
+        "sha256": "08856C7C050D9C4080D073528A0629B9F1FD23666651CA1F98EA09398321E3E9"
+      },
+      {
+        "path": "workspace-saved.json.assets/82043DC209B112E6FD57546A70578AE47FB8D04EA7FEBFBBAFF56CE98C1FB23E.text",
+        "size": 62,
+        "sha256": "82043DC209B112E6FD57546A70578AE47FB8D04EA7FEBFBBAFF56CE98C1FB23E"
+      },
+      {
+        "path": "workspace-saved.json.assets/95368149D9AC9BA3E8D9575318697E6C0D4AE62596F81D35633BA9800659B6AB.text",
+        "size": 136,
+        "sha256": "95368149D9AC9BA3E8D9575318697E6C0D4AE62596F81D35633BA9800659B6AB"
+      }
+    ],
+    "productReader": "verify-products.py",
+    "reuseStatus": "read-only pin validation; B588/D99 product execution remains separate"
+  }
+}

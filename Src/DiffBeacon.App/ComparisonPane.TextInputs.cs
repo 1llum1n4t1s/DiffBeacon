@@ -75,8 +75,17 @@ public sealed partial class ComparisonPane
         actions.Children.Add(new TextBlock { Text = "中央の役割", VerticalAlignment = VerticalAlignment.Center });
         actions.Children.Add(_textRole); actions.Children.Add(_textPair);
         actions.Children.Add(_middleSave); actions.Children.Add(_middleSaveAs);
-        _middleSave.Click += async (_, _) => await GuardAsync(() => SaveWorkingTextAsync(1));
-        _middleSaveAs.Click += async (_, _) => await GuardAsync(() => SaveTextAsAsync(1));
+        actions.Children.Add(IndependentTextInputsButton);
+        IndependentTextInputsButton.Click += async (_, _) => await GuardAsync(async () =>
+        {
+            if (_owner is MainWindow window)
+            {
+                var opening = window.OpenIndependentTextInputsAsync(this);
+                window.IndependentTextInputOperationObserved?.Invoke(opening); await opening;
+            }
+        });
+        _middleSave.Click += async (_, _) => await GuardAsync(() => ObserveCriticalTextSaveTask((string)_middleSave.Content!, SaveWorkingTextAsync(1)));
+        _middleSaveAs.Click += async (_, _) => await GuardAsync(() => ObserveCriticalTextSaveTask("中央を外部保存", SaveTextAsAsync(1)));
         _textRole.SelectionChanged += (_, _) => { InvalidateTextSave(); if (_textRole.SelectedIndex == 1) _mode.SelectedIndex = 1; RefreshIndependentControls(); };
         _textPair.SelectionChanged += async (_, _) =>
         {
@@ -133,12 +142,17 @@ public sealed partial class ComparisonPane
         LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, LeftEditor.IsReadOnly, MiddleEditor.IsReadOnly, RightEditor.IsReadOnly,
         _savedLeft, _savedMiddle, _savedRight, _independentInputIdentity);
 
-    internal async Task PrepareIndependentProjectAsync(CancellationToken token)
+    internal async Task PrepareIndependentProjectAsync(CancellationToken token, string?[][]? candidatePasswords = null)
     {
-        if (!await CompareIndependentTextAsync(token, confirmDiscard: false))
-            throw new OperationCanceledException("独立Textの候補を採用できませんでした。既存タブを保持します。", token);
+        var seed = candidatePasswords is null ? null : CopyIndependentCandidatePasswords(CaptureProject(), candidatePasswords);
+        try
+        {
+            if (!await CompareIndependentTextAsync(token, confirmDiscard: false, candidatePasswords: seed))
+                throw new OperationCanceledException("独立Textの候補を採用できませんでした。既存タブを保持します。", token);
+        }
+        finally { ClearIndependentCandidatePasswords(seed); }
     }
-    private async Task<bool> CompareIndependentTextAsync(CancellationToken callerToken = default, bool confirmDiscard = true)
+    private async Task<bool> CompareIndependentTextAsync(CancellationToken callerToken = default, bool confirmDiscard = true, string?[][]? candidatePasswords = null)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         var project = CaptureProject();
@@ -159,7 +173,7 @@ public sealed partial class ComparisonPane
         CompareButton.IsEnabled = false; _status.Text = "三側のTextを読み込んでいます…";
         try
         {
-            using var read = await ReadIndependentTextInputsAsync(project, operation, token);
+            using var read = await ReadIndependentTextInputsAsync(project, operation, token, candidatePasswords);
             var documents = read.Documents;
             var diff = await Task.Run(() => TextDiffer.Compare(documents[pair.Left].Text, documents[pair.Right].Text, options, token), token);
             IndependentTextReadyForAdoption?.Invoke();
