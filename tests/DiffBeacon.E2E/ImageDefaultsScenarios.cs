@@ -38,7 +38,9 @@ internal static class ImageDefaultsScenarios
         var pid = process.Id; var handle = process.SafeHandle; DateTime? birth = null; string? birthError = null;
         var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
         try { birth = process.StartTime.ToUniversalTime(); } catch (Exception error) { birthError = error.ToString(); }
-        try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(60)); }
+        // Windows ARM64も独立readerの有限timeoutを共通policyへ揃える。
+        var timeoutSeconds = CommandTimeoutPolicy.GetSeconds("image-defaults-reader", arguments);
+        try { await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(timeoutSeconds)); }
         catch (TimeoutException) { if (!process.HasExited) process.Kill(true); await process.WaitForExitAsync(); await Task.WhenAll(stdout, stderr); throw; }
         var outText = await stdout; var errorText = await stderr;
         File.WriteAllText(Path.Combine(work, "reader.stdout.raw"), outText); File.WriteAllText(Path.Combine(work, "reader.stderr.raw"), errorText);
