@@ -369,6 +369,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var previousBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
         var previousBinaryStamp = previousBinary?.StateStamp;
         var candidateTextRole = _textRole.SelectedIndex;
+        var syncPointRevisionAtStart = _syncPointRevision;
         var resultHost = _resultHost; var resultVersion = resultHost?.Session.Current.Version;
         var inheritedIndependentStamp = IndependentText ? TextAdoptionStamp() : null;
         bool CanAdopt()
@@ -377,6 +378,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 && previousBinary?.StateStamp == previousBinaryStamp
                 && !MergeHasPendingComposition && ReferenceEquals(resultHost, _resultHost) && resultVersion == _resultHost?.Session.Current.Version
                 && candidateTextRole == _textRole.SelectedIndex
+                && syncPointRevisionAtStart == _syncPointRevision
                 && (inheritedIndependentStamp is null || Equals(inheritedIndependentStamp, TextAdoptionStamp()))
                 && comparisonForPackaging == (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
             if (!valid && !_disposed && ReferenceEquals(_operation, operation))
@@ -392,7 +394,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (string.IsNullOrWhiteSpace(left) && string.IsNullOrWhiteSpace(right))
         {
             var editorLeft = LeftEditor.Text ?? ""; var editorRight = RightEditor.Text ?? ""; var editorOptions = Options();
-            var editorDiff = await Task.Run(() => TextDiffer.Compare(editorLeft, editorRight, editorOptions, token), token);
+            var editorSyncPoints = _mode.SelectedIndex is 0 or 1 ? TextSyncPointsFor(0, 2).ToArray() : Array.Empty<TextSyncPoint>();
+            var editorDiff = await Task.Run(() => CompareTextWithSyncPoints(editorLeft, editorRight, editorSyncPoints, editorOptions, token), token);
             if (CanAdopt() && editorLeft == LeftEditor.Text && editorRight == RightEditor.Text) { AdoptLegacyTextRole(); ResetMergeSession(); _lastPackageComparison = null; ApplyDiff(editorDiff); }
             return;
         }
@@ -502,7 +505,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             var rightDocument = await TextDocument.LoadAsync(right, token);
             var baseDocument = !string.IsNullOrWhiteSpace(comparisonForPackaging.Item2) ? await TextDocument.LoadAsync(comparisonForPackaging.Item2, token) : null;
             var textOptions = Options();
-            var textDiff = mode is 5 or 6 ? null : await Task.Run(() => TextDiffer.Compare(leftDocument.Text, rightDocument.Text, textOptions, token), token);
+            var useCurrentSyncPoints = (mode is 0 or 1) && LeftEditor.Text == leftDocument.Text && RightEditor.Text == rightDocument.Text;
+            var syncPoints = useCurrentSyncPoints ? TextSyncPointsFor(0, 2).ToArray() : Array.Empty<TextSyncPoint>();
+            var textDiff = mode is 5 or 6 ? null : await Task.Run(() => CompareTextWithSyncPoints(leftDocument.Text, rightDocument.Text, syncPoints, textOptions, token), token);
             var tableCandidate = mode == 6 ? await CreateTableViewAsync(leftDocument, rightDocument, baseDocument, token) : default;
             LegacyTextReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested();
@@ -535,15 +540,17 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public void CompareEditors()
     {
         if (IndependentText) { CompareIndependentEditors(); return; }
-        ApplyDiff(TextDiffer.Compare(LeftEditor.Text ?? "", RightEditor.Text ?? "", Options()));
+        ApplyDiff(CompareTextWithSyncPoints(LeftEditor.Text ?? "", RightEditor.Text ?? "", 0, 2, Options(), CancellationToken.None));
     }
     private async Task CompareEditorsAsync()
     {
         if (IndependentText) { await StartIndependentEditorComparisonAsync(); return; }
         var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var options = Options();
         var token = _operation?.Token ?? CancellationToken.None;
-        var diff = await Task.Run(() => TextDiffer.Compare(left, right, options, token), token);
-        if (left == LeftEditor.Text && right == RightEditor.Text) ApplyDiff(diff);
+        var syncPointRevision = _syncPointRevision;
+        var syncPoints = _mode.SelectedIndex is 0 or 1 ? TextSyncPointsFor(0, 2).ToArray() : Array.Empty<TextSyncPoint>();
+        var diff = await Task.Run(() => CompareTextWithSyncPoints(left, right, syncPoints, options, token), token);
+        if (left == LeftEditor.Text && right == RightEditor.Text && syncPointRevision == _syncPointRevision) ApplyDiff(diff);
     }
     private Task RefreshEditorsAsync()
     {

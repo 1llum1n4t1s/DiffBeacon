@@ -207,8 +207,11 @@ internal static class HeadlessBinaryThreeWayChecks
         window.SelectSession(Array.IndexOf(window.SessionPanes.ToArray(), readonlySource)); screenshot("binary-threeway-readonly.png");
         window.Width = 900; window.Height = 600; readonlyPanel.Viewport.Offset = default; Dispatcher.UIThread.RunJobs(); screenshot("binary-threeway-minimum.png");
         var centralSave = readonlyPanel.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中央を別名保存"));
-        var savePosition = centralSave.TranslatePoint(new Avalonia.Point(0, 0), window);
-        Report("minimum window keeps three Hex editors and central SaveAs reachable", readonlyPanel.ProjectSides.All(side => readonlyPanel.Editor(side).Bounds.Height >= 80) && savePosition.HasValue && savePosition.Value.Y >= 0 && savePosition.Value.Y + centralSave.Bounds.Height <= window.Bounds.Height, $"editorHeights={string.Join(",", readonlyPanel.ProjectSides.Select(side => readonlyPanel.Editor(side).Bounds.Height))};save={savePosition};window={window.Bounds}");
+        var saveContentPosition = centralSave.TranslatePoint(new Avalonia.Point(0, 0), content);
+        if (saveContentPosition.HasValue) viewport.Offset = new Vector(0, Math.Max(0, saveContentPosition.Value.Y));
+        Dispatcher.UIThread.RunJobs(); screenshot("binary-threeway-minimum-save.png");
+        var savePosition = centralSave.TranslatePoint(new Avalonia.Point(0, 0), viewport);
+        Report("minimum window keeps three Hex editors and central SaveAs reachable", readonlyPanel.ProjectSides.All(side => readonlyPanel.Editor(side).Bounds.Height >= 80) && savePosition.HasValue && savePosition.Value.Y >= 0 && savePosition.Value.Y + centralSave.Bounds.Height <= viewport.Bounds.Height, $"editorHeights={string.Join(",", readonlyPanel.ProjectSides.Select(side => readonlyPanel.Editor(side).Bounds.Height))};save={savePosition};viewport={viewport.Bounds};offset={viewport.Offset}");
         window.Width = 1280; window.Height = 850;
         Report("original sources remain full-byte unchanged", roots.Select(Hash).SequenceEqual(hashes) && File.ReadAllBytes(files[0]).SequenceEqual(originals[0]) && File.ReadAllBytes(files[2]).SequenceEqual(originals[2]));
         using var stream = File.Create(Path.Combine(folder, "facts.json")); using var json = new Utf8JsonWriter(stream, new() { Indented = true });

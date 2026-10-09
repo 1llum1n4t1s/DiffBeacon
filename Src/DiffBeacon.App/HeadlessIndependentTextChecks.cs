@@ -9,6 +9,7 @@ using Avalonia.VisualTree;
 using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Input.Raw;
+using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
@@ -320,6 +321,71 @@ internal static class HeadlessIndependentTextChecks
         var missingProjectPath = Path.Combine(folder, "typed-missing.json"); pump(WorkspaceStore.SaveAsync(missingProjectPath, persisted with { RightPath = Path.Combine(folder, "not-there.txt") }));
         var oldPane = window.ActivePane; var oldWorkspace = window.WorkspaceSourcePath;
         Check("typed workspace later load failure preserves old tabs and source", Refused(() => window.OpenWorkspaceAsync(missingProjectPath, discardChanges: true)) && ReferenceEquals(oldPane, window.ActivePane) && oldWorkspace == window.WorkspaceSourcePath);
+
+        var sync = Open();
+        sync.SelectIndependentText(); sync.SelectTextPair(2); pump(sync.IndependentTextUiTask);
+        var syncLeft = "A\nshared\nold-left\nsync-left\nother-left\nend\n";
+        var syncRight = "A\nold-right\nsync-right\nshared\nother-right\nend\n";
+        sync.LeftEditor.Text = syncLeft; sync.RightEditor.Text = syncRight; sync.CompareEditors();
+        bool HasSharedMatch() => sync.CurrentDiff?.Rows.Any(row => row.Kind == DiffKind.Equal && row.LeftText == "shared" && row.RightText == "shared") == true;
+        TextBlock SyncCount() => sync.GetVisualDescendants().OfType<TextBlock>().Single(block => (block.Text ?? "").StartsWith("同期点 ", StringComparison.Ordinal));
+        var unanchoredShared = HasSharedMatch();
+        sync.LeftEditor.CaretIndex = syncLeft.IndexOf("sync-left", StringComparison.Ordinal);
+        sync.RightEditor.CaretIndex = syncRight.IndexOf("sync-right", StringComparison.Ordinal);
+        Click(sync, "同期点を追加"); pump(sync.IndependentTextUiTask);
+        var anchoredShared = HasSharedMatch(); var anchoredTextPreserved = sync.CurrentDiff?.LeftText == syncLeft && sync.CurrentDiff?.RightText == syncRight;
+        Check("actual sync point button separates matches across the selected lines", unanchoredShared && !anchoredShared && anchoredTextPreserved && SyncCount().Text == "同期点 1");
+
+        sync.LeftEditor.CaretIndex = syncLeft.IndexOf("old-left", StringComparison.Ordinal);
+        sync.RightEditor.CaretIndex = syncRight.IndexOf("other-right", StringComparison.Ordinal);
+        Click(sync, "同期点を追加");
+        var crossedOrderRefused = SyncCount().Text == "同期点 1" && sync.ComparisonStatus?.Contains("同じ順序", StringComparison.Ordinal) == true;
+        sync.LeftEditor.CaretIndex = syncLeft.Length; sync.RightEditor.CaretIndex = syncRight.Length;
+        Click(sync, "同期点を追加");
+        var trailingBlankLineRefused = SyncCount().Text == "同期点 1" && sync.ComparisonStatus?.Contains("本文内", StringComparison.Ordinal) == true;
+        Check("crossed-order and trailing-blank-line sync points are refused", crossedOrderRefused && trailingBlankLineRefused);
+
+        Click(sync, "同期点を消去"); pump(sync.IndependentTextUiTask);
+        var clearRestoresMatch = SyncCount().Text == "同期点 0" && HasSharedMatch()
+            && sync.LeftEditor.Text == syncLeft && sync.RightEditor.Text == syncRight;
+        sync.LeftEditor.CaretIndex = syncLeft.IndexOf("sync-left", StringComparison.Ordinal);
+        sync.RightEditor.CaretIndex = syncRight.IndexOf("sync-right", StringComparison.Ordinal);
+        Click(sync, "同期点を追加"); pump(sync.IndependentTextUiTask);
+        sync.LeftEditor.Text = syncLeft + "edit\n";
+        sync.CompareEditors();
+        var editClearsAnchors = SyncCount().Text == "同期点 0" && HasSharedMatch();
+        Check("clearing restores automatic matching and editing drops stale positions", clearRestoresMatch && editClearsAnchors);
+        screenshot("independent-text-sync-points.png");
+
+        var legacySync = window.AddSession(); legacySync.SelectMode(1); Dispatcher.UIThread.RunJobs(); window.UpdateLayout();
+        legacySync.LeftEditor.Text = syncLeft; legacySync.RightEditor.Text = syncRight; legacySync.CompareEditors();
+        var legacyAutomaticShared = legacySync.CurrentDiff?.Rows.Any(row => row.Kind == DiffKind.Equal && row.LeftText == "shared" && row.RightText == "shared") == true;
+        legacySync.LeftEditor.CaretIndex = syncLeft.IndexOf("sync-left", StringComparison.Ordinal);
+        legacySync.RightEditor.CaretIndex = syncRight.IndexOf("sync-right", StringComparison.Ordinal);
+        var legacyBeforeSync = legacySync.CurrentDiff;
+        Click(legacySync, "同期点を追加"); pump(Wait(() => !ReferenceEquals(legacyBeforeSync, legacySync.CurrentDiff)));
+        var legacyAnchored = legacySync.CurrentDiff?.Rows.Any(row => row.Kind == DiffKind.Equal && row.LeftText == "shared" && row.RightText == "shared") != true;
+        var legacyManualDiff = legacySync.CurrentDiff;
+        Click(legacySync, "同期点を消去"); pump(Wait(() => !ReferenceEquals(legacyManualDiff, legacySync.CurrentDiff)));
+        var legacyCleared = legacySync.CurrentDiff?.Rows.Any(row => row.Kind == DiffKind.Equal && row.LeftText == "shared" && row.RightText == "shared") == true;
+        Check("ordinary two-way text comparison adds and clears sync points", legacyAutomaticShared && legacyAnchored && legacyCleared);
+
+        using (var syncOutput = File.Create(Path.Combine(folder, "sync-points.json")))
+        using (var syncWriter = new Utf8JsonWriter(syncOutput, new JsonWriterOptions { Indented = true }))
+        {
+            syncWriter.WriteStartObject();
+            syncWriter.WriteNumber("leftLine", 4); syncWriter.WriteNumber("rightLine", 3);
+            syncWriter.WriteBoolean("automaticSharedMatch", unanchoredShared); syncWriter.WriteBoolean("anchoredSharedMatch", anchoredShared);
+            syncWriter.WriteBoolean("inputTextPreserved", anchoredTextPreserved); syncWriter.WriteBoolean("crossedOrderRefused", crossedOrderRefused);
+            syncWriter.WriteBoolean("trailingBlankLineRefused", trailingBlankLineRefused); syncWriter.WriteBoolean("clearRestoresMatch", clearRestoresMatch);
+            syncWriter.WriteBoolean("editClearsAnchors", editClearsAnchors);
+            syncWriter.WriteBoolean("twoWayAutomaticMatch", legacyAutomaticShared); syncWriter.WriteBoolean("twoWayAnchorApplied", legacyAnchored);
+            syncWriter.WriteBoolean("twoWayClearRestoresMatch", legacyCleared);
+            syncWriter.WriteString("finalLeftSha256", Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(sync.LeftEditor.Text ?? ""))));
+            syncWriter.WriteString("finalRightSha256", Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(sync.RightEditor.Text ?? ""))));
+            syncWriter.WriteEndObject();
+        }
+
         using var stream = File.Create(Path.Combine(folder, "observations.json"));
         using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
         writer.WriteStartArray();

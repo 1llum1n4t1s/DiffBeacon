@@ -4,8 +4,25 @@ namespace DiffBeacon.Core;
 
 public static class TextDiffer
 {
+    private sealed record ComparisonSegment(int EndLeft, int EndRight, int ActiveLeftStart,
+        int ActiveRightStart, GnuLineMatches Matches);
+
+    public const int MaximumSyncPoints = 256;
+
     public static DiffResult Compare(string left, string right, ComparisonOptions? options = null,
         CancellationToken cancellationToken = default)
+        => CompareCore(left, right, options, null, cancellationToken);
+
+    public static DiffResult CompareWithSyncPoints(string left, string right,
+        IReadOnlyList<TextSyncPoint> syncPoints, ComparisonOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(syncPoints);
+        return CompareCore(left, right, options, syncPoints, cancellationToken);
+    }
+
+    private static DiffResult CompareCore(string left, string right, ComparisonOptions? options,
+        IReadOnlyList<TextSyncPoint>? syncPoints, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
@@ -23,8 +40,59 @@ public static class TextDiffer
         var activeB = preparedB.Active;
         var keysA = preparedA.Keys;
         var keysB = preparedB.Keys;
-        var lineMatches = GnuLineMatcher.Match(keysA, keysB, a, b, activeA, activeB, options, cancellationToken);
-        var matches = lineMatches.Pairs;
+        var comparisonSegments = new List<ComparisonSegment>();
+        GnuLineMatches lineMatches;
+        if (syncPoints is null || syncPoints.Count == 0)
+        {
+            lineMatches = GnuLineMatcher.Match(keysA, keysB, a, b, activeA, activeB, options, cancellationToken);
+            comparisonSegments.Add(new(a.Count, b.Count, 0, 0, lineMatches));
+        }
+        else
+        {
+            if (syncPoints.Count > MaximumSyncPoints)
+                throw new ArgumentOutOfRangeException(nameof(syncPoints), $"同期点は{MaximumSyncPoints}個までです。");
+
+            var budget = new GnuLineMatcher.LineBudget(options.MaxFallbackComparisons, cancellationToken);
+            var fallback = false;
+            string? fallbackReason = null;
+            var startA = 0;
+            var startB = 0;
+            var previousLineA = 0;
+            var previousLineB = 0;
+            for (var index = 0; index <= syncPoints.Count; index++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var endA = a.Count;
+                var endB = b.Count;
+                if (index < syncPoints.Count)
+                {
+                    var point = syncPoints[index] ?? throw new ArgumentException("同期点がnullです。", nameof(syncPoints));
+                    if (point.LeftLineNumber < 1 || point.LeftLineNumber > a.Count
+                        || point.RightLineNumber < 1 || point.RightLineNumber > b.Count
+                        || point.LeftLineNumber <= previousLineA || point.RightLineNumber <= previousLineB)
+                        throw new ArgumentException("同期点は両側の行範囲内で、左右とも前の点より後ろに指定してください。", nameof(syncPoints));
+                    previousLineA = point.LeftLineNumber;
+                    previousLineB = point.RightLineNumber;
+                    endA = point.LeftLineNumber - 1;
+                    endB = point.RightLineNumber - 1;
+                }
+
+                var activeStartA = LowerBound(activeA, startA);
+                var activeEndA = LowerBound(activeA, endA);
+                var activeStartB = LowerBound(activeB, startB);
+                var activeEndB = LowerBound(activeB, endB);
+                var segmentMatches = GnuLineMatcher.Match(
+                    keysA[activeStartA..activeEndA], keysB[activeStartB..activeEndB], a, b,
+                    activeA[activeStartA..activeEndA], activeB[activeStartB..activeEndB],
+                    options, budget, cancellationToken);
+                comparisonSegments.Add(new(endA, endB, activeStartA, activeStartB, segmentMatches));
+                fallback |= segmentMatches.Fallback;
+                fallbackReason ??= segmentMatches.FallbackReason;
+                startA = endA;
+                startB = endB;
+            }
+            lineMatches = new([], budget.Used, fallback, fallbackReason);
+        }
         var rows = new List<DiffRow>();
         var nextA = 0;
         var nextB = 0;
@@ -54,16 +122,21 @@ public static class TextDiffer
                 AddRow(ai, bi, ai.HasValue ? bi.HasValue ? DiffKind.Modified : DiffKind.Deleted : DiffKind.Added);
             }
         }
-        foreach (var (ai, bi) in matches)
+        foreach (var segment in comparisonSegments)
         {
-            var rawA = activeA[ai];
-            var rawB = activeB[bi];
-            AddSegment(rawA, rawB);
-            AddRow(rawA, rawB, DiffKind.Equal);
-            nextA = rawA + 1;
-            nextB = rawB + 1;
+            foreach (var (ai, bi) in segment.Matches.Pairs)
+            {
+                var rawA = activeA[segment.ActiveLeftStart + ai];
+                var rawB = activeB[segment.ActiveRightStart + bi];
+                AddSegment(rawA, rawB);
+                AddRow(rawA, rawB, DiffKind.Equal);
+                nextA = rawA + 1;
+                nextB = rawB + 1;
+            }
+            AddSegment(segment.EndLeft, segment.EndRight);
+            nextA = segment.EndLeft;
+            nextB = segment.EndRight;
         }
-        AddSegment(a.Count, b.Count);
         var blocks = new List<DiffBlock>();
         var consumedA = 0;
         var consumedB = 0;
@@ -190,6 +263,19 @@ public static class TextDiffer
             LineWorkUsed = lineMatches.WorkUsed, LineFallback = lineMatches.Fallback,
             LineFallbackReason = lineMatches.FallbackReason
         };
+    }
+
+    private static int LowerBound(int[] values, int minimum)
+    {
+        var low = 0;
+        var high = values.Length;
+        while (low < high)
+        {
+            var middle = low + ((high - low) / 2);
+            if (values[middle] < minimum) low = middle + 1;
+            else high = middle;
+        }
+        return low;
     }
 
     // 通常比較とfolder Fullで、構文状態・無視行・原文座標・終端キーを共用する。

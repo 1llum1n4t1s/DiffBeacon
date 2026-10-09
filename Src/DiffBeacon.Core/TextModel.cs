@@ -83,6 +83,7 @@ public sealed record DiffRow(int? LeftLineNumber, int? RightLineNumber, string? 
 }
 public sealed record DiffBlock(int Index, int RowStart, int RowCount, int LeftStart,
     int LeftCount, int RightStart, int RightCount);
+public sealed record TextSyncPoint(int LeftLineNumber, int RightLineNumber);
 public sealed record DiffResult(string LeftText, string RightText, IReadOnlyList<DiffRow> Rows,
     IReadOnlyList<DiffBlock> Blocks)
 {

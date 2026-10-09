@@ -16,8 +16,13 @@ public sealed partial class ComparisonPane
     private readonly long[] _textRevisions = new long[3];
     private readonly ComboBox _textRole = new() { ItemsSource = new[] { "祖先（読取り専用）", "比較対象" }, SelectedIndex = 0, Width = 180 };
     private readonly ComboBox _textPair = new() { ItemsSource = new[] { "左と中央", "中央と右", "左と右" }, SelectedIndex = 0, Width = 140, IsVisible = false };
+    private readonly TextBlock _syncPointCount = new() { Text = "同期点 0", VerticalAlignment = VerticalAlignment.Center, IsVisible = false };
+    private readonly Button _addSyncPoint = new() { Content = "同期点を追加", IsVisible = false };
+    private readonly Button _clearSyncPoints = new() { Content = "同期点を消去", IsVisible = false };
     private readonly Button _middleSave = new() { Content = "中央を保存", IsVisible = false };
     private readonly Button _middleSaveAs = new() { Content = "中央を外部保存", IsVisible = false };
+    private readonly Dictionary<(int Left, int Right), List<TextSyncPoint>> _manualSyncPoints = [];
+    private long _syncPointRevision;
     private object? _independentInputIdentity;
     private int _comparedTextPair = -1;
     private string? _comparedTextConfiguration;
@@ -75,6 +80,7 @@ public sealed partial class ComparisonPane
         actions.Children.Add(new TextBlock { Text = "中央の役割", VerticalAlignment = VerticalAlignment.Center });
         actions.Children.Add(_textRole); actions.Children.Add(_textPair);
         actions.Children.Add(_middleSave); actions.Children.Add(_middleSaveAs);
+        actions.Children.Add(_syncPointCount); actions.Children.Add(_addSyncPoint); actions.Children.Add(_clearSyncPoints);
         actions.Children.Add(IndependentTextInputsButton);
         IndependentTextInputsButton.Click += async (_, _) => await GuardAsync(async () =>
         {
@@ -89,22 +95,35 @@ public sealed partial class ComparisonPane
         _textRole.SelectionChanged += (_, _) => { InvalidateTextSave(); if (_textRole.SelectedIndex == 1) _mode.SelectedIndex = 1; RefreshIndependentControls(); };
         _textPair.SelectionChanged += async (_, _) =>
         {
+            RefreshSyncPointControls();
             if (IndependentText && _leftDocument is not null && _baseDocument is not null && _rightDocument is not null)
                 await GuardAsync(() => StartIndependentEditorComparisonAsync());
         };
+        _mode.PropertyChanged += (_, change) => { if (change.Property == ComboBox.SelectedIndexProperty) RefreshSyncPointControls(); };
+        _provider.PropertyChanged += (_, change) => { if (change.Property == ComboBox.SelectedItemProperty) RefreshSyncPointControls(); };
+        _addSyncPoint.Click += async (_, _) => await GuardAsync(AddTextSyncPointAsync);
+        _clearSyncPoints.Click += async (_, _) => await GuardAsync(ClearTextSyncPointsAsync);
         foreach (var side in Enumerable.Range(0, 3))
         {
             var capturedSide = side;
             // TextChangedの遅延通知で初期値を後発編集として数えず、実際のproperty変更を同期追跡する。
             TextEditor(side).PropertyChanged += (_, change) =>
-            { if (change.Property == TextBox.TextProperty) { _textRevisions[capturedSide]++; RefreshArchiveDraftCaptions(); } };
+            {
+                if (change.Property != TextBox.TextProperty) return;
+                _textRevisions[capturedSide]++;
+                if (ClearTextSyncPointsForSide(capturedSide))
+                    _status.Text = "本文を編集したため、この側を含む同期点を消去しました。再比較してください。";
+                RefreshArchiveDraftCaptions();
+            };
         }
+        RefreshSyncPointControls();
     }
     private void RefreshIndependentControls()
     {
         _textPair.IsVisible = _middleSave.IsVisible = _middleSaveAs.IsVisible = _textRole.SelectedIndex == 1;
         MiddleEditor.IsReadOnly = !IndependentText || !_textSaveAllowed || TextReadOnly(1);
         _middleSave.Content = ProjectInputs.Archive(_projectMetadata, 1) is not null ? "中央の作業版を保存" : "中央を保存";
+        RefreshSyncPointControls();
     }
     private void AdoptLegacyTextRole()
     {
@@ -130,10 +149,10 @@ public sealed partial class ComparisonPane
     {
         var project = CaptureProject();
         return (project.LeftPath, project.BasePath, project.RightPath, project.Mode, project.ProviderId, project.TextInputs?.Semantics,
-            project.TextInputs?.Left?.Kind, project.TextInputs?.Middle?.Kind, project.TextInputs?.Right?.Kind, ArchiveComparisonIdentity(project));
+        project.TextInputs?.Left?.Kind, project.TextInputs?.Middle?.Kind, project.TextInputs?.Right?.Kind, ArchiveComparisonIdentity(project));
     }
     private object TextAdoptionStamp() => (TextInputIdentity(), _projectMetadata.TextInputs, _textSaveGeneration, _workingTexts.Generation, ArchiveComparisonIdentity(CaptureProject()), _leftDocument, _baseDocument, _rightDocument,
-        _textPair.SelectedIndex, _textRevisions[0], _textRevisions[1], _textRevisions[2], LeftEditor.Text, MiddleEditor.Text, RightEditor.Text,
+        _textPair.SelectedIndex, _textRevisions[0], _textRevisions[1], _textRevisions[2], _syncPointRevision, LeftEditor.Text, MiddleEditor.Text, RightEditor.Text,
         LeftEditor.IsReadOnly, MiddleEditor.IsReadOnly, RightEditor.IsReadOnly, (_owner as MainWindow)?.ActivePane,
         _resultHost, _resultHost?.Session.Current.Version, MergeHasPendingComposition);
     private string DescribeTextAdoptionState() => $"generation={_textSaveGeneration}; revisions={string.Join(",", _textRevisions)}; role={_textRole.SelectedIndex}; pair={_textPair.SelectedIndex}; "
@@ -176,7 +195,10 @@ public sealed partial class ComparisonPane
         {
             using var read = await ReadIndependentTextInputsAsync(project, operation, token, candidatePasswords);
             var documents = read.Documents;
-            var diff = await Task.Run(() => TextDiffer.Compare(documents[pair.Left].Text, documents[pair.Right].Text, options, token), token);
+            var useCurrentSyncPoints = TextEditor(pair.Left).Text == documents[pair.Left].Text
+                && TextEditor(pair.Right).Text == documents[pair.Right].Text;
+            var syncPoints = useCurrentSyncPoints ? TextSyncPointsFor(pair.Left, pair.Right).ToArray() : Array.Empty<TextSyncPoint>();
+            var diff = await Task.Run(() => CompareTextWithSyncPoints(documents[pair.Left].Text, documents[pair.Right].Text, syncPoints, options, token), token);
             IndependentTextReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested();
             // 同size/mtimeの差替えも、候補を採用する前に原本SHAで拒否する。
@@ -211,6 +233,117 @@ public sealed partial class ComparisonPane
     }
     private (int Left, int Right) TextPair() => _textPair.SelectedIndex switch
     { 0 => (0, 1), 1 => (1, 2), 2 => (0, 2), _ => throw new InvalidOperationException("比較する二側を選択してください。") };
+
+    private (int Left, int Right) CurrentTextSyncPair()
+        => IndependentText && _textRole.SelectedIndex == 1 ? TextPair() : (0, 2);
+
+    private IReadOnlyList<TextSyncPoint> TextSyncPointsFor(int left, int right)
+        => _manualSyncPoints.TryGetValue((left, right), out var points) ? points : Array.Empty<TextSyncPoint>();
+
+    private DiffResult CompareTextWithSyncPoints(string left, string right, int leftSide, int rightSide,
+        ComparisonOptions options, CancellationToken token)
+    {
+        return CompareTextWithSyncPoints(left, right, TextSyncPointsFor(leftSide, rightSide), options, token);
+    }
+
+    private static DiffResult CompareTextWithSyncPoints(string left, string right,
+        IReadOnlyList<TextSyncPoint> points, ComparisonOptions options, CancellationToken token)
+    {
+        return points.Count == 0 ? TextDiffer.Compare(left, right, options, token)
+            : TextDiffer.CompareWithSyncPoints(left, right, points, options, token);
+    }
+
+    private void RefreshSyncPointControls()
+    {
+        var visible = _mode.SelectedIndex is 0 or 1;
+        _syncPointCount.IsVisible = _addSyncPoint.IsVisible = _clearSyncPoints.IsVisible = visible;
+        if (!visible) return;
+        var pair = CurrentTextSyncPair();
+        var count = TextSyncPointsFor(pair.Left, pair.Right).Count;
+        _syncPointCount.Text = $"同期点 {count}";
+        _addSyncPoint.IsEnabled = count < TextDiffer.MaximumSyncPoints;
+        _clearSyncPoints.IsEnabled = count > 0;
+    }
+
+    private async Task AddTextSyncPointAsync()
+    {
+        if (_mode.SelectedIndex is not (0 or 1))
+        { _status.Text = "同期点はテキスト比較で使用できます。"; return; }
+        var pair = CurrentTextSyncPair();
+        var leftText = TextEditor(pair.Left).Text ?? "";
+        var rightText = TextEditor(pair.Right).Text ?? "";
+        var point = new TextSyncPoint(CaretLineNumber(TextEditor(pair.Left), leftText), CaretLineNumber(TextEditor(pair.Right), rightText));
+        if (point.LeftLineNumber > TextLineCount(leftText) || point.RightLineNumber > TextLineCount(rightText))
+        { _status.Text = "同期点は本文内の行に置いてください。末尾の改行後は選択できません。"; return; }
+
+        if (!_manualSyncPoints.TryGetValue(pair, out var points)) _manualSyncPoints[pair] = points = [];
+        if (points.Count >= TextDiffer.MaximumSyncPoints)
+        { _status.Text = $"同期点は{TextDiffer.MaximumSyncPoints}個までです。"; return; }
+        if (points.Any(existing => existing.LeftLineNumber == point.LeftLineNumber || existing.RightLineNumber == point.RightLineNumber))
+        { _status.Text = "同じ行を使う同期点が既にあります。"; return; }
+        var insert = points.FindIndex(existing => existing.LeftLineNumber > point.LeftLineNumber);
+        if (insert < 0) insert = points.Count;
+        if (insert > 0 && points[insert - 1].RightLineNumber >= point.RightLineNumber
+            || insert < points.Count && points[insert].RightLineNumber <= point.RightLineNumber)
+        { _status.Text = "同期点は両側で同じ順序になる行を選んでください。"; return; }
+
+        points.Insert(insert, point);
+        _syncPointRevision++;
+        RefreshSyncPointControls();
+        await CompareEditorsAsync();
+    }
+
+    private async Task ClearTextSyncPointsAsync()
+    {
+        var pair = CurrentTextSyncPair();
+        if (!_manualSyncPoints.Remove(pair)) return;
+        _syncPointRevision++;
+        RefreshSyncPointControls();
+        await CompareEditorsAsync();
+    }
+
+    private bool ClearTextSyncPointsForSide(int side)
+    {
+        var keys = _manualSyncPoints.Keys.Where(pair => pair.Left == side || pair.Right == side).ToArray();
+        if (keys.Length == 0) return false;
+        foreach (var key in keys) _manualSyncPoints.Remove(key);
+        _syncPointRevision++;
+        RefreshSyncPointControls();
+        return true;
+    }
+
+    private static int CaretLineNumber(TextBox editor, string text)
+    {
+        var end = Math.Clamp(editor.CaretIndex, 0, text.Length);
+        var line = 1;
+        for (var index = 0; index < end; index++)
+        {
+            if (text[index] == '\r')
+            {
+                line++;
+                if (index + 1 < end && text[index + 1] == '\n') index++;
+            }
+            else if (text[index] == '\n') line++;
+        }
+        return line;
+    }
+
+    private static int TextLineCount(string text)
+    {
+        if (text.Length == 0) return 0;
+        var count = 0;
+        for (var index = 0; index < text.Length; index++)
+        {
+            if (text[index] == '\r')
+            {
+                count++;
+                if (index + 1 < text.Length && text[index + 1] == '\n') index++;
+            }
+            else if (text[index] == '\n') count++;
+        }
+        return text[^1] is '\r' or '\n' ? count : count + 1;
+    }
+
     private void ApplyIndependentDiff(DiffResult diff)
     {
         ApplyDiff(diff); _comparedTextPair = _textPair.SelectedIndex;
@@ -224,7 +357,7 @@ public sealed partial class ComparisonPane
     private void CompareIndependentEditors()
     {
         var pair = TextPair();
-        ApplyIndependentDiff(TextDiffer.Compare(TextEditor(pair.Left).Text ?? "", TextEditor(pair.Right).Text ?? "", Options()));
+        ApplyIndependentDiff(CompareTextWithSyncPoints(TextEditor(pair.Left).Text ?? "", TextEditor(pair.Right).Text ?? "", pair.Left, pair.Right, Options(), CancellationToken.None));
     }
     private Task<bool> StartIndependentEditorComparisonAsync()
     {
@@ -236,7 +369,8 @@ public sealed partial class ComparisonPane
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         var operation = _operation; var token = operation.Token;
         var stamp = TextAdoptionStamp(); var texts = Enumerable.Range(0, 3).Select(side => TextEditor(side).Text ?? "").ToArray();
-        var pair = TextPair(); var options = Options(); options = options with { SubstitutionRules = options.SubstitutionRules.ToArray() };
+        var pair = TextPair(); var syncPoints = TextSyncPointsFor(pair.Left, pair.Right).ToArray();
+        var options = Options(); options = options with { SubstitutionRules = options.SubstitutionRules.ToArray() };
         var gate = IndependentEditorCompareGate;
         CompareButton.IsEnabled = false; _status.Text = "選択ペアのTextを比較しています…（中止できます）";
         try
@@ -244,7 +378,7 @@ public sealed partial class ComparisonPane
             var diff = await Task.Run(async () =>
             {
                 if (gate is not null) await gate(token).ConfigureAwait(false);
-                return TextDiffer.Compare(texts[pair.Left], texts[pair.Right], options, token);
+                return CompareTextWithSyncPoints(texts[pair.Left], texts[pair.Right], syncPoints, options, token);
             }, token);
             IndependentEditorDiffReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(operation, _operation) || !Equals(stamp, TextAdoptionStamp()))

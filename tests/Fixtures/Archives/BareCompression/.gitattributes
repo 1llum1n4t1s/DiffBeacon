@@ -1,2 +1,3 @@
 inputs.zip -text -eol
 expected.json -text -eol
+*.py -text -eol
