@@ -87,6 +87,7 @@ public static class ComparisonPackage
         var stage = Path.Combine(parent, ".diffbeacon-package-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(stage);
         var owned = new List<string>();
+        var ownedDirectories = new List<string>();
         try
         {
             var inputs = new List<Input>();
@@ -103,8 +104,14 @@ public static class ComparisonPackage
                 }
                 var info = new FileInfo(source);
                 var initialSize = info.Length; var initialModified = info.LastWriteTimeUtc;
-                // Sourceのwrapper判定に必要な全basenameを失わない。
-                var snapshot = Path.Combine(stage, inputs.Count.ToString("D4") + "-" + Path.GetFileName(source));
+                // 裸圧縮の合成格納名も保つため、入力ごとの所有ディレクトリへ元basenameのまま確定する。
+                var snapshotDirectory = Path.Combine(stage, inputs.Count.ToString("D4", System.Globalization.CultureInfo.InvariantCulture));
+                ValidateLocal(snapshotDirectory);
+                if (Directory.Exists(snapshotDirectory) || File.Exists(snapshotDirectory))
+                    throw new IOException("包装の入力snapshotディレクトリが既に存在します。");
+                Directory.CreateDirectory(snapshotDirectory); ownedDirectories.Add(snapshotDirectory);
+                var snapshot = Path.Combine(snapshotDirectory, Path.GetFileName(source));
+                ValidateLocal(snapshot);
                 owned.Add(snapshot);
                 using (var original = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (var copy = new FileStream(snapshot, FileMode.CreateNew, FileAccess.Write, FileShare.None))
@@ -266,7 +273,7 @@ public static class ComparisonPackage
             if (options.IncludeProject)
             {
                 var active = Array.IndexOf(indices, workspace.ActiveEntryIndex);
-                GeneratedBytes("project.json", WorkspaceStore.SerializeWorkspace(new ComparisonWorkspace { Entries = packed, ActiveEntryIndex = Math.Max(0, active) }));
+                GeneratedBytes("project.json", WorkspaceStore.SerializeWorkspace(new ComparisonWorkspace { FormatVersion = workspace.FormatVersion is 8 or 9 ? workspace.FormatVersion : 1, Entries = packed, ActiveEntryIndex = Math.Max(0, active) }));
             }
             IEnumerable<ManagedArchiveWriteEntry> Content()
             {
@@ -286,6 +293,11 @@ public static class ComparisonPackage
             // 生成したファイル名だけを解除する。他の一時物・利用者のディレクトリへは触れない。
             ValidateLocal(stage);
             foreach (var path in owned) { ValidateLocal(path); if (File.Exists(path)) File.Delete(path); }
+            for (var index = ownedDirectories.Count - 1; index >= 0; index--)
+            {
+                var directory = ownedDirectories[index]; ValidateLocal(directory);
+                Directory.Delete(directory, recursive: false);
+            }
             Directory.Delete(stage, recursive: false);
         }
     }

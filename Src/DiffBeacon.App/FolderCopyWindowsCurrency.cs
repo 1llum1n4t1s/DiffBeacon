@@ -40,7 +40,7 @@ public static partial class FolderOperations
         ? FolderCopyWindowsMetadata.QualificationScope + ";OutsideRootAncestorWriteTimeUntracked"
         : OperatingSystem.IsWindows() ? "OrdinaryAttributesOnly;AdvancedMetadataUnverified" : "NotWindows";
 
-    private static void CaptureWindowsMetadataChain(string path,
+    private static void CaptureWindowsMetadataChain(string path, string root,
         Dictionary<string, FolderCopyWindowsMetadata> state, CopyBudget budget, CancellationToken token)
     {
         for (var current = path; current is not null; current = Path.GetDirectoryName(current))
@@ -51,16 +51,21 @@ public static partial class FolderOperations
             if (basic is null) continue;
             // map key・計画のreadonly列・実行側stateを含め、保持する前に一括予約する。
             budget.ReserveRetainedBytes(checked(WindowsMetadataStateAllowance + 2L * current.Length));
-            var metadata = FolderCopyWindowsMetadata.Capture(current, budget, token);
-            RequireWindowsSnapshot(basic, metadata);
+            var trackWriteTime = SameOrInside(current, root);
+            if (FolderCopyWindowsMetadata.VerificationObserver is not null)
+                FolderCopyWindowsMetadata.NotifyVerification(current, "afterBasicSnapshot", trackWriteTime, null, token,
+                    basicWriteTime: checked((ulong)basic.LastWriteTimeUtc.ToFileTimeUtc()));
+            var metadata = FolderCopyWindowsMetadata.Capture(current, budget, token, trackWriteTime: trackWriteTime);
+            RequireWindowsSnapshot(basic, metadata, trackWriteTime);
             state.Add(current, metadata);
         }
     }
 
-    private static void RequireWindowsSnapshot(FolderCopySnapshot basic, FolderCopyWindowsMetadata metadata)
+    private static void RequireWindowsSnapshot(FolderCopySnapshot basic, FolderCopyWindowsMetadata metadata, bool trackWriteTime = true)
     {
         if ((basic.Kind == DirectoryEntryKind.Directory) != metadata.IsDirectory || basic.Size != metadata.Size
-            || checked((ulong)basic.LastWriteTimeUtc.ToFileTimeUtc()) != metadata.LastWriteTime
+            || ((trackWriteTime || basic.Kind != DirectoryEntryKind.Directory)
+                && checked((ulong)basic.LastWriteTimeUtc.ToFileTimeUtc()) != metadata.LastWriteTime)
             || basic.Attributes != metadata.ObservedAttributes)
             throw new IOException("Windowsの基本snapshotとmetadataの観測値が一致しません。");
     }
@@ -100,8 +105,7 @@ public static partial class FolderOperations
             // identity・creation・属性・security・EAは原観測値との照合を続ける。
             var current = ReadSnapshot(path) ?? throw new IOException("Windows metadataの祖先が不在になりました。");
             if (current.Kind != DirectoryEntryKind.Directory) throw new IOException("Windows metadataの祖先がdirectoryではありません。");
-            FolderCopyWindowsMetadata.RequireUnchanged(path, metadata,
-                checked((ulong)current.LastWriteTimeUtc.ToFileTimeUtc()), budget, token);
+            FolderCopyWindowsMetadata.RequireUnchanged(path, metadata, budget, token, trackWriteTime: false);
         }
         Guard(token, validateContext);
     }

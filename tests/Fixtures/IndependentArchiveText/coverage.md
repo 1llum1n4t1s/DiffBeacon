@@ -2,9 +2,11 @@
 
 失敗条件原本は `failure-spec.md`。これを変更せず、実装した検証と残りを区別する。
 
+独立三者のGUIマージ結果作成は対応を追加した。原本失敗仕様のmerge拒否は追加前の範囲であり、現在は中央を祖先にせず手動採用する。別paneで入力・revision・原本rootの保持、左の文字コードでの結果保存、Undo/Redoと原本containerへの出力拒否を確認する。HTML・包装の入力比較とpatch拒否の契約は維持する。
+
 | 条件 | 追加した経路 |
 | --- | --- |
-| 3側実在leaf／中央非祖先 | Headless読み込み・編集・merge拒否 |
+| 3側実在leaf／中央非祖先 | Headless読み込み・編集・手動結果作成、中央採用・保存点・原本root保護 |
 | 全6方向コピー／BOM／1252／混在改行 | 実pair/hunkボタン、全hunk適用、保存全byte＋literal独立reader |
 | 三側working／中央保存／外部Physical | 中央実saveボタン、三側SaveWorkingTextAsync、中央SaveTextToAsync、root保護 |
 | v6／3側相対asset／HTML／包装／展開 | CLI別プロセスと全ZIP/CRC、全asset、HTML snapshot、製品再読込み |

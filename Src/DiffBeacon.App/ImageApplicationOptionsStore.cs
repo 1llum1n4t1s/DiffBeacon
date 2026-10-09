@@ -5,6 +5,12 @@ namespace DiffBeacon.App;
 
 internal sealed record ImageApplicationOptions
 {
+    public bool ShowDifferences { get; set; } = true;
+    public double Zoom { get; set; } = 1;
+    public int BlockSize { get; set; } = 8;
+    public double HighlightAlpha { get; set; } = .7;
+    public double Threshold { get; set; } = 0;
+    public int InsertionDeletionMode { get; set; } = 0;
     public ImageDragMode DragMode { get; set; } = ImageDragMode.Move;
     public int OverlayMode { get; set; }
     public bool BlinkDifferences { get; set; }
@@ -69,7 +75,8 @@ internal sealed class ImageApplicationOptionsStore
             var options = JsonSerializer.Deserialize(bytes, ImageApplicationOptionsJsonContext.Default.ImageApplicationOptions)
                 ?? throw new InvalidDataException("画像操作設定が空です。");
             ValidateOptions(options);
-            _current = options; Diagnostic = null; NotifyChanged(); return true;
+            var notify = NeedsSharedNotification(_current, options);
+            _current = options; Diagnostic = null; if (notify) NotifyChanged(); return true;
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or JsonException)
         { Diagnostic = "画像操作設定を読み込めません。既存の設定ファイルを保持しました: " + error.Message; return false; }
@@ -79,9 +86,31 @@ internal sealed class ImageApplicationOptionsStore
     internal static void ValidateOptions(ImageApplicationOptions options)
     {
         ValidateMode(options.DragMode);
+        ImageViewSettings.Validate(DefaultViewSettings(options));
         new ImageOverlayRenderer.Settings(options.OverlayMode, options.OverlayAlpha, false, options.BlinkDifferences,
             options.AnimationPeriod, options.BlinkPeriod).Validate();
     }
+    internal static ImageViewSettings DefaultViewSettings(ImageApplicationOptions options) => new()
+    {
+        ShowDifferences = options.ShowDifferences,
+        Zoom = options.Zoom,
+        BlockSize = options.BlockSize,
+        HighlightAlpha = options.HighlightAlpha,
+        Threshold = options.Threshold,
+        InsertionDeletionMode = options.InsertionDeletionMode,
+    };
+
+    private static bool NeedsSharedNotification(ImageApplicationOptions previous, ImageApplicationOptions options)
+        => (previous with
+        {
+            ShowDifferences = options.ShowDifferences,
+            Zoom = options.Zoom,
+            BlockSize = options.BlockSize,
+            HighlightAlpha = options.HighlightAlpha,
+            Threshold = options.Threshold,
+            InsertionDeletionMode = options.InsertionDeletionMode,
+        }) != options;
+
     internal bool SetOptions(ImageApplicationOptions requested)
     {
         string? temporary = null;
@@ -95,6 +124,7 @@ internal sealed class ImageApplicationOptionsStore
                 var directory = Path.GetDirectoryName(path)!; Directory.CreateDirectory(directory);
                 temporary = Path.Combine(directory, ".diffbeacon-options-" + Guid.NewGuid().ToString("N") + ".tmp");
                 var bytes = JsonSerializer.SerializeToUtf8Bytes(options, ImageApplicationOptionsJsonContext.Default.ImageApplicationOptions);
+                if (bytes.Length > MaximumBytes) throw new InvalidDataException("画像操作設定は4 KiB以下です。");
                 var attributes = File.Exists(path) ? File.GetAttributes(path) : FileAttributes.Normal;
                 UnixFileMode? unixMode = !OperatingSystem.IsWindows() && File.Exists(path) ? File.GetUnixFileMode(path) : null;
                 using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 4096, FileOptions.WriteThrough))
@@ -107,7 +137,10 @@ internal sealed class ImageApplicationOptionsStore
                 }
                 GuardTarget(); File.Move(temporary, path, overwrite: true); temporary = null;
             }
-            _current = options; Diagnostic = null; NotifyChanged(); return true;
+            var notify = NeedsSharedNotification(_current, options);
+            _current = options; Diagnostic = null;
+            if (notify) NotifyChanged();
+            return true;
         }
         catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or InvalidOperationException)
         { Diagnostic = "画像操作設定を保存できません。操作モードは変更していません: " + error.Message; return false; }

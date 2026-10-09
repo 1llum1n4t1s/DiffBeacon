@@ -8,8 +8,7 @@ internal static class ImageLineScenarios
     public static async Task RunAsync(string output, string fixtures,
         Func<string, int, bool, string[], Task<CommandResult>> run, Action<string, bool, string> check)
     {
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (root is not null && !File.Exists(Path.Combine(root.FullName, "DiffBeacon.slnx"))) root = root.Parent;
+        var root = FixtureRepository.FindRoot();
         if (root is null) throw new DirectoryNotFoundException("ImageLines fixture root");
         var source = Path.Combine(root.FullName, "tests", "Fixtures", "ImageLines", "winimerge-image-lines-golden.json.gz");
         var zipped = await File.ReadAllBytesAsync(source);

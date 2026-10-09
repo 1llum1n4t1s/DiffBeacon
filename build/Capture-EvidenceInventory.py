@@ -9,13 +9,13 @@ import stat
 import subprocess
 
 
-def capture(repository, roots):
+def capture(base, roots):
     entries = []
     missing = []
 
     def visit(path):
         metadata = path.lstat()
-        row = {"path": path.relative_to(repository).as_posix(), "mtimeNs": metadata.st_mtime_ns}
+        row = {"path": path.relative_to(base).as_posix(), "mtimeNs": metadata.st_mtime_ns}
         if stat.S_ISLNK(metadata.st_mode) or getattr(metadata, "st_file_attributes", 0) & 0x400:
             row.update(kind="link", target=os.readlink(path))
         elif stat.S_ISDIR(metadata.st_mode):
@@ -42,7 +42,7 @@ def capture(repository, roots):
 
     for root in roots:
         if not os.path.lexists(root):
-            missing.append(root.relative_to(repository).as_posix())
+            missing.append(root.relative_to(base).as_posix())
         else:
             visit(root)
     return entries, missing
@@ -50,19 +50,29 @@ def capture(repository, roots):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--base-directory", help="Absolute evidence base directory; defaults to the repository")
     parser.add_argument("--root", action="append", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     repository = pathlib.Path(__file__).resolve().parent.parent
+    base = pathlib.Path(args.base_directory) if args.base_directory is not None else repository
+    if not base.is_absolute() or ".." in base.parts:
+        raise ValueError("Evidence base must be absolute without parent traversal")
+    # 外部baseも全祖先を検査し、link経由で別領域を読み書きしない。
+    for ancestor in (base, *base.parents):
+        if ancestor.is_symlink() or ancestor.is_junction():
+            raise ValueError(f"Linked evidence base or parent: {ancestor}")
+    if base.exists() and not base.is_dir():
+        raise ValueError("Evidence base must be a directory")
     roots = []
     for value in args.root:
         relative = pathlib.PurePath(value)
-        if relative.anchor or ".." in relative.parts:
-            raise ValueError("Evidence roots must be repository-relative paths without parent traversal")
-        root = repository / relative
+        if relative.anchor or ".." in relative.parts or not relative.parts:
+            raise ValueError("Evidence roots must be base-relative paths without parent traversal")
+        root = base / relative
         # 親link経由の別領域は走査しない。root自身のlinkは実体として記録する。
         for ancestor in root.parents:
-            if ancestor == repository:
+            if ancestor == base:
                 break
             if ancestor.is_symlink() or ancestor.is_junction():
                 raise ValueError(f"Linked evidence parent: {ancestor}")
@@ -70,11 +80,11 @@ def main():
             raise ValueError("Evidence roots must not overlap")
         roots.append(root)
     output_relative = pathlib.PurePath(args.output)
-    if output_relative.anchor or ".." in output_relative.parts:
-        raise ValueError("Inventory output must be repository-relative without parent traversal")
-    output = repository / output_relative
+    if output_relative.anchor or ".." in output_relative.parts or not output_relative.parts:
+        raise ValueError("Inventory output must be base-relative without parent traversal")
+    output = base / output_relative
     for ancestor in output.parents:
-        if ancestor == repository:
+        if ancestor == base:
             break
         if ancestor.is_symlink() or ancestor.is_junction():
             raise ValueError(f"Linked inventory parent: {ancestor}")
@@ -82,12 +92,13 @@ def main():
         raise ValueError("Inventory output must be outside captured roots")
     if os.path.lexists(output):
         raise FileExistsError("Fresh inventory output required")
-    entries, missing = capture(repository, roots)
+    entries, missing = capture(base, roots)
     receipt = {
         "schema": 1,
         "observedUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repository, text=True).strip(),
-        "roots": [root.relative_to(repository).as_posix() for root in roots],
+        "evidenceBase": str(base),
+        "roots": [root.relative_to(base).as_posix() for root in roots],
         "missingRoots": missing,
         "entries": entries,
         "scope": "Physical evidence immediately before upload; links recorded without following; absent roots retained for failed runs",

@@ -1,5 +1,26 @@
 # 実行経路の検証
 
+現行の検証出力は、最初に次のPowerShell式で一意な外部作業先を決めてください。`artifacts`という完全一致のフォルダー名、repo内、Codexユーザーディレクトリ内、リンク祖先のある出力先は使用しません。
+
+```powershell
+$runRoot = Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/verify-' + [guid]::NewGuid().ToString('N'))
+```
+
+## バイナリ検索と画像比較の全体初期設定
+
+既存の外部ビルドを使う場合は、`$e2eDll` にE2EのDLL、`$appDll` に同じソースからビルドしたアプリのDLL、`$python` にPython実行ファイルの絶対パスを指定します。リポジトリルートで実行してください。出力先は冒頭の `$runRoot` を使います。
+
+```powershell
+dotnet $e2eDll --app $appDll --python $python --output $runRoot/e2e/binary-search --binary-search-only
+dotnet $e2eDll --app $appDll --python $python --output $runRoot/e2e/image-defaults --image-defaults-only
+```
+
+バイナリ検索は実アプリの検索ボタン・Ctrl+F・F3・Shift+F3とダイアログを操作し、選択／前回語の優先、無語と不一致、ANSI／OEM・UTF16・バイトコード、方向と大文字小文字、取消・古い完了・読取り専用、原本・共有履歴・保存点の保持を確認します。[独立reader](../Fixtures/BinarySearch/verify.py)を別プロセスで呼び、固定文字列と保存bytesを照合します。
+
+画像初期設定は差分表示・ズーム・ブロックサイズ・差分色の不透明度・閾値・行列挿入削除の6項目を確認します。新規比較への継承、旧projectとCLIの固定初期値、保存失敗後の再試行、取消・採用拒否・古い完了後の原画と実bitmap、最小850×550で各設定欄への到達を[独立reader](../Fixtures/ImageDefaults/verify.py)で照合します。run内の設定fileを注入し、利用者の設定を変更しません。
+
+両方とも全体E2Eと全体UIに登録されています。assertions、実プロセスの終了・stdout／stderr、reader receipt、入力・保存bytes・JSON・PNGを保持してください。限定成功を全体E2E・Native AOT・macOS・実OS pointer／保存ダイアログの検証済み扱いにしません。
+
 ## 独立三側Textの入力選択GUI
 
 新しいCドライブrunを使う。次の限定E2Eは実アプリを別processで起動し、対応する独立Python readerを集計前に実行する。全体E2E／全体UIにも登録されるが、限定成功を全体実行や4RID Native AOTの資格へ読み替えない。
@@ -14,9 +35,10 @@
 | Saved Archives2 | `--independent-text-input-saved-archives-only` | `--self-test-independent-text-input-saved-archives` | [Saved Archives](../Fixtures/IndependentTextInputSavedArchives/README.md) |
 
 ```powershell
-dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/new-saved-archives --independent-text-input-saved-archives-only
-dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-text-input-saved-archives artifacts/verification/new-saved-archives
-python -B -X utf8 tests/Fixtures/IndependentTextInputSavedArchives/verify.py --gui-report artifacts/verification/new-saved-archives/ui-report.json --output artifacts/verification/new-saved-archives-reader.json
+$runRoot = Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/verify-' + [guid]::NewGuid().ToString('N'))
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output $runRoot/e2e/new-saved-archives --independent-text-input-saved-archives-only
+dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-text-input-saved-archives $runRoot/verification/new-saved-archives
+python -B -X utf8 tests/Fixtures/IndependentTextInputSavedArchives/verify.py --gui-report $runRoot/verification/new-saved-archives/ui-report.json --output $runRoot/verification/new-saved-archives-reader.json
 ```
 
 他の限定実行は表のflagへ置き換える。Basic readerは `--fixture tests/Fixtures/IndependentTextInputSelection --repo . --gui-report <run>/ui-report.json --output <new-receipt>.json`、Archive／Cipher／Lifetimeは各fixture READMEの追加引数に従う。Criticalは同reportのfixtures配下の `independent-text-input-selection-critical` を `verify.py --run <path> --output <new-receipt>.json` で照合する。Route／Saved Archivesは `verify.py --gui-report <run>/ui-report.json --output <new-receipt>.json` を使う。Basic／Route／Saved Archivesに全体UIのreportを渡す場合は `--full-ui` を追加する。reportのscopeを自動的に限定扱いへ置き換えない。
@@ -37,9 +59,9 @@ E2E harnessは `verify-products.py` を別Python processで呼び、PID・OS生�
 
 三者フォルダーは`--folder-threeway-only`で限定実行します。実アプリの`--directory LEFT RIGHT --middle MIDDLE`、全6方向コピー、三者全体statusを使う差分gate、不在／除外、非コピー先rootへの出力保護、読込予算と相対中央path／readonlyのproject往復を[固定原本と独立reader](../Fixtures/FolderThreeWay/README.md)へ照合します。GUIは別プロセスの`--self-test OUTPUT --folder-threeway-only`で16ケースと通常／最小PNGを保存し、既存二者の`--folder-copy-only`と分けて各120秒の枠を維持します。全体E2E・全体UIは両方を含みます。限定成功を全体／Native AOT／4RIDの完了とは扱いません。
 
-実アプリの子プロセスは、通常CLIを30秒、`--self-test`で始まる描画・操作自己検証を120秒の上限で実行する。自己検証は複数の実画面操作と原本照合を含むため、通常CLIとは予算を分ける。時間超過では子プロセス群を終了し、終了コード`-2`と選択した制限時間をstdout／stderr・`assertions.json`へ残す。上限を延ばしただけで検証成功とは扱わず、実行完了と全条件の合格を確認する。
+実アプリの子プロセスは共通の `CommandTimeoutPolicy` に従い、通常CLIを30秒、登録済みの描画・操作自己検証を120秒の上限で実行する。例外は入力選択Basic／Criticalの `--self-test-independent-text-inputs` だけ240秒、命令名 `folder-copy-large-stream`／`folder-copy-gui` は180秒とする。通常起動とmacOS gate起動で同じ規則を使う。自己検証は複数の実画面操作と原本照合を含むため、通常CLIとは予算を分ける。時間超過では子プロセス群を終了し、終了コード`-2`と選択した制限時間をstdout／stderr・`assertions.json`へ残す。上限を延ばしただけで検証成功とは扱わず、実行完了と全条件の合格を確認する。
 
-TAR.Zは`--tar-z-only`で限定実行し、`--archives-only`と全体E2Eにも含む。全39固定原本（block9–16、nonblock10–16、独立literal nonblock9）の全entry bytes・型・サイズ、通常CLI全操作と標準archive／tar metadata provider、壊れたheader/code/TAR、既存出力保護、包装と相対入力再読込みを照合する。[固定原本・出典](../Fixtures/Archives/TarZ/README.md)を参照する。writer出力は`build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local`で別buildした公式decoderを`--z-reference <decoder>`へ明示し、Python標準tarfileで全内容・時刻・writer metadataを独立検証する。Windowsは`ncompress.exe`、macOSは`ncompress`。`--z-sevenzip <full7z>`はローカル第二decoderの追加照合。reference toolとC/compilerは製品・通常.NET buildの依存ではない。入力・出力・独立復号TAR・proof・exit・stdout/stderr・assertionsを保持する。限定は全体の代替ではない。
+TAR.Zは`--tar-z-only`で限定実行し、`--archives-only`と全体E2Eにも含む。全39固定原本（block9–16、nonblock10–16、独立literal nonblock9）の全entry bytes・型・サイズ、通常CLI全操作と標準archive／tar metadata provider、壊れたheader/code/TAR、既存出力保護、包装と相対入力再読込みを照合する。[固定原本・出典](../Fixtures/Archives/TarZ/README.md)を参照する。writer出力は`build/Build-ZReference.ps1 -OutputDirectory "$runRoot/z-reference"`で別buildした公式decoderを`--z-reference <decoder>`へ明示し、Python標準tarfileで全内容・時刻・writer metadataを独立検証する。Windowsは`ncompress.exe`、macOSは`ncompress`。`--z-sevenzip <full7z>`はローカル第二decoderの追加照合。reference toolとC/compilerは製品・通常.NET buildの依存ではない。入力・出力・独立復号TAR・proof・exit・stdout/stderr・assertionsを保持する。限定は全体の代替ではない。
 
 画像重ね合わせの限定実行は`--image-overlay-only`（核と通常CLI）、`--image-overlay-reports-only`（通常CLI）を使う。`--image-overlay-script`へ期待値を除いた入力を送り、[静的原本](../Fixtures/ImageOverlays/README.md)49ケースと[時間原本](../Fixtures/ImageTemporalOverlays/README.md)77ケース83状態の全BGRA・個別clock読取り・blend alpha・分類／原画保持を照合する。通常CLIは適合する原本を単体HTML30ケース、領域診断25ケース、画像比較6ケースへ接続し、独立PNG復号・Alpha優先順位・無指定payload・不正引数・32MiB超過時のstdout空と入力／既存HTML保持を確認する。通常UTCのANIM出力のdigest検証と、固定原本clockの全画素照合を区別する。限定実行は全体E2Eの代替にしない。
 
@@ -65,7 +87,7 @@ GUIの`HeadlessImageOverlayChecks`は全体`--self-test`へ含む。run内のopt
 
 画像設定の保存・復元は `--image-project-only` と全体E2Eで検証する。実CLIの`--project-copy`・`--report-project`・`--package-project`へ保存設定を渡し、source-generated JSONの全値・既定値・境界・CLI上書き、単体／包装HTMLの原画PNG全BGRA、包装の相対入力・展開再読込みを照合する。不正型・null・範囲外・中央なし指定・存在しないページでは、入力と既存出力のbytes・属性を保持し終了2を確認する。GUI自己検証の`HeadlessImageProjectChecks`は再比較・workspace再読込み、取消・古い完了・表示保持を操作し、PNG・設定JSON・選択HTMLを保持する。
 
-TIFFの限定実行は `--tiff-only`。ビルド完了後、`dotnet tests/DiffBeacon.E2E/bin/Release/net10.0/DiffBeacon.E2E.dll --tiff-only --output E:/DiffBeacon-artifacts/local/tiff-limited` でも実行できる。[自作TIFF入力](../Fixtures/Images/Tiff/README.md)のページ寸法・全BGRA／SHA、byte order、圧縮・色の代表構成、全／選択・三者・短い側の反復、領域・単体／包装HTMLの独立PNG復号を照合する。不正IFD・切詰め・巨大宣言・旧JPEG参照・scan欠損の拒否、既存出力と入力保持を確認する。GUI自己検証は全ページの実bitmap、取消・古い完了、snapshot HTMLをBGRA・PNG・JSONへ記録する。限定実行は全体E2Eの代替にしない。
+TIFFの限定実行は `--tiff-only`。ビルド完了後、`dotnet tests/DiffBeacon.E2E/bin/Release/net10.0/DiffBeacon.E2E.dll --tiff-only --output $runRoot/e2e-tiff` でも実行できる。[自作TIFF入力](../Fixtures/Images/Tiff/README.md)のページ寸法・全BGRA／SHA、byte order、圧縮・色の代表構成、全／選択・三者・短い側の反復、領域・単体／包装HTMLの独立PNG復号を照合する。不正IFD・切詰め・巨大宣言・旧JPEG参照・scan欠損の拒否、既存出力と入力保持を確認する。GUI自己検証は全ページの実bitmap、取消・古い完了、snapshot HTMLをBGRA・PNG・JSONへ記録する。限定実行は全体E2Eの代替にしない。
 
 APNGの限定実行は `--apng-only`。小さな[自作CC0入力](../Fixtures/Images/Apng/README.md)で既定画像の含有／除外、位置・合成・3種のdisposal、透明RGB、全／選択フレーム・三者・短い側の反復を実アプリへ渡す。CLIの画素SHA、単体／包装／再展開HTMLの原画PNGを独立復号して手書き全BGRAへ照合する。不正sequence・CRC・矩形・枚数・欠損・宣言上限の拒否、既存出力・入力の保持も確認する。共有256M作業量の拒否には約36KBの正常APNGを実行時生成し、巨大な復号画素は確保しない。全体実行にも含める。GUI自己検証は自動画像判定・全ページの実bitmap、同期ボタン・取消・古い完了・snapshot HTMLをPNG／JSONに記録する。
 
@@ -137,11 +159,12 @@ GNU算法の限定実行は `--gnu-line-only`。原本の同値クラスと変�
 - 読取り専用の既存出力をマージで変更する、Unix のパッチ保存で実行権限を失う。
 
 ```powershell
-pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory artifacts/z-reference/local
+$runRoot = Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/verify-' + [guid]::NewGuid().ToString('N'))
+pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory "$runRoot/z-reference"
 $zReferenceName = if ($IsWindows) { 'ncompress.exe' } else { 'ncompress' }
-$zReference = (Resolve-Path -LiteralPath (Join-Path 'artifacts/z-reference/local' $zReferenceName)).Path
+$zReference = (Resolve-Path -LiteralPath (Join-Path "$runRoot/z-reference" $zReferenceName)).Path
 dotnet build DiffBeacon.slnx -c Release
-dotnet run --project tests/DiffBeacon.E2E -c Release --no-build -- --output artifacts/e2e/local --z-reference $zReference
+dotnet run --project tests/DiffBeacon.E2E -c Release --no-build -- --output "$runRoot/e2e" --z-reference $zReference
 ```
 
 プロバイダーのレビュー境界 5 ケースだけを再現する場合は `--provider-boundaries-only` を追加する。CLI とファイル形式を通す E2E の経路は全体実行と共通である。
@@ -154,7 +177,7 @@ dotnet run --project tests/DiffBeacon.E2E -c Release --no-build -- --output arti
 
 `--app <実行ファイル>` で Native AOT 発行物を検証する。省略時は Release のアプリ DLL を別プロセスで実行する。`--output` の下に入力、出力、標準出力・標準エラー、コマンド、終了コード、アサーション JSON を保存する。シンボリックリンクが作成できない環境は理由付きでその検証を省略する。UI の操作・画像はアプリの `--self-test` と発行スクリプトで別途検証する。
 
-macOS のアプリ起動では、固定 SHA の `process_startup_gate.py` が nonce と実 PID を通知して待機し、harness が実 OS の開始時刻を取得してから同じ PID の `exec` でアプリを実行する。既存の検証用 Python を使い、製品の依存には追加しない。通知と native の stdout を分離し、UTF-8 stdin と EOF を引き継ぐ。30／120／180 秒の実行制限に加え、異常時の終了待機と出力回収は共通の5秒枠で扱う。実終了コード・終端の観測・部分出力を `LaunchEvidence` に保存し、launcher の初期化失敗や回収不完全をアプリの期待終了コードと同一視しない。秘密の stdin は記録しない。固定 script の `-text` 属性を維持する。Windows の起動経路は従来どおりで、実 Mac での成功は対象 SHA の GitHub runner 結果を確認して判定する。
+macOS のアプリ起動では、固定 SHA の `process_startup_gate.py` が nonce と実 PID を通知して待機し、harness が実 OS の開始時刻を取得してから同じ PID の `exec` でアプリを実行する。既存の検証用 Python を使い、製品の依存には追加しない。通知と native の stdout を分離し、UTF-8 stdin と EOF を引き継ぐ。通常 CLI は30秒、既知の自己検証 selector は120秒、フォルダー大容量コピー／GUI は180秒で制限する。`--self-test-independent-text-inputs` だけは、CI osx-x64 の同一製品 SHA で入力選択145.6秒＋critical17.4秒を正常完走した実測に合わせ、両段階と起動を240秒の有限枠で扱う。この policy は通常起動と macOS gate 起動で共通とし、native 全体自己検証の Windows600秒／macOS1,200秒は変更しない。これらの実行制限に加え、異常時の終了待機と出力回収は共通の5秒枠で扱う。実終了コード・終端の観測・部分出力を `LaunchEvidence` に保存し、launcher の初期化失敗や回収不完全をアプリの期待終了コードと同一視しない。秘密の stdin は記録しない。固定 script の `-text` 属性を維持する。Windows の起動経路は従来どおりで、実 Mac での成功は対象 SHA の GitHub runner 結果を確認して判定する。
 
 パッチ往復は 60 個の固定 seed を記録し、それぞれの入力・生成パッチ・適用結果を保持する。再実行で既存入力を消さないよう実行ごとに固有の fixture ディレクトリを作る。検証で作成した循環リンクだけは、保存した LinkTarget と一致することを確認して終了時に解除し、リンクのパス・ターゲット・解除結果を JSON に残す。
 
@@ -203,12 +226,56 @@ TAR.ZのGUI自己検証はAuto/picker/preview/export/extractに加え、標準ta
 
 標準TAR providerの結果完成後・採用前の中止も、実Builtin tar-metadata結果と実「中止」ボタンで再現します。default-nullの内部GUI採用境界callbackで中止し、完成した全canonical本文とmetadata、最終両Editorの前回本文、取消表示、入力SHAをarchive-z-gui-late-cancel.jsonと編集4ペインPNGへ保存します。早期取消も最終本文保持までassertします。
 
-### 明示 archive wrapper 鎖
+### 裸BZip2／Zの限定読込みとv9
+
+`--bare-compression-only`は[固定原本](../Fixtures/Archives/BareCompression/README.md)を使う実アプリ別processの限定E2Eです。実行前にraw／空／TAR風本文のAuto／File／Tar、cross-kind設定、各層設定とidentity、v9／旧version拒否、入力・既存出力・readonly／link・共有予算・取消・後続破損の失敗条件を確認します。workspaceの複製／包装・v9保持はCLI限定契約で、旧候補build3での実測です。裸BZip2／Zのwriter、内側repack、複合writerを追加した検証ではありません。限定GUIは初回再試行・左右picker・拡張子なしinner Open・保存版・workspace保存／復元・世代／取消・失敗時の確定表示保持と通常／最小window一覧を対象にします。
+
+.NET 10 SDKと既存lockを維持し、同じsourceからビルドした絶対パスの`$e2eDll`／`$appDll`、固定公式decoderの`$zReference`、Pythonの`$python`を指定します。出力は冒頭の一意な外部`$runRoot`へ置き、repo内・ドットfolder・Codexユーザーディレクトリ・名前が`artifacts`のfolderへ作業物を出しません。通常build・decoder buildの出力も外部へ明示指定します。
+
+```powershell
+dotnet $e2eDll --app $appDll --output "$runRoot/e2e/bare-compression" --z-reference $zReference --bare-compression-only
+dotnet $appDll --self-test "$runRoot/ui/bare-compression" --bare-compression-only
+$cliRuns = @(Get-ChildItem -LiteralPath "$runRoot/e2e/bare-compression/fixtures" -Directory | ForEach-Object { Join-Path $_.FullName 'bare-compression' } | Where-Object { Test-Path -LiteralPath (Join-Path $_ 'fixture-input-proof.json') })
+if ($cliRuns.Count -ne 1) { throw 'CLI reader対象のrunを一意に決定できません。' }
+& $python -B -X utf8 tests/Fixtures/Archives/BareCompression/verify.py --root tests/Fixtures/Archives/BareCompression --z-reference $zReference --run $cliRuns[0]
+$uiRuns = @(Get-ChildItem -LiteralPath "$runRoot/ui/bare-compression/fixtures" -Directory | ForEach-Object { Join-Path $_.FullName 'bare-compression' } | Where-Object { Test-Path -LiteralPath (Join-Path $_ 'proof.json') })
+if ($uiRuns.Count -ne 1) { throw 'UI reader対象のrunを一意に決定できません。' }
+& $python -B -X utf8 tests/Fixtures/Archives/BareCompression/verify-ui.py --run $uiRuns[0]
+```
+
+CLI readerの`--run`はE2E出力下の`fixtures/<時刻とrun ID>/bare-compression`で、`fixture-input-proof.json`がある実runを指定します。UI readerは`proof.json`と`expected.json`がある実fixture runを指定し、親の`--output`directoryを渡しません。[UI-CONTRACT.md](../Fixtures/Archives/BareCompression/UI-CONTRACT.md)のbounds／PNG／原本／全byte照合を確認します。CLIの実PID・出生・終了・stdout／stderr・`assertions.json`、独立readerの終了とEOF、GUIのPNG・bounds・proofとreceiptを保持します。限定GUI候補build10は83成功／0失敗、reader67ケース・23原本・15復号ケースです。通常一覧257 DIP／最小850×550一覧101 DIPを確認しました。160命令・395成功のCLI証拠は旧候補build3のものです。source292は実repoへ反映済みですが、通常solution build・全体E2E／全体UI・Native・他RID・通常desktop・実OS clipboardはまだ未検証です。候補限定結果をこれらの資格へ読み替えません。現時点の資格は[移行記録](../../Docs/MIGRATION.md#裸bzip2zの読込みとv9ワークスペースsource292候補2026-10-09)を参照してください。全体E2Eは`--app`／`--output`／`--z-reference`を明示して実行します。
+
+### 裸の gzip と階層別の格納名文字コード
+
+`--bare-gzip-only` は [固定CC0原本](../Fixtures/Archives/BareGZip/README.md) のseed32件＋追加11件と固定TAR原本を使い、既存240命令と本文形式の追加411命令、合計651命令を実アプリで確認します。既存のlist／entry／compare／extract／repack、typed Source、v7格納名設定・Text／Binary保存版・包装・HTMLを維持し、Auto／File／Tar、TAR風本文と空gzip、入れ子の各階層、完全性・共有予算・既存出力保持、v8の選択identity・保存版・複製／包装を追加します。名前は最初memberだけ、本文は全memberを検証します。FHCRC／CRC／ISIZE／EOF、末尾zero padding、危険path／名前復号失敗、CLIの不正値／重複／右指定の用途違い、descriptorの配列長／未知／重複field、旧versionへの設定混入を拒否します。root932＋inner65001、1252／1251、DBCS末尾`0x5C`も対象です。
+
+writer追加前のsource284の追加411命令はseed192、本文・拡張子matrix80、repack／extract4、root予算15、破損9、TAR FNAME3、長名3、UTF-8名2、不正CLI8、比較3、非gzip4、入れ子56、不正descriptor17、workspace15です。成功時だけ実行するentry／export枝も固定名・期待exitのmultisetへ含めます。全651命令・1,302本のstdout／stderr、実PID／出生／終了、全期待exit、最終assertionsとfixture原本・source／payload不変を監査し、成功枝が欠けた部分実行を合格にしません。
+
+読込みCLIは`--gzip-payload-kind auto|file|tar`、比較右側の上書きは`--right-gzip-payload-kind auto|file|tar`です。右指定の省略は左設定を継承し、Source descriptorでは`containerGZipPayloadKinds`にroot＋各containerのAuto／File／Tarを指定します。
+
+同じソースから生成した外部ビルドの `$e2eDll`／`$appDll` を指定して、リポジトリルートで実行します。出力先は冒頭の一意な外部 `$runRoot` を使います。この限定はZ原本を使わないため `--z-reference` は不要です。harnessから限定headless自己検証も別processで呼びます。
+
+```powershell
+dotnet $e2eDll --app $appDll --output "$runRoot/e2e/bare-gzip" --bare-gzip-only
+dotnet $appDll --self-test "$runRoot/ui/bare-gzip" --bare-gzip-only
+```
+
+Native AOTでは同じ限定E2Eの `--app $appDll` を `--app $appExe` へ置き換え、自己検証は `& $appExe --self-test "$runRoot/ui/bare-gzip-native" --bare-gzip-only` とします。各DLL／exeは絶対パスを明示してください。構文検証・fixture原本の独立復号・限定成功を、製品の全体実行・Native AOT・別RIDの成功へ読み替えません。
+
+通常全体と `--archives-only` にも登録しています。全体E2Eは既存の公式Z decoderを明示します。例は `dotnet $e2eDll --app $appDll --output "$runRoot/e2e/all" --z-reference $zReference` です。全体UIは `dotnet $appDll --self-test "$runRoot/ui/all"` とし、既存の時間制限を変更せず最終集計まで確認します。
+
+E2Eの入力・出力・実終了・stdout／stderr・`assertions.json`、`bare-gzip-independent-proof.json`、追加411命令と原本SHAを持つ`gzip-mode-proof.json`を保持します。限定headlessでは`ui-report.json`・`bare-gzip/ui-proof.json`・`bare-gzip-confirmed.png`と本文形式のraw／PNGを保持し、writer追加前の78 unique checksを照合します。writerを含む現行限定headlessは旧78＋writer11＝89 unique checksを固定します。候補460Cでは別processの専用独立readerが固定入力・保存版全byte・ZIP／PNG・操作後のrawを検証して終了0でした。readerの実終了・EOFとproducerとの結合を保管し、producerのboolだけを独立照合の代用にしません。GUIは名前復号再試行、本文形式picker、確定／取消／再比較・stale／失敗後の表示保持、親と保存版の選択identity、root保護を確認します。候補managedの限定結果と取り込み後repoの通常build／全体E2E／Native AOT／他RIDは別資格です。実OS pointer・ネイティブdialog・視覚goldenとの比較は未検証です。実測のDLLとreceiptは[移行記録](../../Docs/MIGRATION.md#gzip本文の形式選択とv8ワークスペース)を参照してください。
+
+限定writerは`--archive-create SOURCE_FILE_OR_DIRECTORY OUTPUT`と`--archive-repack INPUT OUTPUT`の裸`.gz`／`.gzip`を対象にします。`--output-gzip-name-code-page`は出力専用で、読込みの`--gzip-name-code-page`から継承しません。単一論理file（空を含む）、safe basename FNAME・Latin-1既定と明示UTF-8／932／1252、CRC／ISIZE・単一DEFLATE EOF・MTIME範囲・TAR優先、directory／複数entry拒否、既存出力・原本・readonly／link・取消保護を確認します。別readerは出力gzipの全bytes・FNAME・単一DEFLATE EOF・CRC／ISIZE・空memberを独立照合し、MTIMEや操作状態まで独立検証したものとは扱いません。候補App8A024／E2E4C67の限定実測は698命令・1,829成功／0失敗／0skip、13gzip独立照合です。候補UI89では4create＋1rootRepackの5gzip全bytesと3actualmodal PNGを独立readerで照合しました。`bare-gzip/writing/ui-proof.json`、parent before／after PNG、modal PNG、writer raw／終端／EOFとreader receiptを保持します。modal bounds／owner寿命／親状態snapshotはproofに無く、producer boolだけで独立資格を与えません。source288の通常repo build／全体runtime、Native／他RID／通常OS pickerは未資格で、source284全体成功は前版履歴です。[移行記録](../../Docs/MIGRATION.md)を参照してください。
+
+
+### 明示 archive wrapper 鎖の限定実行
 
 `--archive-wrappers-only` は ZIP派生/7z/RAR＋gz/bz2/Zの固定鎖、全entry export、compare/repack/extract、暗号化stdin、破損後member/終端/深度と出力保護を実App別プロセスで検証します。通常全体と `--archives-only` にも接続します。既存 Build-ZReference のdecoderを明示します。
 
 ```powershell
-dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --archive-wrappers-only --z-reference <absolute-existing-ncompress> --output artifacts/e2e/wrappers
+$runRoot = Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/verify-' + [guid]::NewGuid().ToString('N'))
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --archive-wrappers-only --z-reference <absolute-existing-ncompress> --output $runRoot/e2e/wrappers
 ```
 
 `archive_wrapper_verifier.py` はPython標準のstrict各member復号と明示公式Zを使い、全層・終端bytes/SHA、ZIP全entry bytes/timeを独立照合して `wrapper-oracle/proof.json` を保存します。小予算・取消・GUI候補採用/Refresh/実Stop/Retry/Cancel/×は App のheadless自己検証にJSON/PNGを残します。限定実行は全体E2Eの代替ではありません。新wrapper出力形式や内側entry navigationは検証済みとして扱いません。
@@ -222,7 +289,8 @@ E2E harnessは未知option、値欠損、同じoptionの重複、複数selector�
 `--archive-sources-only` は実アプリのSource専用CLIへdescriptorを渡します。通常全体と `--archives-only` にも含みます。[固定入力](../Fixtures/Archives/Sources/README.md)を変更せず、ZIP内ZIP、raw TAR、未知名gzip／bzip2 TAR、内側wrapper、深度8／9、二層の異なるpasswordとplaintext空行を検証します。最終全entryのsize／SHA、empty file、directory／missing拒否、後続sibling／内側CRC破損、root同サイズ・同mtime差替え、共有復号量の正確なbyte境界、件数・名前・深度・作業量、descriptor／root／readonly／link出力保護を確認します。
 
 ```powershell
-dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --archive-sources-only --output artifacts/e2e/sources
+$runRoot = Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/verify-' + [guid]::NewGuid().ToString('N'))
+dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --archive-sources-only --output $runRoot/e2e/sources
 ```
 
 280MiBのTARは各140MiBの二entryを含む固定圧縮入力でlistし、巨大raw fileを保存しません。Python標準libraryは全入力SHA・サイズ、全container CRC／内容、raw TAR SHA、取得した全entry bytesを独立照合し、run内の `archive-sources/independent-proof.json` と標準出力・エラー・終了コードを保持します。Windowsのlink作成特権がない場合はその操作をskipとして区別し、管理者／GitHub runnerで別途実行します。今後の検証用linkとtargetは小さい `<出力先>-source-links-<GUID>` siblingに分け、run内とsiblingの `retained-links.json` に絶対pathを保持します。過去runのlinkは移しません。Source CLIの実CancellationToken取消、GUI子タブ・workspace・包装・HTMLは、この限定実行の検証済み範囲へ含めません。限定実行は全体E2Eの代替にしません。

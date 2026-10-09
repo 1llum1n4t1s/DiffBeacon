@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Avalonia.Threading;
+using Avalonia.Controls;
 using DiffBeacon.Core;
 using DiffBeacon.Providers;
 
@@ -7,6 +8,18 @@ namespace DiffBeacon.App;
 
 public sealed partial class ComparisonPane
 {
+    private long _binarySearchInputEpoch;
+    private bool _binarySearchInputTrackingBound;
+    private void BindBinarySearchInputTracking()
+    {
+        if (_binarySearchInputTrackingBound) return;
+        _binarySearchInputTrackingBound = true;
+        // paneのcontrolsへ一度だけ購読し、過去のpanelを捕捉しない。
+        foreach (var path in new[] { LeftPath, BasePath, RightPath })
+            path.PropertyChanged += (_, change) => { if (change.Property == TextBox.TextProperty) _binarySearchInputEpoch++; };
+        _mode.PropertyChanged += (_, change) => { if (change.Property == ComboBox.SelectedIndexProperty) _binarySearchInputEpoch++; };
+        _provider.PropertyChanged += (_, change) => { if (change.Property == ComboBox.SelectedItemProperty) _binarySearchInputEpoch++; };
+    }
     private CancellationTokenSource? _binarySaveOperation;
     private long _binarySaveGeneration;
     private string? _binaryLoadedIdentity;
@@ -20,12 +33,36 @@ public sealed partial class ComparisonPane
             : side switch { 0 => _projectMetadata.LeftReadOnly, 1 => _projectMetadata.BaseReadOnly, 2 => _projectMetadata.RightReadOnly, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
     private void BindBinaryPanel(SpecializedViews.BinaryPanel panel)
     {
+        BindBinarySearchInputTracking();
         _binaryLoadedIdentity = ArchiveComparisonIdentity(CaptureProject());
         var project = CaptureProject();
         foreach (var side in panel.ProjectSides) panel.SetCaption(side, (side switch { 0 => project.LeftDescription, 1 => project.BaseDescription, _ => project.RightDescription }) ?? ProjectInputs.Caption(project, side));
         panel.RequiredReadOnly = BinaryReadOnly;
         panel.EditingCurrent = () => !_disposed && !panel.IsDisposed && ReferenceEquals(_specialTab.Content, panel)
             && ArchiveComparisonIdentity(CaptureProject()) == _binaryLoadedIdentity;
+        // bind時のoperationに固定せず、検索を始めた時点のowner文脈を返す。
+        panel.CaptureSearchContext = () =>
+        {
+            var stamp = panel.StateStamp; var generation = _binarySaveGeneration; var operation = _operation;
+            var inputEpoch = _binarySearchInputEpoch;
+            var identity = ArchiveComparisonIdentity(CaptureProject());
+            var inputs = (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem);
+            var readOnly = panel.ProjectSides.Select(panel.ReadOnly).ToArray();
+            var revisions = panel.ProjectSides.Select(value => panel.Session.Revision(panel.LocalSide(value))).ToArray();
+            var token = operation?.Token ?? CancellationToken.None;
+            return () =>
+            {
+                token.ThrowIfCancellationRequested();
+                if (_disposed || panel.IsDisposed || !ReferenceEquals(_specialTab.Content, panel)
+                    || generation != _binarySaveGeneration || !ReferenceEquals(operation, _operation) || operation?.IsCancellationRequested == true
+                    || stamp != panel.StateStamp || identity != ArchiveComparisonIdentity(CaptureProject()) || identity != _binaryLoadedIdentity
+                    || inputEpoch != _binarySearchInputEpoch
+                    || inputs != (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem)
+                    || !panel.ProjectSides.Select(panel.ReadOnly).SequenceEqual(readOnly)
+                    || !panel.ProjectSides.Select(value => panel.Session.Revision(panel.LocalSide(value))).SequenceEqual(revisions))
+                    throw new OperationCanceledException("検索中に比較、本文、選択または読取り専用の状態が変更されました。元のバイトと選択を保持しています。");
+            };
+        };
         panel.ClipboardContent = async (side, command) =>
         {
             var stamp = panel.StateStamp; var generation = _binarySaveGeneration; var operation = _operation;
@@ -157,7 +194,7 @@ public sealed partial class ComparisonPane
                     Current();
                     if ((File.GetAttributes(archive.RootPath) & FileAttributes.ReadOnly) != 0) throw new UnauthorizedAccessException("読取り専用の原本から作業保存はできません。");
                     BinarySaveReadyForAdoption?.Invoke(); Current();
-                    _workingTexts.Save(archive, revision, new() { EntryChain = archive.EntryChain.ToArray(), LeafEntry = archive.LeafEntry!, Kind = "Binary", Bytes = bytes, Sha256 = capture.Sha256 });
+                    _workingTexts.Save(archive, revision, new() { EntryChain = archive.EntryChain.ToArray(), ContainerNameCodePages = archive.ContainerNameCodePages?.ToArray(), ContainerGZipPayloadKinds = archive.ContainerGZipPayloadKinds?.ToArray(), ContainerCompressionPayloadKinds = archive.ContainerCompressionPayloadKinds?.ToArray(), LeafEntry = archive.LeafEntry!, Kind = "Binary", Bytes = bytes, Sha256 = capture.Sha256 });
                     panel.MarkSaved(side, capture); _workingTextRevisions[side] = _workingTexts.Revision(archive);
                     foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this]) pane.WorkingTextSaved();
                     panel.SetStatus("バイナリの作業版を保存しました。原本アーカイブは保持しています。");

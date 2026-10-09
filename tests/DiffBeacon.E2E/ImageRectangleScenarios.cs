@@ -9,8 +9,7 @@ internal static class ImageRectangleScenarios
     public static async Task RunAsync(string output, string fixtures,
         Func<string, int, bool, string[], Task<CommandResult>> run, Action<string, bool, string> check)
     {
-        var repository = new DirectoryInfo(AppContext.BaseDirectory);
-        while (repository is not null && !File.Exists(Path.Combine(repository.FullName, "DiffBeacon.slnx"))) repository = repository.Parent;
+        var repository = FixtureRepository.FindRoot();
         if (repository is null) throw new DirectoryNotFoundException("ImageRectangles fixtures");
         var source = Path.Combine(repository.FullName, "tests", "Fixtures", "ImageRectangles");
         var packed = await File.ReadAllBytesAsync(Path.Combine(source, "winimerge-rectangles-golden.json.gz"));

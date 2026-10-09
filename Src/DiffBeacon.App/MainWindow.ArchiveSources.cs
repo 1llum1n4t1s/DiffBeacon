@@ -21,6 +21,9 @@ public sealed partial class MainWindow
         ArchiveProjectInput Input(ArchiveSource source, IReadOnlyList<string>? missing, bool present, int side) => new()
         {
             RootPath = source.RootPath,
+            ContainerNameCodePages = ArchiveNameSettings.Capture(missing is null && present && container ? source.ContainerNameCodePages.Append(28591).ToArray() : source.ContainerNameCodePages),
+            ContainerGZipPayloadKinds = ArchivePayloadSettings.Capture(missing is null && present && container ? source.ContainerGZipPayloadKinds.Append(GZipPayloadKind.Auto).ToArray() : source.ContainerGZipPayloadKinds),
+            ContainerCompressionPayloadKinds = ArchivePayloadSettings.Capture(missing is null && present && container ? source.ContainerCompressionPayloadKinds.Append(CompressionPayloadKind.Auto).ToArray() : source.ContainerCompressionPayloadKinds),
             EntryChain = missing is null && present && container ? source.EntryChain.Append(request.Row.Path).ToArray() : source.EntryChain.ToArray(),
             LeafEntry = missing is null && present && !container ? request.Row.Path : null, RootSha256 = source.RootSha256,
             MissingEntryChain = missing is not null ? missing.Append(request.Row.Path).ToArray() : present ? null : [request.Row.Path],
@@ -97,6 +100,7 @@ public sealed partial class ComparisonPane
             Part(input?.InheritedReadOnly?.ToString());
             result.Append(input?.EntryChain.Length ?? -1).Append(':');
             if (input is not null) foreach (var hop in input.EntryChain) Part(hop);
+            if (input is not null) foreach (var choice in ArchivePayloadSettings.NormalizedChoices(input.ContainerNameCodePages, input.ContainerGZipPayloadKinds, input.EntryChain.Length + 1, compressionPayloadKinds: input.ContainerCompressionPayloadKinds)) Part(choice);
             result.Append(input?.MissingEntryChain?.Length ?? -1).Append(':');
             if (input?.MissingEntryChain is { } missing) foreach (var hop in missing) Part(hop);
         }
@@ -138,6 +142,7 @@ public sealed partial class ComparisonPane
         var requestedIdentity = ArchiveComparisonIdentity(project);
         var workingGeneration = _workingTexts.Generation;
         var initialText = (LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, ResultEditor.Text);
+        var initialMerge = (_resultHost, _resultHost?.Session.Current.Version);
         var initialBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
         var initialBinaryVersion = initialBinary?.StateStamp;
         InvalidateTextSave();
@@ -157,7 +162,7 @@ public sealed partial class ComparisonPane
             {
                 var count = (ProjectInputs.Archive(project, side)?.EntryChain.Length ?? 0) + 1;
                 var provided = side == 0 ? leftPasswords : side == 2 ? rightPasswords : middlePasswords;
-                var cached = _archivePasswords?[side];
+                var cached = _lastArchiveComparison == requestedIdentity ? _archivePasswords?[side] : null;
                 var copied = (provided ?? (IReadOnlyList<string?>?)cached)?.ToArray()
                     ?? (ProjectInputs.Archive(project, side) is { } input ? (_owner as MainWindow)?.ArchiveLifetime.Find(input) : null) ?? new string?[count];
                 if (copied.Length != count || copied.Any(value => value?.Length > 4096))
@@ -223,7 +228,7 @@ public sealed partial class ComparisonPane
                 catch (Exception exception) when (exception is not OutOfMemoryException)
                 {
                     token.ThrowIfCancellationRequested(); if (_disposed || !ReferenceEquals(_operation, operation)) return false;
-                    var dialog = new ArchiveSourceRetryDialog(project, passwords);
+                    var dialog = new ArchiveSourceRetryDialog(project, passwords, exception is ArchiveNameDecodingException);
                     string?[][]? retry = null;
                     try
                     {
@@ -233,6 +238,7 @@ public sealed partial class ComparisonPane
                         retry = await retryTask;
                         token.ThrowIfCancellationRequested(); if (_disposed || !ReferenceEquals(_operation, operation)) return false;
                         if (retry is null) throw new OperationCanceledException("内包比較を中止しました。", token);
+                        dialog.ApplyNameChoices(project);
                         foreach (var side in passwords) Array.Clear(side); passwords = retry; retry = null;
                     }
                     finally { if (retry is not null) foreach (var side in retry) Array.Clear(side); dialog.ClearPasswords(); dialog.Close(); }
@@ -241,6 +247,7 @@ public sealed partial class ComparisonPane
             ArchiveSourceReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(_operation, operation) || ArchiveComparisonIdentity(CaptureProject()) != requestedIdentity
                 || workingGeneration != _workingTexts.Generation || initialText != (LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, ResultEditor.Text)
+                || initialMerge != (_resultHost, _resultHost?.Session.Current.Version) || MergeHasPendingComposition
                 || initialBinary?.StateStamp != initialBinaryVersion || candidateTextRole != _textRole.SelectedIndex
                 || inheritedIndependentStamp is not null && !Equals(inheritedIndependentStamp, TextAdoptionStamp()))
             {
@@ -249,6 +256,9 @@ public sealed partial class ComparisonPane
                 return false;
             }
             AdoptLegacyTextRole();
+            _projectMetadata.LeftArchiveInput = project.LeftArchiveInput?.Copy();
+            _projectMetadata.BaseArchiveInput = project.BaseArchiveInput?.Copy();
+            _projectMetadata.RightArchiveInput = project.RightArchiveInput?.Copy();
             ResetMergeSession();
             if (candidate is not null)
             {
@@ -270,7 +280,7 @@ public sealed partial class ComparisonPane
             ConfigureArchiveInputControls();
             LeftEditor.IsReadOnly = project.LeftReadOnly || project.LeftArchiveInput is not null || !_textSaveAllowed;
             RightEditor.IsReadOnly = project.RightReadOnly || project.RightArchiveInput is not null || !_textSaveAllowed;
-            _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? "";
+            _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? "";
             ClearArchivePasswords(); _archivePasswords = passwords.Select(side => side.ToArray()).ToArray();
             if (_owner is MainWindow window)
                 foreach (var side in Enumerable.Range(0, 3))
@@ -288,7 +298,7 @@ public sealed partial class ComparisonPane
             {
                 foreach (var snapshot in input.WorkingDocuments ?? [])
                 {
-                    var route = input.Copy() with { EntryChain = snapshot.EntryChain.ToArray(), LeafEntry = snapshot.LeafEntry, WorkingDocuments = null };
+                    var route = input.Copy() with { EntryChain = snapshot.EntryChain.ToArray(), ContainerNameCodePages = snapshot.ContainerNameCodePages?.ToArray(), ContainerGZipPayloadKinds = snapshot.ContainerGZipPayloadKinds?.ToArray(), ContainerCompressionPayloadKinds = snapshot.ContainerCompressionPayloadKinds?.ToArray(), LeafEntry = snapshot.LeafEntry, WorkingDocuments = null };
                     var values = (_owner as MainWindow)?.ArchiveLifetime.Find(route) ?? new string?[route.EntryChain.Length + 1];
                     // 親と同一routeのprefixだけ継承し、別枝の同じ深さへpasswordを流用しない。
                     if (route.EntryChain.Take(input.EntryChain.Length).SequenceEqual(input.EntryChain))
@@ -315,7 +325,7 @@ public sealed partial class ComparisonPane
                                 else if (side == 1) request.BaseArchiveInput = route;
                                 else request.RightArchiveInput = route;
                                 string?[][] fields = [new string?[1], new string?[1], new string?[1]]; fields[side] = values.ToArray();
-                                var dialog = new ArchiveSourceRetryDialog(request, fields); string?[][]? retry = null;
+                                var dialog = new ArchiveSourceRetryDialog(request, fields, allowPayloadRetry: false); string?[][]? retry = null;
                                 try
                                 {
                                     var task = dialog.ShowDialog<string?[][]?>(_owner);

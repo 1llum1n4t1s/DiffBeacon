@@ -41,7 +41,7 @@ tarは10万エントリ、各内容256 MiB、ヘッダーとパディングを�
 | キャンセル、読み取り専用出力、出力先リンク、入出力同一 | 原本と既存出力を保持し、今回作った途中出力だけを削除する。 |
 | 作成・再梱包・全件展開 | 一時出力を閉じてから置換。全件展開は未存在のディレクトリへ全検証後に公開。RAR作成・暗号化出力は未対応として明示する。 |
 
-`ManagedArchive` は SharpCompress 0.50.4（MIT）と.NET標準APIを使う純managedサービスです。`ReadManifest(path, password, cancellationToken)`は`Format`（`7z`・`rar`・`zip`・`tar`・`tar.gz`・`tar.bz2`・`tar.Z`および明示wrapper鎖の`zip.gz.Z`等）と、正規化した相対パス、ディレクトリ種別、実測サイズ、内容SHA-256、暗号化フラグ、更新日時を返します。エントリはパスのordinal順、ディレクトリはサイズ0・ハッシュ空文字です。全内容を順次復号するためsolidでも読み落としません。TARの安全な先頭`./`は除去し、ルートディレクトリ自身は比較一覧に含めません。
+`ManagedArchive` は SharpCompress 0.50.4（MIT）と.NET標準APIを使う純managedサービスです。`ReadManifest(path, password, cancellationToken)`は`Format`（`7z`・`rar`・`zip`・`gzip`・`bzip2`・`Z`・`tar`・`tar.gz`・`tar.bz2`・`tar.Z`および明示wrapper鎖の`zip.gz.Z`等）と、正規化した相対パス、ディレクトリ種別、実測サイズ、内容SHA-256、暗号化フラグ、更新日時を返します。エントリはパスのordinal順、ディレクトリはサイズ0・ハッシュ空文字です。全内容を順次復号するためsolidでも読み落としません。TARの安全な先頭`./`は除去し、ルートディレクトリ自身は比較一覧に含めません。
 
 `ReadEntry`は全検証後に選択したバイト列を返します。`WriteArchive(destinationPath, entries, cancellationToken)`と`Repack(sourcePath, destinationPath, password, cancellationToken)`は出力拡張子から7z・zip/jar/ear/war/xpi・tar・tar.gz/tgz・tar.bz2/tbz2/tbz・tar.Z/tazを選びます。`ManagedArchiveWriteEntry(Path, Content, LastModifiedTime)`の`Content`は`ReadOnlyMemory<byte>?`、nullはディレクトリです。既存の`WriteSevenZip`/`RepackToSevenZip`は同じ処理の7z指定APIです。7zは非solid LZMA2、全出力は非暗号化です。更新日時を伝達しますがZIPは1980〜2107年・2秒精度へ制約し、元形式の精度・タイムゾーンの完全保存は保証しません。属性・ACL・圧縮方式・solid設定・元暗号化は保存しません。
 
@@ -55,9 +55,33 @@ ZIPはライブラリの`CheckCrc`付き抽出でCRC値0とWinZip AESの認証�
 
 GUIはマスク付きパスワード、再比較、先頭4096バイトのプレビュー、エントリ書出し、全件展開、形式を選ぶ非暗号化再梱包を提供します。`ReadEntryPreview`は保持する先頭だけを制限し全内容を検証、`ReadEntryForExport`は既定256 MiBまでです。フォルダーからの作成は出力ファイルを入力一覧から除外し、同じ出力先での再作成にも対応します。GUI保存は左右の原本を上書きしません。
 
-CLIは`--archive-list ARCHIVE`、`--archive-compare LEFT RIGHT`、`--archive-entry ARCHIVE ENTRY OUTPUT`、`--archive-repack INPUT OUTPUT`、`--archive-create SOURCE_DIRECTORY OUTPUT`、`--archive-extract INPUT NEW_DIRECTORY`です。暗号化読込みには末尾の`--password-stdin`を使い、リダイレクトされたUTF-8標準入力へ1アーカイブにつき1行を送ります（比較は左・右の2行）。各行は4096文字までで、引数・環境変数・設定・ログにパスワードを渡しません。比較の終了コードは一致0・差分1・エラー2です。作成はパスワード指定を受け付けず、再梱包も出力は暗号化しません。TAR.Zはowned managed UNIX compress codecで読み書きします。Z magicと3byte header、9〜16bit・block/nonblock読込み、幅/CLEAR/辞書を検査し、内側TARの同じ上限・checksum・終端検査へ通します。出力は16bit block形式で、正常TAR終端後だけ残codeを明示完了しatomic保存します。Flushはcode列を終端化しません。裸の単一GZip/BZip2/Z非TARファイルは未対応です。ZにはCRC・宣言長・明示EOFがなく、全semantic改変や末尾padding欠損の完全検出を保証しません。padding zeroを必須制約にしません。[固定原本と独立復号E2E](../../tests/Fixtures/Archives/TarZ/README.md)では公式ncompress別buildとPython標準tarfile、ローカルfull7Zipを使用しますが、製品や通常.NET buildへ外部tool・C/compiler・DLL探索を追加しません。
+CLIは`--archive-list ARCHIVE`、`--archive-compare LEFT RIGHT`、`--archive-entry ARCHIVE ENTRY OUTPUT`、`--archive-repack INPUT OUTPUT`、`--archive-create SOURCE_FILE_OR_DIRECTORY OUTPUT`、`--archive-extract INPUT NEW_DIRECTORY`です。暗号化読込みには末尾の`--password-stdin`を使い、リダイレクトされたUTF-8標準入力へ1アーカイブにつき1行を送ります（比較は左・右の2行）。各行は4096文字までで、引数・環境変数・設定・ログにパスワードを渡しません。比較の終了コードは一致0・差分1・エラー2です。作成はパスワード指定を受け付けず、再梱包も出力は暗号化しません。TAR.Zはowned managed UNIX compress codecで読み書きします。Z magicと3byte header、9〜16bit・block/nonblock読込み、幅/CLEAR/辞書を検査し、内側TARの同じ上限・checksum・終端検査へ通します。出力は16bit block形式で、正常TAR終端後だけ残codeを明示完了しatomic保存します。Flushはcode列を終端化しません。裸gzipは単一ファイルとして読込み・entry書出し・既存形式への再梱包・全件展開に対応します。裸`.gz`／`.gzip`の単一ファイル作成・再梱包にも対応し、TAR系の出力判定を優先します。裸BZip2／Zは空を含む非TAR本文を単一entryとして読み、entry書出し・全件展開・対応する通常形式への再梱包に使えます。裸BZip2／Zの単一ファイル作成・再梱包にも対応し、TAR系の出力判定を優先します。これらの裸圧縮形式は通常ファイル1件に限り、ディレクトリや複数entryを拒否します。ZにはCRC・宣言長・明示EOFがなく、全semantic改変や末尾padding欠損の完全検出を保証しません。padding zeroを必須制約にしません。[固定原本と独立復号E2E](../../tests/Fixtures/Archives/TarZ/README.md)では公式ncompress別buildとPython標準tarfile、ローカルfull7Zipを使用しますが、製品や通常.NET buildへ外部tool・C/compiler・DLL探索を追加しません。
+
+裸gzip出力は`ManagedArchiveWriteOptions.GZipNameCodePage`（既定Latin-1／28591）を使い、読込みの文字コードを継承しません。CLIの`--output-gzip-name-code-page`はcreate／repack専用で、裸`.gz`／`.gzip`出力にだけ指定できます。UTF-8／65001・932・1252など対応するASCII互換code pageを明示でき、置換符号化と復号roundtrip不一致を拒否します。ディレクトリエントリを含まない論理ファイル1件だけを単一memberへ書き、0 byteファイルは有効、0件・複数件・ディレクトリエントリは拒否します。全相対pathの安全性を検査してbasenameだけをFNAMEに保存します（4096文字／16 KiBまで、NUL拒否）。CRC／ISIZEを実byteから計算し、空DEFLATEは`03 00`、MTIMEはUTC秒切捨て・未指定／epoch以前0・上限超過uint.MaxValueです。既存の共有上限・取消・atomic公開・readonly／link／入力／既存出力保護を維持します。`.tar.gz`／`.tgz`はTAR出力を優先し、多層writer・内側アーカイブの再梱包・内包entryへの書戻しは追加しません。GUI作成はGZip（単一ファイル）でファイル選択＋出力格納名code page modal、TAR系はフォルダー選択です。
+
+gzip入力の本文は、GUIの「自動判定」「単一ファイル」「TARアーカイブ」から選べます。TARに見える本文を一つのファイルとして取り出したい場合は「単一ファイル」を指定してください。
+
+| 本文の形式 | 読込み方 |
+| --- | --- |
+| Auto（自動判定・既定） | 明示した拡張子の圧縮鎖を優先し、それ以外のgzipは復号済み先頭のTARヘッダーからTAR／単一ファイルを判定します。 |
+| File（単一ファイル） | 外側gzipの全memberの本文を連結して一つのentryにします。本文のTARらしい内容や`.tar.gz`等の名前から再帰しません。 |
+| Tar（TARアーカイブ） | 外側gzipの本文をTARとして完全検証します。不正なTARを単一ファイルへ切り替えません。 |
+
+gzip以外の入力にFile／Tarを指定するとエラーになります。名前は単一ファイルの場合だけ最初のmemberのFNAMEを使い、省略時は入力名から決めます。後続memberの本文・CRC・ISIZEも検証します。CLIでは`--gzip-payload-kind auto|file|tar`を読込み操作に付け、比較の右側だけを変える場合は`--right-gzip-payload-kind auto|file|tar`を使います。右側を省略すると左側の指定を引き継ぎます。格納名の文字コードは`--gzip-name-code-page`／`--right-gzip-name-code-page`で独立して指定します。CLI値は小文字です。
+
+明示Sourceのdescriptorでは、`containerGZipPayloadKinds`にrootと各内包containerの分を順番に指定します（値は`Auto`／`File`／`Tar`）。省略／nullは全段Autoです。gzipだけのFile／Tarを採用した選択と作業保存版はプロジェクトの形式v8で保存します。BZip2／Zの非Auto選択も含む場合はv9になります。省略された旧入力はAutoとして読み、明示v8入力は全段Autoでも複製・包装時にv8を保持します。操作の詳細と検証範囲は[移行記録](../../Docs/MIGRATION.md#gzip本文の形式選択とv8ワークスペース)を参照してください。
 
 RAR作成、暗号化出力、分割、CAB/LZH/ISO/MSI等の全旧形式、属性・リンクの保存は未対応です。4 RIDの実測状況は[移行対応表](../../Docs/MIGRATION.md)を参照してください。SharpCompress のライセンスは `SharpCompress.LICENSE.txt` としてビルド・発行先へコピーします。上流の [形式表](https://github.com/adamhathcock/sharpcompress/blob/0.50.4/docs/FORMATS.md)、[使用方法](https://github.com/adamhathcock/sharpcompress/blob/0.50.4/USAGE.md)、[パッケージ](https://www.nuget.org/packages/SharpCompress/0.50.4) を参照してください。
+
+## 裸BZip2／Zの本文形式と選択の保持
+
+`ManagedArchiveReadOptions.CompressionPayloadKind`はBZip2／Z専用のAuto／File／Tarです。gzip専用の`GZipPayloadKind`と分離し、両者の非Auto併用と対象圧縮形式の不一致を拒否します。Autoは既存TAR拡張子・明示wrapper鎖を優先し、裸入力では復号済み先頭のTARヘッダーから判定します。Fileは本文全体（空も可）を単一entryにし、Tarは全TARを検証して失敗時にFileへ退避しません。名前は物理／論理入力名のbasenameの最後の拡張子を一つ除き、拡張子なしは`noname`です。危険名は通常entryと同じ契約で拒否します。BZip2は全member／CRC／終端を検査し、Zはchecksum・宣言長・明示EOFのない既存構造検査の限界を維持します。共有深度・復号量・作業量・取消・出力保護を緩和しません。
+
+CLIは`--compression-payload-kind auto|file|tar`と比較専用の`--right-compression-payload-kind`を使い、右省略時だけ左設定を継承します。createには読込み設定を受け付けません。Source descriptorの`containerCompressionPayloadKinds`はroot＋各containerの設定を一つずつ保持し、外側の指定を内側へ暗黙継承しません。GUIの明示的な内側Openはmagicから拡張子のないBZip2／Zを受け付けますが、通常の`SupportsInput`による自動候補採用で拡張子なしを認識するようにはしません。内包entryの自動再帰は追加しません。
+
+workspaceの新fieldはv9専用です。非Autoを保存するとv9を選び、明示v9は全Autoでもproject-copy／包装でv9を保持します。v1〜v8に新fieldを混入するとnull／全Autoでも拒否します。gzipだけの非Auto保存と明示v8の保持はv8の既存契約を維持します。全層の圧縮本文設定を選択identityと作業保存版のprefixへ含めます。typed入力の原本rootは固定読取り専用で、論理Text／Binary作業版の編集許可は`InheritedReadOnly=false`を明示した側だけです。包装では原本basenameを維持し、再読込み時の単一entry名が変わらないようにします。裸BZip2／Zのwriterは通常ファイル1件（空ファイルを含む）に対応し、ディレクトリ・複数entryは拒否します。複合writerと内側アーカイブの再梱包は未対応です。
+
+[固定原本](../../tests/Fixtures/Archives/BareCompression/README.md)と[UI契約](../../tests/Fixtures/Archives/BareCompression/UI-CONTRACT.md)を参照してください。裸BZip2／Zのwriterと検証実績は[移行記録](../../Docs/MIGRATION.md)に記録しています。読込みとv9 workspaceのsource292時点の候補実測は同記録の旧節を参照してください。
 
 ## 外部実行ファイル
 
@@ -83,7 +107,7 @@ RAR作成、暗号化出力、分割、CAB/LZH/ISO/MSI等の全旧形式、属�
 
 ### 明示 container wrapper 入力
 
-`SupportsInput` は既存入力に加え、ZIP/JAR/EAR/WAR/XPI・7z・RARの終端名を `.gz`/`.bz2`/`.Z` で1段以上包む明示名を認識します。全公開read/preview/export/repack/extractと標準archive providerで同じRead経路を使い、GUI Autoへ接続します。各wrapperのmagicと全member/footer/EOFを検証してから次段へ進み、GZip FNAMEは物理pathやhandler選択に使いません。contained archive entryはleafです。既存単段TARのraw/header予算とconsumer policyは維持します。裸compressed非archive、TAR複数wrapper統一、GUI内側entry navigation、wrapper出力作成は次工程です。
+`SupportsInput` は既存入力に加え、ZIP/JAR/EAR/WAR/XPI・7z・RARの終端名を `.gz`/`.bz2`/`.Z` で1段以上包む明示名を認識します。全公開read/preview/export/repack/extractと標準archive providerで同じRead経路を使い、GUI Autoへ接続します。各wrapperのmagicと全member/footer/EOFを検証してから次段へ進み、GZip FNAMEは物理pathやhandler選択に使いません。contained archive entryはleafです。既存単段TARのraw/header予算とconsumer policyは維持します。裸gzip／BZip2／Zの非archive本文、TAR多層wrapper、GUIの明示的な内側entry navigationに対応します。複合wrapper出力作成と内側アーカイブの再梱包は未対応です。
 
 `ManagedArchiveLimits` 末尾の `MaximumWrapperDepth`（既定8）と `MaximumWorkBytes`（8 GiB）は新明示鎖に適用します。各中間内容は `MaximumEntryBytes` 以下、全wrapper復号output＋終端entry outputは同一 `MaximumDecodedBytes` を共有します。wrapper/member/entry/implicit parent件数とpathkey＋元表記/名前metadataも共有し、上限の次1byteを拒否します。作業量は実read（seek後の再read含む）＋復号output＋明示処理したmetadataで、codec内部の厳密CPU命令数ではありません。現在入力と次MemoryStreamだけを保持し中間ToArrayやtemp保存を行いません。終端capture APIの最後のcopyは残るため、peakは終端buffer＋capture＋return copy（概ね最大3×entry上限、成長容量/codec workspace別）です。
 

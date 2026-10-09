@@ -9,11 +9,11 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 // 誤記や旧selectorを通常全体実行へ落とさず、成果物作成/アプリ起動より先に拒否する。
-var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip" };
+var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip", "--bare-compression-fixtures" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--folder-model-only", "--folder-copy-only", "--folder-threeway-only", "--independent-text-inputs-only", "--independent-text-input-archives-only", "--independent-text-input-cipher-only", "--independent-text-input-routes-only", "--independent-text-input-saved-archives-only", "--independent-text-input-lifetime-only", "--independent-text-only", "--independent-archive-text-only", "--binary-clipboard-only",
-    "--binary-range-edits-only", "--binary-copy-all-only", "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
+    "--folder-model-only", "--folder-copy-only", "--folder-threeway-only", "--independent-text-inputs-only", "--independent-text-input-archives-only", "--independent-text-input-cipher-only", "--independent-text-input-routes-only", "--independent-text-input-saved-archives-only", "--independent-text-input-lifetime-only", "--independent-text-only", "--independent-archive-text-only", "--image-defaults-only", "--binary-search-only", "--binary-clipboard-only",
+    "--binary-range-edits-only", "--binary-copy-all-only", "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--bare-gzip-only", "--bare-compression-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
     "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
@@ -38,8 +38,45 @@ for (var argumentIndex = 0; argumentIndex < args.Length; argumentIndex++)
     if (error is not null) { Console.Error.WriteLine(error); return 2; }
 }
 
-var outputArgument = Option("--output") ?? "artifacts/e2e/local";
+var outputArgument = Option("--output") ?? Path.Combine(Path.GetTempPath(), "Codex", "DiffBeacon", "e2e-" + Guid.NewGuid().ToString("N"));
 var output = Path.GetFullPath(outputArgument);
+// 入力fixtureを含むrepoやCodex設定、禁止名、リンクへ成果物を作成しない。
+var pathComparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+var repositoryRoot = Path.GetFullPath(Environment.CurrentDirectory);
+foreach (var start in new[] { Environment.CurrentDirectory, AppContext.BaseDirectory })
+{
+    for (var directory = new DirectoryInfo(start); directory is not null; directory = directory.Parent)
+    {
+        if (!File.Exists(Path.Combine(directory.FullName, "DiffBeacon.slnx"))) continue;
+        repositoryRoot = directory.FullName;
+        break;
+    }
+}
+var codexRoot = Path.GetFullPath(Environment.GetEnvironmentVariable("CODEX_HOME") ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".codex"));
+var allowedRoots = new List<string>
+{
+    Path.Combine(Path.GetTempPath(), "Codex", "DiffBeacon"),
+    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Codex", "TaskArtifacts", "DiffBeacon")
+};
+if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true" && Environment.GetEnvironmentVariable("RUNNER_TEMP") is { Length: > 0 } runnerTemp)
+    allowedRoots.Add(Path.Combine(runnerTemp, "Codex", "DiffBeacon"));
+bool Below(string path, string root) => path.StartsWith(Path.TrimEndingDirectorySeparator(Path.GetFullPath(root)) + Path.DirectorySeparatorChar, pathComparison);
+if (!allowedRoots.Any(root => Below(output, root)) || Below(output, repositoryRoot) || output.Equals(repositoryRoot, pathComparison)
+    || Below(output, codexRoot) || output.Equals(codexRoot, pathComparison)
+    || output.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries).Any(part => part.Equals("artifacts", StringComparison.OrdinalIgnoreCase) || part.Equals(".codex", StringComparison.OrdinalIgnoreCase)))
+{
+    Console.Error.WriteLine("生成先はrepo／Codexユーザーディレクトリ外のCodex/DiffBeacon作業別領域を指定してください。artifactsというパス要素は使用できません。");
+    return 2;
+}
+for (var ancestor = new DirectoryInfo(output); ancestor is not null; ancestor = ancestor.Parent)
+{
+    if (ancestor.LinkTarget is not null || (ancestor.Exists && (ancestor.Attributes & FileAttributes.ReparsePoint) != 0))
+    {
+        Console.Error.WriteLine($"生成先にリンクは使用できません: {ancestor.FullName}");
+        return 2;
+    }
+}
+
 Directory.CreateDirectory(output);
 var fixtures = Path.Combine(output, "fixtures", DateTime.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N")[..8]);
 Directory.CreateDirectory(fixtures);
@@ -1111,7 +1148,7 @@ async Task ProjectWorkspaceCases()
         ("null-replacement", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":null}]}"),
         ("null-rule-flag", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":\"y\",\"enabled\":null}]}"),
         ("null-legacy-value", "{\"legacySettings\":{\"unpacker\":null}}"),
-        ("unknown-version", "{\"formatVersion\":7,\"entries\":[{}],\"activeEntryIndex\":0}"),
+        ("unknown-version", "{\"formatVersion\":10,\"entries\":[{}],\"activeEntryIndex\":0}"),
         ("negative-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":-1}"),
         ("large-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":1}"),
         ("too-many", "{\"formatVersion\":1,\"entries\":[" + string.Join(',', Enumerable.Repeat("{}", 257)) + "],\"activeEntryIndex\":0}"),
@@ -1148,15 +1185,15 @@ async Task ProjectWorkspaceCases()
     else
     {
         var executableProject = Text("workspace-rejected/mode.json", "old project bytes");
-        var originalMode = File.GetUnixFileMode(executableProject);
+        var originalMode = E2EUnixFileModes.Read(executableProject);
         try
         {
             var executableMode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute;
-            File.SetUnixFileMode(executableProject, executableMode);
+            E2EUnixFileModes.Write(executableProject, executableMode);
             await Run("workspace-unix-mode", 0, true, "--project-copy", single, executableProject);
-            Check("workspace Unix mode preserved", File.GetUnixFileMode(executableProject) == executableMode);
+            Check("workspace Unix mode preserved", E2EUnixFileModes.Read(executableProject) == executableMode);
         }
-        finally { File.SetUnixFileMode(executableProject, originalMode); }
+        finally { E2EUnixFileModes.Write(executableProject, originalMode); }
     }
     try
     {
@@ -1240,8 +1277,52 @@ async Task TextAdvancedCases()
         await Run(name, 0, true, "--merge", crlfAncestor, left, right, merged);
         Check(name + " exact selected bytes", File.Exists(merged) && File.ReadAllBytes(merged).SequenceEqual(File.ReadAllBytes(expected)), $"expected={expected}; actual={merged}");
     }
+    await MergeCliSerializationCases();
     await WorkspaceAdvancedCases();
     await LegacyCommentCases();
+}
+
+async Task MergeCliSerializationCases()
+{
+    // 新GUIのpane順とは独立に、CLIのマーカー全文・raw EOL・空本文を固定する。
+    string nl = Environment.NewLine;
+    foreach (var (label, ancestorText, leftText, rightText, expectedText) in new[]
+    {
+        ("mixed-no-final", "head\r\nbase", "head\nleft", "head\rright",
+            "head\r\n<<<<<<< LEFT\r\nleft\r\n||||||| BASE\r\nbase\r\n=======\r\nright\r\n>>>>>>> RIGHT\r\n"),
+        ("raw-body-eols", "head\r\nbase\r\ntail", "head\nleft\ntail", "head\rright\rtail",
+            "head\r\n<<<<<<< LEFT\r\nleft\n||||||| BASE\r\nbase\r\n=======\r\nright\r>>>>>>> RIGHT\r\ntail"),
+        ("empty-left", "old", "", "right",
+            "<<<<<<< LEFT" + nl + "||||||| BASE" + nl + "old" + nl + "=======" + nl + "right" + nl + ">>>>>>> RIGHT" + nl),
+        ("empty-base", "", "left", "right",
+            "<<<<<<< LEFT" + nl + "left" + nl + "||||||| BASE" + nl + "=======" + nl + "right" + nl + ">>>>>>> RIGHT" + nl),
+        ("empty-right", "old", "left", "",
+            "<<<<<<< LEFT" + nl + "left" + nl + "||||||| BASE" + nl + "old" + nl + "=======" + nl + ">>>>>>> RIGHT" + nl),
+        ("real-empty-line", "head\r\nold\r\ntail", "head\r\n\r\ntail", "head\r\nright\r\ntail",
+            "head\r\n<<<<<<< LEFT\r\n\r\n||||||| BASE\r\nold\r\n=======\r\nright\r\n>>>>>>> RIGHT\r\ntail")
+    })
+    {
+        var name = "advanced-merge-markers-" + label;
+        var ancestor = Text(name + "-base.txt", ancestorText, new UTF8Encoding(true));
+        var left = Text(name + "-left.txt", leftText);
+        var right = Text(name + "-right.txt", rightText);
+        var inputBytes = new[] { ancestor, left, right }.Select(File.ReadAllBytes).ToArray();
+        var output = Path.Combine(fixtures, name + "-output.txt");
+        var expected = Text(name + "-expected.txt", expectedText, new UTF8Encoding(true));
+        var command = await Run(name, 1, true, "--merge", ancestor, left, right, output);
+        Check(name + " exact marker bytes and ancestor BOM", File.Exists(output) && File.ReadAllBytes(output).SequenceEqual(File.ReadAllBytes(expected)), $"expected={expected}; actual={output}");
+        using var json = JsonDocument.Parse(command.Stdout);
+        Check(name + " pending counts", json.RootElement.GetProperty("conflicts").GetInt32() == 1 && json.RootElement.GetProperty("unresolved").GetInt32() == 1);
+        Check(name + " input bytes preserved", new[] { ancestor, left, right }.Select((path, index) => File.ReadAllBytes(path).SequenceEqual(inputBytes[index])).All(equal => equal));
+    }
+    var rejectedBase = Text("advanced-merge-invalid-base.txt", "base\r\n");
+    var rejectedLeft = Text("advanced-merge-invalid-left.txt", "left\n");
+    var rejectedRight = Text("advanced-merge-invalid-right.txt", "right\r");
+    var protectedOutput = Text("advanced-merge-invalid-output.txt", "existing output\r\n", new UnicodeEncoding(false, true));
+    var protectedPaths = new[] { rejectedBase, rejectedLeft, rejectedRight, protectedOutput };
+    var protectedBytes = protectedPaths.Select(File.ReadAllBytes).ToArray();
+    await Run("advanced-merge-invalid-selection", 2, false, "--merge-select", rejectedBase, rejectedLeft, rejectedRight, protectedOutput, "3");
+    Check("advanced merge invalid selection preserves inputs and existing output", protectedPaths.Select((path, index) => File.ReadAllBytes(path).SequenceEqual(protectedBytes[index])).All(equal => equal));
 }
 
 async Task LegacyCommentCases()
@@ -1495,13 +1576,13 @@ async Task ArchiveCases()
     {
         var privateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
         var privateArchive = Text("archive-private-mode.7z", "existing private archive");
-        File.SetUnixFileMode(privateArchive, privateMode);
+        E2EUnixFileModes.Write(privateArchive, privateMode);
         await Run("archive-repack-preserves-unix-mode", 0, true, "--archive-repack", solid, privateArchive);
-        Check("repack preserves Unix 0600", File.GetUnixFileMode(privateArchive) == privateMode);
+        Check("repack preserves Unix 0600", E2EUnixFileModes.Read(privateArchive) == privateMode);
         var privateEntry = Text("archive-private-entry.bin", "existing private export");
-        File.SetUnixFileMode(privateEntry, privateMode);
+        E2EUnixFileModes.Write(privateEntry, privateMode);
         await Run("archive-export-preserves-unix-mode", 0, true, "--archive-entry", solid, "exe/test.exe", privateEntry);
-        Check("export preserves Unix 0600 and bytes", File.GetUnixFileMode(privateEntry) == privateMode && Hash(privateEntry).Equals(expected["exe/test.exe"].Sha, StringComparison.OrdinalIgnoreCase));
+        Check("export preserves Unix 0600 and bytes", E2EUnixFileModes.Read(privateEntry) == privateMode && Hash(privateEntry).Equals(expected["exe/test.exe"].Sha, StringComparison.OrdinalIgnoreCase));
     }
     else assertions.Add(new("archive Unix 0600 preservation", "skipped", "Windows does not expose UnixFileMode."));
     if (OperatingSystem.IsMacOS())
@@ -1773,6 +1854,10 @@ try
         await FolderThreeWayScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     else if (args.Contains("--archive-tar-wrappers-only", StringComparer.Ordinal))
         await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--image-defaults-only", StringComparer.Ordinal))
+        await ImageDefaultsScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--binary-search-only", StringComparer.Ordinal))
+        await BinarySearchScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-clipboard-only", StringComparer.Ordinal))
         await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-range-edits-only", StringComparer.Ordinal))
@@ -1791,6 +1876,10 @@ try
         await ArchiveProjectScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--archive-sources-only", StringComparer.Ordinal))
         await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
+    else if (args.Contains("--bare-compression-only", StringComparer.Ordinal))
+        await BareCompressionScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--bare-compression-fixtures"));
+    else if (args.Contains("--bare-gzip-only", StringComparer.Ordinal))
+        await BareGZipScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--archive-wrappers-only", StringComparer.Ordinal))
         await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
     else if (args.Contains("--tar-z-only", StringComparer.Ordinal))
@@ -1908,6 +1997,8 @@ try
         await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
         await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
+        await BareGZipScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await BareCompressionScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--bare-compression-fixtures"));
         await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
         await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     }
@@ -1932,6 +2023,8 @@ try
     await BinaryCopyAllScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryRangeEditScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    await BinarySearchScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    await ImageDefaultsScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await IndependentTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
@@ -1947,6 +2040,8 @@ try
     await ArchiveMissingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveSourceScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Skip, Option("--python") ?? "python");
     await ArchiveWrapperScenarios.RunAsync(output, fixtures, Run, RunWithInput, Check, Option("--python") ?? "python", Option("--z-reference"));
+        await BareGZipScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await BareCompressionScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--bare-compression-fixtures"));
         await ArchiveTarWrapperScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
@@ -2194,9 +2289,9 @@ try
     {
         var executableOutput = Text("patch-executable.txt", "old output");
         var mode = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute | UnixFileMode.GroupRead | UnixFileMode.OtherRead;
-        File.SetUnixFileMode(executableOutput, mode);
+        E2EUnixFileModes.Write(executableOutput, mode);
         await Run("patch-unix-executable", 0, true, "--patch-apply", left, externalPatch, executableOutput);
-        Check("patch preserves Unix mode", File.GetUnixFileMode(executableOutput) == mode);
+        Check("patch preserves Unix mode", E2EUnixFileModes.Read(executableOutput) == mode);
         Check("executable patch content", File.ReadAllText(executableOutput) == "alpha\nchanged\n");
     }
 
@@ -2314,5 +2409,20 @@ sealed class LocalHttpSite : IAsyncDisposable
         listener.Stop();
         await serve;
         cancellation.Dispose();
+    }
+}
+
+internal static class E2EUnixFileModes
+{
+    internal static UnixFileMode Read(string path)
+    {
+        if (OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
+        return File.GetUnixFileMode(path);
+    }
+
+    internal static void Write(string path, UnixFileMode mode)
+    {
+        if (OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
+        File.SetUnixFileMode(path, mode);
     }
 }

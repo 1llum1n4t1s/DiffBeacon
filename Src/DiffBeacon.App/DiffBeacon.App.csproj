@@ -46,5 +46,9 @@
     <EmbeddedResource Include="../../tests/Fixtures/ImageRectangles/winimerge-rectangles-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageRectangles.Golden.gz" />
     <EmbeddedResource Include="../../tests/Fixtures/ImageResize/cases.json" LogicalName="DiffBeacon.SelfTest.ImageResize.Cases.json" />
     <EmbeddedResource Include="../../tests/Fixtures/ImageResize/winimerge-resize-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageResize.Golden.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareCompression/inputs.zip" LogicalName="DiffBeacon.SelfTest.BareCompression.inputs.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareCompression/expected.json" LogicalName="DiffBeacon.SelfTest.BareCompression.expected.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareGZip/extra-inputs.zip" LogicalName="DiffBeacon.SelfTest.BareGZip.extra.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareGZip/extra-expected.json" LogicalName="DiffBeacon.SelfTest.BareGZip.extra.json" />
   </ItemGroup>
 </Project>

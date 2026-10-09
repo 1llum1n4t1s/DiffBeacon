@@ -27,6 +27,8 @@ python tests/Fixtures/IndependentText/verify.py --run <E2E出力root> --receipt 
 
 `--run` は `fixtures/*/independent-text` がちょうど一つあるE2E出力rootです。他scenarioのfixtureが併存する全体E2Eにも使えます。通常は外側の `assertions.json` と実CLI終了コードの記録も照合します。E2Eの `RunAsync` 内で最終集計の保存前に呼ぶ場合は、明示的に `--products-only` を追加します。この指定で省略するのは外側の集計JSONだけで、三組のCLI全文・全コマンドの生stdout/stderr・project・HTML・ZIP・GUI成果物は引き続き必須です。親driverはreaderの実終了コード0、stdout、stderrを回収して最終集計に接続します。
 
+全体E2Eの外側集計は各statusの実件数・非負整数の集計値・failed=0を照合します。対象scopeの全exit assertionは一意・passed・期待終了値と生stderr全文の一致を必須とし、scope外の同名assertionを一括で重複拒否しません。対象のskip、未知status、未知skipは拒否します。許容するscope外skipは正式suiteの固定Name／理由とfixture実体・対応命令の生stream／passed終了assertionへ結合し、可変exceptionや未宣言理由は許容しません。macOS側の固定skip契約は原典の宣言に基づき、Windowsでの検証をmacOS実測として扱いません。
+
 現在の通常scopeは38製品命令です。`commands.json` の全label・引数・期待終了値・実終了値・PID・creation／launch／exit UTC・全stdout／stderrを固定契約と生streamへ照合し、命令の欠落・重複・未知命令や不完全なprocess receiptを拒否します。`FixedAncestor` と中央 `Untitled` の矛盾はproject-copy・report-project・package-projectの三入口で終了2・stdout空・診断stderr・既存UTF-8 no-BOM `KEEP` 出力保持を照合します。同一UTF-8 no-BOM `制`×3×1024×1024文字を三側へ渡すJSON予算ケースは終了2・stdout空・`32 MiB` 診断・9 MiB原本の全bytes／SHA保持を照合します。両ケースの期待入力はreaderのliteralから構成します。
 
 これに加え、`legacy-payload-proof.json` の対応済み通常compare／tableの二実プロセスを別scopeで必須照合します。UTF-8 no-BOMの固定原文 `tag --pair --independent-text\n` の入力を全bytesで確認し、`--substitute` の値に含まれるフラグ文字列が独立Textのoptionと誤認されないことを確認します。compareはdifferent=false・textSemanticsなし、tableはdifferent=false・rows=1・cols=1・alignedRows=1・alignmentFallback=false・alignmentWorkUsed=0・alignmentFallbackReason=null・mapping=[{left:1,right:1}]の固定JSON全体に照合します。両命令の実終了0・引数・PID／UTC・生stdout／stderr一致を確認し、未対応merge置換オプションの出力fileが存在しないことも確認します。38命令の `commands.json` へこの互換scopeを混ぜません。

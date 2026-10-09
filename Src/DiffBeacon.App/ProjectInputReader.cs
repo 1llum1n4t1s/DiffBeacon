@@ -96,7 +96,7 @@ internal static class ProjectInputReader
     {
         copy.Validate(input.RootPath);
         // 作業版でも全CRC/SHAと元leafの存在、文字コード/BOMを完全階層で検証する。
-        var source = new ArchiveSource(Path.GetFullPath(input.RootPath), copy.EntryChain, input.RootSha256);
+        var source = new ArchiveSource(Path.GetFullPath(input.RootPath), copy.EntryChain, input.RootSha256, copy.ContainerNameCodePages, ArchivePayloadSettings.Choices(copy.ContainerGZipPayloadKinds, copy.EntryChain.Length + 1).ToArray(), ArchivePayloadSettings.CompressionChoices(copy.ContainerCompressionPayloadKinds, copy.EntryChain.Length + 1).ToArray());
         var bytes = new ManagedArchive().ResolveEntry(source, copy.LeafEntry, copy.MaximumFileBytes, passwords, token);
         if (copy.IsBinary) return;
         var original = TextDocument.FromSnapshot(bytes);

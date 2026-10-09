@@ -12,6 +12,12 @@ public sealed record ArchiveProjectInput
     public string? LeafEntry { get; set; }
     public string? RootSha256 { get; set; }
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int[]? ContainerNameCodePages { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? ContainerGZipPayloadKinds { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? ContainerCompressionPayloadKinds { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string[]? MissingEntryChain { get; set; }
     // 原本の固定readonlyとは別に、最初に開いた側の編集指定を保持する。
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -23,10 +29,13 @@ public sealed record ArchiveProjectInput
     internal ArchiveProjectInput Copy() => this with
     {
         EntryChain = EntryChain.Select(CanonicalEntry).ToArray(), LeafEntry = LeafEntry is null ? null : CanonicalEntry(LeafEntry),
+        ContainerNameCodePages = ContainerNameCodePages?.ToArray(),
+        ContainerGZipPayloadKinds = ArchivePayloadSettings.Copy(ContainerGZipPayloadKinds, EntryChain.Length + 1),
+        ContainerCompressionPayloadKinds = ArchivePayloadSettings.CopyCompression(ContainerCompressionPayloadKinds, EntryChain.Length + 1),
         MissingEntryChain = MissingEntryChain?.Select(CanonicalEntry).ToArray(), WorkingDocuments = WorkingDocuments?.Select(copy => copy.Copy()).ToArray()
     };
     internal static string CanonicalEntry(string value) => value.Replace('\\', '/').TrimEnd('/');
-    internal ArchiveSource ToSource() => new(RootPath, EntryChain, RootSha256);
+    internal ArchiveSource ToSource() => new(RootPath, EntryChain, RootSha256, ContainerNameCodePages, ArchivePayloadSettings.Choices(ContainerGZipPayloadKinds, EntryChain.Length + 1).ToArray(), ArchivePayloadSettings.CompressionChoices(ContainerCompressionPayloadKinds, EntryChain.Length + 1).ToArray());
 
     internal void Validate(bool container, bool readOnly)
     {
@@ -34,7 +43,7 @@ public sealed record ArchiveProjectInput
             Uri.TryCreate(RootPath, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https")
             throw new InvalidDataException("内包入力の物理rootと格納階層が不正です。");
         // 相対rootを保存可能にし、格納名はruntimeのimmutable型と同じ規則で検証する。
-        _ = new ArchiveSource(Path.GetFullPath(RootPath), EntryChain, RootSha256);
+        _ = new ArchiveSource(Path.GetFullPath(RootPath), EntryChain, RootSha256, ContainerNameCodePages, ArchivePayloadSettings.Choices(ContainerGZipPayloadKinds, EntryChain.Length + 1).ToArray(), ArchivePayloadSettings.CompressionChoices(ContainerCompressionPayloadKinds, EntryChain.Length + 1).ToArray());
         if (MissingEntryChain is { } missing)
         {
             if (missing.Length == 0 || missing.Length > 9 || LeafEntry is not null ||
@@ -57,7 +66,12 @@ public sealed record ArchiveProjectInput
             {
                 if (copy is null) throw new InvalidDataException("作業文書がnullです。");
                 copy.Validate(RootPath);
-                if (!keys.Add(string.Concat(copy.EntryChain.Append(copy.LeafEntry).Select(CanonicalEntry).Select(part => part.Length + ":" + part)))
+                if (!ArchivePayloadSettings.NormalizedChoices(copy.ContainerNameCodePages, copy.ContainerGZipPayloadKinds, copy.EntryChain.Length + 1, EntryChain.Length + 1, compressionPayloadKinds: copy.ContainerCompressionPayloadKinds)
+                    .SequenceEqual(ArchivePayloadSettings.NormalizedChoices(ContainerNameCodePages, ContainerGZipPayloadKinds, EntryChain.Length + 1, compressionPayloadKinds: ContainerCompressionPayloadKinds)))
+                    throw new InvalidDataException("作業文書の格納名文字コードまたはgzip本文形式が親入力と一致しません。");
+                if (!keys.Add(string.Concat(copy.EntryChain.Append(copy.LeafEntry).Select(CanonicalEntry)
+                    .Concat(ArchivePayloadSettings.NormalizedChoices(copy.ContainerNameCodePages, copy.ContainerGZipPayloadKinds, copy.EntryChain.Length + 1, compressionPayloadKinds: copy.ContainerCompressionPayloadKinds))
+                    .Select(part => part.Length + ":" + part)))
                     || (container ? !copy.EntryChain.Take(EntryChain.Length).SequenceEqual(EntryChain)
                         : !copy.EntryChain.SequenceEqual(EntryChain) || copy.LeafEntry != LeafEntry))
                     throw new InvalidDataException("作業文書が入力の格納階層と一致しないか、重複しています。");

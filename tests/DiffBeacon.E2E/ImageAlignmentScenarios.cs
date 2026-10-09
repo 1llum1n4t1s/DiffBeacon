@@ -8,8 +8,7 @@ internal static class ImageAlignmentScenarios
     public static async Task RunAsync(string output, string fixtures,
         Func<string, int, bool, string[], Task<CommandResult>> run, Action<string, bool, string> check)
     {
-        var root = new DirectoryInfo(AppContext.BaseDirectory);
-        while (root is not null && !File.Exists(Path.Combine(root.FullName, "DiffBeacon.slnx"))) root = root.Parent;
+        var root = FixtureRepository.FindRoot();
         if (root is null) throw new DirectoryNotFoundException("ImageInsertions fixture root");
         var zip = await File.ReadAllBytesAsync(Path.Combine(root.FullName, "tests", "Fixtures", "ImageInsertions", "winimerge-insertions-golden.json.gz"));
         var zipSha = Convert.ToHexString(SHA256.HashData(zip));

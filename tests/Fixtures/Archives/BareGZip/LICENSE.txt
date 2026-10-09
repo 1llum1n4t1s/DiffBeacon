@@ -1,0 +1,2 @@
+SPDX-License-Identifier: CC0-1.0
+These original synthetic fixture bytes and generator are dedicated to the public domain under CC0 1.0. No upstream fixture or WinMerge binary was used.

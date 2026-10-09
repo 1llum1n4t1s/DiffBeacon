@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
@@ -67,7 +68,53 @@ internal static class HeadlessIndependentArchiveTextChecks
         }
         var main = Open();
         Verify("three present leaves editable without treating middle as ancestor", Enumerable.Range(0, 3).All(side => main.TextEditor(side).Text == originals[side] && !main.TextEditor(side).IsReadOnly), main.ComparisonStatus ?? "");
-        Verify("Independent merge refused", Refused(() => { main.StartMergeSession(); return Task.CompletedTask; }));
+        // 結果作成は独立paneで確認し、既存の三入力保存・HTML検証を維持する。
+        var mergePane = Open();
+        var mergeInputs = Enumerable.Range(0, 3).Select(side => mergePane.TextEditor(side).Text).ToArray();
+        var mergeRevisions = mergePane.CaptureIndependentTextRevisions();
+        var mergeProject = mergePane.CaptureProject();
+        var mergeRoots = Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(mergeProject, side)!.RootPath).ToArray();
+        var mergeRootBytes = mergeRoots.Select(File.ReadAllBytes).ToArray();
+        mergePane.StartMergeSession();
+        var mergePending = mergePane.CurrentMergeSession!.UnresolvedCount;
+        var mergeInitialUndo = mergePane.CurrentMergeSession.CanUndo;
+        Verify("manual result has three independent sources and no automatic history", mergePane.CurrentMergeSession is
+            { InputCount: 3, HasAncestor: false, UnresolvedCount: > 0, CanUndo: false } && mergePane.HasUnsavedChanges);
+        mergePane.ChooseMergeSources(MergeSource.Base);
+        Verify("manual middle choice retains literal middle without treating it as ancestor", mergePane.ResultEditor.Text == originals[1]
+            && mergePane.CurrentMergeSession is { HasAncestor: false, UnresolvedCount: 0 });
+        var mergeOutput = Path.Combine(folder, "independent-merge-middle.text");
+        pump(mergePane.SaveMergeResultToAsync(mergeOutput));
+        Verify("manual result save uses fixed left UTF8 without BOM", File.ReadAllBytes(mergeOutput)
+            .SequenceEqual(new System.Text.UTF8Encoding(false).GetBytes(originals[1])) && !mergePane.HasUnsavedChanges);
+        mergePane.UndoMerge();
+        Verify("manual result undo restores unresolved and dirty", mergePane.CurrentMergeSession!.UnresolvedCount == mergePending && mergePane.HasUnsavedChanges);
+        mergePane.RedoMerge();
+        Verify("manual result redo returns literal saved identity", mergePane.ResultEditor.Text == originals[1] && !mergePane.HasUnsavedChanges);
+        Verify("manual result cannot publish into an original container", Refused(() => mergePane.SaveMergeResultToAsync(mergeRoots[1])));
+        var mergeAfter = Enumerable.Range(0, 3).Select(side => mergePane.TextEditor(side).Text).ToArray();
+        var mergeAfterRevisions = mergePane.CaptureIndependentTextRevisions();
+        Verify("manual result preserves all source text revisions routes and root bytes", mergeInputs.SequenceEqual(mergeAfter)
+            && mergeRevisions.SequenceEqual(mergeAfterRevisions) && Enumerable.Range(0, 3).All(side => !mergePane.TextDirty(side)
+                && ProjectInputs.Archive(mergePane.CaptureProject(), side) is not null
+                && File.ReadAllBytes(mergeRoots[side]).SequenceEqual(mergeRootBytes[side])));
+        using (var stream = File.Create(Path.Combine(folder, "independent-merge-observations.json")))
+        using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true }))
+        {
+            writer.WriteStartObject(); writer.WriteNumber("inputCount", mergePane.CurrentMergeSession!.InputCount);
+            writer.WriteBoolean("hasAncestor", mergePane.CurrentMergeSession.HasAncestor);
+            writer.WriteNumber("initialUnresolved", mergePending); writer.WriteBoolean("initialCanUndo", mergeInitialUndo);
+            writer.WriteString("resultFile", Path.GetFileName(mergeOutput));
+            writer.WriteStartArray("beforeTexts"); foreach (var text in mergeInputs) writer.WriteStringValue(text); writer.WriteEndArray();
+            writer.WriteStartArray("afterTexts"); foreach (var text in mergeAfter) writer.WriteStringValue(text); writer.WriteEndArray();
+            writer.WriteStartArray("beforeRevisions"); foreach (var revision in mergeRevisions) writer.WriteNumberValue(revision); writer.WriteEndArray();
+            writer.WriteStartArray("afterRevisions"); foreach (var revision in mergeAfterRevisions) writer.WriteNumberValue(revision); writer.WriteEndArray();
+            writer.WriteStartArray("roots"); foreach (var rootPath in mergeRoots) writer.WriteStringValue(Path.GetRelativePath(folder, rootPath)); writer.WriteEndArray();
+            writer.WriteEndObject();
+        }
+        mergePane.DiscardChanges(); pump(mergePane.ComparePathsAsync());
+        Verify("manual result pane can reset without disturbing source regressions", mergePane.CurrentMergeSession is null && !mergePane.HasUnsavedChanges);
+        window.SelectSession(Array.IndexOf(window.SessionPanes.ToArray(), main)); Dispatcher.UIThread.RunJobs();
         for (var side = 0; side < 3; side++) main.TextEditor(side).Text = edits[side];
         pump(main.SaveReportAsync(Path.Combine(folder, "pending.html")));
         Verify("unsaved middle protects workspace and package", Refused(() => { main.EnsureArchiveDraftSaved(); return Task.CompletedTask; }));

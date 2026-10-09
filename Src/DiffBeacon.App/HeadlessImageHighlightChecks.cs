@@ -37,6 +37,9 @@ internal static class HeadlessImageHighlightChecks
             pane.LeftPath.Text = paths[0]; pane.RightPath.Text = paths[^1]; pane.BasePath.Text = paths.Length == 3 ? paths[1] : "";
             pump(pane.ComparePathsAsync());
             var panel = pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+            // 各fixtureは強調表示を要求する。前caseの原画表示設定の継承後に実操作で戻す。
+            panel.GetVisualDescendants().OfType<CheckBox>().Single(control => control.Name == "ImageShowDifferences").IsChecked = true;
+            pump(panel.CurrentFrameOperation);
             panel.GetVisualDescendants().OfType<NumericUpDown>().Single(control => control.Name == "ImageThreshold").Value = (decimal)item.GetProperty("threshold").GetDouble();
             pump(panel.CurrentFrameOperation);
             var expected = item.GetProperty("expected"); var selected = expected.GetProperty("currentDiffIndex").GetInt32();

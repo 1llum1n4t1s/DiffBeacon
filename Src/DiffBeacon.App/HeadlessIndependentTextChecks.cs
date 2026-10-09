@@ -282,7 +282,8 @@ internal static class HeadlessIndependentTextChecks
         if (history.MiddleEditor.Text != historyEdited)
         { window.KeyPress(Key.Y, commandModifier, PhysicalKey.Y, null); window.KeyRelease(Key.Y, commandModifier, PhysicalKey.Y, null); Dispatcher.UIThread.RunJobs(); }
         Check("real middle Redo returns to saved point", history.MiddleEditor.Text == historyEdited && !history.TextDirty(1));
-        Check("independent merge explicitly refused", Refused(() => { stale.StartMergeSession(); return Task.CompletedTask; }));
+        stale.StartMergeSession();
+        Check("independent three-way merge keeps middle independent", stale.CurrentMergeSession is { InputCount: 3, HasAncestor: false });
         var sessions = window.GetVisualDescendants().OfType<TabControl>().Single(control => control.Items.OfType<TabItem>().Any(tab => ReferenceEquals(tab.Content, stale)));
         sessions.SelectedItem = sessions.Items.OfType<TabItem>().Single(tab => ReferenceEquals(tab.Content, stale)); Dispatcher.UIThread.RunJobs();
         var views = stale.GetVisualDescendants().OfType<TabControl>().Single(); views.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();

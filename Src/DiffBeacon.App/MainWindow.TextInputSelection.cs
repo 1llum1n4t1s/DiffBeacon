@@ -157,7 +157,7 @@ public sealed partial class ComparisonPane
         return (TextAdoptionStamp(), _mode.SelectedIndex, _textRole.SelectedIndex, _workingTexts,
             CurrentDiff, HasUnsavedChanges, _specialTab.Content, binary?.StateStamp,
             binary?.LeftReadOnly, binary?.HasMiddle == true ? binary.MiddleReadOnly : (bool?)null, binary?.RightReadOnly, binary?.IsDisposed,
-            _savedLeft, _savedMiddle, _savedRight, _savedResult, ResultEditor.Text,
+            _savedLeft, _savedMiddle, _savedRight, _mergeResultSaved, _resultHost, _resultHost?.Session.Current.Version, MergeHasPendingComposition, ResultEditor.Text,
             _textSaveAllowed, _workingDocumentStale, _operation, _operation?.IsCancellationRequested, CompareButton.IsEnabled);
     }
     internal bool IsTextInputSelectionCurrent(object stamp) => !_disposed && Equals(stamp, CaptureTextInputSelectionStamp());

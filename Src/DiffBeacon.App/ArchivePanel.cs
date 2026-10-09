@@ -46,10 +46,17 @@ public sealed class ArchivePanel : UserControl, IDisposable
     public Button OpenEntryButton { get; } = new() { Name = "archive-open-entry", Content = "選択項目を比較", Margin = new Thickness(4), IsEnabled = false };
     public TextBox LeftPassword { get; } = new() { Name = "archive-left-password", PasswordChar = '●', MaxLength = 4096, PlaceholderText = "左のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
     public TextBox RightPassword { get; } = new() { Name = "archive-right-password", PasswordChar = '●', MaxLength = 4096, PlaceholderText = "右のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
+    public ComboBox LeftNameCodePage { get; } = ArchiveNameSettings.Picker();
+    public ComboBox RightNameCodePage { get; } = ArchiveNameSettings.Picker();
+    public ComboBox LeftGZipPayloadKind { get; } = ArchivePayloadSettings.Picker();
+    public ComboBox RightGZipPayloadKind { get; } = ArchivePayloadSettings.Picker();
+    public ComboBox LeftCompressionPayloadKind { get; } = ArchivePayloadSettings.CompressionPicker();
+    public ComboBox RightCompressionPayloadKind { get; } = ArchivePayloadSettings.CompressionPicker();
     public TextBox ExtractionName { get; } = new() { Name = "archive-extraction-name", Text = "extracted", PlaceholderText = "新しい展開フォルダー名", Width = 200, Margin = new Thickness(4) };
     public IReadOnlyList<ArchiveEntryDifference> Rows { get; private set; } = [];
     public string PreviewText => _preview.Text ?? "";
     public string StatusText => _status.Text ?? "";
+    internal ArchiveWritePickerInjection? ArchiveWritePickers { get; set; }
     internal Func<Task<string?>>? ExtractionParentPathPicker { get; set; }
     internal Action<string, Task>? ButtonTaskObserved { get; set; }
     internal Action? RefreshReadyForAdoption { get; set; }
@@ -73,6 +80,30 @@ public sealed class ArchivePanel : UserControl, IDisposable
         catch { Array.Clear(_leftAncestors); throw; }
         _guardOutput = guardOutput; _lifetime = new CancellationTokenSource();
         var panel = new DockPanel(); var actions = new WrapPanel(); actions.Children.Add(LeftPassword); actions.Children.Add(RightPassword);
+        LeftNameCodePage.Name = "archive-left-gzip-name-code-page"; RightNameCodePage.Name = "archive-right-gzip-name-code-page";
+        LeftNameCodePage.SelectedItem = left.ContainerNameCodePages[^1]; RightNameCodePage.SelectedItem = right.ContainerNameCodePages[^1];
+        actions.Children.Add(new TextBlock { Text = "左 gzip格納名", VerticalAlignment = VerticalAlignment.Center }); actions.Children.Add(LeftNameCodePage);
+        actions.Children.Add(new TextBlock { Text = "右 gzip格納名", VerticalAlignment = VerticalAlignment.Center }); actions.Children.Add(RightNameCodePage);
+        ToolTip.SetTip(LeftNameCodePage, "28591: RFC1952 Latin1 / 65001: UTF-8 / 932: 日本語。再比較に成功した設定だけを保存します。");
+        ToolTip.SetTip(RightNameCodePage, "28591: RFC1952 Latin1 / 65001: UTF-8 / 932: 日本語。再比較に成功した設定だけを保存します。");
+        LeftGZipPayloadKind.Name = "archive-left-gzip-payload-kind"; RightGZipPayloadKind.Name = "archive-right-gzip-payload-kind";
+        LeftGZipPayloadKind.SelectedItem = left.ContainerGZipPayloadKinds[^1]; RightGZipPayloadKind.SelectedItem = right.ContainerGZipPayloadKinds[^1];
+        actions.Children.Add(new TextBlock { Text = "左 gzip本文", VerticalAlignment = VerticalAlignment.Center }); actions.Children.Add(LeftGZipPayloadKind);
+        actions.Children.Add(new TextBlock { Text = "右 gzip本文", VerticalAlignment = VerticalAlignment.Center }); actions.Children.Add(RightGZipPayloadKind);
+        ToolTip.SetTip(LeftGZipPayloadKind, "指定したコンテナーの外側がgzipのときだけ変更できます。再比較に成功した設定だけを保存します。");
+        ToolTip.SetTip(RightGZipPayloadKind, "指定したコンテナーの外側がgzipのときだけ変更できます。再比較に成功した設定だけを保存します。");
+        LeftCompressionPayloadKind.Name = "archive-left-compression-payload-kind"; RightCompressionPayloadKind.Name = "archive-right-compression-payload-kind";
+        LeftCompressionPayloadKind.SelectedItem = left.ContainerCompressionPayloadKinds[^1]; RightCompressionPayloadKind.SelectedItem = right.ContainerCompressionPayloadKinds[^1];
+        actions.Children.Add(new TextBlock { Text = "左 BZip2／Z本文", VerticalAlignment = VerticalAlignment.Center }); actions.Children.Add(LeftCompressionPayloadKind);
+        actions.Children.Add(new TextBlock { Text = "右 BZip2／Z本文", VerticalAlignment = VerticalAlignment.Center }); actions.Children.Add(RightCompressionPayloadKind);
+        ToolTip.SetTip(LeftCompressionPayloadKind, "指定したコンテナーの外側がBZip2／Zのときだけ変更できます。再比較に成功した設定だけを保存します。");
+        ToolTip.SetTip(RightCompressionPayloadKind, "指定したコンテナーの外側がBZip2／Zのときだけ変更できます。再比較に成功した設定だけを保存します。");
+        void PayloadChoiceChanged(object? sender, SelectionChangedEventArgs args)
+        {
+            _refreshVersion++; _operation?.Cancel();
+        }
+        LeftGZipPayloadKind.SelectionChanged += PayloadChoiceChanged; RightGZipPayloadKind.SelectionChanged += PayloadChoiceChanged;
+        LeftCompressionPayloadKind.SelectionChanged += PayloadChoiceChanged; RightCompressionPayloadKind.SelectionChanged += PayloadChoiceChanged;
         var sources = new TextBlock { Name = "archive-confirmed-sources", Text = $"左: {SourceCaption(left, _leftMissing)}\n右: {SourceCaption(right, _rightMissing)}", TextWrapping = TextWrapping.Wrap, Margin = new Thickness(8, 4) };
         Button("アーカイブを再比較", RefreshAsync);
         actions.Children.Add(EntryKind); actions.Children.Add(OpenEntryButton);
@@ -103,9 +134,21 @@ public sealed class ArchivePanel : UserControl, IDisposable
         DockPanel.SetDock(_statusViewport, Dock.Bottom); panel.Children.Add(_statusViewport);
         SizeChanged += (_, _) =>
         {
-            if (Bounds.Height <= 0) return;
-            _toolbar.MaxHeight = Math.Clamp(Bounds.Height * .35, 40, 160);
-            _statusViewport.MaxHeight = Math.Clamp(Bounds.Height * .2, 24, 80);
+            var height = Bounds.Height;
+            if (!double.IsFinite(height) || height <= 0) return;
+            var renderScale = TopLevel.GetTopLevel(this)?.RenderScaling ?? 1;
+            if (!double.IsFinite(renderScale) || renderScale <= 0 || !double.IsFinite(height * renderScale)) return;
+            // 一覧と上下余白の実描画寸法を先に残し、操作欄と状態欄はスクロールで参照する。
+            var margin = Avalonia.Layout.LayoutHelper.RoundLayoutThickness(new Thickness(8), renderScale);
+            var listHeight = Avalonia.Layout.LayoutHelper.RoundLayoutSizeUp(new Size(0, 100), renderScale).Height;
+            var available = Math.Max(0, height - listHeight - margin.Top - margin.Bottom);
+            var toolbarHeight = Math.Clamp(height * .35, 40, 160);
+            var statusHeight = Math.Clamp(height * .2, 24, 80);
+            var scale = Math.Min(1, available / (toolbarHeight + statusHeight));
+            // 個別の切上げと小数の再丸めで、予約した本文領域を消費しない。
+            var epsilon = Avalonia.Layout.LayoutHelper.LayoutEpsilon;
+            _toolbar.MaxHeight = Math.Max(0, Math.Floor(toolbarHeight * scale * renderScale) / renderScale - epsilon);
+            _statusViewport.MaxHeight = Math.Max(0, Math.Floor(statusHeight * scale * renderScale) / renderScale - epsilon);
         };
         var pair = new Grid { ColumnDefinitions = new ColumnDefinitions("*,6,*"), Margin = new Thickness(8) };
         pair.Children.Add(EntryList); var splitter = new GridSplitter { ResizeDirection = GridResizeDirection.Columns, HorizontalAlignment = HorizontalAlignment.Stretch };
@@ -120,9 +163,12 @@ public sealed class ArchivePanel : UserControl, IDisposable
     public static Task<ArchivePanel> CreateAsync(string left, string right, CancellationToken token, Action<string>? guardOutput = null)
         => CreateWithPasswordsAsync(left, right, token, guardOutput, null, null);
     internal static async Task<ArchivePanel> CreateWithPasswordsAsync(string left, string right, CancellationToken token,
-        Action<string>? guardOutput, string? leftPassword, string? rightPassword)
+        Action<string>? guardOutput, string? leftPassword, string? rightPassword, int leftNameCodePage = 28591, int rightNameCodePage = 28591,
+        GZipPayloadKind leftPayloadKind = GZipPayloadKind.Auto, GZipPayloadKind rightPayloadKind = GZipPayloadKind.Auto,
+        CompressionPayloadKind leftCompressionPayloadKind = CompressionPayloadKind.Auto, CompressionPayloadKind rightCompressionPayloadKind = CompressionPayloadKind.Auto)
     {
-        return await CreateForSourcesAsync(new(Path.GetFullPath(left)), new(Path.GetFullPath(right)), token, guardOutput, [], [], leftPassword, rightPassword);
+        return await CreateForSourcesAsync(new(Path.GetFullPath(left), containerNameCodePages: new[] { leftNameCodePage }, containerGZipPayloadKinds: new[] { leftPayloadKind }, containerCompressionPayloadKinds: new[] { leftCompressionPayloadKind }),
+            new(Path.GetFullPath(right), containerNameCodePages: new[] { rightNameCodePage }, containerGZipPayloadKinds: new[] { rightPayloadKind }, containerCompressionPayloadKinds: new[] { rightCompressionPayloadKind }), token, guardOutput, [], [], leftPassword, rightPassword);
     }
     internal static async Task<ArchivePanel> CreateForSourcesAsync(ArchiveSource left, ArchiveSource right, CancellationToken token,
         Action<string>? guardOutput, IReadOnlyList<string?> leftAncestors, IReadOnlyList<string?> rightAncestors,
@@ -140,6 +186,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     internal void CancelOperation() { if (_disposed) return; _operation?.Cancel(); _previewOperation?.Cancel(); _writeOperation?.Cancel(); _childOperation?.Cancel(); }
     internal void CancelChildOperation() { if (_disposed) return; _childGeneration++; _childOperation?.Cancel(); }
     public Task RefreshAsync() => RefreshCoreAsync(CancellationToken.None);
+    public Task RefreshAsync(CancellationToken cancellationToken) => RefreshCoreAsync(cancellationToken);
     private async Task RefreshCoreAsync(CancellationToken callerToken)
     {
         if (_disposed) return;
@@ -153,13 +200,25 @@ public sealed class ArchivePanel : UserControl, IDisposable
         try
         {
             leftPasswords = Passwords(false); rightPasswords = Passwords(true);
-            var left = await Task.Run(() => service.ResolveManifest(_requestedLeft, leftPasswords, token), token);
-            var right = await Task.Run(() => service.ResolveManifest(_requestedRight, rightPasswords, token), token);
+            var requestedLeft = ArchivePayloadSettings.WithChoices(_requestedLeft, _requestedLeft.EntryChain.Count,
+                ArchivePayloadSettings.Selected(LeftGZipPayloadKind), ArchivePayloadSettings.SelectedCompression(LeftCompressionPayloadKind))
+                .WithNameCodePage(_requestedLeft.EntryChain.Count, ArchiveNameSettings.Selected(LeftNameCodePage));
+            var requestedRight = ArchivePayloadSettings.WithChoices(_requestedRight, _requestedRight.EntryChain.Count,
+                ArchivePayloadSettings.Selected(RightGZipPayloadKind), ArchivePayloadSettings.SelectedCompression(RightCompressionPayloadKind))
+                .WithNameCodePage(_requestedRight.EntryChain.Count, ArchiveNameSettings.Selected(RightNameCodePage));
+            var left = await Task.Run(() => service.ResolveManifest(requestedLeft, leftPasswords, token), token);
+            var right = await Task.Run(() => service.ResolveManifest(requestedRight, rightPasswords, token), token);
             if (_leftMissing is not null) { ProjectInputReader.EnsureAbsent(left.Manifest, _leftMissing[0], token); left = left with { Manifest = new("不在", []) }; }
             if (_rightMissing is not null) { ProjectInputReader.EnsureAbsent(right.Manifest, _rightMissing[0], token); right = right with { Manifest = new("不在", []) }; }
             var candidate = ArchiveComparison.Compare(left.Manifest, right.Manifest);
             RefreshReadyForAdoption?.Invoke();
-            token.ThrowIfCancellationRequested(); if (_disposed || version != _refreshVersion) return;
+            token.ThrowIfCancellationRequested(); if (_disposed || version != _refreshVersion
+                || ArchiveNameSettings.Selected(LeftNameCodePage) != requestedLeft.ContainerNameCodePages[^1]
+                || ArchiveNameSettings.Selected(RightNameCodePage) != requestedRight.ContainerNameCodePages[^1]
+                || ArchivePayloadSettings.Selected(LeftGZipPayloadKind) != requestedLeft.ContainerGZipPayloadKinds[^1]
+                || ArchivePayloadSettings.Selected(RightGZipPayloadKind) != requestedRight.ContainerGZipPayloadKinds[^1]
+                || ArchivePayloadSettings.SelectedCompression(LeftCompressionPayloadKind) != requestedLeft.ContainerCompressionPayloadKinds[^1]
+                || ArchivePayloadSettings.SelectedCompression(RightCompressionPayloadKind) != requestedRight.ContainerCompressionPayloadKinds[^1]) return;
             _confirmedLeft = left.Source; _confirmedRight = right.Source;
             _leftManifest = left.Manifest; _rightManifest = right.Manifest;
             Rows = candidate; EntryList.ItemsSource = Rows; _preview.Text = "";
@@ -216,13 +275,15 @@ public sealed class ArchivePanel : UserControl, IDisposable
         }
         finally { Array.Clear(passwords); }
     }
-    public Task RepackToAsync(bool rightSide, string output, CancellationToken token = default)
+    public Task RepackToAsync(bool rightSide, string output, CancellationToken token = default, ManagedArchiveWriteOptions? writeOptions = null)
     {
         EnsurePresentSide(rightSide);
         if ((rightSide ? _requestedRight : _requestedLeft).EntryChain.Count != 0) throw new InvalidOperationException("内側アーカイブの再梱包は未対応です。");
         EnsureNewOutput(output);
         var input = rightSide ? _rightPath : _leftPath; var password = Password(rightSide);
-        return RunWriteAsync(cancellation => Task.Run(() => new ManagedArchive().Repack(input, output, password, cancellation), cancellation), token);
+        var confirmed = rightSide ? _confirmedRight : _confirmedLeft;
+        var codePage = confirmed.ContainerNameCodePages[0]; var payloadKind = confirmed.ContainerGZipPayloadKinds[0]; var compressionPayloadKind = confirmed.ContainerCompressionPayloadKinds[0];
+        return RunWriteAsync(cancellation => Task.Run(() => new ManagedArchive(readOptions: new(codePage, payloadKind, compressionPayloadKind)).Repack(input, output, password, cancellation, writeOptions), cancellation), token);
     }
     public Task ExtractToAsync(bool rightSide, string directory, CancellationToken token = default)
     {
@@ -230,7 +291,9 @@ public sealed class ArchivePanel : UserControl, IDisposable
         if ((rightSide ? _requestedRight : _requestedLeft).EntryChain.Count != 0) throw new InvalidOperationException("内側アーカイブの全件展開は未対応です。");
         _guardOutput?.Invoke(directory);
         var input = rightSide ? _rightPath : _leftPath; var password = Password(rightSide);
-        return RunWriteAsync(cancellation => Task.Run(() => new ManagedArchive().ExtractAll(input, directory, password, cancellation), cancellation), token);
+        var confirmed = rightSide ? _confirmedRight : _confirmedLeft;
+        var codePage = confirmed.ContainerNameCodePages[0]; var payloadKind = confirmed.ContainerGZipPayloadKinds[0]; var compressionPayloadKind = confirmed.ContainerCompressionPayloadKinds[0];
+        return RunWriteAsync(cancellation => Task.Run(() => new ManagedArchive(readOptions: new(codePage, payloadKind, compressionPayloadKind)).ExtractAll(input, directory, password, cancellation), cancellation), token);
     }
     private async Task RunWriteAsync(Func<CancellationToken, Task> action, CancellationToken callerToken)
     {
@@ -252,9 +315,20 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private async Task RepackAsync(bool rightSide)
     {
         var top = TopLevel.GetTopLevel(this); if (top is null) return;
-        var output = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = "非暗号化アーカイブへ再梱包", SuggestedFileName = "repacked.7z", ShowOverwritePrompt = true, FileTypeChoices = ArchivePickers.FileTypes });
-        if (output?.TryGetLocalPath() is not string path) return;
-        await RepackToAsync(rightSide, path, _lifetime.Token); _status.Text = $"非暗号化アーカイブを保存しました: {path}";
+        var confirmed = rightSide ? _confirmedRight : _confirmedLeft;
+        var path = await ArchiveWritePickerInjection.SaveAsync(top, new FilePickerSaveOptions { Title = "非暗号化アーカイブへ再梱包", SuggestedFileName = "repacked.7z", ShowOverwritePrompt = true, FileTypeChoices = ArchivePickers.FileTypes }, ArchiveWritePickers);
+        if (path is null) return;
+        ManagedArchiveWriteOptions? writeOptions = null;
+        if (!path.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase)
+            && (path.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".gzip", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (top is not Window owner) throw new InvalidOperationException("gzip出力の設定を表示するウィンドウがありません。");
+            writeOptions = await GZipWriteOptionsDialog.ShowAsync(owner);
+            if (writeOptions is null) return;
+        }
+        if (_disposed || !ReferenceEquals(confirmed, rightSide ? _confirmedRight : _confirmedLeft))
+            throw new OperationCanceledException("再梱包の設定中に確定済み入力が変わりました。");
+        await RepackToAsync(rightSide, path, _lifetime.Token, writeOptions); _status.Text = $"非暗号化アーカイブを保存しました: {path}";
     }
     private async Task ExtractAsync(bool rightSide)
     {

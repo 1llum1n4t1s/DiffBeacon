@@ -52,7 +52,11 @@ internal static class HeadlessArchiveWorkingReviewChecks
         leaf.DiscardChanges();
 
         var three = window.AddSession(); three.ApplyProject(new() { LeftArchiveInput = Input(), BaseArchiveInput = Input(), RightArchiveInput = Input(), LeftReadOnly = true, BaseReadOnly = true, RightReadOnly = true });
-        pump(three.ComparePathsAsync()); three.StartMergeSession(); three.ResultEditor.Text = "manual result\n";
+        pump(three.ComparePathsAsync()); three.StartMergeSession();
+        three.ResultEditor.SelectionStart = 0;
+        three.ResultEditor.SelectionEnd = (three.ResultEditor.Text?.Length ?? 0) - 1;
+        three.ResultEditor.ReplaceSelection("manual result");
+        Avalonia.Threading.Dispatcher.UIThread.RunJobs();
         var merge = three.CurrentMergeSession;
         leaf.LeftEditor.Text = "updated ancestor\n"; pump(leaf.SaveAsync(false));
         window.SelectSession(Array.IndexOf(window.SessionPanes.ToArray(), three)); screenshot("review-ancestor.png");

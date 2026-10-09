@@ -9,6 +9,12 @@ namespace DiffBeacon.App;
 public sealed record ArchiveWorkingSnapshot
 {
     public string[] EntryChain { get; set; } = [];
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int[]? ContainerNameCodePages { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? ContainerGZipPayloadKinds { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string[]? ContainerCompressionPayloadKinds { get; set; }
     public string LeafEntry { get; set; } = "";
     [JsonIgnore]
     internal byte[]? Bytes { get; set; }
@@ -24,6 +30,9 @@ public sealed record ArchiveWorkingSnapshot
     internal string AssetExtension => IsBinary ? ".bin" : ".text";
 
     internal ArchiveWorkingSnapshot Copy() => this with { EntryChain = EntryChain.Select(ArchiveProjectInput.CanonicalEntry).ToArray(),
+        ContainerNameCodePages = ContainerNameCodePages?.ToArray(),
+        ContainerGZipPayloadKinds = ArchivePayloadSettings.Copy(ContainerGZipPayloadKinds, EntryChain.Length + 1),
+        ContainerCompressionPayloadKinds = ArchivePayloadSettings.CopyCompression(ContainerCompressionPayloadKinds, EntryChain.Length + 1),
         LeafEntry = ArchiveProjectInput.CanonicalEntry(LeafEntry) };
     internal TextDocument Document() => !IsBinary ? TextDocument.FromSavedSnapshot(Bytes ?? throw new InvalidDataException("作業文書のsnapshotを読み込んでください。"), EncodingName, HasBom)
         : throw new InvalidDataException("Binary作業版をTextとして復号できません。Binary形式で開き直してください。");
@@ -35,7 +44,7 @@ public sealed record ArchiveWorkingSnapshot
             || (IsBinary ? EncodingName != "" || HasBom : EncodingName is not ("utf-8" or "utf-16" or "utf-16BE" or "utf-32" or "utf-32BE" or "windows-1252") || EncodingName == "windows-1252" && HasBom)
             || Bytes is null && string.IsNullOrWhiteSpace(SnapshotPath))
             throw new InvalidDataException("作業文書の格納階層が不正です。");
-        _ = new ArchiveSource(Path.GetFullPath(root), EntryChain);
+        _ = new ArchiveSource(Path.GetFullPath(root), EntryChain, containerNameCodePages: ContainerNameCodePages, containerGZipPayloadKinds: ArchivePayloadSettings.Choices(ContainerGZipPayloadKinds, EntryChain.Length + 1).ToArray(), containerCompressionPayloadKinds: ArchivePayloadSettings.CompressionChoices(ContainerCompressionPayloadKinds, EntryChain.Length + 1).ToArray());
         _ = new ArchiveSource(Path.GetFullPath(root), [LeafEntry]);
         if (Bytes is null) return;
         if (Bytes.Length > MaximumFileBytes) throw new InvalidDataException("作業版が形式別の保持上限を超えています。");
@@ -60,18 +69,19 @@ internal sealed class ArchiveWorkingStore
         var root = Path.GetFullPath(input.RootPath);
         if (OperatingSystem.IsWindows()) root = root.ToUpperInvariant();
         return string.Concat(new[] { root, input.RootSha256?.ToUpperInvariant() ?? "" }.Concat(chain.Select(ArchiveProjectInput.CanonicalEntry)).Append(ArchiveProjectInput.CanonicalEntry(leaf))
+            .Concat(ArchivePayloadSettings.NormalizedChoices(input.ContainerNameCodePages, input.ContainerGZipPayloadKinds, input.EntryChain.Length + 1, chain.Length + 1, compressionPayloadKinds: input.ContainerCompressionPayloadKinds))
             .Select(part => part.Length + ":" + part));
     }
     internal long Revision(ArchiveProjectInput input) => input.LeafEntry is null ? 0
         : _saved.GetValueOrDefault(Key(input, input.EntryChain, input.LeafEntry)).Revision;
     internal ArchiveWorkingSnapshot? Find(ArchiveSource source, string leaf)
     {
-        var input = new ArchiveProjectInput { RootPath = source.RootPath, RootSha256 = source.RootSha256 };
+        var input = new ArchiveProjectInput { RootPath = source.RootPath, RootSha256 = source.RootSha256, EntryChain = source.EntryChain.ToArray(), ContainerNameCodePages = ArchiveNameSettings.Capture(source.ContainerNameCodePages), ContainerGZipPayloadKinds = ArchivePayloadSettings.Capture(source.ContainerGZipPayloadKinds), ContainerCompressionPayloadKinds = ArchivePayloadSettings.Capture(source.ContainerCompressionPayloadKinds) };
         return _saved.GetValueOrDefault(Key(input, source.EntryChain.ToArray(), leaf)).Snapshot;
     }
     internal ManagedArchiveManifest Overlay(ManagedArchiveManifest manifest, ArchiveSource source)
     {
-        var input = Capture(new() { RootPath = source.RootPath, RootSha256 = source.RootSha256, EntryChain = source.EntryChain.ToArray() });
+        var input = Capture(new() { RootPath = source.RootPath, RootSha256 = source.RootSha256, EntryChain = source.EntryChain.ToArray(), ContainerNameCodePages = ArchiveNameSettings.Capture(source.ContainerNameCodePages), ContainerGZipPayloadKinds = ArchivePayloadSettings.Capture(source.ContainerGZipPayloadKinds), ContainerCompressionPayloadKinds = ArchivePayloadSettings.Capture(source.ContainerCompressionPayloadKinds) });
         return manifest with { Entries = manifest.Entries.Select(entry =>
         {
             if (entry.IsDirectory) return entry;
@@ -86,6 +96,8 @@ internal sealed class ArchiveWorkingStore
     internal ArchiveProjectInput Capture(ArchiveProjectInput input)
     {
         var copies = _saved.Values.Where(value => Key(value.Origin, [], "") == Key(input, [], "")
+            && ArchivePayloadSettings.NormalizedChoices(value.Snapshot.ContainerNameCodePages, value.Snapshot.ContainerGZipPayloadKinds, value.Snapshot.EntryChain.Length + 1, input.EntryChain.Length + 1, compressionPayloadKinds: value.Snapshot.ContainerCompressionPayloadKinds)
+                .SequenceEqual(ArchivePayloadSettings.NormalizedChoices(input.ContainerNameCodePages, input.ContainerGZipPayloadKinds, input.EntryChain.Length + 1, compressionPayloadKinds: input.ContainerCompressionPayloadKinds))
             && (input.LeafEntry is null ? value.Snapshot.EntryChain.Take(input.EntryChain.Length).SequenceEqual(input.EntryChain)
                 : value.Snapshot.LeafEntry == input.LeafEntry && value.Snapshot.EntryChain.SequenceEqual(input.EntryChain)))
             .Select(value => value.Snapshot.Copy()).ToArray();
@@ -100,7 +112,7 @@ internal sealed class ArchiveWorkingStore
         foreach (var copy in input.WorkingDocuments ?? [])
         {
             copy.Validate(input.RootPath);
-            var key = Key(input, copy.EntryChain, copy.LeafEntry);
+            var key = Key(input with { EntryChain = copy.EntryChain, ContainerNameCodePages = copy.ContainerNameCodePages, ContainerGZipPayloadKinds = copy.ContainerGZipPayloadKinds, ContainerCompressionPayloadKinds = copy.ContainerCompressionPayloadKinds }, copy.EntryChain, copy.LeafEntry);
             var previous = _saved.TryGetValue(key, out var saved) ? saved.Snapshot : pending.GetValueOrDefault(key).Snapshot;
             if (previous is not null)
             {
@@ -132,7 +144,7 @@ internal sealed class ArchiveWorkingStore
     {
         EnsureCurrent(input, expected); snapshot.Validate(input.RootPath);
         if (snapshot.Bytes is null) throw new InvalidDataException("作業文書のsnapshotを読み込んでください。");
-        var key = Key(input, snapshot.EntryChain, snapshot.LeafEntry);
+        var key = Key(input with { EntryChain = snapshot.EntryChain, ContainerNameCodePages = snapshot.ContainerNameCodePages, ContainerGZipPayloadKinds = snapshot.ContainerGZipPayloadKinds, ContainerCompressionPayloadKinds = snapshot.ContainerCompressionPayloadKinds }, snapshot.EntryChain, snapshot.LeafEntry);
         var exists = _saved.TryGetValue(key, out var old);
         Capacity(snapshot.Bytes.Length, exists, old.Snapshot?.Bytes?.Length ?? 0);
         _bytes += snapshot.Bytes.Length - (old.Snapshot?.Bytes?.Length ?? 0);

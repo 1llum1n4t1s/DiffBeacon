@@ -77,10 +77,20 @@ public static partial class FolderOperations
                 if (!_destination.TryGetValue(current, out var state)) continue;
                 if (!state.Metadata.IsDirectory) throw new IOException("既知namespace更新の親がdirectoryではありません。");
                 token.ThrowIfCancellationRequested();
-                var writeTime = FolderCopyWindowsMetadata.RefreshOwnedParentMtime(current, state.Metadata,
-                    state.ExpectedWriteTime, _budget, token);
-                token.ThrowIfCancellationRequested();
-                state.ExpectedWriteTime = writeTime;
+                if (SameOrInside(current, _destinationRoot))
+                {
+                    // root内だけ、今回の既知namespace変更後のmtimeを更新する。
+                    var writeTime = FolderCopyWindowsMetadata.RefreshOwnedParentMtime(current, state.Metadata,
+                        state.ExpectedWriteTime, _budget, token);
+                    token.ThrowIfCancellationRequested();
+                    state.ExpectedWriteTime = writeTime;
+                }
+                else
+                {
+                    // root外の兄弟変更を既知変更として採用せず、mtime以外を再照合する。
+                    FolderCopyWindowsMetadata.RequireUnchanged(current, state.Metadata, _budget, token, trackWriteTime: false);
+                    token.ThrowIfCancellationRequested();
+                }
             }
             Guard(token, context);
         }

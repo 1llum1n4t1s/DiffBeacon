@@ -59,7 +59,23 @@ var comparison = TextDiffer.Compare(left.Text, right.Text, options, cancellation
 
 ## 三者マージ
 
-`ThreeWayMerger.Merge(baseText, left, right, options?, cancellationToken)` は `MergeResult` (`Text` / `MergedText`, `Conflicts`, `HasConflicts`) を返します。片側だけの変更と同じ変更は自動マージし、重なる異なる変更は `<<<<<<< LEFT` / `||||||| BASE` / `=======` / `>>>>>>> RIGHT` で明示します。`MergeConflict` には元の開始行・行数と BASE/LEFT/RIGHT の文字列があります。隣接する別の行への変更は競合にしません。
+通常App／CLIの結果生成は [FourPaneMaterialization](FourPaneMaterialization.cs) のfactoryを使います。次の3methodはすべて `FourPaneMaterializedResult` を返します。
+
+```csharp
+FourPaneMaterialization.CreateTwoWay(string left, string right,
+    ComparisonOptions? options = null, CancellationToken token = default);
+FourPaneMaterialization.CreateThreeWay(string ancestor, string left, string right,
+    ComparisonOptions? options = null, bool autoResolve = false,
+    CancellationToken token = default);
+FourPaneMaterialization.CreateIndependentThreeWay(string left, string middle, string right,
+    ComparisonOptions? options = null, CancellationToken token = default);
+```
+
+設定付きoverloadは二者・独立三者では `options, FourPaneMaterializationSettings settings, token`、祖先三者では `options, autoResolve, FourPaneMaterializationSettings settings, token` の順です。二者・独立三者・祖先三者を分け、独立三者の中央を祖先として扱いません。祖先三者は `autoResolve: true` で独立変更を自動採用し、未解決箇所を保持します。生成・EOF／ghost同期・元diffと原文の対応・初期結果は共有作業／保持予算で準備します。
+
+戻り値の `InitialBuffer` は [ResultLineBuffer](ResultLineBuffer.cs)、`InitialSession` は [ResultEditSession](ResultEditSession.cs) です。通常入口ではこのsessionを使い、`Current` の本文・物理行の由来と共有Undo/Redo・保存点を管理します。bufferから直接sessionを作る場合の公開constructorは `ResultEditSession(ResultLineBuffer initial, int maximumGroups = 100, long maximumCharacters = 64L * 1024 * 1024)` です。採用候補は `Choices` と `PrepareChoice` を使い、保存本文は `FourPaneMaterializedResult.ExpandedText(ResultLineBuffer buffer, CancellationToken token = default)` で未解決箇所を展開します。CLIは `FourPaneCliSerialization` を通し、LEFT／BASE／RIGHTマーカーと原文改行の保存契約を適用します。GUIの採用・編集境界は [結果編集の契約](../../Docs/MERGE-SESSION.md) を参照してください。
+
+旧 `MergeSession`／`ThreeWayMerger` は新方式の4RID移行検証まで参照用に保持し、通常App／CLIからは呼び出しません。4RID検証後、共有型の整理と合わせて旧2classを除去します。外部consumerやNuGet配布の互換性は未確認で、公開済みAPIとの互換を検証済みとは扱いません。現役の共有型 `MergeSource`／`MergeLineProvenance` と、二者差分コピーの `TextMerger.CopyLeftToRight`／`CopyRightToLeft` はこの旧2classの除去対象に含めません。
 
 ## ファイル・ディレクトリ・バイナリ
 

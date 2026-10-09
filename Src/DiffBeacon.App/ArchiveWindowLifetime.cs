@@ -19,7 +19,8 @@ internal sealed class ArchiveWindowLifetime
     {
         var path = Path.GetFullPath(input.RootPath);
         if (OperatingSystem.IsWindows()) path = path.ToUpperInvariant();
-        return string.Concat(new[] { path, input.RootSha256?.ToUpperInvariant() ?? "" }.Concat(input.EntryChain.Select(ArchiveProjectInput.CanonicalEntry)).Select(part => part.Length + ":" + part));
+        return string.Concat(new[] { path, input.RootSha256?.ToUpperInvariant() ?? "" }.Concat(input.EntryChain.Select(ArchiveProjectInput.CanonicalEntry))
+            .Concat(ArchivePayloadSettings.NormalizedChoices(input.ContainerNameCodePages, input.ContainerGZipPayloadKinds, input.EntryChain.Length + 1, compressionPayloadKinds: input.ContainerCompressionPayloadKinds)).Select(part => part.Length + ":" + part));
     }
     internal string?[]? Find(ArchiveProjectInput input) => _credentials.TryGetValue(RouteKey(input), out var values) ? values.ToArray() : null;
     internal void Remember(ArchiveProjectInput input, IReadOnlyList<string?> values)

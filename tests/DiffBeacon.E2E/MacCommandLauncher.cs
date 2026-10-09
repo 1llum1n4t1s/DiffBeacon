@@ -9,7 +9,8 @@ internal static class MacCommandLauncher
     {
         var nativeExecutable = app.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ? "dotnet" : app;
         var nativeArguments = app.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) ? new[] { app }.Concat(arguments).ToArray() : arguments;
-        var gatePath = Path.GetFullPath("tests/DiffBeacon.E2E/process_startup_gate.py");
+        var repository = FixtureRepository.FindRoot() ?? throw new IOException("Startup gate repository not found.");
+        var gatePath = Path.Combine(repository.FullName, "tests", "DiffBeacon.E2E", "process_startup_gate.py");
         const string expectedGateSha256 = "760F968A8438F91441ACE6A7F6556B64D3CC54785A3825B9D1D98112A5CD074E";
         string? gateSha256 = null;
         var launchNonce = Guid.NewGuid().ToString("N");

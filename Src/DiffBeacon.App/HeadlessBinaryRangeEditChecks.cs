@@ -123,7 +123,7 @@ internal static class HeadlessBinaryRangeEditChecks
                 var stamp = panel.StateStamp; Edit(panel, 2, BinaryRangeKind.Insert, 3, ""); Edit(panel, 2, BinaryRangeKind.Overwrite, 0, "AA BB CC"); Report("noops preserve redo revision", panel.StateStamp == stamp && panel.Session.CanRedo);
                 foreach (var request in new[] { new BinaryRangeRequest(BinaryRangeKind.Insert, -1, 0, "AA"), new(BinaryRangeKind.Delete, long.MaxValue, long.MaxValue, ""), new(BinaryRangeKind.Delete, 0, long.MaxValue, ""), new(BinaryRangeKind.Overwrite, 3, 0, "AA"), new(BinaryRangeKind.Insert, 0, 0, "A"), new(BinaryRangeKind.Insert, 0, 0, "GG") })
                     Report("bounds atomic " + request, Refused(() => panel.EditRange(2, request)) && panel.StateStamp == stamp && panel.Session.CanRedo);
-                panel.RightReadOnly = true; Report("readonly noop rejected", Refused(() => Edit(panel, 2, BinaryRangeKind.Insert, 0, "")) && panel.StateStamp == stamp);
+                panel.RightReadOnly = true; var readonlyStamp = panel.StateStamp; Report("readonly noop rejected", Refused(() => Edit(panel, 2, BinaryRangeKind.Insert, 0, "")) && panel.StateStamp == readonlyStamp);
             }
             using (var panel = new SpecializedViews.BinaryPanel(new byte[4097], new byte[4097], false, false))
             {

@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
 using DiffBeacon.Core;
+using DiffBeacon.Providers;
 
 namespace DiffBeacon.App;
 
@@ -59,7 +60,7 @@ public sealed partial class ComparisonPane
                     catch (OperationCanceledException) { throw; }
                     catch (Exception exception) when (exception is not OutOfMemoryException && ProjectInputs.Archive(project, side) is not null)
                     {
-                        var retry = await RetryIndependentArchivePasswordsAsync(project, result.Passwords, operation, token);
+                        var retry = await RetryIndependentArchivePasswordsAsync(project, result.Passwords, operation, token, exception is ArchiveNameDecodingException);
                         foreach (var values in result.Passwords) Array.Clear(values);
                         result.Passwords = retry;
                         // 別側のpassword訂正も読込み結果へ反映する。
@@ -73,7 +74,7 @@ public sealed partial class ComparisonPane
                 if (input is null) continue;
                 foreach (var snapshot in input.WorkingDocuments ?? [])
                 {
-                    var route = input.Copy() with { EntryChain = snapshot.EntryChain.ToArray(), LeafEntry = snapshot.LeafEntry, WorkingDocuments = null };
+                    var route = input.Copy() with { EntryChain = snapshot.EntryChain.ToArray(), ContainerNameCodePages = snapshot.ContainerNameCodePages?.ToArray(), ContainerGZipPayloadKinds = snapshot.ContainerGZipPayloadKinds?.ToArray(), ContainerCompressionPayloadKinds = snapshot.ContainerCompressionPayloadKinds?.ToArray(), LeafEntry = snapshot.LeafEntry, WorkingDocuments = null };
                     var values = (_owner as MainWindow)?.ArchiveLifetime.Find(route) ?? new string?[route.EntryChain.Length + 1];
                     if (route.EntryChain.Take(input.EntryChain.Length).SequenceEqual(input.EntryChain))
                         for (var layer = 0; layer < Math.Min(values.Length, result.Passwords[side].Length); layer++) values[layer] ??= result.Passwords[side][layer];
@@ -99,7 +100,7 @@ public sealed partial class ComparisonPane
                                 Array.Clear(supplied[side]); supplied[side] = values.ToArray();
                                 try
                                 {
-                                    var retry = await RetryIndependentArchivePasswordsAsync(routeProject, supplied, operation, token);
+                                    var retry = await RetryIndependentArchivePasswordsAsync(routeProject, supplied, operation, token, allowPayloadRetry: false);
                                     Array.Clear(values); values = retry[side]; retry[side] = [];
                                     foreach (var other in retry) Array.Clear(other);
                                 }
@@ -118,11 +119,11 @@ public sealed partial class ComparisonPane
     }
 
     private async Task<string?[][]> RetryIndependentArchivePasswordsAsync(ComparisonProject project, string?[][] passwords,
-        CancellationTokenSource operation, CancellationToken token)
+        CancellationTokenSource operation, CancellationToken token, bool allowNameRetry = false, bool allowPayloadRetry = true)
     {
         token.ThrowIfCancellationRequested();
         if (_disposed || !ReferenceEquals(_operation, operation)) throw new OperationCanceledException(token);
-        var dialog = new ArchiveSourceRetryDialog(project, passwords);
+        var dialog = new ArchiveSourceRetryDialog(project, passwords, allowNameRetry, allowPayloadRetry);
         string?[][]? retry = null;
         try
         {
@@ -132,6 +133,7 @@ public sealed partial class ComparisonPane
             retry = await task;
             token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(_operation, operation) || retry is null) throw new OperationCanceledException(token);
+            dialog.ApplyNameChoices(project);
             var adopted = retry; retry = null; return adopted;
         }
         finally

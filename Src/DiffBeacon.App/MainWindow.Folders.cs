@@ -24,6 +24,11 @@ public sealed partial class ComparisonPane
     };
     private readonly List<Control> _folderThreeWayControls = [];
     private DirectoryComparisonResult? _directoryComparison;
+    // headless raw証拠: 比較モデルの実referenceだけを読み出す。
+    internal object? FolderOptionsAdoptedModel => _directoryComparison;
+    internal ListBox FolderOptionsRawRows => _directoryList;
+    internal CheckBox FolderOptionsRawMode => _folderTreeMode;
+    internal ComboBox FolderOptionsRawPolicy => _folderInitialExpansion;
     private CancellationTokenSource? _folderCopyOperation, _folderRefreshOperation;
     private long _folderContextGeneration;
     private bool _folderCopyBusy, _folderModelStale;
@@ -89,7 +94,11 @@ public sealed partial class ComparisonPane
         AddThreeWay("選択をすべてコピー", DirectoryCopyMode.All);
         AddThreeWay("選択の差分をコピー", DirectoryCopyMode.DifferencesOnly);
         _folderDirection.SelectionChanged += (_, _) => InvalidateFolderCopy(false);
-        DockPanel.SetDock(actions, Dock.Top); _folderView.Children.Add(actions);
+        InitializeFolderTree(actions);
+        var folderActionsScroll = new ScrollViewer { Content = actions, MaxHeight = 144,
+            HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
+        DockPanel.SetDock(folderActionsScroll, Dock.Top); _folderView.Children.Add(folderActionsScroll);
         DockPanel.SetDock(_folderCopySummary, Dock.Bottom); _folderView.Children.Add(_folderCopySummary);
         _folderView.Children.Add(_directoryList);
         foreach (var control in new Control[] { LeftPath, BasePath, RightPath, _mode, _provider, _recursive, _folderMode,
@@ -133,6 +142,7 @@ public sealed partial class ComparisonPane
         _folderContextGeneration++;
         _folderCopyOperation?.Cancel(); _folderRefreshOperation?.Cancel();
         if (markStale && _directoryComparison is not null) _folderModelStale = true;
+        UpdateFolderTreeControls();
     }
 
     internal void CancelInactiveFolderCopy(bool active)
@@ -149,32 +159,32 @@ public sealed partial class ComparisonPane
             _status.Text = "フォルダーコピーを中止しています…";
     }
 
-    private void BindDirectoryModel(DirectoryComparisonResult result, FolderConfiguration configuration, string? filterStamp)
+    internal void EnsureFolderOptionsOutputWritable(string path)
     {
+        EnsureProjectOutputWritable(path);
+        foreach (var source in CurrentImageProtectedPaths().Concat(new[] { _directoryLeft, _directoryMiddle, _directoryRight }))
+        {
+            if (string.IsNullOrWhiteSpace(source)) continue;
+            if (ArchivePaths.SameFile(source, path)) throw new InvalidOperationException("フォルダー表示設定で比較入力やworkspaceを上書きできません。");
+            if (!FolderComparisons.IsDirectory(source)) continue;
+            for (var current = Path.GetDirectoryName(path); current is not null; current = Path.GetDirectoryName(current))
+                if (ArchivePaths.SameFile(source, current)) throw new InvalidOperationException("比較入力フォルダー内へ表示設定を保存できません。");
+        }
+    }
+    private void BindDirectoryModel(FolderDirectoryCandidate candidate)
+    {
+        var result = candidate.Model;
         InvalidateFolderCopy();
         _directoryLeft = result.LeftPath; _directoryMiddle = result.MiddlePath; _directoryRight = result.RightPath;
-        _directoryComparison = result; _directoryConfiguration = configuration; _directoryFilterStamp = filterStamp;
+        _directoryComparison = result; _directoryConfiguration = candidate.Configuration; _directoryFilterStamp = candidate.FilterStamp;
         foreach (var button in _folderCopyButtons.Take(4)) button.IsVisible = !result.IsThreeWay;
         foreach (var control in _folderThreeWayControls) control.IsVisible = result.IsThreeWay;
-        _directoryList.ItemsSource = result.Entries;
-        _directoryList.ItemTemplate = new FuncDataTemplate<DirectoryEntry>((entry, _) => new TextBlock
-        {
-            Text = entry is null ? "" : $"{entry.Status,-14}  {ThreeWayCaption(entry)}{(entry.IsFiltered ? "[除外] " : "")}{entry.RelativePath}",
-            FontFamily = new FontFamily("Cascadia Mono, Menlo, monospace"), Margin = new Thickness(8),
-            TextTrimming = TextTrimming.CharacterEllipsis
-        }, false);
+        AdoptFolderTreeProjection(candidate.Projection, candidate.Selection);
         _folderModelStale = false; _folderCopySummary.Text = "Ctrl / Shiftで複数の項目を選択できます。";
         SetSpecialView(_folderView); _views.SelectedItem = _specialTab;
+        UpdateFolderTreeControls();
         _status.Text = $"フォルダー比較: {result.Entries.Count} 件";
 
-        static string ThreeWayCaption(DirectoryEntry entry) => entry.ThreeWay?.Classification switch
-        {
-            DirectoryThreeWayClassification.OnlyLeft => "[左のみ異なる] ",
-            DirectoryThreeWayClassification.OnlyMiddle => "[中央のみ異なる] ",
-            DirectoryThreeWayClassification.OnlyRight => "[右のみ異なる] ",
-            DirectoryThreeWayClassification.AllChanged => "[三者差分] ",
-            _ => ""
-        };
     }
 
     private bool FolderOwnerCurrent() => !_disposed && (_owner is not MainWindow window
@@ -314,6 +324,7 @@ public sealed partial class ComparisonPane
             _folderCopyBusy = busy; _directoryList.IsEnabled = !busy;
             foreach (var button in _folderCopyButtons) button.IsEnabled = !busy;
             _folderDirection.IsEnabled = !busy;
+            UpdateFolderTreeControls();
         }
         static void OnUi(Action action)
         {

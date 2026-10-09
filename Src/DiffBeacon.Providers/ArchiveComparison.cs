@@ -36,10 +36,9 @@ internal sealed class ArchiveComparisonProvider : IComparisonProvider
     public async Task<ProviderResult> CompareAsync(ComparisonRequest request, CancellationToken cancellationToken)
     {
         if (request.Format != Id) throw new NotSupportedException("プロバイダーと比較形式が一致しません。");
-        var service = new ManagedArchive();
-        var left = await Task.Run(() => service.ReadManifest(request.LeftPath, cancellationToken: cancellationToken), cancellationToken);
-        var right = await Task.Run(() => service.ReadManifest(request.RightPath, cancellationToken: cancellationToken), cancellationToken);
-        return new("7z / RAR / ZIP: 格納名・型・サイズ・内容SHA-256を比較。パスワード付きの内容はアーカイブビューで比較してください。",
+        var left = await Task.Run(() => new ManagedArchive(readOptions: request.LeftArchiveReadOptions).ReadManifest(request.LeftPath, cancellationToken: cancellationToken), cancellationToken);
+        var right = await Task.Run(() => new ManagedArchive(readOptions: request.RightArchiveReadOptions).ReadManifest(request.RightPath, cancellationToken: cancellationToken), cancellationToken);
+        return new("アーカイブ: 格納名・型・サイズ・内容SHA-256を比較。パスワード付きの内容はアーカイブビューで比較してください。",
             ArchiveComparison.CanonicalText(left), ArchiveComparison.CanonicalText(right));
     }
 }

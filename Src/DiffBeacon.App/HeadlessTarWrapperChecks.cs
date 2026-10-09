@@ -41,8 +41,9 @@ internal static class HeadlessTarWrapperChecks
             var name = item.GetProperty("name").GetString()!; var path = Path.Combine(folder, name); var before = Hash(File.ReadAllBytes(path));
             var observations = new List<Observation>(); ManagedArchiveEntry[]? completed = null;
             var prior = Panel(); Preview(prior); var rows = prior.Rows; var preview = prior.PreviewText;
-            SetPaths(path); pane.ArchiveReadStarting = Stop;
+            var earlyHookReached = false; SetPaths(path); pane.ArchiveReadStarting = () => { earlyHookReached = true; Stop(); };
             var canceled = Cancel(pane.ComparePathsAsync()); pane.ArchiveReadStarting = null;
+            check("TAR GUI normal input hook " + name, earlyHookReached, "normal archive reader reached before actual Stop");
             Observe("early-stop", prior, rows, preview, canceled);
             rows = prior.Rows; preview = prior.PreviewText;
             pane.ArchiveReadyForAdoption = candidate => { completed = candidate.Rows.Select(row => row.Left!).ToArray(); Stop(); };
@@ -71,7 +72,7 @@ internal static class HeadlessTarWrapperChecks
                 pump(owner.RefreshAsync()); Preview(owner);
                 var operable = !owner.IsDisposed && owner.Rows.Count == expectedRows.Count;
                 observations.Add(new(stage, wasCanceled, same, rowsSame, previewSame, operable));
-                check("TAR GUI " + stage + " " + name, wasCanceled && same && rowsSame && previewSame && operable, "actual Stop, confirmed display retained and refresh/preview reusable");
+                check("TAR GUI " + stage + " " + name, wasCanceled && same && rowsSame && previewSame && operable, $"canceled={wasCanceled}; samePanel={same}; rows={rowsSame}; preview={previewSame}; operable={operable}; actual Stop, confirmed display retained and refresh/preview reusable");
             }
         }
         using (var file = File.Create(Path.Combine(folder, "facts.json")))

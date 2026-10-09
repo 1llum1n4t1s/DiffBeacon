@@ -65,6 +65,7 @@ public static partial class SpecializedViews
                         }
                         else { selection.Caret = caret; selection.Anchor = caret; selection.Selected = false; }
                         selection.LowNibble = !ascii && editor.CaretIndex % 3 == 1; SelectionVersion++;
+                        UpdateSearchButtons();
                     };
                 }
             }
@@ -144,6 +145,8 @@ public static partial class SpecializedViews
         private bool HandleByteKey(int side, KeyEventArgs args, bool ascii)
         {
             var command = args.KeyModifiers.HasFlag(KeyModifiers.Control) || args.KeyModifiers.HasFlag(KeyModifiers.Meta);
+            if (command && args.Key == Key.F) { _ = RunAsync(() => SearchDialogAsync(side)); return true; }
+            if (args.Key == Key.F3) { _ = RunAsync(() => SearchNextAsync(side, args.KeyModifiers.HasFlag(KeyModifiers.Shift))); return true; }
             if (command && args.Key is Key.C or Key.X or Key.V)
             { _ = RunAsync(() => ClipboardAsync(side, args.Key == Key.C ? BinaryClipboardCommand.Copy : args.Key == Key.X ? BinaryClipboardCommand.Cut : BinaryClipboardCommand.FastPaste)); return true; }
             if (command && args.Key is Key.Z or Key.Y) { _ = Run(() => { if (args.Key == Key.Z && !args.KeyModifiers.HasFlag(KeyModifiers.Shift)) Undo(); else Redo(); }); return true; }

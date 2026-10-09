@@ -7,6 +7,7 @@ public sealed partial class ManagedArchive
 {
     /// <summary>読込み可能な明示名。出力形式と wrapper 入力の対応を分ける。</summary>
     public static bool SupportsInput(string path) => SupportsOutput(path) ||
+        path.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) || IsSingleCompressionName(path) ||
         path.EndsWith(".rar", StringComparison.OrdinalIgnoreCase) || TryGetWrapperChain(path, out _, out _, out _);
 
     // FNAME や内包エントリを使わず、呼び出し元が指定した名前だけで鎖を確定する。

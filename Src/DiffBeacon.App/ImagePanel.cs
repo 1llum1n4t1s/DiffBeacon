@@ -116,7 +116,7 @@ public static partial class SpecializedViews
                 _paneCaptions.Add(caption);
                 DockPanel.SetDock(caption, Dock.Top); column.Children.Add(caption); column.Children.Add(AttachImageScroll(pane, AttachRectanglePane(pane)));
                 Grid.SetColumn(column, pane); side.Children.Add(column);
-                _selectors[pane].ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
+                _selectors[pane].ValueChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(persistApplicationDefaults: true); };
             }
             Add(frameControls, FrameButton("ImagePreviousBoth", "同期 ◀", -1, -1)); Add(frameControls, FrameButton("ImageNextBoth", "同期 ▶", -1, 1));
             toolbar.Children.Add(frameControls);
@@ -145,33 +145,37 @@ public static partial class SpecializedViews
             _imageViews.SelectedIndex = 0;
             Children.Add(_imageViews);
             InitializeDragOptions(); InitializeOverlay();
-            _zoom.ValueChanged += (_, _) => { PreserveWipeOrCancelDrag(); UpdateZoom(); };
+            _zoom.ValueChanged += (_, _) =>
+            {
+                PreserveWipeOrCancelDrag(); UpdateZoom();
+                if (!_updatingSelectors && _operationCancellation is null) PersistAdoptedApplicationDefaults();
+            };
             _highlightAlpha.ValueChanged += async (_, _) =>
             {
                 if (_updatingSelectors || _disposed) return;
                 _requestedHighlightAlpha = _highlightAlpha.Value;
-                await SelectFromControlsAsync(preserveRectangle: true);
+                await SelectFromControlsAsync(preserveRectangle: true, persistApplicationDefaults: true);
             };
             _threshold.ValueChanged += async (_, _) =>
             {
                 if (_updatingSelectors || _disposed) return;
                 _requestedThreshold = (double)(_threshold.Value ?? 0);
-                await SelectFromControlsAsync();
+                await SelectFromControlsAsync(persistApplicationDefaults: true);
             };
             _blockSizeControl.ValueChanged += async (_, _) =>
             {
                 if (_updatingSelectors || _disposed) return;
                 var value = _blockSizeControl.Value ?? 8;
                 if (decimal.Truncate(value) != value) { RestoreSelectors(); return; }
-                _requestedBlockSize = (int)value; await SelectFromControlsAsync();
+                _requestedBlockSize = (int)value; await SelectFromControlsAsync(persistApplicationDefaults: true);
             };
-            _showDifferences.IsCheckedChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(); };
+            _showDifferences.IsCheckedChanged += async (_, _) => { if (!_updatingSelectors && !_disposed) await SelectFromControlsAsync(persistApplicationDefaults: true); };
             _insertionDeletionMode.SelectionChanged += async (_, _) =>
             {
                 if (_updatingSelectors || _disposed) return;
                 if (_insertionDeletionMode.SelectedIndex is < 0 or > 2) { RestoreSelectors(); return; }
                 _requestedInsertionDeletionMode = _insertionDeletionMode.SelectedIndex;
-                await SelectFromControlsAsync();
+                await SelectFromControlsAsync(persistApplicationDefaults: true);
             };
             AttachedToVisualTree += (_, _) => { if (!_disposed && _owner is null && TopLevel.GetTopLevel(this) is Window owner) { _owner = owner; owner.Closed += OwnerClosed; AttachRectangleOwner(owner); } };
             UpdateNavigation();
@@ -231,10 +235,10 @@ public static partial class SpecializedViews
             return button;
         }
 
-        private async Task SelectFromControlsAsync(bool preserveRectangle = false)
+        private async Task SelectFromControlsAsync(bool preserveRectangle = false, bool persistApplicationDefaults = false)
         {
             var generation = _generation;
-            try { var task = SetNumbersAsync(ReadNumbers(), CancellationToken.None, preserveRectangle: preserveRectangle); generation = _generation; UpdateNavigation(); await task; }
+            try { var task = SetNumbersAsync(ReadNumbers(), CancellationToken.None, preserveRectangle: preserveRectangle, persistApplicationDefaults: persistApplicationDefaults); generation = _generation; UpdateNavigation(); await task; }
             catch (OperationCanceledException) { }
             catch (Exception error) { if (!_disposed && generation == _generation) { RestoreSelectors(); _status.Text = "画像を表示できません: " + error.Message; } }
         }
@@ -243,7 +247,7 @@ public static partial class SpecializedViews
             => SetNumbersAsync(_counts.Length == 3 ? [left, MiddleFrame!.Value, right] : [left, right], token);
         internal Task SetFramesAsync(int left, int middle, int right, CancellationToken token = default) => SetNumbersAsync([left, middle, right], token);
 
-        private Task SetNumbersAsync(int[] numbers, CancellationToken token, int? requestedSelection = null, bool preserveRectangle = false)
+        private Task SetNumbersAsync(int[] numbers, CancellationToken token, int? requestedSelection = null, bool preserveRectangle = false, bool persistApplicationDefaults = false)
         {
             ObjectDisposedException.ThrowIf(_disposed, this); ImageComparisonEngine.ValidateSelection(_snapshots!, numbers, _requestedOrientations, _requestedOffsets); token.ThrowIfCancellationRequested();
             if (_saving) throw new InvalidOperationException("画像の保存が完了してから表示を変更してください。");
@@ -258,13 +262,13 @@ public static partial class SpecializedViews
             _operationCancellation?.Cancel(); var cancel = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token); _operationCancellation = cancel;
             _displayCandidateCancellation?.Cancel();
             _displayStateCompletion?.TrySetResult();
-            CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection);
+            CurrentFrameOperation = LoadFramesAsync(numbers, _requestedThreshold, _showDifferences.IsChecked == true, ++_generation, cancel, requestedSelection: requestedSelection, persistApplicationDefaults: persistApplicationDefaults);
             UpdateEditControls();
             return CurrentFrameOperation;
         }
 
         private async Task LoadFramesAsync(int[] numbers, double threshold, bool show, long generation, CancellationTokenSource cancel,
-            Action<ImageEditSession, CancellationToken>? edit = null, int writablePane = -1, int? requestedSelection = null)
+            Action<ImageEditSession, CancellationToken>? edit = null, int writablePane = -1, int? requestedSelection = null, bool persistApplicationDefaults = false)
         {
             var token = cancel.Token; var snapshots = _snapshots!; var cached = _rawDecoded; var selected = requestedSelection ?? _selectedDiffIndex;
             var candidateReady = FrameCandidateReady;
@@ -363,6 +367,7 @@ public static partial class SpecializedViews
                 _displayRefreshPending = false;
                 if (_requestedWipe != _activeWipe) RequestDisplayRefresh();
                 UpdateOverlayTimer();
+                if (persistApplicationDefaults) PersistAdoptedApplicationDefaults();
             }
             catch (Exception error)
             {

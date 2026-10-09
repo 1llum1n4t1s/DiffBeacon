@@ -964,7 +964,7 @@
   ],
   "reusedFixedScope": {
     "path": "tests/Fixtures/IndependentArchiveText",
-    "manifestSha256": "9EF4C602232BB7DD9331B3D1C776C8A34180000317D90E08F95BC74242028943",
+    "manifestSha256": "53E3EBA944D9DDCB70EF02F2A876276960DCC025F4E2F9C21C5AFDC043ADE49D",
     "files": [
       {
         "path": "LICENSE",
@@ -983,8 +983,8 @@
       },
       {
         "path": "coverage.md",
-        "size": 4203,
-        "sha256": "0A69AB20974609CCFD7175520C00ACBCDC48D11A101262B13FA6837105EE38B6"
+        "size": 4669,
+        "sha256": "D47CD132E167EEE1CBEA90CBDF574D305FC44458DE784648A2D41C3ECA20C08E"
       },
       {
         "path": "critical-failure-spec.md",
@@ -1143,8 +1143,8 @@
       },
       {
         "path": "verify-products.py",
-        "size": 32522,
-        "sha256": "B58845054B0E456DACA9B4294ECD0501BA6F4319FE9B927B01FE653E2DCC38A9"
+        "size": 33805,
+        "sha256": "295D0055086A0D8E5C0E26180521BDDE492747E4496C98945802DB678A1AD9DA"
       },
       {
         "path": "verify.py",

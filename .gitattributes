@@ -109,3 +109,5 @@ tests/Fixtures/Archives/Sources/regenerate.py -text !eol
 tests/DiffBeacon.E2E/archive_wrapper_verifier.py -text !eol
 tests/Fixtures/IndependentTextInputSelectionArchives/** -text !eol
 tests/Fixtures/IndependentTextInputSelectionCipher/** -text !eol
+tests/Fixtures/Archives/BareGZip/** -text !eol
+build/WinIMergeDllReference/** -text !eol

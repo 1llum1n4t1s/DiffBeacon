@@ -89,6 +89,10 @@ public sealed partial class MainWindow
 public sealed partial class ComparisonPane
 {
     private ComparisonProject _projectMetadata = new();
+    private long _archiveRequestGeneration;
+    private long _archivePanelRequestGeneration = -1;
+    private bool _hasRestoredImageSettings;
+    private bool _pendingRestoredImageSettings;
     private static readonly string[] ModeNames = ["Auto", "Text", "Folder", "Binary", "Image", "Json", "Table", "Archive", "Provider"];
 
     public ComparisonProject CaptureProject() => CaptureWorkingProject(WorkspaceStore.CloneProject(_projectMetadata with
@@ -137,7 +141,10 @@ public sealed partial class ComparisonPane
         InvalidateTextSave(); InvalidateFolderCopy();
         _operation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelChildOperation();
         ClearArchivePasswords(); _lastArchiveComparison = null;
+        _archiveRequestGeneration++;
         _projectMetadata = WorkspaceStore.CloneProject(project);
+        _hasRestoredImageSettings = true;
+        _pendingRestoredImageSettings = true;
         LeftPath.Text = ProjectInputs.IsUntitled(project, 0) ? "" : ProjectInputs.Caption(project, 0);
         BasePath.Text = ProjectInputs.IsUntitled(project, 1) ? "" : ProjectInputs.Caption(project, 1);
         RightPath.Text = ProjectInputs.IsUntitled(project, 2) ? "" : ProjectInputs.Caption(project, 2);
@@ -170,11 +177,13 @@ public sealed partial class ComparisonPane
         if (ProjectInputs.HasArchives(project)) _status.Text = "内包入力を復元しました。「比較」で明示的に読み込んでください。パスワードは保存されません。";
     }
 
-    private ImageViewSettings CaptureImageSettings()
+    private ImageViewSettings CaptureImageSettings(bool useApplicationDefaults = false)
     {
         var current = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
-        if (_lastPackageComparison == current && _specialTab.Content is SpecializedViews.ImagePanel image) return image.CaptureSettings();
-        var settings = _projectMetadata.ImageSettings with { };
+        if ((!useApplicationDefaults || !_pendingRestoredImageSettings) && _lastPackageComparison == current && _specialTab.Content is SpecializedViews.ImagePanel image) return image.CaptureSettings();
+        var settings = useApplicationDefaults && !_hasRestoredImageSettings && _owner is MainWindow window
+            ? ImageApplicationOptionsStore.DefaultViewSettings(window.ImageOptions.Current)
+            : _projectMetadata.ImageSettings with { };
         // 別の入力へ切り替えた側は先頭から開き、元プロジェクトのページ番号を流用しない。
         if (current.Item1 != _projectMetadata.LeftPath) { settings.LeftFrame = 1; settings.LeftOrientation = new(); settings.LeftOffset = default; }
         if (current.Item2 != _projectMetadata.BasePath || string.IsNullOrWhiteSpace(current.Item2)) { settings.MiddleFrame = 1; settings.MiddleOrientation = new(); settings.MiddleOffset = default; }
@@ -234,9 +243,14 @@ public sealed partial class ComparisonPane
             if (protection.SameContainer(asset, path))
                 throw new InvalidOperationException("公開または読込み済みの作業snapshotを上書きできません。");
         foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this])
+        {
+            if (pane._specialTab.Content is ArchivePanel { IsDisposed: false } panel
+                && (Same(panel.ConfirmedLeft.RootPath, path) || Same(panel.ConfirmedRight.RootPath, path)))
+                throw new InvalidOperationException("表示中のアーカイブ原本を上書きできません。");
             foreach (var root in pane._detachedArchiveRoots)
                 if (Same(root, path))
                     throw new InvalidOperationException("外部保存した文書のアーカイブ原本を上書きできません。");
+        }
         var archiveProjects = (_owner as MainWindow)?.SessionPanes.Select(pane => pane.CaptureProject()) ?? [CaptureProject()];
         foreach (var project in archiveProjects)
             foreach (var side in Enumerable.Range(0, 3))

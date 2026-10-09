@@ -19,6 +19,7 @@ public sealed partial class MainWindow : Window
     private bool _headerBringQueued;
     internal ScrollViewer? SessionHeaders { get; private set; }
     internal ImageApplicationOptionsStore ImageOptions { get; }
+    internal FolderApplicationOptionsStore FolderOptions { get; }
     internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
     public ComparisonPane ActivePane => (ComparisonPane)((TabItem)_tabs.SelectedItem!).Content!;
@@ -26,8 +27,14 @@ public sealed partial class MainWindow : Window
     public MainWindow(string[]? arguments = null) : this(arguments, new ImageApplicationOptionsStore()) { }
 
     internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions)
+        : this(arguments, imageOptions, new FolderApplicationOptionsStore()) { }
+
+    internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions, FolderApplicationOptionsStore folderOptions)
     {
-        ImageOptions = imageOptions;
+        ImageOptions = imageOptions; FolderOptions = folderOptions;
+        Action<string> folderGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
+        FolderOptions.AddOutputGuard(folderGuard);
+        Closed += (_, _) => FolderOptions.RemoveOutputGuard(folderGuard);
         Closed += (_, _) => { _independentTextInputWindowClosed = true; ArchiveTexts.Clear(); ArchiveLifetime.Clear(); };
         Title = "DiffBeacon";
         Width = 1280;
@@ -72,8 +79,12 @@ public sealed partial class MainWindow : Window
         PropertyChanged += (_, args) => { if (args.Property == IsVisibleProperty) UpdateImageDisplayVisibility(); };
         Content = root;
         AddSession(arguments);
-        if (ImageOptions.Diagnostic is { } diagnostic)
-            Opened += async (_, _) => await Dialogs.MessageAsync(this, "画像操作設定", diagnostic);
+        var optionDiagnostics = new List<string>();
+        if (ImageOptions.Diagnostic is { } imageDiagnostic) optionDiagnostics.Add("画像操作設定: " + imageDiagnostic);
+        if (FolderOptions.Diagnostic is { } folderDiagnostic) optionDiagnostics.Add("フォルダー表示設定: " + folderDiagnostic);
+        // 二種類の読込失敗でもOpenedから一つのdialogだけを開く。
+        if (optionDiagnostics.Count > 0)
+            Opened += async (_, _) => await Dialogs.MessageAsync(this, "表示・操作設定", string.Join("\n\n", optionDiagnostics));
         if (arguments is { Length: 1 } && Path.GetExtension(arguments[0]).ToLowerInvariant() is ".json" or ".winmerge" or ".diffbeacon")
             Opened += async (_, _) =>
             {
@@ -142,12 +153,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public TextBox RightPath { get; } = new() { PlaceholderText = "右のファイル / フォルダー" };
     public TextBox LeftEditor { get; } = Editor();
     public TextBox RightEditor { get; } = Editor();
-    public TextBox ResultEditor { get; } = Editor();
+    public TransactionalResultEditor ResultEditor { get; } = new() { Text = "", TextWrapping = TextWrapping.NoWrap, FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 14, HorizontalContentAlignment = HorizontalAlignment.Stretch };
     public Button CompareButton { get; } = new() { Content = "比較", MinWidth = 90 };
     public Button CopyRightButton { get; } = new() { Content = "選択差分 →" };
     public ListBox DiffList { get; } = new() { SelectionMode = SelectionMode.Single };
     public DiffResult? CurrentDiff { get; private set; }
-    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || ResultEditor.Text != _savedResult || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
+    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || MergeResultDirty || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
     private readonly CheckBox _ignoreCase = new() { Content = "大文字小文字を無視" };
     private readonly CheckBox _ignoreSpace = new() { Content = "空白を無視" };
     private readonly CheckBox _ignoreBlank = new() { Content = "空行を無視" };
@@ -171,13 +182,13 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly TabItem _resultTab;
     private readonly Grid _editGrid = new();
     private readonly TextBox _ancestorEditor = Editor();
-    private readonly TextBox _resultPreview = Editor();
+    private readonly TransactionalResultEditor _resultPreview = new() { Text = "", TextWrapping = TextWrapping.NoWrap, FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 14, HorizontalContentAlignment = HorizontalAlignment.Stretch };
     private readonly ListBox _directoryList = new();
     private TextDocument? _leftDocument, _rightDocument;
     private CancellationTokenSource? _operation;
     private CancellationTokenSource? _reportOperation;
     private string? _baseText;
-    private string _savedLeft = "", _savedRight = "", _savedResult = "";
+    private string _savedLeft = "", _savedRight = "";
     private string? _directoryLeft, _directoryMiddle, _directoryRight;
     private int _diffIndex = -1;
     private bool _textSaveAllowed = true;
@@ -194,7 +205,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     // 採用を拒否したとき、前の本文・文書・保存点を実GUIから照合する。
     internal object CaptureAdoptionState() => (_leftDocument, _rightDocument, _baseDocument, CurrentDiff, CurrentMergeSession,
         _baseText, _textSaveAllowed, _lastPackageComparison, LeftEditor.Text, RightEditor.Text, ResultEditor.Text,
-        LeftEditor.IsReadOnly, RightEditor.IsReadOnly, _savedLeft, _savedRight, _savedResult);
+        LeftEditor.IsReadOnly, RightEditor.IsReadOnly, _savedLeft, _savedRight, MergeResultDirty);
     internal Action<ArchiveRetryDialog>? ArchiveRetryShown { get; set; }
     // 実GUI自己検証で、有効な比較操作の読込み開始時に中止ボタンを押す。
     internal Action? ArchiveReadStarting { get; set; }
@@ -231,7 +242,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "パッチ出力", ExportPatchAsync);
         AddAction(actions, "自動マージ", MergeThreeWayAsync);
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
-        AddAction(actions, "アーカイブ作成", CreateArchiveAsync);
+        AddAction(actions, "アーカイブ作成", () => ObserveCriticalTextSaveTask("archive-create", CreateArchiveAsync()));
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
         AddAction(actions, "中止", () => { StopFolderCopy(); _operation?.Cancel(); _reportOperation?.Cancel(); _textSaveOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
@@ -268,8 +279,6 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         DockPanel.SetDock(captions, Dock.Top); diffRoot.Children.Add(captions); diffRoot.Children.Add(DiffList);
         _diffTab = new TabItem { Header = "差分", Content = diffRoot };
         _ancestorEditor.IsReadOnly = true;
-        ResultEditor.TextChanged += (_, _) => { if (_resultPreview.Text != ResultEditor.Text) _resultPreview.Text = ResultEditor.Text; };
-        _resultPreview.TextChanged += (_, _) => { if (ResultEditor.Text != _resultPreview.Text) ResultEditor.Text = _resultPreview.Text; };
         LeftEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
         RightEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
         UpdateEditorLayout(false);
@@ -355,16 +364,18 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         (_specialTab.Content as ArchivePanel)?.CancelOperation();
         var operation = _operation; var token = operation.Token;
         var left = LeftPath.Text ?? ""; var right = RightPath.Text ?? "";
-        var imageSettings = CaptureImageSettings();
+        var imageSettings = CaptureImageSettings(useApplicationDefaults: true);
         var comparisonForPackaging = (left, BasePath.Text ?? "", right, _mode.SelectedIndex, _provider.SelectedItem as string);
         var previousBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
         var previousBinaryStamp = previousBinary?.StateStamp;
         var candidateTextRole = _textRole.SelectedIndex;
+        var resultHost = _resultHost; var resultVersion = resultHost?.Session.Current.Version;
         var inheritedIndependentStamp = IndependentText ? TextAdoptionStamp() : null;
         bool CanAdopt()
         {
             var valid = !token.IsCancellationRequested && !_disposed && ReferenceEquals(_operation, operation)
                 && previousBinary?.StateStamp == previousBinaryStamp
+                && !MergeHasPendingComposition && ReferenceEquals(resultHost, _resultHost) && resultVersion == _resultHost?.Session.Current.Version
                 && candidateTextRole == _textRole.SelectedIndex
                 && (inheritedIndependentStamp is null || Equals(inheritedIndependentStamp, TextAdoptionStamp()))
                 && comparisonForPackaging == (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
@@ -423,10 +434,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                     if (!CanAdopt()) return;
                     ConfigureImageEditing((SpecializedViews.ImagePanel)imageView);
                     PrepareAdoption();
-                    SetSpecialView(imageView); imageView = null;
-                    _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? "";
+                    SetSpecialView(imageView);
+                    ((SpecializedViews.ImagePanel)imageView).EnableApplicationDefaultsPersistence();
+                    imageView = null;
+                    _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; DiscardMergeChanges();
                     LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
-                    _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; return;
+                    _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; _pendingRestoredImageSettings = false; return;
                 }
                 finally { SpecializedViews.Release(imageView); }
             }
@@ -443,19 +456,22 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             {
                 ArchivePanel? candidate = null;
                 string? leftPassword = null, rightPassword = null;
+                var leftNameCodePage = 28591; var rightNameCodePage = 28591;
+                var leftPayloadKind = GZipPayloadKind.Auto; var rightPayloadKind = GZipPayloadKind.Auto;
+                var leftCompressionPayloadKind = CompressionPayloadKind.Auto; var rightCompressionPayloadKind = CompressionPayloadKind.Auto;
                 try
                 {
                     while (candidate is null)
                     {
                         ArchiveReadStarting?.Invoke();
                         token.ThrowIfCancellationRequested();
-                        try { candidate = await ArchivePanel.CreateWithPasswordsAsync(left, right, token, EnsureArchiveOutputWritable, leftPassword, rightPassword); }
+                        try { candidate = await ArchivePanel.CreateWithPasswordsAsync(left, right, token, EnsureArchiveOutputWritable, leftPassword, rightPassword, leftNameCodePage, rightNameCodePage, leftPayloadKind, rightPayloadKind, leftCompressionPayloadKind, rightCompressionPayloadKind); }
                         catch (OperationCanceledException) { throw; }
                         catch (Exception exception) when (exception is not OutOfMemoryException)
                         {
                             token.ThrowIfCancellationRequested();
                             if (operation != _operation) return;
-                            var dialog = new ArchiveRetryDialog(leftPassword, rightPassword);
+                            var dialog = new ArchiveRetryDialog(leftPassword, rightPassword, exception is DiffBeacon.Providers.ArchiveNameDecodingException, leftNameCodePage, rightNameCodePage, leftPayloadKind, rightPayloadKind, leftCompressionPayloadKind, rightCompressionPayloadKind);
                             try
                             {
                                 var retryTask = dialog.ShowDialog<ArchiveRetryResult?>(_owner);
@@ -465,6 +481,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                                 if (operation != _operation) return;
                                 if (retry is null) throw new OperationCanceledException("アーカイブ操作を中止しました。", token);
                                 leftPassword = retry.LeftPassword; rightPassword = retry.RightPassword;
+                                leftNameCodePage = retry.LeftNameCodePage; rightNameCodePage = retry.RightNameCodePage;
+                                leftPayloadKind = retry.LeftPayloadKind; rightPayloadKind = retry.RightPayloadKind;
+                                leftCompressionPayloadKind = retry.LeftCompressionPayloadKind; rightCompressionPayloadKind = retry.RightCompressionPayloadKind;
                             }
                             finally { dialog.LeftPassword.Text = dialog.RightPassword.Text = ""; dialog.Close(); }
                         }
@@ -571,11 +590,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         CompareEditors();
     }
 
-    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; _savedResult = ResultEditor.Text ?? ""; SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
+    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; DiscardMergeChanges(); SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
     public void SelectMode(int mode) => _mode.SelectedIndex = mode;
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        InvalidateMergeSave(); ResultEditor.CancelComposition("pane-disposed"); _resultPreview.CancelComposition("pane-disposed"); ResultEditor.DetachHost(); _resultPreview.DetachHost();
         IndependentTextInputParentDisposed?.Invoke(); IndependentTextInputParentDisposed = null;
         InvalidateFolderCopy();
         InvalidateTextSave();
@@ -595,6 +615,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (ReferenceEquals(_specialTab.Content, _folderView) && !ReferenceEquals(view, _folderView)) InvalidateFolderCopy();
         SpecializedViews.Release(_specialTab.Content as Control);
         _specialTab.Content = view;
+        _archivePanelRequestGeneration = view is ArchivePanel ? _archiveRequestGeneration : -1;
         if (view is SpecializedViews.BinaryPanel binary) BindBinaryPanel(binary);
         (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         UpdateComparisonToolbarHeight();
@@ -730,6 +751,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private Task MergeThreeWayAsync() => RestartMergeAsync(true);
     private void UpdateEditorLayout(bool fourPanes)
     {
+        // ソース保存などの再配置でも、採用済みの結果編集ペインを保持する。
+        fourPanes |= !_disposed && _resultHost is not null;
         if (IndependentText) { UpdateIndependentEditorLayout(); return; }
         if (_views.ItemsSource is IEnumerable<TabItem> tabs)
             foreach (var tab in tabs.Where(tab => ReferenceEquals(tab.Content, _editGrid))) tab.Header = "編集 / 4ペイン";
@@ -775,10 +798,14 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
     private async Task SaveResultAsync()
     {
-        if (IndependentText) throw new InvalidOperationException("独立三者Textのマージ結果保存にはまだ対応していません。");
-        var unresolved = CurrentMergeSession?.UnresolvedCount ?? ((ResultEditor.Text ?? "").Contains("<<<<<<<", StringComparison.Ordinal) ? 1 : 0);
+        CommitMergeInput();
+        var host = _resultHost ?? throw new InvalidOperationException("先にマージを開始してください。");
+        var generation = _mergeSaveGeneration; var version = host.Session.Current.Version;
+        void Current() { if (_disposed || generation != _mergeSaveGeneration || !ReferenceEquals(host, _resultHost) || version != host.Session.Current.Version || MergeHasPendingComposition) throw new InvalidOperationException("保存の選択中にマージ結果が変更されました。"); }
+        var unresolved = CurrentMergeSession?.UnresolvedCount ?? 0;
         if (unresolved > 0 && !await Dialogs.ConfirmAsync(_owner, "競合が残っています", "未解決の差分を含む結果を保存しますか？")) return;
         var path = await SavePathAsync("マージ結果を保存", "merged.txt");
+        Current();
         if (path is null) return;
         await SaveMergeResultToAsync(path, allowUnresolved: true);
     }
@@ -786,6 +813,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private async Task<bool> CompareDirectoryAsync(string left, string right, CancellationToken token, Func<bool> canAdopt, Action prepareAdoption,
         string? middle = null)
     {
+        var folderGeneration = _folderContextGeneration;
+        var previousFolderModel = _directoryComparison;
         var configuration = CaptureFolderConfiguration();
         var filterStamp = FolderFilterStamp();
         var textOptions = Options();
@@ -797,9 +826,15 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             : await FolderComparisons.CompareAsync(left, middle, right, options, token);
         DirectoryReadyForAdoption?.Invoke();
         token.ThrowIfCancellationRequested();
-        if (!canAdopt() || !FolderConfigurationMatches(configuration) || FolderFilterStamp() != filterStamp) return false;
+        if (!canAdopt() || _folderContextGeneration != folderGeneration
+            || !ReferenceEquals(_directoryComparison, previousFolderModel)
+            || !FolderConfigurationMatches(configuration) || FolderFilterStamp() != filterStamp) return false;
+        // 表示を破棄する前に投影と継承状態を準備し、取消と採用条件を最後に再確認する。
+        var candidate = PrepareFolderCandidate(result, configuration, filterStamp, token);
+        token.ThrowIfCancellationRequested();
+        if (!canAdopt() || !FolderCandidateContextCurrent(candidate)) return false;
         prepareAdoption();
-        BindDirectoryModel(result, configuration, filterStamp);
+        BindDirectoryModel(candidate);
         return true;
     }
 
@@ -834,29 +869,57 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 }
 
 // 認証必須と断定せず、候補の検証失敗から明示再試行へ進む。秘密値は保存しない。
-internal sealed record ArchiveRetryResult(string? LeftPassword, string? RightPassword);
+internal sealed record ArchiveRetryResult(string? LeftPassword, string? RightPassword, int LeftNameCodePage = 28591, int RightNameCodePage = 28591,
+    GZipPayloadKind LeftPayloadKind = GZipPayloadKind.Auto, GZipPayloadKind RightPayloadKind = GZipPayloadKind.Auto,
+    CompressionPayloadKind LeftCompressionPayloadKind = CompressionPayloadKind.Auto, CompressionPayloadKind RightCompressionPayloadKind = CompressionPayloadKind.Auto);
 internal sealed class ArchiveRetryDialog : Window
 {
     internal TextBox LeftPassword { get; } = new() { PasswordChar = '●', MaxLength = 4096, PlaceholderText = "左のパスワード（任意）", Margin = new Thickness(0, 4) };
     internal TextBox RightPassword { get; } = new() { PasswordChar = '●', MaxLength = 4096, PlaceholderText = "右のパスワード（任意）", Margin = new Thickness(0, 4) };
     internal Button Retry { get; } = new() { Content = "再試行", Margin = new Thickness(4) };
     internal Button Cancel { get; } = new() { Content = "キャンセル", Margin = new Thickness(4) };
-    internal ArchiveRetryDialog(string? leftPassword, string? rightPassword)
+    internal ComboBox LeftNameCodePage { get; } = ArchiveNameSettings.Picker();
+    internal ComboBox RightNameCodePage { get; } = ArchiveNameSettings.Picker();
+    internal ComboBox LeftGZipPayloadKind { get; } = ArchivePayloadSettings.Picker();
+    internal ComboBox RightGZipPayloadKind { get; } = ArchivePayloadSettings.Picker();
+    internal ComboBox LeftCompressionPayloadKind { get; } = ArchivePayloadSettings.CompressionPicker();
+    internal ComboBox RightCompressionPayloadKind { get; } = ArchivePayloadSettings.CompressionPicker();
+    internal ArchiveRetryDialog(string? leftPassword, string? rightPassword, bool allowNameRetry = false, int leftNameCodePage = 28591, int rightNameCodePage = 28591,
+        GZipPayloadKind leftPayloadKind = GZipPayloadKind.Auto, GZipPayloadKind rightPayloadKind = GZipPayloadKind.Auto,
+        CompressionPayloadKind leftCompressionPayloadKind = CompressionPayloadKind.Auto, CompressionPayloadKind rightCompressionPayloadKind = CompressionPayloadKind.Auto)
     {
-        Title = "アーカイブを開けませんでした"; Width = 480; SizeToContent = SizeToContent.Height;
-        CanResize = false; WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        Title = "アーカイブを開けませんでした"; Width = 480; Height = 520;
+        CanResize = true; WindowStartupLocation = WindowStartupLocation.CenterOwner;
         LeftPassword.Text = leftPassword; RightPassword.Text = rightPassword;
         var panel = new StackPanel { Margin = new Thickness(16) };
         var status = new TextBlock { Text = "読込みを検証できませんでした。パスワード、破損、形式を確認して再試行してください。", TextWrapping = TextWrapping.Wrap };
         panel.Children.Add(status); panel.Children.Add(LeftPassword); panel.Children.Add(RightPassword);
+        LeftNameCodePage.SelectedItem = leftNameCodePage; RightNameCodePage.SelectedItem = rightNameCodePage;
+        LeftGZipPayloadKind.SelectedItem = leftPayloadKind; RightGZipPayloadKind.SelectedItem = rightPayloadKind;
+        panel.Children.Add(new TextBlock { Text = "左 gzip本文の形式" }); panel.Children.Add(LeftGZipPayloadKind);
+        panel.Children.Add(new TextBlock { Text = "右 gzip本文の形式" }); panel.Children.Add(RightGZipPayloadKind);
+        LeftCompressionPayloadKind.SelectedItem = leftCompressionPayloadKind; RightCompressionPayloadKind.SelectedItem = rightCompressionPayloadKind;
+        panel.Children.Add(new TextBlock { Text = "左 BZip2／Z本文の形式" }); panel.Children.Add(LeftCompressionPayloadKind);
+        panel.Children.Add(new TextBlock { Text = "右 BZip2／Z本文の形式" }); panel.Children.Add(RightCompressionPayloadKind);
+        if (allowNameRetry)
+        {
+            status.Text = "gzip格納名を復号できません。28591はRFC1952 Latin1、65001はUTF-8、932は日本語です。左右の格納名文字コードを選択してください。";
+            panel.Children.Add(new TextBlock { Text = "左 gzip格納名の文字コード" }); panel.Children.Add(LeftNameCodePage);
+            panel.Children.Add(new TextBlock { Text = "右 gzip格納名の文字コード" }); panel.Children.Add(RightNameCodePage);
+        }
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-        buttons.Children.Add(Cancel); buttons.Children.Add(Retry); panel.Children.Add(buttons); Content = panel;
+        buttons.Children.Add(Cancel); buttons.Children.Add(Retry);
+        var root = new DockPanel(); DockPanel.SetDock(buttons, Dock.Bottom); root.Children.Add(buttons);
+        root.Children.Add(new ScrollViewer { Content = panel }); Content = root;
         Cancel.Click += (_, _) => Close();
         Retry.Click += (_, _) =>
         {
             if (LeftPassword.Text?.Length > 4096 || RightPassword.Text?.Length > 4096) { status.Text = "パスワードは左右それぞれ4096文字以下で入力してください。"; return; }
             Close(new ArchiveRetryResult(string.IsNullOrEmpty(LeftPassword.Text) ? null : LeftPassword.Text,
-                string.IsNullOrEmpty(RightPassword.Text) ? null : RightPassword.Text));
+                string.IsNullOrEmpty(RightPassword.Text) ? null : RightPassword.Text,
+                ArchiveNameSettings.Selected(LeftNameCodePage), ArchiveNameSettings.Selected(RightNameCodePage),
+                ArchivePayloadSettings.Selected(LeftGZipPayloadKind), ArchivePayloadSettings.Selected(RightGZipPayloadKind),
+                ArchivePayloadSettings.SelectedCompression(LeftCompressionPayloadKind), ArchivePayloadSettings.SelectedCompression(RightCompressionPayloadKind)));
         };
         Closed += (_, _) => LeftPassword.Text = RightPassword.Text = "";
     }

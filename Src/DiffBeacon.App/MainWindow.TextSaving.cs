@@ -33,14 +33,25 @@ public sealed partial class ComparisonPane
         ArchiveProjectInput? Capture(int side)
         {
             var input = ProjectInputs.Archive(project, side);
-            if (input is null && project.Mode == "Archive" && _specialTab.Content is ArchivePanel panel && side != 1)
+            if (project.Mode == "Archive" && _archivePanelRequestGeneration == _archiveRequestGeneration
+                && _specialTab.Content is ArchivePanel { IsDisposed: false } panel && side != 1)
             {
                 var source = side == 0 ? panel.ConfirmedLeft : panel.ConfirmedRight;
+                if (input is null && !SameConfirmedRoot(side == 0 ? project.LeftPath : project.RightPath, source.RootPath)) return null;
                 var captured = _workingTexts.Capture(new() { RootPath = source.RootPath, RootSha256 = source.RootSha256,
-                    EntryChain = source.EntryChain.ToArray(), InheritedReadOnly = side == 0 ? project.LeftReadOnly : project.RightReadOnly });
-                if (captured.WorkingDocuments is not null) input = captured;
+                    EntryChain = source.EntryChain.ToArray(), ContainerNameCodePages = ArchiveNameSettings.Capture(source.ContainerNameCodePages), ContainerGZipPayloadKinds = ArchivePayloadSettings.Capture(source.ContainerGZipPayloadKinds), ContainerCompressionPayloadKinds = ArchivePayloadSettings.Capture(source.ContainerCompressionPayloadKinds),
+                    MissingEntryChain = input?.MissingEntryChain?.ToArray(), InheritedReadOnly = input?.InheritedReadOnly ?? (side == 0 ? project.LeftReadOnly : project.RightReadOnly) });
+                if (input is not null || captured.WorkingDocuments is not null || captured.ContainerNameCodePages is not null || captured.ContainerGZipPayloadKinds is not null || captured.ContainerCompressionPayloadKinds is not null) input = captured;
             }
             return input is null ? null : _workingTexts.Capture(input);
+        }
+        static bool SameConfirmedRoot(string? path, string root)
+        {
+            if (string.IsNullOrWhiteSpace(path)) return false;
+            try { return ArchivePaths.SameFile(path, root); }
+            catch (ArgumentException) { return false; }
+            catch (NotSupportedException) { return false; }
+            catch (PathTooLongException) { return false; }
         }
         var left = Capture(0); var middle = Capture(1); var right = Capture(2);
         return project with { LeftArchiveInput = left, BaseArchiveInput = middle, RightArchiveInput = right,
@@ -289,7 +300,7 @@ public sealed partial class ComparisonPane
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 Guard(); TextSaveReadyForAdoption?.Invoke(); Guard();
-                var snapshot = new ArchiveWorkingSnapshot { EntryChain = input.EntryChain.ToArray(), LeafEntry = input.LeafEntry!, Bytes = bytes,
+                var snapshot = new ArchiveWorkingSnapshot { EntryChain = input.EntryChain.ToArray(), ContainerNameCodePages = input.ContainerNameCodePages?.ToArray(), ContainerGZipPayloadKinds = input.ContainerGZipPayloadKinds?.ToArray(), ContainerCompressionPayloadKinds = input.ContainerCompressionPayloadKinds?.ToArray(), LeafEntry = input.LeafEntry!, Bytes = bytes,
                     Sha256 = Convert.ToHexString(SHA256.HashData(bytes)), EncodingName = document.EncodingName, HasBom = document.HasBom };
                 _workingTexts.Save(input, revision, snapshot);
                 SetSavedTextInput(side, snapshot.Document(), text);

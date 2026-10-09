@@ -65,7 +65,7 @@ internal static class ArchiveSourceCommands
         if (file.ReadByte() >= 0) throw new IOException("読込み中にdescriptorのサイズが変わりました。");
         using var json = JsonDocument.Parse(bytes);
         var root = json.RootElement;
-        CheckProperties(root, ["rootPath", "entryChain", "rootSha256", "limits"]);
+        CheckProperties(root, ["rootPath", "entryChain", "rootSha256", "limits", "containerNameCodePages", "containerGZipPayloadKinds", "containerCompressionPayloadKinds"]);
         var path = root.GetProperty("rootPath").GetString();
         ArgumentException.ThrowIfNullOrWhiteSpace(path);
         var chain = new List<string>();
@@ -101,7 +101,31 @@ internal static class ArchiveSourceCommands
                 return number;
             }
         }
-        return (new ArchiveSource(Path.GetFullPath(path, Path.GetDirectoryName(descriptor)!), chain, sha), limits);
+        int[]? codePages = null;
+        if (root.TryGetProperty("containerNameCodePages", out var choices))
+        {
+            if (choices.ValueKind != JsonValueKind.Array || choices.GetArrayLength() != chain.Count + 1)
+                throw new InvalidDataException("格納名の文字コードはrootと各コンテナーに一つずつ指定してください。");
+            codePages = choices.EnumerateArray().Select(value => value.TryGetInt32(out var codePage)
+                ? codePage : throw new InvalidDataException("格納名の文字コードは整数で指定してください。")).ToArray();
+        }
+        GZipPayloadKind[]? payloadKinds = null;
+        if (root.TryGetProperty("containerGZipPayloadKinds", out var payloadChoices) && payloadChoices.ValueKind != JsonValueKind.Null)
+        {
+            if (payloadChoices.ValueKind != JsonValueKind.Array || payloadChoices.GetArrayLength() != chain.Count + 1)
+                throw new InvalidDataException("gzip本文の形式はrootと各コンテナーに一つずつ指定してください。");
+            payloadKinds = payloadChoices.EnumerateArray().Select(value => value.ValueKind == JsonValueKind.String
+                ? ArchivePayloadSettings.Parse(value.GetString()) : throw new InvalidDataException("gzip本文の形式は文字列で指定してください。")).ToArray();
+        }
+        CompressionPayloadKind[]? compressionKinds = null;
+        if (root.TryGetProperty("containerCompressionPayloadKinds", out var compressionChoices) && compressionChoices.ValueKind != JsonValueKind.Null)
+        {
+            if (compressionChoices.ValueKind != JsonValueKind.Array || compressionChoices.GetArrayLength() != chain.Count + 1)
+                throw new InvalidDataException("BZip2／Z本文の形式はrootと各コンテナーに一つずつ指定してください。");
+            compressionKinds = compressionChoices.EnumerateArray().Select(value => value.ValueKind == JsonValueKind.String
+                ? ArchivePayloadSettings.ParseCompression(value.GetString()) : throw new InvalidDataException("BZip2／Z本文の形式は文字列で指定してください。")).ToArray();
+        }
+        return (new ArchiveSource(Path.GetFullPath(path, Path.GetDirectoryName(descriptor)!), chain, sha, codePages, payloadKinds, compressionKinds), limits);
     }
 
     private static void CheckProperties(JsonElement value, string[] allowed)

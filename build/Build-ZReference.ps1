@@ -1,15 +1,47 @@
 [CmdletBinding()]
 param(
-    [string] $OutputDirectory = 'artifacts/z-reference'
+    [string] $OutputDirectory
 )
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $sourceRoot = Join-Path $repoRoot 'tests/Fixtures/Archives/TarZ/reference-source'
-$outputRoot = [IO.Path]::GetFullPath($OutputDirectory, $repoRoot)
-if (-not $outputRoot.StartsWith((Join-Path $repoRoot 'artifacts') + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
-    throw 'reference buildの生成先はこのrepoのartifacts配下を指定してください。'
+$outputRoot = if ($OutputDirectory) { [IO.Path]::GetFullPath($OutputDirectory, $repoRoot) } else { Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/z-reference-' + [guid]::NewGuid().ToString('N')) }
+# 作業出力は外部の作業別領域へ限定し、作成前に全祖先を検査する。
+$allowedOutputRoots = @(
+    (Join-Path ([IO.Path]::GetTempPath()) 'Codex/DiffBeacon'),
+    (Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Codex/TaskArtifacts/DiffBeacon')
+)
+if ($env:RUNNER_TEMP -and $env:GITHUB_ACTIONS -eq 'true') {
+    $allowedOutputRoots += Join-Path $env:RUNNER_TEMP 'Codex/DiffBeacon'
+}
+$comparison = if ($IsWindows) { [StringComparison]::OrdinalIgnoreCase } else { [StringComparison]::Ordinal }
+$allowedOutput = $false
+foreach ($allowedRoot in $allowedOutputRoots) {
+    $prefix = [IO.Path]::GetFullPath($allowedRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if ($outputRoot.StartsWith($prefix, $comparison)) { $allowedOutput = $true; break }
+}
+$repoPrefix = $repoRoot.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+$codexRoot = if ($env:CODEX_HOME) { [IO.Path]::GetFullPath($env:CODEX_HOME) } else { Join-Path ([Environment]::GetFolderPath('UserProfile')) '.codex' }
+$codexPrefix = $codexRoot.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+if (-not $allowedOutput -or $outputRoot.StartsWith($repoPrefix, $comparison) -or $outputRoot.Equals($repoRoot, $comparison) -or $outputRoot.StartsWith($codexPrefix, $comparison) -or $outputRoot.Equals($codexRoot, $comparison) -or $outputRoot -match '(?i)(^|[\\/])(artifacts|\.codex)([\\/]|$)') {
+    throw '生成先はrepo／Codexユーザーディレクトリ外のCodex/DiffBeacon作業別領域を指定してください。artifactsという名前のパス要素は使用できません。'
+}
+$currentPath = $outputRoot
+while ($currentPath) {
+    $existingAncestor = $null
+    try { $existingAncestor = Get-Item -LiteralPath $currentPath -Force -ErrorAction Stop }
+    catch [Management.Automation.ItemNotFoundException] { }
+    if ($existingAncestor) {
+        if ($existingAncestor.PSProvider.Name -ne 'FileSystem' -or $existingAncestor -isnot [IO.DirectoryInfo]) {
+            throw "生成先の祖先はファイルシステムのディレクトリである必要があります: $currentPath"
+        }
+        if ($existingAncestor.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+            throw "生成先にリンクは使用できません: $currentPath"
+        }
+    }
+    $currentPath = [IO.Path]::GetDirectoryName($currentPath)
 }
 foreach ($source in @(
     @{ Name = 'compress.c'; SHA = '29C5A78005921A7881D8C83EA711E826C8C87F354B4A2F47F8C474117F6646D8' },
@@ -19,13 +51,6 @@ foreach ($source in @(
     if ((Get-FileHash -LiteralPath (Join-Path $sourceRoot $source.Name) -Algorithm SHA256).Hash -ne $source.SHA) {
         throw "reference原本SHAが一致しません: $($source.Name)"
     }
-}
-$currentPath = $outputRoot
-while ($currentPath) {
-    if ((Test-Path -LiteralPath $currentPath) -and ((Get-Item -LiteralPath $currentPath).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-        throw "reference生成先にリンクは使用できません: $currentPath"
-    }
-    $currentPath = [IO.Path]::GetDirectoryName($currentPath)
 }
 New-Item -ItemType Directory -Force -Path $outputRoot | Out-Null
 $architecture = [Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()

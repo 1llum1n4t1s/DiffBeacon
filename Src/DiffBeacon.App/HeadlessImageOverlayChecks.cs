@@ -102,12 +102,46 @@ internal static partial class HeadlessImageOverlayChecks
                 {
                     var blinkClock = new Clock(epoch); panel.RenderClock = blinkClock;
                     panel.SetOverlayOptions(window.ImageOptions.Current with { BlinkDifferences = true }); pump(panel.CurrentDisplayOperation);
+                    if (epoch > 0) { panel.GateClock = new Clock(epoch); panel.TickOverlay(); pump(panel.DisplayWorkerOperation); }
+                    void SaveBlinkFailure(SpecializedViews.ImagePanel failedPanel, int side, long failedEpoch, byte[] expectedPixels)
+                    {
+                        var actual = failedPanel.RenderedFrames[side];
+                        var stem = count + "-blink" + failedEpoch + "-pane" + side + "-failure";
+                        var actualPath = Path.Combine(folder, stem + "-actual.bgra"); var expectedPath = Path.Combine(folder, stem + "-expected.bgra");
+                        using (var target = new FileStream(actualPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) target.Write(actual.Pixels);
+                        using (var target = new FileStream(expectedPath, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) target.Write(expectedPixels);
+                        using var file = new FileStream(Path.Combine(folder, stem + ".json"), FileMode.CreateNew, FileAccess.Write, FileShare.Read);
+                        using var writer = new Utf8JsonWriter(file);
+                        writer.WriteStartObject(); writer.WriteNumber("schemaVersion", 1); writer.WriteNumber("count", count); writer.WriteNumber("side", side); writer.WriteNumber("epoch", failedEpoch);
+                        writer.WriteNumber("width", actual.Width); writer.WriteNumber("height", actual.Height); writer.WriteNumber("selectedDiffIndex", failedPanel.SelectedDiffIndex);
+                        writer.WriteString("actualBGRA", actualPath); writer.WriteNumber("actualBytes", actual.Pixels.Length); writer.WriteString("actualSHA256", Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(actual.Pixels)));
+                        writer.WriteString("expectedBGRA", expectedPath); writer.WriteNumber("expectedBytes", expectedPixels.Length); writer.WriteString("expectedSHA256", Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(expectedPixels)));
+                        writer.WritePropertyName("capturedProject"); JsonSerializer.Serialize(writer, new ComparisonProject { ImageSettings = failedPanel.CaptureSettings() }, ProjectJsonContext.Default.ComparisonProject);
+                        writer.WritePropertyName("globalOptions"); JsonSerializer.Serialize(writer, window.ImageOptions.Current, ImageApplicationOptionsJsonContext.Default.ImageApplicationOptions);
+                        writer.WriteString("displayTaskStatus", failedPanel.CurrentDisplayOperation.Status.ToString()); writer.WriteString("workerTaskStatus", failedPanel.DisplayWorkerOperation.Status.ToString());
+                        writer.WriteStartArray("renderClockReads"); foreach (var value in ((Clock)failedPanel.RenderClock).Reads) writer.WriteNumberValue(value); writer.WriteEndArray();
+                        writer.WriteStartArray("gateClockReads"); foreach (var value in ((Clock)failedPanel.GateClock).Reads) writer.WriteNumberValue(value); writer.WriteEndArray();
+                        writer.WritePropertyName("adoptedDisplay");
+                        if (failedPanel.AdoptedDisplay is not { } display) writer.WriteNullValue();
+                        else
+                        {
+                            var settings = display.Settings; writer.WriteStartObject(); writer.WriteStartObject("settings");
+                            writer.WriteNumber("mode", settings.Mode); writer.WriteNumber("alpha", settings.Alpha); writer.WriteBoolean("showDifferences", settings.ShowDifferences); writer.WriteBoolean("blinkDifferences", settings.BlinkDifferences);
+                            writer.WriteNumber("animationPeriod", settings.AnimationPeriod); writer.WriteNumber("blinkPeriod", settings.BlinkPeriod); writer.WriteNumber("blockSize", settings.BlockSize); writer.WriteNumber("threshold", settings.Threshold);
+                            writer.WriteNumber("highlightAlpha", settings.HighlightAlpha); writer.WriteNumber("selectedDiffIndex", settings.SelectedDiffIndex); writer.WriteEndObject();
+                            writer.WriteStartArray("sampleEpochs"); foreach (var value in display.Sample.Epochs) writer.WriteNumberValue(value); writer.WriteEndArray();
+                            writer.WriteStartArray("blendAlphas"); foreach (var value in display.Sample.BlendAlphas) writer.WriteNumberValue(value); writer.WriteEndArray(); writer.WriteBoolean("highlightVisible", display.Sample.HighlightVisible); writer.WriteEndObject();
+                        }
+                        writer.WriteEndObject(); writer.Flush();
+                    }
                     var expected = Expected(raw, 2);
                     if (epoch == 400) foreach (var pixels in expected) Highlight(pixels);
                     for (var i = 0; i < count; i++)
                     {
+                        var actualPixels = panel.RenderedFrames[i].Pixels;
+                        if (!actualPixels.AsSpan().SequenceEqual(expected[i])) SaveBlinkFailure(panel, i, epoch, expected[i]);
                         check("overlay selected blink ordering " + count + ":" + epoch + ":" + i,
-                            panel.RenderedFrames[i].Pixels.AsSpan().SequenceEqual(expected[i]), "overlay bytes then blink suppression then selected red highlight");
+                            actualPixels.AsSpan().SequenceEqual(expected[i]), "overlay bytes then blink suppression then selected red highlight");
                         var png = Path.Combine(folder, count + "-blink" + epoch + "-pane" + i + ".png");
                         pump(ImagePngStore.SaveAsync(png, panel.RenderedFrames[i], [])); observations.Add((count + ":blink:" + epoch + ":" + i, png, expected[i], 8, 6));
                     }

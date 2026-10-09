@@ -21,23 +21,23 @@ public sealed partial class ManagedArchive
         return Path.GetExtension(name) switch
         {
             ".zip" or ".jar" or ".ear" or ".war" or ".xpi" => "zip",
-            ".tar" => "tar", ".7z" => "7z", _ => null
+            ".tar" => "tar", ".7z" => "7z", ".gz" or ".gzip" => "gzip", ".bz2" => "bzip2", ".z" => "Z", _ => null
         };
     }
 
     public void WriteArchive(string destinationPath, IEnumerable<ManagedArchiveWriteEntry> entries,
-        CancellationToken cancellationToken = default)
-        => WriteArchiveCore(destinationPath, entries, RequireOutputFormat(destinationPath), cancellationToken);
+        CancellationToken cancellationToken = default, ManagedArchiveWriteOptions? writeOptions = null)
+        => WriteArchiveCore(destinationPath, entries, RequireOutputFormat(destinationPath), cancellationToken, writeOptions);
 
     public void Repack(string sourcePath, string destinationPath, string? password = null,
-        CancellationToken cancellationToken = default)
-        => RepackCore(sourcePath, destinationPath, RequireOutputFormat(destinationPath), password, cancellationToken);
+        CancellationToken cancellationToken = default, ManagedArchiveWriteOptions? writeOptions = null)
+        => RepackCore(sourcePath, destinationPath, RequireOutputFormat(destinationPath), password, cancellationToken, writeOptions);
 
     private static string RequireOutputFormat(string path) => OutputFormat(path)
-        ?? throw new InvalidDataException("出力形式は 7z・ZIP 派生・TAR・tar.gz・tar.bz2・tar.Z を指定してください。");
+        ?? throw new InvalidDataException("出力形式は 7z・ZIP 派生・TAR・tar.gz・tar.bz2・tar.Z・gzip・BZip2・Z を指定してください。");
 
     private void WriteArchiveCore(string destinationPath, IEnumerable<ManagedArchiveWriteEntry> entries,
-        string format, CancellationToken token)
+        string format, CancellationToken token, ManagedArchiveWriteOptions? writeOptions = null)
     {
         ArgumentNullException.ThrowIfNull(entries);
         SaveOutput(ValidateLocalPath(destinationPath, false), format, token, write =>
@@ -61,10 +61,10 @@ public sealed partial class ManagedArchive
                     write(name, bounded, entry.LastModifiedTime);
                 }
             }
-        });
+        }, writeOptions);
     }
 
-    private void RepackCore(string sourcePath, string destinationPath, string format, string? password, CancellationToken token)
+    private void RepackCore(string sourcePath, string destinationPath, string format, string? password, CancellationToken token, ManagedArchiveWriteOptions? writeOptions = null)
     {
         var source = ValidateLocalPath(sourcePath, true);
         var destination = ValidateLocalPath(destinationPath, false);
@@ -80,11 +80,11 @@ public sealed partial class ManagedArchive
                     using var bounded = new CheckedStream(content, _limits.MaximumEntryBytes, token);
                     write(entry.Path, bounded, entry.LastModifiedTime);
                 }
-            }));
+            }), writeOptions);
     }
 
     private void SaveOutput(string destination, string format, CancellationToken token,
-        Action<Action<string, Stream?, DateTime?>> populate)
+        Action<Action<string, Stream?, DateTime?>> populate, ManagedArchiveWriteOptions? writeOptions = null)
     {
         token.ThrowIfCancellationRequested();
         ValidateOutput(destination);
@@ -96,7 +96,11 @@ public sealed partial class ManagedArchive
             {
                 created = true;
                 using var output = new CheckedStream(file, _limits.MaximumOutputBytes, token);
-                if (format == "7z")
+                if (format == "gzip")
+                    WriteGZipOutput(output, populate, writeOptions ?? new ManagedArchiveWriteOptions(), token);
+                else if (format is "bzip2" or "Z")
+                    WriteCompressionOutput(output, format, populate, token);
+                else if (format == "7z")
                 {
                     using var writer = new SevenZipWriter(output, new SevenZipWriterOptions(CompressionType.LZMA2));
                     populate((name, content, time) =>

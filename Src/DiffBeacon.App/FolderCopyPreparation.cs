@@ -77,8 +77,8 @@ public static partial class FolderOperations
                 CaptureDestinationParents(destinationRoot, destination, parents);
                 if (usesWindowsMetadata)
                 {
-                    CaptureWindowsMetadataChain(source, sourceWindowsMetadata, budget, token);
-                    CaptureWindowsMetadataChain(destination, destinationWindowsMetadata, budget, token);
+                    CaptureWindowsMetadataChain(source, sourceRoot, sourceWindowsMetadata, budget, token);
+                    CaptureWindowsMetadataChain(destination, destinationRoot, destinationWindowsMetadata, budget, token);
                     RequireWindowsSnapshot(snapshot, sourceWindowsMetadata[source]);
                     if (target is not null) RequireWindowsSnapshot(target, destinationWindowsMetadata[destination]);
                 }

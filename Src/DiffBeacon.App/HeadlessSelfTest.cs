@@ -6,6 +6,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Interactivity;
+using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -16,7 +17,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false, bool binarySearchOnly = false, bool imageDefaultsOnly = false, bool bareGZipOnly = false, bool bareCompressionOnly = false)
     {
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
@@ -60,6 +61,22 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (bareCompressionOnly)
+            {
+                HeadlessBareCompressionChecks.Run(window, pane, output, Pump, Check, Screenshot);
+                HeadlessBareCompressionWritingChecks.Run(window, pane, output, Pump, Check, Screenshot);
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (bareGZipOnly)
+            {
+                HeadlessBareGZipChecks.Run(window, pane, output, Pump, Check, Screenshot);
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (imageDefaultsOnly)
+            {
+                RunImageDefaults();
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (independentTextInputSavedArchivesOnly)
             {
                 Progress("HeadlessIndependentTextInputSavedArchiveChecks", "start");
@@ -130,7 +147,13 @@ internal static class HeadlessSelfTest
             {
                 Progress("HeadlessFolderCopyChecks", "start");
                 HeadlessFolderCopyChecks.Run(window, output, Pump, Check, Screenshot);
+                RunFolderOptions();
                 Progress("HeadlessFolderCopyChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (binarySearchOnly)
+            {
+                RunBinarySearch();
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
             if (binaryClipboardOnly)
@@ -244,7 +267,7 @@ internal static class HeadlessSelfTest
             pane.BasePath.Text = ancestor;
             Pump(pane.ComparePathsAsync());
             pane.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "自動マージ")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Check("three-way merge exposes conflicting result", (pane.ResultEditor.Text ?? "").Contains("<<<<<<<", StringComparison.Ordinal));
+            Check("three-way merge exposes compact conflicting result", pane.CurrentMergeSession is { UnresolvedCount: 1 } && (pane.ResultEditor.Text ?? "").Contains("Merge Conflict", StringComparison.Ordinal));
             var views = pane.GetVisualDescendants().OfType<TabControl>().Single();
             views.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
             Check("four-pane editing view renders ancestor and result", pane.GetVisualDescendants().OfType<TextBox>().Count(x => x.AcceptsReturn) == 4);
@@ -253,7 +276,7 @@ internal static class HeadlessSelfTest
             Check("choosing right resolves only the selected conflict", pane.CurrentMergeSession is { UnresolvedCount: 0 } && pane.ResultEditor.Text == pane.RightEditor.Text);
             Check("result provenance identifies chosen source", pane.CurrentMergeSession!.LineProvenance.Any(line => line.Source == "3"));
             pane.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "マージを元に戻す")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            Check("undo restores conflict and resolution state", pane.CurrentMergeSession is { UnresolvedCount: 1 } && (pane.ResultEditor.Text ?? "").Contains("<<<<<<< LEFT", StringComparison.Ordinal));
+            Check("undo restores conflict and resolution state", pane.CurrentMergeSession is { UnresolvedCount: 1 } && (pane.ResultEditor.Text ?? "").Contains("Merge Conflict", StringComparison.Ordinal));
             pane.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "マージをやり直す")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check("redo restores chosen source", pane.CurrentMergeSession is { UnresolvedCount: 0 } && pane.ResultEditor.Text == pane.RightEditor.Text);
             var chosenMerge = Path.Combine(output, "selected-merge.txt");
@@ -261,25 +284,84 @@ internal static class HeadlessSelfTest
             Check("merge result save preserves ancestor encoding and source bytes", File.ReadAllBytes(chosenMerge).SequenceEqual(File.ReadAllBytes(right)));
             Pump(pane.SaveAsync(false));
             Check("saving merge output does not retarget the source document", pane.LeftPath.Text == left && File.ReadAllText(left).Contains("left value", StringComparison.Ordinal));
+            Check("source save retains fourth result editor in logical editing layout", pane.HasSharedResultEditorInLayout, pane.CaptureResultPaneLayoutDiagnostic());
             pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Left, DiffBeacon.Core.MergeSource.Right);
             Check("ordered multiple-source selection preserves both contributions", (pane.ResultEditor.Text ?? "").Contains("left value\r\nright value\r\n", StringComparison.Ordinal));
             pane.UndoMerge();
-            pane.ResultEditor.Text = (pane.ResultEditor.Text ?? "").Replace("right value", "manual value", StringComparison.Ordinal);
+            var mergeBeforeManualDiagnostic = pane.CaptureMergeDiagnostic();
+            EditResult((pane.ResultEditor.Text ?? "").Replace("right value", "manual value", StringComparison.Ordinal));
             Dispatcher.UIThread.RunJobs();
             Check("manual editing marks only touched result lines", pane.CurrentMergeSession!.LineProvenance.Any(line => line.Source == "m") && pane.CurrentMergeSession.LineProvenance.First().Source == "2");
+            var mergeAfterManualDiagnostic = pane.CaptureMergeDiagnostic();
             pane.UndoMerge();
-            Check("undo manual edit restores source provenance", pane.ResultEditor.Text == pane.RightEditor.Text && !pane.CurrentMergeSession!.LineProvenance.Any(line => line.Source == "m"));
+            Check("undo manual edit restores source provenance", pane.ResultEditor.Text == pane.RightEditor.Text && !pane.CurrentMergeSession!.LineProvenance.Any(line => line.Source == "m"),
+                "before=" + mergeBeforeManualDiagnostic + "; afterEdit=" + mergeAfterManualDiagnostic + "; afterUndo=" + pane.CaptureMergeDiagnostic());
             pane.RedoMerge();
             Check("redo manual edit retains untouched provenance", pane.CurrentMergeSession!.LineProvenance.Any(line => line.Source == "m") && pane.CurrentMergeSession.LineProvenance.First().Source == "2");
+            views.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
+            AvaloniaHeadlessPlatform.ForceRenderTimerTick(); Dispatcher.UIThread.RunJobs();
+            Check("fourth result editor is present in visual editing tab after source save", pane.GetVisualDescendants().OfType<TransactionalResultEditor>().Any(editor => !ReferenceEquals(editor, pane.ResultEditor)), pane.CaptureResultPaneLayoutDiagnostic());
+            var sharedResultEditor = pane.GetVisualDescendants().OfType<TransactionalResultEditor>().Single(editor => !ReferenceEquals(editor, pane.ResultEditor));
+            Check("fourth result editor has reachable editable bounds after source save", sharedResultEditor.Bounds.Width > 0 && sharedResultEditor.Bounds.Height > 0 && !sharedResultEditor.IsReadOnly, pane.CaptureResultPaneLayoutDiagnostic());
+            EditResultIn(sharedResultEditor, sharedResultEditor.Text!.Replace("manual value", "preview value", StringComparison.Ordinal));
+            Check("fourth pane exact edit shares result model and dirty", pane.ResultEditor.Text == sharedResultEditor.Text && pane.ResultEditor.Text!.Contains("preview value", StringComparison.Ordinal) && pane.HasUnsavedChanges);
+            sharedResultEditor.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Z, KeyModifiers = KeyModifiers.Control });
+            Check("fourth pane undo updates both result editors", pane.ResultEditor.Text == sharedResultEditor.Text && pane.ResultEditor.Text!.Contains("manual value", StringComparison.Ordinal));
+            sharedResultEditor.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Y, KeyModifiers = KeyModifiers.Control });
+            Check("fourth pane redo updates both result editors and shared dirty", pane.ResultEditor.Text == sharedResultEditor.Text && pane.ResultEditor.Text!.Contains("preview value", StringComparison.Ordinal) && pane.HasUnsavedChanges);
             Screenshot("chosen-merge.png");
+            var mergeWindowWidth = window.Width; var mergeWindowHeight = window.Height; window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs();
+            EditResultIn(sharedResultEditor, sharedResultEditor.Text!.Replace("preview value", "minimum value", StringComparison.Ordinal));
+            Check("minimum four-pane result accepts exact edit in shared model", pane.ResultEditor.Text == sharedResultEditor.Text && pane.HasUnsavedChanges);
+            Screenshot("four-pane-minimum-edit.png"); window.Width = mergeWindowWidth; window.Height = mergeWindowHeight; Dispatcher.UIThread.RunJobs();
             views.SelectedIndex = 0; Dispatcher.UIThread.RunJobs();
             pane.BasePath.Text = ""; pane.DiscardChanges();
-            Pump(pane.ComparePathsAsync()); pane.StartMergeSession(false);
+            Pump(pane.ComparePathsAsync());
+            Check("comparison reset without ancestor or result returns to ordinary input layout", pane.CurrentMergeSession is null && !pane.HasSharedResultEditorInLayout, pane.CaptureResultPaneLayoutDiagnostic());
+            pane.StartMergeSession(false);
             var ancestorRejected = false;
             try { pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Base); } catch (ArgumentException) { ancestorRejected = true; }
             Check("two-way session rejects nonexistent ancestor without resolving", ancestorRejected && pane.CurrentMergeSession is { UnresolvedCount: 1 });
             pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Right);
             Check("two-way result can choose right", pane.ResultEditor.Text == pane.RightEditor.Text && pane.CurrentMergeSession is { UnresolvedCount: 0 });
+
+            pane.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "空白を無視")).IsChecked = false;
+            pane.SetAdvancedFilters(false, DiffBeacon.Core.CommentSyntax.None, DiffBeacon.Core.WhitespaceMode.Trim);
+            TwoWay("\t a\u00a0\n", "a\n");
+            Check("GUI trim option ignores only leading and trailing Unicode whitespace", pane.CurrentMergeSession is { InputCount: 2, ConflictCount: 0 } && pane.LeftEditor.Text == "\t a\u00a0\n" && pane.RightEditor.Text == "a\n");
+            TwoWay("a b\n", "ab\n");
+            Check("GUI trim option preserves internal whitespace differences", pane.CurrentMergeSession is { ConflictCount: 1 });
+            pane.SetAdvancedFilters(false, DiffBeacon.Core.CommentSyntax.None, DiffBeacon.Core.WhitespaceMode.None);
+            var mergeIgnoreCase = pane.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "大文字小文字を無視"));
+            mergeIgnoreCase.IsChecked = true; TwoWay("é\n", "É\n");
+            Check("GUI merge shares Unicode ignore-case semantics with text comparison", pane.CurrentMergeSession is { ConflictCount: 0 });
+            mergeIgnoreCase.IsChecked = false;
+            var mergeIgnoreSpace = pane.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "空白を無視"));
+            mergeIgnoreSpace.IsChecked = true; TwoWay("a\u00a0b\n", "ab\n");
+            Check("GUI merge ignore-whitespace includes Unicode space", pane.CurrentMergeSession is { ConflictCount: 0 });
+            mergeIgnoreSpace.IsChecked = false;
+            pane.SetAdvancedFilters(false, DiffBeacon.Core.CommentSyntax.None, DiffBeacon.Core.WhitespaceMode.IgnoreChanges);
+            TwoWay("a\u00a0\u2007b\n", "a b\n");
+            Check("GUI merge whitespace changes retain existing Unicode semantics", pane.CurrentMergeSession is { ConflictCount: 0 });
+            pane.SetAdvancedFilters(false, DiffBeacon.Core.CommentSyntax.None, DiffBeacon.Core.WhitespaceMode.None);
+            TwoWay("\uFEFF", "");
+            Check("decoded FEFF-only body remains a real differing source", pane.CurrentMergeSession is { UnresolvedCount: 1 });
+            pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Left);
+            Check("choosing FEFF-only body preserves its exact text", pane.ResultEditor.Text == "\uFEFF");
+            TwoWay("A", "\uFEFFA");
+            Check("leading literal FEFF remains a two-way difference", pane.CurrentMergeSession is { ConflictCount: 1 });
+            pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Right);
+            Check("leading literal FEFF is kept in chosen result", pane.ResultEditor.Text == "\uFEFFA");
+
+            TwoWay("A", "A");
+            pane.ResultEditor.SelectionStart = 0; pane.ResultEditor.SelectionEnd = 1;
+            pane.ResultEditor.ReplaceSelection(""); Dispatcher.UIThread.RunJobs();
+            Check("deleting final unterminated result body retains real empty line", pane.ResultEditor.Text == "" && pane.CurrentMergeSession is { CanUndo: true });
+            pane.ResultEditor.ReplaceSelection("B"); Dispatcher.UIThread.RunJobs();
+            Check("real empty result accepts subsequent input", pane.ResultEditor.Text == "B" && pane.HasUnsavedChanges);
+            pane.UndoMerge(); Check("empty result insertion undo keeps editable survivor", pane.ResultEditor.Text == "");
+            pane.UndoMerge(); pane.RedoMerge(); pane.RedoMerge();
+            Check("empty result delete and insert share replayable history", pane.ResultEditor.Text == "B" && pane.CurrentMergeSession is { CanUndo: true, CanRedo: false });
 
             TwoWay("one\ntwo\nLEFT\ntail\n", "one\ntwo\nRIGHT\ntail\n");
             EditResult(pane.ResultEditor.Text!.Replace("tail", "TAIL", StringComparison.Ordinal));
@@ -291,19 +373,39 @@ internal static class HeadlessSelfTest
             EditResult(pane.ResultEditor.Text!.Replace("one", "ONE", StringComparison.Ordinal));
             Check("separated common edits retain intervening conflict", pane.CurrentMergeSession is { UnresolvedCount: 1 });
             pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Right);
-            Check("source choice preserves unrelated edited and untouched line origins", pane.CurrentMergeSession!.LineProvenance.Take(2).Select(line => line.Source).SequenceEqual(new[] { "m", "1" }));
+            // 固定原典はCommonの手入力でも区間の元ownerを保持し、Tracked Editedだけをmで示す。
+            Check("source choice preserves exact common edits and original source owners", pane.ResultEditor.Text == "ONE\ntwo\nRIGHT\nTAIL\n"
+                && pane.CurrentMergeSession!.LineProvenance.Take(2).Select(line => line.Source).SequenceEqual(new[] { "1", "1" }));
             TwoWay("LEFT\n", "RIGHT\n");
-            EditResult(pane.ResultEditor.Text!.Replace("LEFT\n", "MANUAL\n", StringComparison.Ordinal));
-            Check("editing conflict payload retains generated pending markers", pane.CurrentMergeSession is { UnresolvedCount: 1 });
+            var placeholder = pane.ResultEditor.Text;
+            pane.ResultEditor.SelectionStart = 0; pane.ResultEditor.SelectionEnd = pane.ResultEditor.Text!.Length;
+            pane.ResultEditor.ReplaceSelection("MANUAL\n");
+            Check("compact unresolved placeholder rejects direct replacement without history", pane.ResultEditor.Text == placeholder && pane.CurrentMergeSession is { UnresolvedCount: 1, CanUndo: false });
+            var markerOutput = Path.Combine(output, "unresolved-native-markers.txt");
+            Pump(pane.SaveMergeResultToAsync(markerOutput, allowUnresolved: true));
+            var nativeMarkers = File.ReadAllText(markerOutput);
+            Check("unresolved export uses native right before left marker policy", nativeMarkers.StartsWith("<<<<<<< RIGHT\nRIGHT\n=======\nLEFT\n>>>>>>> LEFT\n", StringComparison.Ordinal));
+            pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Right);
             EditResult("MANUAL\n");
-            Check("removing generated conflict markers resolves manual text", pane.CurrentMergeSession is { UnresolvedCount: 0 } && pane.CurrentMergeSession.LineProvenance.All(line => line.Source == "m"));
-            TwoWay("=======\n", "right\n");
-            EditResult("=======\n");
-            Check("literal source separator is not an unresolved generated marker", pane.CurrentMergeSession is { UnresolvedCount: 0 });
-            pane.UndoMerge();
-            Check("undo restores generated marker tracking", pane.CurrentMergeSession is { UnresolvedCount: 1 });
-            pane.RedoMerge();
-            Check("redo restores resolution and manual provenance", pane.CurrentMergeSession is { UnresolvedCount: 0 } && pane.CurrentMergeSession.LineProvenance.All(line => line.Source == "m"));
+            Check("resolved text accepts exact selection replacement and records manual provenance", pane.CurrentMergeSession is { UnresolvedCount: 0, CanUndo: true } && pane.CurrentMergeSession.LineProvenance.Any(line => line.Source == "m"));
+            pane.UndoMerge(); Check("manual undo returns chosen source", pane.ResultEditor.Text == "RIGHT\n");
+            pane.RedoMerge(); Check("manual redo returns edited text", pane.ResultEditor.Text == "MANUAL\n");
+            var capturedMerge = Path.Combine(output, "captured-merge.txt");
+            pane.MergeSaveBeforePublish = () => { EditResult("LATER\n"); return Task.CompletedTask; };
+            try { Pump(pane.SaveMergeResultToAsync(capturedMerge)); } finally { pane.MergeSaveBeforePublish = null; }
+            Check("saving a captured result keeps later edits dirty", File.ReadAllText(capturedMerge) == "MANUAL\n" && pane.ResultEditor.Text == "LATER\n" && pane.HasUnsavedChanges);
+            pane.UndoMerge(); pane.RedoMerge();
+            Check("undo redo after snapshot save preserve later edit dirty identity", pane.ResultEditor.Text == "LATER\n" && pane.HasUnsavedChanges);
+            var guardedMerge = Path.Combine(output, "guarded-merge.txt"); File.WriteAllText(guardedMerge, "sentinel");
+            pane.MergeSaveBeforePublish = () => { pane.LeftPath.Text = guardedMerge; return Task.CompletedTask; };
+            var guardRejected = false;
+            try { Pump(pane.SaveMergeResultToAsync(guardedMerge)); } catch (InvalidOperationException) { guardRejected = true; } finally { pane.MergeSaveBeforePublish = null; pane.LeftPath.Text = left; }
+            Check("merge publication rechecks changed input output guard", guardRejected && File.ReadAllText(guardedMerge) == "sentinel" && pane.HasUnsavedChanges);
+            pane.MergeSaveBeforePublish = () => { pane.StartMergeSession(false); return Task.CompletedTask; };
+            var generationRejected = false;
+            try { Pump(pane.SaveMergeResultToAsync(guardedMerge, allowUnresolved: true)); } catch (InvalidOperationException) { generationRejected = true; } finally { pane.MergeSaveBeforePublish = null; }
+            Check("merge restart invalidates a captured save before publication", generationRejected && File.ReadAllText(guardedMerge) == "sentinel");
+            pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Right); EditResult("MANUAL\n");
             var priorSession = pane.CurrentMergeSession; var priorResult = pane.ResultEditor.Text;
             pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "マージ開始")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Dispatcher.UIThread.RunJobs();
@@ -312,23 +414,10 @@ internal static class HeadlessSelfTest
             Dispatcher.UIThread.RunJobs();
             Check("canceling merge restart retains unsaved result and session", ReferenceEquals(pane.CurrentMergeSession, priorSession) && pane.ResultEditor.Text == priorResult);
             pane.DiscardChanges();
-            File.WriteAllText(ancestor, "A\nB\n"); File.WriteAllText(left, "a"); File.WriteAllText(right, "A\nB\nC\n");
-            pane.BasePath.Text = ancestor; Pump(pane.ComparePathsAsync()); pane.StartMergeSession();
-            EditResult("a\nD\n");
-            Check("editing after synthesized boundary newline preserves that newline", pane.CurrentMergeSession!.Text == "a\nD\n");
-            pane.UndoMerge(); Check("undo preserves original synthesized boundary", pane.ResultEditor.Text == "a\nC\n");
-            pane.RedoMerge(); Check("redo preserves edited synthesized boundary", pane.ResultEditor.Text == "a\nD\n");
-            var sectionSelector = pane.GetVisualDescendants().OfType<ComboBox>().Single(box => box.Items.Count > 0 && box.Items[0]?.ToString()?.StartsWith("差分 ", StringComparison.Ordinal) == true);
-            sectionSelector.SelectedIndex = 0; pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Left);
-            pane.UndoMerge(); pane.RedoMerge();
-            Check("reselecting source before manual section preserves boundary newline", pane.ResultEditor.Text == "a\nD\n");
-            sectionSelector.SelectedIndex = sectionSelector.ItemCount - 1; pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Base);
-            pane.UndoMerge(); pane.RedoMerge();
-            Check("removing final contribution restores original no-final-newline source", pane.ResultEditor.Text == "a");
-            pane.UndoMerge();
-            EditResult("a\n");
-            Check("manual deletion of final line retains untouched boundary newline", pane.ResultEditor.Text == "a\n");
-            pane.UndoMerge(); Check("undo final-line deletion restores manual contribution", pane.ResultEditor.Text == "a\nD\n");
+            TwoWay("a\nleft\n", "a\nright\n"); pane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Right);
+            EditResult("a\nR\n");
+            pane.UndoMerge(); Check("exact selected replacement undo restores raw source text", pane.ResultEditor.Text == "a\nright\n");
+            pane.RedoMerge(); Check("exact selected replacement redo preserves raw EOL", pane.ResultEditor.Text == "a\nR\n");
             Screenshot("merge-regressions.png");
             pane.DiscardChanges();
             pane.SetAdvancedFilters(true, DiffBeacon.Core.CommentSyntax.CStyle, DiffBeacon.Core.WhitespaceMode.None, new DiffBeacon.Core.SubstitutionRule("build=[A-Z]", "build=*"));
@@ -538,6 +627,7 @@ internal static class HeadlessSelfTest
             Progress("HeadlessImageRectangleChecks", "start");
             HeadlessImageRectangleChecks.Run(window, pane, artifactOutput, Pump, Check, Screenshot);
             Progress("HeadlessImageRectangleChecks", "complete");
+            RunImageDefaults();
             Progress("HeadlessImageDragChecks", "start");
             HeadlessImageDragChecks.Run(window, pane, output, Pump, Check, Screenshot);
             Progress("HeadlessImageDragChecks", "complete");
@@ -840,6 +930,9 @@ internal static class HeadlessSelfTest
             Check("masked GUI passwords unlock encrypted archive contents", encryptedPanel.Rows.Count > 0 && encryptedPanel.Rows.All(row => row.Status == "Equal") && encryptedPanel.LeftPassword.PasswordChar == '●');
             Screenshot("encrypted-archives.png");
             HeadlessArchiveWrapperChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            HeadlessBareGZipChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            HeadlessBareCompressionChecks.Run(window, pane, output, Pump, Check, Screenshot);
+            HeadlessBareCompressionWritingChecks.Run(window, pane, output, Pump, Check, Screenshot);
             HeadlessTarWrapperChecks.Run(window, output, Pump, Check, Screenshot);
             Progress("HeadlessArchiveSourceChecks", "start");
             HeadlessArchiveSourceChecks.Run(window, pane, output, Pump, Check, Screenshot);
@@ -922,7 +1015,7 @@ internal static class HeadlessSelfTest
             Check("workspace readonly refuses diff copy into protected side", rejected && textPane.LeftEditor.Text == beforeReadOnly);
             rejected = false; try { Pump(textPane.SaveAsync(false)); } catch (InvalidOperationException) { rejected = true; }
             Check("workspace readonly refuses original save", rejected && File.ReadAllText(workspaceLeft) == "same\nleft\n");
-            textPane.ResultEditor.Text = "replacement";
+            textPane.StartMergeSession(false); textPane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Right);
             rejected = false; try { Pump(textPane.SaveMergeResultToAsync(workspaceLeft)); } catch (InvalidOperationException) { rejected = true; }
             Check("workspace readonly refuses merge output targeting protected input", rejected && File.ReadAllText(workspaceLeft) == "same\nleft\n");
             rejected = false; try { Pump(window.SaveWorkspaceAsync(workspaceLeft)); } catch (InvalidOperationException) { rejected = true; }
@@ -1332,8 +1425,9 @@ internal static class HeadlessSelfTest
             using var stream = File.Create(Path.Combine(artifactOutput, "ui-report.json"));
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
+            writer.WriteBoolean("binarySearchOnly", binarySearchOnly);
             writer.WriteBoolean("binaryClipboardOnly", binaryClipboardOnly);
-            writer.WriteString("scope", independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", bareCompressionOnly ? "bare-compression-only" : bareGZipOnly ? "bare-gzip-only" : imageDefaultsOnly ? "image-defaults-only" : independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binarySearchOnly ? "binary-search-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -1360,7 +1454,7 @@ internal static class HeadlessSelfTest
         {
             var prior = window;
             var binary = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "binary-image-options.json"))) { Width = 1280, Height = 850 };
-            try { window = binary; binary.Show(); HeadlessBinaryWorkingChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryThreeWayChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryCopyAllChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryRangeEditChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryClipboardChecks.Run(binary, output, Pump, Check, Screenshot); }
+            try { window = binary; binary.Show(); HeadlessBinaryWorkingChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryThreeWayChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryCopyAllChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryRangeEditChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryClipboardChecks.Run(binary, output, Pump, Check, Screenshot); RunBinarySearch(); }
             finally { foreach (var session in binary.SessionPanes) session.DiscardChanges(); binary.Close(); window = prior; }
             Check("Binary window close releases shared assets and credentials", binary.ArchiveLifetime.Assets.Length == 0 && binary.ArchiveLifetime.CredentialCount == 0);
         }
@@ -1371,6 +1465,32 @@ internal static class HeadlessSelfTest
             try { window = folder; folder.Show(); HeadlessFolderCopyChecks.Run(folder, output, Pump, Check, Screenshot); }
             finally { foreach (var session in folder.SessionPanes) session.DiscardChanges(); folder.Close(); window = prior; }
             Check("Folder copy window close releases shared assets and credentials", folder.ArchiveLifetime.Assets.Length == 0 && folder.ArchiveLifetime.CredentialCount == 0);
+            RunFolderOptions();
+        }
+        void RunBinarySearch()
+        {
+            var previous = window;
+            var owner = new MainWindow(null);
+            window = owner;
+            try { owner.Show(); HeadlessBinarySearchChecks.Run(owner, output, Pump, Check, Screenshot); }
+            finally { owner.Close(); window = previous; }
+        }
+
+        void RunImageDefaults()
+        {
+            Progress("HeadlessImageDefaultsChecks", "start");
+            HeadlessImageDefaultsChecks.Run(output, Pump, Check);
+            Progress("HeadlessImageDefaultsChecks", "complete");
+        }
+
+        void RunFolderOptions()
+        {
+            HeadlessFolderOptionsChecks.Run(output, Check, (optionsWindow, name) =>
+            {
+                var screenshotWindow = window;
+                try { window = optionsWindow; Screenshot(name); }
+                finally { window = screenshotWindow; }
+            });
         }
         void RunFolderThreeWay()
         {
@@ -1391,7 +1511,75 @@ internal static class HeadlessSelfTest
         {
             var prior = window;
             var text = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "independent-text-image-options.json"))) { Width = 1280, Height = 850 };
-            try { window = text; text.Show(); HeadlessIndependentTextChecks.Run(text, output, Pump, Check, Screenshot); }
+            try
+            {
+                window = text; text.Show(); HeadlessIndependentTextChecks.Run(text, output, Pump, Check, Screenshot);
+                var folder = Path.Combine(output, "independent-merge"); Directory.CreateDirectory(folder);
+                var leftPath = Path.Combine(folder, "left.txt"); var middlePath = Path.Combine(folder, "middle.txt"); var rightPath = Path.Combine(folder, "right.txt");
+                var sources = new[] { "head\r\nleft\r\ntail\r\n", "head\r\nmiddle\r\ntail\r\n", "head\r\nright\r\ntail\r\n" };
+                var encoding = new UnicodeEncoding(false, true);
+                File.WriteAllText(leftPath, sources[0], encoding); File.WriteAllText(middlePath, sources[1], new UTF8Encoding(false)); File.WriteAllText(rightPath, sources[2], new UTF8Encoding(false));
+                var originals = new[] { leftPath, middlePath, rightPath }.Select(File.ReadAllBytes).ToArray();
+                var mergePane = text.AddSession(); mergePane.ApplyProject(new()
+                {
+                    Mode = "Text", LeftPath = leftPath, BasePath = middlePath, RightPath = rightPath,
+                    TextInputs = new() { Semantics = "Independent", Left = new() { Kind = "Physical" }, Middle = new() { Kind = "Physical" }, Right = new() { Kind = "Physical" } }
+                });
+                Pump(mergePane.ComparePathsAsync()); mergePane.StartMergeSession(autoResolve: true);
+                Check("independent three-way merge never interprets middle as ancestor or auto adopts", mergePane.CurrentMergeSession is { InputCount: 3, HasAncestor: false, UnresolvedCount: > 0, CanUndo: false } && mergePane.HasUnsavedChanges);
+                mergePane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中央を採用")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Check("independent three-way middle choice uses exact middle input", mergePane.ResultEditor.Text == sources[1] && mergePane.CurrentMergeSession is { UnresolvedCount: 0 });
+                var saved = Path.Combine(folder, "merged.txt"); Pump(mergePane.SaveMergeResultToAsync(saved));
+                Check("independent merge save uses left encoding and BOM with unchanged inputs", File.ReadAllBytes(saved).SequenceEqual(encoding.GetPreamble().Concat(encoding.GetBytes(sources[1])))
+                    && new[] { leftPath, middlePath, rightPath }.Select(File.ReadAllBytes).Zip(originals).All(pair => pair.First.SequenceEqual(pair.Second)) && !mergePane.HasUnsavedChanges);
+                mergePane.UndoMerge(); Check("independent result undo away from saved identity is dirty", mergePane.HasUnsavedChanges);
+                mergePane.RedoMerge(); Check("independent result redo to saved identity clears dirty", !mergePane.HasUnsavedChanges);
+                var tabs = mergePane.GetVisualDescendants().OfType<TabControl>().Single(); tabs.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
+                var fourth = mergePane.GetVisualDescendants().OfType<TransactionalResultEditor>().Single(editor => !ReferenceEquals(editor, mergePane.ResultEditor));
+                EditResultIn(fourth, sources[1].Replace("middle", "edited", StringComparison.Ordinal));
+                Check("independent fourth pane shares exact edits and dirty with result tab", mergePane.ResultEditor.Text == fourth.Text && mergePane.HasUnsavedChanges);
+                Screenshot("independent-four-pane-merge.png"); text.Width = 850; text.Height = 550; Dispatcher.UIThread.RunJobs();
+                EditResultIn(fourth, fourth.Text!.Replace("edited", "minimum", StringComparison.Ordinal));
+                Check("independent minimum fourth pane remains editable", mergePane.ResultEditor.Text == fourth.Text && mergePane.HasUnsavedChanges && fourth.Bounds.Height > 0);
+                Screenshot("independent-four-pane-minimum-merge.png");
+                mergePane.StartMergeSession(autoResolve: true); mergePane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Base);
+                var independentMiddleMemory = mergePane.MiddleEditor.Text;
+                Pump(mergePane.SaveMergeResultToAsync(middlePath));
+                Check("independent result can save to its ordinary middle input without retargeting memory", mergePane.MiddleEditor.Text == independentMiddleMemory && mergePane.BasePath.Text == middlePath
+                    && File.ReadAllBytes(middlePath).SequenceEqual(encoding.GetPreamble().Concat(encoding.GetBytes(sources[1]))));
+                var automaticBase = Path.Combine(folder, "automatic-base.txt"); var automaticLeft = Path.Combine(folder, "automatic-left.txt"); var automaticRight = Path.Combine(folder, "automatic-right.txt");
+                File.WriteAllText(automaticBase, "head\nbase\ntail\n"); File.WriteAllText(automaticLeft, "head\nleft\ntail\n"); File.WriteAllText(automaticRight, "head\nbase\ntail\n");
+                var automatic = text.AddSession(); automatic.ApplyProject(new() { Mode = "Text", LeftPath = automaticLeft, BasePath = automaticBase, RightPath = automaticRight });
+                Pump(automatic.ComparePathsAsync()); automatic.StartMergeSession(autoResolve: true);
+                Check("automatic nonconflicting merge retains one grouped adoption history and dirty", automatic.CurrentMergeSession is { HasAncestor: true, UnresolvedCount: 0, CanUndo: true, IsModified: true } && automatic.ResultEditor.Text == automatic.LeftEditor.Text && automatic.HasUnsavedChanges);
+                automatic.UndoMerge(); Check("one automatic undo restores pending difference in shared result", automatic.CurrentMergeSession is { UnresolvedCount: 1, CanUndo: false, CanRedo: true } && automatic.ResultEditor.Text!.Contains("Unresolved Difference", StringComparison.Ordinal) && automatic.HasUnsavedChanges);
+                automatic.RedoMerge(); Check("automatic redo restores adopted text and shared dirty", automatic.CurrentMergeSession is { UnresolvedCount: 0, CanUndo: true, CanRedo: false, IsModified: true } && automatic.ResultEditor.Text == automatic.LeftEditor.Text && automatic.HasUnsavedChanges);
+                var automaticSave = Path.Combine(folder, "automatic-merged.txt"); Pump(automatic.SaveMergeResultToAsync(automaticSave));
+                Check("automatic result save clears dirty at exact saved identity", File.ReadAllBytes(automaticSave).SequenceEqual(File.ReadAllBytes(automaticLeft)) && !automatic.HasUnsavedChanges);
+                Screenshot("automatic-merge-saved.png");
+                var ownInputMemory = automatic.LeftEditor.Text; var ownInputPath = automatic.LeftPath.Text;
+                EditResultIn(automatic.ResultEditor, automatic.ResultEditor.Text!.Replace("left", "merged", StringComparison.Ordinal));
+                Pump(automatic.SaveMergeResultToAsync(automaticLeft));
+                Check("ordinary merge result can save to own writable input without retargeting source memory", File.ReadAllText(automaticLeft) == "head\nmerged\ntail\n"
+                    && automatic.LeftEditor.Text == ownInputMemory && automatic.LeftPath.Text == ownInputPath && !automatic.HasUnsavedChanges);
+                Pump(automatic.SaveAsync(false));
+                Check("merge SaveCopy keeps ordinary source document content available for original save", File.ReadAllText(automaticLeft) == ownInputMemory);
+                var protectedProject = automatic.CaptureProject(); protectedProject.BaseReadOnly = true; automatic.ApplyProject(protectedProject);
+                var beforeReadOnlyBase = File.ReadAllBytes(automaticBase); var readonlyOwnRejected = false;
+                try { Pump(automatic.SaveMergeResultToAsync(automaticBase)); } catch (InvalidOperationException) { readonlyOwnRejected = true; }
+                Check("ordinary merge result cannot overwrite own readonly ancestor input", readonlyOwnRejected && File.ReadAllBytes(automaticBase).SequenceEqual(beforeReadOnlyBase));
+                protectedProject.BaseReadOnly = false; automatic.ApplyProject(protectedProject);
+                var otherInputPane = text.AddSession(); otherInputPane.ApplyProject(new() { Mode = "Text", LeftPath = automaticLeft, RightPath = automaticRight });
+                var beforeOtherInput = File.ReadAllBytes(automaticLeft); var otherInputRejected = false;
+                try { Pump(automatic.SaveMergeResultToAsync(automaticLeft)); } catch (InvalidOperationException) { otherInputRejected = true; }
+                Check("own input permission cannot overwrite another tab ordinary input", otherInputRejected && File.ReadAllBytes(automaticLeft).SequenceEqual(beforeOtherInput));
+                var lateOwnPath = Path.Combine(folder, "late-own-input.txt"); File.WriteAllText(lateOwnPath, "late sentinel");
+                automatic.MergeSaveBeforePublish = () => { automatic.LeftPath.Text = lateOwnPath; return Task.CompletedTask; };
+                var lateOwnRejected = false;
+                try { Pump(automatic.SaveMergeResultToAsync(automaticSave)); } catch (InvalidOperationException) { lateOwnRejected = true; }
+                finally { automatic.MergeSaveBeforePublish = null; automatic.LeftPath.Text = ownInputPath; }
+                Check("captured merge save refuses changed own input identity before publication", lateOwnRejected && File.ReadAllText(lateOwnPath) == "late sentinel" && File.ReadAllText(automaticSave) == "head\nleft\ntail\n");
+            }
             finally { foreach (var session in text.SessionPanes) session.DiscardChanges(); text.Close(); window = prior; }
         }
         void TwoWay(string leftText, string rightText)
@@ -1400,13 +1588,22 @@ internal static class HeadlessSelfTest
             // 前の祖先状態は再読込みで解除し、実際のエディター入力から開始する。
             Pump(currentPane.ComparePathsAsync());
             currentPane.LeftEditor.Text = leftText; currentPane.RightEditor.Text = rightText;
+            currentPane.DiscardChanges();
             currentPane.StartMergeSession(false); Dispatcher.UIThread.RunJobs();
         }
         ComparisonPane paneForTests() => window!.ActivePane;
         void EditResult(string text)
         {
-            var currentPane = paneForTests(); currentPane.ResultEditor.Text = text; Dispatcher.UIThread.RunJobs();
+            var currentPane = paneForTests(); EditResultIn(currentPane.ResultEditor, text);
             Check("result editor synchronizes exact manual text", currentPane.CurrentMergeSession!.Text == text && currentPane.ResultEditor.Text == text);
+        }
+        void EditResultIn(TransactionalResultEditor editor, string text)
+        {
+            var before = editor.Text ?? "";
+            int prefix = 0; while (prefix < before.Length && prefix < text.Length && before[prefix] == text[prefix]) prefix++;
+            int suffix = 0; while (suffix < before.Length - prefix && suffix < text.Length - prefix && before[^(suffix + 1)] == text[^(suffix + 1)]) suffix++;
+            editor.CaretIndex = prefix; editor.SelectionStart = prefix; editor.SelectionEnd = before.Length - suffix;
+            editor.ReplaceSelection(text.Substring(prefix, text.Length - prefix - suffix)); Dispatcher.UIThread.RunJobs();
         }
         void Screenshot(string name)
         {

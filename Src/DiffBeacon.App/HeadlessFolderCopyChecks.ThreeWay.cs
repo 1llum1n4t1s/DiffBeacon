@@ -142,6 +142,7 @@ internal static partial class HeadlessFolderCopyChecks
             Dialogs.ConfirmationShown = null; CloseFolderMessages(window);
             var after = roots.Select(path => File.ReadAllText(Path.Combine(path, "entry.txt"))).ToArray();
             var published = pane.LastFolderCopyResult?.PublishedCount ?? 0;
+            RecordCopyDiagnostic(root, "threeway-readonly-other-tab-long-device", pane, roots[0], roots[2], DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, "readonly-output-protection");
             check("Folder Three Way long readonly raw input", captured.LeftPath == raw && captured.LeftReadOnly, "uncompared other tab retains DOS long readonly root");
             check("Folder Three Way long readonly confirmation", confirms == 1, "readonly descendants refused by the existing pre-publication check after confirmation");
             check("Folder Three Way long readonly no publication", published == 0, "no overwrite");
@@ -188,6 +189,7 @@ internal static partial class HeadlessFolderCopyChecks
             CloseFolderMessages(window); Dialogs.ConfirmationShown = null;
             var after = files.Select(File.ReadAllText).ToArray();
             var published = pane.LastFolderCopyResult?.PublishedCount ?? 0;
+            RecordCopyDiagnostic(root, "threeway-" + name, pane, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, "third-root-protection");
             check("Folder Three Way protection no confirmation " + name, confirms == 0, "reject before confirmation");
             check("Folder Three Way protection no publication " + name, published == 0, "third root is not a destination");
             check("Folder Three Way protection all bytes " + name, after.SequenceEqual(before), "new/protected/right fixed bytes retained");
@@ -225,6 +227,7 @@ internal static partial class HeadlessFolderCopyChecks
             if (pane.PendingFolderCopy is { } task) wait(task);
             Dialogs.ConfirmationShown = null;
             var (source, destination) = DirectorySideMapping.GetSides(direction);
+            RecordCopyDiagnostic(root, "threeway-" + name, pane, roots[(int)source], roots[(int)destination], direction, mode, stale ? "injected-confirmation-change" : !confirm ? "confirmation-cancel" : middleReadOnly ? "readonly-copy" : "copy");
             var copied = confirm && !stale && !(destination == DirectorySide.Middle && middleReadOnly);
             var after = roots.Select(path => File.ReadAllText(Path.Combine(path, "entry.txt"))).ToArray();
             check("Folder Three Way copy bytes " + name, after.Select((text, side) => text ==

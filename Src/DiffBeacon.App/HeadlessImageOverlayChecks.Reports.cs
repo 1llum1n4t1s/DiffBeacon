@@ -83,10 +83,34 @@ internal static partial class HeadlessImageOverlayChecks
         Action<string, bool, string> check, List<(string Name, string Png, byte[] Pixels, int Width, int Height)> observations)
     {
         panel.GateClock = new Clock(0);
-        pump(panel.ApplySettingsAsync(panel.CaptureSettings() with { MiddleOffset = new() }));
+        var budgetDisplayBefore = panel.CurrentDisplayOperation;
+        var budgetDisplayBeforeStatus = budgetDisplayBefore.Status.ToString();
+        var resetFrameOperation = panel.ApplySettingsAsync(panel.CaptureSettings() with { MiddleOffset = new() });
+        pump(resetFrameOperation);
+        using (var stateFile = new FileStream(Path.Combine(folder, "frame-budget-start-state.json"), FileMode.CreateNew, FileAccess.Write, FileShare.None))
+        using (var stateWriter = new System.Text.Json.Utf8JsonWriter(stateFile, new() { Indented = true }))
+        {
+            var startSettings = panel.CaptureSettings();
+            stateWriter.WriteStartObject();
+            stateWriter.WriteBoolean("sameDisplayTask", ReferenceEquals(budgetDisplayBefore, panel.CurrentDisplayOperation));
+            stateWriter.WriteString("displayTaskStatusBeforeApply", budgetDisplayBeforeStatus);
+            stateWriter.WriteString("previousDisplayTaskStatusAfterApply", budgetDisplayBefore.Status.ToString());
+            stateWriter.WriteString("displayTaskStatusAfterApply", panel.CurrentDisplayOperation.Status.ToString());
+            stateWriter.WriteString("frameTaskStatusAfterAwait", resetFrameOperation.Status.ToString());
+            stateWriter.WriteBoolean("frameAwaitCompletedSuccessfully", resetFrameOperation.IsCompletedSuccessfully);
+            stateWriter.WriteNumber("adoptedMode", panel.AdoptedDisplay!.Settings.Mode);
+            stateWriter.WriteNumber("globalMode", window.ImageOptions.Current.OverlayMode);
+            stateWriter.WriteNumber("middleOffsetX", startSettings.MiddleOffset.X);
+            stateWriter.WriteNumber("middleOffsetY", startSettings.MiddleOffset.Y);
+            stateWriter.WriteStartArray("renderedFrames");
+            foreach (var startFrame in panel.RenderedFrames)
+            { stateWriter.WriteStartObject(); stateWriter.WriteNumber("width", startFrame.Width); stateWriter.WriteNumber("height", startFrame.Height); stateWriter.WriteEndObject(); }
+            stateWriter.WriteEndArray(); stateWriter.WriteEndObject();
+        }
         foreach (var mode in new[] { 2, 3 })
         {
-            panel.SetOverlayOptions(window.ImageOptions.Current with { OverlayMode = mode }); pump(panel.CurrentDisplayOperation);
+            if (window.ImageOptions.Current.OverlayMode != mode)
+            { panel.SetOverlayOptions(window.ImageOptions.Current with { OverlayMode = mode }); pump(panel.CurrentDisplayOperation); }
             var previous = panel.CaptureSettings(); var frames = panel.RenderedFrames.ToArray();
             var hashes = frames.Select(frame => ImageComparisonEngine.PixelHash(frame.Pixels, CancellationToken.None)).ToArray();
             var clock = new Clock(200, 300, 500, 600); panel.RenderClock = clock;

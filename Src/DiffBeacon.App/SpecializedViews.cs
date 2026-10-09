@@ -16,9 +16,9 @@ public static partial class SpecializedViews
 {
     private static readonly FontFamily Mono = new("Cascadia Mono, Menlo, Consolas, monospace");
     public static void Release(Control? control) { if (control is IDisposable disposable) disposable.Dispose(); }
-    public static bool HasUnsavedChanges(Control? control) => control is BinaryPanel binary && binary.IsDirty?.Invoke() == true || control is TablePanel table && table.HasPendingCellEdit
+    public static bool HasUnsavedChanges(Control? control) => control is BinaryPanel binary && !binary.IsDisposed && binary.IsDirty?.Invoke() == true || control is TablePanel table && table.HasPendingCellEdit
         || control is ImagePanel image && image.HasUnsavedChanges;
-    public static void DiscardChanges(Control? control) { if (control is BinaryPanel binary) binary.MarkClean?.Invoke(); if (control is TablePanel table) table.DiscardCellDraft(); if (control is ImagePanel image) image.DiscardChanges(); }
+    public static void DiscardChanges(Control? control) { if (control is BinaryPanel binary && !binary.IsDisposed) binary.MarkClean?.Invoke(); if (control is TablePanel table) table.DiscardCellDraft(); if (control is ImagePanel image) image.DiscardChanges(); }
     public static bool IsImage(string path) => Path.GetExtension(path).ToLowerInvariant() is ".png" or ".apng" or ".jpg" or ".jpeg" or ".bmp" or ".gif" or ".tif" or ".tiff" or ".webp";
 
     public static async Task<Control> ImagesAsync(string left, string right, CancellationToken cancellationToken, string? middle = null,

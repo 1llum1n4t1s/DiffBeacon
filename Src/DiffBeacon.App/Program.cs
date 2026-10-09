@@ -12,6 +12,12 @@ public static class Program
         Console.OutputEncoding = new System.Text.UTF8Encoding(false);
         if (Console.IsInputRedirected) Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
         Arguments = args;
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--bare-compression-only")
+            return HeadlessSelfTest.Run(args[1], bareCompressionOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--bare-gzip-only")
+            return HeadlessSelfTest.Run(args[1], bareGZipOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-defaults-only")
+            return HeadlessSelfTest.Run(args[1], imageDefaultsOnly: true);
         if (args.Length == 2 && args[0] == "--self-test-independent-text-input-saved-archives")
             return HeadlessSelfTest.Run(args[1], independentTextInputSavedArchivesOnly: true);
         if (args.Length == 2 && args[0] == "--self-test-independent-text-input-routes")
@@ -29,6 +35,8 @@ public static class Program
         if (args.Length == 2 && args[0] == "--self-test-independent-text")
             return HeadlessSelfTest.Run(args[1], independentTextOnly: true);
         if (args.Length == 5 && args[0] == "--binary-bytecode-self-test") return BinaryBytecodeSelfTest(args);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-search-only")
+            return HeadlessSelfTest.Run(args[1], binarySearchOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-clipboard-only")
             return HeadlessSelfTest.Run(args[1], binaryClipboardOnly: true);
         if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);

@@ -18,11 +18,44 @@ $isMacTarget = $RuntimeIdentifier.StartsWith('osx-')
 if (($isMacTarget -and -not $IsMacOS) -or (-not $isMacTarget -and -not $IsWindows)) {
     throw 'Native AOT は対象と同じ OS 上で発行してください。Windows と macOS 間のクロスコンパイルには対応していません。'
 }
-$artifactsRoot = Join-Path $repoRoot 'artifacts'
-$publishRoot = if ($OutputRoot) { [IO.Path]::GetFullPath($OutputRoot, $repoRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) } else { Join-Path $artifactsRoot 'publish' }
-if (-not $publishRoot.StartsWith($artifactsRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '発行rootはリポジトリのartifacts配下へ指定してください。' }
+$publishRoot = if ($OutputRoot) { [IO.Path]::GetFullPath($OutputRoot, $repoRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) } else { Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/publish-' + [guid]::NewGuid().ToString('N')) }
+# 作業出力は外部の作業別領域へ限定し、作成前に全祖先を検査する。
+$allowedOutputRoots = @(
+    (Join-Path ([IO.Path]::GetTempPath()) 'Codex/DiffBeacon'),
+    (Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Codex/TaskArtifacts/DiffBeacon')
+)
+if ($env:RUNNER_TEMP -and $env:GITHUB_ACTIONS -eq 'true') {
+    $allowedOutputRoots += Join-Path $env:RUNNER_TEMP 'Codex/DiffBeacon'
+}
+$comparison = if ($IsWindows) { [StringComparison]::OrdinalIgnoreCase } else { [StringComparison]::Ordinal }
+$allowedOutput = $false
+foreach ($allowedRoot in $allowedOutputRoots) {
+    $prefix = [IO.Path]::GetFullPath($allowedRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if ($publishRoot.StartsWith($prefix, $comparison)) { $allowedOutput = $true; break }
+}
+$repoPrefix = $repoRoot.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+$codexRoot = if ($env:CODEX_HOME) { [IO.Path]::GetFullPath($env:CODEX_HOME) } else { Join-Path ([Environment]::GetFolderPath('UserProfile')) '.codex' }
+$codexPrefix = $codexRoot.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+if (-not $allowedOutput -or $publishRoot.StartsWith($repoPrefix, $comparison) -or $publishRoot.Equals($repoRoot, $comparison) -or $publishRoot.StartsWith($codexPrefix, $comparison) -or $publishRoot.Equals($codexRoot, $comparison) -or $publishRoot -match '(?i)(^|[\\/])(artifacts|\.codex)([\\/]|$)') {
+    throw '生成先はrepo／Codexユーザーディレクトリ外のCodex/DiffBeacon作業別領域を指定してください。artifactsという名前のパス要素は使用できません。'
+}
+$currentPath = $publishRoot
+while ($currentPath) {
+    $existingAncestor = $null
+    try { $existingAncestor = Get-Item -LiteralPath $currentPath -Force -ErrorAction Stop }
+    catch [Management.Automation.ItemNotFoundException] { }
+    if ($existingAncestor) {
+        if ($existingAncestor.PSProvider.Name -ne 'FileSystem' -or $existingAncestor -isnot [IO.DirectoryInfo]) {
+            throw "生成先の祖先はファイルシステムのディレクトリである必要があります: $currentPath"
+        }
+        if ($existingAncestor.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+            throw "生成先にリンクは使用できません: $currentPath"
+        }
+    }
+    $currentPath = [IO.Path]::GetDirectoryName($currentPath)
+}
 $outputPath = Join-Path $publishRoot $RuntimeIdentifier
-$verificationPath = if ($OutputRoot) { Join-Path $publishRoot "verification/$RuntimeIdentifier" } else { Join-Path $repoRoot "artifacts/verification/$RuntimeIdentifier" }
+$verificationPath = Join-Path $publishRoot "verification/$RuntimeIdentifier"
 $projectPath = Join-Path $repoRoot 'Src/DiffBeacon.App/DiffBeacon.App.csproj'
 if (-not (Test-Path -LiteralPath $projectPath -PathType Leaf)) { throw "アプリのプロジェクトが見つかりません: $projectPath" }
 
@@ -30,8 +63,16 @@ if (-not (Test-Path -LiteralPath $projectPath -PathType Leaf)) { throw "アプ�
 foreach ($path in @($publishRoot, $outputPath, $verificationPath)) {
     $ancestor = $path
     while ($ancestor) {
-        if ((Test-Path -LiteralPath $ancestor) -and ((Get-Item -LiteralPath $ancestor).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-            throw "生成先にリンクは使用できません: $ancestor"
+        $existingAncestor = $null
+        try { $existingAncestor = Get-Item -LiteralPath $ancestor -Force -ErrorAction Stop }
+        catch [Management.Automation.ItemNotFoundException] { }
+        if ($existingAncestor) {
+            if ($existingAncestor.PSProvider.Name -ne 'FileSystem' -or $existingAncestor -isnot [IO.DirectoryInfo]) {
+                throw "生成先の祖先はファイルシステムのディレクトリである必要があります: $ancestor"
+            }
+            if ($existingAncestor.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+                throw "生成先にリンクは使用できません: $ancestor"
+            }
         }
         $ancestor = [IO.Path]::GetDirectoryName($ancestor)
     }
@@ -45,7 +86,7 @@ if (Test-Path -LiteralPath $outputPath) {
         if (-not $OwnerAttestsQuiescentAndNoMixedWork) { throw '旧発行物の利用中プロセスなし・他作業混在なしを確認し、-OwnerAttestsQuiescentAndNoMixedWork を指定してください。' }
         if ([Threading.Thread]::CurrentThread.ApartmentState -ne 'STA') { throw '旧発行物を清掃するWindows発行は pwsh -STA -NoProfile -File build/Publish.ps1 で実行してください。' }
         # 旧発行物はごみ箱で今回の項目を照合し、個別に完全消去してから再生成する。
-        $cleanupRoot = Join-Path $repoRoot 'artifacts/publish-cleanup'
+        $cleanupRoot = Join-Path $publishRoot 'publish-cleanup'
         New-Item -ItemType Directory -Path $cleanupRoot -Force | Out-Null
         $cleanupId = [guid]::NewGuid().ToString('N')
         $cleanupPath = Join-Path $cleanupRoot "$RuntimeIdentifier-$cleanupId-clean.json"

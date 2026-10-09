@@ -37,41 +37,45 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
+      - name: Select external run output
+        run: |
+          $runRoot = Join-Path $env:RUNNER_TEMP 'Codex/DiffBeacon/ci-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}'
+          "DIFFBEACON_RUN_ROOT=$runRoot" >> $env:GITHUB_ENV
       - name: Build managed projects
         run: dotnet build DiffBeacon.slnx -c Release
       - name: Verify macOS SDK file kind ABI
         if: startsWith(matrix.rid, 'osx-')
-        run: pwsh -NoProfile -File build/Build-FolderMacReference.ps1 -OutputDirectory 'artifacts/folder-reference/${{ matrix.rid }}'
+        run: pwsh -NoProfile -File build/Build-FolderMacReference.ps1 -OutputDirectory '${{ env.DIFFBEACON_RUN_ROOT }}/folder-reference'
       - name: Publish and verify native application
         run: |
           $timeoutSeconds = if ('${{ matrix.rid }}'.StartsWith('osx-')) { 1200 } else { 600 }
-          ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -VerificationTimeoutSeconds $timeoutSeconds
+          ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -OutputRoot (Join-Path $env:DIFFBEACON_RUN_ROOT 'publish') -VerificationTimeoutSeconds $timeoutSeconds
       - name: Build independent Z decoder for verification
         run: |
-          pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory 'artifacts/z-reference/${{ matrix.rid }}'
+          pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory '${{ env.DIFFBEACON_RUN_ROOT }}/z-reference'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Run end-to-end scenarios
         run: |
-          $manifest = Get-Content 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
+          $manifest = Get-Content '${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
           $decoderName = if ($IsWindows) { 'ncompress.exe' } else { 'ncompress' }
-          $zReference = (Resolve-Path -LiteralPath (Join-Path 'artifacts/z-reference/${{ matrix.rid }}' $decoderName)).Path
-          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output 'artifacts/e2e/${{ matrix.rid }}' --app $manifest.executable --z-reference $zReference
+          $zReference = (Resolve-Path -LiteralPath (Join-Path '${{ env.DIFFBEACON_RUN_ROOT }}/z-reference' $decoderName)).Path
+          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output '${{ env.DIFFBEACON_RUN_ROOT }}/e2e' --app $manifest.executable --z-reference $zReference
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify actual OS clipboard across application processes
         run: |
-          $manifest = Get-Content 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
-          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-clipboard' --write
+          $manifest = Get-Content '${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
+          & $manifest.executable --clipboard-self-test '${{ env.DIFFBEACON_RUN_ROOT }}/verification/desktop-clipboard' --write
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-clipboard' --read
+          & $manifest.executable --clipboard-self-test '${{ env.DIFFBEACON_RUN_ROOT }}/verification/desktop-clipboard' --read
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-binary-clipboard' --binary-write
+          & $manifest.executable --clipboard-self-test '${{ env.DIFFBEACON_RUN_ROOT }}/verification/desktop-binary-clipboard' --binary-write
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          & $manifest.executable --clipboard-self-test 'artifacts/verification/${{ matrix.rid }}/desktop-binary-clipboard' --binary-read
+          & $manifest.executable --clipboard-self-test '${{ env.DIFFBEACON_RUN_ROOT }}/verification/desktop-binary-clipboard' --binary-read
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Record evidence directories and file hashes before upload
         if: always()
         run: |
-          python -B build/Capture-EvidenceInventory.py --root 'artifacts/e2e/${{ matrix.rid }}' --root 'artifacts/verification/${{ matrix.rid }}' --root 'artifacts/z-reference/${{ matrix.rid }}' --root 'artifacts/folder-reference/${{ matrix.rid }}' --root 'artifacts/publish/${{ matrix.rid }}/publish-manifest.json' --output 'artifacts/evidence/${{ matrix.rid }}.json'
+          python -B build/Capture-EvidenceInventory.py --base-directory '${{ env.DIFFBEACON_RUN_ROOT }}' --root e2e --root verification --root 'publish/verification/${{ matrix.rid }}' --root z-reference --root folder-reference --root 'publish/${{ matrix.rid }}/publish-manifest.json' --output evidence.json
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload verification evidence
         if: always()
@@ -79,16 +83,17 @@ jobs:
         with:
           name: verification-${{ matrix.rid }}
           path: |
-            artifacts/e2e/${{ matrix.rid }}/
-            artifacts/verification/${{ matrix.rid }}/
-            artifacts/publish/${{ matrix.rid }}/publish-manifest.json
-            artifacts/z-reference/${{ matrix.rid }}/
-            artifacts/folder-reference/${{ matrix.rid }}/
-            artifacts/evidence/${{ matrix.rid }}.json
+            ${{ env.DIFFBEACON_RUN_ROOT }}/e2e/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/verification/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/publish/verification/${{ matrix.rid }}/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/publish-manifest.json
+            ${{ env.DIFFBEACON_RUN_ROOT }}/z-reference/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/folder-reference/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/evidence.json
           if-no-files-found: warn
       - name: Upload native application
         uses: actions/upload-artifact@v4
         with:
           name: DiffBeacon-${{ matrix.rid }}
-          path: artifacts/publish/${{ matrix.rid }}/
+          path: ${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/
           if-no-files-found: error

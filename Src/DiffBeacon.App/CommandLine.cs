@@ -36,7 +36,8 @@ internal static class CommandLine
                     + "--folder-sync LEFT RIGHT [--middle MIDDLE] --direction DIRECTION --copy all|diff --select RELATIVE [--select RELATIVE ...] [folder options]\n"
                     + "folder options: --middle MIDDLE --mode content|hash|timestamp --exclude PATTERN --filter FILE --no-recursive --show-filtered --max-entries N --max-depth N --max-content-bytes N と text comparison options\n"
                     + "three-way folder directions: left-to-middle, middle-to-left, middle-to-right, right-to-middle（left-to-right/right-to-leftも使用可能）\n"
-                    + "--archive-list ARCHIVE [--password-stdin]\n--archive-compare LEFT RIGHT [--password-stdin]\n--archive-entry ARCHIVE ENTRY OUTPUT [--password-stdin]\n--archive-repack INPUT OUTPUT [--password-stdin]\n--archive-extract INPUT NEW_DIRECTORY [--password-stdin]\n--archive-create SOURCE_DIRECTORY OUTPUT\n"
+                    + "--archive-list ARCHIVE [--password-stdin]\n--archive-compare LEFT RIGHT [--password-stdin]\n--archive-entry ARCHIVE ENTRY OUTPUT [--password-stdin]\n--archive-repack INPUT OUTPUT [--password-stdin]\n--archive-extract INPUT NEW_DIRECTORY [--password-stdin]\n--archive-create SOURCE_FILE_OR_DIRECTORY OUTPUT\n"
+                    + "archive create/repack gzip output: --output-gzip-name-code-page N\narchive read options: --gzip-name-code-page N --gzip-payload-kind auto|file|tar --compression-payload-kind auto|file|tar\narchive compare right overrides: --right-gzip-name-code-page N --right-gzip-payload-kind auto|file|tar --right-compression-payload-kind auto|file|tar\n"
                     + "--merge BASE LEFT RIGHT OUTPUT\n--merge-select BASE LEFT RIGHT OUTPUT LEFT|BASE|RIGHT\n--patch-create LEFT RIGHT OUTPUT\n--patch-apply SOURCE PATCH OUTPUT\n"
                     + "--archive-source-list DESCRIPTOR_JSON [--password-stdin]\n--archive-source-entry DESCRIPTOR_JSON ENTRY OUTPUT [--password-stdin]\n"
                     + "--self-test OUTPUT_DIRECTORY\nExit: 0 equal/success, 1 differences/conflicts, 2 error");
@@ -187,7 +188,7 @@ internal static class CommandLine
             if (command == "--project-copy")
             {
                 var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], token);
-                if (workspace.Entries.Length == 1) await WorkspaceStore.SaveAsync(args[2], workspace.Entries[0], token, args[1]);
+                if (workspace.Entries.Length == 1 && workspace.FormatVersion is not (8 or 9)) await WorkspaceStore.SaveAsync(args[2], workspace.Entries[0], token, args[1]);
                 else await WorkspaceStore.SaveWorkspaceAsync(args[2], workspace, token, args[1]);
                 WriteJson(w => { w.WriteString("output", Path.GetFullPath(args[2])); w.WriteNumber("entries", workspace.Entries.Length); w.WriteNumber("activeEntryIndex", workspace.ActiveEntryIndex); }); return 0;
             }
@@ -282,15 +283,27 @@ internal static class CommandLine
                 var ancestor = await TextDocument.LoadAsync(args[1], token);
                 var left = await TextDocument.LoadAsync(args[2], token);
                 var right = await TextDocument.LoadAsync(args[3], token);
-                var session = MergeSession.CreateThreeWay(ancestor.Text, left.Text, right.Text, token: token);
+                var materialized = FourPaneMaterialization.CreateThreeWay(ancestor.Text, left.Text, right.Text,
+                    options: null, autoResolve: true, settings: new FourPaneMaterializationSettings { DefaultEol = ancestor.NewLine }, token: token);
+                var session = materialized.InitialSession;
                 if (command == "--merge-select")
                 {
                     if (!Enum.TryParse<MergeSource>(args[5], true, out var source) || !Enum.IsDefined(source)) throw new ArgumentException("採用元はLEFT、BASE、RIGHTです。");
-                    session.ChooseAll(source);
+                    foreach (var descriptor in materialized.Choices.Descriptors)
+                    {
+                        if (!session.Current.Segments.Single(s => s.Id == descriptor.SegmentId).IsPlaceholder) continue;
+                        var candidate = session.PrepareChoice(materialized.Choices,
+                            new(session.Current.Version, descriptor.OriginalDiffIndex, [(int)source]), token, out _);
+                        try { candidate.End(candidate.Buffer.Text, candidate.Buffer.Cursor, candidate.Buffer.Selection); }
+                        finally { candidate.Cancel(); }
+                    }
                 }
-                await ancestor.SaveAsync(args[4], session.Text, token);
-                WriteJson(w => { w.WriteNumber("conflicts", session.ConflictCount); w.WriteNumber("unresolved", session.UnresolvedCount); w.WriteString("output", Path.GetFullPath(args[4])); });
-                return session.UnresolvedCount != 0 ? 1 : 0;
+                var text = FourPaneCliSerialization.ExpandedText(materialized, session.Current, ancestor.Text, left.Text, right.Text, token);
+                int unresolved = session.Current.Segments.Count(s => s.IsPlaceholder);
+                int conflicts = session.Current.Segments.Count(s => s.IsPlaceholder && s.State == SegmentState.Conflict);
+                await ancestor.SaveAsync(args[4], text, token);
+                WriteJson(w => { w.WriteNumber("conflicts", conflicts); w.WriteNumber("unresolved", unresolved); w.WriteString("output", Path.GetFullPath(args[4])); });
+                return unresolved != 0 ? 1 : 0;
             }
             if (command == "--patch-create")
             {

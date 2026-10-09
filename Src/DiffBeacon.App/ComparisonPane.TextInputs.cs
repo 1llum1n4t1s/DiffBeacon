@@ -134,7 +134,8 @@ public sealed partial class ComparisonPane
     }
     private object TextAdoptionStamp() => (TextInputIdentity(), _projectMetadata.TextInputs, _textSaveGeneration, _workingTexts.Generation, ArchiveComparisonIdentity(CaptureProject()), _leftDocument, _baseDocument, _rightDocument,
         _textPair.SelectedIndex, _textRevisions[0], _textRevisions[1], _textRevisions[2], LeftEditor.Text, MiddleEditor.Text, RightEditor.Text,
-        LeftEditor.IsReadOnly, MiddleEditor.IsReadOnly, RightEditor.IsReadOnly, (_owner as MainWindow)?.ActivePane);
+        LeftEditor.IsReadOnly, MiddleEditor.IsReadOnly, RightEditor.IsReadOnly, (_owner as MainWindow)?.ActivePane,
+        _resultHost, _resultHost?.Session.Current.Version, MergeHasPendingComposition);
     private string DescribeTextAdoptionState() => $"generation={_textSaveGeneration}; revisions={string.Join(",", _textRevisions)}; role={_textRole.SelectedIndex}; pair={_textPair.SelectedIndex}; "
         + $"documents={_leftDocument is not null}/{_baseDocument is not null}/{_rightDocument is not null}; textLengths={LeftEditor.Text?.Length}/{MiddleEditor.Text?.Length}/{RightEditor.Text?.Length}; "
         + $"readonly={LeftEditor.IsReadOnly}/{MiddleEditor.IsReadOnly}/{RightEditor.IsReadOnly}; active={ReferenceEquals((_owner as MainWindow)?.ActivePane, this)}; identity={TextInputIdentity()}";
@@ -352,18 +353,19 @@ public sealed partial class ComparisonPane
     private void UpdateIndependentEditorLayout()
     {
         foreach (var pane in _editGrid.Children.OfType<DockPanel>()) pane.Children.Clear();
-        _editGrid.Children.Clear(); _editGrid.ColumnDefinitions = new ColumnDefinitions("*,6,*,6,*");
-        for (var side = 0; side < 3; side++)
+        var count = _resultHost is null ? 3 : 4;
+        _editGrid.Children.Clear(); _editGrid.ColumnDefinitions = new ColumnDefinitions(count == 3 ? "*,6,*,6,*" : "*,6,*,6,*,6,*");
+        for (var side = 0; side < count; side++)
         {
-            var pane = new DockPanel(); var label = new TextBlock { Text = TextSideCaption(side), Margin = new Thickness(8), FontWeight = FontWeight.Bold };
-            DockPanel.SetDock(label, Dock.Top); pane.Children.Add(label); pane.Children.Add(TextEditor(side));
+            var pane = new DockPanel(); var label = new TextBlock { Text = side == 3 ? "マージ結果" : TextSideCaption(side), Margin = new Thickness(8), FontWeight = FontWeight.Bold };
+            DockPanel.SetDock(label, Dock.Top); pane.Children.Add(label); pane.Children.Add(side == 3 ? _resultPreview : TextEditor(side));
             Grid.SetColumn(pane, side * 2); _editGrid.Children.Add(pane);
-            if (side == 2) continue;
+            if (side == count - 1) continue;
             var splitter = new GridSplitter { ResizeDirection = GridResizeDirection.Columns, HorizontalAlignment = HorizontalAlignment.Stretch };
             Grid.SetColumn(splitter, side * 2 + 1); _editGrid.Children.Add(splitter);
         }
         if (_views.ItemsSource is IEnumerable<TabItem> tabs)
-            foreach (var tab in tabs.Where(tab => ReferenceEquals(tab.Content, _editGrid))) tab.Header = "編集 / 3ペイン";
+            foreach (var tab in tabs.Where(tab => ReferenceEquals(tab.Content, _editGrid))) tab.Header = count == 3 ? "編集 / 3ペイン" : "編集 / 4ペイン";
         UpdateComparisonToolbarHeight();
     }
     private void EnsureUntitledTextSaved()

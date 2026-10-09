@@ -16,7 +16,7 @@ public sealed class BeaconApplication : Application
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow(Program.Arguments, ImageApplicationOptionsStore.ForDesktop());
+            desktop.MainWindow = new MainWindow(Program.Arguments, ImageApplicationOptionsStore.ForDesktop(), FolderApplicationOptionsStore.ForDesktop());
         base.OnFrameworkInitializationCompleted();
     }
 }

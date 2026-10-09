@@ -27,6 +27,9 @@ internal static partial class HeadlessFolderCopyChecks
         var reviewRows = new List<(string Id, string Work, Entry[] Before, Entry[] After, bool Rejected, bool AdsAccepted, bool CopyAttempted, string? AdsPath, string? AdsBefore, string? AdsAfter)>();
         var extendedAccepted = false; string? extendedRequested = null; string? extendedObserved = null; string? extendedInputText = null; var extendedNormalized = false;
         var confirmations = 0;
+        var baselinePanes = window.SessionPanes.ToArray();
+        var ownedPanes = new List<ComparisonPane>();
+        var closedTabs = 0;
         try
         {
             foreach (var toRight in new[] { true, false }) foreach (var all in new[] { true, false })
@@ -86,42 +89,25 @@ internal static partial class HeadlessFolderCopyChecks
             WindowsStreamBudgetCases(); Trace("stream-budgets-complete");
             RunWindowsMetadata(root, (name, limits) =>
             {
+                // 前caseのfinally（NTFS observer解除と診断JSON採取を含む）を通過してから閉じる。
+                CloseCompletedCase("metadata-before-" + name);
                 var pane = Create(name, out var left, out var right, limits: limits);
                 return (pane, left, right);
             }, Wait, Report, screenshot);
-            Trace("metadata-complete");
+            CloseCompletedCase("metadata-final"); Trace("metadata-complete");
 
             var layout = Create("layout", out var layoutLeft, out var layoutRight);
             Select(layout, ["a.bin", "b.bin"]); window.Width = 1280; window.Height = 850;
             Dispatcher.UIThread.RunJobs(); Layout(layout, "normal"); screenshot("folder-copy-normal.png");
             window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs(); Layout(layout, "minimum"); screenshot("folder-copy-minimum.png");
             Trace("layout-minimum-complete");
-            while(window.SessionPanes.Count>45)
-            {
-                var paneToClose=window.SessionPanes.First(p=>!ReferenceEquals(p,layout));
-                var countBefore = window.SessionPanes.Count;
-                Trace("tab-close-start", paneToClose.LeftPath.Text);
-                // 結果を記録済みの検証タブだけを破棄し、実ボタンの閉鎖を一度ずつ待つ。
-                paneToClose.DiscardChanges();
-                var tab=window.GetVisualDescendants().OfType<TabControl>().Single(t=>t.Items.OfType<TabItem>().Any(i=>ReferenceEquals(i.Content,paneToClose)));
-                var item=tab.Items.OfType<TabItem>().Single(i=>ReferenceEquals(i.Content,paneToClose));
-                ((StackPanel)item.Header!).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                var closeClock = Stopwatch.StartNew();
-                while (window.SessionPanes.Contains(paneToClose))
-                {
-                    Dispatcher.UIThread.RunJobs();
-                    if (closeClock.Elapsed > TimeSpan.FromSeconds(5))
-                    {
-                        Trace("tab-close-timeout", paneToClose.LeftPath.Text);
-                        throw new TimeoutException("検証済みフォルダータブの閉鎖が完了しませんでした。");
-                    }
-                    Thread.Sleep(2);
-                }
-                Dispatcher.UIThread.RunJobs();
-                Report("completed tab closed once " + countBefore, window.SessionPanes.Count == countBefore - 1);
-                Trace("tab-close-complete");
-            }
-            while (window.SessionPanes.Count < 45) window.AddSession(); Activate(layout); Dispatcher.UIThread.RunJobs();
+            // caseタブを再利用せず、専用fillerでTree所有の二枠を予約する。
+            if (window.SessionPanes.Count > 43) throw new InvalidOperationException("Folder layout baseline exceeds 43 reserved tabs.");
+            while (window.SessionPanes.Count < 43) AddOwnedSession();
+            Activate(layout); Dispatcher.UIThread.RunJobs();
+            Report("before Tree exact 43 tabs", window.SessionPanes.Count == 43);
+            RunFolderTree(window, root, Wait, check, screenshot, Activate);
+            while (window.SessionPanes.Count < 45) AddOwnedSession(); Activate(layout); Dispatcher.UIThread.RunJobs();
             Report("minimum exact 45 tabs",window.SessionPanes.Count==45);
             Layout(layout, "minimum-many-tabs"); screenshot("folder-copy-minimum-many-tabs.png");
             Trace("layout-many-tabs-complete");
@@ -199,7 +185,7 @@ internal static partial class HeadlessFolderCopyChecks
                     WriteStreamMetadataFile(Path.Combine(location, "before-metadata.json"), beforeMetadata);
                     var sourceMtime = File.GetLastWriteTimeUtc(sourcePath).ToFileTimeUtc();
                     var destinationMtime = id == "fresh" ? 0 : File.GetLastWriteTimeUtc(destinationPath).ToFileTimeUtc();
-                    var pane = window.AddSession();
+                    var pane = AddOwnedSession();
                     pane.FolderCopyVerificationLimits = id == "io179" ? new() { MaximumIoBytes = 179 } : id == "io180" ? new() { MaximumIoBytes = 180 } : null;
                     pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, Recursive = true }); Wait(pane.ComparePathsAsync()); Activate(pane);
                     Select(pane, [id == "directory" ? "tree" : relative]);
@@ -215,6 +201,7 @@ internal static partial class HeadlessFolderCopyChecks
                     Click(pane, "選択をすべてコピー →");
                     if (pane.PendingFolderCopy is { } pending) Wait(pending); else CloseMessages();
                     var result = pane.LastFolderCopyResult;
+                    RecordCopyDiagnostic(root, "stream-" + id, pane, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, id is "source-sha-change" or "destination-sha-change" ? "injected-stream-change" : id == "cancel" ? "confirmation-cancel" : id == "io179" ? "budget-refusal" : "stream-copy");
                     var afterMetadata = CaptureStreamMetadata(location);
                     WriteStreamMetadataFile(Path.Combine(location, "after-metadata.json"), afterMetadata);
                     var success = id is not ("io179" or "source-sha-change" or "destination-sha-change" or "cancel");
@@ -229,6 +216,7 @@ internal static partial class HeadlessFolderCopyChecks
                         result?.Entries.Select(e => e.RelativePath).ToArray() ?? [], sourceMtime, destinationMtime, beforeMetadata, afterMetadata));
                     screenshot("folder-stream-" + id + ".png");
                     pane.FolderPlanReady = null; Dialogs.ConfirmationShown = null;
+                    CloseCompletedCase("stream-" + id);
                 }
             }
             finally
@@ -268,7 +256,7 @@ internal static partial class HeadlessFolderCopyChecks
                     Directory.SetLastWriteTimeUtc(right, new DateTime(2011, 4, 5, 6, 7, 8, DateTimeKind.Utc));
                     var before = CaptureStreamMetadata(location);
                     WriteStreamMetadataFile(Path.Combine(location, "before-metadata.json"), before);
-                    var pane = window.AddSession(); pane.FolderCopyVerificationLimits = limits;
+                    var pane = AddOwnedSession(); pane.FolderCopyVerificationLimits = limits;
                     pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, Recursive = true });
                     Wait(pane.ComparePathsAsync()); Activate(pane); Select(pane, paths);
                     FolderCopyPlan? plan = null; var confirmed = false;
@@ -277,6 +265,7 @@ internal static partial class HeadlessFolderCopyChecks
                     Click(pane, "選択をすべてコピー →");
                     if (pane.PendingFolderCopy is { } pending) Wait(pending); else CloseMessages();
                     var result = pane.LastFolderCopyResult;
+                    RecordCopyDiagnostic(root, "stream-budget-" + id, pane, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, success ? "stream-budget-boundary-copy" : "budget-refusal");
                     var after = CaptureStreamMetadata(location);
                     WriteStreamMetadataFile(Path.Combine(location, "after-metadata.json"), after);
                     Report("stream budget " + id + " actual button/confirmation", confirmed == success && (result?.Succeeded == true) == success);
@@ -288,6 +277,7 @@ internal static partial class HeadlessFolderCopyChecks
                     rows.Add(new(id, location, confirmed, success, limits, plan, result, before, after));
                     screenshot("folder-stream-budget-" + id + ".png");
                     pane.FolderPlanReady = null; Dialogs.ConfirmationShown = null;
+                    CloseCompletedCase("stream-budget-" + id);
                 }
             }
             finally
@@ -323,7 +313,7 @@ internal static partial class HeadlessFolderCopyChecks
             }
             foreach (var path in Directory.EnumerateFileSystemEntries(location, "*", SearchOption.AllDirectories))
                 if (Directory.Exists(path)) Directory.SetLastWriteTimeUtc(path, FixedTime); else File.SetLastWriteTimeUtc(path, FixedTime);
-            var pane = window.AddSession();
+            var pane = AddOwnedSession();
             pane.ApplyProject(new() { Mode = "Folder", LeftPath = Path.Combine(location, "left"), RightPath = Path.Combine(location, "left", "Sub") });
             Wait(pane.ComparePathsAsync()); Activate(pane); Select(pane, ["a.bin", "Sub/a.bin"]);
             var before = Snapshot(location); var confirmed = false;
@@ -331,9 +321,11 @@ internal static partial class HeadlessFolderCopyChecks
             Click(pane, toRight ? all ? "選択をすべてコピー →" : "選択の差分をコピー →" : all ? "← 選択をすべてコピー" : "← 選択の差分をコピー");
             if (pane.PendingFolderCopy is { } pending) Wait(pending); else CloseMessages();
             var after = Snapshot(location);
+            RecordCopyDiagnostic(root, "review-" + id, pane, Path.Combine(location, toRight ? "left" : "left/Sub"), Path.Combine(location, toRight ? "left/Sub" : "left"), toRight ? DirectoryCopyDirection.LeftToRight : DirectoryCopyDirection.RightToLeft, all ? DirectoryCopyMode.All : DirectoryCopyMode.DifferencesOnly, "nested-root-protection");
             var rejected = !confirmed && pane.LastFolderCopyResult is null && before.SequenceEqual(after);
             Report(id + " prepare rejects overlapping roots", rejected);
             reviewRows.Add((id, location, before, after, rejected, false, true, null, null, null));
+            CloseCompletedCase("review-" + id);
         }
 
         void ReviewCentralAds()
@@ -346,8 +338,8 @@ internal static partial class HeadlessFolderCopyChecks
             var ads = Path.Combine(right, "base.bin") + ":protected"; File.WriteAllBytes(ads, [0x03, 0x14, 0xFF]);
             foreach (var path in Directory.EnumerateFileSystemEntries(location, "*", SearchOption.AllDirectories))
                 if (Directory.Exists(path)) Directory.SetLastWriteTimeUtc(path, FixedTime); else File.SetLastWriteTimeUtc(path, FixedTime);
-            var folder = window.AddSession(); folder.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right }); Wait(folder.ComparePathsAsync());
-            var binary = window.AddSession(); binary.ApplyProject(new() { Mode = "Binary", LeftPath = Path.Combine(left, "base.bin"), RightPath = Path.Combine(left, "support.bin"), BasePath = ads });
+            var folder = AddOwnedSession(); folder.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right }); Wait(folder.ComparePathsAsync());
+            var binary = AddOwnedSession(); binary.ApplyProject(new() { Mode = "Binary", LeftPath = Path.Combine(left, "base.bin"), RightPath = Path.Combine(left, "support.bin"), BasePath = ads });
             Wait(binary.ComparePathsAsync());
             var panel = binary.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().SingleOrDefault();
             var accepted = panel is { HasMiddle: true } && panel.Capture(1).CopyBytes().SequenceEqual(new byte[] { 0x03, 0x14, 0xFF });
@@ -359,10 +351,12 @@ internal static partial class HeadlessFolderCopyChecks
                 Dialogs.ConfirmationShown = dialog => Answer(dialog, true);
                 Click(folder, "選択をすべてコピー →"); if (folder.PendingFolderCopy is { } pending) Wait(pending); else CloseMessages();
             }
+            RecordCopyDiagnostic(root, "review-" + id, folder, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, "ads-input-protection");
             var after = Snapshot(location); var adsAfter = Convert.ToHexString(File.ReadAllBytes(ads));
             var rejected = accepted && attempted && before.SequenceEqual(after) && adsBefore == adsAfter && folder.LastFolderCopyResult?.Succeeded != true;
             Report("central ADS container overwrite protected", rejected);
             reviewRows.Add((id, location, before, after, rejected, accepted, attempted, ads, adsBefore, adsAfter));
+            CloseCompletedCase("review-" + id);
         }
 
         void ReviewFilterChange()
@@ -374,7 +368,7 @@ internal static partial class HeadlessFolderCopyChecks
             var filter = Path.Combine(right, "rules.flt"); File.WriteAllText(filter, "def: include\n## original\n", new System.Text.UTF8Encoding(false));
             foreach (var path in Directory.EnumerateFileSystemEntries(location, "*", SearchOption.AllDirectories))
                 if (Directory.Exists(path)) Directory.SetLastWriteTimeUtc(path, FixedTime); else File.SetLastWriteTimeUtc(path, FixedTime);
-            var pane = window.AddSession(); pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, FileFilterPath = filter });
+            var pane = AddOwnedSession(); pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, FileFilterPath = filter });
             Wait(pane.ComparePathsAsync()); Activate(pane); Select(pane, ["a.bin"]);
             var before = Snapshot(location); var confirmed = false;
             Dialogs.ConfirmationShown = dialog =>
@@ -383,9 +377,11 @@ internal static partial class HeadlessFolderCopyChecks
             };
             Click(pane, "選択をすべてコピー →"); if (pane.PendingFolderCopy is { } pending) Wait(pending); else CloseMessages();
             var after = Snapshot(location);
+            RecordCopyDiagnostic(root, "review-" + id, pane, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, "injected-filter-change");
             var rejected = confirmed && before.Where(e => e.Path != "right/rules.flt").SequenceEqual(after.Where(e => e.Path != "right/rules.flt")) && pane.LastFolderCopyResult?.Succeeded != true;
             Report("active filter content changed confirmation refuses copy", rejected);
             reviewRows.Add((id, location, before, after, rejected, false, true, null, null, null));
+            CloseCompletedCase("review-" + id);
         }
 
         void ReviewExtendedDirectory()
@@ -396,8 +392,8 @@ internal static partial class HeadlessFolderCopyChecks
             File.WriteAllBytes(Path.Combine(left, "base.bin"), [0x01, 0x02]); File.WriteAllBytes(Path.Combine(right, "base.bin"), [0x7A, 0x62]);
             foreach (var path in Directory.EnumerateFileSystemEntries(location, "*", SearchOption.AllDirectories))
                 if (Directory.Exists(path)) Directory.SetLastWriteTimeUtc(path, FixedTime); else File.SetLastWriteTimeUtc(path, FixedTime);
-            var operation = window.AddSession(); operation.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right }); Wait(operation.ComparePathsAsync());
-            var other = window.AddSession(); extendedRequested = @"\\?\" + Path.GetFullPath(right);
+            var operation = AddOwnedSession(); operation.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right }); Wait(operation.ComparePathsAsync());
+            var other = AddOwnedSession(); extendedRequested = @"\\?\" + Path.GetFullPath(right);
             other.ApplyProject(new() { Mode = "Folder", LeftPath = extendedRequested, RightPath = left }); Wait(other.ComparePathsAsync()); Activate(other);
             extendedInputText = other.LeftPath.Text;
             var list = other.GetVisualDescendants().OfType<ListBox>().SingleOrDefault(l => l.ItemsSource is IEnumerable<DirectoryEntry>);
@@ -414,9 +410,11 @@ internal static partial class HeadlessFolderCopyChecks
                 Click(operation, "選択をすべてコピー →"); if (operation.PendingFolderCopy is { } pending) Wait(pending); else CloseMessages();
             }
             var after = Snapshot(location);
+            RecordCopyDiagnostic(root, "review-" + id, operation, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, "extended-root-protection");
             var rejected = extendedAccepted && attempted && before.SequenceEqual(after) && operation.LastFolderCopyResult?.Succeeded != true;
             Report("extended Folder container descendant output protected", rejected);
             reviewRows.Add((id, location, before, after, rejected, false, attempted, null, null, null));
+            CloseCompletedCase("review-" + id);
         }
 
         void Case(string name, bool toRight, bool all, string[] selected, string[] copied,
@@ -427,7 +425,7 @@ internal static partial class HeadlessFolderCopyChecks
             var destination = toRight ? right : left; var source = toRight ? left : right;
             if (protection is not null)
             {
-                var other = window.AddSession();
+                var other = AddOwnedSession();
                 if (protection == "folder") { other.ApplyProject(new() { Mode = "Folder", LeftPath = destination, RightPath = source }); Wait(other.ComparePathsAsync()); }
                 else if (protection == "filter") other.ApplyProject(new() { Mode = "Text", LeftPath = Path.Combine(source, "same.bin"), RightPath = Path.Combine(source, "a.bin"), FileFilterPath = Path.Combine(destination, "a.bin") });
                 else if (protection == "accepted")
@@ -489,6 +487,7 @@ internal static partial class HeadlessFolderCopyChecks
             }
             else CloseMessages();
             var result = pane.LastFolderCopyResult;
+            RecordCopyDiagnostic(root, name, pane, source, destination, toRight ? DirectoryCopyDirection.LeftToRight : DirectoryCopyDirection.RightToLeft, all ? DirectoryCopyMode.All : DirectoryCopyMode.DifferencesOnly, outputFault is not null ? "injected-output-" + outputFault : beforeConfirm is not null ? "injected-confirmation-change" : rejectRefresh || name == "cancel-refresh" ? "injected-refresh-change" : !confirm ? "confirmation-cancel" : protection is not null ? "output-protection" : "copy");
             var cancellationStatus = pane.ComparisonStatus;
             var cancellationPng = "folder-" + name + ".png";
             if (checksCancellation)
@@ -527,7 +526,7 @@ internal static partial class HeadlessFolderCopyChecks
             if (name is not ("cancel-preflight" or "cancel-refresh")) observations.Add(observation);
             if (checksCancellation) cancellationRows.Add((observation, cancellationStatus, cancellationPng, cancellationBefore, CaptureStreamMetadata(Path.GetDirectoryName(source)!)));
             pane.FolderPlanReady = null; pane.FolderOutputChecking = null; pane.DirectoryReadyForAdoption = null; Dialogs.ConfirmationShown = null;
-            Trace("case-complete", name);
+            Trace("case-complete", name); CloseCompletedCase(name);
         }
 
         void StaleConfirmation(string mode, bool accept)
@@ -539,7 +538,24 @@ internal static partial class HeadlessFolderCopyChecks
             Click(pane,"選択をすべてコピー →");
             var oldTask=pane.PendingFolderCopy ?? Task.CompletedTask;
             var clock=Stopwatch.StartNew();
-            while(confirmation is null && !oldTask.IsCompleted) {Dispatcher.UIThread.RunJobs();if(clock.Elapsed>TimeSpan.FromSeconds(20))throw new TimeoutException("Folder confirmationが開きません。");Thread.Sleep(2);}
+            var errorDialogRecorded = false;
+            while(confirmation is null && !oldTask.IsCompleted)
+            {
+                Dispatcher.UIThread.RunJobs();
+                if (!errorDialogRecorded && window.OwnedWindows.Any(dialog => dialog.Title == "コピーを完了できませんでした"))
+                {
+                    RecordConfirmationWaitDiagnostic(root, name, "error-dialog", window, pane, oldTask, clock.Elapsed, left, right, before, beforeDestination);
+                    errorDialogRecorded = true;
+                }
+                if(clock.Elapsed>TimeSpan.FromSeconds(20))
+                {
+                    RecordConfirmationWaitDiagnostic(root, name, "timeout", window, pane, oldTask, clock.Elapsed, left, right, before, beforeDestination);
+                    throw new TimeoutException("Folder confirmationが開きません。");
+                }
+                Thread.Sleep(2);
+            }
+            if (confirmation is null)
+                RecordConfirmationWaitDiagnostic(root, name, "completed-without-confirmation", window, pane, oldTask, clock.Elapsed, left, right, before, beforeDestination);
             Report(name+" actual dialog held",confirmation is not null);
             // 確認を保持してから中止し、新比較の採用後も旧完了が新しい表示を上書きしない。
             if (mode == "Folder" && accept && confirmation is not null) Click(pane, "中止");
@@ -552,10 +568,11 @@ internal static partial class HeadlessFolderCopyChecks
             pane.ApplyProject(new(){Mode=mode,LeftPath=nextLeft,RightPath=nextRight});Wait(pane.ComparePathsAsync());
             var status=pane.ComparisonStatus; var adoption=pane.CaptureAdoptionState();
             if(confirmation is not null) Answer(confirmation,accept); Wait(oldTask);
+            RecordCopyDiagnostic(root, name, pane, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, "injected-stale-confirmation");
             Report(name+" adopted state and status retained",pane.ComparisonStatus==status && Equals(adoption,pane.CaptureAdoptionState()));
             Report(name+" original output retained",Snapshot(right).SequenceEqual(beforeDestination)&&Snapshot(left).SequenceEqual(before));
             observations.Add(new(name,left,right,[],true,true,accept,0,null,null,null,[],before,Snapshot(left),beforeDestination,Snapshot(right)));
-            Dialogs.ConfirmationShown=null;
+            Dialogs.ConfirmationShown=null; CloseCompletedCase(name);
         }
 
         void StalePreparation(string mode)
@@ -571,9 +588,10 @@ internal static partial class HeadlessFolderCopyChecks
                 pane.ApplyProject(new(){Mode=mode,LeftPath=l,RightPath=r});Wait(pane.ComparePathsAsync());status=pane.ComparisonStatus;adopted=pane.CaptureAdoptionState();
             };
             Select(pane,["a.bin"]);Click(pane,"選択をすべてコピー →");if(pane.PendingFolderCopy is {} pending)Wait(pending);
+            RecordCopyDiagnostic(root, name, pane, left, right, DirectoryCopyDirection.LeftToRight, DirectoryCopyMode.All, "injected-stale-preparation");
             Report(name+" completed prepare rejected after new adoption",status is not null&&status==pane.ComparisonStatus&&Equals(adopted,pane.CaptureAdoptionState()));
             Report(name+" original output retained",Snapshot(right).SequenceEqual(beforeDestination)&&Snapshot(left).SequenceEqual(before));
-            observations.Add(new(name,left,right,[],true,true,false,0,null,null,null,[],before,Snapshot(left),beforeDestination,Snapshot(right)));pane.FolderPlanReady=null;
+            observations.Add(new(name,left,right,[],true,true,false,0,null,null,null,[],before,Snapshot(left),beforeDestination,Snapshot(right)));pane.FolderPlanReady=null; CloseCompletedCase(name);
         }
 
         ComparisonPane Create(string name, out string left, out string right, bool readonlySource = false, FolderCopyLimits? limits = null, bool recursive = true)
@@ -590,8 +608,48 @@ internal static partial class HeadlessFolderCopyChecks
             if (readonlySource) File.SetAttributes(Path.Combine(left, "a.bin"), File.GetAttributes(Path.Combine(left, "a.bin")) | FileAttributes.ReadOnly);
             foreach (var side in new[] { left, right }) foreach (var path in Directory.EnumerateFileSystemEntries(side, "*", SearchOption.AllDirectories).Prepend(side))
                 if (Directory.Exists(path)) Directory.SetLastWriteTimeUtc(path, FixedTime); else File.SetLastWriteTimeUtc(path, FixedTime);
-            var pane = window.AddSession(); pane.FolderCopyVerificationLimits = limits;
+            var pane = AddOwnedSession(); pane.FolderCopyVerificationLimits = limits;
             pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, Recursive=recursive }); Wait(pane.ComparePathsAsync()); Trace("compare-complete", name); return pane;
+        }
+        ComparisonPane AddOwnedSession()
+        {
+            var pane = window.AddSession(); ownedPanes.Add(pane); return pane;
+        }
+        void CloseCompletedCase(string name)
+        {
+            if (FolderCopyWindowsMetadata.VerificationObserver is not null)
+                throw new InvalidOperationException("Folder case retirement attempted while NTFS observer is active.");
+            Dialogs.ConfirmationShown = null;
+            foreach (var pane in ownedPanes.ToArray())
+            {
+                if (baselinePanes.Contains(pane) || !window.SessionPanes.Contains(pane))
+                    throw new InvalidOperationException("Folder case ownership changed before retirement.");
+                if (pane.PendingFolderCopy is { IsCompleted: false })
+                    throw new InvalidOperationException("Folder case copy is still pending at retirement.");
+                pane.FolderPlanReady = null; pane.FolderExecutionStarting = null;
+                pane.FolderOutputChecking = null; pane.DirectoryReadyForAdoption = null;
+                // すべてのcase判定・PNG・原本／診断採取の後にだけ実×ボタンで閉じる。
+                pane.DiscardChanges();
+                var before = window.SessionPanes.ToArray();
+                Trace("case-tab-close-start", name);
+                var tab = window.GetVisualDescendants().OfType<TabControl>().Single(t => t.Items.OfType<TabItem>().Any(i => ReferenceEquals(i.Content, pane)));
+                var item = tab.Items.OfType<TabItem>().Single(i => ReferenceEquals(i.Content, pane));
+                ((StackPanel)item.Header!).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                var closeClock = Stopwatch.StartNew();
+                while (window.SessionPanes.Contains(pane))
+                {
+                    Dispatcher.UIThread.RunJobs();
+                    if (closeClock.Elapsed > TimeSpan.FromSeconds(5))
+                    {
+                        Trace("case-tab-close-timeout", name);
+                        throw new TimeoutException("検証済みフォルダータブの閉鎖が完了しませんでした。");
+                    }
+                    Thread.Sleep(2);
+                }
+                Report("completed case tab closed once " + (++closedTabs) + " " + name,
+                    window.SessionPanes.SequenceEqual(before.Where(p => !ReferenceEquals(p, pane))));
+                ownedPanes.Remove(pane); Trace("case-tab-close-complete", name);
+            }
         }
         void Trace(string phase, string? name = null)
         {

@@ -6,6 +6,31 @@ public static partial class SpecializedViews
 {
     public sealed partial class ImagePanel
     {
+        private ImageViewSettings? _applicationDefaultsBaseline;
+
+        // MainWindow の候補採用後だけ有効にし、初期読込みや project 復元は保存しない。
+        internal void EnableApplicationDefaultsPersistence()
+            => _applicationDefaultsBaseline = CaptureSettingsValues();
+
+        private void PersistAdoptedApplicationDefaults()
+        {
+            if (_applicationDefaultsBaseline is not { } previous || _disposed || _saving || _decoded is null) return;
+            var current = CaptureSettingsValues();
+            var requested = _applicationOptions.Current with
+            {
+                ShowDifferences = current.ShowDifferences != previous.ShowDifferences ? current.ShowDifferences : _applicationOptions.Current.ShowDifferences,
+                Zoom = current.Zoom != previous.Zoom ? current.Zoom : _applicationOptions.Current.Zoom,
+                BlockSize = current.BlockSize != previous.BlockSize ? current.BlockSize : _applicationOptions.Current.BlockSize,
+                HighlightAlpha = current.HighlightAlpha != previous.HighlightAlpha ? current.HighlightAlpha : _applicationOptions.Current.HighlightAlpha,
+                Threshold = current.Threshold != previous.Threshold ? current.Threshold : _applicationOptions.Current.Threshold,
+                InsertionDeletionMode = current.InsertionDeletionMode != previous.InsertionDeletionMode ? current.InsertionDeletionMode : _applicationOptions.Current.InsertionDeletionMode,
+            };
+            // ページ移動・編集や別タブの操作で、変更していない既定値を巻き戻さない。
+            if (requested == _applicationOptions.Current || _applicationOptions.SetOptions(requested))
+                _applicationDefaultsBaseline = current;
+            else _status.Text = _applicationOptions.Diagnostic;
+        }
+
         private ImageViewSettings CaptureSettingsValues() => new()
         {
             // 番号と閾値は採用済みの原画に対応する値を使い、復号待ちの選択を保存しない。
@@ -40,7 +65,7 @@ public static partial class SpecializedViews
             try
             {
                 var alphaOnly = requested with { HighlightAlpha = previous.HighlightAlpha } == previous;
-                var operation = SetNumbersAsync(numbers, token, preserveRectangle: alphaOnly);
+                var operation = SetNumbersAsync(numbers, token, preserveRectangle: alphaOnly, persistApplicationDefaults: true);
                 generation = _generation;
                 await operation;
                 _imageViewToken = requested.View == "PixelDifference" ? "SideBySide" : requested.View;

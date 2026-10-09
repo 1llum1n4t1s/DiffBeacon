@@ -34,6 +34,21 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
     [ThreadStatic] private static bool _observing;
     private readonly byte[] _rawSecurity, _rawEa, _security, _ea;
 
+    // 内部self-test専用。通常経路はnullでguard/query/予約を追加しない。
+    internal readonly record struct VerificationPoint(string Path, string Point, bool TrackWriteTime,
+        ulong? MetadataWriteTime, ulong? BasicWriteTime, int ProcessId, int ThreadId);
+    internal static Action<VerificationPoint>? VerificationObserver { get; set; }
+
+    internal static void NotifyVerification(string path, string point, bool trackWriteTime,
+        ulong? metadataWriteTime, CancellationToken token, Action? context = null, ulong? basicWriteTime = null)
+    {
+        if (VerificationObserver is not { } observer) return;
+        Guard(token, context);
+        observer(new(path, point, trackWriteTime, metadataWriteTime, basicWriteTime,
+            Environment.ProcessId, Environment.CurrentManagedThreadId));
+        Guard(token, context);
+    }
+
     private FolderCopyWindowsMetadata(NativeFileInformation info, byte[] rawSecurity, byte[] rawEa,
         byte[] security, byte[] ea, long retainedBytes)
     {
@@ -82,15 +97,15 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
     internal ReadOnlySpan<byte> CanonicalExtendedAttributes => _ea;
 
     internal static FolderCopyWindowsMetadata Capture(string validatedAbsolutePath,
-        IFolderCopyWindowsMetadataBudget budget, CancellationToken token, Action? validateContext = null) =>
-        Observe(validatedAbsolutePath, budget, token, validateContext, null).Snapshot!;
+        IFolderCopyWindowsMetadataBudget budget, CancellationToken token, Action? validateContext = null, bool trackWriteTime = true) =>
+        Observe(validatedAbsolutePath, budget, token, validateContext, null, trackWriteTime: trackWriteTime).Snapshot!;
 
     internal static void RequireUnchanged(string validatedAbsolutePath, FolderCopyWindowsMetadata expected,
-        IFolderCopyWindowsMetadataBudget budget, CancellationToken token, Action? validateContext = null)
+        IFolderCopyWindowsMetadataBudget budget, CancellationToken token, Action? validateContext = null, bool trackWriteTime = true)
     {
         ArgumentNullException.ThrowIfNull(expected);
         // 単件fixed caller buffersで直接比較し、expected/全計画の配列を再複製しない。
-        _ = Observe(validatedAbsolutePath, budget, token, validateContext, expected);
+        _ = Observe(validatedAbsolutePath, budget, token, validateContext, expected, trackWriteTime: trackWriteTime);
     }
 
     internal static void RequireUnchanged(string validatedAbsolutePath, FolderCopyWindowsMetadata expected,
@@ -112,17 +127,17 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
     private readonly record struct Observation(FolderCopyWindowsMetadata? Snapshot, ulong WriteTime);
 
     private static Observation Observe(string path, IFolderCopyWindowsMetadataBudget budget,
-        CancellationToken token, Action? context, FolderCopyWindowsMetadata? expected, ulong? writeOverride = null, bool refreshWrite = false)
+        CancellationToken token, Action? context, FolderCopyWindowsMetadata? expected, ulong? writeOverride = null, bool refreshWrite = false, bool trackWriteTime = true)
     {
         // 共有予算/context callbackからの再入も、大きいcaller frameを重ねる前に拒否する。
         if (_observing) throw new InvalidOperationException("metadata capture中の同一threadへの再入はできません。");
         _observing = true;
-        try { return ObserveCore(path, budget, token, context, expected, writeOverride, refreshWrite); }
+        try { return ObserveCore(path, budget, token, context, expected, writeOverride, refreshWrite, trackWriteTime); }
         finally { _observing = false; }
     }
 
     private static Observation ObserveCore(string path, IFolderCopyWindowsMetadataBudget budget,
-        CancellationToken token, Action? context, FolderCopyWindowsMetadata? expected, ulong? writeOverride, bool refreshWrite)
+        CancellationToken token, Action? context, FolderCopyWindowsMetadata? expected, ulong? writeOverride, bool refreshWrite, bool trackWriteTime)
     {
         if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException("Windows metadata captureはWindows専用です。");
         ArgumentNullException.ThrowIfNull(budget);
@@ -155,12 +170,16 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
             RequireNtfs(handle, budget, token, context);
             var before = QueryInformation(handle, budget, token, context);
             ValidateInformation(before);
+            if (!trackWriteTime && (before.Attributes & (uint)FileAttributes.Directory) == 0)
+                throw new IOException("更新日時の追跡省略は比較root外のdirectory専用です。");
+            NotifyVerification(nativePath, "before", trackWriteTime, before.Write.Value, token, context);
             // security queryの共有予約は大きい単件scratch frameへ入る前に済ませる。
             BeforeQuery(budget, MaximumSecurityBytes, token, context);
-            var result = ObserveOpened(handle, before, budget, token, context, expected, writeOverride, refreshWrite);
+            var result = ObserveOpened(handle, before, budget, token, context, expected, writeOverride, refreshWrite, nativePath, trackWriteTime);
             Guard(token, context);
             RejectReparseAncestors(nativePath, budget, token, context);
-            RequirePathIdentity(nativePath, before, budget, token, context);
+            NotifyVerification(nativePath, "beforePathRecheck", trackWriteTime, before.Write.Value, token, context);
+            RequirePathIdentity(nativePath, before, budget, token, context, trackWriteTime);
             return new(result, before.Write.Value);
         }
         catch (Exception exception) { primaryFailure = exception; throw; }
@@ -169,7 +188,7 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
 
     private static FolderCopyWindowsMetadata? ObserveOpened(nint handle, NativeFileInformation before,
         IFolderCopyWindowsMetadataBudget budget, CancellationToken token, Action? context, FolderCopyWindowsMetadata? expected,
-        ulong? writeOverride = null, bool refreshWrite = false)
+        ulong? writeOverride = null, bool refreshWrite = false, string? nativePath = null, bool trackWriteTime = true)
     {
         // 非再帰の単件処理。同時stack scratchの上限は約154KiB (64KiB+64KiB+6554*sizeof(int))。
         // query予約拒否時はこの大きいframeへ入る前/各native call前に止める。
@@ -212,7 +231,7 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
         for (var index = 1; index < entries.Length; index++)
             if (CompareEaNames(rawEa, entries[index - 1], entries[index]) == 0) throw Malformed("EA名の重複");
         var after = QueryInformation(handle, budget, token, context);
-        if (!SameInformation(before, after)) throw new IOException("metadata取得中にidentity/creation/mtime/size/属性が変わりました。");
+        if (!SameInformation(before, after, trackWriteTime)) throw InformationChange("metadata取得中にidentity/creation/mtime/size/属性が変わりました。", nativePath, before, after);
         if (expected is not null)
         {
             var securityComparison = CanonicalSink.Compare(expected._security);
@@ -220,7 +239,7 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
             var eaComparison = CanonicalSink.Compare(expected._ea);
             WriteEa(rawEa, entries, ref eaComparison);
             Guard(token, context);
-            if (!expected.Matches(before, writeOverride, refreshWrite) || !securityComparison.Equal || !eaComparison.Equal)
+            if (!expected.Matches(before, writeOverride, refreshWrite, trackWriteTime) || !securityComparison.Equal || !eaComparison.Equal)
                 throw new IOException("Windows metadataが確認値から変わりました。");
             return null;
         }
@@ -498,12 +517,20 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
         if (information.Size > long.MaxValue || information.Index == 0) throw new NotSupportedException("file size/64bit identityを表現できません。");
     }
 
-    private static bool SameInformation(NativeFileInformation left, NativeFileInformation right) =>
-        left.Creation.Value == right.Creation.Value && left.Write.Value == right.Write.Value && left.Size == right.Size
+    private static bool SameInformation(NativeFileInformation left, NativeFileInformation right, bool trackWriteTime = true) =>
+        left.Creation.Value == right.Creation.Value
+        && (left.Write.Value == right.Write.Value || (!trackWriteTime
+            && (left.Attributes & (uint)FileAttributes.Directory) != 0 && (right.Attributes & (uint)FileAttributes.Directory) != 0))
+        && left.Size == right.Size
         && left.Attributes == right.Attributes && left.Volume == right.Volume && left.Index == right.Index;
 
+    // 拒否時だけscalarの前後値を追記する。security/EA本文・SIDとcleanup情報は混ぜない。
+    private static IOException InformationChange(string prefix, string? nativePath,
+        NativeFileInformation before, NativeFileInformation after) =>
+        new(FormattableString.Invariant($"{prefix} nativePath={nativePath ?? "<owned-handle>"}; Creation={before.Creation.Value}->{after.Creation.Value}; Write={before.Write.Value}->{after.Write.Value}; Size={before.Size}->{after.Size}; Attributes=0x{before.Attributes:X8}->0x{after.Attributes:X8}; Volume=0x{before.Volume:X8}->0x{after.Volume:X8}; Index={before.Index}->{after.Index}."));
+
     private static void RequirePathIdentity(string nativePath, NativeFileInformation observed,
-        IFolderCopyWindowsMetadataBudget budget, CancellationToken token, Action? context)
+        IFolderCopyWindowsMetadataBudget budget, CancellationToken token, Action? context, bool trackWriteTime = true)
     {
         // metadata専用handleのshareはrenameを拘束しないため、末尾に同じpathを再openする。
         // 同一objectのhardlink名は許容する。再open後のABA/祖先差替え/hostile raceの完全防止ではない。
@@ -521,16 +548,17 @@ internal sealed unsafe partial class FolderCopyWindowsMetadata : IEquatable<Fold
             Guard(token, context);
             var current = QueryInformation(handle, budget, token, context);
             ValidateInformation(current);
-            if (!SameInformation(observed, current))
-                throw new IOException("Windows metadataのpathが取得したidentity/basic情報から変わりました。");
+            if (!SameInformation(observed, current, trackWriteTime))
+                throw InformationChange("Windows metadataのpathが取得したidentity/basic情報から変わりました。", nativePath, observed, current);
         }
         catch (Exception exception) { primaryFailure = exception; throw; }
         finally { CheckedClose(handle, primaryFailure); }
         Guard(token, context);
     }
 
-    private bool Matches(NativeFileInformation value, ulong? writeOverride = null, bool refreshWrite = false) =>
-        CreationTime == value.Creation.Value && (refreshWrite || (writeOverride ?? LastWriteTime) == value.Write.Value)
+    private bool Matches(NativeFileInformation value, ulong? writeOverride = null, bool refreshWrite = false, bool trackWriteTime = true) =>
+        CreationTime == value.Creation.Value && (refreshWrite || (writeOverride ?? LastWriteTime) == value.Write.Value
+            || (!trackWriteTime && IsDirectory && (value.Attributes & (uint)FileAttributes.Directory) != 0))
         && Size == checked((long)value.Size) && (uint)ObservedAttributes == value.Attributes && VolumeSerial == value.Volume && FileIndex == value.Index;
 
     private static void Guard(CancellationToken token, Action? context) { token.ThrowIfCancellationRequested(); context?.Invoke(); token.ThrowIfCancellationRequested(); }

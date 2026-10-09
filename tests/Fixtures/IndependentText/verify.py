@@ -51,6 +51,42 @@ def single(paths, description):
     return paths[0]
 
 
+def raw_receipt(run, label, suffix):
+    path = single(run.glob("*-" + label + suffix), label + suffix)
+    index, separator, name = path.name.partition("-")
+    check("exact numeric raw filename " + label + suffix,
+          bool(index) and index.isascii() and index.isdecimal() and separator == "-" and name == label + suffix)
+    return path
+
+
+def independent_raw_receipts(run, commands):
+    # 他scopeは宣言済みの6命令とfixtureだけに限定し、未知input-*を除外しない。
+    siblings = {
+        "independent-text-input-selection-gui": "independent-text-input-selection",
+        "independent-text-input-selection-archives-gui": "independent-text-input-selection-archives",
+        "independent-text-input-selection-cipher-gui": "independent-text-input-selection-cipher",
+        "independent-text-input-selection-routes-gui": "independent-text-input-selection-routes",
+        "independent-text-input-saved-archives-gui": "independent-text-input-saved-archives",
+        "independent-text-input-lifetime-gui": "independent-text-input-lifetime",
+    }
+    expected = set(commands)
+    for label, scope in siblings.items():
+        fixtures = list(run.glob("fixtures/*/" + scope))
+        check("single sibling fixture scope " + label, len(fixtures) <= 1)
+        if fixtures:
+            expected.add(label)
+    for suffix in (".stdout.txt", ".stderr.txt"):
+        files = list(run.glob("*-independent-text-*" + suffix))
+        check("all exact command raw receipts" + suffix, len(files) == len(expected)
+              and {p.name.split("-", 1)[1].removesuffix(suffix) for p in files} == expected)
+    for label in sorted(expected):
+        stdout = raw_receipt(run, label, ".stdout.txt")
+        stderr = raw_receipt(run, label, ".stderr.txt")
+        check("paired raw filename index " + label,
+              stderr.name == stdout.name.removesuffix(".stdout.txt") + ".stderr.txt")
+    return [raw_receipt(run, label, ".stdout.txt") for label in sorted(commands)]
+
+
 def encoded(text, side, gui=False):
     # 製品が返すencoding名から期待bytesを作らない。
     if side == 1:
@@ -126,7 +162,7 @@ def verify(run, products_only=False, legacy88=False):
     for option, canonical, first, second in PAIRS:
         for equal in (False, True):
             command = "independent-text-" + ("equal-" if equal else "compare-") + option
-            value = read_json(single(run.glob("*-" + command + ".stdout.txt"), command))
+            value = read_json(raw_receipt(run, command, ".stdout.txt"))
             expected_texts = (TEXTS[0], TEXTS[0]) if equal else (TEXTS[first], TEXTS[second])
             check(command + " pair/full text", value["textSemantics"] == "Independent" and value["comparisonPair"] == canonical and
                   (value["firstText"], value["secondText"]) == expected_texts)
@@ -230,8 +266,7 @@ def verify(run, products_only=False, legacy88=False):
         oversized = work / "oversized-cli.txt"
         bytes_equal(oversized, oversized_expected)
         check("oversized UTF8 no-BOM full SHA", hashlib.sha256(oversized.read_bytes()).digest() == hashlib.sha256(oversized_expected).digest())
-    files = list(run.glob("*-independent-text-*.stdout.txt"))
-    check("all exact command raw receipts", len(files) == len(commands) and {p.name.split("-", 1)[1].removesuffix(".stdout.txt") for p in files} == commands)
+    files = independent_raw_receipts(run, commands)
     for path in files:
         stderr = path.with_name(path.name.replace(".stdout.", ".stderr."))
         if "-reject-" in path.name or path.name.endswith("-json-budget.stdout.txt") or "-independent-text-fixed-ancestor-" in path.name:
@@ -249,13 +284,65 @@ def verify(run, products_only=False, legacy88=False):
     gui_result = verify_gui(work / "gui", legacy88)
     if not products_only:
         driver = read_json(run / "assertions.json")
-        check("driver receipts passed", driver["failed"] == 0 and driver["passed"] >= 80 and driver["skipped"] == 0 and all(a["Status"] == "passed" for a in driver["assertions"]))
-        receipts = {a["Name"]: a for a in driver["assertions"]}
-        for option, canonical, first, second in PAIRS:
-            for kind, code in (("compare", 1), ("equal", 0)):
-                name = "independent-text-" + kind + "-" + option + " exit"
-                check("actual process exit " + name, receipts[name]["Detail"].startswith(f"expected={code}, actual={code};"))
+        verify_driver(run, driver, commands, process_evidence, legacy88)
     return {"run": str(run), "productsOnly": products_only, "legacy88": legacy88, "checks": len(CHECKS), "checkNames": CHECKS, "zipEntries": zip_evidence, "processes": process_evidence, **gui_result}
+
+
+def verify_driver(run, driver, commands, process_evidence, legacy88):
+    assertions = driver["assertions"]
+    check("driver assertion rows", isinstance(assertions, list) and all(isinstance(row, dict)
+          and set(row) == {"Name", "Status", "Detail"} and all(isinstance(row[key], str) for key in row) for row in assertions))
+    statuses = ("passed", "failed", "skipped")
+    check("driver known assertion statuses", all(row["Status"] in statuses for row in assertions))
+    for status in statuses:
+        check("driver exact aggregate " + status, type(driver[status]) is int and driver[status] >= 0
+              and driver[status] == sum(row["Status"] == status for row in assertions))
+    check("driver receipts passed", driver["failed"] == 0 and driver["passed"] >= 80)
+    if legacy88:
+        # 旧34命令は明示scope。未採取のcommands.json/PIDを新scopeの成功と読み替えない。
+        exits = {label: 1 if label.startswith("independent-text-compare-") else 2 if "-reject-" in label else 0 for label in commands}
+    else:
+        exits = {row["label"]: row["actualExit"] for row in process_evidence}
+        check("driver verified process scope", len(process_evidence) == len(commands) + 2
+              and set(exits) == commands | {"legacy-text-flags-in-option-payload", "legacy-table-flags-in-option-payload"})
+    def exit_assertion(label, code):
+        assertion = single((row for row in assertions if row["Name"] == label + " exit"), label + " driver exit")
+        stderr = raw_receipt(run, label, ".stderr.txt")
+        stdout = raw_receipt(run, label, ".stdout.txt")
+        check("driver paired raw filename index " + label, stderr.name == stdout.name.removesuffix(".stdout.txt") + ".stderr.txt")
+        check("driver exact passed exit " + label, assertion["Status"] == "passed"
+              and assertion["Detail"] == f"expected={code}, actual={code}; " + stderr.read_bytes().decode("utf-8-sig"))
+    for label, code in sorted(exits.items()):
+        exit_assertion(label, code)
+    # 完全文言は各正式suiteのSkip/Assertion宣言から固定。可変exception/capabilityは許容しない。
+    known_skips = {
+        ("archive Unix 0600 preservation", "Windows does not expose UnixFileMode."): ("archive-protected-source.7z", "archive-repack-input-output-same", 2),
+        ("archive Mac case alias preservation", "The current host is not macOS; actual APFS behavior requires the macOS CI runner."): ("archive-protected-source.7z", "archive-repack-input-output-same", 2),
+        ("archive Mac case alias preservation", "The alternate casing does not resolve to the existing file on this case-sensitive filesystem."): ("archive-protected-source.7z", "archive-repack-input-output-same", 2),
+        ("packaging case collision", "ファイルシステムが二つの入力名を同じファイルへ解決します。"): ("packaging/collision-case", "packaging-single-all-options", 0),
+        ("packaging nfc collision", "ファイルシステムが二つの入力名を同じファイルへ解決します。"): ("packaging/collision-nfc", "packaging-single-all-options", 0),
+        ("Folder copy Mac FIFO/socket actual app", "Mac lstat/非regularの実OS拒否とCSDK ABIはMac RID実検証工程。"): ("folder-copy/gui-process.json", "folder-copy-gui", 0),
+        ("Folder copy Windows compressed sparse actual app", "NTFS圧縮/Sparse mainstream bytesはWindows実測工程。ADS/EFS完全保持ではありません。"): ("folder-copy/gui-process.json", "folder-copy-gui", 0),
+        ("Folder Windows metadata rejection GUI", "Windows NTFSでの実GUI・Win32 handle照合専用。"): ("folder-copy/gui-process.json", "folder-copy-gui", 0),
+        ("Folder Windows full streams", "Windows file stream backend専用。macOSのdefault-only経路はwholeで検証。"): ("folder-copy/gui-process.json", "folder-copy-gui", 0),
+        ("Folder Windows metadata actual main", "Windows local NTFS専用。"): ("folder-copy/gui-process.json", "folder-copy-gui", 0),
+        ("Folder copy Mac case alias", "Case-sensitive filesystem: Directory.Exists(LEFT) is false"): ("folder-copy/gui-process.json", "folder-copy-gui", 0),
+        ("Folder review Mac nested alias", "Case-sensitive filesystem: nested alias unavailable"): ("folder-copy/gui-process.json", "folder-copy-gui", 0),
+        ("Folder threeway actual desktop and all input compatibility", "既定GNU UTF-8原本63とheadless GUIの限定契約。実OS pointer/dialog、任意plugins/encoding/binaryは範囲外。"): ("folder-threeway/gui-process.json", "folder-threeway-gui", 0),
+        ("Folder threeway existing localhost share alias", "既存のローカル管理共有からfixtureを読めないため、UNC別名の実測を省略します。共有やOS設定は変更しません。"): ("folder-threeway/physical-alias-environment.json", "folder-threeway-gui", 0),
+        ("Folder long existing localhost DOS UNC alias", "既存管理共有を読めないため長いDOS UNC別名だけ省略します。共有やOS設定は変更しません。"): ("folder-threeway/long-alias-environment.json", "folder-threeway-gui", 0),
+    }
+    for row in assertions:
+        if row["Status"] != "skipped":
+            continue
+        check("driver target scope never skipped", not row["Name"].startswith("independent-text-")
+              and row["Name"] not in {label + " exit" for label in exits})
+        key = (row["Name"], row["Detail"])
+        check("driver declared outside-scope skip " + row["Name"], key in known_skips)
+        fixture, label, code = known_skips[key]
+        artifact = single(run.glob("fixtures/*/" + fixture), row["Name"] + " declared suite fixture")
+        check("driver skip suite fixture exists " + row["Name"], artifact.is_file() or artifact.is_dir())
+        exit_assertion(label, code)
 
 
 def verify_commands(run, work, commands, rejection_ids, paths):
@@ -327,8 +414,8 @@ def verify_commands(run, work, commands, rejection_ids, paths):
         identity = (result["Pid"], result["CreationUtc"])
         check("unique actual process identity " + label, identity not in seen)
         seen.add(identity)
-        stdout = single(run.glob("*-" + label + ".stdout.txt"), label + " stdout")
-        stderr = single(run.glob("*-" + label + ".stderr.txt"), label + " stderr")
+        stdout = raw_receipt(run, label, ".stdout.txt")
+        stderr = raw_receipt(run, label, ".stderr.txt")
         check("raw complete streams match process receipt " + label, result["Stdout"] == stdout.read_bytes().decode("utf-8-sig") and result["Stderr"] == stderr.read_bytes().decode("utf-8-sig"))
         mac = result["LaunchEvidence"]
         if mac is not None:

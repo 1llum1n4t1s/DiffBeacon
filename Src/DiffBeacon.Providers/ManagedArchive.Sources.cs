@@ -67,7 +67,8 @@ public sealed partial class ManagedArchive
             for (var index = 0; index < source.EntryChain.Count; index++)
             {
                 using var capture = new OwnedEntryCapture(source.EntryChain[index], checked((int)_limits.MaximumEntryBytes));
-                ReadLogical(current, logicalName, passwords[index], token, budget, inputAlreadyDecoded, capture);
+                ReadLogical(current, logicalName, passwords[index], token, budget, inputAlreadyDecoded, capture,
+                    new(source.ContainerNameCodePages[index], source.ContainerGZipPayloadKinds[index], source.ContainerCompressionPayloadKinds[index]));
                 // 全entry・footer・EOF検証とreader解放が済むまで次段を公開しない。
                 var next = capture.Detach();
                 owned?.Dispose();
@@ -76,7 +77,8 @@ public sealed partial class ManagedArchive
                 logicalName = source.EntryChain[index];
                 inputAlreadyDecoded = true;
             }
-            var manifest = ReadLogical(current, logicalName, passwords[^1], token, budget, inputAlreadyDecoded, finalCapture);
+            var manifest = ReadLogical(current, logicalName, passwords[^1], token, budget, inputAlreadyDecoded, finalCapture,
+                new(source.ContainerNameCodePages[^1], source.ContainerGZipPayloadKinds[^1], source.ContainerCompressionPayloadKinds[^1]));
             if (!StringComparer.Ordinal.Equals(rootSha, InputHash(input, budget, token)))
                 throw new InvalidDataException("比較中にアーカイブ入力が変更されました。再比較してください。");
             // 開いたhandleの内容と現在の物理pathを別々に検査し、path差替えも拒否する。
@@ -86,9 +88,10 @@ public sealed partial class ManagedArchive
             if (!StringComparer.Ordinal.Equals(rootSha, InputHash(currentInput, budget, token)))
                 throw new InvalidDataException("比較中にアーカイブの物理入力が差し替えられました。再比較してください。");
             token.ThrowIfCancellationRequested();
-            return new(new ArchiveSource(path, source.EntryChain, rootSha), manifest);
+            return new(new ArchiveSource(path, source.EntryChain, rootSha, source.ContainerNameCodePages, source.ContainerGZipPayloadKinds, source.ContainerCompressionPayloadKinds), manifest);
         }
         catch (OperationCanceledException) { throw; }
+        catch (ArchiveNameDecodingException) { throw; }
         catch (Exception) when (passwords.Any(password => password is not null))
         {
             throw new InvalidDataException("アーカイブを読み取れません。格納階層のパスワード、破損、圧縮方式を確認してください。");
@@ -97,15 +100,30 @@ public sealed partial class ManagedArchive
     }
 
     private ManagedArchiveManifest ReadLogical(Stream input, string name, string? password, CancellationToken token,
-        ArchiveReadBudget budget, bool inputAlreadyDecoded, OwnedEntryCapture? capture)
+        ArchiveReadBudget budget, bool inputAlreadyDecoded, OwnedEntryCapture? capture, ManagedArchiveReadOptions readOptions)
     {
         input.Position = 0;
+        if (readOptions.GZipPayloadKind != GZipPayloadKind.Auto)
+        {
+            using var gzipWork = new WorkReadStream(input, budget, token);
+            if (!IsGZip(gzipWork)) throw new InvalidDataException("gzip本文の形式はgzip入力にだけ指定できます。");
+            return ReadGZip(gzipWork, name, readOptions, token, null, null, capture?.MaximumBytes,
+                capture?.PrefixOnly == true, budget, capture);
+        }
+        if (readOptions.CompressionPayloadKind != CompressionPayloadKind.Auto)
+        {
+            using var compressionWork = new WorkReadStream(input, budget, token);
+            if (DetectSingleCompression(compressionWork) is not { } compression)
+                throw new InvalidDataException("BZip2/Z本文の形式はBZip2/Z入力にだけ指定できます。");
+            return ReadCompression(compressionWork, name, compression, readOptions.CompressionPayloadKind, token,
+                null, null, capture?.MaximumBytes, capture?.PrefixOnly == true, budget, capture);
+        }
         if (TryGetWrapperChain(name, out var terminalLength, out var terminalType, out var depth))
             return ReadWrapped(input, name, terminalLength, terminalType, depth, password, token,
                 null, null, capture?.MaximumBytes, capture?.PrefixOnly == true, budget, capture);
         using var work = new WorkReadStream(input, budget, token);
         return ReadCore(work, name, password, token, null, null, capture?.MaximumBytes, capture?.PrefixOnly == true,
-            budget, ownedCapture: capture, inputAlreadyDecoded: inputAlreadyDecoded);
+            budget, ownedCapture: capture, inputAlreadyDecoded: inputAlreadyDecoded, readOptions: readOptions);
     }
 
     private string InputHash(Stream input, ArchiveReadBudget budget, CancellationToken token)

@@ -31,10 +31,13 @@ public sealed record ManagedArchiveWriteEntry(string Path, ReadOnlyMemory<byte>?
 public sealed partial class ManagedArchive
 {
     private readonly ManagedArchiveLimits _limits;
+    private readonly ManagedArchiveReadOptions _readOptions;
 
-    public ManagedArchive(ManagedArchiveLimits? limits = null)
+    public ManagedArchive(ManagedArchiveLimits? limits = null, ManagedArchiveReadOptions? readOptions = null)
     {
         _limits = limits ?? new();
+        _readOptions = readOptions ?? new();
+        _ = _readOptions.NameEncoding();
         if (_limits.MaximumEntries <= 0 || _limits.MaximumInputBytes <= 0 ||
             _limits.MaximumEntryBytes <= 0 || _limits.MaximumDecodedBytes <= 0 ||
             _limits.MaximumPreviewBytes <= 0 || _limits.MaximumOutputBytes <= 0 ||
@@ -102,12 +105,26 @@ public sealed partial class ManagedArchive
         using var input = new CheckedStream(file, _limits.MaximumInputBytes, token);
         try
         {
+            // 選択はこの外側containerだけに適用し、内側wrapperへ継承しない。
+            if (_readOptions.GZipPayloadKind != GZipPayloadKind.Auto)
+            {
+                if (!IsGZip(input)) throw new InvalidDataException("gzip本文の形式はgzip入力にだけ指定できます。");
+                return ReadGZip(input, path, _readOptions, token, capture, consume, captureLimit, prefixOnly, null, null);
+            }
+            if (_readOptions.CompressionPayloadKind != CompressionPayloadKind.Auto)
+            {
+                if (DetectSingleCompression(input) is not { } compression)
+                    throw new InvalidDataException("BZip2/Z本文の形式はBZip2/Z入力にだけ指定できます。");
+                return ReadCompression(input, path, compression, _readOptions.CompressionPayloadKind, token,
+                    capture, consume, captureLimit, prefixOnly, null, null);
+            }
             if (TryGetWrapperChain(path, out var terminalLength, out var terminalType, out var depth))
                 return ReadWrapped(input, path, terminalLength, terminalType, depth, password, token,
                     capture, consume, captureLimit, prefixOnly);
             return ReadCore(input, path, password, token, capture, consume, captureLimit, prefixOnly);
         }
         catch (OperationCanceledException) { throw; }
+        catch (ArchiveNameDecodingException) { throw; }
         catch (Exception) when (password is not null)
         {
             // 依存ライブラリの例外文や inner exception に認証情報を残さない。
@@ -118,8 +135,29 @@ public sealed partial class ManagedArchive
     private ManagedArchiveManifest ReadCore(Stream input, string logicalName, string? password, CancellationToken token,
         Func<ManagedArchiveEntry, bool>? capture, Action<ManagedArchiveEntry, MemoryStream?>? consume,
         long? captureLimit, bool prefixOnly, ArchiveReadBudget? budget = null, ArchiveType? expectedType = null,
-        OwnedEntryCapture? ownedCapture = null, bool inputAlreadyDecoded = false)
+        OwnedEntryCapture? ownedCapture = null, bool inputAlreadyDecoded = false,
+        ManagedArchiveReadOptions? readOptions = null)
     {
+            // 裸圧縮の明示名を別archiveやgzipのmagicで迂回しない。
+            if (expectedType is null && IsSingleCompressionName(logicalName) &&
+                OutputFormat(logicalName) is not ("tar" or "tar.gz" or "tar.bz2" or "tar.Z") &&
+                DetectSingleCompression(input) is null)
+                throw new InvalidDataException("BZip2/Zのヘッダーが不正です。");
+            // 明示TAR名を優先し、曖昧なgzipは復号済み先頭でTARと裸fileを区別する。
+            if (expectedType is null && OutputFormat(logicalName) is not ("tar" or "tar.gz" or "tar.bz2" or "tar.Z")
+                && (logicalName.EndsWith(".gz", StringComparison.OrdinalIgnoreCase) || IsGZip(input)))
+                return ReadGZip(input, logicalName, readOptions ?? _readOptions, token, capture, consume,
+                    captureLimit, prefixOnly, budget, ownedCapture);
+            if (expectedType is null && OutputFormat(logicalName) is not ("tar" or "tar.gz" or "tar.bz2" or "tar.Z"))
+            {
+                var compression = DetectSingleCompression(input);
+                if (compression is not null || IsSingleCompressionName(logicalName))
+                {
+                    if (compression is null) throw new InvalidDataException("BZip2/Zのヘッダーが不正です。");
+                    return ReadCompression(input, logicalName, compression, CompressionPayloadKind.Auto, token,
+                        capture, consume, captureLimit, prefixOnly, budget, ownedCapture);
+                }
+            }
             // 明示TAR終端は再sniffせず、全ヘッダー・body・footerの検証へ渡す。
             var tarFormat = expectedType == ArchiveType.Tar ? "tar" :
                 expectedType is null ? DetectTarFormat(input, logicalName) : null;

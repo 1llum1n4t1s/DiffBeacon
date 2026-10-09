@@ -339,6 +339,20 @@ def main():
     check('GUI all assertions passed', report['assertions'] and all(item['passed'] for item in report['assertions']))
     gui = pathlib.Path(report['fixtures']) / 'independent-archive-text'
     check('GUI run paths remain within requested run', gui.resolve().is_relative_to((work / 'gui').resolve()))
+    merge = load(gui / 'independent-merge-observations.json')
+    check('GUI manual result keeps independent three sources', merge['inputCount'] == 3 and not merge['hasAncestor']
+          and merge['initialUnresolved'] > 0 and not merge['initialCanUndo'])
+    check('GUI manual result original text and revisions retained', tuple(merge['beforeTexts']) == ORIGINAL
+          and tuple(merge['afterTexts']) == ORIGINAL and merge['beforeRevisions'] == merge['afterRevisions'])
+    result_path = (gui / merge['resultFile']).resolve()
+    check('GUI manual result path remains within requested run', result_path.is_relative_to(gui.resolve()))
+    check('GUI manual middle result literal bytes with left encoding', result_path.read_bytes() == encoded(ORIGINAL[1], 0))
+    check('GUI manual result has exactly three original containers', len(merge['roots']) == 3)
+    for side, relative in enumerate(merge['roots']):
+        root_path = (gui / relative).resolve()
+        check('GUI manual result root path retained ' + ROLES[side], root_path.is_relative_to(gui.resolve()))
+        check('GUI manual result root SHA retained ' + ROLES[side], hashlib.sha256(root_path.read_bytes()).digest()
+              == hashlib.sha256((work / 'inputs' / (ROLES[side] + '.zip')).read_bytes()).digest())
     boundary_check(gui.parent / 'independent-archive-boundaries')
     project_check(load(gui / 'gui-saved.json'), lambda name: (gui / name).read_bytes(), EDITED, 'GUI saved')
     html_check((gui / 'gui-saved.html').read_bytes(), EDITED, 'GUI HTML')

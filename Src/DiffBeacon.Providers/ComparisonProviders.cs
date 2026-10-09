@@ -4,7 +4,8 @@ using System.Text.Json;
 
 namespace DiffBeacon.Providers;
 
-public sealed record ComparisonRequest(string LeftPath, string RightPath, string Format);
+public sealed record ComparisonRequest(string LeftPath, string RightPath, string Format,
+    ManagedArchiveReadOptions? LeftArchiveReadOptions = null, ManagedArchiveReadOptions? RightArchiveReadOptions = null);
 public sealed record ProviderResult(string Summary, string LeftText, string RightText);
 
 public interface IComparisonProvider

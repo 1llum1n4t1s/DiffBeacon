@@ -34,6 +34,9 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
     internal CheckBox ReadOnly { get; } = new() { Content = "読取り専用" };
     internal CheckBox AllowWorkingEdit { get; } = new() { Content = "内包ファイルの作業編集を許可", IsChecked = false };
     internal Button Load { get; } = new() { Content = "一覧を検証 / 再試行" };
+    internal ComboBox NameCodePage { get; } = ArchiveNameSettings.Picker();
+    internal ComboBox GZipPayloadKindPicker { get; } = ArchivePayloadSettings.Picker();
+    internal ComboBox CompressionPayloadKindPicker { get; } = ArchivePayloadSettings.CompressionPicker();
     internal Button OpenContainer { get; } = new() { Content = "選択したアーカイブを開く" };
     internal Button Back { get; } = new() { Content = "戻る" };
     internal ListBox Entries { get; } = new() { MinHeight = 100 };
@@ -92,6 +95,17 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
 
         var fields = new StackPanel { Spacing = 6 };
         fields.Children.Add(Kind);
+        fields.Children.Add(new TextBlock { Text = "現在のコンテナーのgzip格納名文字コード (28591 Latin1 / 65001 UTF-8 / 932 日本語)" });
+        fields.Children.Add(NameCodePage);
+        fields.Children.Add(new TextBlock { Text = "現在のコンテナーのgzip本文の形式" }); fields.Children.Add(GZipPayloadKindPicker);
+        fields.Children.Add(new TextBlock { Text = "現在のコンテナーのBZip2／Z本文の形式" }); fields.Children.Add(CompressionPayloadKindPicker);
+        CompressionPayloadKindPicker.SelectedItem = _requested?.ContainerCompressionPayloadKinds[^1] ?? CompressionPayloadKind.Auto;
+        CompressionPayloadKindPicker.SelectionChanged += (_, _) => { if (_updating || _disposed) return; Mutation(); _verified = false; _leaf = null; Refresh(); };
+        GZipPayloadKindPicker.SelectedItem = _requested?.ContainerGZipPayloadKinds[^1] ?? GZipPayloadKind.Auto;
+        GZipPayloadKindPicker.SelectionChanged += (_, _) => { if (_updating || _disposed) return; Mutation(); _verified = false; _leaf = null; Refresh(); };
+        NameCodePage.SelectedItem = _requested?.ContainerNameCodePages[^1] ?? 28591;
+        GZipPayloadKindPicker.SelectedItem = _requested?.ContainerGZipPayloadKinds[^1] ?? GZipPayloadKind.Auto;
+        NameCodePage.SelectionChanged += (_, _) => { if (_updating || _disposed) return; Mutation(); _verified = false; _leaf = null; Refresh(); };
         var paths = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
         paths.Children.Add(RootPath); Grid.SetColumn(Pick, 1); paths.Children.Add(Pick); fields.Children.Add(paths);
         fields.Children.Add(ReadOnly); fields.Children.Add(AllowWorkingEdit);
@@ -150,6 +164,9 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
     {
         foreach (var box in _passwordBoxes) { box.PropertyChanged -= PasswordChanged; box.Text = ""; }
         _passwordBoxes.Clear(); _passwordPanel.Children.Clear();
+        NameCodePage.SelectedItem = _requested?.ContainerNameCodePages[^1] ?? 28591;
+        GZipPayloadKindPicker.SelectedItem = _requested?.ContainerGZipPayloadKinds[^1] ?? GZipPayloadKind.Auto;
+        CompressionPayloadKindPicker.SelectedItem = _requested?.ContainerCompressionPayloadKinds[^1] ?? CompressionPayloadKind.Auto;
         var count = (_requested?.EntryChain.Count ?? 0) + 1;
         for (var index = 0; index < count; index++)
         {
@@ -177,6 +194,9 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
     private bool RouteMatches() => _requested is not null && _confirmed is not null
         && StringComparer.Ordinal.Equals(_requested.RootPath, _confirmed.Source.RootPath)
         && _requested.EntryChain.SequenceEqual(_confirmed.Source.EntryChain)
+        && _requested.ContainerNameCodePages.SequenceEqual(_confirmed.Source.ContainerNameCodePages)
+        && _requested.ContainerGZipPayloadKinds.SequenceEqual(_confirmed.Source.ContainerGZipPayloadKinds)
+        && _requested.ContainerCompressionPayloadKinds.SequenceEqual(_confirmed.Source.ContainerCompressionPayloadKinds)
         && (_requested.RootSha256 is null || _requested.RootSha256 == _confirmed.Source.RootSha256);
 
     private void ChangeRoute(ArchiveSource source, int retainedCount)
@@ -217,6 +237,9 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
         {
             var root = AbsolutePath();
             _requested ??= new ArchiveSource(root);
+            _requested = ArchivePayloadSettings.WithChoices(_requested, _requested.EntryChain.Count,
+                ArchivePayloadSettings.Selected(GZipPayloadKindPicker), ArchivePayloadSettings.SelectedCompression(CompressionPayloadKindPicker))
+                .WithNameCodePage(_requested.EntryChain.Count, ArchiveNameSettings.Selected(NameCodePage));
             if (_requested.EntryChain.Count > 8) throw new InvalidDataException("内包アーカイブの階層は8段までです。");
             var request = _requested;
             passwords = PasswordCopy(); PendingReadStateObserved?.Invoke(passwords); Mutation(); _verified = false; _leaf = null;
@@ -258,7 +281,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
     private async Task OpenAsync()
     {
         if (_disposed || _reading || !_verified || !RouteMatches() || Entries.SelectedItem is not EntryRow row || row.Entry.IsDirectory) return;
-        if (!ManagedArchive.SupportsInput(row.Entry.Path)) { _status.Text = "選択項目は対応するアーカイブ形式ではありません。"; return; }
+        // 明示的な開封では拡張子で拒否せず、共通読込みで形式と全格納項目を検証する。
         if (_confirmed!.Source.EntryChain.Count >= 8) { _status.Text = "内包アーカイブの階層は8段までです。"; return; }
         ChangeRoute(_confirmed.Source.WithChild(row.Entry.Path), _passwordBoxes.Count);
         await ReadManifestAsync();
@@ -277,7 +300,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
     {
         if (_disposed || _reading || _requested is null || _requested.EntryChain.Count == 0) return;
         var chain = _requested.EntryChain.Take(_requested.EntryChain.Count - 1).ToArray();
-        ChangeRoute(new ArchiveSource(_requested.RootPath, chain, _requested.RootSha256), chain.Length + 1);
+        ChangeRoute(new ArchiveSource(_requested.RootPath, chain, _requested.RootSha256, _requested.ContainerNameCodePages.Take(chain.Length + 1).ToArray(), _requested.ContainerGZipPayloadKinds.Take(chain.Length + 1).ToArray(), _requested.ContainerCompressionPayloadKinds.Take(chain.Length + 1).ToArray()), chain.Length + 1);
         await ReadManifestAsync();
     }
 
@@ -320,6 +343,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
         if (!_verified || !RouteMatches() || _leaf is null || _confirmed!.Manifest.Entries.Count(entry => entry.Path == _leaf && !entry.IsDirectory) != 1)
             throw new InvalidOperationException("現在の経路を検証して実在ファイルを選択してください。");
         var input = new ArchiveProjectInput { RootPath = _confirmed.Source.RootPath, EntryChain = _confirmed.Source.EntryChain.ToArray(),
+            ContainerNameCodePages = ArchiveNameSettings.Capture(_confirmed.Source.ContainerNameCodePages), ContainerGZipPayloadKinds = ArchivePayloadSettings.Capture(_confirmed.Source.ContainerGZipPayloadKinds), ContainerCompressionPayloadKinds = ArchivePayloadSettings.Capture(_confirmed.Source.ContainerCompressionPayloadKinds),
             LeafEntry = _leaf, RootSha256 = _confirmed.Source.RootSha256, InheritedReadOnly = AllowWorkingEdit.IsChecked != true };
         input.Validate(container: false, readOnly: true);
         return ("", input, true, PasswordCopy());
@@ -340,7 +364,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
         ReadOnly.IsVisible = !archive; AllowWorkingEdit.IsVisible = archive;
         _passwordPanel.IsVisible = Load.IsVisible = Back.IsVisible = OpenContainer.IsVisible = Entries.IsVisible = _route.IsVisible = archive;
         Load.IsEnabled = !_reading; Back.IsEnabled = !_reading && _requested?.EntryChain.Count > 0;
-        OpenContainer.IsEnabled = !_reading && _verified && RouteMatches() && Entries.SelectedItem is EntryRow row && !row.Entry.IsDirectory && ManagedArchive.SupportsInput(row.Entry.Path);
+        OpenContainer.IsEnabled = !_reading && _verified && RouteMatches() && Entries.SelectedItem is EntryRow row && !row.Entry.IsDirectory;
         _route.Text = _requested is null ? "アーカイブは未検証です" : string.Join(" / ", new[] { _requested.RootPath }.Concat(_requested.EntryChain));
     }
 
