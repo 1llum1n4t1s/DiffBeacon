@@ -48,7 +48,8 @@ jobs:
         run: pwsh -NoProfile -File build/Build-FolderMacReference.ps1 -OutputDirectory '${{ env.DIFFBEACON_RUN_ROOT }}/folder-reference'
       - name: Publish and verify native application
         run: |
-          $timeoutSeconds = if ('${{ matrix.rid }}'.StartsWith('osx-')) { 1200 } else { 600 }
+          # Windowsの全体Native AOT自己検証も10分を超えるため、4構成に20分の有限枠を使う。
+          $timeoutSeconds = 1200
           ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -OutputRoot (Join-Path $env:DIFFBEACON_RUN_ROOT 'publish') -VerificationTimeoutSeconds $timeoutSeconds
       - name: Build independent Z decoder for verification
         run: |
