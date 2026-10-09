@@ -154,7 +154,7 @@ internal static class HeadlessBinarySearchChecks
         {
             BinarySearchDialog? active = null; PendingHook = () =>
             {
-                if (route == "cancel") Hit(active!.Cancel);
+                if (route == "cancel") Click(active!.Cancel);
                 else if (route == "selection") panel.SelectBytes(side, 1, 1, false);
                 else if (route == "page") panel.SelectBytes(side, 4096, 4096, false);
                 else if (route == "readonly") SetReadOnly(panel, side, !panel.ReadOnly(side));
@@ -204,6 +204,16 @@ internal static class HeadlessBinarySearchChecks
         }
         void Stroke(Key key, PhysicalKey physical, RawInputModifiers modifiers = RawInputModifiers.None) { window.KeyPress(key, modifiers, physical, null); window.KeyRelease(key, modifiers, physical, null); Jobs(); using var stream = new MemoryStream(); using var json = new Utf8JsonWriter(stream); json.WriteStartObject(); json.WriteString("event", "key"); json.WriteString("key", key.ToString()); json.WriteString("modifiers", modifiers.ToString()); json.WriteBoolean("pressedAndReleased", true); FocusEvidence(json, window); json.WriteEndObject(); json.Flush(); uiEvents.Add(stream.ToArray()); }
         void Hit(Control control) { control.BringIntoView(); Jobs(); if (!control.IsEnabled) throw new InvalidOperationException("Disabled test control"); var owner = TopLevel.GetTopLevel(control) as Window ?? throw new InvalidOperationException("Test control owner missing"); var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), owner) ?? throw new InvalidOperationException("Test control bounds missing"); if (point.X < 0 || point.Y < 0 || point.X >= owner.Bounds.Width || point.Y >= owner.Bounds.Height) throw new InvalidOperationException("Test control pointer is outside viewport"); owner.MouseDown(point, MouseButton.Left); owner.MouseUp(point, MouseButton.Left); Jobs(); using var stream = new MemoryStream(); using var json = new Utf8JsonWriter(stream); json.WriteStartObject(); json.WriteString("event", "pointer"); json.WriteString("content", (control as ContentControl)?.Content?.ToString()); json.WriteNumber("x", point.X); json.WriteNumber("y", point.Y); json.WriteBoolean("pressedAndReleased", true); FocusEvidence(json, owner); json.WriteEndObject(); json.Flush(); uiEvents.Add(stream.ToArray()); }
+        void Click(Button button)
+        {
+            // 採用直前の取消はnested dispatcher内なので、遅延しない実ボタンClick経路で発火する。
+            if (!button.IsEnabled) throw new InvalidOperationException("Disabled test button");
+            var owner = TopLevel.GetTopLevel(button) as Window ?? throw new InvalidOperationException("Test button owner missing");
+            button.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent)); Jobs();
+            using var stream = new MemoryStream(); using var json = new Utf8JsonWriter(stream);
+            json.WriteStartObject(); json.WriteString("event", "routed-click"); json.WriteString("content", button.Content?.ToString());
+            json.WriteBoolean("raised", true); FocusEvidence(json, owner); json.WriteEndObject(); json.Flush(); uiEvents.Add(stream.ToArray());
+        }
     }
     private static Action? PendingHook;
     private static SpecializedViews.BinaryPanel Binary(ComparisonPane pane) => pane.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().Single();

@@ -31,7 +31,7 @@ internal static class BareCompressionScenarios
         // override配下の外部scriptも固定原本以外は実行しない。verify.pyがimportするgenerate.pyも同じ境界。
         RequireFixed("verify.py", "5037F45198BF18562476A239BFD1E240443D517FB0EBDA0E9AE3EB76C683FBEF");
         RequireFixed("generate.py", "D68BB5DDE8469F6781741BBD1D2CAC151403AF68FDE2CC8690E7C18528499A18");
-        RequireFixed("verify-writer.py", "62D66FB001A7828BEDE182B104551A955B0EC913BC1394929128826D0918EB1C");
+        RequireFixed("verify-writer.py", "AFB20B5581888DC880E7E02A6CF5730EB8C9295B639D925BDF92C9E0B989EDE0");
         RequireUnlinked(Path.GetFullPath(reference));
         var referenceSource = Path.GetFullPath("tests/Fixtures/Archives/TarZ/reference-source");
         // 固定scriptの資格のみモードはdecoder／compilerを実行せず、原典とbuild-proofを実bytesへ照合する。

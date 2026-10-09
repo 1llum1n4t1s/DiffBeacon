@@ -21,6 +21,16 @@ internal static partial class BareGZipScenarios
         check("bare gzip fixed extra expectations", Hash(Path.Combine(root, "extra-expected.json")) == "47044E7C7D706AA4194D5BAA65C18A57C9CCEF39940980DA4EC2A935F008F1C5", "independent generator");
         ZipFile.ExtractToDirectory(Path.Combine(root, "bare-gzip-inputs.zip"), work);
         ZipFile.ExtractToDirectory(Path.Combine(root, "extra-inputs.zip"), work);
+        if (!OperatingSystem.IsWindows())
+        {
+            // 固定ZIPから展開した入力を後続の独立readerと検証証拠から読める状態にします。
+            foreach (var path in Directory.EnumerateFiles(work, "*", SearchOption.AllDirectories))
+            {
+                var mode = File.GetUnixFileMode(path);
+                if ((mode & UnixFileMode.UserRead) == 0)
+                    File.SetUnixFileMode(path, mode | UnixFileMode.UserRead);
+            }
+        }
         using var expected = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(root, "expected.json")));
         var proof = new List<object>();
         foreach (var item in expected.RootElement.GetProperty("cases").EnumerateArray())

@@ -111,7 +111,7 @@ class Reader:
   if c['kind']=='stale':
    require(c['hookReached'] is True and o is not None and c['returnAdopted'] is False and c['searchTaskStatus']=='RanToCompletion','actual stale hook/task rejected adoption')
    expected=c['eventState'] or b;self.unchanged(expected,a,True); require(a['modalCount']==0,'canceled/rejected dialog closed')
-   if c['id'].endswith('stale-cancel'): require(any(e.get('content')=='取消' for e in events),'actual cancel pointer')
+   if c['id'].endswith('stale-cancel'): require(any(e.get('event')=='routed-click' and e.get('content')=='取消' for e in events),'actual cancel button click')
    if c['id'].endswith('stale-selection'): require(self.side(expected,side)['caret']==1 and self.side(expected,side)['selected'] is False,'actual later selection')
    if c['id'].endswith('stale-page'): require(expected['pageStart']==4096 and self.side(expected,side)['caret']==4096,'actual later page')
    if c['id'].endswith('stale-readonly'): require(self.side(expected,side)['readOnly'] is True,'actual later readonly')

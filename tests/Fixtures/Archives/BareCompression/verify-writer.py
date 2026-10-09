@@ -12,6 +12,13 @@ def require(condition, message):
     if not condition:
         raise ValueError(message)
 
+def is_within(path, root):
+    try:
+        common = os.path.commonpath((str(path), str(root)))
+    except ValueError:
+        return False
+    return os.path.normcase(common) == os.path.normcase(str(root))
+
 def sha(data):
     return hashlib.sha256(data).hexdigest().upper()
 
@@ -427,8 +434,17 @@ def main():
     args = parser.parse_args()
     # Output must be a new file inside the explicit run root; no deletion or overwriting.
     run = safe_path(args.run_root)
-    temporary = safe_path(tempfile.gettempdir())
-    require(os.path.commonpath((str(run), str(temporary))) == str(temporary), 'run output must remain in external Temp')
+    repository = safe_path(args.reference_source).parents[4]
+    require(not is_within(run, repository), 'run output must remain outside repository')
+    temporary_roots = [safe_path(tempfile.gettempdir())]
+    # CI指定TempがPython標準Tempと別ドライブになるWindows runnerにも対応する。
+    runner_temp = os.environ.get('RUNNER_TEMP')
+    if runner_temp:
+        runner_temporary = safe_path(runner_temp)
+        require(not is_within(runner_temporary, repository), 'RUNNER_TEMP must remain outside repository')
+        if not any(is_within(runner_temporary, root) and is_within(root, runner_temporary) for root in temporary_roots):
+            temporary_roots.append(runner_temporary)
+    require(any(is_within(run, root) for root in temporary_roots), 'run output must remain inside system Temp or RUNNER_TEMP')
     require(all(part.lower() not in ('artifacts', '.codex') for part in run.parts), 'forbidden run output component')
     proof = safe_path(args.proof, run, must_exist=False)
     require(not proof.exists() and proof.parent.is_dir(), 'proof must be new file in existing run directory')
