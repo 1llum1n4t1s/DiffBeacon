@@ -436,14 +436,14 @@ def main():
     run = safe_path(args.run_root)
     repository = safe_path(args.reference_source).parents[4]
     require(not is_within(run, repository), 'run output must remain outside repository')
-    temporary_roots = [safe_path(tempfile.gettempdir())]
-    # CI指定TempがPython標準Tempと別ドライブになるWindows runnerにも対応する。
     runner_temp = os.environ.get('RUNNER_TEMP')
     if runner_temp:
+        # CI指定Tempを優先し、macOSの/var aliasをsafe_pathへ渡さない。ローカル実行は標準Tempを使う。
         runner_temporary = safe_path(runner_temp)
         require(not is_within(runner_temporary, repository), 'RUNNER_TEMP must remain outside repository')
-        if not any(is_within(runner_temporary, root) and is_within(root, runner_temporary) for root in temporary_roots):
-            temporary_roots.append(runner_temporary)
+        temporary_roots = [runner_temporary]
+    else:
+        temporary_roots = [safe_path(tempfile.gettempdir())]
     require(any(is_within(run, root) for root in temporary_roots), 'run output must remain inside system Temp or RUNNER_TEMP')
     require(all(part.lower() not in ('artifacts', '.codex') for part in run.parts), 'forbidden run output component')
     proof = safe_path(args.proof, run, must_exist=False)
