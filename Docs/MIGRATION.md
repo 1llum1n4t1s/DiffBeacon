@@ -6,13 +6,22 @@ Text比較に、カーソル位置から手動同期点を追加・消去する�
 
 Release buildは警告0・エラー0。限定CLI E2EのIndependent Textは95成功・0失敗、GNU Textは3,399成功・0失敗。実ボタンを使う限定headless UI検証は70成功・0失敗で、通常二者と独立三者の追加・消去、交差順と末尾空行の拒否、本文保持を確認しました。
 
-全体E2Eは8,190 command、164,975成功・0失敗・5環境別skip。全体managed headless UIは`win-x64`／.NET 10.0.12で13,943成功・0失敗、526.699秒でした。同期点の実操作も成功しています。Windowsの固定SHA付きPython fixtureは`core.autocrlf=true`のcheckout模擬で4 scriptのSHAを維持しました。Binary三者の900×600画面は中央SaveAsまでスクロールしてviewport内にあることを検証し、限定UIは111成功・0失敗です。GitHubの4 RID Native AOT／CodeQLは、この修正を含めたpush後に確認します。
+全体E2Eは8,190 command、164,975成功・0失敗・5環境別skip。全体managed headless UIは`win-x64`／.NET 10.0.12で13,943成功・0失敗、526.699秒でした。同期点の実操作も成功しています。Windowsの固定SHA付きPython fixtureは`core.autocrlf=true`のcheckout模擬で4 scriptのSHAを維持しました。Binary三者の900×600画面は中央SaveAsまでスクロールしてviewport内にあることを検証し、限定UIは111成功・0失敗です。この修正を含むcommit `e0c23e0` のGitHub 4 RID Native AOT／E2EとCodeQLは成功しました（[.NET CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/38010228288)、[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/38010228381)）。
 
 ## 裸BZip2／Zの単一ファイル書込み（2026-10-10）
 
 裸`.bz2`／`.Z`の作成と再梱包に対応しました。通常ファイル1件だけを受け付け、空ファイルも保存できます。ディレクトリと複数entryは拒否し、`.tar.bz2`／`.tbz`／`.tbz2`／`.tar.Z`／`.taz`は従来どおりTAR形式を優先します。複合圧縮鎖の作成と内側アーカイブの再梱包は引き続き未対応です。
 
 Release buildは警告0・エラー0。全体E2Eは8,190 command、164,975成功・0失敗・5 skipでした。Python独立readerはBZip2／Zの30ケース、TAR優先5ケース、期待拒否70件を含めて全検証に成功しました。Headless UI検証は181 assertion成功。Windows x64 Native AOTは.NET SDK 10.0.401で発行され、`nativeAot=true`・self-test passed、13,939 assertion成功・0失敗、自己検証582.01秒でした。これらは同一作業ツリーのローカル実測です。
+
+GitHub Actionsの独立Python readerは、macOSの`tempfile.gettempdir()`が`/var/folders/...`を返して`safe_path`に拒否される場合があったため、`RUNNER_TEMP`設定時は同パスを優先し、未設定時も厳密な一時パス検証を維持するよう修正しました。commit `e0c23e0` の4 RID Native AOT／E2Eと実OSクリップボード検証は成功し、CodeQLも成功しました。
+
+| RID | CI | E2E成功／失敗／skip | 画像clipboard書込／読込 | Binary clipboard書込／読込 |
+| --- | --- | --- | --- | --- |
+| win-x64 | 成功 | 164,975／0／5 | 8／8 成功 | 6／6 成功 |
+| win-arm64 | 成功 | 164,975／0／5 | 8／8 成功 | 6／6 成功 |
+| osx-x64 | 成功 | 165,046／0／11 | 6／6 成功 | 5／5 成功 |
+| osx-arm64 | 成功 | 165,046／0／11 | 6／6 成功 | 5／5 成功 |
 
 ## 裸BZip2／Zの読込みとv9ワークスペース（source292候補、2026-10-09）
 
