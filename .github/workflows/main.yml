@@ -1,9 +1,13 @@
 name: .NET CI
 
 on:
+  workflow_dispatch:
   push:
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 permissions:
   contents: read
