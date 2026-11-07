@@ -4,18 +4,15 @@ on:
   workflow_dispatch:
   push:
   pull_request:
-  workflow_dispatch:
-
-permissions:
-  contents: read
 
 permissions:
   contents: read
 
 jobs:
   build-and-verify:
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     name: Native AOT / ${{ matrix.rid }}
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ fromJSON(startsWith(matrix.runner, 'windows-') && format('["{0}"]', matrix.runner) || startsWith(matrix.runner, 'macos-') && '["self-hosted","macOS","ARM64","m3mb14","diffbeacon-isolated"]' || endsWith(matrix.runner, '-arm') && '["self-hosted","Linux","ARM64","m3mb14"]' || '["self-hosted","Linux","X64","m3mb14"]') }}
     strategy:
       fail-fast: false
       matrix:
@@ -24,8 +21,6 @@ jobs:
             runner: windows-2025
           - rid: win-arm64
             runner: windows-11-arm
-          - rid: osx-x64
-            runner: macos-15-intel
           - rid: osx-arm64
             runner: macos-15
     defaults:
