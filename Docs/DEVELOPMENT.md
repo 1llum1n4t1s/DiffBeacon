@@ -197,7 +197,7 @@ $zReference = (Resolve-Path -LiteralPath "$runRoot/z-reference/ncompress.exe").P
 Invoke-DevDotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output $runRoot/e2e/native --app $runRoot/publish/win-x64/DiffBeacon.exe --z-reference $zReference
 ```
 
-`.github/workflows/main.yml` は Windows x64 / ARM64、macOS Intel / ARM64 上でビルド、Native AOT 発行、自己検証、E2E を行い、検証成果物と発行物を保存する。CodeQL は C# の手動ビルドを解析する。ローカル結果と GitHub 上の実行結果は区別し、CI の完了は実際の run を確認する。
+`.github/workflows/main.yml` は検証専用で、Windows x64 / ARM64（GitHubホスト）と macOS ARM64（M3MB14のself-hosted VM）上でビルド、Native AOT 発行、自己検証、E2E を行う。作業ブランチへのpushはwin-x64だけ、masterへのpush・PR・手動実行・毎週日曜18:00 UTCの定期実行は全構成で、同じrefの古いrunは新しいpushで打ち切る。文書（トップ階層の`*.md`、`Docs/`、`Src/DiffBeacon.*`配下の`*.md`）と旧WinMergeの参照用ディレクトリだけの変更では起動しない。fixtureのREADMEはSHA固定の対象なので除外しない。検証成果物は毎回、発行物は全構成のrunだけ保存する。配布物はWindowsをこのPCで署名付きビルドし、macOSはM3MB14でビルドするため、CIの発行物は配布に使わない。CodeQL は masterとPRの製品コード変更、手動実行、週1回の定期実行で C# の手動ビルドを解析する。ローカル結果と GitHub 上の実行結果は区別し、CI の完了は実際の run を確認する。
 
 複数比較プロジェクト・読取り専用・表設定の4構成検証は[GitHub Actions run 36786270273](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36786270273)で全ジョブ成功した。コードコミット・成功数・実測の範囲は[MIGRATION.md](MIGRATION.md#実行した検証)を参照する。同runの入力・出力・JSON・ログ・PNGと集計を`artifacts/github/36786270273`に保持する。UIはheadless検証であり、ネイティブファイル選択などの手動実測を含まない。成果物はGitへ登録しない。
 

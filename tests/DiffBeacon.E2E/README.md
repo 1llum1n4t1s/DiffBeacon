@@ -3,6 +3,8 @@
 
 `--folder-replace-lists-only` は既存リスト検証と [補助平面case-fold](../Fixtures/FolderSupplementaryCaseFold/README.md) の310命令へ到達します。`--folder-properties-only` と全体E2Eはさらに [provider-null](../Fixtures/FolderProviderNull/README.md) の864命令、[側別6関数](../Fixtures/FolderSideFunctions/README.md) の2,094命令を含みます。最適化の固定検証はoptimizer 5,304件（native 5,208＋source 96）とLexer 22件、fixture Contentは67件です。CF public 310件はdirect 144＋list 144＋derived 22をstrict outer Arrayで照合し、実測出力から期待値を生成しません。
 
+`--folder-optimizer-only` の固定期待値のうち、`StartOfWeek`／`StartOfMonth`／`StartOfYear` とゾーン指定のない `ToDateTime` 文字列は、ローカル日時をUTC+9（Tokyo、夏時間なし）で解釈して採取しています。他のタイムゾーンでは期待値と一致しないため、CIはWindows runnerを `Tokyo Standard Time` に切り替えて実行します。ja-JP／LCID1041まで要求する暦関数スイートは、CIでもlocale不一致として理由付きでskipします。固定readerは履歴上の原典コミットのblobを照合するため、CIは全履歴をcheckoutします。
+
 `--folder-side-functions-only` は `--folder-properties-only` の部分集合で、側別6関数の固定reader・2,094命令と下記の子Optimize fold checkだけを実行します。provider-nullの固定readerは、E2E runner（`Program.cs`）の全体SHAと行番号を照合せず、待機・stream・時刻記録のspanが改行をLFへ正規化した本文にちょうど1回あることを確認します。runnerの他の変更で固定記録を付け直す必要はありません。
 
 側別6関数の固定原本に残した子Optimize fold条件（`required-unimplemented.json`）は、固定原本を書き換えずに別checkで二者／三者の各4命令を実行します。固定式の`@opt`と接頭辞なしは原典`FunctionNode::Optimize`の子先行foldと`ParseColumnRanges`に従い、終了2・空stdout・`invalid column specification`で拒否されることを確認します。`@noopt`と有効な列指定へ畳まれる`Substr('1',0)`の対照は受理され、全行が除外表示になることを確認します。いずれも入力とフィルターのSHAを保持します。固定readerの`completeFeatureVerification:false`は変更しません。

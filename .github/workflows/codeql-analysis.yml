@@ -1,11 +1,31 @@
 name: CodeQL Analysis
 
+# 解析は既定ブランチとPRで行い、作業ブランチの各pushでは回さない。定期実行は週1回にする。
 on:
   workflow_dispatch:
   push:
+    branches: [master]
+    paths:
+      - 'Src/DiffBeacon.*/**'
+      - 'tests/DiffBeacon.*/**'
+      - '*.slnx'
+      - 'Directory.Build.*'
+      - '**/packages.lock.json'
+      - '.github/workflows/codeql-analysis.yml'
   pull_request:
+    paths:
+      - 'Src/DiffBeacon.*/**'
+      - 'tests/DiffBeacon.*/**'
+      - '*.slnx'
+      - 'Directory.Build.*'
+      - '**/packages.lock.json'
+      - '.github/workflows/codeql-analysis.yml'
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 18 * * 0'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 permissions:
   contents: read

@@ -13,7 +13,7 @@
 コード変更後の検証は二段階に分ける。全体E2E・全体UI自己検証は長時間かかるため、毎回のローカル実行を求めない。
 
 1. **ローカル（変更ごと）**: Release build（警告0）、変更した経路の限定E2E selector、追加・変更・付け直した固定fixtureの独立reader（`verify.py` の静的モード）、UI変更では該当headless check。限定selectorがない経路は、近いselectorを追加してから実行する。
-2. **全体（CI）**: 全体E2E・全体UI自己検証・Native AOT は push ごとに `.github/workflows/main.yml` の各構成で実行し、結果を確認する。ローカルで全体を実行するのは、限定selectorで覆えない共通基盤（E2E runnerのコマンド実行・待機・結果記録の共通経路である `Run`／`RecordCommand`／`CommandResult`／`CommandTimeoutPolicy`、`HeadlessSelfTest` の実行基盤、`Directory.Build.*`、`build/*.ps1`）を変えた場合と、本人が求めた場合に限る。`Program.cs` へのselectorの登録と分岐の追加はこれに含めない。
+2. **全体（CI）**: 全体E2E・全体UI自己検証・Native AOT は `.github/workflows/main.yml` で実行し、結果を確認する。作業ブランチへのpushではwin-x64だけ、masterへのpush・PR・手動実行・週1回の定期実行では全構成を回す。文書と旧WinMergeの参照用ディレクトリだけの変更ではCIを起動しない。ローカルで全体を実行するのは、限定selectorで覆えない共通基盤（E2E runnerのコマンド実行・待機・結果記録の共通経路である `Run`／`RecordCommand`／`CommandResult`／`CommandTimeoutPolicy`、`HeadlessSelfTest` の実行基盤、`Directory.Build.*`、`build/*.ps1`）を変えた場合と、本人が求めた場合に限る。`Program.cs` へのselectorの登録と分岐の追加はこれに含めない。
 
 以下の各項目にある「全体E2E」「全体UI自己検証」「限定実行は全体E2Eの代替にしない」は、2の実行を指す。完了報告ではローカルの限定実行とCIの全体結果を区別し、CIを確認していなければ未確認と書く。全体を実行する場合はリポジトリルートで次を使う。
 
@@ -39,7 +39,7 @@ UI の変更は該当headless checkの描画・操作検証を実行し、出力
 
 - 回帰検証は実アプリを別プロセスで呼ぶ既存 E2E に追加する。想定する失敗と期待結果を先に整理し、入力・出力・終了コード・ログ・`assertions.json` を再現可能な成果物として保持する。実行方式と限定実行は [tests/DiffBeacon.E2E/README.md](tests/DiffBeacon.E2E/README.md) を参照する。 macOS の起動経路を変える場合は `MacCommandLauncher` と固定 SHA の `process_startup_gate.py`、その `-text` 属性を照合し、`LaunchEvidence` の実終了・出力回収の完了を確認する。起動失敗や部分出力を製品の期待終了として扱わない。
 - Native AOT に影響する変更は対象と同じ OS で `./build/Dev.ps1 -WorkDirectory <run> -Tool publish -ToolArguments @('-Rid', '<RID>')` を実行する。対応 RID は `win-x64`、`win-arm64`、`osx-x64`、`osx-arm64`。生成先に手作業のファイルを置かない。Windowsの既存発行先は自動削除されず、paths JSONと正規CMDコマンドを準備して停止する。呼出側がPrunletをCMD直接で実行し元パス不在を確認してから再実行するか、未使用の `-OutputRoot <正本配下の一意run>/publish` で旧発行物を保持する。`-OwnerAttestsQuiescentAndNoMixedWork` は利用中プロセスと他作業の混在がないことを確認してから付ける。詳細は[発行手順](Docs/DEVELOPMENT.md)を参照する。
-- CI は `.github/workflows/main.yml` の4構成で AOT 発行・自己検証・E2E、`codeql-analysis.yml` で C# 解析を行う。CIの自己検証全体の制限はWindows600秒・macOS1,200秒で、最終集計がないtimeoutを成功扱いしない。別アーキテクチャで省略された自己検証、headless UI 検証、通常デスクトップ起動を区別して報告する。`artifacts/` と `bin/`・`obj/` は Git に登録しない。
+- CI は検証専用で、`.github/workflows/main.yml` の3構成（win-x64・win-arm64・osx-arm64）で AOT 発行・自己検証・E2E、`codeql-analysis.yml` でmasterとPRのC# 解析を行う。配布物はWindowsをこのPCで署名付きビルドし、macOSはM3MB14でビルドする。CIの自己検証全体の制限は1,200秒で、最終集計がないtimeoutを成功扱いしない。別アーキテクチャで省略された自己検証、headless UI 検証、通常デスクトップ起動を区別して報告する。`artifacts/` と `bin/`・`obj/` は Git に登録しない。
 
 ## 実装上の制約
 

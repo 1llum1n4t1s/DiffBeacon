@@ -101,10 +101,10 @@ Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発
 
 ## 入手と起動
 
-[GitHub Actions](https://github.com/1llum1n4t1s/DiffBeacon/actions) の成功した `.NET CI` 実行から、OS と CPU に合う `DiffBeacon-<RID>` 成果物を取得できます。
+[GitHub Actions](https://github.com/1llum1n4t1s/DiffBeacon/actions) の成功した `.NET CI` 実行のうち、全構成で検証したrun（master・PR・手動・定期実行）から、OS と CPU に合う `DiffBeacon-<RID>` 成果物を取得できます。これは検証用のビルドで、署名済みの配布物ではありません。
 
 - Windows：`win-x64` または `win-arm64` の成果物を展開し、同梱ファイルを一緒に置いたまま `DiffBeacon.exe` を起動します。
-- macOS：`osx-x64`（Intel）または `osx-arm64`（Apple Silicon）の成果物内の `DiffBeacon.app.tar.gz` を展開します。tar は実行権限を保持するため、展開した `DiffBeacon.app` を使ってください。署名・公証は発行工程に含まれていません。
+- macOS：`osx-arm64`（Apple Silicon）の成果物内の `DiffBeacon.app.tar.gz` を展開します。tar は実行権限を保持するため、展開した `DiffBeacon.app` を使ってください。署名・公証は発行工程に含まれていません。
 
 BZip2／Zの読込みCLIは`--compression-payload-kind auto|file|tar`です。アーカイブ比較の右側だけを変える場合は`--right-compression-payload-kind auto|file|tar`を使い、省略時は左の指定を継承します。gzipは別の`--gzip-payload-kind`／`--right-gzip-payload-kind`を使います。異なる圧縮形式へのFile／Tar指定、両形式の非Auto指定の併用、作成時の読込み設定は拒否します。
 
