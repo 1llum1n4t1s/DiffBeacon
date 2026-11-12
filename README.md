@@ -97,7 +97,7 @@ CLIでは `--compare left.txt right.txt --line-transform all 'Trim(Line)'`、表
 
 ## 対応環境
 
-Windows x64 / ARM64、macOS Intel / Apple Silicon に対応する Native AOT 発行物を生成します。macOS の最低バージョンは14.0です。各プラットフォームの実測結果と未検証項目は [移行一覧](Docs/MIGRATION.md) を参照してください。
+Windows x64 / ARM64、macOS Apple Silicon に対応する Native AOT 発行物を生成します。macOS Intel（`osx-x64`）は発行スクリプトが受け付けますが、CI・配布・検証の対象外です。macOS の最低バージョンは14.0です。各プラットフォームの実測結果と未検証項目は [移行一覧](Docs/MIGRATION.md) を参照してください。
 
 ## 入手と起動
 

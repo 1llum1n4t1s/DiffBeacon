@@ -13,11 +13,11 @@
 コード変更後の検証は二段階に分ける。全体E2E・全体UI自己検証は長時間かかるため、毎回のローカル実行を求めない。
 
 1. **ローカル（変更ごと）**: Release build（警告0）、変更した経路の限定E2E selector、追加・変更・付け直した固定fixtureの独立reader（`verify.py` の静的モード）、UI変更では該当headless check。限定selectorがない経路は、近いselectorを追加してから実行する。
-2. **全体（CI）**: 全体E2E・全体UI自己検証・Native AOT は `.github/workflows/main.yml` で実行し、結果を確認する。作業ブランチへのpushではwin-x64だけ、masterへのpush・PR・手動実行・週1回の定期実行では全構成を回す。文書と旧WinMergeの参照用ディレクトリだけの変更ではCIを起動しない。ローカルで全体を実行するのは、限定selectorで覆えない共通基盤（E2E runnerのコマンド実行・待機・結果記録の共通経路である `Run`／`RecordCommand`／`CommandResult`／`CommandTimeoutPolicy`、`HeadlessSelfTest` の実行基盤、`Directory.Build.*`、`build/*.ps1`）を変えた場合と、本人が求めた場合に限る。`Program.cs` へのselectorの登録と分岐の追加はこれに含めない。
+2. **全体（CI）**: 全体E2E・全体UI自己検証・Native AOT は `.github/workflows/main.yml` で実行し、結果を確認する。作業ブランチへのpushではwin-x64だけ、masterへのpush・PR・手動実行・週1回の定期実行では全構成を回す。ローカルで全体を実行するのは、限定selectorで覆えない共通基盤（E2E runnerのコマンド実行・待機・結果記録の共通経路である `Run`／`RecordCommand`／`CommandResult`／`CommandTimeoutPolicy`、`HeadlessSelfTest` の実行基盤、`Directory.Build.*`、`build/*.ps1`）を変えた場合と、本人が求めた場合に限る。`Program.cs` へのselectorの登録と分岐の追加はこれに含めない。
 
 以下の各項目にある「全体E2E」「全体UI自己検証」「限定実行は全体E2Eの代替にしない」は、2の実行を指す。完了報告ではローカルの限定実行とCIの全体結果を区別し、CIを確認していなければ未確認と書く。全体を実行する場合はリポジトリルートで次を使う。
 
-開発出力の作業rootは各ツールの既定の一時フォルダー（PowerShellの `[IO.Path]::GetTempPath()`）配下の `Codex/DiffBeacon` を基準にする。このPCでは Git 管理外の `Directory.Build.local.props` の `DiffBeaconWorkRoot` を正本とし、このcheckoutで設定が無い場合は暗黙のfallbackをせずエラーにする。WindowsのTEMPはStorage Senseが実行中の成果物を削除し得るため、このPCの正本はTEMP外（`D:\tmp\Codex\DiffBeacon`）に置く。ビルド・E2E・自己検証・発行は [開発出力の起動経路](Docs/DEVELOPMENT.md#開発出力の起動経路) の `build/Dev.ps1` を使い、bin/obj/AOT・fixture・結果・log・TEMP/TMPを明示runへ集約する。CI/macOS/別利用者にはこのPCのローカル設定を強要しない。
+開発出力の作業rootは各ツールの既定の一時フォルダー配下の `Codex/DiffBeacon` を基準にする。このPCでは Git 管理外の `Directory.Build.local.props` の `DiffBeaconWorkRoot` を正本とし、このcheckoutで設定が無い場合は暗黙のfallbackをせずエラーにする。WindowsのTEMPはStorage Senseが実行中の成果物を削除し得るため、このPCの正本はTEMP外（`D:\tmp\Codex\DiffBeacon`）に置く。ビルド・E2E・自己検証・発行は [開発出力の起動経路](Docs/DEVELOPMENT.md#開発出力の起動経路) の `build/Dev.ps1` を使い、bin/obj/AOT・fixture・結果・log・TEMP/TMPを明示runへ集約する。CI等へこのPCの設定を強要しない。
 
 ```powershell
 . ./build/DevelopmentOutput.ps1
@@ -39,11 +39,11 @@ UI の変更は該当headless checkの描画・操作検証を実行し、出力
 
 - 回帰検証は実アプリを別プロセスで呼ぶ既存 E2E に追加する。想定する失敗と期待結果を先に整理し、入力・出力・終了コード・ログ・`assertions.json` を再現可能な成果物として保持する。実行方式と限定実行は [tests/DiffBeacon.E2E/README.md](tests/DiffBeacon.E2E/README.md) を参照する。 macOS の起動経路を変える場合は `MacCommandLauncher` と固定 SHA の `process_startup_gate.py`、その `-text` 属性を照合し、`LaunchEvidence` の実終了・出力回収の完了を確認する。起動失敗や部分出力を製品の期待終了として扱わない。
 - Native AOT に影響する変更は対象と同じ OS で `./build/Dev.ps1 -WorkDirectory <run> -Tool publish -ToolArguments @('-Rid', '<RID>')` を実行する。対応 RID は `win-x64`、`win-arm64`、`osx-x64`、`osx-arm64`。生成先に手作業のファイルを置かない。Windowsの既存発行先は自動削除されず、paths JSONと正規CMDコマンドを準備して停止する。呼出側がPrunletをCMD直接で実行し元パス不在を確認してから再実行するか、未使用の `-OutputRoot <正本配下の一意run>/publish` で旧発行物を保持する。`-OwnerAttestsQuiescentAndNoMixedWork` は利用中プロセスと他作業の混在がないことを確認してから付ける。詳細は[発行手順](Docs/DEVELOPMENT.md)を参照する。
-- CI は検証専用で、`.github/workflows/main.yml` の3構成（win-x64・win-arm64・osx-arm64）で AOT 発行・自己検証・E2E、`codeql-analysis.yml` でmasterとPRのC# 解析を行う。配布物はWindowsをこのPCで署名付きビルドし、macOSはM3MB14でビルドする。CIの自己検証全体の制限は1,200秒で、最終集計がないtimeoutを成功扱いしない。別アーキテクチャで省略された自己検証、headless UI 検証、通常デスクトップ起動を区別して報告する。`artifacts/` と `bin/`・`obj/` は Git に登録しない。
+- CI は検証専用で、`.github/workflows/main.yml` の3構成（win-x64・win-arm64・osx-arm64）で AOT 発行・自己検証・E2E、`codeql-analysis.yml` でmasterとPRのC# 解析を行う。CIの発行物は配布に使わない。CIの自己検証全体の制限は1,200秒で、最終集計がないtimeoutを成功扱いしない。別アーキテクチャで省略された自己検証、headless UI 検証、通常デスクトップ起動を区別して報告する。`artifacts/` と `bin/`・`obj/` は Git に登録しない。
 
 ## 実装上の制約
 
-- ディスク節約の指定を維持する。ローカルE2Eは空き容量のあるドライブに出力し、最新の検証と再開に必要な原本採取だけを展開保持する。完了済みの過去成果物は[圧縮保持の手順](Docs/DEVELOPMENT.md#検証成果物の容量管理)に従い、全entryのSHA・サイズ照合後に展開元を除去する。新しいrunを取得する前に前回分を整理し、全4RIDの成果物を展開したまま積み上げない。失敗ログ・入力・出力も圧縮内へ保持し、共有キャッシュや他プロジェクトを清掃対象にしない。保全index・圧縮log・Prunlet用paths/resultは正本workroot配下へ置き、repoへ作らない。自作fixtureの意図的ReadOnly／ACLは正規teardownで原状復帰してから最初のPrunletへ渡し、拒否済み対象を無断で属性変更して再試行しない。Prunlet復元コピーもC占有に含め、保全照合済みの今回operationだけを正規purgeして実C空きを確認する。既存他operationは任意purgeしない。
+- ディスク節約の指定を維持する。ローカルE2Eは空き容量のあるドライブに出力し、最新の検証と再開に必要な原本採取だけを展開保持する。完了済みの過去成果物は[圧縮保持の手順](Docs/DEVELOPMENT.md#検証成果物の容量管理)に従い、全entryのSHA・サイズ照合後に展開元を除去する。新しいrunを取得する前に前回分を整理し、各RIDの成果物を展開したまま積み上げない。失敗ログ・入力・出力も圧縮内へ保持し、共有キャッシュや他プロジェクトを清掃対象にしない。保全index・圧縮log・Prunlet用paths/resultは正本workroot配下へ置き、repoへ作らない。自作fixtureの意図的ReadOnly／ACLは正規teardownで原状復帰してから最初のPrunletへ渡し、拒否済み対象を無断で属性変更して再試行しない。Prunlet復元コピーもC占有に含め、保全照合済みの今回operationだけを正規purgeして実C空きを確認する。既存他operationは任意purgeしない。
 
 - 共通設定は `Directory.Build.props`。nullable・AOT 互換性解析を維持し、既存 `packages.lock.json` とパッケージ参照を整合させる。Core は外部パッケージや実行時 DLL 探索に依存させない。
 - 保存時の文字コード・BOM・改行・既存ファイル属性、比較の処理上限、キャンセル、リンクとルート外パスの拒否を保つ。詳細な不変条件は DESIGN.md と各コンポーネントの README に従う。
