@@ -133,6 +133,228 @@ internal static class FolderCopyScenarios
         await File.WriteAllTextAsync(Path.Combine(work, "gui.stdout.txt"), gui.Stdout, new UTF8Encoding(false));
         await File.WriteAllTextAsync(Path.Combine(work, "gui.stderr.txt"), gui.Stderr, new UTF8Encoding(false));
         await WriteJson(work, "gui-process.json", gui);
+        await VerifyGuiListDependencies();
+        var moveReports = Directory.GetFiles(Path.Combine(work, "gui"), "folder-move-observations.json", SearchOption.AllDirectories);
+        check("Folder move GUI observation report", moveReports.Length == 1, "report count=" + moveReports.Length);
+        if (moveReports.Length == 1)
+        {
+            using var moveDocument = JsonDocument.Parse(await File.ReadAllBytesAsync(moveReports[0]));
+            var moveRoot = moveDocument.RootElement;
+            var moveCases = moveRoot.GetProperty("cases").EnumerateArray().ToArray();
+            var expectedMoveCases = OperatingSystem.IsWindows() ? 18 : 17;
+            check("Folder move GUI report complete", moveRoot.GetProperty("complete").GetBoolean()
+                && moveCases.Length == expectedMoveCases, $"case count={moveCases.Length}, expected={expectedMoveCases}");
+            if (moveRoot.GetProperty("complete").GetBoolean() && moveCases.Length == expectedMoveCases)
+            {
+            var success = MoveCase("success");
+            var successSource = FindMoveEntry(success.GetProperty("beforeLeft"), "a.bin");
+            var successAfterSource = FindMoveEntry(success.GetProperty("afterLeft"), "a.bin");
+            var successAfterDestination = FindMoveEntry(success.GetProperty("afterRight"), "a.bin");
+            var successResult = success.GetProperty("result");
+            check("Folder move GUI publishes exact source bytes", success.GetProperty("confirmed").GetBoolean()
+                && successResult.GetProperty("Succeeded").GetBoolean()
+                && successResult.GetProperty("MovedCount").GetInt32() == 1
+                && successAfterSource.ValueKind == JsonValueKind.Undefined
+                && successAfterDestination.ValueKind == JsonValueKind.Object
+                && successAfterDestination.GetProperty("sha256").GetString() == successSource.GetProperty("sha256").GetString(),
+                "source file moves to the selected destination with identical SHA-256");
+            var reverse = MoveCase("right-to-left");
+            check("Folder move GUI supports right to left", MoveSucceeded(reverse, "a.bin")
+                && reverse.GetProperty("sourceSide").GetString() == "Right"
+                && reverse.GetProperty("destinationSide").GetString() == "Left",
+                "right-side source is removed and left-side destination has the exact SHA-256");
+            var multiple = MoveCase("multiple-success");
+            check("Folder move GUI moves every selected file", MoveSucceeded(multiple, "a.bin", "b.bin"),
+                "both selected source files move with their exact SHA-256 values");
+            foreach (var id in new[] { "reject-existing-destination", "reject-directory", "reject-shared-input" })
+            {
+                var rejected = MoveCase(id);
+                check("Folder move GUI rejects safely " + id, !rejected.GetProperty("confirmed").GetBoolean()
+                    && rejected.GetProperty("result").ValueKind == JsonValueKind.Null
+                    && SameMoveSnapshot(rejected.GetProperty("beforeLeft"), rejected.GetProperty("afterLeft"))
+                    && SameMoveSnapshot(rejected.GetProperty("beforeRight"), rejected.GetProperty("afterRight")),
+                    "no confirmation or filesystem change");
+            }
+            var changed = MoveCase("source-changed-after-plan");
+            check("Folder move GUI rechecks source", changed.GetProperty("confirmed").GetBoolean()
+                && !changed.GetProperty("result").GetProperty("MutationOccurred").GetBoolean()
+                && FindMoveEntry(changed.GetProperty("afterLeft"), "a.bin").GetProperty("sha256").GetString()
+                    == Convert.ToHexString(SHA256.HashData(new byte[] { 0x99 }))
+                && SameMoveSnapshot(changed.GetProperty("beforeRight"), changed.GetProperty("afterRight")),
+                "changed source remains and destination is untouched");
+            var partial = MoveCase("partial-second-failure");
+            var moveEntries = partial.GetProperty("result").GetProperty("entries").EnumerateArray()
+                .ToDictionary(entry => entry.GetProperty("RelativePath").GetString()!, entry => entry.GetProperty("status").GetString()!, StringComparer.Ordinal);
+            check("Folder move GUI records partial mutation", partial.GetProperty("result").GetProperty("MutationOccurred").GetBoolean()
+                && moveEntries.GetValueOrDefault("a.bin") == "Moved"
+                && moveEntries.GetValueOrDefault("b.bin") == "Failed"
+                && moveEntries.GetValueOrDefault("c.bin") == "NotExecuted"
+                && FindMoveEntry(partial.GetProperty("afterLeft"), "a.bin").ValueKind == JsonValueKind.Undefined
+                && FindMoveEntry(partial.GetProperty("afterRight"), "a.bin").ValueKind == JsonValueKind.Object
+                && FindMoveEntry(partial.GetProperty("afterLeft"), "b.bin").ValueKind == JsonValueKind.Object
+                && FindMoveEntry(partial.GetProperty("afterLeft"), "c.bin").ValueKind == JsonValueKind.Object
+                && FindMoveEntry(partial.GetProperty("afterRight"), "b.bin").ValueKind == JsonValueKind.Undefined
+                && FindMoveEntry(partial.GetProperty("afterRight"), "c.bin").ValueKind == JsonValueKind.Undefined,
+                "first move retained, failed and not-run source files stay in place");
+
+            var filterChanged = MoveCase("filter-changed-after-hash");
+            check("Folder move GUI cancels after filter changes during hashing", filterChanged.GetProperty("confirmed").GetBoolean()
+                && filterChanged.GetProperty("result").GetProperty("Cancelled").GetBoolean()
+                && !filterChanged.GetProperty("result").GetProperty("MutationOccurred").GetBoolean()
+                && SameMoveSnapshot(filterChanged.GetProperty("beforeLeft"), filterChanged.GetProperty("afterLeft"))
+                && SameMoveSnapshot(filterChanged.GetProperty("beforeRight"), filterChanged.GetProperty("afterRight")),
+                "both roots remain unchanged after the protected filter changes");
+            var destinationAppeared = MoveCase("destination-appears-after-plan");
+            check("Folder move GUI preserves a destination that appears after planning", destinationAppeared.GetProperty("confirmed").GetBoolean()
+                && !destinationAppeared.GetProperty("result").GetProperty("MutationOccurred").GetBoolean()
+                && FindMoveEntry(destinationAppeared.GetProperty("afterSource"), "a.bin").ValueKind == JsonValueKind.Object
+                && FindMoveEntry(destinationAppeared.GetProperty("afterDestination"), "a.bin").GetProperty("sha256").GetString()
+                    == Convert.ToHexString(SHA256.HashData(new byte[] { 0x66 })),
+                "the source stays in place and the concurrently created destination is not overwritten");
+            var partialCancel = MoveCase("partial-cancel-after-first");
+            var cancelledEntries = partialCancel.GetProperty("result").GetProperty("entries").EnumerateArray()
+                .ToDictionary(entry => entry.GetProperty("RelativePath").GetString()!, entry => entry.GetProperty("status").GetString()!, StringComparer.Ordinal);
+            check("Folder move GUI records partial cancellation", partialCancel.GetProperty("result").GetProperty("Cancelled").GetBoolean()
+                && cancelledEntries.GetValueOrDefault("a.bin") == "Moved"
+                && cancelledEntries.GetValueOrDefault("b.bin") == "Cancelled"
+                && cancelledEntries.GetValueOrDefault("c.bin") == "NotExecuted"
+                && FindMoveEntry(partialCancel.GetProperty("afterSource"), "a.bin").ValueKind == JsonValueKind.Undefined
+                && FindMoveEntry(partialCancel.GetProperty("afterDestination"), "a.bin").ValueKind == JsonValueKind.Object
+                && FindMoveEntry(partialCancel.GetProperty("afterSource"), "b.bin").ValueKind == JsonValueKind.Object
+                && FindMoveEntry(partialCancel.GetProperty("afterSource"), "c.bin").ValueKind == JsonValueKind.Object,
+                "first file remains moved, the cancelled and unexecuted files remain at source");
+            if (OperatingSystem.IsWindows())
+            {
+                var alternateStream = MoveCase("preserve-alternate-stream");
+                check("Folder move GUI retains alternate stream test result", MoveSucceeded(alternateStream, "a.bin"),
+                    "Windows same-volume move passes the independent ADS assertion in the app self-check");
+            }
+            foreach (var direction in new[] { "LeftToRight", "RightToLeft", "LeftToMiddle", "MiddleToLeft", "MiddleToRight", "RightToMiddle" })
+            {
+                var threeWay = MoveCase("threeway-" + direction);
+                var sourceSide = threeWay.GetProperty("sourceSide").GetString()!;
+                var destinationSide = threeWay.GetProperty("destinationSide").GetString()!;
+                var untouchedSide = new[] { "Left", "Middle", "Right" }.Single(side => side != sourceSide && side != destinationSide);
+                check("Folder move GUI honors three-way direction " + direction, MoveSucceeded(threeWay, "a.bin")
+                    && threeWay.GetProperty("result").GetProperty("MovedCount").GetInt32() == 1
+                    && SideSnapshot(threeWay, untouchedSide, before: true).GetRawText()
+                        == SideSnapshot(threeWay, untouchedSide, before: false).GetRawText(),
+                    $"{sourceSide} moves to {destinationSide}; {untouchedSide} remains byte-for-byte unchanged");
+            }
+
+            JsonElement MoveCase(string id) => moveCases.SingleOrDefault(value => value.GetProperty("name").GetString() == id);
+            JsonElement FindMoveEntry(JsonElement snapshot, string path) => snapshot.EnumerateArray()
+                .FirstOrDefault(entry => entry.GetProperty("path").GetString() == path);
+            bool MoveSucceeded(JsonElement item, params string[] paths)
+            {
+                if (item.ValueKind != JsonValueKind.Object || !item.GetProperty("confirmed").GetBoolean()) return false;
+                var result = item.GetProperty("result");
+                if (result.ValueKind != JsonValueKind.Object || !result.GetProperty("Succeeded").GetBoolean()
+                    || result.GetProperty("MovedCount").GetInt32() != paths.Length) return false;
+                return paths.All(path =>
+                {
+                    var beforeSource = FindMoveEntry(item.GetProperty("beforeSource"), path);
+                    return beforeSource.ValueKind == JsonValueKind.Object
+                        && FindMoveEntry(item.GetProperty("afterSource"), path).ValueKind == JsonValueKind.Undefined
+                        && FindMoveEntry(item.GetProperty("beforeDestination"), path).ValueKind == JsonValueKind.Undefined
+                        && FindMoveEntry(item.GetProperty("afterDestination"), path).ValueKind == JsonValueKind.Object
+                        && FindMoveEntry(item.GetProperty("afterDestination"), path).GetProperty("sha256").GetString()
+                            == beforeSource.GetProperty("sha256").GetString();
+                });
+            }
+            static JsonElement SideSnapshot(JsonElement item, string side, bool before)
+            {
+                var name = (before ? "before" : "after") + side;
+                return item.GetProperty(name);
+            }
+            static bool SameMoveSnapshot(JsonElement first, JsonElement second) => first.GetRawText() == second.GetRawText();
+            }
+        }
+
+        var trashReports = Directory.GetFiles(Path.Combine(work, "gui"), "folder-trash-observations.json", SearchOption.AllDirectories);
+        check("Folder trash GUI observation report", trashReports.Length == 1, "report count=" + trashReports.Length);
+        if (trashReports.Length == 1)
+        {
+            using var trashDocument = JsonDocument.Parse(await File.ReadAllBytesAsync(trashReports[0]));
+            var trashRoot = trashDocument.RootElement;
+            var trashCases = trashRoot.GetProperty("cases").EnumerateArray().ToArray();
+            check("Folder trash GUI report complete", trashRoot.GetProperty("complete").GetBoolean()
+                && trashCases.Length == 7, $"case count={trashCases.Length}, expected=7");
+            if (trashRoot.GetProperty("complete").GetBoolean() && trashCases.Length == 7)
+            {
+                var selectedDirectory = TrashCase("selected-directory-moves-differing-files-only");
+                var selectedDirectoryResult = selectedDirectory.GetProperty("result");
+                var selectedDirectorySource = FindTrashEntry(selectedDirectory.GetProperty("afterSource"), "tree/leaf.bin");
+                var selectedDirectoryPlan = selectedDirectory.GetProperty("planEntries").EnumerateArray().ToArray();
+                check("Folder trash removes changed files but retains their directory", selectedDirectory.GetProperty("confirmed").GetBoolean()
+                    && selectedDirectoryResult.GetProperty("Succeeded").GetBoolean()
+                    && selectedDirectoryResult.GetProperty("TrashedCount").GetInt32() == 1
+                    && selectedDirectoryPlan.Length == 1 && selectedDirectoryPlan[0].GetProperty("RelativePath").GetString() == "tree/leaf.bin"
+                    && FindTrashEntry(selectedDirectory.GetProperty("afterSource"), "tree").GetProperty("directory").GetBoolean()
+                    && selectedDirectorySource.ValueKind == JsonValueKind.Undefined
+                    && SameTrashSnapshot(selectedDirectory.GetProperty("beforeOther"), selectedDirectory.GetProperty("afterOther")),
+                    "only the differing child file moves to the OS trash; the selected directory and other side remain");
+
+                var reverseTrash = TrashCase("right-to-left");
+                check("Folder trash supports right to left", TrashSucceeded(reverseTrash, "a.bin")
+                    && reverseTrash.GetProperty("sourceSide").GetString() == "Right"
+                    && SameTrashSnapshot(reverseTrash.GetProperty("beforeOther"), reverseTrash.GetProperty("afterOther")),
+                    "the selected right-side file moves to trash while the left side remains unchanged");
+
+                var directoryTrash = TrashCase("unsupported-empty-directory");
+                check("Folder trash never deletes directories", !directoryTrash.GetProperty("confirmed").GetBoolean()
+                    && directoryTrash.GetProperty("result").ValueKind == JsonValueKind.Null
+                    && directoryTrash.GetProperty("planEntries")[0].GetProperty("IsSupported").GetBoolean() == false
+                    && FindTrashEntry(directoryTrash.GetProperty("afterSource"), "tree").GetProperty("directory").GetBoolean(),
+                    "empty directories stay in place and do not reach the OS trash API");
+
+                var protectedInput = TrashCase("shared-input-protected");
+                check("Folder trash protects another comparison input", !protectedInput.GetProperty("confirmed").GetBoolean()
+                    && protectedInput.GetProperty("result").ValueKind == JsonValueKind.Null
+                    && SameTrashSnapshot(protectedInput.GetProperty("beforeSource"), protectedInput.GetProperty("afterSource")),
+                    "shared inputs are rejected before confirmation and remain unchanged");
+
+                var changedSource = TrashCase("source-content-changed-after-confirmation");
+                check("Folder trash checks content immediately before deleting", changedSource.GetProperty("confirmed").GetBoolean()
+                    && !changedSource.GetProperty("result").GetProperty("MutationOccurred").GetBoolean()
+                    && FindTrashEntry(changedSource.GetProperty("afterSource"), "a.bin").GetProperty("sha256").GetString()
+                        == Convert.ToHexString(SHA256.HashData(new byte[] { 0x99 }))
+                    && SameTrashSnapshot(changedSource.GetProperty("beforeOther"), changedSource.GetProperty("afterOther")),
+                    "the changed source stays present and the other side remains unchanged");
+
+                var partialTrash = TrashCase("partial-cancel-after-first");
+                var partialTrashEntries = partialTrash.GetProperty("result").GetProperty("entries").EnumerateArray()
+                    .ToDictionary(entry => entry.GetProperty("RelativePath").GetString()!, entry => entry.GetProperty("status").GetString()!, StringComparer.Ordinal);
+                check("Folder trash records partial cancellation", partialTrash.GetProperty("result").GetProperty("Cancelled").GetBoolean()
+                    && partialTrashEntries.GetValueOrDefault("a.bin") == "Trashed"
+                    && partialTrashEntries.GetValueOrDefault("b.bin") == "Cancelled"
+                    && partialTrashEntries.GetValueOrDefault("c.bin") == "NotExecuted"
+                    && FindTrashEntry(partialTrash.GetProperty("afterSource"), "a.bin").ValueKind == JsonValueKind.Undefined
+                    && FindTrashEntry(partialTrash.GetProperty("afterSource"), "b.bin").ValueKind == JsonValueKind.Object
+                    && FindTrashEntry(partialTrash.GetProperty("afterSource"), "c.bin").ValueKind == JsonValueKind.Object,
+                    "only the first file reaches trash; cancelled and pending files stay in the source folder");
+
+                var threeWayTrash = TrashCase("threeway-left-to-middle");
+                check("Folder trash honors three-way source selection", TrashSucceeded(threeWayTrash, "a.bin")
+                    && threeWayTrash.GetProperty("sourceSide").GetString() == "Left"
+                    && FindTrashEntry(threeWayTrash.GetProperty("afterMiddle"), "a.bin").ValueKind == JsonValueKind.Undefined
+                    && SameTrashSnapshot(threeWayTrash.GetProperty("beforeRight"), threeWayTrash.GetProperty("afterRight")),
+                    "the selected left-side difference is removed; the middle and right sides remain unchanged");
+            }
+
+            JsonElement TrashCase(string id) => trashCases.SingleOrDefault(value => value.GetProperty("name").GetString() == id);
+            static JsonElement FindTrashEntry(JsonElement snapshot, string path) => snapshot.EnumerateArray()
+                .FirstOrDefault(entry => entry.GetProperty("path").GetString() == path);
+            static bool SameTrashSnapshot(JsonElement before, JsonElement after) => before.GetRawText() == after.GetRawText();
+            static bool TrashSucceeded(JsonElement item, string path)
+            {
+                if (item.ValueKind != JsonValueKind.Object || !item.GetProperty("confirmed").GetBoolean()) return false;
+                var result = item.GetProperty("result");
+                return result.ValueKind == JsonValueKind.Object && result.GetProperty("Succeeded").GetBoolean()
+                    && result.GetProperty("MutationOccurred").GetBoolean() && result.GetProperty("TrashedCount").GetInt32() == 1
+                    && FindTrashEntry(item.GetProperty("afterSource"), path).ValueKind == JsonValueKind.Undefined;
+            }
+        }
 
         var info = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
         foreach (var argument in new[] { "-B", "-X", "utf8", Path.Combine(fixture, "verify-copy.py"), fixture, work }) info.ArgumentList.Add(argument);
@@ -210,6 +432,107 @@ internal static class FolderCopyScenarios
             await WriteJson(work, "windows-stream-commands.json", records);
             await StreamReader("verify", Path.GetFullPath(work));
         }
+        async Task VerifyGuiListDependencies()
+        {
+            var reader = Path.Combine(work, "verify-gui-list-dependencies.py");
+            await File.WriteAllTextAsync(reader, """
+import hashlib,json,pathlib,struct,sys
+root=pathlib.Path(sys.argv[1]); reports=list(root.rglob('folder-list-dependency-observations.json'))
+assert len(reports)==1, reports
+data=json.loads(reports[0].read_text(encoding='utf-8')); assert data['complete']
+rows={r['id']:r for r in data['cases']}; expected={'copy','move','stale','cancel'}
+if sys.platform in ('win32','darwin'): expected.add('trash')
+assert set(rows)==expected,(set(rows),expected)
+for name,row in rows.items():
+ assert row['passed'],row
+ target=pathlib.Path(row['target']); raw=target.read_bytes()
+ assert hashlib.sha256(raw).hexdigest().upper()==row['afterSha256'],row
+ assert row['beforeWriteTicks']==row['afterWriteTicks'],row
+ assert (row['beforeSha256']!=row['afterSha256'])==(name=='stale'),row
+ assert row['injected']==(name in ('stale','cancel')),row
+ if name=='stale': assert raw==b'a\tY\n'
+ pngs=list(root.rglob('folder-list-'+name+'.png')); assert len(pngs)==1,pngs
+ png=pngs[0].read_bytes(); assert png[:8]==b'\x89PNG\r\n\x1a\n'
+ width,height=struct.unpack('>II',png[16:24]); assert width>=850 and height>=550
+reports=list(root.rglob('folder-list-output-observations.json')); assert len(reports)==1,reports
+extra=json.loads(reports[0].read_text(encoding='utf-8')); assert extra['complete']
+outputs={r['id']:r for r in extra['cases']}
+assert set(outputs)=={'html-initial','html-late','html-cancel','html-stale-candidate','package-late','workspace-initial','workspace-late','line-asset-missing','working-asset-missing','workspace-repeat','workspace-repeat-protected','workspace-queued-adoption'}
+for name,row in outputs.items():
+ assert row['passed'],row
+ target=pathlib.Path(row['target']); actual=hashlib.sha256(target.read_bytes()).hexdigest().upper() if target.exists() else None
+ assert actual==row['afterSha256'],row
+ positive=name in ('html-stale-candidate','workspace-repeat','workspace-queued-adoption')
+ assert row['rejected']!=positive,row
+ if positive: assert row['beforeSha256']!=row['afterSha256'],row
+ else: assert row['beforeSha256']==row['afterSha256'] and row['beforeWriteTicks']==row['afterWriteTicks'],row
+ assert row['hook']==(name not in ('html-initial','workspace-initial','workspace-repeat-protected')),row
+ assert row['adopted']==(name not in ('html-cancel','html-stale-candidate','workspace-repeat')),row
+ if name in ('html-cancel','html-stale-candidate'): assert row['dependencies']==row['initialDependencies'] and str(target) not in row['dependencies'],row
+ for dependency in row['initialDependencies']: assert pathlib.Path(dependency).read_bytes()==b'a\tX\n',row
+ if row['adopted']: assert str(target) in row['dependencies'],row
+ if name=='html-stale-candidate': assert '<html' in target.read_text(encoding='utf-8').lower()
+ if name in ('workspace-repeat','workspace-repeat-protected','workspace-queued-adoption'):
+  parsed=json.loads(target.read_text(encoding='utf-8')); assert parsed['entries'] and 'folderListDependencies' not in target.read_text(encoding='utf-8')
+ for snapshot in row['dependencySnapshots']:
+  p=pathlib.Path(snapshot['path']); assert (hashlib.sha256(p.read_bytes()).hexdigest().upper() if p.exists() else None)==snapshot['sha256'],row
+ if name=='workspace-queued-adoption':
+  assert row['publishedBeforeQueuedAdoption'] and row['order']==['publisher-entered','adoption-queued','atomic-visible-before-adoption','adoption-complete'],row
+  assert row['dependencySnapshots']==[{'path':str(target),'sha256':row['afterSha256']}],row
+ elif row['hook'] and row['adopted']: assert row['order']==['publisher-entered','adoption-complete'],row
+ if row['workspace']:
+  workspace=pathlib.Path(row['workspace']); assert workspace.read_bytes()==b'KEEP WORKSPACE\n'
+  assert row['workspaceBeforeSha256']==row['workspaceAfterSha256']==hashlib.sha256(workspace.read_bytes()).hexdigest().upper()
+  raw=(target.parents[1]/'source.list').read_bytes() if name=='line-asset-missing' else b'working text\n'
+  assert target==pathlib.Path(str(workspace)+'.assets')/(hashlib.sha256(raw).hexdigest().upper()+('.replace-list' if name=='line-asset-missing' else '.text')) and not target.exists()
+ pngs=list(root.rglob('folder-list-output-'+name+'.png')); assert len(pngs)==1,pngs
+ png=pngs[0].read_bytes(); assert png[:8]==b'\x89PNG\r\n\x1a\n' and struct.unpack('>II',png[16:24])[0]>=850
+reports=list(root.rglob('folder-copy-publication-observations.json')); assert len(reports)==1,reports
+atomic=json.loads(reports[0].read_text(encoding='utf-8')); assert atomic['complete']
+copies={row['id']:row for row in atomic['cases']}
+assert set(copies)=={'late-list','queued-list','cancel','failure','new-parent','empty-directory'},copies
+for name,row in copies.items():
+ assert row['passed'] and row['hooked'] and row['clean'],row
+ source=pathlib.Path(row['source']); target=pathlib.Path(row['target']); accepted=pathlib.Path(row['accepted'])
+ sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest().upper() if p.is_file() else None
+ assert sha(source)==row['sourceBeforeSha256']==row['sourceAfterSha256'],row
+ assert sha(target)==row['afterSha256'],row
+ assert accepted.read_bytes()==b'a\tOLD\n' and sha(accepted)==row['acceptedBeforeSha256']==row['acceptedAfterSha256'],row
+ assert not list(target.parents[0].rglob('.diffbeacon-copy-*')) if target.parent.exists() else True,row
+ positive=name=='queued-list'
+ assert row['succeeded']==positive and row['publishedCount']==int(positive),row
+ if positive:
+  assert source.read_bytes()==target.read_bytes()==b'a\tNEW\n' and row['adopted'] and row['adoptedSha256']==row['afterSha256'],row
+  assert row['order']==['publisher-entered','adoption-queued','atomic-published','adoption-complete'],row
+  assert row['dependencies']==[str(target)],row
+  if atomic['windows']: assert row['windowsMetadataVerified'],row
+ else:
+  assert row['beforeSha256']==row['afterSha256'] and row['beforeWriteTicks']==row['afterWriteTicks'],row
+  assert row['guardedBeforeWriteTicks']==row['guardedAfterWriteTicks'],row
+  if name=='new-parent': assert not pathlib.Path(row['guardedPath']).exists() and not target.exists(),row
+  elif name=='empty-directory':
+   assert source.is_dir() and target.is_dir() and not list(target.iterdir()),row
+   assert target.stat().st_mtime_ns//100+621355968000000000==row['beforeWriteTicks'],row
+   import datetime
+   assert source.stat().st_mtime_ns==int(datetime.datetime(2002,3,4,5,6,7,tzinfo=datetime.timezone.utc).timestamp())*1000000000,row
+  else: assert target.read_bytes()==b'a\tOLD\n' and source.read_bytes()==b'a\tNEW\n' and row['staged'],row
+ if name=='late-list': assert row['adopted'] and row['adoptedSha256']==row['beforeSha256'] and row['dependencies']==[str(target)],row
+ if name in ('cancel','failure'): assert not row['adopted'] and row['dependencies']==row['initialDependencies'],row
+ if name=='cancel': assert row['cancelled'],row
+ pngs=list(root.rglob('folder-publication-'+name+'.png')); assert len(pngs)==1,pngs
+ png=pngs[0].read_bytes(); assert png[:8]==b'\x89PNG\r\n\x1a\n' and struct.unpack('>II',png[16:24])[0]>=850
+print(json.dumps({'passed':True,'cases':len(rows),'pngs':len(rows),'outputProtectionCases':len(outputs),'outputProtectionPngs':len(outputs),'atomicCopyCases':len(copies),'sameSizeRestoredMtime':True,'cancellationDuringRead':True,'cancelledAndStaleDependenciesRetained':True,'workspaceSourceDependencyProtected':True}))
+""", new UTF8Encoding(false));
+            var start = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };
+            foreach (var arg in new[] { "-B", "-X", "utf8", reader, Path.Combine(work, "gui") }) start.ArgumentList.Add(arg);
+            using var process = Process.Start(start)!;
+            var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
+            await process.WaitForExitAsync(); var text = await stdout; var error = await stderr;
+            await File.WriteAllTextAsync(Path.Combine(work, "gui-list-reader-result.json"), text, new UTF8Encoding(false));
+            await File.WriteAllTextAsync(Path.Combine(work, "gui-list-reader-stderr.txt"), error, new UTF8Encoding(false));
+            check("Folder GUI replacement list independent reader", process.ExitCode == 0, text + error);
+        }
+
         async Task StreamReader(string action, string location, string? id = null)
         {
             var start = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false, CreateNoWindow = true };

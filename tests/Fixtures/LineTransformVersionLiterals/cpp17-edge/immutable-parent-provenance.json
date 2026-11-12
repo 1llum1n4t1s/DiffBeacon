@@ -1,0 +1,16 @@
+[
+  {
+    "label": "raw60",
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\line-transform-version-literals-93966516d4134fcc8c3c21e94eabee8a\\draft",
+    "fixedManifestSha256": "91afb79da8e937bce12aa4ce7d43c3c2f13c1f51e27de2c167ae9a8892b0898b",
+    "proofZipSha256": "2c91b8bf865590a4e9ff29171e9eef456aed07d52b165c0efc318823dc631383",
+    "immutable": true
+  },
+  {
+    "label": "supplement128",
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\line-transform-version-literals-93966516d4134fcc8c3c21e94eabee8a\\supplement-612c14d261ed4b628011e2b2b9240321",
+    "fixedManifestSha256": "2ed53b7313fd60471dc1b458047aa84d8ac0a053e2c12c9c8007b75ef01380e5",
+    "proofZipSha256": "a5b9b12b09e7eec7b31393d7e77119ea3bcb81641d92c695962c38baa597a1aa",
+    "immutable": true
+  }
+]

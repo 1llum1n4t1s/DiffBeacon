@@ -4,14 +4,17 @@ param(
     [Parameter(Mandatory)][string]$PythonPath,
     [string[]]$AdditionalEvidenceRoot = @(),
     [string]$ExistingArchive,
+    [switch]$CompressOnly,
     [switch]$OwnerAttestsQuiescentAndNoMixedWork
 )
 $ErrorActionPreference = 'Stop'
-$WindowsCleanupHelper = Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) '.codex/scripts/Remove-CodexItem.ps1'
 if (-not $OwnerAttestsQuiescentAndNoMixedWork) { throw '展開元の所有者が利用中プロセスなし・他作業混在なしを確認してから -OwnerAttestsQuiescentAndNoMixedWork を指定してください。' }
-if (-not $IsWindows -or [Threading.Thread]::CurrentThread.ApartmentState -ne 'STA') { throw 'Windowsでは pwsh -STA -NoProfile -File build/Compact-Evidence.ps1 で実行してください。圧縮だけなら CompactEvidence.py を使用できます。' }
-$repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-$allowedRoots = @([IO.Path]::GetFullPath((Join-Path $repoRoot 'artifacts')))
+if (-not $IsWindows) { throw 'Windowsでは pwsh -NoProfile -File build/Compact-Evidence.ps1 で実行してください。圧縮だけなら CompactEvidence.py を使用できます。' }
+. "$PSScriptRoot/DevelopmentOutput.ps1"
+$workRoot = Get-DiffBeaconWorkRoot
+if (-not $workRoot) { $workRoot = Join-Path ([IO.Path]::GetTempPath()) 'Codex/DiffBeacon' }
+Assert-DiffBeaconEnvironment (Get-DiffBeaconWorkRoot)
+$allowedRoots = @($workRoot)
 $allowedRoots += @($AdditionalEvidenceRoot | ForEach-Object { [IO.Path]::GetFullPath($_).TrimEnd('\', '/') })
 
 function Assert-NoLink([string]$Path) {
@@ -35,8 +38,11 @@ function Assert-Source([string]$Path) {
     return $full
 }
 
-$archivePath = [IO.Path]::GetFullPath($ArchiveRoot).TrimEnd('\', '/')
+$archivePath = Assert-DiffBeaconPath $ArchiveRoot $workRoot
 Assert-NoLink $archivePath
+if (-not $CompressOnly -and $archivePath -match '[^A-Za-z0-9_:\\./-]') { throw 'Prunlet paths-fileのCMD引数に使える空白/特殊文字なしのArchiveRootを指定してください。' }
+$indexPath = Join-Path $archivePath 'index.json'
+$null = Assert-DiffBeaconPath $indexPath $workRoot -AllowFileLeaf
 $sources = @($SourcePath | ForEach-Object { Assert-Source $_ })
 if ($ExistingArchive -and $sources.Count -ne 1) { throw '途中ZIPの再照合は入力1件に限ります。' }
 if (@($sources | Select-Object -Unique).Count -ne $sources.Count) { throw '重複した入力を拒否します。' }
@@ -56,7 +62,8 @@ New-Item -ItemType Directory -Path $archivePath -Force | Out-Null
 foreach ($source in $sources) {
     Assert-Source $source | Out-Null
     $id = [guid]::NewGuid().ToString('N')
-    $name = "$(Split-Path -Path $source -Leaf)-$id"
+    $safeLeaf = [regex]::Replace((Split-Path -Path $source -Leaf), '[^A-Za-z0-9_-]', '_')
+    $name = "$safeLeaf-$id"
     $archive = Join-Path $archivePath "$name.zip"
     $reportPath = Join-Path $archivePath "$name.json"
     $extraArguments = @()
@@ -67,24 +74,38 @@ foreach ($source in $sources) {
         $reportPath = [IO.Path]::ChangeExtension($archive, '.json')
         $extraArguments = @('--verify-existing')
     }
-    & $PythonPath -X utf8 (Join-Path $PSScriptRoot 'CompactEvidence.py') --source $source --archive $archive --report $reportPath @extraArguments
+    $logPath = Join-Path $archivePath "$name.compress.log"
+    $null = Assert-DiffBeaconPath $archive $workRoot -AllowFileLeaf
+    $null = Assert-DiffBeaconPath $reportPath $workRoot -AllowFileLeaf
+    $null = Assert-DiffBeaconPath $logPath $workRoot -AllowFileLeaf
+    & $PythonPath -B -X utf8 (Join-Path $PSScriptRoot 'CompactEvidence.py') --source $source --archive $archive --report $reportPath @extraArguments 2>&1 | Tee-Object -FilePath $logPath
     if ($LASTEXITCODE -ne 0) { throw "圧縮照合に失敗。元データを保持: $source; 途中ZIP: $archive" }
     $report = Get-Content -LiteralPath $reportPath -Raw | ConvertFrom-Json
     if ($report.source -ne $source -or $report.archive -ne $archive -or
         -not $report.sourceUnchanged -or -not $report.allFileHashesVerified -or $report.files -ne $report.verifiedFiles) { throw '除去前の照合条件を満たしません。' }
     if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ne $report.archiveSha256) { throw '照合後のZIPが変化しました。' }
     Assert-Source $source | Out-Null
-    # 全entry照合後も、ごみ箱への移動と今回項目の完全消去を別々に記録する。
-    $cleanupPath = Join-Path $archivePath "$name-recycle-clean.json"
-    $evidenceRoot = @($allowedRoots | Where-Object { $source.StartsWith($_ + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) } | Sort-Object Length -Descending)[0]
-    if (-not (Test-Path -LiteralPath $WindowsCleanupHelper -PathType Leaf)) { throw '指定されたWindows共通清掃ヘルパーがないため、展開元とZIPを保持します。' }
-    & $WindowsCleanupHelper -AllowedRoot $evidenceRoot -LiteralPath @($source) -LedgerPath $cleanupPath
-    $cleaned = Get-Content -LiteralPath $cleanupPath -Raw | ConvertFrom-Json
-    if ($cleaned.state -ne 'complete' -or @($cleaned.items | Where-Object { -not $_.sourceAbsent -or -not $_.recycleAbsent -or -not $_.metadataAbsent }).Count -gt 0) { throw '元データ・ごみ箱実体・管理情報の消失を確認できません。' }
-    if (Test-Path -LiteralPath $source) { throw "展開元が残っています: $source" }
-    $report.sourceRemoved = $true
-    $report | Add-Member -NotePropertyName cleanupProtocol -NotePropertyValue 'recycle-exact-item-purge' -Force
-    $report | Add-Member -NotePropertyName cleanupReport -NotePropertyValue $cleanupPath -Force
-    $report | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $reportPath -Encoding utf8NoBOM
-    $report | ConvertTo-Json -Depth 6 -Compress
+    # PowerShellから削除を呼び出さない。正規Prunletは呼出側がCMD直接で実行する。
+    $entry = [ordered]@{ source=$source; archive=$archive; report=$reportPath; archiveSha256=$report.archiveSha256; files=$report.files; bytes=$report.sourceBytes; log=$logPath; sourceRemoved=$false; cleanupState='not-requested' }
+    if (-not $CompressOnly) {
+        $pathsPath = Join-Path $archivePath "$name.paths.json"
+        $resultPath = Join-Path $archivePath "$name.delete.json"
+        foreach ($output in @($pathsPath, $resultPath)) { $null = Assert-DiffBeaconPath $output $workRoot -AllowFileLeaf }
+        if (Test-Path -LiteralPath $pathsPath) { throw '既存paths-fileを上書きしません。' }
+        $pathsJson = ConvertTo-Json -InputObject @($source)
+        [IO.File]::WriteAllText($pathsPath, $pathsJson, [Text.UTF8Encoding]::new($false))
+        $entry.cleanupState = 'awaiting-prunlet-cmd-direct'
+        $entry.pathsFile = $pathsPath
+        $entry.deleteResult = $resultPath
+        $entry.command = "C:\Users\IMT\.local\Prunlet\bin\prunlet.exe --config C:\Users\IMT\.local\Prunlet\config.json delete --recursive --paths-file $pathsPath > $resultPath"
+    }
+    $index = if (Test-Path -LiteralPath $indexPath) { Get-Content -LiteralPath $indexPath -Raw | ConvertFrom-Json } else { [pscustomobject]@{ schema=1; entries=@() } }
+    if ($index.schema -ne 1 -or $null -eq $index.entries) { throw '既存indexのschemaが不明なため更新しません。' }
+    $index.entries = @($index.entries) + @([pscustomobject]$entry)
+    $null = Assert-DiffBeaconPath $indexPath $workRoot -AllowFileLeaf
+    $json = $index | ConvertTo-Json -Depth 10
+    $encoded = [Text.UTF8Encoding]::new($false).GetBytes($json)
+    $stream = [IO.File]::Open($indexPath, [IO.FileMode]::Create, [IO.FileAccess]::Write, [IO.FileShare]::Read)
+    try { $stream.Write($encoded, 0, $encoded.Length); $stream.Flush($true) } finally { $stream.Dispose() }
+    [pscustomobject]$entry | ConvertTo-Json -Depth 6 -Compress
 }

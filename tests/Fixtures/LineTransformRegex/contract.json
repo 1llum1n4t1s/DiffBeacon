@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "legacyCaseCount": 325,
+  "legacyGoldenSha256": "edff508973ae736fba73d6ad44cb76228524e9d99445a6107d693551b6a44ced",
+  "addedFunction": "regexreplace",
+  "addedCaseCount": 107,
+  "oracle": "Unmodified RegexReplaceFunc, regexSubst overloads, Poco subst/substOne and inline overload, PCRE2 source, selected optimizer branch; MSVC x64.",
+  "assertions": [
+    "Original 325 input/result ordering and native stdout bytes remain unchanged.",
+    "All added results, exception phases and native error bytes are captured rather than synthesized.",
+    "Intermediate unmatched capture throws std::out_of_range; trailing unmatched capture references yield empty bytes.",
+    "All raw source Git blobs, extraction byte ranges and archive entry SHA/size/CRC are verified.",
+    "Separate recompilation stdout must match all 432 cases byte for byte.",
+    "RegexReplace(\"é😀a\", \"(?:)\", \"X\") is captured in no-opt and selected optimizer modes to expose the none-to-string fold failure."
+  ],
+  "exceptionAdapter": "Poco regex/assertion and std::bad_variant_access/std::out_of_range are distinguished. Existing std::exception label remains for ThrowNode runtime_error to preserve original 325 rows."
+}

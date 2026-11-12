@@ -32,9 +32,10 @@ public static partial class DirectoryComparer
             options.EntryTypeValidator?.Invoke(root, DirectoryEntryKind.Directory);
         }
         var comparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
-        var left = Scan(leftPath, options, comparer, cancellationToken);
-        var middle = Scan(middlePath, options, comparer, cancellationToken);
-        var right = Scan(rightPath, options, comparer, cancellationToken);
+        var scannedSides = ScanSides([leftPath, middlePath, rightPath], options, comparer, cancellationToken);
+        var left = scannedSides[0];
+        var middle = scannedSides[1];
+        var right = scannedSides[2];
         var relativePaths = left.Keys.Union(middle.Keys, comparer).Union(right.Keys, comparer).Order(comparer).ToArray();
         if (relativePaths.Length > options.MaximumEntries)
             throw new InvalidDataException("フォルダー比較の項目数の上限を超えています。");
@@ -221,8 +222,19 @@ public static partial class DirectoryComparer
         else if (options.Mode == DirectoryComparisonMode.TimeAndSize) equal = first.Size == second.Size && first.LastWriteTimeUtc == second.LastWriteTimeUtc;
         else if (options.Mode == DirectoryComparisonMode.Content)
         {
-            var content = await CompareThreeWayContentAsync(first, second, null, options.TextOptions, options.MaximumContentBytes, token).ConfigureAwait(false);
-            equal = content.MiddleLeftEqual;
+            // 型衝突で残るファイル同士も、変換対象は実際の三者ペインを維持する。
+            var states = new DirectorySideSnapshot?[3];
+            states[(int)pair.First] = first;
+            states[(int)pair.Second] = second;
+            var content = await CompareThreeWayContentAsync(states[0], states[1], states[2],
+                options.TextOptions, options.MaximumContentBytes, token).ConfigureAwait(false);
+            equal = (pair.First, pair.Second) switch
+            {
+                (DirectorySide.Middle, DirectorySide.Left) => content.MiddleLeftEqual,
+                (DirectorySide.Middle, DirectorySide.Right) => content.MiddleRightEqual,
+                (DirectorySide.Left, DirectorySide.Right) => content.LeftRightEqual,
+                _ => throw new ArgumentOutOfRangeException(nameof(pair))
+            };
         }
         else if (first.Size != second.Size) equal = false;
         else

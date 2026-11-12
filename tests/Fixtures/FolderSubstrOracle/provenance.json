@@ -1,0 +1,48 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "upstream": "https://github.com/WinMerge/winmerge",
+  "copiedFrom": "tests/Fixtures/FolderStrSearchOracle/original (unchanged pinned Git blobs)",
+  "sources": [
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "file": "original/FilterExpressionNodes.cpp",
+      "blob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "file": "original/FilterExpressionNodes.h",
+      "blob": "c5533753a5d4f3200f077e0302cc28c2f3871cc9",
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Src/FilterEngine/FilterParser.y",
+      "file": "original/FilterParser.y",
+      "blob": "2cc89832aee98ab0f6932396eb17b683c5267380",
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Src/COPYING",
+      "file": "original/COPYING",
+      "blob": "7d1f8605f8f722063883b7feefec942fe2f28206",
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900",
+      "localBytesMatch": true,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    }
+  ],
+  "boundary": "Native function bodies/helpers only. Explicit typed literal/throw node bindings. No legacy parser, FunctionNode constructor, Optimize, folder loader/scanner, managed evaluator or public .flt execution."
+}

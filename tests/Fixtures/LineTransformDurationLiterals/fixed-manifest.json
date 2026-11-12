@@ -1,0 +1,176 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "adapter.cpp",
+      "size": 7861,
+      "sha256": "1fc9e6c859e1973e8516bae8b4ab7892102569ca65d478ddb2ab8976cb67ac00"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Ascii.h",
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/String.h",
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Timestamp.h",
+      "size": 6256,
+      "sha256": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Types.h",
+      "size": 4608,
+      "sha256": "a9aa7e44ea8ff34d8c97aba0fc8fb6719b788cec13314844ccd8e204c9192a20"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Ascii.cpp",
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Timestamp.cpp",
+      "size": 3853,
+      "sha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19"
+    },
+    {
+      "path": "additional-original/Src/FileTransform.cpp",
+      "size": 51547,
+      "sha256": "a37500cf3ad1e1713752474a9d3e3e400e4ed3806c23ef22d220fdbdf7f6f599"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterError.h",
+      "size": 1391,
+      "sha256": "160a03bf7f2a0ed0a4db66a3d5211a8dccd7445e7eb0d2b7fd640c3fa914fa2b"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterExpression.cpp",
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterExpression.h",
+      "size": 3539,
+      "sha256": "115ff8a8cef7760ae6a2019b57ab6c760a55fe6b4484c1e1c4c5a9cf845b0f0c"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterLexer.re",
+      "size": 3901,
+      "sha256": "36b06326ab1d6569b74a64edc071829cbe314d3543b7f6b70249e4d4d244a1c6"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterParser.y",
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/ILineDataProvider.h",
+      "size": 1300,
+      "sha256": "841545932977bc270fb7d2a61f421fe9930c285200502e619e9061f77f8f555b"
+    },
+    {
+      "path": "capture.py",
+      "size": 6079,
+      "sha256": "a7cb81bb15e7f475f09a5395a3de80aa01becdefbed38dfbd7ef7f3642c10ab7"
+    },
+    {
+      "path": "cases.inc",
+      "size": 14219,
+      "sha256": "3c2b013b0cff562e71fa9bb1fd1dcbe2b8b92d3ef0a3f5d877c99da162bf8d4c"
+    },
+    {
+      "path": "cases.json",
+      "size": 34715,
+      "sha256": "feea95d76203ca2ebd72fa5729f166a803163e792be661e87665b6c964883857"
+    },
+    {
+      "path": "extractions.json",
+      "size": 22134,
+      "sha256": "f992845867c4c027f5b4126f7a7f2d088be9b6d6118d15b1c7670017b7ec2799"
+    },
+    {
+      "path": "generate-public-plan.py",
+      "size": 2541,
+      "sha256": "b3003671d2c782796c9ef74b49650a277b5900c1fc1f9c7e2e2e52b87ebe5589"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 46554,
+      "sha256": "bbd10685c14154365a905239292b0fcd3024d31ab70cd7eaf96b7d5453693aec"
+    },
+    {
+      "path": "LICENSE-GPL-2.0.md",
+      "size": 17895,
+      "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e"
+    },
+    {
+      "path": "LICENSE-Poco-BSL-1.0.txt",
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    {
+      "path": "native-evidence/native-proof-manifest.json",
+      "size": 25623,
+      "sha256": "6130edf38f5b4e6f127020fd58f6efbb2de865a0b26db432b30c5cc3514c743a"
+    },
+    {
+      "path": "native-evidence/native-proof.zip",
+      "size": 423787,
+      "sha256": "faf6aade2043c2845ea4ec9b268f523426cb7712913bde699a38a9054c377d8e"
+    },
+    {
+      "path": "public-case-plan.json",
+      "size": 301122,
+      "sha256": "e891e218b68d8501d31fa38ff84a16806f6913df60a28b8b48a96b0dadd70ab9"
+    },
+    {
+      "path": "public-probes-and-boundaries.json",
+      "size": 5827,
+      "sha256": "fc7b7ebd5d1146f1c7f95660199ee8c87f181ed7299b74af67b0620132484f18"
+    },
+    {
+      "path": "README.md",
+      "size": 7091,
+      "sha256": "7902f0141bcf9eed2f739d66607adbc0ff1e03d6f8d23c460ffbae67813f7c48"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 1087,
+      "sha256": "2fb208fa6926c2eab81edff31cfa9e5f2228f5b4afdb4e3cdc0b53d9161bd170"
+    },
+    {
+      "path": "scope.json",
+      "size": 730,
+      "sha256": "cd6a6e42817b8caadba41d89b86efad7811b46c0f78a744cab0d44f5254958fc"
+    },
+    {
+      "path": "source-manifest.json",
+      "size": 6521,
+      "sha256": "13162323ccb65e4d102b654c687a3d177f33e68319447c507aaf5fb25c15a51e"
+    },
+    {
+      "path": "verify-public.py",
+      "size": 17711,
+      "sha256": "1adc07375682565603436f6509acb59e41d3d760ebb66c978caf62ff035a9bdb"
+    },
+    {
+      "path": "verify.py",
+      "size": 9418,
+      "sha256": "a92d2b1d40f76b568ea0ddff5ae4e7f023497bf83f9e7c12a1e608108716c63a"
+    }
+  ],
+  "proofArchiveSha256": "faf6aade2043c2845ea4ec9b268f523426cb7712913bde699a38a9054c377d8e",
+  "proofManifestSha256": "6130edf38f5b4e6f127020fd58f6efbb2de865a0b26db432b30c5cc3514c743a",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "goldenSha256": "bbd10685c14154365a905239292b0fcd3024d31ab70cd7eaf96b7d5453693aec",
+  "nativeCases": 106,
+  "proofDirectoryPolicy": "Essential proof ZIP and manifest only in local native-evidence; external receipts stay separate.",
+  "retention": "External formal draft for parent review; immutable original BASE30 unchanged."
+}

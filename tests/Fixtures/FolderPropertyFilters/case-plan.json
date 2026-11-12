@@ -1,0 +1,594 @@
+[
+  {
+    "id": "convert-empty",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-i4",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-ui4",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-i8",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-ui8-overflow",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-r8",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-r4-unsupported",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-wide",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-wide-empty",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-bool-0",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-bool--1",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-bool-1",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-bool-2",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-filetime-116444736000000000",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-filetime-116444736012345679",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-filetime-0",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-string-vector",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-string-vector-empty",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-byte-vector",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-byte-vector-empty",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-unsupported-1",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-unsupported-2",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-unsupported-8",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "convert-unsupported-4099",
+    "scope": "typed-conversion"
+  },
+  {
+    "id": "truth-scalar-integer",
+    "scope": "truth-predicate"
+  },
+  {
+    "id": "truth-scalar-string",
+    "scope": "truth-predicate"
+  },
+  {
+    "id": "truth-scalar-double",
+    "scope": "truth-predicate"
+  },
+  {
+    "id": "truth-array-integer",
+    "scope": "truth-predicate"
+  },
+  {
+    "id": "truth-array-true",
+    "scope": "truth-predicate"
+  },
+  {
+    "id": "truth-nested-true",
+    "scope": "truth-predicate"
+  },
+  {
+    "id": "truth-nested-string",
+    "scope": "truth-predicate"
+  },
+  {
+    "id": "side-1-0-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-1-0-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-1-0-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-1-0-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-1-1-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-1-1-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-1-1-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-1-1-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-0-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-0-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-0-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-0-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-1-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-1-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-1-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-1-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-2-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-2-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-2-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-2-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-3-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-3-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-3-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-2-3-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-0-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-0-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-0-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-0-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-1-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-1-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-1-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-1-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-2-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-2-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-2-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-2-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-3-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-3-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-3-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-3-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-4-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-4-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-4-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-4-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-5-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-5-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-5-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-5-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-6-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-6-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-6-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-6-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-7-prop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-7-leftprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-7-middleprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-3-7-rightprop",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-nested-keywords",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "side-unregistered",
+    "scope": "context-adapter-native-prop"
+  },
+  {
+    "id": "canonical-System.Size",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-system.size",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-System.FileName",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-System.NotARealProperty.20261017",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-Hash.MD5",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-Hash.SHA1",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-Hash.SHA256",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-hash.sha256",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-Hash.Sha256",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "canonical-",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "validation-null",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "validation-zero",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "validation-two",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "validation-nonliteral",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "validation-invalid",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "validation-valid",
+    "scope": "canonical-and-argument-validation"
+  },
+  {
+    "id": "file-empty.bin-mixed-System.Size",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-mixed-System.FileName",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-mixed-System.FileExtension",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-mixed-System.DateModified",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-mixed-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-mixed-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-mixed-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-hashonly-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-hashonly-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-empty.bin-hashonly-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-mixed-System.Size",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-mixed-System.FileName",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-mixed-System.FileExtension",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-mixed-System.DateModified",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-mixed-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-mixed-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-mixed-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-hashonly-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-hashonly-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-unicode-日本語.bin-hashonly-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-mixed-System.Size",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-mixed-System.FileName",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-mixed-System.FileExtension",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-mixed-System.DateModified",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-mixed-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-mixed-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-mixed-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-hashonly-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-hashonly-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-boundary.bin-hashonly-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-mixed-System.Size",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-mixed-System.FileName",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-mixed-System.FileExtension",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-mixed-System.DateModified",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-mixed-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-mixed-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-mixed-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-hashonly-Hash.MD5",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-hashonly-Hash.SHA1",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "file-absent.bin-hashonly-Hash.SHA256",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "cache-before",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "cache-after-file-change",
+    "scope": "real-windows-services"
+  },
+  {
+    "id": "cache-after-reset",
+    "scope": "real-windows-services"
+  }
+]

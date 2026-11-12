@@ -10,6 +10,7 @@ public sealed record FourPaneMaterializationSettings
     public string MiddleLabel { get; init; } = "middle";
     public string RightLabel { get; init; } = "right";
     public IReadOnlyList<bool?>? ExplicitUtf8Boms { get; init; }
+    public TextComparisonSourcePaths? SourcePaths { get; init; }
     public IReadOnlySet<int>? WhitespaceOnlyOriginalDiffIds { get; init; }
     public long MaximumRetainedCharacters { get; init; } = 64L * 1024 * 1024;
 }
@@ -58,7 +59,7 @@ public static class FourPaneMaterialization
         FourPaneMaterializationSettings settings, CancellationToken token = default)
     {
         options ??= new(); Validate(settings);
-        var generated = new FourPaneGenerator(options, token, settings.MaximumRetainedCharacters, FourPaneTextProfile.DecodedBody).GenerateTwoWay(left, right).Generation;
+        var generated = new FourPaneGenerator(options, token, settings.MaximumRetainedCharacters, FourPaneTextProfile.DecodedBody, settings.SourcePaths).GenerateTwoWay(left, right).Generation;
         return FromGeneration(generated, FourPaneInputMode.TwoWay, options, false, settings, token);
     }
     public static FourPaneMaterializedResult CreateThreeWay(string ancestor, string left, string right,
@@ -68,7 +69,7 @@ public static class FourPaneMaterialization
         ComparisonOptions? options, bool autoResolve, FourPaneMaterializationSettings settings, CancellationToken token = default)
     {
         options ??= new(); Validate(settings);
-        var generated = new FourPaneGenerator(options, token, settings.MaximumRetainedCharacters, FourPaneTextProfile.DecodedBody).Generate(ancestor, left, right);
+        var generated = new FourPaneGenerator(options, token, settings.MaximumRetainedCharacters, FourPaneTextProfile.DecodedBody, settings.SourcePaths).Generate(ancestor, left, right);
         return FromGeneration(generated, FourPaneInputMode.AncestorThreeWay, options, autoResolve, settings, token);
     }
     public static FourPaneMaterializedResult CreateIndependentThreeWay(string left, string middle, string right,
@@ -78,7 +79,7 @@ public static class FourPaneMaterialization
         ComparisonOptions? options, FourPaneMaterializationSettings settings, CancellationToken token = default)
     {
         options ??= new(); Validate(settings);
-        var generated = new FourPaneGenerator(options, token, settings.MaximumRetainedCharacters, FourPaneTextProfile.DecodedBody).Generate(middle, left, right);
+        var generated = new FourPaneGenerator(options, token, settings.MaximumRetainedCharacters, FourPaneTextProfile.DecodedBody, settings.SourcePaths).Generate(middle, left, right);
         return FromGeneration(generated, FourPaneInputMode.IndependentThreeWay, options, false, settings, token);
     }
     public static FourPaneMaterializedResult FromGeneration(GenerationResult generation, FourPaneInputMode mode,

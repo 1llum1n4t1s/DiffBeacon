@@ -1,0 +1,60 @@
+{
+  "files": {
+    ".gitattributes": {
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "adapter.cpp": {
+      "size": 4244,
+      "sha256": "7754f31b3e9025acbf502155d600c08a48091bb4dadca5aeefbba5963f9e8206"
+    },
+    "boundaries.md": {
+      "size": 3688,
+      "sha256": "fb3bd4944d0e9e98ccecc03f381a1057e215b81094873ba8c0ee23e05c05b6ad"
+    },
+    "capture-index.json": {
+      "size": 409,
+      "sha256": "0d3ab36b5b4a70499b2296506f85e84eaf980864af2fbb09767e386b3df8c218"
+    },
+    "cases.json": {
+      "size": 72430,
+      "sha256": "56724edc3707c4bb8874ab20c9532c20c1d82590ed447bf5de60e8cd84adb5ff"
+    },
+    "failure-matrix.md": {
+      "size": 1312,
+      "sha256": "ad9208511e9e57ea329af6df577737f972e9861dfbd1087dc127384608d0b46e"
+    },
+    "golden.ndjson": {
+      "size": 28051,
+      "sha256": "2b65c7145716f0ed30a9fd63e1523574989b70be011188c98bffbe2c9a175cc1"
+    },
+    "original/COPYING": {
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    "original/FilterExpressionNodes.cpp": {
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    "original/FilterExpressionNodes.h": {
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    "original/FilterParser.y": {
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    "provenance.json": {
+      "size": 1936,
+      "sha256": "bd96a37fb4a5c331b9506a52b77bcaf525fa84a62d7de27a32166c4e9e25da49"
+    },
+    "reproduce.py": {
+      "size": 4610,
+      "sha256": "cc70add2e4cb62f24b365a1288b5cf6d072ea10420ef19130cfdcaf95f63e6fb"
+    },
+    "verify.py": {
+      "size": 6078,
+      "sha256": "38226505def070012c322ea49772967c7de0cba547111132863f90a1365baa24"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "nativeSerializedCases": 60,
+  "nativeQuoteCases": 60,
+  "quoteProbes": 8,
+  "publicClassification": {
+    "proposedQuotedInputs": 59,
+    "constructorOnlyNulRejected": 1
+  },
+  "runtime": [
+    "unchanged Version ctor/Evaluate int64",
+    "unchanged ToStringValue int64 branch only",
+    "unchanged UnescapeQuotes direct method",
+    "original FilterLexer ctor and empty FreeStrings dtor"
+  ],
+  "staticOnly": [
+    "v/V case-insensitive re2c flag and version rule",
+    "getConstIntValue numeric constructor origins",
+    "Negate Optimize",
+    "IsArrayConst",
+    "Function Optimize Abs/At/Substr/StrFind"
+  ],
+  "unexecuted": [
+    "yylex",
+    "parser/directives",
+    "full native serializer",
+    "typed context",
+    "whole AST/Optimize equivalence",
+    "actual public producer"
+  ],
+  "adapterBoundaries": [
+    "Timestamp/regex/FileContent stub constructors or accessed formatter throw std::logic_error",
+    "int64 original ValueType arm index3 and full original alias unchanged",
+    "FilterEvalContext empty stub ignored by original Version Evaluate",
+    "quote body doubles only doublequote and appends closer; byte transport hex only",
+    "adapter output formatting distinct from original serializer"
+  ],
+  "exclusions": "raw60 exclusions/values unchanged; no numeric golden computation",
+  "retention": "minimal KEEP supplement for parent review; own Temp cleanup waits parent exact GO"
+}

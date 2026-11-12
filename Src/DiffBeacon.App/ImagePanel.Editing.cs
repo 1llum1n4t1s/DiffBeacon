@@ -9,6 +9,7 @@ public static partial class SpecializedViews
     {
         private ImageEditSession? _editSession;
         private bool[] _readOnly = [];
+        private bool[] _fixedReadOnly = [];
         private string[] _paths = [];
         private readonly HashSet<string> _originPaths = new(StringComparer.Ordinal);
         private Func<IEnumerable<string>>? _protectedPaths;
@@ -40,9 +41,14 @@ public static partial class SpecializedViews
         }
 
         internal void ConfigureEditing(IReadOnlyList<string> paths, IReadOnlyList<bool> readOnly,
-            Func<IEnumerable<string>>? protectedPaths = null, Action<string>? outputGuard = null, Action<int, string>? savedPath = null)
+            Func<IEnumerable<string>>? protectedPaths = null, Action<string>? outputGuard = null, Action<int, string>? savedPath = null,
+            IReadOnlyList<bool>? fixedReadOnly = null)
         {
             if (paths.Count != _counts.Length) throw new ArgumentException("画像パスの指定数が入力数と一致しません。");
+            if (fixedReadOnly is not null && fixedReadOnly.Count != _counts.Length) throw new ArgumentException("固定読取り専用の指定数が入力数と一致しません。");
+            if (_fixedReadOnly.Length == 0) _fixedReadOnly = new bool[_counts.Length];
+            if (fixedReadOnly is not null)
+                for (var pane = 0; pane < _counts.Length; pane++) _fixedReadOnly[pane] |= fixedReadOnly[pane];
             _paths = paths.ToArray();
             var initialProtection = paths.Concat(protectedPaths?.Invoke() ?? []).ToArray();
             foreach (var path in initialProtection) if (!string.IsNullOrWhiteSpace(path)) _originPaths.Add(path);
@@ -54,7 +60,11 @@ public static partial class SpecializedViews
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
             if (values.Count != _counts.Length) throw new ArgumentException("読取り専用の指定数が入力数と一致しません。");
-            for (var pane = 0; pane < values.Count; pane++) { _readOnly[pane] = values[pane]; _editSession?.SetReadOnly(pane, values[pane]); }
+            for (var pane = 0; pane < values.Count; pane++)
+            {
+                _readOnly[pane] = values[pane] || _fixedReadOnly.Length != 0 && _fixedReadOnly[pane];
+                _editSession?.SetReadOnly(pane, _readOnly[pane]);
+            }
             if (_resizeMode != 0 && _dragPane >= 0 && _readOnly[_dragPane]) CancelRectangleInteraction();
             UpdateRectangleVisuals();
             UpdateNavigation();
@@ -87,7 +97,7 @@ public static partial class SpecializedViews
             AddEditButton(panel, "ImageRedo", "やり直す", "redo", () => RedoEditAsync());
             AddEditButton(panel, "ImageCancelEdit", "中止", "cancel", () => { _operationCancellation?.Cancel(); _saveCancellation?.Cancel(); CancelDisplayDrag(); CancelRectangleInteraction(); return Task.CompletedTask; });
             AddRectangleControls(panel);
-            AddEditButton(panel, "ImageSavePng", "PNGで別名保存…", "save", PickPngAsync);
+            AddEditButton(panel, "ImageSavePng", "PNG/TIFFで別名保存…", "save", PickImageAsync);
             return panel;
         }
 
@@ -114,9 +124,9 @@ public static partial class SpecializedViews
         private void RequireEditing()
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
-            if (_saving) throw new InvalidOperationException("PNG保存が完了してから画像を編集してください。");
+            if (_saving) throw new InvalidOperationException("画像保存が完了してから画像を編集してください。");
             if (_editSession is null || _resetEditing || _counts.Any(count => count != 1))
-                throw new InvalidOperationException("画像コピーとPNG保存は、読込みが完了した静止画の比較で使用してください。");
+                throw new InvalidOperationException("画像コピーと別名保存は、読込みが完了した静止画の比較で使用してください。");
         }
 
         private Task EditAsync(Action<ImageEditSession, CancellationToken> edit, int writablePane, CancellationToken token)
@@ -161,7 +171,7 @@ public static partial class SpecializedViews
         internal async Task SaveToAsync(int pane, string output, CancellationToken token = default)
         {
             RequireEditing();
-            if (HasFloatingImage || _clipboardBusy) throw new InvalidOperationException("貼り付けを確定し、クリップボード操作が完了してからPNGを保存してください。");
+            if (HasFloatingImage || _clipboardBusy) throw new InvalidOperationException("貼り付けを確定し、クリップボード操作が完了してから画像を保存してください。");
             if (_operationCancellation is not null) throw new InvalidOperationException("画像の操作が完了してから保存してください。");
             if (pane < 0 || pane >= _counts.Length) throw new ArgumentOutOfRangeException(nameof(pane));
             if (_readOnly[pane]) throw new InvalidOperationException("読取り専用の画像を保存できません。");
@@ -185,24 +195,29 @@ public static partial class SpecializedViews
                 _snapshots![pane] = saved; _paths[pane] = target;
                 _savedPath?.Invoke(pane, target);
                 session.MarkSaved(pane);
-                _status.Text = "原画をPNGで保存しました。";
+                _status.Text = IsTiffOutput(target) ? "原画を単ページTIFFで保存しました。" : "原画をPNGで保存しました。";
             }
             finally { _saving = false; _saveCancellation = null; if (!_disposed) UpdateNavigation(); }
         }
 
-        private async Task PickPngAsync()
+        private async Task PickImageAsync()
         {
             RequireEditing(); var top = TopLevel.GetTopLevel(this); if (top is null) return;
             var pane = _editPane.SelectedIndex;
             if (pane < 0 || pane >= _paths.Length) return;
+            var pngType = new FilePickerFileType("PNG") { Patterns = ["*.png"] };
+            var tiffType = new FilePickerFileType("TIFF") { Patterns = ["*.tif", "*.tiff"] };
             var file = await top.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
-                Title = "原画をPNGで別名保存", SuggestedFileName = Path.GetFileNameWithoutExtension(_paths[pane]) + "-edited.png",
-                FileTypeChoices = [new FilePickerFileType("PNG") { Patterns = ["*.png"] }], ShowOverwritePrompt = true
+                Title = "原画を別名保存", SuggestedFileName = Path.GetFileNameWithoutExtension(_paths[pane]) + "-edited.png",
+                DefaultExtension = "png", SuggestedFileType = pngType, FileTypeChoices = [pngType, tiffType],
+                ShowOverwritePrompt = true
             });
             if (file is null) return;
             await SaveToAsync(pane, file.TryGetLocalPath() ?? throw new IOException("ローカルの保存先を選択してください。"));
         }
+
+        private static bool IsTiffOutput(string path) => ImagePngStore.IsTiffTarget(path);
 
         private void UpdateEditControls()
         {

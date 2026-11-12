@@ -1,0 +1,43 @@
+{
+  "id": "native-run-2",
+  "sourcePreflightSha256": "83e066a78914d1527b33952e1c0643495b34e64b64e261748a8292a1840eb435",
+  "sourceSha256AtLaunch": null,
+  "command": [
+    "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\exe\\timestamp-boundary-capturer.exe"
+  ],
+  "pid": 22740,
+  "birthFileTime": 134362700497952726,
+  "osExitFileTime": 134362700498063195,
+  "birthValidatedOnHeldHandleAfterExit": true,
+  "handleHeldThroughOsExitAndBothEof": true,
+  "heldProcessHandle": 536,
+  "osExitCode": 0,
+  "pythonExitCode": 0,
+  "waitForSingleObjectResult": 0,
+  "launchUtc": "2026-10-12T09:14:09.794648+00:00",
+  "completedUtc": "2026-10-12T09:14:09.852139+00:00",
+  "stdout": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-2.stdout.bin",
+    "size": 57623,
+    "sha256": "d82712e9020c7a957653648a9c55eb88a6ece86820538ece1b5435b39391e5dc",
+    "eof": true,
+    "eofUtc": "2026-10-12T09:14:09.809829+00:00"
+  },
+  "stderr": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-2.stderr.bin",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "eof": true,
+    "eofUtc": "2026-10-12T09:14:09.806930+00:00"
+  },
+  "jobAssigned": true,
+  "jobAssignmentError": 0,
+  "jobKillOnClose": true,
+  "stopReason": null,
+  "terminationRequested": null,
+  "drainErrors": [],
+  "bytesBefore": 2624229,
+  "bytesAfter": 2681852,
+  "outputs": [],
+  "noResubmission": true
+}

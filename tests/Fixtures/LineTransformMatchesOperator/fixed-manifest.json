@@ -1,0 +1,40 @@
+{
+  "files": {
+    ".gitattributes": {
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "adapter.cpp": {
+      "size": 7259,
+      "sha256": "4fbe5ebc18307db9cc24c59c4f5558cf22387df69fdd712e25054bfe656b0c1f"
+    },
+    "capture.py": {
+      "size": 9656,
+      "sha256": "ed7b86d5d361c67d318ce14d73633469085af113026a621eafbd787ebf46ba1b"
+    },
+    "cases.json": {
+      "size": 38843,
+      "sha256": "7ceed92c28cf45f472f0a75249ff24c6b0ad35d82895b14c9f2ea97320975530"
+    },
+    "generate-cases.py": {
+      "size": 3416,
+      "sha256": "12b788d25f96a78a88022ed8b30213e7c1e81bba17a18458b6d87c2244fccff5"
+    },
+    "golden.ndjson": {
+      "size": 16961,
+      "sha256": "1e656f041600072588ac168fc4ad546eb2abbea78ca7e762c36b6e17ef5598ff"
+    },
+    "native-proof.zip": {
+      "size": 44335,
+      "sha256": "7da5f17c8a39b1c4c46c87d0b9b9f0c0dccef569d029798a1a19caa250084c7f"
+    },
+    "README.md": {
+      "size": 5540,
+      "sha256": "3baf9a1d825db472999900a923b89a55fa74975bacd04a7551eaa6e4126bd545"
+    },
+    "verify.py": {
+      "size": 5089,
+      "sha256": "0230e32eaa741a4cde378675123c98471afb33c22297ec091f91d7215af7637f"
+    }
+  }
+}

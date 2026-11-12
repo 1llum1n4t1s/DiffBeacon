@@ -39,7 +39,7 @@ public static class WordDiffer
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
         options ??= new();
-        ArgumentNullException.ThrowIfNull(options.Separators);
+        ValidateSeparators(options.Separators, nameof(options));
         if (!Enum.IsDefined(options.Whitespace) || !Enum.IsDefined(options.Eol))
             throw new ArgumentException("WordDiff options contain an unknown mode.", nameof(options));
         ArgumentOutOfRangeException.ThrowIfNegative(maxWork);
@@ -58,6 +58,13 @@ public static class WordDiffer
 
     private static WordDiffResult FullDifference(string left, string right, string reason)
         => new(Array.AsReadOnly(new[] { new WordDifference(new(0, left.Length), new(0, right.Length)) }), true, reason);
+
+    internal static void ValidateSeparators(string? separators, string parameterName)
+    {
+        ArgumentNullException.ThrowIfNull(separators, parameterName);
+        if (separators.Length > ComparisonOptions.MaximumWordBreakSeparatorsLength)
+            throw new ArgumentException($"区切り文字は {ComparisonOptions.MaximumWordBreakSeparatorsLength} 文字までです。", parameterName);
+    }
 
     private sealed class LimitException(string reason) : Exception
     {

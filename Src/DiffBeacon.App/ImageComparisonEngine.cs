@@ -100,6 +100,13 @@ internal static class ImageComparisonEngine
             content.Write(buffer.AsSpan(0, read));
         }
         var bytes = content.ToArray();
+        return await OpenBytesAsync(bytes, token);
+    }
+
+    internal static async Task<Snapshot> OpenBytesAsync(byte[] bytes, CancellationToken token)
+    {
+        token.ThrowIfCancellationRequested();
+        if (bytes.LongLength > MaximumFileBytes) throw new InvalidOperationException("画像ファイルの上限は各64 MiBです。");
         // フレーム情報の走査は native が行うため、UI スレッド上で実行しない。
         return await Task.Run(() =>
         {

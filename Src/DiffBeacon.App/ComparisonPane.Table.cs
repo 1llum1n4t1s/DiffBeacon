@@ -1,4 +1,5 @@
 using DiffBeacon.Core;
+using DiffBeacon.Providers;
 
 namespace DiffBeacon.App;
 
@@ -32,6 +33,28 @@ public sealed partial class ComparisonPane
 
     private DelimitedSyntax? _tableSyntax;
 
+    internal void SetTableHeaderPreference(bool enabled)
+    {
+        if (_specialTab.Content is TablePanel table) table.SetFirstRowAsHeaders(enabled);
+    }
+
+    internal void EnsureTableOptionsOutputWritable(string path)
+    {
+        EnsureFolderOptionsOutputWritable(path);
+        foreach (var source in new[] { LeftPath.Text, BasePath.Text, RightPath.Text })
+        {
+            if (string.IsNullOrWhiteSpace(source)) continue;
+            var localSource = source;
+            if (Uri.TryCreate(source, UriKind.Absolute, out var uri))
+            {
+                if (!uri.IsFile) continue;
+                localSource = uri.LocalPath;
+            }
+            if (ArchivePaths.SameFile(localSource, path))
+                throw new InvalidOperationException("表表示設定で比較入力を上書きできません。");
+        }
+    }
+
     private async Task<TableComparisonResult> CompareTableAsync()
     {
         var count = _baseText is null ? 2 : 3;
@@ -39,7 +62,15 @@ public sealed partial class ComparisonPane
         var syntax = _tableSyntax ?? new DelimitedSyntax(_projectMetadata.TableDelimiter ?? SpecializedViews.DetectSeparator(sources[0], sources[^1]),
             _projectMetadata.TableQuote ?? '"', _projectMetadata.TableAllowNewlinesInQuotes ?? true);
         var options = Options(); var token = _operation?.Token ?? CancellationToken.None;
-        var result = await Task.Run(() => StructuredComparer.CompareTables(sources, syntax, options, token), token);
+        var sourcePaths = CurrentTextSourcePaths();
+        var result = await Task.Run(() => StructuredComparer.CompareTablesWithSourcePaths(sources, sourcePaths, syntax, options, token), token);
+        token.ThrowIfCancellationRequested();
+        if (!options.TableColumnIgnoreRules.SequenceEqual(_projectMetadata.TableColumnIgnoreRules))
+            throw new OperationCanceledException("表の比較中に除外列の設定が変更されました。");
+        if (!options.TableColumnRangeRules.SequenceEqual(_projectMetadata.TableColumnRangeRules))
+            throw new OperationCanceledException("表の比較中に列範囲の設定が変更されました。");
+        if (!options.LineTransformRules.SequenceEqual(_projectMetadata.LineTransformRules))
+            throw new OperationCanceledException("表の比較中に行変換が変更されました。");
         if (sources.Where((source, side) => source != TableSource(side)).Any())
             throw new OperationCanceledException("表の比較中に本文が変更されました。");
         _tableSyntax = syntax;
@@ -55,14 +86,19 @@ public sealed partial class ComparisonPane
             var syntax = new DelimitedSyntax(_projectMetadata.TableDelimiter ?? SpecializedViews.DetectSeparator(sources[0], sources[^1]),
                 _projectMetadata.TableQuote ?? '"', _projectMetadata.TableAllowNewlinesInQuotes ?? true);
             var options = Options();
-            var comparison = await Task.Run(() => StructuredComparer.CompareTables(sources, syntax, options, token), token);
+            var comparison = await Task.Run(() => StructuredComparer.CompareTablesWithSourcePaths(sources, TextComparisonSources.ForProject(_projectMetadata, left, ancestor, right), syntax, options, token), token);
             TableReadyForAdoption?.Invoke();
             string Caption(string? value, string fallback) => string.IsNullOrWhiteSpace(value) ? fallback : value;
             var names = ancestor is null
                 ? new[] { Caption(_projectMetadata.LeftDescription, "左"), Caption(_projectMetadata.RightDescription, "右") }
                 : new[] { Caption(_projectMetadata.LeftDescription, "左"), Caption(_projectMetadata.BaseDescription, "祖先（読取り専用）"), Caption(_projectMetadata.RightDescription, "右") };
+            var applicationOptions = (_owner as MainWindow)?.TableOptions ?? new TableApplicationOptionsStore();
             return (new TablePanel(comparison, TableSource, TableReadOnly, WriteTableSource, RestoreTableSource, CompareTableAsync, names,
-                () => _operation?.Token ?? CancellationToken.None), comparison.Documents[0].Syntax);
+                () => _operation?.Token ?? CancellationToken.None, applicationOptions,
+                () => _projectMetadata.TableColumnIgnoreRules,
+                rules => _projectMetadata = _projectMetadata with { TableColumnIgnoreRules = WorkspaceStore.CloneTableColumnIgnoreRules(rules) },
+                () => _projectMetadata.TableColumnRangeRules,
+                rules => _projectMetadata = _projectMetadata with { TableColumnRangeRules = WorkspaceStore.CloneTableColumnRangeRules(rules) }), comparison.Documents[0].Syntax);
         }
         catch (FormatException exception)
         { return (new Avalonia.Controls.TextBlock { Text = exception.Message, TextWrapping = Avalonia.Media.TextWrapping.Wrap }, null); }

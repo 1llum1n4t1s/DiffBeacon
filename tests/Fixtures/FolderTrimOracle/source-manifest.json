@@ -1,0 +1,47 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "sources": [
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+      "blob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736",
+      "blob": "c5533753a5d4f3200f077e0302cc28c2f3871cc9"
+    },
+    {
+      "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+      "size": 3853,
+      "sha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19",
+      "blob": "bf612e7f1775ee688a112523d404ffa0ec57d6bd"
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/Timestamp.h",
+      "size": 6256,
+      "sha256": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1",
+      "blob": "cb7ae662db95afd24f558292b55f667234cb2604"
+    },
+    {
+      "path": "LICENSE.md",
+      "size": 17895,
+      "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e",
+      "blob": "28fbecabf5c0c4489cdd781e297cdf1c4cd7fde6"
+    },
+    {
+      "path": "Externals/poco/LICENSE",
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5",
+      "blob": "2f2f957ce4f48733875f0791d0d383e8d9319205"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpression.cpp",
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e",
+      "blob": "538df75d94f20e191f0dea9847d9b1f562ec7b8f"
+    }
+  ]
+}

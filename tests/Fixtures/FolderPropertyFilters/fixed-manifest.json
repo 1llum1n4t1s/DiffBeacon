@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "files": {
+    ".gitattributes": {
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "adapter.cpp": {
+      "size": 10666,
+      "sha256": "fc3f746bb0b00aa838a000a004579584d2e4f8ac3ec5cf9d52aee58de64fdb7d"
+    },
+    "capture.py": {
+      "size": 9931,
+      "sha256": "4ed4640e020e1dc29fb7dd0e32eecf7c7842da5c4e5a10b4d8cd3d3c027a36e4"
+    },
+    "case-plan.json": {
+      "size": 12705,
+      "sha256": "6e1066e6390094fd14e8267f5b404107d523886cc99777309ecec79b3523c8f1"
+    },
+    "failure-matrix.json": {
+      "size": 1358,
+      "sha256": "bb246e46cd93f5205cd3b5db89e5c09de92e57d808b2a918e1652d26339c8e13"
+    },
+    "freeze.py": {
+      "size": 2392,
+      "sha256": "2be7d83be22c8290cf85900192926306444873c6e5dfba9cd24a6f2b5c0f21a6"
+    },
+    "golden.ndjson": {
+      "size": 19627,
+      "sha256": "c2fa2b016932c823ab0e7de0fc0870e581bceebd43925832c7352b2abdcc077e"
+    },
+    "input-manifest.json": {
+      "size": 646,
+      "sha256": "a816752bfd0c0e955be3cd58c1c6223d9aa09465c5baaee1b9ed8cda693b6834"
+    },
+    "input.zip": {
+      "size": 1307,
+      "sha256": "2702d98f27fd09ac57e0f6ae49de9e614ce9b447a684e8a9b89eea96659df653"
+    },
+    "native-proof.zip": {
+      "size": 29398,
+      "sha256": "769742c4f1d071ba2383b1fc3899abb67f5dff1421e77a5d2a333e2688c70547"
+    },
+    "provenance.json": {
+      "size": 5357,
+      "sha256": "420eff850e29caec1168fe1622349af447de93aab0835eceb716f139ca662742"
+    },
+    "README.md": {
+      "size": 7864,
+      "sha256": "9bd87eee85b96cf5372c47d2d888c2af22cf908fb1ebdb2db60404d42cc81136"
+    },
+    "reference-source.zip": {
+      "size": 46399,
+      "sha256": "a77f71a72f05b8fa9bc7500997f0112410997752f073b0cfc73dd6d57ad35d20"
+    },
+    "reproduce.py": {
+      "size": 823,
+      "sha256": "89fca32c6fddca4f5808977b67847b8a8c1f0f28a89706b9a3af92434134cd1e"
+    },
+    "source-manifest.json": {
+      "size": 2743,
+      "sha256": "be3c2f4b3f367dc6c7798cc5f7a8f7075df08f9f8fd33e95abd8bdd334eacd40"
+    },
+    "verify.py": {
+      "size": 6995,
+      "sha256": "04c06a935c52663e8fd19c3e36fbda0f9daf5a7df6ed2c3c787a745620371a2b"
+    }
+  }
+}

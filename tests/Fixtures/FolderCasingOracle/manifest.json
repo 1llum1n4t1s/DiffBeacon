@@ -1,0 +1,104 @@
+{
+  "files": [
+    {
+      "file": ".gitattributes",
+      "size": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "file": "adapter.cpp",
+      "size": 4870,
+      "sha256": "d3e8a7c0b7d73d50c48e8e3d1874987a7ff4fd61638150752b802d3a6ec59f0d"
+    },
+    {
+      "file": "capture-index.json",
+      "size": 6125,
+      "sha256": "8b55d17eef3d3c91569ceb003f6768b0d9fa66b6c2fb70a88918e0ebb91d50ff"
+    },
+    {
+      "file": "cases.json",
+      "size": 18791,
+      "sha256": "e251a9a0619cce7412a564d2b3967fc1b581b55cc514d52d34ab23f731c1a5be"
+    },
+    {
+      "file": "failure-matrix.md",
+      "size": 563,
+      "sha256": "a08e4d32f40354ce2ce4f68f13c93b97e9a26feb00fd43368dd8d3f594a366ee"
+    },
+    {
+      "file": "golden.ndjson",
+      "size": 9378,
+      "sha256": "8b770bbb1abc5dbfd0b3fe4323b2eaf5827363bcf5d505ae36d0dbb68618cca8"
+    },
+    {
+      "file": "original/COPYING",
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    {
+      "file": "original/FilterExpressionNodes.cpp",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    {
+      "file": "original/Poco-LICENSE",
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    {
+      "file": "original/TextIterator.cpp",
+      "size": 2796,
+      "sha256": "8b4c092d5a637bd1487f08819df6548516f6bbb7b55ea7a0d8a7f6b8d6183cb8"
+    },
+    {
+      "file": "original/TextIterator.h",
+      "size": 3416,
+      "sha256": "5b0a46eb888ef9450792b69b474c3bab72049dce6812bcd6449a977fe91943ba"
+    },
+    {
+      "file": "original/UnicodeConverter.cpp",
+      "size": 3652,
+      "sha256": "60813871b28d2f6f5f6e8e2f0d318276ad337bf5b930d1184805a8d96b477be9"
+    },
+    {
+      "file": "original/UnicodeConverter.h",
+      "size": 4193,
+      "sha256": "21f97e1c1ff15af01065f45a7af0ab3d3f14be19a66f94586b516cc92dad0a1a"
+    },
+    {
+      "file": "original/unicoder.cpp",
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7"
+    },
+    {
+      "file": "original/UTF8Encoding.cpp",
+      "size": 5654,
+      "sha256": "d61f56ed798ebc3776459979b49246527a16796fa143aec289082722a0ffdeef"
+    },
+    {
+      "file": "poco-specs.json",
+      "size": 2039,
+      "sha256": "6883ba6b3bdbf35ee3d0009eac0131a44b6edfd4ad048ad7a65da6c91e4773ec"
+    },
+    {
+      "file": "provenance.json",
+      "size": 3011,
+      "sha256": "d4ec0375bb0cdd63e322403e7e85e500ec9cc70b2cc74dea76e6f5210018ca65"
+    },
+    {
+      "file": "README.md",
+      "size": 4099,
+      "sha256": "d5f130e2aa22dcb5018844f2b6091db305a9f0a7093f12fe0da5e72d94cf01a7"
+    },
+    {
+      "file": "reproduce.py",
+      "size": 6174,
+      "sha256": "40a9a60bbda59bb69e88475068ed5dc43c7324a97ecd98568b9379f84cdb6c7c"
+    },
+    {
+      "file": "verify.py",
+      "size": 2488,
+      "sha256": "e9950f1c4d6a78fef644bba432737238859c916ba2700a96ac52721bc1c459be"
+    }
+  ]
+}

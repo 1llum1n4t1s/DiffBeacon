@@ -1,0 +1,2894 @@
+[
+  {
+    "id": "toint-s00",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s01",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s02",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s03",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "+0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s04",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "00042"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s05",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s06",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s07",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "+42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s08",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": " 42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s09",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "\t\r\n42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s10",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "42 "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s11",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "42\t"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s12",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,234"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s13",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,,2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s14",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": ","
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s15",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": " , "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s16",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": ",42,"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s17",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,2.5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s18",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e,2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s19",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "9223372036854775807"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s20",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s21",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "9223372036854775808"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s22",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-9223372036854775809"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s23",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "18446744073709551615"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s24",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s25",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1."
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s26",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": " .5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s27",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-.5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s28",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s29",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1E+2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s30",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e-2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s31",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s32",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e+"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s33",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x10"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s34",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x1p2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s35",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x1.8p2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s36",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "0xDEAD"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s37",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "NaN"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s38",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "nan"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s39",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "NAN"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s40",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "nan(payload)"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s41",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-nan"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s42",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s43",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "+inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s44",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s45",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "Infinity"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s46",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-Infinity"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s47",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "infinite"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s48",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e309"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s49",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-1e309"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s50",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e-9999"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s51",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-1e-9999"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s52",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "4.9406564584124654e-324"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s53",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "2.2250738585072014e-308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s54",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.7976931348623157e308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s55",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.7976931348623159e308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s56",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "42x"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s57",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s58",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "0b10"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s59",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1_000"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s60",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "1 2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s61",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "１２"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s62",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": " 42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s63",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "42 "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s64",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "42\u0000"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "toint-s65",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u000042"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "toint-s66",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "toint-s67",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "3.141592653589793"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-s68",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "-0.0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "toint-typed0",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed1",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed2",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed3",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "int",
+        "value": "42"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed4",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "int",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed5",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "double",
+        "value": "42.5"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed6",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "double",
+        "value": "nan"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed7",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed8",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "1,234"
+          },
+          {
+            "type": "string",
+            "value": "1.5"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "2"
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "9"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-typed9",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "inf"
+          },
+          {
+            "type": "string",
+            "value": "nan"
+          },
+          {
+            "type": "string",
+            "value": "1e309"
+          },
+          {
+            "type": "string",
+            "value": "-0.0"
+          }
+        ]
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "toint-arity0",
+    "function": "ToInt",
+    "args": [],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "toint-ignored-extra",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "string",
+        "value": "42"
+      },
+      {
+        "type": "throw"
+      }
+    ],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "toint-throws-first",
+    "function": "ToInt",
+    "args": [
+      {
+        "type": "throw"
+      },
+      {
+        "type": "string",
+        "value": "42"
+      }
+    ],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "todouble-s00",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s01",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s02",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s03",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "+0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s04",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "00042"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s05",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s06",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s07",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "+42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s08",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": " 42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s09",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "\t\r\n42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s10",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "42 "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s11",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "42\t"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s12",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,234"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s13",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,,2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s14",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": ","
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s15",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": " , "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s16",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": ",42,"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s17",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,2.5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s18",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e,2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s19",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "9223372036854775807"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s20",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s21",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "9223372036854775808"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s22",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-9223372036854775809"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s23",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "18446744073709551615"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s24",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s25",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1."
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s26",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": " .5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s27",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-.5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s28",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s29",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1E+2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s30",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e-2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s31",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s32",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e+"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s33",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x10"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s34",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x1p2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s35",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x1.8p2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s36",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "0xDEAD"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s37",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "NaN"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s38",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "nan"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s39",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "NAN"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s40",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "nan(payload)"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s41",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-nan"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s42",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s43",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "+inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s44",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s45",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "Infinity"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s46",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-Infinity"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s47",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "infinite"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s48",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e309"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s49",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-1e309"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s50",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e-9999"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s51",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-1e-9999"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s52",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "4.9406564584124654e-324"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s53",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "2.2250738585072014e-308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s54",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.7976931348623157e308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s55",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.7976931348623159e308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s56",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "42x"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s57",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s58",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "0b10"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s59",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1_000"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s60",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "1 2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s61",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "１２"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s62",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": " 42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s63",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "42 "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s64",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "42\u0000"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "todouble-s65",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u000042"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "todouble-s66",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "todouble-s67",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "3.141592653589793"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-s68",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "-0.0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "todouble-typed0",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed1",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed2",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed3",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "int",
+        "value": "42"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed4",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "int",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed5",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "double",
+        "value": "42.5"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed6",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "double",
+        "value": "nan"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed7",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed8",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "1,234"
+          },
+          {
+            "type": "string",
+            "value": "1.5"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "2"
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "9"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-typed9",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "inf"
+          },
+          {
+            "type": "string",
+            "value": "nan"
+          },
+          {
+            "type": "string",
+            "value": "1e309"
+          },
+          {
+            "type": "string",
+            "value": "-0.0"
+          }
+        ]
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "todouble-arity0",
+    "function": "ToDouble",
+    "args": [],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "todouble-ignored-extra",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "string",
+        "value": "42"
+      },
+      {
+        "type": "throw"
+      }
+    ],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "todouble-throws-first",
+    "function": "ToDouble",
+    "args": [
+      {
+        "type": "throw"
+      },
+      {
+        "type": "string",
+        "value": "42"
+      }
+    ],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "tonumber-s00",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s01",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s02",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s03",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "+0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s04",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "00042"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s05",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s06",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s07",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "+42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s08",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": " 42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s09",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "\t\r\n42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s10",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "42 "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s11",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "42\t"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s12",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,234"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s13",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,,2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s14",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": ","
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s15",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": " , "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s16",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": ",42,"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s17",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1,2.5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s18",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e,2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s19",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "9223372036854775807"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s20",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s21",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "9223372036854775808"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s22",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-9223372036854775809"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s23",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "18446744073709551615"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s24",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s25",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1."
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s26",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": " .5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s27",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-.5"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s28",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s29",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1E+2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s30",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e-2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s31",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s32",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e+"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s33",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x10"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s34",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x1p2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s35",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x1.8p2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s36",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "0xDEAD"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s37",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "NaN"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s38",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "nan"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s39",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "NAN"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s40",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "nan(payload)"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s41",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-nan"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s42",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s43",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "+inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s44",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-inf"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s45",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "Infinity"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s46",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-Infinity"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s47",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "infinite"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s48",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e309"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s49",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-1e309"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s50",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1e-9999"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s51",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-1e-9999"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s52",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "4.9406564584124654e-324"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s53",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "2.2250738585072014e-308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s54",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.7976931348623157e308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s55",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1.7976931348623159e308"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s56",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "42x"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s57",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "0x"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s58",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "0b10"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s59",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1_000"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s60",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "1 2"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s61",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "１２"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s62",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": " 42"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s63",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "42 "
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s64",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "42\u0000"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "tonumber-s65",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u000042"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "tonumber-s66",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000"
+      }
+    ],
+    "scope": "oracle-only-embedded-nul",
+    "limit": "Embedded NUL is an adapter byte string; public .flt parser expressibility is not asserted."
+  },
+  {
+    "id": "tonumber-s67",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "3.141592653589793"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-s68",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "-0.0"
+      }
+    ],
+    "scope": "public-string-candidate"
+  },
+  {
+    "id": "tonumber-typed0",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed1",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed2",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed3",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "int",
+        "value": "42"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed4",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "int",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed5",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "double",
+        "value": "42.5"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed6",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "double",
+        "value": "nan"
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed7",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed8",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "1,234"
+          },
+          {
+            "type": "string",
+            "value": "1.5"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "2"
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "9"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-typed9",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "inf"
+          },
+          {
+            "type": "string",
+            "value": "nan"
+          },
+          {
+            "type": "string",
+            "value": "1e309"
+          },
+          {
+            "type": "string",
+            "value": "-0.0"
+          }
+        ]
+      }
+    ],
+    "scope": "oracle-only-typed-binding",
+    "limit": "Exact typed construction is adapter-only; no claim public .flt can express it."
+  },
+  {
+    "id": "tonumber-arity0",
+    "function": "ToNumber",
+    "args": [],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "tonumber-ignored-extra",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "string",
+        "value": "42"
+      },
+      {
+        "type": "throw"
+      }
+    ],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  },
+  {
+    "id": "tonumber-throws-first",
+    "function": "ToNumber",
+    "args": [
+      {
+        "type": "throw"
+      },
+      {
+        "type": "string",
+        "value": "42"
+      }
+    ],
+    "scope": "oracle-only-function-body",
+    "limit": "Registration requires one argument; throwing node is adapter-only."
+  }
+]

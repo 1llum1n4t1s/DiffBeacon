@@ -1,0 +1,34 @@
+[
+  {
+    "pid": 35976,
+    "birthFileTime": 134366210755801301,
+    "heldProcessHandleSignaled": true,
+    "startedUtc": "2026-10-16T10:44:35.579199+00:00",
+    "exitCode": 0,
+    "timeout": false,
+    "stdoutEof": true,
+    "stderrEof": true,
+    "stdoutSha256": "2264f26555ca884c93071fca6d88a559d8c869d8e138d3f94e493bb7cc168ef6",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compilerPath": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe",
+    "compilerSha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57",
+    "executableSha256": "e3ce28cf9a922dade8856e6e1ffd196b839f336f2c5c847f809aac47377704dd",
+    "caseCount": 99
+  },
+  {
+    "pid": 35988,
+    "birthFileTime": 134366210854434743,
+    "heldProcessHandleSignaled": true,
+    "startedUtc": "2026-10-16T10:44:45.442591+00:00",
+    "exitCode": 0,
+    "timeout": false,
+    "stdoutEof": true,
+    "stderrEof": true,
+    "stdoutSha256": "2264f26555ca884c93071fca6d88a559d8c869d8e138d3f94e493bb7cc168ef6",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compilerPath": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe",
+    "compilerSha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57",
+    "executableSha256": "89846d93ac0ddd71c8f1bdbdf7b33a66949cc70cdf60fe8abc2c8398622a30df",
+    "caseCount": 99
+  }
+]

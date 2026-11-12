@@ -23,6 +23,8 @@ internal static partial class HeadlessFolderCopyChecks
         var progressPath = Path.Combine(root, "folder-copy-progress.ndjson");
         Trace("start");
         var observations = new List<Observation>();
+        var moveObservations = new List<MoveObservation>();
+        var trashObservations = new List<TrashObservation>();
         var cancellationRows = new List<(Observation Row, string? Status, string Png, StreamMetadata[] Before, StreamMetadata[] After)>();
         var reviewRows = new List<(string Id, string Work, Entry[] Before, Entry[] After, bool Rejected, bool AdsAccepted, bool CopyAttempted, string? AdsPath, string? AdsBefore, string? AdsAfter)>();
         var extendedAccepted = false; string? extendedRequested = null; string? extendedObserved = null; string? extendedInputText = null; var extendedNormalized = false;
@@ -81,7 +83,33 @@ internal static partial class HeadlessFolderCopyChecks
             foreach (var mode in new[] { "Folder", "Binary", "Image" }) StalePreparation(mode);
 
             foreach (var toRight in new[] { true, false }) foreach (var all in new[] { true, false }) ReviewNested(toRight, all);
+            MoveCase("success", ["a.bin"]);
+            MoveCase("right-to-left", ["a.bin"], direction: DirectoryCopyDirection.RightToLeft);
+            MoveCase("multiple-success", ["a.bin", "b.bin"]);
+            MoveCase("reject-existing-destination", ["a.bin"], existingDestination: true);
+            MoveCase("reject-directory", ["tree"], includeDirectory: true);
+            MoveCase("reject-shared-input", ["a.bin"], sharedInput: true);
+            MoveCase("source-changed-after-plan", ["a.bin"], changeAfterPlan: true);
+            MoveCase("partial-second-failure", ["a.bin", "b.bin", "c.bin"], failSecond: true);
+            MoveCase("filter-changed-after-hash", ["a.bin"], filterChangedAfterHash: true);
+            MoveCase("destination-appears-after-plan", ["a.bin"], destinationAppearsAfterHash: true);
+            MoveCase("partial-cancel-after-first", ["a.bin", "b.bin", "c.bin"], cancelAfterFirst: true);
+            if (OperatingSystem.IsWindows()) MoveCase("preserve-alternate-stream", ["a.bin"], preserveAlternateStream: true);
+            foreach (var direction in Enum.GetValues<DirectoryCopyDirection>())
+                MoveCase("threeway-" + direction, ["a.bin"], direction: direction, threeWay: true);
+            if (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS())
+            {
+                TrashCase("selected-directory-moves-differing-files-only", ["tree"], includeTreeFile: true);
+                TrashCase("right-to-left", ["a.bin"], direction: DirectoryCopyDirection.RightToLeft);
+                TrashCase("unsupported-empty-directory", ["tree"], includeEmptyDirectory: true);
+                TrashCase("shared-input-protected", ["a.bin"], sharedInput: true);
+                TrashCase("source-content-changed-after-confirmation", ["a.bin"], changeAfterPlan: true);
+                TrashCase("partial-cancel-after-first", ["a.bin", "b.bin", "c.bin"], cancelAfterFirst: true);
+                TrashCase("threeway-left-to-middle", ["a.bin"], direction: DirectoryCopyDirection.LeftToMiddle, threeWay: true);
+            }
             ReviewFilterChange();
+            ReviewListDependencies();
+            RunListOutputs(window, root, AddOwnedSession, Wait, Report, screenshot, Activate, CloseCompletedCase);
             if (OperatingSystem.IsWindows()) ReviewCentralAds();
             if (OperatingSystem.IsWindows()) ReviewExtendedDirectory();
 
@@ -117,11 +145,13 @@ internal static partial class HeadlessFolderCopyChecks
         {
             Trace("finally");
             Dialogs.ConfirmationShown = null;
-            foreach (var pane in window.SessionPanes) { pane.FolderPlanReady = null; pane.FolderExecutionStarting = null; pane.FolderOutputChecking = null; pane.DirectoryReadyForAdoption = null; pane.DiscardChanges(); }
+            foreach (var pane in window.SessionPanes) { pane.FolderPlanReady = null; pane.FolderExecutionStarting = null; pane.FolderOutputChecking = null; pane.FolderMovePlanReady = null; pane.FolderMoveExecutionStarting = null; pane.FolderMoveSourceChecking = null; pane.FolderMoveDestinationChecking = null; pane.FolderTrashPlanReady = null; pane.FolderTrashExecutionStarting = null; pane.FolderTrashSourceChecking = null; pane.DirectoryReadyForAdoption = null; pane.DiscardChanges(); }
             using var file = File.Create(Path.Combine(root, "folder-copy-observations.json"));
             using var json = new Utf8JsonWriter(file, new JsonWriterOptions { Indented = true });
             json.WriteStartObject(); json.WriteBoolean("complete", true); json.WriteNumber("confirmations", confirmations);
             json.WriteStartArray("cases"); foreach (var value in observations) Write(json, value); json.WriteEndArray(); json.WriteEndObject();
+            WriteMoveObservationsFile(Path.Combine(root, "folder-move-observations.json"), moveObservations);
+            WriteTrashObservationsFile(Path.Combine(root, "folder-trash-observations.json"), trashObservations);
             using var cancellationFile = File.Create(Path.Combine(root, "folder-cancellation-observations.json"));
             using var cancellationJson = new Utf8JsonWriter(cancellationFile, new JsonWriterOptions { Indented = true });
             cancellationJson.WriteStartObject(); cancellationJson.WriteBoolean("complete", true); cancellationJson.WriteStartArray("cases");
@@ -384,6 +414,83 @@ internal static partial class HeadlessFolderCopyChecks
             CloseCompletedCase("review-" + id);
         }
 
+        void ReviewListDependencies()
+        {
+            var evidence = new List<(string Id, string Target, string Before, string After, long BeforeTime, long AfterTime, bool Passed, bool Injected)>();
+            foreach (var operation in new[] { "copy", "move", "trash", "stale", "cancel" })
+            {
+                if (operation == "trash" && !OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS()) continue;
+                var location = Path.Combine(root, "list-" + operation);
+                var left = Path.Combine(location, "left"); var right = Path.Combine(location, "right");
+                Directory.CreateDirectory(left); Directory.CreateDirectory(right);
+                var source = Path.Combine(left, "a.bin"); var destination = Path.Combine(right, "a.bin");
+                File.WriteAllBytes(source, [0x11]); if (operation != "move") File.WriteAllBytes(destination, [0x22]);
+                var target = operation == "copy" ? destination : source;
+                if (operation is "stale" or "cancel") target = Path.Combine(location, "candidate.list");
+                File.WriteAllText(target, operation == "cancel" ? new string('#', 20000) + "\n" : "a\tX\n", new System.Text.UTF8Encoding(false));
+                File.SetLastWriteTimeUtc(target, FixedTime);
+                var before = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(target))); var beforeTime = File.GetLastWriteTimeUtc(target).Ticks;
+                var pane = AddOwnedSession();
+                var baselineList = Path.Combine(location, "accepted.list"); var baselineFilter = Path.Combine(location, "accepted.flt");
+                File.WriteAllText(baselineList, "a\tB\n", new System.Text.UTF8Encoding(false));
+                File.WriteAllText(baselineFilter, "def: exclude\nfe: RegexReplaceWithList('a','" + baselineList.Replace("\\", "/") + "') != None\n", new System.Text.UTF8Encoding(false));
+                pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, FileFilterPath = baselineFilter }); Wait(pane.ComparePathsAsync());
+                var previous = List(pane).ItemsSource; var previousPaths = pane.FolderListDependencyPaths.ToArray(); var injected = false; var passed = false;
+                var dependent = operation is "stale" or "cancel" ? pane : AddOwnedSession();
+                var observerLeft = Path.Combine(location, "observer-left"); var observerRight = Path.Combine(location, "observer-right");
+                Directory.CreateDirectory(observerLeft); Directory.CreateDirectory(observerRight);
+                File.WriteAllBytes(Path.Combine(observerLeft, "b.bin"), [1]); File.WriteAllBytes(Path.Combine(observerRight, "b.bin"), [2]);
+                var filter = Path.Combine(location, "rules.flt");
+                File.WriteAllText(filter, "def: exclude\nfe: RegexReplaceWithList('a','" + target.Replace("\\", "/") + "') != None\n", new System.Text.UTF8Encoding(false));
+                if (operation == "stale") dependent.DirectoryReadyForAdoption = () =>
+                {
+                    File.WriteAllText(target, "a\tY\n", new System.Text.UTF8Encoding(false)); File.SetLastWriteTimeUtc(target, FixedTime); injected = true;
+                };
+                if (operation == "cancel") dependent.FolderListReadProgress = (_, count) =>
+                {
+                    if (count <= 0 || injected) return; injected = true;
+                    Dispatcher.UIThread.InvokeAsync(() => Click(dependent, "中止")).GetAwaiter().GetResult();
+                };
+                dependent.ApplyProject(new() { Mode = "Folder", LeftPath = operation is "stale" or "cancel" ? left : observerLeft,
+                    RightPath = operation is "stale" or "cancel" ? right : observerRight, FileFilterPath = filter });
+                Activate(dependent); var expectedFailure = false;
+                try { Wait(dependent.ComparePathsAsync()); }
+                catch (IOException error) when (operation == "stale" && injected && error.Message.Contains("置換リストが変わりました", StringComparison.Ordinal)) { expectedFailure = true; }
+                catch (OperationCanceledException) when (operation == "cancel" && injected) { expectedFailure = true; }
+                if (operation is "stale" or "cancel")
+                    passed = injected && expectedFailure && ReferenceEquals(previous, List(dependent).ItemsSource)
+                        && previousPaths.Length == 1 && dependent.FolderListDependencyPaths.SequenceEqual(previousPaths);
+                else
+                {
+                    passed = dependent.FolderListDependencyPaths.Contains(Path.GetFullPath(target));
+                    Activate(pane); Select(pane, ["a.bin"]); Dialogs.ConfirmationShown = dialog => Answer(dialog, true);
+                    Click(pane, operation == "copy" ? "選択をすべてコピー →" : operation == "move" ? "選択ファイルを移動 →" : "左側の差分ファイルをゴミ箱へ");
+                    var task = operation == "copy" ? pane.PendingFolderCopy : operation == "move" ? pane.PendingFolderMove : pane.PendingFolderTrash;
+                    if (task is not null) Wait(task); else CloseMessages();
+                    passed &= operation == "copy" ? pane.LastFolderCopyResult?.Succeeded != true : operation == "move" ? pane.LastFolderMoveResult?.Succeeded != true : pane.LastFolderTrashResult?.Succeeded != true;
+                }
+                dependent.DirectoryReadyForAdoption = null; dependent.FolderListReadProgress = null; Dialogs.ConfirmationShown = null;
+                var after = File.Exists(target) ? Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(target))) : "missing";
+                var afterTime = File.GetLastWriteTimeUtc(target).Ticks;
+                passed &= beforeTime == afterTime && (operation == "stale" ? before != after : before == after);
+                Report("folder list dependency " + operation, passed);
+                screenshot("folder-list-" + operation + ".png");
+                evidence.Add((operation, target, before, after, beforeTime, afterTime, passed, injected));
+                CloseMessages(); CloseCompletedCase("list-" + operation);
+            }
+            using var file = File.Create(Path.Combine(root, "folder-list-dependency-observations.json"));
+            using var json = new Utf8JsonWriter(file, new JsonWriterOptions { Indented = true });
+            json.WriteStartObject(); json.WriteBoolean("complete", true); json.WriteStartArray("cases");
+            foreach (var row in evidence)
+            {
+                json.WriteStartObject(); json.WriteString("id", row.Id); json.WriteString("target", row.Target);
+                json.WriteString("beforeSha256", row.Before); json.WriteString("afterSha256", row.After);
+                json.WriteNumber("beforeWriteTicks", row.BeforeTime); json.WriteNumber("afterWriteTicks", row.AfterTime);
+                json.WriteBoolean("passed", row.Passed); json.WriteBoolean("injected", row.Injected); json.WriteEndObject();
+            }
+            json.WriteEndArray(); json.WriteEndObject();
+        }
+
         void ReviewExtendedDirectory()
         {
             const string id = "extended-directory-container";
@@ -529,6 +636,297 @@ internal static partial class HeadlessFolderCopyChecks
             Trace("case-complete", name); CloseCompletedCase(name);
         }
 
+        void MoveCase(string name, string[] selected, bool existingDestination = false, bool includeDirectory = false,
+            bool sharedInput = false, bool changeAfterPlan = false, bool failSecond = false,
+            DirectoryCopyDirection direction = DirectoryCopyDirection.LeftToRight, bool threeWay = false,
+            bool filterChangedAfterHash = false, bool destinationAppearsAfterHash = false,
+            bool cancelAfterFirst = false, bool preserveAlternateStream = false)
+        {
+            var location = Path.Combine(root, "move-" + name);
+            var left = Path.Combine(location, "left"); var middle = Path.Combine(location, "middle"); var right = Path.Combine(location, "right");
+            var sourceSide = DirectorySideMapping.GetSides(direction).Source;
+            var destinationSide = DirectorySideMapping.GetSides(direction).Destination;
+            if (!threeWay && direction is not (DirectoryCopyDirection.LeftToRight or DirectoryCopyDirection.RightToLeft))
+                throw new InvalidOperationException("Two-way move case has a three-way direction.");
+            var roots = new Dictionary<DirectorySide, string>
+            {
+                [DirectorySide.Left] = left, [DirectorySide.Middle] = middle, [DirectorySide.Right] = right
+            };
+            var includedSides = threeWay ? Enum.GetValues<DirectorySide>() : new[] { DirectorySide.Left, DirectorySide.Right };
+            foreach (var side in includedSides)
+                Directory.CreateDirectory(roots[side]);
+            var sourceRoot = roots[sourceSide]; var destinationRoot = roots[destinationSide];
+            foreach (var relative in selected.Where(path => path != "tree"))
+            {
+                var source = Path.Combine(sourceRoot, relative); Directory.CreateDirectory(Path.GetDirectoryName(source)!);
+                var bytes = new byte[] { relative == "a.bin" ? (byte)0x11 : relative == "b.bin" ? (byte)0x22 : (byte)0x33 };
+                File.WriteAllBytes(source, bytes); File.SetLastWriteTimeUtc(source, FixedTime);
+                if (preserveAlternateStream && relative == "a.bin") File.WriteAllBytes(source + ":move-stream", [0x5a, 0xa5]);
+                if (existingDestination && relative == "a.bin")
+                {
+                    var destination = Path.Combine(destinationRoot, relative); File.WriteAllBytes(destination, [0x44]);
+                    File.SetLastWriteTimeUtc(destination, FixedTime);
+                }
+            }
+            if (includeDirectory)
+            {
+                Directory.CreateDirectory(Path.Combine(sourceRoot, "tree")); Directory.CreateDirectory(Path.Combine(destinationRoot, "tree"));
+                File.WriteAllBytes(Path.Combine(sourceRoot, "tree", "leaf.bin"), [0x55]);
+                File.WriteAllBytes(Path.Combine(destinationRoot, "tree", "leaf.bin"), [0x66]);
+                File.SetLastWriteTimeUtc(Path.Combine(sourceRoot, "tree", "leaf.bin"), FixedTime);
+                File.SetLastWriteTimeUtc(Path.Combine(destinationRoot, "tree", "leaf.bin"), FixedTime);
+            }
+            foreach (var side in includedSides)
+                Directory.SetLastWriteTimeUtc(roots[side], FixedTime);
+            var filter = filterChangedAfterHash ? Path.Combine(location, "rules.flt") : null;
+            if (filter is not null) File.WriteAllText(filter, "def: include\n## original\n", new System.Text.UTF8Encoding(false));
+            var pane = AddOwnedSession(); pane.ApplyProject(new() { Mode = "Folder", LeftPath = left,
+                BasePath = threeWay ? middle : "", RightPath = right, FileFilterPath = filter ?? "" });
+            Wait(pane.ComparePathsAsync()); Activate(pane);
+            if (sharedInput)
+            {
+                var shared = AddOwnedSession(); var external = Path.Combine(location, "external.bin"); File.WriteAllBytes(external, [0x77]);
+                shared.ApplyProject(new() { Mode = "Binary", LeftPath = Path.Combine(sourceRoot, "a.bin"), RightPath = external });
+                Wait(shared.ComparePathsAsync()); Activate(pane);
+            }
+            var beforeLeft = Snapshot(left); var beforeMiddle = threeWay ? Snapshot(middle) : null; var beforeRight = Snapshot(right);
+            var beforeSource = Snapshot(sourceRoot); var beforeDestination = Snapshot(destinationRoot);
+            var confirmed = false; FolderMovePlan? plan = null; FolderMoveResult? result = null;
+            var sourceChecks = 0; var destinationChecks = 0;
+            pane.FolderMovePlanReady = value => plan = value;
+            if (changeAfterPlan) pane.FolderMoveExecutionStarting = _ =>
+            {
+                var source = Path.Combine(sourceRoot, "a.bin");
+                File.WriteAllBytes(source, [0x99]); File.SetLastWriteTimeUtc(source, FixedTime);
+            };
+            if (failSecond || filterChangedAfterHash || cancelAfterFirst) pane.FolderMoveSourceChecking = path =>
+            {
+                if (failSecond && PathEquals(path, Path.Combine(sourceRoot, "b.bin"))
+                    && !File.Exists(Path.Combine(sourceRoot, "a.bin")))
+                    throw new IOException("検証用に2件目の移動を拒否しました。");
+                if (filterChangedAfterHash && PathEquals(path, Path.Combine(sourceRoot, "a.bin")) && ++sourceChecks == 2)
+                    File.WriteAllText(filter!, "def: include\n## changed after content check\n", new System.Text.UTF8Encoding(false));
+                if (cancelAfterFirst && PathEquals(path, Path.Combine(sourceRoot, "b.bin"))
+                    && !File.Exists(Path.Combine(sourceRoot, "a.bin"))) pane.InvalidateFolderCopy();
+            };
+            if (destinationAppearsAfterHash) pane.FolderMoveDestinationChecking = path =>
+            {
+                if (PathEquals(path, Path.Combine(destinationRoot, "a.bin")) && ++destinationChecks == 2)
+                    File.WriteAllBytes(Path.Combine(destinationRoot, "a.bin"), [0x66]);
+            };
+            Dialogs.ConfirmationShown = dialog => { confirmations++; confirmed = true; Answer(dialog, true); };
+            Select(pane, selected);
+            if (threeWay) pane.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
+            var moveButton = threeWay ? "選択ファイルを移動" : direction == DirectoryCopyDirection.RightToLeft ? "← 選択ファイルを移動" : "選択ファイルを移動 →";
+            Click(pane, moveButton);
+            if (pane.PendingFolderMove is { } pending) Wait(pending); else CloseMessages();
+            result = pane.LastFolderMoveResult;
+            var afterLeft = Snapshot(left); var afterMiddle = threeWay ? Snapshot(middle) : null; var afterRight = Snapshot(right);
+            var afterSource = Snapshot(sourceRoot); var afterDestination = Snapshot(destinationRoot);
+            var unchanged = beforeLeft.SequenceEqual(afterLeft) && beforeRight.SequenceEqual(afterRight)
+                && (beforeMiddle is null || beforeMiddle.SequenceEqual(afterMiddle!));
+            var movedOne = result is { Succeeded: true, MutationOccurred: true, MovedCount: 1 }
+                && !File.Exists(Path.Combine(sourceRoot, "a.bin"))
+                && File.ReadAllBytes(Path.Combine(destinationRoot, "a.bin")).SequenceEqual(new byte[] { 0x11 });
+            if (name == "success" || name == "right-to-left")
+            {
+                var expectedStatus = destinationSide == DirectorySide.Right ? DirectoryDifferenceKind.RightOnly : DirectoryDifferenceKind.LeftOnly;
+                var buttonEnabled = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, moveButton)).IsEnabled;
+                Report("Folder move successful actual button and recompare " + name, movedOne
+                    && pane.FolderCopyStatusText.StartsWith("移動結果: 移動 1 件", StringComparison.Ordinal)
+                    && List(pane).Items.OfType<DirectoryEntry>().Single(entry => entry.RelativePath == "a.bin").Status == expectedStatus);
+                Report("Folder move restores controls " + name, buttonEnabled && List(pane).IsEnabled);
+            }
+            else if (name == "multiple-success")
+                Report("Folder move moves every selected file", result is { Succeeded: true, MutationOccurred: true, MovedCount: 2 }
+                    && new[] { "a.bin", "b.bin" }.All(file => !File.Exists(Path.Combine(sourceRoot, file)) && File.Exists(Path.Combine(destinationRoot, file))));
+            else if (existingDestination)
+                Report("Folder move rejects existing destination before confirmation", !confirmed && result is null && unchanged);
+            else if (includeDirectory)
+                Report("Folder move rejects selected directory before confirmation", !confirmed && result is null && unchanged);
+            else if (sharedInput)
+                Report("Folder move protects another tab input", !confirmed && result is null && unchanged);
+            else if (changeAfterPlan)
+                Report("Folder move rechecks changed source before mutation", confirmed && result is { Succeeded: false, MutationOccurred: false }
+                    && File.ReadAllBytes(Path.Combine(sourceRoot, "a.bin")).SequenceEqual(new byte[] { 0x99 })
+                    && beforeDestination.SequenceEqual(afterDestination));
+            else if (failSecond)
+            {
+                var moved = result?.Entries.SingleOrDefault(entry => entry.RelativePath == "a.bin")?.Status == FolderMoveEntryStatus.Moved;
+                var failed = result?.Entries.SingleOrDefault(entry => entry.RelativePath == "b.bin")?.Status == FolderMoveEntryStatus.Failed;
+                var pendingEntry = result?.Entries.SingleOrDefault(entry => entry.RelativePath == "c.bin")?.Status == FolderMoveEntryStatus.NotExecuted;
+                Report("Folder move reports partial mutation and protects remaining files", confirmed && result is { Succeeded: false, Cancelled: false, MutationOccurred: true }
+                    && moved && failed && pendingEntry
+                    && !File.Exists(Path.Combine(sourceRoot, "a.bin")) && File.ReadAllBytes(Path.Combine(destinationRoot, "a.bin")).SequenceEqual(new byte[] { 0x11 })
+                    && File.Exists(Path.Combine(sourceRoot, "b.bin")) && File.Exists(Path.Combine(sourceRoot, "c.bin"))
+                    && !File.Exists(Path.Combine(destinationRoot, "b.bin")) && !File.Exists(Path.Combine(destinationRoot, "c.bin")));
+            }
+            else if (filterChangedAfterHash)
+                Report("Folder move cancels when filter changes during content validation", confirmed && result is { Succeeded: false, Cancelled: true, MutationOccurred: false } && unchanged);
+            else if (destinationAppearsAfterHash)
+                Report("Folder move preserves destination that appears before rename", confirmed && result is { Succeeded: false, MutationOccurred: false }
+                    && File.Exists(Path.Combine(sourceRoot, "a.bin")) && File.ReadAllBytes(Path.Combine(destinationRoot, "a.bin")).SequenceEqual(new byte[] { 0x66 }));
+            else if (cancelAfterFirst)
+            {
+                var moved = result?.Entries.SingleOrDefault(entry => entry.RelativePath == "a.bin")?.Status == FolderMoveEntryStatus.Moved;
+                var cancelled = result?.Entries.SingleOrDefault(entry => entry.RelativePath == "b.bin")?.Status == FolderMoveEntryStatus.Cancelled;
+                var pendingEntry = result?.Entries.SingleOrDefault(entry => entry.RelativePath == "c.bin")?.Status == FolderMoveEntryStatus.NotExecuted;
+                Report("Folder move records cancellation after a partial move", confirmed && result is { Succeeded: false, Cancelled: true, MutationOccurred: true }
+                    && moved && cancelled && pendingEntry && !File.Exists(Path.Combine(sourceRoot, "a.bin"))
+                    && File.ReadAllBytes(Path.Combine(destinationRoot, "a.bin")).SequenceEqual(new byte[] { 0x11 })
+                    && File.Exists(Path.Combine(sourceRoot, "b.bin")) && File.Exists(Path.Combine(sourceRoot, "c.bin")));
+            }
+            else if (preserveAlternateStream)
+                Report("Folder move preserves Windows alternate stream", movedOne
+                    && File.ReadAllBytes(Path.Combine(destinationRoot, "a.bin:move-stream")).SequenceEqual(new byte[] { 0x5a, 0xa5 }));
+            else if (threeWay)
+                Report("Folder move honors three-way direction " + direction, movedOne
+                    && beforeSource.Length == 1 && afterSource.Length == 0 && afterDestination.Length == 1);
+            if (result is null && plan is null) Report("Folder move rejected before plan " + name, !confirmed && unchanged);
+            moveObservations.Add(new(name, confirmed, beforeLeft, afterLeft, beforeRight, afterRight,
+                plan?.CopyPlan.Entries.Select(entry => entry.RelativePath).ToArray(), result is null ? null : new(
+                    result.Succeeded, result.Cancelled, result.MutationOccurred, result.MovedCount, result.Reason,
+                    result.Entries.Select(entry => new MoveEntryObservation(entry.RelativePath, entry.Status.ToString(), entry.Reason)).ToArray()),
+                sourceSide.ToString(), destinationSide.ToString(), beforeSource, afterSource, beforeDestination, afterDestination,
+                beforeMiddle, afterMiddle));
+            screenshot("folder-move-" + name + ".png");
+            pane.FolderMovePlanReady = null; pane.FolderMoveExecutionStarting = null; pane.FolderMoveSourceChecking = null;
+            pane.FolderMoveDestinationChecking = null; Dialogs.ConfirmationShown = null;
+            CloseCompletedCase("move-" + name);
+
+            static bool PathEquals(string actual, string expected) => string.Equals(Path.GetFullPath(actual), Path.GetFullPath(expected),
+                OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        }
+
+        void TrashCase(string name, string[] selected, bool includeTreeFile = false, bool includeEmptyDirectory = false,
+            bool sharedInput = false, bool changeAfterPlan = false, bool cancelAfterFirst = false,
+            DirectoryCopyDirection direction = DirectoryCopyDirection.LeftToRight, bool threeWay = false)
+        {
+            var location = Path.Combine(root, "trash-" + name);
+            var left = Path.Combine(location, "left"); var middle = Path.Combine(location, "middle"); var right = Path.Combine(location, "right");
+            var sourceSide = DirectorySideMapping.GetSides(direction).Source;
+            var otherSide = DirectorySideMapping.GetSides(direction).Destination;
+            if (!threeWay && direction is not (DirectoryCopyDirection.LeftToRight or DirectoryCopyDirection.RightToLeft))
+                throw new InvalidOperationException("Two-way trash case has a three-way direction.");
+            var roots = new Dictionary<DirectorySide, string>
+            {
+                [DirectorySide.Left] = left, [DirectorySide.Middle] = middle, [DirectorySide.Right] = right
+            };
+            var includedSides = threeWay ? Enum.GetValues<DirectorySide>() : new[] { DirectorySide.Left, DirectorySide.Right };
+            foreach (var side in includedSides) Directory.CreateDirectory(roots[side]);
+            var sourceRoot = roots[sourceSide]; var otherRoot = roots[otherSide];
+            if (includeTreeFile)
+            {
+                var sourceTree = Path.Combine(sourceRoot, "tree"); var otherTree = Path.Combine(otherRoot, "tree");
+                Directory.CreateDirectory(sourceTree); Directory.CreateDirectory(otherTree);
+                File.WriteAllBytes(Path.Combine(sourceTree, "leaf.bin"), [0x11]);
+                File.WriteAllBytes(Path.Combine(otherTree, "leaf.bin"), [0x22]);
+                File.SetLastWriteTimeUtc(Path.Combine(sourceTree, "leaf.bin"), FixedTime);
+                File.SetLastWriteTimeUtc(Path.Combine(otherTree, "leaf.bin"), FixedTime);
+            }
+            else if (includeEmptyDirectory)
+            {
+                Directory.CreateDirectory(Path.Combine(sourceRoot, "tree"));
+                Directory.SetLastWriteTimeUtc(Path.Combine(sourceRoot, "tree"), FixedTime);
+            }
+            else
+                foreach (var relative in selected)
+                {
+                    var source = Path.Combine(sourceRoot, relative); Directory.CreateDirectory(Path.GetDirectoryName(source)!);
+                    File.WriteAllBytes(source, [relative == "a.bin" ? (byte)0x11 : relative == "b.bin" ? (byte)0x22 : (byte)0x33]);
+                    File.SetLastWriteTimeUtc(source, FixedTime);
+                }
+            foreach (var side in includedSides) Directory.SetLastWriteTimeUtc(roots[side], FixedTime);
+
+            var pane = AddOwnedSession();
+            pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, BasePath = threeWay ? middle : "", RightPath = right });
+            Wait(pane.ComparePathsAsync()); Activate(pane);
+            if (sharedInput)
+            {
+                var shared = AddOwnedSession(); var external = Path.Combine(location, "external.bin"); File.WriteAllBytes(external, [0x77]);
+                shared.ApplyProject(new() { Mode = "Binary", LeftPath = Path.Combine(sourceRoot, "a.bin"), RightPath = external });
+                Wait(shared.ComparePathsAsync()); Activate(pane);
+            }
+            var beforeLeft = Snapshot(left); var beforeMiddle = threeWay ? Snapshot(middle) : null; var beforeRight = Snapshot(right);
+            var beforeSource = Snapshot(sourceRoot); var beforeOther = Snapshot(otherRoot);
+            var confirmed = false; FolderTrashPlan? plan = null; FolderTrashResult? result = null;
+            pane.FolderTrashPlanReady = value => plan = value;
+            if (changeAfterPlan) pane.FolderTrashExecutionStarting = _ =>
+            {
+                var source = Path.Combine(sourceRoot, "a.bin");
+                File.WriteAllBytes(source, [0x99]); File.SetLastWriteTimeUtc(source, FixedTime);
+            };
+            if (cancelAfterFirst) pane.FolderTrashSourceChecking = path =>
+            {
+                if (PathEquals(path, Path.Combine(sourceRoot, "b.bin")) && !File.Exists(Path.Combine(sourceRoot, "a.bin")))
+                    pane.InvalidateFolderCopy();
+            };
+            Dialogs.ConfirmationShown = dialog => { confirmations++; confirmed = true; Answer(dialog, true); };
+            Select(pane, selected);
+            if (threeWay)
+                pane.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
+            var button = threeWay ? "選択側の差分ファイルをゴミ箱へ"
+                : sourceSide == DirectorySide.Left ? "左側の差分ファイルをゴミ箱へ" : "右側の差分ファイルをゴミ箱へ";
+            Click(pane, button);
+            if (pane.PendingFolderTrash is { } pending) Wait(pending); else CloseMessages();
+            result = pane.LastFolderTrashResult;
+            var afterLeft = Snapshot(left); var afterMiddle = threeWay ? Snapshot(middle) : null; var afterRight = Snapshot(right);
+            var afterSource = Snapshot(sourceRoot); var afterOther = Snapshot(otherRoot);
+            var unchangedOther = beforeOther.SequenceEqual(afterOther);
+            if (includeTreeFile)
+                Report("Folder trash moves differing files without deleting selected directories", confirmed
+                    && result is { Succeeded: true, MutationOccurred: true, TrashedCount: 1, UnsupportedCount: 0 }
+                    && plan?.Entries.Select(entry => entry.RelativePath).SequenceEqual(new[] { "tree/leaf.bin" }) == true
+                    && Directory.Exists(Path.Combine(sourceRoot, "tree")) && !File.Exists(Path.Combine(sourceRoot, "tree", "leaf.bin"))
+                    && File.Exists(Path.Combine(otherRoot, "tree", "leaf.bin")) && unchangedOther);
+            else if (includeEmptyDirectory)
+                Report("Folder trash leaves directories untouched", !confirmed && result is null
+                    && plan is { SupportedCount: 0, UnsupportedCount: 1 }
+                    && Directory.Exists(Path.Combine(sourceRoot, "tree")) && unchangedOther);
+            else if (sharedInput)
+                Report("Folder trash protects another comparison input", !confirmed && result is null
+                    && plan is { SupportedCount: 1 } && beforeSource.SequenceEqual(afterSource) && unchangedOther);
+            else if (changeAfterPlan)
+                Report("Folder trash rechecks file content immediately before moving", confirmed
+                    && result is { Succeeded: false, MutationOccurred: false, TrashedCount: 0 }
+                    && File.ReadAllBytes(Path.Combine(sourceRoot, "a.bin")).SequenceEqual(new byte[] { 0x99 }) && unchangedOther);
+            else if (cancelAfterFirst)
+            {
+                var statuses = result?.Entries.ToDictionary(entry => entry.RelativePath, entry => entry.Status);
+                Report("Folder trash records cancellation after a partial move", confirmed
+                    && result is { Succeeded: false, Cancelled: true, MutationOccurred: true, TrashedCount: 1 }
+                    && statuses?.GetValueOrDefault("a.bin") == FolderTrashEntryStatus.Trashed
+                    && statuses?.GetValueOrDefault("b.bin") == FolderTrashEntryStatus.Cancelled
+                    && statuses?.GetValueOrDefault("c.bin") == FolderTrashEntryStatus.NotExecuted
+                    && !File.Exists(Path.Combine(sourceRoot, "a.bin"))
+                    && File.Exists(Path.Combine(sourceRoot, "b.bin")) && File.Exists(Path.Combine(sourceRoot, "c.bin"))
+                    && unchangedOther);
+            }
+            else if (threeWay)
+                Report("Folder trash honors three-way direction " + direction, confirmed
+                    && result is { Succeeded: true, MutationOccurred: true, TrashedCount: 1 }
+                    && !File.Exists(Path.Combine(sourceRoot, "a.bin")) && unchangedOther
+                    && beforeRight!.SequenceEqual(afterRight));
+            else
+                Report("Folder trash supports right to left", confirmed
+                    && result is { Succeeded: true, MutationOccurred: true, TrashedCount: 1 }
+                    && !File.Exists(Path.Combine(sourceRoot, "a.bin")) && unchangedOther);
+
+            trashObservations.Add(new(name, confirmed, sourceSide.ToString(), otherSide.ToString(),
+                plan?.Entries.Select(entry => new TrashPlanEntryObservation(entry.RelativePath, entry.IsSupported, entry.LogicalBytes, entry.Reason)).ToArray(),
+                result is null ? null : new(result.Succeeded, result.Cancelled, result.MutationOccurred,
+                    result.TrashedCount, result.UnsupportedCount, result.Reason,
+                    result.Entries.Select(entry => new TrashEntryObservation(entry.RelativePath, entry.Status.ToString(), entry.Reason)).ToArray()),
+                beforeSource, afterSource, beforeOther, afterOther, beforeLeft, afterLeft, beforeRight, afterRight, beforeMiddle, afterMiddle));
+            screenshot("folder-trash-" + name + ".png");
+            pane.FolderTrashPlanReady = null; pane.FolderTrashExecutionStarting = null; pane.FolderTrashSourceChecking = null;
+            Dialogs.ConfirmationShown = null;
+            CloseCompletedCase("trash-" + name);
+
+            static bool PathEquals(string actual, string expected) => string.Equals(Path.GetFullPath(actual), Path.GetFullPath(expected),
+                OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        }
+
         void StaleConfirmation(string mode, bool accept)
         {
             var name="old-confirmation-new-"+mode.ToLowerInvariant()+"-"+(accept?"continue":"cancel");
@@ -624,10 +1022,12 @@ internal static partial class HeadlessFolderCopyChecks
             {
                 if (baselinePanes.Contains(pane) || !window.SessionPanes.Contains(pane))
                     throw new InvalidOperationException("Folder case ownership changed before retirement.");
-                if (pane.PendingFolderCopy is { IsCompleted: false })
-                    throw new InvalidOperationException("Folder case copy is still pending at retirement.");
+                if (pane.PendingFolderCopy is { IsCompleted: false } || pane.PendingFolderMove is { IsCompleted: false })
+                    throw new InvalidOperationException("Folder case operation is still pending at retirement.");
                 pane.FolderPlanReady = null; pane.FolderExecutionStarting = null;
                 pane.FolderOutputChecking = null; pane.DirectoryReadyForAdoption = null;
+                pane.FolderMovePlanReady = null; pane.FolderMoveExecutionStarting = null;
+                pane.FolderMoveSourceChecking = null; pane.FolderMoveDestinationChecking = null;
                 // すべてのcase判定・PNG・原本／診断採取の後にだけ実×ボタンで閉じる。
                 pane.DiscardChanges();
                 var before = window.SessionPanes.ToArray();
@@ -688,12 +1088,16 @@ internal static partial class HeadlessFolderCopyChecks
             using var file=File.Create(Path.Combine(root,name+"-bounds.json"));using var json=new Utf8JsonWriter(file,new JsonWriterOptions{Indented=true});
             json.WriteStartObject();json.WriteNumber("width",window.Bounds.Width);json.WriteNumber("height",window.Bounds.Height);json.WriteNumber("tabs",window.SessionPanes.Count);
             json.WriteNumber("listY",listPosition.Y);json.WriteNumber("listHeight",list.Bounds.Height);json.WriteNumber("firstRowY",itemPosition.Y);json.WriteNumber("firstRowHeight",item.Bounds.Height);json.WriteString("firstPath",first.RelativePath);json.WriteEndObject();
-            foreach (var title in new[] { "← 選択をすべてコピー", "選択をすべてコピー →", "← 選択の差分をコピー", "選択の差分をコピー →" })
+            foreach (var title in new[] { "← 選択をすべてコピー", "選択をすべてコピー →", "← 選択の差分をコピー", "選択の差分をコピー →",
+                "左側の差分ファイルをゴミ箱へ", "右側の差分ファイルをゴミ箱へ" })
             {
                 var button = pane.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, title));
+                button.BringIntoView(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
                 var point = button.TranslatePoint(default, window)!.Value;
                 Report(name + " reachable " + title, button.IsEffectivelyVisible && button.Bounds.Width > 0 && point.X>=0 && point.X+button.Bounds.Width<=window.Bounds.Width && point.Y >= 0 && point.Y + button.Bounds.Height <= window.Bounds.Height);
             }
+            var threeWayTrash = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "選択側の差分ファイルをゴミ箱へ"));
+            Report(name + " three-way trash button hidden in two-way model", !threeWayTrash.IsVisible);
             var toolbar = pane.GetVisualDescendants().OfType<ScrollViewer>().Single(scroll =>
                 scroll.Content is Control content && content.GetVisualDescendants().Contains(pane.CompareButton));
             var filter = pane.GetVisualDescendants().OfType<TextBox>().Single(box => Equals(box.PlaceholderText, "ファイルフィルター (.flt)"));
@@ -815,6 +1219,109 @@ internal static partial class HeadlessFolderCopyChecks
     private sealed record Observation(string Name, string Source, string Destination, string[] Copied, bool ToRight, bool All, bool Confirm,
         int GuardCalls, bool? Succeeded, bool? Mutation, int? Published, (string Path, string Status, bool Published)[] Results,
         Entry[] BeforeSource, Entry[] AfterSource, Entry[] BeforeDestination, Entry[] AfterDestination);
+    private sealed record MoveObservation(string Name, bool Confirmed, Entry[] BeforeLeft, Entry[] AfterLeft,
+        Entry[] BeforeRight, Entry[] AfterRight, string[]? PlanEntries, MoveResultObservation? Result,
+        string SourceSide, string DestinationSide, Entry[] BeforeSource, Entry[] AfterSource,
+        Entry[] BeforeDestination, Entry[] AfterDestination, Entry[]? BeforeMiddle, Entry[]? AfterMiddle);
+    private sealed record MoveResultObservation(bool Succeeded, bool Cancelled, bool MutationOccurred,
+        int MovedCount, string? Reason, MoveEntryObservation[] Entries);
+    private sealed record MoveEntryObservation(string RelativePath, string Status, string? Reason);
+    private sealed record TrashObservation(string Name, bool Confirmed, string SourceSide, string OtherSide,
+        TrashPlanEntryObservation[]? PlanEntries, TrashResultObservation? Result,
+        Entry[] BeforeSource, Entry[] AfterSource, Entry[] BeforeOther, Entry[] AfterOther,
+        Entry[] BeforeLeft, Entry[] AfterLeft, Entry[] BeforeRight, Entry[] AfterRight,
+        Entry[]? BeforeMiddle, Entry[]? AfterMiddle);
+    private sealed record TrashPlanEntryObservation(string RelativePath, bool IsSupported, long LogicalBytes, string? Reason);
+    private sealed record TrashResultObservation(bool Succeeded, bool Cancelled, bool MutationOccurred,
+        int TrashedCount, int UnsupportedCount, string? Reason, TrashEntryObservation[] Entries);
+    private sealed record TrashEntryObservation(string RelativePath, string Status, string? Reason);
+    private static void WriteTrashObservationsFile(string path, IReadOnlyList<TrashObservation> rows)
+    {
+        using var file = File.Create(path);
+        using var json = new Utf8JsonWriter(file, new JsonWriterOptions { Indented = true });
+        json.WriteStartObject(); json.WriteBoolean("complete", true); json.WriteStartArray("cases");
+        foreach (var row in rows)
+        {
+            json.WriteStartObject(); json.WriteString("name", row.Name); json.WriteBoolean("confirmed", row.Confirmed);
+            json.WriteString("sourceSide", row.SourceSide); json.WriteString("otherSide", row.OtherSide);
+            WriteEntries(json, "beforeSource", row.BeforeSource); WriteEntries(json, "afterSource", row.AfterSource);
+            WriteEntries(json, "beforeOther", row.BeforeOther); WriteEntries(json, "afterOther", row.AfterOther);
+            WriteEntries(json, "beforeLeft", row.BeforeLeft); WriteEntries(json, "afterLeft", row.AfterLeft);
+            WriteEntries(json, "beforeRight", row.BeforeRight); WriteEntries(json, "afterRight", row.AfterRight);
+            if (row.BeforeMiddle is { } beforeMiddle) WriteEntries(json, "beforeMiddle", beforeMiddle);
+            if (row.AfterMiddle is { } afterMiddle) WriteEntries(json, "afterMiddle", afterMiddle);
+            if (row.PlanEntries is { } plan)
+            {
+                json.WriteStartArray("planEntries");
+                foreach (var entry in plan)
+                {
+                    json.WriteStartObject(); json.WriteString("RelativePath", entry.RelativePath);
+                    json.WriteBoolean("IsSupported", entry.IsSupported); json.WriteNumber("LogicalBytes", entry.LogicalBytes);
+                    if (entry.Reason is { } reason) json.WriteString("Reason", reason); else json.WriteNull("Reason");
+                    json.WriteEndObject();
+                }
+                json.WriteEndArray();
+            }
+            else json.WriteNull("planEntries");
+            if (row.Result is { } result)
+            {
+                json.WriteStartObject("result"); json.WriteBoolean("Succeeded", result.Succeeded);
+                json.WriteBoolean("Cancelled", result.Cancelled); json.WriteBoolean("MutationOccurred", result.MutationOccurred);
+                json.WriteNumber("TrashedCount", result.TrashedCount); json.WriteNumber("UnsupportedCount", result.UnsupportedCount);
+                if (result.Reason is { } reason) json.WriteString("Reason", reason); else json.WriteNull("Reason");
+                json.WriteStartArray("entries");
+                foreach (var entry in result.Entries)
+                {
+                    json.WriteStartObject(); json.WriteString("RelativePath", entry.RelativePath);
+                    json.WriteString("status", entry.Status); if (entry.Reason is { } entryReason) json.WriteString("Reason", entryReason); else json.WriteNull("Reason");
+                    json.WriteEndObject();
+                }
+                json.WriteEndArray(); json.WriteEndObject();
+            }
+            else json.WriteNull("result");
+            json.WriteEndObject();
+        }
+        json.WriteEndArray(); json.WriteEndObject(); json.Flush();
+    }
+    private static void WriteMoveObservationsFile(string path, IReadOnlyList<MoveObservation> rows)
+    {
+        using var file = File.Create(path);
+        using var json = new Utf8JsonWriter(file, new JsonWriterOptions { Indented = true });
+        json.WriteStartObject(); json.WriteBoolean("complete", true); json.WriteStartArray("cases");
+        foreach (var row in rows)
+        {
+            json.WriteStartObject(); json.WriteString("name", row.Name); json.WriteBoolean("confirmed", row.Confirmed);
+            WriteEntries(json, "beforeLeft", row.BeforeLeft); WriteEntries(json, "afterLeft", row.AfterLeft);
+            WriteEntries(json, "beforeRight", row.BeforeRight); WriteEntries(json, "afterRight", row.AfterRight);
+            json.WriteString("sourceSide", row.SourceSide); json.WriteString("destinationSide", row.DestinationSide);
+            WriteEntries(json, "beforeSource", row.BeforeSource); WriteEntries(json, "afterSource", row.AfterSource);
+            WriteEntries(json, "beforeDestination", row.BeforeDestination); WriteEntries(json, "afterDestination", row.AfterDestination);
+            if (row.BeforeMiddle is { } beforeMiddle) WriteEntries(json, "beforeMiddle", beforeMiddle);
+            if (row.AfterMiddle is { } afterMiddle) WriteEntries(json, "afterMiddle", afterMiddle);
+            if (row.PlanEntries is { } plan)
+            { json.WriteStartArray("planEntries"); foreach (var item in plan) json.WriteStringValue(item); json.WriteEndArray(); }
+            else json.WriteNull("planEntries");
+            if (row.Result is { } result)
+            {
+                json.WriteStartObject("result"); json.WriteBoolean("Succeeded", result.Succeeded);
+                json.WriteBoolean("Cancelled", result.Cancelled); json.WriteBoolean("MutationOccurred", result.MutationOccurred);
+                json.WriteNumber("MovedCount", result.MovedCount);
+                if (result.Reason is { } reason) json.WriteString("Reason", reason); else json.WriteNull("Reason");
+                json.WriteStartArray("entries");
+                foreach (var entry in result.Entries)
+                {
+                    json.WriteStartObject(); json.WriteString("RelativePath", entry.RelativePath);
+                    json.WriteString("status", entry.Status);
+                    if (entry.Reason is { } entryReason) json.WriteString("Reason", entryReason); else json.WriteNull("Reason");
+                    json.WriteEndObject();
+                }
+                json.WriteEndArray(); json.WriteEndObject();
+            }
+            else json.WriteNull("result");
+            json.WriteEndObject();
+        }
+        json.WriteEndArray(); json.WriteEndObject(); json.Flush();
+    }
     private static void Write(Utf8JsonWriter json, Observation value)
     {
         json.WriteStartObject(); json.WriteString("name", value.Name); json.WriteString("source", value.Source); json.WriteString("destination", value.Destination);

@@ -13,15 +13,16 @@ internal static class FolderComparisons
 
     internal static Task<DirectoryComparisonResult> CompareAsync(string left, string right,
         DirectoryComparisonOptions options, CancellationToken token)
-        => DirectoryComparer.CompareAsync(left, right, ValidateTypes(options), token);
+        => Task.Run(() => DirectoryComparer.CompareAsync(left, right, ValidateTypes(options), token), token);
 
     internal static Task<DirectoryComparisonResult> CompareAsync(string left, string middle, string right,
         DirectoryComparisonOptions options, CancellationToken token)
-        => DirectoryComparer.CompareThreeWayAsync(left, middle, right, ValidateTypes(options), token);
+        => Task.Run(() => DirectoryComparer.CompareThreeWayAsync(left, middle, right, ValidateTypes(options), token), token);
 
     private static DirectoryComparisonOptions ValidateTypes(DirectoryComparisonOptions options)
         => options with
         {
+            PropertyService = options.FileFilter?.UsesProperties == true ? WindowsFileFilterProperties.Instance : options.PropertyService,
             EntryTypeValidator = static (path, kind) =>
             {
                 if (OperatingSystem.IsMacOS()) FolderCopyMacFileKind.Require(path, kind);

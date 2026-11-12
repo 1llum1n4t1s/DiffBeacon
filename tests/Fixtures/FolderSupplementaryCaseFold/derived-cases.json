@@ -1,0 +1,13 @@
+[
+  {"id":"scope-enable", "expression":"@cs AllEqual(Array(RegexReplace('𐐀','(?i:𐐨)','X'),'X'))"},
+  {"id":"scope-disable", "expression":"@ci AllEqual(Array(RegexReplace('𐐀','(?-i:𐐨)','X'),'𐐀'))"},
+  {"id":"scope-restore-cs", "expression":"@cs AllEqual(Array(RegexReplace('𐐀𐐀','(?i:𐐨)𐐨','X'),'𐐀𐐀'))"},
+  {"id":"scope-restore-ci", "expression":"@ci AllEqual(Array(RegexReplace('𐐀𐐀','(?-i:𐐀)𐐨','X'),'X'))"},
+  {"id":"quantifier-ci", "expression":"@ci AllEqual(Array(RegexReplace('𐐀𐐀','𐐨+','X'),'X'))"},
+  {"id":"quantifier-cs", "expression":"@cs AllEqual(Array(RegexReplace('𐐀𐐀','𐐨+','X'),'𐐀𐐀'))"},
+  {"id":"capture-original", "expression":"@ci AllEqual(Array(RegexExtract('𐐀!','(𐐨)(!)',1),'𐐀')) and AllEqual(Array(RegexExtract('𐐀!','(𐐨)(!)',2),'!'))"},
+  {"id":"capture-quantifier", "expression":"@ci AllEqual(Array(RegexExtract('𐐀𐐀!','(𐐨+)(!)',1),'𐐀𐐀'))"},
+  {"id":"bmp-ci", "expression":"@ci AllEqual(Array(RegexReplace('AΣſ','aσs','X'),'X'))"},
+  {"id":"bmp-cs", "expression":"@cs AllEqual(Array(RegexReplace('AΣſ','aσs','X'),'AΣſ'))"},
+  {"id":"noncased-supplementary", "expression":"@ci AllEqual(Array(RegexReplace('😀😀','😀+','X'),'X'))"}
+]

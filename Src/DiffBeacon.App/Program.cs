@@ -12,12 +12,30 @@ public static class Program
         Console.OutputEncoding = new System.Text.UTF8Encoding(false);
         if (Console.IsInputRedirected) Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
         Arguments = args;
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-properties-only")
+            return HeadlessSelfTest.Run(args[1], folderPropertiesOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--line-transform-replace-lists-only")
+            return HeadlessSelfTest.Run(args[1], lineTransformReplaceListsOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--bare-compression-only")
             return HeadlessSelfTest.Run(args[1], bareCompressionOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--bare-gzip-only")
             return HeadlessSelfTest.Run(args[1], bareGZipOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-defaults-only")
             return HeadlessSelfTest.Run(args[1], imageDefaultsOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-copy-only")
+            return HeadlessSelfTest.Run(args[1], imageCopyOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-headers-only")
+            return HeadlessSelfTest.Run(args[1], tableHeadersOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-raw-search-only")
+            return HeadlessSelfTest.Run(args[1], tableRawSearchOnly: true);
+if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-column-ignore-only")
+    return HeadlessSelfTest.Run(args[1], tableColumnIgnoreOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--line-transform-only")
+            return HeadlessSelfTest.Run(args[1], lineTransformOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-column-range-only")
+            return HeadlessSelfTest.Run(args[1], tableColumnRangeOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--text-bookmarks-only")
+            return HeadlessSelfTest.Run(args[1], textBookmarksOnly: true);
         if (args.Length == 2 && args[0] == "--self-test-independent-text-input-saved-archives")
             return HeadlessSelfTest.Run(args[1], independentTextInputSavedArchivesOnly: true);
         if (args.Length == 2 && args[0] == "--self-test-independent-text-input-routes")
@@ -37,6 +55,8 @@ public static class Program
         if (args.Length == 5 && args[0] == "--binary-bytecode-self-test") return BinaryBytecodeSelfTest(args);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-search-only")
             return HeadlessSelfTest.Run(args[1], binarySearchOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-replace-only")
+            return HeadlessSelfTest.Run(args[1], binaryReplaceOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-clipboard-only")
             return HeadlessSelfTest.Run(args[1], binaryClipboardOnly: true);
         if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);
@@ -74,6 +94,7 @@ public static class Program
         {
             if (args[1] is not ("encode" or "decode" or "decode-oem") || args[2] is not ("little" or "big")) throw new ArgumentException("encode|decode|decode-oem little|big INPUT OUTPUT を指定してください。");
             var input = Path.GetFullPath(args[3]); var output = Path.GetFullPath(args[4]);
+            DiffBeacon.Development.DevelopmentOutputGuard.Validate(output);
             if (DiffBeacon.Providers.ArchivePaths.SameFile(input, output)) throw new IOException("入力を出力へ指定できません。");
             for (var path = input; path is not null; path = Path.GetDirectoryName(path))
                 if ((File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0) throw new IOException("リンクを入力へ指定できません。");

@@ -1,0 +1,723 @@
+{
+  "compileCount": 36,
+  "linkCount": 1,
+  "nativeRunCount": 2,
+  "nativeCaseCount": 30,
+  "requiresNewSafe30ScopeApproval": true,
+  "compileTUs": [
+    {
+      "id": "compile-Timestamp",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Timestamp.cpp",
+      "sourceSha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-DateTime",
+      "sourceRelative": "source/Externals/poco/Foundation/src/DateTime.cpp",
+      "sourceSha256": "93e09ccc88f6a658b5ec5fb8ebf4a39e23f29dd2d689f78bdd4704ca51684b4c",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-LocalDateTime",
+      "sourceRelative": "source/Externals/poco/Foundation/src/LocalDateTime.cpp",
+      "sourceSha256": "8461f1bc6c6cdbd34384dec30039afb263bf025964d9ddcb1762f7f6da0974a2",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-DateTimeParser",
+      "sourceRelative": "source/Externals/poco/Foundation/src/DateTimeParser.cpp",
+      "sourceSha256": "8afdcd719c0c7e263d25767312ecc01b9b32de4c29271ad92604a514281d4dbf",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-DateTimeFormatter",
+      "sourceRelative": "source/Externals/poco/Foundation/src/DateTimeFormatter.cpp",
+      "sourceSha256": "6f2653eec24e02abf9dc1b2454c02f332f1506e99341a731f5b1644300523fc7",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-DateTimeFormat",
+      "sourceRelative": "source/Externals/poco/Foundation/src/DateTimeFormat.cpp",
+      "sourceSha256": "9f8b35047876e279790fd32dcdd2b408ac5c90e0b340a3f631e8eb43a31eaba9",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Timespan",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Timespan.cpp",
+      "sourceSha256": "db99b2c6c09c17430f622cfdec82d0ca7243f8ef13219bc0f7e06cd76da1930b",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Timezone",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Timezone.cpp",
+      "sourceSha256": "5e510c0222a8b8f9c2f9db069f9551d591147ef9e8e704d54ea4996ca171fdc4",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Format",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Format.cpp",
+      "sourceSha256": "c707c65e7c358b9de3a243ab02efd7c06d8f79a0a5fe81824c4be4eb2eb2af4d",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Exception",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Exception.cpp",
+      "sourceSha256": "aaf4f14a30fe3e6502b405add93efdd79d06520c853bea54ad550ec9ca4ea964",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Bugcheck",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Bugcheck.cpp",
+      "sourceSha256": "327712a9e5f86e645768267cf4f5f781f7dde915e35c2fa00aa3bbe45e2db5f3",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Ascii",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Ascii.cpp",
+      "sourceSha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-NumberFormatter",
+      "sourceRelative": "source/Externals/poco/Foundation/src/NumberFormatter.cpp",
+      "sourceSha256": "bd702409cff7ec3083a8b6ecf82d9fc3227bbe03ff19d51d114baa7e9f0415df",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-RegularExpression",
+      "sourceRelative": "source/Externals/poco/Foundation/src/RegularExpression.cpp",
+      "sourceSha256": "fff9946466099bef0f2c8df3f9a2026931643e968254967bc437eb2ba827bfbb",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-UnicodeConverter",
+      "sourceRelative": "source/Externals/poco/Foundation/src/UnicodeConverter.cpp",
+      "sourceSha256": "60813871b28d2f6f5f6e8e2f0d318276ad337bf5b930d1184805a8d96b477be9",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-NumericString",
+      "sourceRelative": "source/Externals/poco/Foundation/src/NumericString.cpp",
+      "sourceSha256": "a2f5eae69070150fc9f6802471cc1b3a030186e32704620d4f47ccd773bdcbf7",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Debugger",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Debugger.cpp",
+      "sourceSha256": "f260236d81967c5aa7716a9e658ac2f6c4f615ee820adf55f59fc3f0abc78bf0",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-FPEnvironment",
+      "sourceRelative": "source/Externals/poco/Foundation/src/FPEnvironment.cpp",
+      "sourceSha256": "6ba2f9530d8e0735c97e8a78a6e57ecf25fc1e957972bbe4524f42ac0916dac9",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-MemoryStream",
+      "sourceRelative": "source/Externals/poco/Foundation/src/MemoryStream.cpp",
+      "sourceSha256": "a5862b652bd8bf7811e9724aab23afdfba94f5898e1800ac69ba6ccf8ab17c79",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-TextConverter",
+      "sourceRelative": "source/Externals/poco/Foundation/src/TextConverter.cpp",
+      "sourceSha256": "9a4598d6fbe682c73ac2d877dfb1d38f52b511bc94efbffcd1696f8c77c8c412",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-TextIterator",
+      "sourceRelative": "source/Externals/poco/Foundation/src/TextIterator.cpp",
+      "sourceSha256": "8b4c092d5a637bd1487f08819df6548516f6bbb7b55ea7a0d8a7f6b8d6183cb8",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-TextEncoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/TextEncoding.cpp",
+      "sourceSha256": "272a795ea64a25d43da9aead135d231f1a029d4aabbe627b41a49e674742b26c",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-UTF8Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/UTF8Encoding.cpp",
+      "sourceSha256": "d61f56ed798ebc3776459979b49246527a16796fa143aec289082722a0ffdeef",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-UTF16Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/UTF16Encoding.cpp",
+      "sourceSha256": "3d30ef9056af0e793f4592ced8ae241f82b749b51225efd0428434f8b1d1d21d",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-UTF32Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/UTF32Encoding.cpp",
+      "sourceSha256": "5948ef4ed427d65febbe6b4394712ed00da61d4fe2067ce693c93a0adbf7a200",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-RWLock",
+      "sourceRelative": "source/Externals/poco/Foundation/src/RWLock.cpp",
+      "sourceSha256": "1a5fb35eb1ab6e47df8f453a40f825ffc0c299af00e7259ce47ca62998f1acb8",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-ASCIIEncoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/ASCIIEncoding.cpp",
+      "sourceSha256": "909ad349f8fa74ae80c8c4e8307b62d3df91bd4a207c08cad936601580813d3f",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Latin1Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Latin1Encoding.cpp",
+      "sourceSha256": "f3bf501be2a4df7c79baab0189abacb5a49895c64112efd87cb214c86afcdfd9",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Latin2Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Latin2Encoding.cpp",
+      "sourceSha256": "3d3c6dc064a87e5ff5be319fc1c5f9198241acb6d46736d9dbd53841516b98be",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Latin9Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Latin9Encoding.cpp",
+      "sourceSha256": "b73b72d702bc6475021dca54216556cfe0de4d3b0ed6f5b0e5d0ab2264c8247b",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Windows1250Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Windows1250Encoding.cpp",
+      "sourceSha256": "22dae8e8e5a99eed7509379460ea254c59f567bb4a15d38c82a5c0185289ca95",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Windows1251Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Windows1251Encoding.cpp",
+      "sourceSha256": "e3150a26651c9fcb704659b122b29f98ceeccfa6222abce36aa219d8c3876058",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-Windows1252Encoding",
+      "sourceRelative": "source/Externals/poco/Foundation/src/Windows1252Encoding.cpp",
+      "sourceSha256": "488c2d7dcb56982dbd3497950a604a1e1fa046de7a42ff348a4816ae84224ef2",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-pcre2",
+      "sourceRelative": "source/Externals/poco/dependencies/pcre2/src/pcre2.c",
+      "sourceSha256": "7d05fd0a971a5ad96d632c137195b5150c0307ad5fc1067c3f7ed4ce94ddc80a",
+      "abiFlags": [
+        "/nologo",
+        "/TC",
+        "/DPCRE2_STATIC",
+        "/DHAVE_CONFIG_H",
+        "/MD",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    },
+    {
+      "id": "compile-reproduce-safe30-adapter",
+      "sourceRelative": "reproduce-safe30-adapter.cpp",
+      "sourceSha256": "51deb76d152d5dc91301eee2aa5078a79a8033f2203ab25a2576e80d40345896",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "owned safe30 proposed adapter"
+    },
+    {
+      "id": "compile-AtomicCounter",
+      "sourceRelative": "source/Externals/poco/Foundation/src/AtomicCounter.cpp",
+      "sourceSha256": "d5a0992736324eaaf08e0695763b921bc85f4662b38dcbdd53648e9d961ece57",
+      "abiFlags": [
+        "/nologo",
+        "/std:c++17",
+        "/EHsc",
+        "/MD",
+        "/DPOCO_STATIC",
+        "/DPOCO_NO_AUTOMATIC_LIBS",
+        "/DPCRE2_STATIC",
+        "/DNOMINMAX",
+        "/DUNICODE",
+        "/D_UNICODE",
+        "/c"
+      ],
+      "role": "whole unchanged original TU"
+    }
+  ],
+  "includeRoots": [
+    "source/Externals/poco/Foundation/include",
+    "source/Externals/poco/dependencies/v8_double_conversion/src",
+    "source/Externals/poco/dependencies/pcre2/src",
+    "source/Src",
+    "source/Src/Common",
+    "source/Src/FilterEngine",
+    "adapter",
+    "original-pieces"
+  ],
+  "linkFlags": [
+    "/NOLOGO"
+  ],
+  "systemLibraries": [
+    "oleaut32.lib",
+    "kernel32.lib"
+  ],
+  "compilerSha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57",
+  "linkerSha256": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d",
+  "toolset": "MSVC14.51.36231 / original C++17 static bundled8bit PCRE/Unicode/JITundef flags; wholeproject flags not qualified",
+  "byteBudget": 67108864,
+  "commandTimeoutSeconds": 180,
+  "nativeTimeoutSeconds": 60,
+  "overallTimeoutSeconds": 7200,
+  "oldObjReuseProhibited": true,
+  "sameProfile": {
+    "userLcid": 1041,
+    "userLocaleUtf8Hex": "6a612d4a50",
+    "timezoneState": 0,
+    "timezoneStandardNameUtf8Hex": "e69db1e4baac2028e6a899e6ba96e6998229",
+    "timezoneBiasMinutes": -540,
+    "timezoneStandardBiasMinutes": 0,
+    "timezoneDaylightBiasMinutes": -60,
+    "pocoTimezoneTzdSeconds": 32400
+  }
+}

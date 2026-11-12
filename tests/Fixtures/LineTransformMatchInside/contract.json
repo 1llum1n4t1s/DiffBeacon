@@ -1,0 +1,14 @@
+{
+  "nativeCaseCount": 59,
+  "failures": [
+    "predicate begin/end throw at first/middle/last: trace stops at failing node; no outer cache published",
+    "invalid scalar/array conversion: evalAsBool native behavior",
+    "empty/no provider; nested range boundaries; pair identity and reverse key; cached mutation and fresh context",
+    "injected cancellation-shaped exception is an adapter probe; no native cancellation API claim"
+  ],
+  "publicBoundary": "CLI serialized keys only; no public typed/cache/AST/exception equivalence",
+  "unsupported": [
+    "parser and optimizer are not executed",
+    "actual GUI, cancellation token, other OS/AOT are not executed"
+  ]
+}

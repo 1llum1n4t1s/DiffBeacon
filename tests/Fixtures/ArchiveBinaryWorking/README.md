@@ -6,8 +6,8 @@
 
 ```powershell
 dotnet build DiffBeacon.slnx -c Release
-dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test <fresh-gui> --binary-working-only
-dotnet tests/DiffBeacon.E2E/bin/Release/net10.0/DiffBeacon.E2E.dll --output <fresh-e2e> --archive-binary-only --python python
+dotnet Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll --self-test <fresh-gui> --binary-working-only
+dotnet tests/DiffBeacon.E2E/bin/Release/net11.0/DiffBeacon.E2E.dll --output <fresh-e2e> --archive-binary-only --python python
 python tests/Fixtures/ArchiveBinaryWorking/verify.py <fresh-gui> <binary-scenario-work-directory>
 ```
 

@@ -1884,7 +1884,7 @@
           "filtered-dir/deep/leaf.bin": "4567",
           "conflict/c.bin": "cb",
           "reverse-conflict": "db",
-          "size-side.bin": "01"
+          "size-side.bin": "020304"
         },
         "leftDirs": [
           "equal-dir",
@@ -1910,12 +1910,8 @@
       },
       "exit": 0,
       "json": true,
-      "operations": [
-        "size-side.bin"
-      ],
-      "changedDirectories": [
-        ""
-      ],
+      "operations": [],
+      "changedDirectories": [],
       "emptyDirectoryMtimes": []
     },
     {

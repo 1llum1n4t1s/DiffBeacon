@@ -1,0 +1,182 @@
+[
+  {
+    "output": "array.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 59979,
+    "endByte": 60306,
+    "startLine": 1803,
+    "endLine": 1815,
+    "sha256": "dc6095335ea25e8b8bf1f766d517d25742e25b5cbd9d5e0529d80bda7d3ef019"
+  },
+  {
+    "output": "trim.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 91110,
+    "endByte": 91689,
+    "startLine": 2862,
+    "endLine": 2881,
+    "sha256": "103acbd31ce8eca5b500183abf5fcb60f70b020785d0a4d5c2e04866136f14f8"
+  },
+  {
+    "output": "trimleft.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 91691,
+    "endByte": 92218,
+    "startLine": 2883,
+    "endLine": 2901,
+    "sha256": "395d95e3f6bab173a3971f63306776b927f5b14add03a6f06b699fc0e70d5009"
+  },
+  {
+    "output": "trimright.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 92220,
+    "endByte": 92750,
+    "startLine": 2903,
+    "endLine": 2921,
+    "sha256": "65ffc6b48de04f08fa0f11979a64e30c5fc1e5e713b720eb829dcdb1be16367e"
+  },
+  {
+    "output": "to-string.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 76207,
+    "endByte": 77464,
+    "startLine": 2315,
+    "endLine": 2357,
+    "sha256": "364fddb14994e0b992fb3aa40b83b25ec2b2a0b71dde9763f2f5e12eccc5aaf1"
+  },
+  {
+    "output": "convert-string.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 1277,
+    "endByte": 1512,
+    "startLine": 51,
+    "endLine": 58,
+    "sha256": "f66596a0c1646cfc43167b4282173894287169a389fce1e5c5e5a27ccf849059"
+  },
+  {
+    "output": "scalar-array.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 56747,
+    "endByte": 57135,
+    "startLine": 1693,
+    "endLine": 1704,
+    "sha256": "5c4b109fd6a2b058f9dde10e0f837e88ed0943bda5172b9519f586b812ba19c5"
+  },
+  {
+    "output": "logical-truth.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 819,
+    "endByte": 1275,
+    "startLine": 34,
+    "endLine": 49,
+    "sha256": "ab367bcd4047fd964659bf4bc32cce58652ddea759d0b86c845a3832a308e4a5"
+  },
+  {
+    "output": "direct-truth.inc",
+    "path": "Src/FilterEngine/FilterExpression.cpp",
+    "startByte": 8401,
+    "endByte": 8739,
+    "startLine": 336,
+    "endLine": 350,
+    "sha256": "3469eee1af0d5a7bf44c617b91d4a310e9934882d01e0f3680472370c674eae9"
+  },
+  {
+    "output": "case-normalization.txt",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 131747,
+    "endByte": 131919,
+    "startLine": 4221,
+    "endLine": 4222,
+    "sha256": "2cfa9b0382fa303f0d8b806b67428fef866bc7d6a400c090f8590ae638d23e70"
+  },
+  {
+    "output": "function-info.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 115631,
+    "endByte": 115808,
+    "startLine": 3778,
+    "endLine": 3785,
+    "sha256": "98c8144f8d30df8dd83cd59e38f94bb63b05661738c390c2fd1ae8b0ffba95da"
+  },
+  {
+    "output": "arity-check.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 133431,
+    "endByte": 133965,
+    "startLine": 4270,
+    "endLine": 4281,
+    "sha256": "e4e0bf3fdf89ea651c4d7bd671804f32e125df611ab2772c8f0f8f39446fa57f"
+  },
+  {
+    "output": "registration.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 118437,
+    "endByte": 118536,
+    "startLine": 3855,
+    "endLine": 3858,
+    "sha256": "be354981e6ce91ad79f1e713776ad500f388415f85a73f1d0ca7118d73a50c60"
+  },
+  {
+    "output": "value-type.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.h",
+    "startByte": 232,
+    "endByte": 617,
+    "startLine": 15,
+    "endLine": 22,
+    "sha256": "d6aa2ad12d811492d3bace3491e88e8dd113bc867e560c7a6ba4ca6bde1e42a7"
+  },
+  {
+    "output": "expr-node.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.h",
+    "startByte": 694,
+    "endByte": 857,
+    "startLine": 26,
+    "endLine": 31,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1167,
+    "endByte": 1214,
+    "startLine": 58,
+    "endLine": 61,
+    "sha256": "237bccfb53e209a276ec96e9f60493486d60f476432810d7af55e6213ee34531"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1217,
+    "endByte": 1283,
+    "startLine": 64,
+    "endLine": 67,
+    "sha256": "5d52e64c0f807545cd763cfe426f7fdb4438ac73c40259686117c7c2a4fbe0a5"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1286,
+    "endByte": 1313,
+    "startLine": 70,
+    "endLine": 72,
+    "sha256": "085376444119a0c2113ef85eb210ad20ca3b320edd1dae02934f5c8f7061e071"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    "startByte": 4359,
+    "endByte": 4448,
+    "startLine": 156,
+    "endLine": 159,
+    "sha256": "1d33ee8d78718ff11f6e746832d19110e27da932df31b23893e72d8e5b8b84ad"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    "startByte": 5629,
+    "endByte": 5708,
+    "startLine": 236,
+    "endLine": 239,
+    "sha256": "69ab8ff123cd5f22b464d42574f297127b44ba8e99dc7593767e255541207344"
+  }
+]

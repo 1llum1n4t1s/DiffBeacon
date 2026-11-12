@@ -1,12 +1,12 @@
 {
-  "readerSha256": "A20714AD82F77EF9866F685D4A874369692101FDCC6E93ED3C557AB44D1D4CC1",
+  "readerSha256": "0F8225D5C2DEE8D8153071DE6D1D91824CE4EC13C0E24F6541A4517EBC0325CD",
   "adapter": [
     "Unified TypeConflict retains both raw kinds; unfiltered side representative kind",
     "Parent gate and direct selected child bypass",
     "Scanned empty source with opposite model child recurses and skips absent child",
     "New budgets2entry/depth1; duplicate candidate pruning"
   ],
-  "expectationsSha256": "0D10C226C3675622CA0560FE1332F49990AB2CFC2E818497CD596A45C0667450",
+  "expectationsSha256": "3FFD03CD07FF6C18FFB1FB5335503575FB02056345D8C94803C96B6A41783A7D",
   "oracle": "Self-authored literal expectations with static original source evidence and explicit adapter/safety policy; not unmodified original runtime",
   "sourceEvidence": [
     {

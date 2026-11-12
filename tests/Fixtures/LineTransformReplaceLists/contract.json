@@ -1,0 +1,19 @@
+{
+  "failures": [
+    "literal global/case and regex global replacements diverge",
+    "array lifting/typed pair shape differs",
+    "comment/blank/tab/third-column parser contract differs",
+    "BOM adapter boundary mistaken for native UniMemFile equivalence",
+    "invalid regex must log and skip while subsequent rule is retained",
+    "open failure returns empty list and preserves source with diagnostic",
+    "arity prevents evaluation; first/second eager throw stops evaluation",
+    "compiled regex/string pair acceptance differs between literal/regex functions"
+  ],
+  "osBoundary": "UniMemFile/options/detection/env are explicit UTF-8 adapter; file cases native-only",
+  "publicBoundary": "string pair functions serialized-key comparison only; compiled regex pairs and file APIs are native-only",
+  "unsupported": [
+    "native UniMemFile/encoding inference and environment expansion",
+    "full parser/optimizer/GUI/AOT/other OS",
+    "unsafe non-array path/list argument dereference is not executed"
+  ]
+}

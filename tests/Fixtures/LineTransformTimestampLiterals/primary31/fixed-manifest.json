@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "candidate": "timestamp sameProfile raw Native31 + safe30 reproduction PREP",
+  "actualCounts": {
+    "newCompile": 1,
+    "inheritedObjects": 35,
+    "newLink": 1,
+    "nativeRuns": 2
+  },
+  "sourceZipCounts": {
+    "wholeOriginal": 375,
+    "exactPieces": 12,
+    "adapterHeader": 2,
+    "primaryLicenses": 5,
+    "entries": 394
+  },
+  "sameProfileOnly": true,
+  "unsafeNulForensicOnly": true,
+  "newSafe30ReproductionUnexecuted": true,
+  "productAdoption": false,
+  "files": [
+    {
+      "path": "case-plan.json",
+      "size": 26853,
+      "sha256": "9cf2094d0e0b7a907a433930cc502372394b3628ac81622c11d148d6928a322d",
+      "role": "forensic-original-case-plan"
+    },
+    {
+      "path": "failure-list.json",
+      "size": 976,
+      "sha256": "5613b5bac156e628e099e8592168ee76cb489589b2353af042bd212e4047f117",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "native-proof.zip",
+      "size": 1488113,
+      "sha256": "46c4db7fbd429bb2dc055ffc2c5fe52001d8fbc350efb1dcd36652c3a266cd55",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "native-run-1.ndjson",
+      "size": 32663,
+      "sha256": "b0f4e718d199844937db8cedc5707e4889d736c93e4d97a6c433546d8c2ceee1",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "native-run-2.ndjson",
+      "size": 32663,
+      "sha256": "dfff67fc587d292296feb7a8887694282cc457a8fc34b154a3d6ba67e8c9c3ee",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "native-semantic31-joined.json",
+      "size": 68752,
+      "sha256": "b0913a71db364c22dc8d5c679c0f2084c0ab8ca1d88c057b92591143cc8c80b3",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "output-identity.json",
+      "size": 861,
+      "sha256": "de2054d86d095962864317f6c092d208fd15fdd0d9db03c2613a4fcc094c46bb",
+      "role": "forensic-output-identity"
+    },
+    {
+      "path": "owned_windows_process.py",
+      "size": 5287,
+      "sha256": "eed5ce00129091d76bee91c4111d762f061983a57b50062a48d4b4c247344c90",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "portable-case-plan.json",
+      "size": 25784,
+      "sha256": "4bdd9cc9fbbde67bf8dfb11449ad65541f77301d22229afbfa6de37bed499b1c",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "portable-compile-plan.json",
+      "size": 20346,
+      "sha256": "244361e17084a059546bda14a86e46cd6b8b49243b757dc5f614db69a861f575",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "proof-zip-manifest.json",
+      "size": 34368,
+      "sha256": "42f191ef4a4d07f0d50b9564c2d64ffcf57138c5edbd024e22f9bf637cd8d351",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "README.md",
+      "size": 7401,
+      "sha256": "1ac79b311c99e3bd4c2626fa9aea5ab471446a65c06d98093f3f6620311a93f1",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "reference-source.zip",
+      "size": 972888,
+      "sha256": "044a1e0497951b740f6b11185592983ed9fee921df8d98ca4ffd987031eaa120",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "reproduce-safe30-adapter.cpp",
+      "size": 8035,
+      "sha256": "51deb76d152d5dc91301eee2aa5078a79a8033f2203ab25a2576e80d40345896",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 9951,
+      "sha256": "53bc2482d6da7d7c5f1923ab6650530fea953064814705ed6ee256fa90bc7241",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "reproduction-scope.json",
+      "size": 785,
+      "sha256": "2fd6c01729b3e93533d3616972a6e68ee322b01f1682d281a2a3940160068f55",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "source-manifest.json",
+      "size": 173384,
+      "sha256": "cc5db0d544e3cc4c9ef1bbccffd09c3bba3e665ab5b89ad0b8ca862fe8d71f9c",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "source-zip-manifest.json",
+      "size": 80404,
+      "sha256": "f3666ff16d32f747dfeb77892baae3e3bfebf1ce3b3a42439d01054fc6df4fdb",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "verify.py",
+      "size": 10274,
+      "sha256": "c82ad55e59b9d763e6f732541de4f5f1d1f3c108708cd7f476319174b83e01ae",
+      "role": "self-contained-relative-input"
+    }
+  ]
+}

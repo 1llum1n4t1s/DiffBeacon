@@ -1,0 +1,10 @@
+{
+  "nativeProofSha256": "f2955cd07049d8f6318ba3dc301e52b5a008d548f2ead8d5b5c2ab027cf1766e",
+  "nativeOutputSha256": "c2b28802f077519f92fde2d9665ef0a1ab5c986f20be59c21bba1fbbef8c6232",
+  "nativeCasesSha256": "f0d5f5336cce2a4ca4d6d0b4610ffc09b5bcb7e0284a87c5bad7320d464c3433",
+  "nativeInputFreezeSha256": "a78ac48b729592446f7c4b9aca1ff48bb267089bffa161e6b302a2b414451c0b",
+  "postReaderChainSha256": "5e5caa89f1f511535826c95194c5a4c4c25f49cfabdb217273970befc3689a10",
+  "postReaderReceiptSha256": "02870c9f35e3ad352051251829570a2a1374dad8f8ca6fedba6f542e99a8f767",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "productExecuted": false
+}

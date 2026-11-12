@@ -1,0 +1,2666 @@
+[
+  {
+    "id": "search-strcount-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": ""
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"\", \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-absent",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "string",
+                "text": "x"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"abc\", \"x\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-overlap",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"aaaaa\", \"aa\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-utf8",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "あx😀あ"
+              },
+              {
+                "op": "string",
+                "text": "あ"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"あx😀あ\", \"あ\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-utf8-byte",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "あx😀あ"
+              },
+              {
+                "op": "string",
+                "text": "😀"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"あx😀あ\", \"😀\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 12121
+              },
+              {
+                "op": "string",
+                "text": "21"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(12121, \"21\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-bool",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "r"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(true, \"r\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-none",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(None, \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-array",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "aaaa"
+                  },
+                  {
+                    "op": "none"
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 123
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(Array(\"aaaa\", None, 123, true), \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "string",
+                        "text": "ab"
+                      },
+                      {
+                        "op": "string",
+                        "text": "ab"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": []
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "string",
+                        "text": "abab"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "ab"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(Array(Array(\"ab\", \"ab\"), Array(), Array(\"abab\")), \"ab\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-needle-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "string",
+                "text": ""
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"abc\", \"\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-needle-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "123"
+              },
+              {
+                "op": "integer",
+                "integer": 123
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"123\", 123)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-needle-bool",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "true"
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"true\", true)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-needle-array",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"abc\", Array(\"a\"))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-needle-none",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "none"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"abc\", None)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-ci-ascii",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": false,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "aAbBAA"
+              },
+              {
+                "op": "string",
+                "text": "Aa"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@ci @noopt StrCount(\"aAbBAA\", \"Aa\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-ci-nonascii",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": false,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "ÄäÉéA"
+              },
+              {
+                "op": "string",
+                "text": "ä"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@ci @noopt StrCount(\"ÄäÉéA\", \"ä\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-ci-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": false,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "あA😀a"
+              },
+              {
+                "op": "string",
+                "text": "A"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@ci @noopt StrCount(\"あA😀a\", \"A\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-arity-0",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": []
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount()"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-arity-1",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"abc\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-arity-4",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              },
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"abc\", \"a\", 0, 1)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": ""
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"\", \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-absent",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "string",
+                "text": "x"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"abc\", \"x\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-overlap",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-utf8",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "あx😀あ"
+              },
+              {
+                "op": "string",
+                "text": "あ"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"あx😀あ\", \"あ\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-utf8-byte",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "あx😀あ"
+              },
+              {
+                "op": "string",
+                "text": "😀"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"あx😀あ\", \"😀\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 12121
+              },
+              {
+                "op": "string",
+                "text": "21"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(12121, \"21\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-bool",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "r"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(true, \"r\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-none",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(None, \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-array",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "aaaa"
+                  },
+                  {
+                    "op": "none"
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 123
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(Array(\"aaaa\", None, 123, true), \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "string",
+                        "text": "ab"
+                      },
+                      {
+                        "op": "string",
+                        "text": "ab"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": []
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "string",
+                        "text": "abab"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "ab"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(Array(Array(\"ab\", \"ab\"), Array(), Array(\"abab\")), \"ab\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-needle-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "string",
+                "text": ""
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"abc\", \"\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-needle-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "123"
+              },
+              {
+                "op": "integer",
+                "integer": 123
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"123\", 123)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-needle-bool",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "true"
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"true\", true)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-needle-array",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"abc\", Array(\"a\"))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-needle-none",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "none"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"abc\", None)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-ci-ascii",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": false,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aAbBAA"
+              },
+              {
+                "op": "string",
+                "text": "Aa"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@ci @noopt StrFind(\"aAbBAA\", \"Aa\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-ci-nonascii",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": false,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "ÄäÉéA"
+              },
+              {
+                "op": "string",
+                "text": "ä"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@ci @noopt StrFind(\"ÄäÉéA\", \"ä\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-ci-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": false,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "あA😀a"
+              },
+              {
+                "op": "string",
+                "text": "A"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@ci @noopt StrFind(\"あA😀a\", \"A\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-arity-0",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": []
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind()"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-arity-1",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"abc\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-arity-4",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "abc"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              },
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"abc\", \"a\", 0, 1)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-zero",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", 0)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-one",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", 1)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-two",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", 2)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-neg",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "integer",
+                "integer": -1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", -1)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-max",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "toint",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "9223372036854775807"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", ToInt(\"9223372036854775807\"))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-min",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "toint",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "-9223372036854775808"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", ToInt(\"-9223372036854775808\"))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-str",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "string",
+                "text": "1"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", \"1\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-bool",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", true)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-none",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "none"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", None)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-array",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", Array(1))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-toint",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "aa"
+              },
+              {
+                "op": "toint",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "1"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"aa\", ToInt(\"1\"))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-source-error",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": ""
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount((1 / 0), \"\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-needle-error",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(None, (1 / 0))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strcount-lazy",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "strcount",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "aaaa"
+                  },
+                  {
+                    "op": "string",
+                    "text": "aa"
+                  }
+                ]
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt If(true, StrCount(\"aaaa\", \"aa\"), (1 / 0))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-source-error",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": ""
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind((1 / 0), \"\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-needle-error",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(None, (1 / 0))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-strfind-lazy",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "strfind",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "aaaa"
+                  },
+                  {
+                    "op": "string",
+                    "text": "aa"
+                  }
+                ]
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt If(true, StrFind(\"aaaa\", \"aa\"), (1 / 0))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-occ-eager",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "string",
+                "text": ""
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(None, \"\", (1 / 0))"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-find-badneedle-before-occ",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              },
+              {
+                "op": "none"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"a\", (1 / 0), None)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-dynamic-line",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "あa\r\n",
+      "ba\n",
+      "zz\r",
+      "a"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "line"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(Line, \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-dynamic-occ",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "x\r\n",
+      "y\n",
+      "z"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaaa"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "number"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaaa\", \"a\", LineNumber)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-table-raw",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c\r\n",
+      "a,\"b,c\"\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "line"
+              },
+              {
+                "op": "string",
+                "text": ","
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(Line, \",\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-table-range",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "range",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "2,1"
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": ","
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(ColumnRange(\"2,1\"), \",\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-skip-mask",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 1,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 1,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaa"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"aaaa\", \"a\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-include-mask",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 1,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 2,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaa"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(\"aaaa\", \"a\", 1)"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  },
+  {
+    "id": "search-group-chain",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strcount",
+            "children": [
+              {
+                "op": "string",
+                "text": "aaaa"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrCount(\"aaaa\", \"a\")"
+        ]
+      },
+      {
+        "mask": 7,
+        "caseSensitive": true,
+        "ast": [
+          {
+            "op": "strfind",
+            "children": [
+              {
+                "op": "line"
+              },
+              {
+                "op": "string",
+                "text": "4"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt StrFind(Line, \"4\")"
+        ]
+      }
+    ],
+    "note": "fixed explicit AST; parser/optimizer not executed"
+  }
+]

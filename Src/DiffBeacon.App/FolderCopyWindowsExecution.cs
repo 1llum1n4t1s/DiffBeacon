@@ -131,7 +131,7 @@ public static partial class FolderOperations
     private static async Task CopyWindowsFileAsync(FolderCopyEntry entry, string temporary, CopyBudget budget,
         Dictionary<string, FolderCopyEntry> sourceState, Dictionary<string, FolderCopySnapshot?> state,
         WindowsExecutionState windows, CopyMutation item, string destinationRoot, CancellationToken token,
-        Action<string>? validateDestination, Action? validateContext)
+        Action<string>? validateDestination, Action? validateContext, Action<string, Action> publish)
     {
         var source = entry.SourceWindowsMetadata ?? throw new IOException("Windows source metadataが計画にありません。");
         Guard(token, validateContext);
@@ -157,12 +157,12 @@ public static partial class FolderOperations
             ValidateDestinationChain(entry.DestinationPath, destinationRoot, state, token, validateDestination, validateContext, windows);
             RejectLinks(temporary);
             // DATA/ADS検証はleaseをopenする前に完了。最後のsource/oldtarget DATA guardsもawaitでclose済み。
-            lease.Publish(entry.DestinationPath, entry.DestinationWindowsMetadata, () => Guard(token, validateContext), () =>
+            publish(entry.DestinationPath, () => lease.Publish(entry.DestinationPath, entry.DestinationWindowsMetadata, () => Guard(token, validateContext), () =>
             {
                 item.Published = true;
                 item.Mutated = true;
                 item.TemporaryPath = null;
-            }, token);
+            }, token));
             if (!lease.Finalized) throw new IOException("公開したstagingの最終close/属性照合が完了していません。");
             item.WindowsMetadata = new(expectedProof, expectedProof, true, FolderCopyWindowsMetadata.OwnedStaging.Qualification);
             Guard(token, validateContext);

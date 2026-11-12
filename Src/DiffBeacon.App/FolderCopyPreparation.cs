@@ -232,6 +232,12 @@ public static partial class FolderOperations
         catch (FileNotFoundException) { return null; }
         catch (DirectoryNotFoundException) { return null; }
         var directory = (attributes & FileAttributes.Directory) != 0;
+        if (directory && OperatingSystem.IsWindows() && FolderCopyPortableSnapshot.IsUncPath(path))
+        {
+            var snapshot = FolderCopyPortableSnapshot.ReadDirectory(path);
+            RejectLinks(path);
+            return snapshot;
+        }
         // コピー先や祖先も通常項目に限定し、FIFO/socketをMoveで置換しない。
         ValidatePlatformEntryKind(path, directory ? DirectoryEntryKind.Directory : DirectoryEntryKind.File);
         var size = directory ? 0 : new FileInfo(path).Length;

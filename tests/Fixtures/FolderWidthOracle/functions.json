@@ -1,0 +1,65 @@
+{
+  "functions": [
+    {
+      "id": "tohalfwidth",
+      "publicSpelling": "ToHalfWidth",
+      "registeredName": "tohalfwidth",
+      "aliases": [],
+      "flagName": "LCMAP_HALFWIDTH",
+      "flagValue": 4194304,
+      "minArgs": 1,
+      "maxArgs": 1
+    },
+    {
+      "id": "tofullwidth",
+      "publicSpelling": "ToFullWidth",
+      "registeredName": "tofullwidth",
+      "aliases": [],
+      "flagName": "LCMAP_FULLWIDTH",
+      "flagValue": 8388608,
+      "minArgs": 1,
+      "maxArgs": 1
+    },
+    {
+      "id": "tohiragana",
+      "publicSpelling": "ToHiragana",
+      "registeredName": "tohiragana",
+      "aliases": [],
+      "flagName": "LCMAP_HIRAGANA",
+      "flagValue": 1048576,
+      "minArgs": 1,
+      "maxArgs": 1
+    },
+    {
+      "id": "tokatakana",
+      "publicSpelling": "ToKatakana",
+      "registeredName": "tokatakana",
+      "aliases": [],
+      "flagName": "LCMAP_KATAKANA",
+      "flagValue": 2097152,
+      "minArgs": 1,
+      "maxArgs": 1
+    },
+    {
+      "id": "tosimplifiedchinese",
+      "publicSpelling": "ToSimplifiedChinese",
+      "registeredName": "tosimplifiedchinese",
+      "aliases": [],
+      "flagName": "LCMAP_SIMPLIFIED_CHINESE",
+      "flagValue": 33554432,
+      "minArgs": 1,
+      "maxArgs": 1
+    },
+    {
+      "id": "totraditionalchinese",
+      "publicSpelling": "ToTraditionalChinese",
+      "registeredName": "totraditionalchinese",
+      "aliases": [],
+      "flagName": "LCMAP_TRADITIONAL_CHINESE",
+      "flagValue": 67108864,
+      "minArgs": 1,
+      "maxArgs": 1
+    }
+  ],
+  "aliasBoundary": "Fixed registration table has exactly these six names and no additional aliases. PublicSpelling is the usual case variant; parser/case-insensitive name lookup is outside native capture."
+}

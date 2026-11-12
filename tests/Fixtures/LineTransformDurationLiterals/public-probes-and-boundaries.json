@@ -1,0 +1,192 @@
+{
+  "unitSpellings": [
+    "w",
+    "week",
+    "weeks",
+    "d",
+    "day",
+    "days",
+    "h",
+    "hr",
+    "hour",
+    "hours",
+    "m",
+    "min",
+    "minute",
+    "minutes",
+    "s",
+    "sec",
+    "second",
+    "seconds",
+    "ms",
+    "msec",
+    "millisecond",
+    "milliseconds"
+  ],
+  "originalLexerRuleUtf8Hex": "285b302d395d2b285b2e5d5b302d395d2b293f2928227765656b73227c227765656b227c2277227c2264617973227c22646179227c2264227c22686f757273227c22686f7572227c226872227c2268227c226d696e75746573227c226d696e757465227c226d696e227c226d227c227365636f6e6473227c227365636f6e64227c22736563227c2273227c226d696c6c697365636f6e6473227c226d696c6c697365636f6e64227c226d736563227c226d732229",
+  "originalLexerRuleLine": 41,
+  "proposals": [
+    {
+      "id": "static-token-0",
+      "input": "1s",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": true,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-1",
+      "input": "1MS",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": true,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-2",
+      "input": "1.5mInUtEs",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": true,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-3",
+      "input": ".1s",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-4",
+      "input": "1.s",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-5",
+      "input": "1e2s",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-6",
+      "input": "1 s",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-7",
+      "input": "1ss",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-8",
+      "input": "1x",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-9",
+      "input": "s",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-10",
+      "input": "1.2.3s",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-token-11",
+      "input": "1msecX",
+      "classification": "static-lexical-shape-proposal",
+      "expectedWholeTokenShape": false,
+      "nativeExecuted": false
+    },
+    {
+      "id": "static-adjacent-12",
+      "input": "1sAnd true",
+      "classification": "static-longest-unit-prefix-proposal",
+      "durationTokenPrefix": "1s",
+      "remainingText": "And true",
+      "nativeExecuted": false,
+      "parserWholeExpressionObserved": false
+    },
+    {
+      "id": "static-adjacent-13",
+      "input": "1millisecondsOr false",
+      "classification": "static-longest-unit-prefix-proposal",
+      "durationTokenPrefix": "1milliseconds",
+      "remainingText": "Or false",
+      "nativeExecuted": false,
+      "parserWholeExpressionObserved": false
+    },
+    {
+      "id": "static-adjacent-14",
+      "input": "1minAnd true",
+      "classification": "static-longest-unit-prefix-proposal",
+      "durationTokenPrefix": "1min",
+      "remainingText": "And true",
+      "nativeExecuted": false,
+      "parserWholeExpressionObserved": false
+    },
+    {
+      "id": "static-adjacent-15",
+      "input": "1MSECOr false",
+      "classification": "static-longest-unit-prefix-proposal",
+      "durationTokenPrefix": "1MSEC",
+      "remainingText": "Or false",
+      "nativeExecuted": false,
+      "parserWholeExpressionObserved": false
+    }
+  ],
+  "excluded": [
+    {
+      "id": "excluded-0",
+      "input": "9223372036854775.808ms",
+      "classification": "scaled-double-at-or-above-2pow63",
+      "nativeExecuted": false,
+      "nativeGoldenValue": null
+    },
+    {
+      "id": "excluded-1",
+      "input": "9223372036854.775808s",
+      "classification": "scaled-double-at-or-above-2pow63",
+      "nativeExecuted": false,
+      "nativeGoldenValue": null
+    },
+    {
+      "id": "excluded-2",
+      "input": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999w",
+      "classification": "finite-stod-times-unit-nonfinite-or-out-of-range",
+      "nativeExecuted": false,
+      "nativeGoldenValue": null
+    },
+    {
+      "id": "excluded-3",
+      "input": "-9223372036854775808us",
+      "classification": "signed-negation-overflow-boundary-no-node-built",
+      "nativeExecuted": false,
+      "nativeGoldenValue": null
+    },
+    {
+      "id": "excluded-4",
+      "input": "1és",
+      "classification": "nonascii-ctype-excluded",
+      "nativeExecuted": false,
+      "nativeGoldenValue": null
+    }
+  ],
+  "nativeExecuted": false,
+  "nativeParserExecuted": false,
+  "nativeDirectiveExecuted": false,
+  "publicProducerCompiled": false,
+  "qualification": "Static source/token-shape and longest-prefix proposal only. Original lexer/parser/directive not executed; no UB golden."
+}

@@ -1,0 +1,204 @@
+{
+  "ascii-class.inc": [
+    "Externals/poco/Foundation/include/Poco/Ascii.h",
+    [
+      [
+        27,
+        121
+      ]
+    ]
+  ],
+  "ascii-properties.inc": [
+    "Externals/poco/Foundation/include/Poco/Ascii.h",
+    [
+      [
+        127,
+        133
+      ]
+    ]
+  ],
+  "ascii-isascii.inc": [
+    "Externals/poco/Foundation/include/Poco/Ascii.h",
+    [
+      [
+        136,
+        139
+      ]
+    ]
+  ],
+  "ascii-hasproperties.inc": [
+    "Externals/poco/Foundation/include/Poco/Ascii.h",
+    [
+      [
+        142,
+        145
+      ]
+    ]
+  ],
+  "ascii-isupper.inc": [
+    "Externals/poco/Foundation/include/Poco/Ascii.h",
+    [
+      [
+        196,
+        199
+      ]
+    ]
+  ],
+  "ascii-lower.inc": [
+    "Externals/poco/Foundation/include/Poco/Ascii.h",
+    [
+      [
+        208,
+        214
+      ]
+    ]
+  ],
+  "ascii-table.inc": [
+    "Externals/poco/Foundation/src/Ascii.cpp",
+    [
+      [
+        21,
+        151
+      ]
+    ]
+  ],
+  "icompare.inc": [
+    "Externals/poco/Foundation/include/Poco/String.h",
+    [
+      [
+        286,
+        309
+      ]
+    ]
+  ],
+  "timestamp-class.inc": [
+    "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    [
+      [
+        31,
+        150
+      ]
+    ]
+  ],
+  "timestamp-opeq.inc": [
+    "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    [
+      [
+        156,
+        159
+      ]
+    ]
+  ],
+  "timestamp-opne.inc": [
+    "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    [
+      [
+        162,
+        165
+      ]
+    ]
+  ],
+  "timestamp-opgt.inc": [
+    "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    [
+      [
+        168,
+        171
+      ]
+    ]
+  ],
+  "timestamp-opge.inc": [
+    "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    [
+      [
+        174,
+        177
+      ]
+    ]
+  ],
+  "timestamp-oplt.inc": [
+    "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    [
+      [
+        180,
+        183
+      ]
+    ]
+  ],
+  "timestamp-ople.inc": [
+    "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    [
+      [
+        186,
+        189
+      ]
+    ]
+  ],
+  "timestamp-value.inc": [
+    "Externals/poco/Foundation/src/Timestamp.cpp",
+    [
+      [
+        58,
+        61
+      ]
+    ]
+  ],
+  "timestamp-copy.inc": [
+    "Externals/poco/Foundation/src/Timestamp.cpp",
+    [
+      [
+        64,
+        67
+      ]
+    ]
+  ],
+  "timestamp-dtor.inc": [
+    "Externals/poco/Foundation/src/Timestamp.cpp",
+    [
+      [
+        70,
+        72
+      ]
+    ]
+  ],
+  "native.inc": [
+    "FilterExpressionNodes.cpp",
+    [
+      [
+        1693,
+        1705
+      ],
+      [
+        2236,
+        2313
+      ]
+    ]
+  ],
+  "registration.inc": [
+    "FilterExpressionNodes.cpp",
+    [
+      [
+        3801,
+        3801
+      ]
+    ]
+  ],
+  "arity.inc": [
+    "FilterExpressionNodes.cpp",
+    [
+      [
+        4269,
+        4280
+      ]
+    ]
+  ],
+  "timestamp-assign.inc": [
+    "Externals/poco/Foundation/src/Timestamp.cpp",
+    [
+      [
+        75,
+        79
+      ]
+    ]
+  ]
+}

@@ -53,6 +53,9 @@ public sealed partial class ComparisonPane
     { 0 => LeftEditor, 1 => MiddleEditor, 2 => RightEditor, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
     private TextBox TextPath(int side) => side switch
     { 0 => LeftPath, 1 => BasePath, 2 => RightPath, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
+    private TextComparisonSourcePaths CurrentTextSourcePaths() => _textSaveAllowed
+        ? TextComparisonSources.ForProject(_projectMetadata, _leftDocument, _baseDocument, _rightDocument) : new();
+
     private TextDocument? TextInputDocument(int side) => side switch
     { 0 => _leftDocument, 1 => _baseDocument, 2 => _rightDocument, _ => throw new ArgumentOutOfRangeException(nameof(side)) };
     private string TextSaved(int side) => side switch
@@ -198,7 +201,7 @@ public sealed partial class ComparisonPane
             var useCurrentSyncPoints = TextEditor(pair.Left).Text == documents[pair.Left].Text
                 && TextEditor(pair.Right).Text == documents[pair.Right].Text;
             var syncPoints = useCurrentSyncPoints ? TextSyncPointsFor(pair.Left, pair.Right).ToArray() : Array.Empty<TextSyncPoint>();
-            var diff = await Task.Run(() => CompareTextWithSyncPoints(documents[pair.Left].Text, documents[pair.Right].Text, syncPoints, options, token), token);
+            var diff = await Task.Run(() => CompareTextWithSyncPoints(documents[pair.Left].Text, documents[pair.Right].Text, syncPoints, options, token, pair.Left, pair.Right, TextComparisonSources.ForProject(project, documents[0], documents[1], documents[2])), token);
             IndependentTextReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested();
             // 同size/mtimeの差替えも、候補を採用する前に原本SHAで拒否する。
@@ -243,14 +246,17 @@ public sealed partial class ComparisonPane
     private DiffResult CompareTextWithSyncPoints(string left, string right, int leftSide, int rightSide,
         ComparisonOptions options, CancellationToken token)
     {
-        return CompareTextWithSyncPoints(left, right, TextSyncPointsFor(leftSide, rightSide), options, token);
+        return CompareTextWithSyncPoints(left, right, TextSyncPointsFor(leftSide, rightSide), options, token, leftSide, rightSide, CurrentTextSourcePaths());
     }
 
     private static DiffResult CompareTextWithSyncPoints(string left, string right,
-        IReadOnlyList<TextSyncPoint> points, ComparisonOptions options, CancellationToken token)
+        IReadOnlyList<TextSyncPoint> points, ComparisonOptions options, CancellationToken token, int leftSide = 0, int rightSide = 2, TextComparisonSourcePaths? sourcePaths = null)
     {
-        return points.Count == 0 ? TextDiffer.Compare(left, right, options, token)
-            : TextDiffer.CompareWithSyncPoints(left, right, points, options, token);
+        var leftPane = leftSide == 0 ? TablePaneMask.Left : leftSide == 1 ? TablePaneMask.Base : TablePaneMask.Right;
+        var rightPane = rightSide == 0 ? TablePaneMask.Left : rightSide == 1 ? TablePaneMask.Base : TablePaneMask.Right;
+        sourcePaths ??= new();
+        return points.Count == 0 ? TextDiffer.CompareForPanesWithSourcePaths(left, right, leftPane, rightPane, sourcePaths, options, token)
+            : TextDiffer.CompareWithSyncPointsForPanesWithSourcePaths(left, right, points, leftPane, rightPane, sourcePaths, options, token);
     }
 
     private void RefreshSyncPointControls()
@@ -371,6 +377,7 @@ public sealed partial class ComparisonPane
         var stamp = TextAdoptionStamp(); var texts = Enumerable.Range(0, 3).Select(side => TextEditor(side).Text ?? "").ToArray();
         var pair = TextPair(); var syncPoints = TextSyncPointsFor(pair.Left, pair.Right).ToArray();
         var options = Options(); options = options with { SubstitutionRules = options.SubstitutionRules.ToArray() };
+        var sourcePaths = CurrentTextSourcePaths();
         var gate = IndependentEditorCompareGate;
         CompareButton.IsEnabled = false; _status.Text = "選択ペアのTextを比較しています…（中止できます）";
         try
@@ -378,7 +385,7 @@ public sealed partial class ComparisonPane
             var diff = await Task.Run(async () =>
             {
                 if (gate is not null) await gate(token).ConfigureAwait(false);
-                return CompareTextWithSyncPoints(texts[pair.Left], texts[pair.Right], syncPoints, options, token);
+                return CompareTextWithSyncPoints(texts[pair.Left], texts[pair.Right], syncPoints, options, token, pair.Left, pair.Right, sourcePaths);
             }, token);
             IndependentEditorDiffReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(operation, _operation) || !Equals(stamp, TextAdoptionStamp()))

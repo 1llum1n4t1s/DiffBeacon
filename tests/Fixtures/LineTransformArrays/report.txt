@@ -1,0 +1,23 @@
+配列一般行変換 原典増分fixture草案
+
+固定source commit: 6780924ba35f7f55af0f6f14dd302561175830a6。
+90件: Array/At/AnyOf/AllOf/AllEqual/AndEach/OrEach/NotEach/If/IfEach/Choose/ChooseEach、算術・比較・scalar lifting・Len/Trim・最終ToStringValue・UTF8・EOL・target group。既存86件は変更していない。
+MSVC 14.51.36231 x64、Windows SDK 10.0.28000.0で無改変本体抽出をcompile/run。
+88 ok、2 evaluate error（IfEachの非選択枝のzero division）。PID/birth FILETIME/保持handle terminal signal/exit/EOF/raw stdout-stderr SHAをcapture.jsonに保存。
+
+明示AST接続: cases.jsonのop/childrenと製品向けexpressionsを併記。Arrayを製品文字列へConvertStringする原典ApplyFilterExpressionsToLines本体も使用。
+caseSensitive=trueのみ。製品向けexpressionsは全件 @cs @noopt prefixで同じ無最適化・大文字小文字区別の評価経路を明示する。既定caseSensitive/Optimizeは別回帰。doubleリテラル/Poco/date/regex/FileContentを構築するopは存在しない。computeの死依存だけthrow binding。Lenは固定原典unicoderのlead-byte計数を使用。数値overflowを起こす演算は採取しない。
+旧登録にToString関数はない（ToStringValueは結果文字列化）。tostring AST opは未使用のadapter接続であり製品向けparser機能を示さない。
+Optimize/no-opt、旧parser/arity validation、int-double numericEQ対strictAllEqualは未検証。bool/intのstrict型差、recursive array EQの境界は採取済み。Optimizeは製品実装前に追加の原典node/literal接続が必要。
+
+重要な実測: AllEqual(Array(1,1),99)はarray内だけ照合する。Ifはlazy、IfEachは全3引数eager。Choose/ChooseEachのindexはintegerのみ、負値はfirst、巨大値はlastへclamp。bool subtractionは原典rval-lval順（true-false=-1）。AnyOf/AllOf/evalAsBoolはbool trueだけを数える。nested配列のLogicalEachはevalAsBoolによるtrue-any。
+
+reader-selfcheck.jsonの555checksはgolden自己照合であり、製品actual検証ではない。
+独立reader: py -3.14 verify.py [--actual product.ndjson]。C# importなし。既存86caseと同じrow/status/errorPhase/hex/EOL/columnCount/selections schema。--actualは90件すべてを要求する。
+再採取: py -3.14 reproduce.py --output <外部Temp作業別directory> --compiler <cl.exe>。MSVC x64 INCLUDE/LIB/PATHを設定する。出力directoryはrepo/.codex/完全folder名artifacts/linked ancestorを拒否する。
+source provenance/ライセンス/raw Gitblob/SHA/sizeはprovenance.jsonとoriginal/COPYING。manifest.jsonは納品内容の全SHA/size。
+保持理由: 親が製品実装・既存fixtureへ統合するための原典証拠。削除条件: 統合・再採取・独立照合完了後、親のExactTrash清掃。初回TempはExactTrash完全清掃済み。再compileは保持先reproduce.pyから成功し原典stdoutSHA一致、exeSHA/compile rawstreams/実PID receiptをrecompile-proof.json/recompile-capture.jsonに保存。fresh Tempも保持確認後に共通清掃する。repo source/fixture、Git stage/commit/push、外部service書込みは実施していない。
+
+4件のindex整数極値は旧lexer stoi32bit literal境界を避け、製品式とASTを共に原典ToInt(stringliteral)へ一致させた。removeCommas Nodes.cpp:2520–2530、ToIntFunc:2576–2607を無改変採取。製品lexerの範囲拡大は行わない。変更前backupはfresh Tempのbefore-tointで親保持確認まで保持する。
+
+arrays-value-eol-valuesだけはproduct expressionに実LF/CRLFを含む文字列literalを使い、AST textと一致させる。旧/現lexerにC-style escapeはない。goldenはvalue engine原典90件の正常証拠を維持する。生成CR/LFは公開Plan callerが未対応guard拒否する境界であり、その拒否は製品側の別検証とする。この原典goldenを公開Planの成功期待として扱わない。

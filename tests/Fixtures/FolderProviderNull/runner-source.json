@@ -1,0 +1,20 @@
+{
+  "path": "tests/DiffBeacon.E2E/Program.cs",
+  "sourceSha256": "fe614c86fdf72f6054d12acf32c92b22c4c4edf1be7b864cdc3e2385e83ecb9a",
+  "signedAttestation": false,
+  "qualification": "source-only canonical runner plus same-host JSON/retained-stream consistency; Windows WaitForExitAsync and both stream tasks awaited before result; Mac evidence remains mandatory",
+  "spans": [
+    {
+      "startLine": 1794,
+      "endLine": 1826,
+      "spanSha256": "461bcfc4cf9211f83d9864208bd8036d486f1f7227503bfc7cc0a3c27e5098db",
+      "spanUtf8": "    var launchUtc = DateTime.UtcNow; var pid = 0; DateTime? creationUtc = null; DateTime? exitObservedUtc = null;\r\n    try\r\n    {\r\n        process.Start();\r\n        pid = process.Id; creationUtc = process.StartTime.ToUniversalTime();\r\n        var stdoutTask = process.StandardOutput.ReadToEndAsync();\r\n        var stderrTask = stderrObservers.TryGetValue(name, out var observer)\r\n            ? ReadObservedStderr(process.StandardError, observer) : process.StandardError.ReadToEndAsync();\r\n        if (standardInput is not null)\r\n        {\r\n            await process.StandardInput.WriteAsync(standardInput);\r\n            process.StandardInput.Close();\r\n        }\r\n        // 全streamの11 GUIケースを含む実測は約110秒。通常CLIの30秒は維持する。\r\n        var timeoutSeconds = CommandTimeoutPolicy.GetSeconds(name, arguments);\r\n        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(timeoutSeconds));\r\n        try { await process.WaitForExitAsync(timeout.Token); }\r\n        catch (OperationCanceledException)\r\n        {\r\n            timedOut = true;\r\n            process.Kill(entireProcessTree: true);\r\n            await process.WaitForExitAsync();\r\n            stderr += $\"検証の制限時間 {timeoutSeconds} 秒を超えました。\\n\";\r\n        }\r\n        stdout = await stdoutTask;\r\n        stderr += await stderrTask;\r\n        exit = timedOut ? -2 : process.ExitCode;\r\n        exitObservedUtc = DateTime.UtcNow;\r\n    }\r\n    catch (Exception exception) { stderr += exception.ToString(); }\r\n    timer.Stop();\r\n    var result = new CommandResult(name, arguments, exit, stdout, stderr, timer.ElapsedMilliseconds, pid, creationUtc, launchUtc, exitObservedUtc);\r\n    return await RecordCommand(result, expectedExit, json);\r\n"
+    },
+    {
+      "startLine": 2614,
+      "endLine": 2614,
+      "spanSha256": "480fa9f1eb9c0b2694beb8d1a887c56cea08d6c7e6380123b461129f29687228",
+      "spanUtf8": "sealed record CommandResult(string Name, string[] Arguments, int ExitCode, string Stdout, string Stderr, long DurationMilliseconds, int Pid = 0, DateTime? CreationUtc = null, DateTime? LaunchUtc = null, DateTime? ExitObservedUtc = null, CommandLaunchEvidence? LaunchEvidence = null);\r\n"
+    }
+  ]
+}

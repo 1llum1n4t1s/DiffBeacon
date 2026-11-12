@@ -58,17 +58,24 @@ internal static class ImageCopyScenarios
         await File.WriteAllTextAsync(Path.Combine(output, "image-copy-observations.json"), JsonSerializer.Serialize(observations, new JsonSerializerOptions { WriteIndented = true }));
 
         // exportは静止原画の保存。golden末尾stateのBGRAだけを独立復号期待にする。
-        foreach (var caseName in new[] { "2-transparent-all-0to1", "2-dimensions-all-1to0", "3-ring-hole-all-0to1", "3-history-two-expansions" })
+        foreach (var (caseName, extension) in new[]
         {
+            ("2-transparent-all-0to1", ".png"), ("2-dimensions-all-1to0", ".png"),
+            ("3-ring-hole-all-0to1", ".png"), ("3-history-two-expansions", ".png"),
+            ("2-transparent-all-0to1", ".tif"), ("2-dimensions-all-1to0", ".tiff")
+        })
+        {
+            var tiff = extension is ".tif" or ".tiff";
+            var exportLabel = "image-copy-" + caseName + "-export" + (tiff ? "-tiff" : "");
             var item = cases.Single(value => value.GetProperty("name").GetString() == caseName);
             var input = prepared[caseName].Inputs; var expectedStates = item.GetProperty("expected").GetProperty("states");
             var finalState = expectedStates[expectedStates.GetArrayLength() - 1].GetProperty("state");
-            var exportPath = Path.Combine(folder, caseName + "-export.png");
+            var exportPath = Path.Combine(folder, caseName + "-export" + extension);
             var dst = caseName == "2-transparent-all-0to1" || caseName == "3-ring-hole-all-0to1" ? 1 : 0;
             var actions = item.GetProperty("actions").EnumerateArray().Select(action => (object)action.Clone()).ToList();
             // 相対パスはrunnerと同じCWDで解決されることも実経路で確認。
             actions.Add(new { kind = "export", dst, path = caseName == "2-transparent-all-0to1" ? Path.GetRelativePath(Environment.CurrentDirectory, exportPath) : exportPath });
-            var script = Script(caseName + "-export", actions, item);
+            var script = Script(caseName + "-export" + (tiff ? "-tiff" : ""), actions, item);
             var before = input.Append(script).Select(Hash).ToArray(); var attrs = input.Select(File.GetAttributes).ToArray();
             await File.WriteAllTextAsync(exportPath, "existing PNG output must be atomically replaced");
             if (OperatingSystem.IsWindows()) File.SetAttributes(exportPath, FileAttributes.Hidden | FileAttributes.Archive);
@@ -76,46 +83,47 @@ internal static class ImageCopyScenarios
             try
             {
                 for (var i = 0; i < input.Length; i++) File.SetAttributes(input[i], attrs[i] | FileAttributes.ReadOnly);
-                var result = await run("image-copy-" + caseName + "-export", 0, true, ["--image-copy", .. input, "--script", script]);
-                check("image-copy-" + caseName + "-export-exists", File.Exists(exportPath), exportPath);
+                var result = await run(exportLabel, 0, true, ["--image-copy", .. input, "--script", script]);
+                check(exportLabel + "-exists", File.Exists(exportPath), exportPath);
                 if (File.Exists(exportPath))
                 {
                     if (OperatingSystem.IsWindows())
-                        check("image-copy-" + caseName + "-export-attributes", (File.GetAttributes(exportPath) & (FileAttributes.Hidden | FileAttributes.Archive)) == (FileAttributes.Hidden | FileAttributes.Archive), File.GetAttributes(exportPath).ToString());
+                        check(exportLabel + "-attributes", (File.GetAttributes(exportPath) & (FileAttributes.Hidden | FileAttributes.Archive)) == (FileAttributes.Hidden | FileAttributes.Archive), File.GetAttributes(exportPath).ToString());
                     else
-                        check("image-copy-" + caseName + "-export-unix-mode", File.GetUnixFileMode(exportPath) == (UnixFileMode.UserRead | UnixFileMode.UserWrite), File.GetUnixFileMode(exportPath).ToString());
-                    var decoded = ImageReportScenarios.DecodePng(await File.ReadAllBytesAsync(exportPath));
+                        check(exportLabel + "-unix-mode", File.GetUnixFileMode(exportPath) == (UnixFileMode.UserRead | UnixFileMode.UserWrite), File.GetUnixFileMode(exportPath).ToString());
+                    var bytes = await File.ReadAllBytesAsync(exportPath);
+                    var decoded = tiff ? DecodeSingleStripTiff(bytes) : ImageReportScenarios.DecodePng(bytes);
                     var expectedFrame = finalState.GetProperty("frames")[dst];
                     var pixels = Convert.FromBase64String(expectedFrame.GetProperty("bgraBase64").GetString()!);
-                    check("image-copy-" + caseName + "-export-raw-bgra", decoded.Width == expectedFrame.GetProperty("width").GetInt32()
+                    check(exportLabel + "-raw-bgra", decoded.Width == expectedFrame.GetProperty("width").GetInt32()
                         && decoded.Height == expectedFrame.GetProperty("height").GetInt32() && decoded.Bgra.SequenceEqual(pixels), Convert.ToHexString(SHA256.HashData(decoded.Bgra)));
                     using var parsed = JsonDocument.Parse(result.Stdout); var returned = parsed.RootElement.GetProperty("states");
-                    check("image-copy-" + caseName + "-export-state-count", returned.GetArrayLength() == expectedStates.GetArrayLength() + 1, returned.GetRawText().Length.ToString(CultureInfo.InvariantCulture));
+                    check(exportLabel + "-state-count", returned.GetArrayLength() == expectedStates.GetArrayLength() + 1, returned.GetRawText().Length.ToString(CultureInfo.InvariantCulture));
                     var last = returned[returned.GetArrayLength() - 1]; var exported = last.GetProperty("state");
-                    check("image-copy-" + caseName + "-export-result", last.GetProperty("actionResult").GetInt32() == 1, last.GetProperty("actionResult").GetRawText());
+                    check(exportLabel + "-result", last.GetProperty("actionResult").GetInt32() == 1, last.GetProperty("actionResult").GetRawText());
                     foreach (var field in new[] { "frames", "regionIds", "regions", "differenceCount", "conflictCount" })
-                        check("image-copy-" + caseName + "-export-preserves-" + field, Same(finalState.GetProperty(field), exported.GetProperty(field)), field);
+                        check(exportLabel + "-preserves-" + field, Same(finalState.GetProperty(field), exported.GetProperty(field)), field);
                     var history = exported.GetProperty("history"); var prior = finalState.GetProperty("history");
                     foreach (var field in new[] { "index", "count", "undoable", "redoable" })
-                        check("image-copy-" + caseName + "-export-history-" + field, Same(prior.GetProperty(field), history.GetProperty(field)), field);
+                        check(exportLabel + "-history-" + field, Same(prior.GetProperty(field), history.GetProperty(field)), field);
                     for (var pane = 0; pane < input.Length; pane++)
                     {
                         var expectedPane = prior.GetProperty("panes")[pane]; var actualPane = history.GetProperty("panes")[pane];
-                        check("image-copy-" + caseName + "-export-history-pane" + pane, pane == dst
+                        check(exportLabel + "-history-pane" + pane, pane == dst
                             ? !actualPane.GetProperty("modified").GetBoolean() && actualPane.GetProperty("modcount").GetInt32() == expectedPane.GetProperty("modcount").GetInt32()
                                 && actualPane.GetProperty("savepoint").GetInt32() == expectedPane.GetProperty("modcount").GetInt32()
                             : Same(expectedPane, actualPane), actualPane.GetRawText());
                     }
                     var reloadScript = Script(caseName + "-reload", Array.Empty<object>());
-                    var reload = await run("image-copy-" + caseName + "-export-reload", 0, true, ["--image-copy", exportPath, exportPath, "--script", reloadScript]);
+                    var reload = await run(exportLabel + "-reload", 0, true, ["--image-copy", exportPath, exportPath, "--script", reloadScript]);
                     using var reread = JsonDocument.Parse(reload.Stdout); var initial = reread.RootElement.GetProperty("states")[0];
-                    check("image-copy-" + caseName + "-reload-equal", initial.GetProperty("differenceCount").GetInt32() == 0, initial.GetRawText().Length.ToString(CultureInfo.InvariantCulture));
+                    check(exportLabel + "-reload-equal", initial.GetProperty("differenceCount").GetInt32() == 0, initial.GetRawText().Length.ToString(CultureInfo.InvariantCulture));
                     foreach (var frame in initial.GetProperty("frames").EnumerateArray())
-                        check("image-copy-" + caseName + "-reload-bgra", Same(expectedFrame, frame), frame.GetProperty("sha256").GetString()!);
-                    await File.WriteAllTextAsync(Path.Combine(output, "image-copy-" + caseName + "-export-observation.json"), JsonSerializer.Serialize(new { exportPath, expected = finalState.Clone(), actual = parsed.RootElement.Clone(), reloaded = reread.RootElement.Clone() }, new JsonSerializerOptions { WriteIndented = true }));
+                        check(exportLabel + "-reload-bgra", Same(expectedFrame, frame), frame.GetProperty("sha256").GetString()!);
+                    await File.WriteAllTextAsync(Path.Combine(output, "image-copy-" + caseName + "-export" + (tiff ? "-tiff" : "") + "-observation.json"), JsonSerializer.Serialize(new { exportPath, expected = finalState.Clone(), actual = parsed.RootElement.Clone(), reloaded = reread.RootElement.Clone() }, new JsonSerializerOptions { WriteIndented = true }));
                 }
-                check("image-copy-" + caseName + "-export-inputs-script-preserved", input.Append(script).Select(Hash).SequenceEqual(before), string.Join(',', before));
-                check("image-copy-" + caseName + "-export-readonly-inputs", input.All(path => File.GetAttributes(path).HasFlag(FileAttributes.ReadOnly)), string.Join(',', input));
+                check(exportLabel + "-inputs-script-preserved", input.Append(script).Select(Hash).SequenceEqual(before), string.Join(',', before));
+                check(exportLabel + "-readonly-inputs", input.All(path => File.GetAttributes(path).HasFlag(FileAttributes.ReadOnly)), string.Join(',', input));
             }
             finally
             {
@@ -280,6 +288,48 @@ internal static class ImageCopyScenarios
         return JsonElement.DeepEquals(expected, actual);
     }
     private static string Hash(string path) { using var file = File.OpenRead(path); return Convert.ToHexString(SHA256.HashData(file)); }
+    private static (int Width, int Height, byte[] Bgra) DecodeSingleStripTiff(byte[] bytes)
+    {
+        if (bytes.Length < 166 || bytes.Length > 64 * 1024 * 1024 || bytes[0] != 73 || bytes[1] != 73
+            || BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(2, 2)) != 42
+            || BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(4, 4)) != 8)
+            throw new InvalidDataException("TIFF is not a bounded little-endian classic image.");
+        const int ifd = 8; const int entries = 12; const int bitsOffset = 158; const int pixelOffset = 166;
+        if (BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(ifd, 2)) != entries
+            || BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(ifd + 2 + entries * 12, 4)) != 0)
+            throw new InvalidDataException("TIFF must contain one IFD.");
+        var fields = new Dictionary<ushort, (ushort Type, uint Count, uint Value)>();
+        for (var i = 0; i < entries; i++)
+        {
+            var offset = ifd + 2 + i * 12;
+            var tag = BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(offset, 2));
+            if (!fields.TryAdd(tag, (BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(offset + 2, 2)),
+                BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(offset + 4, 4)),
+                BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(offset + 8, 4)))))
+                throw new InvalidDataException("TIFF IFD has duplicate tags.");
+        }
+        var expectedTags = new ushort[] { 256, 257, 258, 259, 262, 273, 274, 277, 278, 279, 284, 338 };
+        if (!fields.Keys.Order().SequenceEqual(expectedTags)) throw new InvalidDataException("TIFF IFD tags differ from the single-strip RGBA contract.");
+        uint Long(ushort tag) => fields[tag] is { Type: 4, Count: 1 } field ? field.Value : throw new InvalidDataException("TIFF LONG field is invalid.");
+        ushort Short(ushort tag, ushort value) => fields[tag] is { Type: 3, Count: 1 } field && field.Value == value
+            ? value : throw new InvalidDataException("TIFF SHORT field is invalid.");
+        var width = checked((int)Long(256)); var height = checked((int)Long(257));
+        var pixels = checked((long)width * height);
+        if (width <= 0 || height <= 0 || pixels > 16_000_000 || fields[258] is not { Type: 3, Count: 4, Value: bitsOffset }
+            || Enumerable.Range(0, 4).Any(i => BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(bitsOffset + i * 2, 2)) != 8)
+            || Short(259, 1) != 1 || Short(262, 2) != 2 || Long(273) != pixelOffset || Short(274, 1) != 1
+            || Short(277, 4) != 4 || Long(278) != height || Long(279) != checked((uint)(pixels * 4))
+            || Short(284, 1) != 1 || Short(338, 2) != 2 || bytes.Length != checked(pixelOffset + (int)(pixels * 4)))
+            throw new InvalidDataException("TIFF pixel layout is invalid.");
+        var bgra = new byte[checked((int)(pixels * 4))];
+        for (var source = pixelOffset; source < bytes.Length; source += 4)
+        {
+            var target = source - pixelOffset;
+            bgra[target] = bytes[source + 2]; bgra[target + 1] = bytes[source + 1];
+            bgra[target + 2] = bytes[source]; bgra[target + 3] = bytes[source + 3];
+        }
+        return (width, height, bgra);
+    }
     private static string FindFixtures(string name, string marker)
     {
         foreach (var start in new[] { Environment.CurrentDirectory, AppContext.BaseDirectory })

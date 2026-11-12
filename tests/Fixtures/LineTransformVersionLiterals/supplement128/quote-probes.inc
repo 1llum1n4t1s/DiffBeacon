@@ -1,0 +1,8 @@
+{"doublequote","61222262227461696c"},
+{"backslash-n","615c6e62227461696c"},
+{"backslash-quote","615c227461696c"},
+{"ASCII-newlines","610d0a620963227461696c"},
+{"unterminated","616263"},
+{"NUL-before-quote","610062227461696c"},
+{"empty-quoted","227461696c"},
+{"doublequote-no-close","2222"},

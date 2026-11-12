@@ -1,0 +1,5102 @@
+[
+  {
+    "id": "matchcount-empty",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-single-true",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-single-false",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-none-match",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-all-match",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-first",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-last",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-middle",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-edges-tie",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-alternating",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-blocks",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-typed-none",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-typed-integer",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-typed-double",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      },
+      {
+        "type": "double",
+        "value": -1.0
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-typed-string",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "false"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-array-direct",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-array-nested",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": false
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-mixed",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-timestamp",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 0
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-raw-string",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          0,
+          97
+        ]
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-throw-scan",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchcount-different-ast",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchcount-new-context",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchcount-mutate-cached",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchcount-nested-match",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchcount-nested-aggregate",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchcount-outer-throw-after-inner",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchcount-null-provider",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchcount-shared-functions",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "shared-functions"
+  },
+  {
+    "id": "matchcount-outside-lines",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outside-lines"
+  },
+  {
+    "id": "matchcount-throw-first",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "predicate-first"
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcount-throw-last",
+    "function": "matchcount",
+    "nativeFunction": "MatchCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-last"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-empty",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-single-true",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-single-false",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-none-match",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-all-match",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-first",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-last",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-middle",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-edges-tie",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-alternating",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-blocks",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-typed-none",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-typed-integer",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-typed-double",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      },
+      {
+        "type": "double",
+        "value": -1.0
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-typed-string",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "false"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-array-direct",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-array-nested",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": false
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-mixed",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-timestamp",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 0
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-raw-string",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          0,
+          97
+        ]
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-throw-scan",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchnumber-different-ast",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchnumber-new-context",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchnumber-mutate-cached",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchnumber-nested-match",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchnumber-nested-aggregate",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchnumber-outer-throw-after-inner",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchnumber-null-provider",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchnumber-shared-functions",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "shared-functions"
+  },
+  {
+    "id": "matchnumber-outside-lines",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outside-lines"
+  },
+  {
+    "id": "matchnumber-throw-first",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "predicate-first"
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchnumber-throw-last",
+    "function": "matchnumber",
+    "nativeFunction": "LineMatchNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-last"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-empty",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-single-true",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-single-false",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-none-match",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-all-match",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-first",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-last",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-middle",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-edges-tie",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-alternating",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-blocks",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-typed-none",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-typed-integer",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-typed-double",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      },
+      {
+        "type": "double",
+        "value": -1.0
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-typed-string",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "false"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-array-direct",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-array-nested",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": false
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-mixed",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-timestamp",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 0
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-raw-string",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          0,
+          97
+        ]
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-throw-scan",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchdistance-different-ast",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchdistance-new-context",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchdistance-mutate-cached",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchdistance-nested-match",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchdistance-nested-aggregate",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchdistance-outer-throw-after-inner",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchdistance-null-provider",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchdistance-shared-functions",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "shared-functions"
+  },
+  {
+    "id": "matchdistance-outside-lines",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outside-lines"
+  },
+  {
+    "id": "matchdistance-throw-first",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "predicate-first"
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistance-throw-last",
+    "function": "matchdistance",
+    "nativeFunction": "LineMatchDistanceFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-last"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-empty",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-single-true",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-single-false",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-none-match",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-all-match",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-first",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-last",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-middle",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-edges-tie",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-alternating",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-blocks",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-typed-none",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-typed-integer",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-typed-double",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      },
+      {
+        "type": "double",
+        "value": -1.0
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-typed-string",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "false"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-array-direct",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-array-nested",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": false
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-mixed",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-timestamp",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 0
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-raw-string",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          0,
+          97
+        ]
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-throw-scan",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchdistancebefore-different-ast",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchdistancebefore-new-context",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchdistancebefore-mutate-cached",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchdistancebefore-nested-match",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchdistancebefore-nested-aggregate",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchdistancebefore-outer-throw-after-inner",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchdistancebefore-null-provider",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchdistancebefore-shared-functions",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "shared-functions"
+  },
+  {
+    "id": "matchdistancebefore-outside-lines",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outside-lines"
+  },
+  {
+    "id": "matchdistancebefore-throw-first",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "predicate-first"
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistancebefore-throw-last",
+    "function": "matchdistancebefore",
+    "nativeFunction": "LineMatchDistanceBeforeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-last"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-empty",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-single-true",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-single-false",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-none-match",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-all-match",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-first",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-last",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-middle",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-edges-tie",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-alternating",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-blocks",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-typed-none",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-typed-integer",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-typed-double",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      },
+      {
+        "type": "double",
+        "value": -1.0
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-typed-string",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "false"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-array-direct",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-array-nested",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": false
+              }
+            ]
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-mixed",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-timestamp",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 0
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-raw-string",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          0,
+          97
+        ]
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-throw-scan",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchdistanceafter-different-ast",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchdistanceafter-new-context",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchdistanceafter-mutate-cached",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchdistanceafter-nested-match",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchdistanceafter-nested-aggregate",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchdistanceafter-outer-throw-after-inner",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchdistanceafter-null-provider",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchdistanceafter-shared-functions",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "shared-functions"
+  },
+  {
+    "id": "matchdistanceafter-outside-lines",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "outside-lines"
+  },
+  {
+    "id": "matchdistanceafter-throw-first",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "predicate-first"
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchdistanceafter-throw-last",
+    "function": "matchdistanceafter",
+    "nativeFunction": "LineMatchDistanceAfterFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-last"
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  }
+]

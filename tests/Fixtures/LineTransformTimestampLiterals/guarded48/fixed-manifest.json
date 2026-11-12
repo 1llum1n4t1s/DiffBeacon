@@ -1,0 +1,336 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "budgetBytes": 67108864,
+  "files": [
+    {
+      "path": "adapter/DateTimeCtor.inc",
+      "size": 202,
+      "sha256": "9a04bafe2a175625b041bbc6cd020f6c6ac17ee636998f5c41df3b7b1b05662b",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/DateTimeLiteral.inc",
+      "size": 260,
+      "sha256": "60a1ff50e758b905b0e5e1f3b1b91655e63752423dcce22da191915089482fb1",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/ExprNode.inc",
+      "size": 164,
+      "sha256": "a81db4258264cd5a49abc8af5fbbdf94664cda381443c9cf629cb8215948199e",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/ParseDateTime.inc",
+      "size": 862,
+      "sha256": "18f4a4ad3947e5de6c19bab2186596a33e3eb232386bdc17dc5321f151d4cb8a",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/RealFilterEvalContext.inc",
+      "size": 371,
+      "sha256": "4174dafcb0aa3772dff814c363841ffbe306b202e630b9323b2e9ef4542ccb14",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/timestamp_boundary_adapter.cpp",
+      "size": 11451,
+      "sha256": "fc7c9b7506077035a72e897cecc4b0d1e730313a7e27b6aa983bceadf73c8454",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/timestamp_original.hpp",
+      "size": 1563,
+      "sha256": "1ca1e33e3607d1d157c48c3843a914252b8bb7d69ba0b5a4c233ecddebe525c6",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/TimestampSerializerArm.inc",
+      "size": 236,
+      "sha256": "92e046211ff13fb53ff93e7d5fa4c60d8e5f735be287ec891dba9aff2f2161c3",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/ucr-toTString.inc",
+      "size": 264,
+      "sha256": "525f8e4ee69e52a8a4795b10f4a0b2e52d9c62cffb33d83750e8c5ee7d6875cb",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/ucr-toUTF8-return.inc",
+      "size": 100,
+      "sha256": "a26d8c674f99b9c3050ee124a1b0093a3eaf12577f12884cf82e6c2a8da65c3c",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/ucr-toUTF8-wide.inc",
+      "size": 616,
+      "sha256": "9ef06df44c8ce18a2b67c4dfc3d0aa1c64002fca817b2fa0e7957d30dd3ac456",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/Ucs4_to_Utf8.inc",
+      "size": 1252,
+      "sha256": "78361d539d37b2a8291ebde33dc553ccc154ada4b230df48cac4dc40cb87bce2",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/ValueType.inc",
+      "size": 385,
+      "sha256": "d6aa2ad12d811492d3bace3491e88e8dd113bc867e560c7a6ba4ca6bde1e42a7",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "adapter/WindowsLocaleFallback.inc",
+      "size": 865,
+      "sha256": "9e4f715b49fe3b9dff3a921125ec453caae2b57e8887d5ec9da5297e8826833e",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "boundary-raw-spans/Timestamp-fromFileTimeNP.inc",
+      "size": 379,
+      "sha256": "a7737d555e50c7dada7536f28bbfa4167920dc64dc561d33a4219763abf22f0d",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "boundary-raw-spans/Timestamp-TimeValCtor.inc",
+      "size": 48,
+      "sha256": "e0d743aa80629cea29a03164e5cf360cf24f7c3f653c5ad54d27aa3649bdf2d5",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "boundary-raw-spans/Timestamp-utcTime.inc",
+      "size": 120,
+      "sha256": "4484e1df290dd36fee48129b20bd85b0866bc6d3d487f439a46d5b4863c4b614",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "case-join.json",
+      "size": 173958,
+      "sha256": "e065631b4eebb5ae18eb27aa6b7f8ac9c4147438298673f316f68a08eff51d99",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "case-plan.json",
+      "size": 21491,
+      "sha256": "d14bf7460b1177f9bd21494b52f987d33fc85a3a5857f40ac9ee84cbbe956527",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "compiler-scope.json",
+      "size": 20496,
+      "sha256": "57e7f67294d7756f12e68db9e7ddb5fdc6bce02dbc65a08f73c8c91e319d9440",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "failure-list.json",
+      "size": 642,
+      "sha256": "6ff5525ab9561689b4eeb3054b717878b4892ed9a4d4b58cf0c043731cd11a0b",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "forensic/assembly-output-identity.json",
+      "size": 1963,
+      "sha256": "754d9dc2cda1278e95e35324302402011e8d787f2300a52a1c32b59bc2b592c7",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/compile-boundary-adapter.receipt.json",
+      "size": 6308,
+      "sha256": "d39e6cbcabb2a819a8e812e9dc7234102faac97c83cda72bfbc2bad86158bd64",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/compile-boundary-adapter.stderr.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/compile-boundary-adapter.stdout.raw",
+      "size": 32,
+      "sha256": "87c0b1fdded5bf4d3d3abcfba77f92ba8575a666e4491bcebabf7803039108c2",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/link-native.receipt.json",
+      "size": 7265,
+      "sha256": "37ff25ca22d25c4294ef4c0c1f46ca66ad5e61e7aabcf722a07f7682b9d79a55",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/link-native.stderr.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/link-native.stdout.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/native-authority.json",
+      "size": 2815,
+      "sha256": "e922ff1d9accc9d5c61e4da605a4afe8926b581ef20d5e3ff9808d3651caed28",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/native-exact-go.json",
+      "size": 1062,
+      "sha256": "5323b07036d859e9a36e416516ac96075ef6c0d83afdbf6e21e921bcc5b69942",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/native-run-1.receipt.json",
+      "size": 1827,
+      "sha256": "fd0cba9eaf72d4f6c4ac68ed79d3782fe1404322d43a38c6757fa7f79b775c23",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/native-run-1.stderr.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/native-run-2.receipt.json",
+      "size": 1827,
+      "sha256": "10d408ea3d40c4e427bd1a0f19646f6c450fa2cab149b89abb25244d7a16238e",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/native-run-2.stderr.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/native-worker-qualified.json",
+      "size": 17013,
+      "sha256": "77dcea0421808e1d65eaea5150d601acdf8ad788be06a47ff739d1ba8623dd65",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/prior-failure-summary.json",
+      "size": 1146,
+      "sha256": "e37b8edce60ffa769bd4b0e18bf6cf5d0f0318486d11ac9f75022e905cffd807",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/root-parent-actual-launch.json",
+      "size": 464,
+      "sha256": "f630a716d60e6896ea353fc78f2dcbab5e4d1936d223a7b6bee8d570326bab99",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/root-parent-actual-result.json",
+      "size": 520,
+      "sha256": "4132800447e5d37d9b47107b4e07f31dbaf458294025e1dd77ea11f5be28f0f2",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/root-parent-proof.json",
+      "size": 1018,
+      "sha256": "1649d8c59d0897f1c9054dd3020c4c1a20fbd304d1a05706561843b0f2a92f5a",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/root-parent.stderr.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/root-parent.stdout.raw",
+      "size": 884,
+      "sha256": "662f7e39b26606c02bd49a1df846d1da48ff345c46df4024f05db1f44bc71f0b",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/supervisor-held-receipt.json",
+      "size": 1739,
+      "sha256": "f8ef9047e4ff7c1a7dd87c4ad31ff239f7c0cf8471171c98089c3d1b971435d7",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/supervisor.stderr.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "forensic/supervisor.stdout.raw",
+      "size": 77,
+      "sha256": "c6fecb36c01e765f666cfabce64697ae4985d39501d032cc492fcf75d6c21c19",
+      "role": "forensic-actor-fields-never-opened"
+    },
+    {
+      "path": "native-run-1.ndjson",
+      "size": 57623,
+      "sha256": "9702c81150a95293b2de20b27fb968a0f4fb33b890259d14ad4480012fc71d8f",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "native-run-2.ndjson",
+      "size": 57623,
+      "sha256": "d82712e9020c7a957653648a9c55eb88a6ece86820538ece1b5435b39391e5dc",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "README.md",
+      "size": 4630,
+      "sha256": "0e01e7bdaa9fcd8c0574197c62854bd47749aa0fc734d3ecf87a9653c0815c91",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "receipt-local-map.json",
+      "size": 1112,
+      "sha256": "ab4cad2eefb6a01defbe48b30512a89c91618690b2785a08bda6000a242016b0",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "reference-source.zip",
+      "size": 972888,
+      "sha256": "044a1e0497951b740f6b11185592983ed9fee921df8d98ca4ffd987031eaa120",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "source-manifest.json",
+      "size": 173384,
+      "sha256": "cc5db0d544e3cc4c9ef1bbccffd09c3bba3e665ab5b89ad0b8ca862fe8d71f9c",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "source-provenance.json",
+      "size": 178894,
+      "sha256": "7d04473da946284d5a0d09220270fb6211e9d994dbc751cc263315f74009eb5b",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "source-zip-manifest.json",
+      "size": 80404,
+      "sha256": "f3666ff16d32f747dfeb77892baae3e3bfebf1ce3b3a42439d01054fc6df4fdb",
+      "role": "self-contained-relative-input"
+    },
+    {
+      "path": "verify.py",
+      "size": 13923,
+      "sha256": "39a854fb3da04c0ef336cc8731a99a4a6f65c0968bdd331a6356980488d4a952",
+      "role": "self-contained-relative-input"
+    }
+  ],
+  "nativeRawSha256": [
+    "9702c81150a95293b2de20b27fb968a0f4fb33b890259d14ad4480012fc71d8f",
+    "d82712e9020c7a957653648a9c55eb88a6ece86820538ece1b5435b39391e5dc"
+  ],
+  "rootParentProofSha256": "1649d8c59d0897f1c9054dd3020c4c1a20fbd304d1a05706561843b0f2a92f5a",
+  "referenceSourceZipSha256": "044a1e0497951b740f6b11185592983ed9fee921df8d98ca4ffd987031eaa120",
+  "allPayloadPathsRelative": true,
+  "oldActorFilesRequired": false,
+  "defaultVerifierNoEpochGuardGoldenMathOrNativeRun": true,
+  "freshReproduceCreated": false,
+  "sourceScopePublicFullAstParserOtherProfilesQualified": false
+}

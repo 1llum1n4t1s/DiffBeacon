@@ -1,0 +1,312 @@
+{
+  "schema": "diffbeacon.version-engineering-plan.v1",
+  "scope": "engineering constant expectations; no Native full-parser observation",
+  "records": [
+    {
+      "id": "array-constructor",
+      "expressionUtf8Hex": "4172726179287622302e302e302e31222c7622302e302e302e322229",
+      "expressionUtf16Hex": "004100720072006100790028007600220030002e0030002e0030002e00310022002c007600220030002e0030002e0030002e003200220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "[1, 2]",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "array-noopt",
+      "expressionUtf8Hex": "406e6f6f7074204172726179287622302e302e302e31222c7622302e302e302e322229",
+      "expressionUtf16Hex": "0040006e006f006f007000740020004100720072006100790028007600220030002e0030002e0030002e00310022002c007600220030002e0030002e0030002e003200220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "[1, 2]",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "abs-constructor",
+      "expressionUtf8Hex": "416273287622302e302e302e2d312229",
+      "expressionUtf16Hex": "0041006200730028007600220030002e0030002e0030002e002d003100220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "abs-noopt",
+      "expressionUtf8Hex": "406e6f6f707420416273287622302e302e302e2d312229",
+      "expressionUtf16Hex": "0040006e006f006f0070007400200041006200730028007600220030002e0030002e0030002e002d003100220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "at-constructor",
+      "expressionUtf8Hex": "41742841727261792831302c3230292c7622302e302e302e312229",
+      "expressionUtf16Hex": "00410074002800410072007200610079002800310030002c003200300029002c007600220030002e0030002e0030002e003100220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "20",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "at-noopt",
+      "expressionUtf8Hex": "406e6f6f70742041742841727261792831302c3230292c7622302e302e302e312229",
+      "expressionUtf16Hex": "0040006e006f006f00700074002000410074002800410072007200610079002800310030002c003200300029002c007600220030002e0030002e0030002e003100220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "20",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "substr-constructor",
+      "expressionUtf8Hex": "5375627374722822616263222c7622302e302e302e31222c7622302e302e302e312229",
+      "expressionUtf16Hex": "005300750062007300740072002800220061006200630022002c007600220030002e0030002e0030002e00310022002c007600220030002e0030002e0030002e003100220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "b",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "substr-noopt",
+      "expressionUtf8Hex": "406e6f6f7074205375627374722822616263222c7622302e302e302e31222c7622302e302e302e312229",
+      "expressionUtf16Hex": "0040006e006f006f007000740020005300750062007300740072002800220061006200630022002c007600220030002e0030002e0030002e00310022002c007600220030002e0030002e0030002e003100220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "b",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "strfind-constructor",
+      "expressionUtf8Hex": "53747246696e642822616263222c2262222c7622302229",
+      "expressionUtf16Hex": "00530074007200460069006e0064002800220061006200630022002c002200620022002c00760022003000220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "strfind-noopt",
+      "expressionUtf8Hex": "406e6f6f70742053747246696e642822616263222c2262222c7622302229",
+      "expressionUtf16Hex": "0040006e006f006f00700074002000530074007200460069006e0064002800220061006200630022002c002200620022002c00760022003000220029",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "signbit",
+      "expressionUtf8Hex": "7622333237363822",
+      "expressionUtf16Hex": "00760022003300320037003600380022",
+      "expectCompile": true,
+      "expectedSerializedValue": "-9223372036854775808",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "signbit-binary-ordinary",
+      "expressionUtf8Hex": "7622333237363822202b2030",
+      "expressionUtf16Hex": "007600220033003200370036003800220020002b00200030",
+      "expectCompile": true,
+      "expectedSerializedValue": "-9223372036854775808",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "zero",
+      "expressionUtf8Hex": "7622302e302e302e3022",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e00300022",
+      "expectCompile": true,
+      "expectedSerializedValue": "0",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "ignored-doubled-quote",
+      "expressionUtf8Hex": "7622302e302e302e3122227461696c22",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e003100220022007400610069006c0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "ignored-backslash",
+      "expressionUtf8Hex": "7622302e302e302e315c7461696c22",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e0031005c007400610069006c0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "ignored-newline",
+      "expressionUtf8Hex": "7622302e302e302e310a5461696c22",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e0031000a005400610069006c0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "partial-first",
+      "expressionUtf8Hex": "7622312e7461696c22",
+      "expressionUtf16Hex": "007600220031002e007400610069006c0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "281474976710656",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "partial-second",
+      "expressionUtf8Hex": "7622302e312e7461696c22",
+      "expressionUtf16Hex": "007600220030002e0031002e007400610069006c0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "4294967296",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "partial-third",
+      "expressionUtf8Hex": "7622302e302e312e7461696c22",
+      "expressionUtf16Hex": "007600220030002e0030002e0031002e007400610069006c0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "65536",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "partial-fourth",
+      "expressionUtf8Hex": "7622302e302e302e317461696c22",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e0031007400610069006c0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "plus",
+      "expressionUtf8Hex": "76222b302e2b302e2b302e2b3122",
+      "expressionUtf16Hex": "00760022002b0030002e002b0030002e002b0030002e002b00310022",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "revision-min",
+      "expressionUtf8Hex": "7622302e302e302e2d3231343734383336343822",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e002d00320031003400370034003800330036003400380022",
+      "expectCompile": true,
+      "expectedSerializedValue": "-2147483648",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "ignored-unicode",
+      "expressionUtf8Hex": "7622302e302e302e31e99baa22",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e003196ea0022",
+      "expectCompile": true,
+      "expectedSerializedValue": "1",
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "major-overflow",
+      "expressionUtf8Hex": "7622363535333622",
+      "expressionUtf16Hex": "00760022003600350035003300360022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "negative-major",
+      "expressionUtf8Hex": "76222d3122",
+      "expressionUtf16Hex": "00760022002d00310022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "negative-minor",
+      "expressionUtf8Hex": "7622302e2d3122",
+      "expressionUtf16Hex": "007600220030002e002d00310022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "minor-int32-overflow",
+      "expressionUtf8Hex": "7622302e3231343734383336343822",
+      "expressionUtf16Hex": "007600220030002e00320031003400370034003800330036003400380022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "build-int32-overflow",
+      "expressionUtf8Hex": "7622302e302e3231343734383336343822",
+      "expressionUtf16Hex": "007600220030002e0030002e00320031003400370034003800330036003400380022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "revision-int32-overflow",
+      "expressionUtf8Hex": "7622302e302e302e3231343734383336343822",
+      "expressionUtf16Hex": "007600220030002e0030002e0030002e00320031003400370034003800330036003400380022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "sum-overflow",
+      "expressionUtf8Hex": "762233323736372e323134373438333634372e323134373438333634372e3231343734383336343722",
+      "expressionUtf16Hex": "0076002200330032003700360037002e0032003100340037003400380033003600340037002e0032003100340037003400380033003600340037002e00320031003400370034003800330036003400370022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "binary-overflow",
+      "expressionUtf8Hex": "7622333237363822202d2031",
+      "expressionUtf16Hex": "007600220033003200370036003800220020002d00200031",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "unary-overflow",
+      "expressionUtf8Hex": "2d7622333237363822",
+      "expressionUtf16Hex": "002d00760022003300320037003600380022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "nul",
+      "expressionUtf8Hex": "7622300022",
+      "expressionUtf16Hex": "00760022003000000022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    },
+    {
+      "id": "unpaired-surrogate",
+      "expressionUtf8Hex": null,
+      "expressionUtf16Hex": "007600220030d8000022",
+      "expectCompile": false,
+      "expectedSerializedValue": null,
+      "nativeIndex": null,
+      "provenance": null
+    }
+  ]
+}

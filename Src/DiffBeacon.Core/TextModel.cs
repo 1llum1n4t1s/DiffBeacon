@@ -7,6 +7,27 @@ public enum DiffKind { Equal, Added, Deleted, Modified }
 public enum WhitespaceMode { None, Trim, IgnoreChanges, IgnoreAll }
 public enum CommentSyntax { None, CStyle, CSharp, Python, Xml }
 
+[Flags]
+public enum TablePaneMask { Left = 1, Base = 2, Right = 4, All = 7 }
+
+public sealed record TableColumnIgnoreRule(int Column, TablePaneMask Panes)
+{
+    public const int MaximumColumnsAndRules = 1_048_576;
+
+    public static void ValidateRules(IReadOnlyList<TableColumnIgnoreRule>? rules, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(rules);
+        if (rules.Count > MaximumColumnsAndRules)
+            throw new ArgumentException($"比較から除外する列は {MaximumColumnsAndRules} 件まで指定できます。", nameof(rules));
+        foreach (var rule in rules)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (rule is null || rule.Column is < 1 or > MaximumColumnsAndRules || rule.Panes == 0 || (rule.Panes & ~TablePaneMask.All) != 0)
+                throw new ArgumentException($"除外列は1から{MaximumColumnsAndRules}、対象は左・祖先・右の有効なペインで指定してください。", nameof(rules));
+        }
+    }
+}
+
 public sealed record SubstitutionRule(string Pattern, string Replacement, bool MatchCase = true)
 {
     public bool UseRegex { get; init; } = true;
@@ -16,10 +37,28 @@ public sealed record SubstitutionRule(string Pattern, string Replacement, bool M
 
 public sealed record ComparisonOptions
 {
+    // WinMerge の OPT_BREAK_SEPARATORS 既定値に合わせる。
+    public const string DefaultWordBreakSeparators = ".,:;?[](){}<=>`'!\"#$%&^~\\|@+-*/";
+    public const int MaximumWordBreakSeparatorsLength = 256;
+
     public bool IgnoreCase { get; init; }
     public bool IgnoreNumbers { get; init; }
     public CommentSyntax CommentSyntax { get; init; }
     public IReadOnlyList<SubstitutionRule> SubstitutionRules { get; init; } = [];
+    public IReadOnlyList<LineTransformRule> LineTransformRules { get; init; } = [];
+    /// <summary>一つの比較へ注入する日時環境。保存形式には含めない。</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public ILineTransformTimestampEnvironment? LineTransformTimestampEnvironment { get; init; }
+    /// <summary>一つの比較へ注入する文字列変換環境。保存形式には含めない。</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public ILineTransformStringEnvironment? LineTransformStringEnvironment { get; init; }
+    /// <summary>一つの比較へ注入する行変換ログ環境。保存形式には含めない。</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public ILineTransformLogEnvironment? LineTransformLogEnvironment { get; init; }
+
+    public ILineTransformListEnvironment? LineTransformListEnvironment { get; init; }
+    public IReadOnlyList<TableColumnIgnoreRule> TableColumnIgnoreRules { get; init; } = [];
+    public IReadOnlyList<TableColumnRangeRule> TableColumnRangeRules { get; init; } = [];
     public bool IgnoreWhitespace { get; init; }
     public WhitespaceMode Whitespace { get; init; }
     public bool IgnoreBlankLines { get; init; }
@@ -27,6 +66,8 @@ public sealed record ComparisonOptions
     public bool IgnoreFinalNewLine { get; init; }
     public bool CompareLineEndings { get; init; }
     public bool InlineCharacterLevel { get; init; } = true;
+    public bool BreakOnSeparators { get; init; } = true;
+    public string WordBreakSeparators { get; init; } = DefaultWordBreakSeparators;
     public int MaxFallbackComparisons { get; init; } = 4_000_000;
 
     public string Normalize(string text, CancellationToken cancellationToken = default)
@@ -80,6 +121,7 @@ public sealed record DiffRow(int? LeftLineNumber, int? RightLineNumber, string? 
 {
     public IReadOnlyList<InlineSpan> LeftSpans { get; init; } = [];
     public IReadOnlyList<InlineSpan> RightSpans { get; init; } = [];
+    public bool IsIgnored { get; init; }
 }
 public sealed record DiffBlock(int Index, int RowStart, int RowCount, int LeftStart,
     int LeftCount, int RightStart, int RightCount);

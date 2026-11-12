@@ -1,0 +1,560 @@
+{
+  "phase": "future actual execution contract; execution awaits parent GO",
+  "gate": "parent-reviewed source/31cases/actual /Zs proof, then separate approval to compile/link/run",
+  "constructorCases": [
+    {
+      "id": "epoch-explicit-z",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30305a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "epoch-lower-z",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30307a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "epoch-plus-zone",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302b30303a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "epoch-negative-only-zone",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302d30303a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "positive-offset",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302d30312d30325430333a30343a30352b30393a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "negative-offset-quirk",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302d30312d30325430333a30343a30352d30393a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "local-no-zone",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302d30312d30325430333a30343a3035",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "date-only",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302d30312d3032",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "before-epoch",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313936392d31322d33315432333a35393a35395a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "fraction-1",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e315a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "fraction-3",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e3132335a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "fraction-6",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e3132333435365a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "fraction-more-6",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e3132333435363738395a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "leap-date",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302d30322d32395431323a33343a35365a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "invalid-leap-date",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313930302d30322d32395431323a33343a35365a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "year-zero-candidate",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "303030302d30312d30315430303a30303a30305a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "year-above-managed-candidate",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "31303030302d30312d30315430303a30303a30305a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "invalid-month",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302d31332d30315430303a30303a30305a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "invalid-time",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302d30312d30315432353a36313a36315a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "empty-literal",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "invalid-text",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "6e6f7420612064617465",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "slash-format",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302f30312f30322030333a30343a3035",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "dot-format",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323030302e30312e30322030333a30343a3035",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "named-month",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "30322d4a616e2d323030302030333a30343a3035",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "locale-fallback-candidate",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "32303030e5b9b431e69c8832e697a52033e6998234e5888635e7a792",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "trailing-text",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30305a20747261696c696e67",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "embedded-nul",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "313937302d30312d3031005430303a30303a30305a",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "dst-summer-candidate",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323032362d30372d30315431323a30303a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "dst-winter-candidate",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323032362d30312d30315431323a30303a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "dst-gap-candidate",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323032362d30332d30385430323a33303a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    },
+    {
+      "id": "dst-fold-candidate",
+      "inputKind": "original-DateTimeLiteral-string-constructor",
+      "stringUtf8Hex": "323032362d31312d30315430313a33303a3030",
+      "expectedTypedValue": null,
+      "expectedSerializedUtf8Hex": null,
+      "qualification": "unmeasured; golden forbidden until actual Native process receipt",
+      "requiredCapture": [
+        "original input bytes",
+        "constructor exception vs successful optional parsing",
+        "Evaluate original Poco::Timestamp variant arm/index4",
+        "signed Int64 epochMicroseconds decimal string",
+        "unchanged original Timestamp serializer arm result raw UTF8 hex only",
+        "ambient locale/TZ/DST/clock and fixedsource SHA"
+      ]
+    }
+  ],
+  "additionalRequiredFailureGroups": [
+    {
+      "requirement": "Explicit Timestamp(TimeVal(0)) vs Timestamp() live-clock; default constructor must not be used as zero",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "Int64 min/max/rawtyped one Timestamp arm, beforeepoch/candidate years must not be constrained to DateTimeOffset range",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "full original unary/binary/constantfold/nonconstant arithmetic and overflow are separate future original AST phase; no C#/serializer arithmetic expected golden",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "d/D doublequote public lexer/parser, singlequote rejection, escaped quote/backslash/unterminated sourceholding require actual generated lexer/parser AST capture, not string ctor bridge",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "constructor error/ParseDateTime SyntaxException catch scope/Poco otherexceptions/Windows fallback HRESULT failures retain exact phase/type/source",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "native sourceholding must retain input/key/EOL/context/output on error/cancel, not replace failed result",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "locale fallback candidate may use original8 Poco formats first; record original branch evidence before calling it fallback-only",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "DST candidates are conditional on recorded ambient Windows timezone; do not silently change machine zone/locale/clock to force outcome",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "unsupported full AST/context/filearm/public command entry must be rejected explicitly and never reported Native-compatible",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    },
+    {
+      "requirement": "compile/link/process failure must not produce successful/empty native golden; heldOSPid/birth/bothEOF/OSexit receipt required",
+      "executionScope": "future-only outside current fixed31 case plan; no compatibility assertion"
+    }
+  ],
+  "ambientProfile": [
+    "GetUserDefaultLCID/GetUserDefaultLocaleName",
+    "GetTimeZoneInformation/current DST + Poco::Timezone::tzd",
+    "UTC clock before/after each batch",
+    "UNICODE/_UNICODE/POCO_STATIC/PCRE2_STATIC/8bitUnicodeJitundef exact profile",
+    "compiler/vcvars/runtime/build source SHA; wholeproject invocation remains unmeasured"
+  ],
+  "nativeQualification": false,
+  "scope": "direct original DateTimeLiteral constructor/Evaluate and unchanged Timestamp serializer arm only",
+  "supersedes": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-arm-phase7-20261012-160138-2fefd032\\case-plan.json",
+    "sha256": "ac414b28d3ff1001fee66f5f1670a72c260b13d42736dd9803b21681e902850f",
+    "reason": "parent-confirmed fullToString wording mismatched narrowed approved Timestamp arm scope; new31 observation boundary corrected"
+  },
+  "observationBoundary": "direct original DateTimeLiteral string ctor/Evaluate realcontext defaults, Poco::Timestamp index4/signedInt64 and unchanged Timestamp serializer arm only",
+  "wholeToStringOtherarmsParserAstFieldcontextsFilearmQualification": false
+}

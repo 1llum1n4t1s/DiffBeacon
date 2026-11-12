@@ -1,0 +1,116 @@
+{
+  "files": {
+    ".gitattributes": {
+      "size": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    "adapter.cpp": {
+      "size": 11230,
+      "sha256": "d78c0c7b21197c0e5093cfd30734c4e59e0bb4c345cbd29dac0c730383334a35"
+    },
+    "capture.json": {
+      "size": 6322,
+      "sha256": "cf4ea7936cc403cf4eb6b214341e724a0c7e9f1e20d833fc17f5a5791d54c56e"
+    },
+    "cases.json": {
+      "size": 58398,
+      "sha256": "d83944637485de6242aaeebbed6bc59f6682081c0cc27cba8c63760f01d9bcdd"
+    },
+    "generate-cases.py": {
+      "size": 3853,
+      "sha256": "a96dcace9e9ca5412819b6f5ddfbb20c2e8a2a5e81382f7678309011857857ab"
+    },
+    "generator-proof.json": {
+      "size": 55,
+      "sha256": "9765795f8f19fa92b0e1cf41e5feaadd3120d8b0d93b410c084a3da53eaa4255"
+    },
+    "golden.ndjson": {
+      "size": 14535,
+      "sha256": "bc73b830108585e9d98f4bd7e8b408466568c48888316b24411a491a9c325657"
+    },
+    "original/COPYING": {
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    "original/DiffTextBuffer.cpp": {
+      "size": 17297,
+      "sha256": "208c50598a61e464a39d70fd2c7b677071c09c8a80c401cfa46241b131f608b9"
+    },
+    "original/FileTransform.cpp": {
+      "size": 51547,
+      "sha256": "a37500cf3ad1e1713752474a9d3e3e400e4ed3806c23ef22d220fdbdf7f6f599"
+    },
+    "original/FilterExpression.cpp": {
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e"
+    },
+    "original/FilterExpressionNodes.cpp": {
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    "original/FilterExpressionNodes.h": {
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    "original/FilterParser.h": {
+      "size": 1472,
+      "sha256": "ac27e0af541b10bea4b78ee5f31b055896de73cef0ce826d9eec6707f493ff41"
+    },
+    "original/FilterParser.y": {
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    "original/ILineDataProvider.h": {
+      "size": 1300,
+      "sha256": "841545932977bc270fb7d2a61f421fe9930c285200502e619e9061f77f8f555b"
+    },
+    "original/Poco-Ascii.cpp": {
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4"
+    },
+    "original/Poco-Ascii.h": {
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1"
+    },
+    "original/Poco-LICENSE": {
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    "original/Poco-String.h": {
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2"
+    },
+    "original/unicoder.cpp": {
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7"
+    },
+    "provenance.json": {
+      "size": 6740,
+      "sha256": "09a606b8f201e397f8b156b1609a056bc64230bb58019da2e6d865cb86f5da49"
+    },
+    "README.md": {
+      "size": 4769,
+      "sha256": "0877868ded9da9412502a52bbae248c9bb4917696180099640a2c502d7b74e0a"
+    },
+    "recompile-capture.json": {
+      "size": 6323,
+      "sha256": "616797b02b39734fdc938dd2d66d90aa517c162c7baa810fd4e9de6cc9a05aad"
+    },
+    "recompile-proof.json": {
+      "size": 165,
+      "sha256": "d639411ba762b669050c11ea66462e66e431fc7f86b47f4e976ca158c6ba2923"
+    },
+    "reference.stderr": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "reproduce.py": {
+      "size": 6693,
+      "sha256": "e6549b3df7b5719f69c90abe6526206bf0124981ceaeef268a127e72c6469512"
+    },
+    "verify.py": {
+      "size": 6956,
+      "sha256": "ce6ce2964625ef15a000cab43ed98b39403dce8b329a0233b5d7969e7e4d358d"
+    }
+  }
+}

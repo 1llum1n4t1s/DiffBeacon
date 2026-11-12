@@ -1,0 +1,89 @@
+{
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "adapter.cpp",
+      "size": 9667,
+      "sha256": "1de3671d330befcb5c0b2710d3fd739834a73c1b4a75040ef966ddd53139de90"
+    },
+    {
+      "path": "capture.py",
+      "size": 12015,
+      "sha256": "085750a08cef4d68bf34fee7b48f073ad061f0d154342f80d03fa97d4c1604f1"
+    },
+    {
+      "path": "cases.json",
+      "size": 43023,
+      "sha256": "92323aeef3e40490b5510df34d1e2f683d00cc673aebe562a4bb3d9feb9e0d67"
+    },
+    {
+      "path": "contract.json",
+      "size": 674,
+      "sha256": "e1bd324c6769aad0c5f0bd325b618cb9be138f7b02b36b465f9d696dc5ad6550"
+    },
+    {
+      "path": "generate-public-plan.py",
+      "size": 2057,
+      "sha256": "8e0c6a0cfdf6259c9f35e1c99be988583bf54ba064de99c1aa303b118c536c8b"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 115923,
+      "sha256": "4b8061442df10a5b0e89c1dfdbfed402a7b2b80c66bfbfc3ae72aaebcc756b95"
+    },
+    {
+      "path": "native-proof.zip",
+      "size": 74225,
+      "sha256": "29d35a05a765a1554d78f2dde59541e97f6441a2e4eda06462dc4c2965f89a29"
+    },
+    {
+      "path": "proof-manifest.json",
+      "size": 19095,
+      "sha256": "11e202af97b88785e5a52f7d2986c685a77361ff1da4d93f75b641ba77baf79a"
+    },
+    {
+      "path": "provenance.json",
+      "size": 25768,
+      "sha256": "fc4b801d4835fb13303cf3ed4074a832f50de362431905f88cd190ba4d0fea53"
+    },
+    {
+      "path": "public-case-plan.json",
+      "size": 19618,
+      "sha256": "df151fb33f9fd0e071316de6239162b033a277a1b2e7a792b71b7b5e10e41692"
+    },
+    {
+      "path": "README.md",
+      "size": 6675,
+      "sha256": "af018f08807548534e55f000179a0497a97577e27fcae85fbfd71c56f036bd5b"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 1008,
+      "sha256": "45dccd8a3d0c06f709f83f4aacb6455a2355e92091eee083466c1c4292f6e0fe"
+    },
+    {
+      "path": "source-manifest.json",
+      "size": 5648,
+      "sha256": "da4b0bfb4909629018d3c1d0b79692a059090218c20cfe4c17a271647d20cb10"
+    },
+    {
+      "path": "source-test-evidence.json",
+      "size": 623,
+      "sha256": "c4eac77543b29d2d0b2351193f338b87a294932b0d9c6d213d7446737a5e4ec2"
+    },
+    {
+      "path": "verify-public.py",
+      "size": 6360,
+      "sha256": "0f67a5b05be4ef4bbb9c30aae690b8d303571879c3e940691809e13b13f40a1d"
+    },
+    {
+      "path": "verify.py",
+      "size": 7642,
+      "sha256": "fc71fa453383b42b10b017699837b8754146d68a7a26e40efba47103c76e2d71"
+    }
+  ]
+}

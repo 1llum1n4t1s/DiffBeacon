@@ -254,11 +254,15 @@
         "conflict/c.bin": "RightOnly",
         "reverse-conflict": "TypeConflict",
         "reverse-conflict/c.bin": "LeftOnly",
-        "size-side.bin": "LeftOnly"
+        "size-side.bin": "Uncompared"
       },
       "filteredRight": [
         "size-side.bin"
-      ]
+      ],
+      "filteredLeft": [
+        "size-side.bin"
+      ],
+      "hideFiltered": true
     },
     "type-filter": {
       "statuses": {
@@ -882,9 +886,7 @@
       ],
       "exit": 0,
       "json": true,
-      "candidates": [
-        "size-side.bin"
-      ],
+      "candidates": [],
       "direction": "left-to-right",
       "copy": "diff",
       "selected": [

@@ -1,0 +1,12 @@
+{
+  "runs": [
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\string-bytes-consumers-20261020-r1\\run1",
+      "receiptSha256": "6fa337b21a32baadf6bc70a83c1a4a5294b7d1e5bef82cfcffce59682172ee37"
+    },
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\string-bytes-consumers-20261020-r1\\run2",
+      "receiptSha256": "4f4a90d2faa35dad6b11363763a879ea833fd63ed958b7f0d99a3357088ea726"
+    }
+  ]
+}

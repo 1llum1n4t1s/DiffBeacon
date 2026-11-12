@@ -1,0 +1,70 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "upstream": "https://github.com/WinMerge/winmerge",
+  "sources": [
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "file": "original/FilterExpressionNodes.cpp",
+      "blob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    {
+      "path": "Src/COPYING",
+      "file": "original/COPYING",
+      "blob": "7d1f8605f8f722063883b7feefec942fe2f28206",
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    {
+      "path": "Src/Common/unicoder.cpp",
+      "file": "original/unicoder.cpp",
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7",
+      "blob": "81e6dbdf90c6a4bfa1c3dd44afc01944c8928c4f"
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/TextIterator.h",
+      "file": "original/TextIterator.h",
+      "blob": "f78fb868b6bd1dd173875056cbafc515d01178f2",
+      "sha256": "5b0a46eb888ef9450792b69b474c3bab72049dce6812bcd6449a977fe91943ba",
+      "size": 3416
+    },
+    {
+      "path": "Externals/poco/Foundation/src/TextIterator.cpp",
+      "file": "original/TextIterator.cpp",
+      "blob": "7fc4bf944684d22c64ea8208dcbeb7935263ab78",
+      "sha256": "8b4c092d5a637bd1487f08819df6548516f6bbb7b55ea7a0d8a7f6b8d6183cb8",
+      "size": 2796
+    },
+    {
+      "path": "Externals/poco/Foundation/src/UTF8Encoding.cpp",
+      "file": "original/UTF8Encoding.cpp",
+      "blob": "5b88f41a03e9c31fde5424c5639f7cb1c2fcdb8f",
+      "sha256": "d61f56ed798ebc3776459979b49246527a16796fa143aec289082722a0ffdeef",
+      "size": 5654
+    },
+    {
+      "path": "Externals/poco/Foundation/src/UnicodeConverter.cpp",
+      "file": "original/UnicodeConverter.cpp",
+      "blob": "7ca9454b76671602438ad238607f0d158b3a8e29",
+      "size": 3652,
+      "sha256": "60813871b28d2f6f5f6e8e2f0d318276ad337bf5b930d1184805a8d96b477be9"
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/UnicodeConverter.h",
+      "file": "original/UnicodeConverter.h",
+      "blob": "ea3ecb1fd75306ddf5df8610e75bffc870491d3e",
+      "size": 4193,
+      "sha256": "21f97e1c1ff15af01065f45a7af0ab3d3f14be19a66f94586b516cc92dad0a1a"
+    },
+    {
+      "path": "Externals/poco/LICENSE",
+      "file": "original/Poco-LICENSE",
+      "blob": "2f2f957ce4f48733875f0791d0d383e8d9319205",
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    }
+  ],
+  "boundary": "Unmodified original ToX/Lower/Upper/getAsString/lifting/stringification/arity and Windows LCMapStringAuto. Actual original Poco UnicodeConverter/TextIterator/UTF8Encoding and ucr UTF16/UTF8 bridges are extracted, including malformed input behavior. Poco timestamp is a dead binding not exercised. No parser/Optimize execution."
+}

@@ -94,6 +94,8 @@ internal static class ProjectInputs
     };
     internal static IEnumerable<string> PhysicalPaths(ComparisonProject project)
         => Enumerable.Range(0, 3).Select(side => PathFor(project, side)).Append(project.FileFilterPath ?? "").Concat(project.ProtectedArchiveAssets)
+            .Concat(project.FolderListDependencies)
+            .Concat(LineTransformListEnvironments.ProtectedPaths(project))
             .Concat(Enumerable.Range(0, 3).SelectMany(side => Archive(project, side)?.WorkingDocuments ?? [])
                 .Select(copy => copy.SnapshotPath ?? ""));
     internal static bool HasArchives(ComparisonProject project)

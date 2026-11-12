@@ -1,0 +1,83 @@
+[
+  {
+    "output": "all-equal.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 58640,
+    "endByte": 59304,
+    "startLine": 1752,
+    "endLine": 1773,
+    "sha256": "8b66a897fa6ba25a61c8ab15004ee6b452f4790bc72cd0cf351f7910571e1b37"
+  },
+  {
+    "output": "all-equal.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 59306,
+    "endByte": 59977,
+    "startLine": 1775,
+    "endLine": 1801,
+    "sha256": "31801ff6c2da2e2f7cf160d43b42c68f52add4171140874cafdf4eefcda97be2"
+  },
+  {
+    "output": "registration-evidence.txt",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 115951,
+    "endByte": 115987,
+    "startLine": 3790,
+    "endLine": 3791,
+    "sha256": "0eff1bef14b90304c2ede9216c69db9b7f0683acb8f35cd3352ee53b3e314ac7"
+  },
+  {
+    "output": "value-type.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.h",
+    "startByte": 232,
+    "endByte": 617,
+    "startLine": 15,
+    "endLine": 22,
+    "sha256": "d6aa2ad12d811492d3bace3491e88e8dd113bc867e560c7a6ba4ca6bde1e42a7"
+  },
+  {
+    "output": "expr-node.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.h",
+    "startByte": 694,
+    "endByte": 857,
+    "startLine": 26,
+    "endLine": 31,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1167,
+    "endByte": 1214,
+    "startLine": 58,
+    "endLine": 61,
+    "sha256": "237bccfb53e209a276ec96e9f60493486d60f476432810d7af55e6213ee34531"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1217,
+    "endByte": 1283,
+    "startLine": 64,
+    "endLine": 67,
+    "sha256": "5d52e64c0f807545cd763cfe426f7fdb4438ac73c40259686117c7c2a4fbe0a5"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1286,
+    "endByte": 1313,
+    "startLine": 70,
+    "endLine": 72,
+    "sha256": "085376444119a0c2113ef85eb210ad20ca3b320edd1dae02934f5c8f7061e071"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/include/Poco/Timestamp.h",
+    "startByte": 4359,
+    "endByte": 4448,
+    "startLine": 156,
+    "endLine": 159,
+    "sha256": "1d33ee8d78718ff11f6e746832d19110e27da932df31b23893e72d8e5b8b84ad"
+  }
+]

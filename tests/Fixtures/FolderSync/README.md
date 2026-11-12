@@ -68,3 +68,5 @@ GUIの新しい`folder-review-observations.json`は通常nested rootの4button�
 ## 中止完了と旧結果の反映拒否
 
 確認中、最初のpreflight出力guard、一件公開後の次項目、再比較候補の採用直前に、実中止ボタンを押す4GUIを検査する。完了表示・コピー操作の復帰・個別Published/Cancelled/NotExecuted、原本と既存出力の全bytes・SHA、左右rootと全subtreeのmtime・属性・Unix modeを`folder-cancellation-observations.json`と4PNGへ保持する。`verify-copy.py`は固定literalと独立lstatで照合する。旧44観測は維持し、追加preflight/refreshは別観測へ保存する。旧Folder確認の取得後に明示中止して新比較を採用し、旧回答・完了が新status/adoptionを上書きしないことも確認する。その他の旧確認／準備後の新比較ケースを保持する。成果物の実測結果はrun receiptへ記録し、限定実行を全体E2E・UI・同OS AOTの代替にしない。
+
+サイズ条件は全側DIFFITEMで評価します。固定入力の左1 byte／右3 bytesに対する `fe: size > 2` は `[false,true]` をrootで一致とし、`def: include` により両側を除外します。modelの既定一覧はこの行を隠し、両方向の差分コピー候補は空、右の `020304` は保持します。式・入力byteと他のケースは維持し、側別除外は既存type／regexケースで検証します。この期待は自己作成adapter期待の是正であり、原版runtime goldenの変更ではありません。

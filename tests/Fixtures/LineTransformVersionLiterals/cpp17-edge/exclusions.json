@@ -1,0 +1,32 @@
+[
+  {
+    "input": "65536.0.0.0",
+    "reason": "major shifted48 exceeds unsigned64 representability in C++17",
+    "status": "excluded/no golden"
+  },
+  {
+    "input": "-1.0.0.0 / 0.-1.0.0 / 0.0.-1.0",
+    "reason": "negative shifted operands in C++17",
+    "status": "excluded/no golden"
+  },
+  {
+    "input": "32768.0.0.-1",
+    "reason": "MSVC signed result INT64_MIN plus negative revision underflows",
+    "status": "excluded/no golden"
+  },
+  {
+    "input": "32768.0.0.-2147483648",
+    "reason": "MSVC signed result INT64_MIN plus negative revision underflows",
+    "status": "excluded/no golden"
+  },
+  {
+    "input": "2147483648.0.0.0 / 0.0.0.-2147483649",
+    "reason": "sscanf %d int32 conversion out-of-range",
+    "status": "excluded/no golden"
+  },
+  {
+    "input": "32767.65535.65535.65536",
+    "reason": "positive signed sum overflow",
+    "status": "excluded/no golden"
+  }
+]

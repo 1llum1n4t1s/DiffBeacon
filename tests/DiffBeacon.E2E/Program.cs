@@ -12,14 +12,15 @@ using System.Text.RegularExpressions;
 var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip", "--bare-compression-fixtures" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
-    "--folder-model-only", "--folder-copy-only", "--folder-threeway-only", "--independent-text-inputs-only", "--independent-text-input-archives-only", "--independent-text-input-cipher-only", "--independent-text-input-routes-only", "--independent-text-input-saved-archives-only", "--independent-text-input-lifetime-only", "--independent-text-only", "--independent-archive-text-only", "--image-defaults-only", "--binary-search-only", "--binary-clipboard-only",
+    "--folder-properties-only", "--folder-replace-lists-only", "--folder-optimizer-only", "--folder-side-functions-only",
+    "--folder-model-only", "--folder-copy-only", "--folder-threeway-only", "--independent-text-inputs-only", "--independent-text-input-archives-only", "--independent-text-input-cipher-only", "--independent-text-input-routes-only", "--independent-text-input-saved-archives-only", "--independent-text-input-lifetime-only", "--independent-text-only", "--independent-archive-text-only", "--image-defaults-only", "--binary-search-only", "--binary-replace-only", "--binary-clipboard-only",
     "--binary-range-edits-only", "--binary-copy-all-only", "--binary-threeway-only", "--archive-tar-wrappers-only", "--archive-binary-only", "--archive-present-only", "--archive-missing-only", "--archive-project-only", "--archive-sources-only", "--archive-wrappers-only", "--bare-gzip-only", "--bare-compression-only", "--tar-z-only", "--image-overlay-only", "--image-overlay-reports-only",
     "--image-wipe-only", "--image-rectangles-only", "--image-insertions-only", "--image-alignment-only",
     "--image-lines-only", "--image-offsets-only", "--image-transforms-only", "--image-project-only",
     "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
     "--image-reports-only", "--image-only", "--gnu-table-only", "--gnu-text-only", "--gnu-line-only",
-    "--line-alignment-only", "--word-diff-only", "--reports-only", "--packaging-only", "--projects-only",
-    "--archives-only", "--legacy-comments-only", "--text-advanced-only", "--provider-boundaries-only"
+    "--line-alignment-only", "--word-diff-only", "--table-raw-search-only", "--table-column-ignore-only", "--table-column-range-only", "--line-transform-only", "--line-transform-logging-only", "--line-transform-timestamp-only", "--line-transform-date-functions-only", "--line-transform-calendar-functions-only", "--line-transform-clock-functions-only", "--line-transform-casing-only", "--line-transform-unicode-normalization-only", "--line-transform-character-mapping-only", "--line-transform-content-only", "--line-transform-regex-only", "--line-transform-matches-operator-only", "--line-transform-recontains-only", "--line-transform-like-only", "--line-transform-match-only", "--line-transform-match-metrics-only", "--line-transform-matchinside-only", "--line-transform-replace-lists-only", "--reports-only", "--packaging-only", "--projects-only",
+    "--archives-only", "--legacy-comments-only", "--text-advanced-only", "--provider-boundaries-only", "--external-provider-only"
 };
 var seenOptions = new HashSet<string>(StringComparer.Ordinal);
 var selectorCount = 0;
@@ -40,6 +41,8 @@ for (var argumentIndex = 0; argumentIndex < args.Length; argumentIndex++)
 
 var outputArgument = Option("--output") ?? Path.Combine(Path.GetTempPath(), "Codex", "DiffBeacon", "e2e-" + Guid.NewGuid().ToString("N"));
 var output = Path.GetFullPath(outputArgument);
+try { DiffBeacon.Development.DevelopmentOutputGuard.Validate(output); }
+catch (IOException exception) { Console.Error.WriteLine(exception.Message); return 2; }
 // 入力fixtureを含むrepoやCodex設定、禁止名、リンクへ成果物を作成しない。
 var pathComparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 var repositoryRoot = Path.GetFullPath(Environment.CurrentDirectory);
@@ -60,6 +63,10 @@ var allowedRoots = new List<string>
 };
 if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true" && Environment.GetEnvironmentVariable("RUNNER_TEMP") is { Length: > 0 } runnerTemp)
     allowedRoots.Add(Path.Combine(runnerTemp, "Codex", "DiffBeacon"));
+if (DiffBeacon.Development.DevelopmentOutputGuard.WorkRoot is { Length: > 0 } developmentRoot)
+    allowedRoots = new List<string> { developmentRoot };
+else if (Environment.GetEnvironmentVariable("DIFFBEACON_WORK_DIRECTORY") is { Length: > 0 } workDirectory)
+    allowedRoots.Add(workDirectory);
 bool Below(string path, string root) => path.StartsWith(Path.TrimEndingDirectorySeparator(Path.GetFullPath(root)) + Path.DirectorySeparatorChar, pathComparison);
 if (!allowedRoots.Any(root => Below(output, root)) || Below(output, repositoryRoot) || output.Equals(repositoryRoot, pathComparison)
     || Below(output, codexRoot) || output.Equals(codexRoot, pathComparison)
@@ -80,9 +87,17 @@ for (var ancestor = new DirectoryInfo(output); ancestor is not null; ancestor = 
 Directory.CreateDirectory(output);
 var fixtures = Path.Combine(output, "fixtures", DateTime.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N")[..8]);
 Directory.CreateDirectory(fixtures);
-var app = Path.GetFullPath(Option("--app") ?? "Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll");
+var defaultApp = Environment.GetEnvironmentVariable("DIFFBEACON_WORK_DIRECTORY") is { Length: > 0 } developmentWork
+    ? Path.Combine(developmentWork, "build", "bin", "DiffBeacon.App", "release", "DiffBeacon.dll")
+    : "Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll";
+var app = Path.GetFullPath(Option("--app") ?? defaultApp);
 var assertions = new List<Assertion>();
 var commands = new List<CommandResult>();
+var stderrObservers = new Dictionary<string, Action<string>>(StringComparer.Ordinal);
+void ObserveStderr(string name, Action<string>? observer)
+{
+    if (observer is null) stderrObservers.Remove(name); else stderrObservers[name] = observer;
+}
 var seededCases = new List<SeededCase>();
 var links = new List<LinkEvidence>();
 var utf8 = new UTF8Encoding(false);
@@ -1148,7 +1163,7 @@ async Task ProjectWorkspaceCases()
         ("null-replacement", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":null}]}"),
         ("null-rule-flag", "{\"substitutionRules\":[{\"pattern\":\"x\",\"replacement\":\"y\",\"enabled\":null}]}"),
         ("null-legacy-value", "{\"legacySettings\":{\"unpacker\":null}}"),
-        ("unknown-version", "{\"formatVersion\":10,\"entries\":[{}],\"activeEntryIndex\":0}"),
+        ("unknown-version", "{\"formatVersion\":99,\"entries\":[{}],\"activeEntryIndex\":0}"),
         ("negative-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":-1}"),
         ("large-active", "{\"formatVersion\":1,\"entries\":[{}],\"activeEntryIndex\":1}"),
         ("too-many", "{\"formatVersion\":1,\"entries\":[" + string.Join(',', Enumerable.Repeat("{}", 257)) + "],\"activeEntryIndex\":0}"),
@@ -1782,7 +1797,8 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
         process.Start();
         pid = process.Id; creationUtc = process.StartTime.ToUniversalTime();
         var stdoutTask = process.StandardOutput.ReadToEndAsync();
-        var stderrTask = process.StandardError.ReadToEndAsync();
+        var stderrTask = stderrObservers.TryGetValue(name, out var observer)
+            ? ReadObservedStderr(process.StandardError, observer) : process.StandardError.ReadToEndAsync();
         if (standardInput is not null)
         {
             await process.StandardInput.WriteAsync(standardInput);
@@ -1810,6 +1826,50 @@ async Task<CommandResult> RunWithInput(string name, int expectedExit, bool json,
     return await RecordCommand(result, expectedExit, json);
 }
 
+static async Task<string> ReadObservedStderr(StreamReader reader, Action<string> observer)
+{
+    var text = new StringBuilder(); var buffer = new char[4096];
+    int count;
+    while ((count = await reader.ReadAsync(buffer.AsMemory())) != 0)
+    {
+        var chunk = new string(buffer, 0, count); text.Append(chunk); observer(chunk);
+    }
+    return text.ToString();
+}
+
+async Task ExternalProviderCases()
+{
+    var fakeProvider = ResolveExternalProviderPath();
+    Check("external provider fixture exists", File.Exists(fakeProvider), fakeProvider);
+    var left = Text("external-provider-left.txt", "alpha\nbeta\n");
+    var equal = Text("external-provider-equal.txt", "alpha\nbeta\n");
+    var right = Text("external-provider-different.txt", "alpha\nchanged\n");
+    await Run("external-provider-equal", 0, true, "--external-provider", fakeProvider, left, equal, "txt");
+    await Run("external-provider-different", 1, true, "--external-provider", fakeProvider, left, right, "txt");
+    await Run("external-provider-invalid-protocol", 2, false, "--external-provider", fakeProvider, left, right, "invalid");
+    await Run("external-provider-response-limit", 2, false, "--external-provider", fakeProvider, left, right, "flood");
+}
+
+string ResolveExternalProviderPath()
+{
+    var executable = OperatingSystem.IsWindows() ? "DiffBeacon.FakeProvider.exe" : "DiffBeacon.FakeProvider";
+    var appDirectory = new DirectoryInfo(Path.GetDirectoryName(app)!);
+    for (var projectOutput = appDirectory; projectOutput is not null; projectOutput = projectOutput.Parent)
+    {
+        if (!projectOutput.Name.Equals("DiffBeacon.App", StringComparison.OrdinalIgnoreCase)
+            || projectOutput.Parent?.Name.Equals("bin", StringComparison.OrdinalIgnoreCase) != true)
+        {
+            continue;
+        }
+
+        var relativeOutput = Path.GetRelativePath(projectOutput.FullName, appDirectory.FullName);
+        var artifactCandidate = Path.Combine(projectOutput.Parent!.FullName, "DiffBeacon.FakeProvider", relativeOutput, executable);
+        if (File.Exists(artifactCandidate))
+            return artifactCandidate;
+    }
+
+    return Path.GetFullPath(Path.Combine(repositoryRoot, "tests", "DiffBeacon.FakeProvider", "bin", "Release", "net11.0", executable));
+}
 async Task<CommandResult> RecordCommand(CommandResult result, int expectedExit, bool json)
 {
     var (name, exit, stdout, stderr) = (result.Name, result.ExitCode, result.Stdout, result.Stderr);
@@ -1830,7 +1890,17 @@ try
 {
     Check("application exists", File.Exists(app), app);
     if (!File.Exists(app)) throw new FileNotFoundException("検証対象をビルドしてください。", app);
-    if (args.Contains("--folder-model-only", StringComparer.Ordinal))
+    if (args.Contains("--folder-optimizer-only", StringComparer.Ordinal))
+        await FolderOptimizerScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
+    else if (args.Contains("--folder-replace-lists-only", StringComparer.Ordinal))
+        await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", replaceListsOnly: true, observeStderr: ObserveStderr);
+    else if (args.Contains("--folder-properties-only", StringComparer.Ordinal))
+        await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", observeStderr: ObserveStderr);
+    // 側別6関数（固定原本2,094命令＋子Optimize fold）だけを実行する。--folder-properties-only の部分集合で、
+    // 約1万命令の全folder-propertiesを流さずにこの経路の変更を確認するための限定実行。
+    else if (args.Contains("--folder-side-functions-only", StringComparer.Ordinal))
+        await FolderSideFunctionScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
+    else if (args.Contains("--folder-model-only", StringComparer.Ordinal))
         await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     else if (args.Contains("--folder-copy-only", StringComparer.Ordinal))
         await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
@@ -1858,6 +1928,8 @@ try
         await ImageDefaultsScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-search-only", StringComparer.Ordinal))
         await BinarySearchScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    else if (args.Contains("--binary-replace-only", StringComparer.Ordinal))
+        await BinaryReplaceScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-clipboard-only", StringComparer.Ordinal))
         await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     else if (args.Contains("--binary-range-edits-only", StringComparer.Ordinal))
@@ -1975,6 +2047,161 @@ try
     {
         await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     }
+    else if (args.Contains("--table-raw-search-only", StringComparer.Ordinal))
+    {
+        var uiOutput = Path.Combine(output, "table-raw-search-ui");
+        await Run("table-raw-search-ui", 0, false, "--self-test", uiOutput, "--table-raw-search-only");
+        var reportPath = Path.Combine(uiOutput, "ui-report.json");
+        Check("table raw search UI report exists", File.Exists(reportPath), reportPath);
+        if (File.Exists(reportPath))
+        {
+            using var report = JsonDocument.Parse(await File.ReadAllTextAsync(reportPath));
+            var root = report.RootElement;
+            var scope = root.TryGetProperty("scope", out var scopeValue) ? scopeValue.GetString() : null;
+            Check("table raw search UI scope", scope == "table-raw-search-only", $"scope={scope}");
+            var checks = root.GetProperty("assertions").EnumerateArray().ToArray();
+            var failed = checks.Where(item => !item.GetProperty("passed").GetBoolean()).Select(item => item.GetProperty("name").GetString()).ToArray();
+            Check("table raw search UI assertions", checks.Length > 0 && failed.Length == 0,
+                $"count={checks.Length}; failed={string.Join(", ", failed)}");
+        }
+    }
+    else if (args.Contains("--table-column-ignore-only", StringComparer.Ordinal))
+    {
+        await TableColumnIgnoreScenarios.RunAsync(output, fixtures, Run, Check);
+        var uiOutput = Path.Combine(output, "table-column-ignore-ui");
+        await Run("table-column-ignore-ui", 0, false, ["--self-test", uiOutput, "--table-column-ignore-only"]);
+        var reportPath = Path.Combine(uiOutput, "ui-report.json");
+        Check("table column ignore UI report exists", File.Exists(reportPath), reportPath);
+        if (File.Exists(reportPath))
+        {
+            using var report = JsonDocument.Parse(await File.ReadAllTextAsync(reportPath));
+            var root = report.RootElement;
+            var scope = root.TryGetProperty("scope", out var scopeValue) ? scopeValue.GetString() : null;
+            Check("table column ignore UI scope", scope == "table-column-ignore-only", $"scope={scope}");
+            var checks = root.GetProperty("assertions").EnumerateArray().ToArray();
+            var failed = checks.Where(item => !item.GetProperty("passed").GetBoolean()).Select(item => item.GetProperty("name").GetString()).ToArray();
+            Check("table column ignore UI assertions", checks.Length > 0 && failed.Length == 0,
+                $"count={checks.Length}; failed={string.Join(", ", failed)}");
+        }
+    }
+    else if (args.Contains("--line-transform-calendar-functions-only", StringComparer.Ordinal))
+    {
+        await LineTransformTimestampCalendarScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-transform-clock-functions-only", StringComparer.Ordinal))
+    {
+        await LineTransformTimestampClockScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-date-functions-only", StringComparer.Ordinal))
+    {
+        await LineTransformTimestampFunctionScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-transform-casing-only", StringComparer.Ordinal))
+    {
+        await LineTransformCasingScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-transform-unicode-normalization-only", StringComparer.Ordinal))
+    {
+        await LineTransformUnicodeNormalizationScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-transform-content-only", StringComparer.Ordinal))
+    {
+        await LineTransformContentScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-transform-regex-only", StringComparer.Ordinal))
+    {
+        await LineTransformRegexScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-matches-operator-only", StringComparer.Ordinal))
+    {
+        await LineTransformMatchesOperatorScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-recontains-only", StringComparer.Ordinal))
+    {
+        await LineTransformREContainsScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-like-only", StringComparer.Ordinal))
+    {
+        await LineTransformLikeScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-match-only", StringComparer.Ordinal))
+    {
+        await LineTransformMatchScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-replace-lists-only", StringComparer.Ordinal))
+    {
+        await LineTransformReplaceListScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-matchinside-only", StringComparer.Ordinal))
+    {
+        await LineTransformMatchInsideScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-match-metrics-only", StringComparer.Ordinal))
+    {
+        await LineTransformMatchMetricScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-character-mapping-only", StringComparer.Ordinal))
+    {
+        await LineTransformCharacterMappingScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-transform-timestamp-only", StringComparer.Ordinal))
+    {
+        await LineTransformTimestampLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+    }
+    else if (args.Contains("--line-transform-logging-only", StringComparer.Ordinal))
+    {
+        await LineTransformLoggingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--line-transform-only", StringComparer.Ordinal))
+    {
+        await LineTransformScenarios.RunGuiAsync(fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformLoggingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformArrayScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformSearchScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformReplaceScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformRangeScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformWithinScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformAggregateScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformSizeLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformDurationLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformVersionLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampFunctionScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampCalendarScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampClockScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformCasingScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformUnicodeNormalizationScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformCharacterMappingScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformContentScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformRegexScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformMatchesOperatorScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformREContainsScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformLikeScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformMatchScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformMatchMetricScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformMatchInsideScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformReplaceListScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    }
+    else if (args.Contains("--table-column-range-only", StringComparer.Ordinal))
+    {
+        await TableColumnRangeScenarios.RunAsync(output, fixtures, Run, Check);
+        var uiOutput = Path.Combine(output, "table-column-range-ui");
+        await Run("table-column-range-ui", 0, false, ["--self-test", uiOutput, "--table-column-range-only"]);
+        var reportPath = Path.Combine(uiOutput, "ui-report.json");
+        Check("table column range UI report exists", File.Exists(reportPath), reportPath);
+        if (File.Exists(reportPath))
+        {
+            using var report = JsonDocument.Parse(await File.ReadAllTextAsync(reportPath));
+            var root = report.RootElement;
+            var scope = root.TryGetProperty("scope", out var scopeValue) ? scopeValue.GetString() : null;
+            Check("table column range UI scope", scope == "table-column-range-only", $"scope={scope}");
+            var checks = root.GetProperty("assertions").EnumerateArray().ToArray();
+            var failed = checks.Where(item => !item.GetProperty("passed").GetBoolean()).Select(item => item.GetProperty("name").GetString()).ToArray();
+            Check("table column range UI assertions", checks.Length > 0 && failed.Length == 0,
+                $"count={checks.Length}; failed={string.Join(", ", failed)}");
+        }
+    }
     else if (args.Contains("--reports-only", StringComparer.Ordinal))
     {
         await ReportCases();
@@ -2014,6 +2241,10 @@ try
     {
         await ProviderBoundaryCases();
     }
+    else if (args.Contains("--external-provider-only", StringComparer.Ordinal))
+    {
+        await ExternalProviderCases();
+    }
     else
     {
     await ArchiveCases();
@@ -2024,8 +2255,10 @@ try
     await BinaryRangeEditScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinaryClipboardScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await BinarySearchScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    await BinaryReplaceScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await ImageDefaultsScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
+    await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", observeStderr: ObserveStderr);
     await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await IndependentTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
     await IndependentArchiveTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
@@ -2046,6 +2279,36 @@ try
     await ArchiveZScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python", Option("--z-reference"), Option("--z-sevenzip"), Skip);
     await WordDiffScenarios.RunAsync(output, fixtures, Run, Check);
     await LineAlignmentScenarios.RunAsync(output, fixtures, Run, Check);
+    await TableColumnIgnoreScenarios.RunAsync(output, fixtures, Run, Check);
+            await TableColumnRangeScenarios.RunAsync(output, fixtures, Run, Check);
+    await LineTransformScenarios.RunGuiAsync(fixtures, Run, Check, Option("--python") ?? "python");
+    await LineTransformScenarios.RunAsync(output, fixtures, Run, Check);
+    await LineTransformLoggingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformArrayScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformSearchScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformReplaceScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformRangeScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformWithinScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformAggregateScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformSizeLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformDurationLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformVersionLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampFunctionScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampCalendarScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformTimestampClockScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformCasingScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformUnicodeNormalizationScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformCharacterMappingScenarios.RunAsync(output, fixtures, Run, Check);
+        await LineTransformContentScenarios.RunAsync(output, fixtures, Run, Check);
+    await LineTransformRegexScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    await LineTransformMatchesOperatorScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformREContainsScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformLikeScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    await LineTransformMatchScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    await LineTransformMatchMetricScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformMatchInsideScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        await LineTransformReplaceListScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await GnuLineScenarios.RunAsync(output, fixtures, Run, Check);
     await GnuTextScenarios.RunAsync(output, Run, Check);
     await GnuTableScenarios.RunAsync(output, fixtures, Run, Check);
@@ -2228,12 +2491,7 @@ try
     await Run("provider-xml-attributes", 0, true, "--provider", "xml", xmlLeft, xmlRight);
     await Run("provider-xml-dtd", 2, false, "--provider", "xml", Text("xml-dtd.xml", "<!DOCTYPE root [<!ENTITY x 'same'>]><root>&x;</root>"), xmlRight);
     await ProviderBoundaryCases();
-    var fakeProvider = Path.GetFullPath(Path.Combine("tests/DiffBeacon.FakeProvider/bin/Release/net10.0", OperatingSystem.IsWindows() ? "DiffBeacon.FakeProvider.exe" : "DiffBeacon.FakeProvider"));
-    Check("external provider fixture exists", File.Exists(fakeProvider), fakeProvider);
-    await Run("external-provider-equal", 0, true, "--external-provider", fakeProvider, left, equal, "txt");
-    await Run("external-provider-different", 1, true, "--external-provider", fakeProvider, left, right, "txt");
-    await Run("external-provider-invalid-protocol", 2, false, "--external-provider", fakeProvider, left, right, "invalid");
-    await Run("external-provider-response-limit", 2, false, "--external-provider", fakeProvider, left, right, "flood");
+    await ExternalProviderCases();
     var htmlLeft = Text("provider-left.html", "<main>Hello &amp; world</main><script>window.ignoreA=1;</script><style>.a{color:red}</style>");
     var htmlRight = Text("provider-right.html", "<div>Hello &amp; world</div><script>window.ignoreB=2;</script><style>.b{color:blue}</style>");
     await Run("provider-html-source", 1, true, "--provider", "html-source", htmlLeft, htmlRight);

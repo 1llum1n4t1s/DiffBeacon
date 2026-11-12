@@ -18,13 +18,13 @@ internal static class IndependentTextReport
     };
 
     internal static string Create(ComparisonProject project, IReadOnlyList<ReportDocument> documents, CancellationToken token,
-        IReadOnlyList<TextDocument>? snapshots = null)
+        IReadOnlyList<TextDocument>? snapshots = null, ILineTransformLogEnvironment? logEnvironment = null)
     {
         project.TextInputs?.Validate(project);
         if (!ProjectInputs.IsIndependentText(project)) throw new InvalidDataException("独立三者Textの明示入力が必要です。");
         if (snapshots is not null && snapshots.Count != 3)
             throw new InvalidDataException("独立三者Textの文字コードsnapshotには三側が必要です。");
-        return HtmlReport.CreateIndependentText(documents, Pair(project), ProjectReport.Options(project), ProjectReport.MaximumBytes, token,
+        return HtmlReport.CreateIndependentText(documents, Pair(project), ProjectReport.Options(project, logEnvironment), ProjectReport.MaximumBytes, token,
             snapshots, Enumerable.Range(0, 3).Select(side => ProjectInputs.Caption(project, side)).ToArray());
     }
 }

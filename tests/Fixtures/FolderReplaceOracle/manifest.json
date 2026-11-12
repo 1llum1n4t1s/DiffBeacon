@@ -1,0 +1,72 @@
+{
+  "files": {
+    "adapter.cpp": {
+      "size": 5568,
+      "sha256": "29612d92eb538f9a72131b81f3a2825611a9434506ef7508b43d682fc2fed093"
+    },
+    "capture-index.json": {
+      "size": 437,
+      "sha256": "58d572505e501bf5145d877bce8de49e1496f06e1f7dbcf73592b6cefe7a5472"
+    },
+    "cases.json": {
+      "size": 104745,
+      "sha256": "16eb1c6fa43ff0c3611b3f2fa05be73ab5230bef7ce6f2d5b6d8eaa9137e2036"
+    },
+    "failure-matrix.md": {
+      "size": 2334,
+      "sha256": "2b209a33f7f36df21ade34b6e8f9193683b7b425bb77af53b8935d3f8876c152"
+    },
+    "golden.ndjson": {
+      "size": 92995,
+      "sha256": "45ce59815fa8bf5475156b3defd58207b3a89d6bc43f220b4ae40195e8c6dbbc"
+    },
+    "include-specs.json": {
+      "size": 6634,
+      "sha256": "47e1e07d5a559c9a7219ec9fb16349887b9b2bc2efc3ad04a44cab493545d994"
+    },
+    "malformed-inputs.json": {
+      "size": 2309,
+      "sha256": "1e84686036966369079adc1b2ea5dccf4cde1adf823f50b841aa0d37cc9ecaad"
+    },
+    "original/COPYING": {
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    "original/FilterExpressionNodes.cpp": {
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    "original/FilterExpressionNodes.h": {
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    "original/Poco-LICENSE": {
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    "provenance.json": {
+      "size": 17784,
+      "sha256": "73bd0698b515967f1d9cf2aa8db331537f6174fd31f02fa393af8552572449e5"
+    },
+    "README.md": {
+      "size": 6539,
+      "sha256": "dc569892da2b95c72002fc2abde0c182aa3102a91d2c00a73f87238838528288"
+    },
+    "reference-source.zip": {
+      "size": 582865,
+      "sha256": "18ed25d74eba5e151bf5fd1a2e811b2490af2ce4c3e39b273a2d563abe8da4e7"
+    },
+    "reproduce.py": {
+      "size": 6443,
+      "sha256": "920d22db053d01bf03dec742454ba3d4593718123f6ea8ca163cb24c28b4fa89"
+    },
+    "source-archive-manifest.json": {
+      "size": 14958,
+      "sha256": "27fd523be1ed4460f77428f8ac0455dbc83ae0d4b3269e3c26442078f691da9a"
+    },
+    "verify.py": {
+      "size": 12276,
+      "sha256": "684940e7f139d99586064ee926dc6b83fd3a06e5c38a88a105ce7ff91bed451c"
+    }
+  }
+}

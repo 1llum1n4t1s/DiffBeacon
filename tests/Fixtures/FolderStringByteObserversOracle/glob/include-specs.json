@@ -1,0 +1,202 @@
+{
+  "glob-class.inc": {
+    "source": "original/Glob.h",
+    "ranges": [
+      [
+        436,
+        5226
+      ]
+    ],
+    "sha256": "a9aceec7d3f7730c239247cd33b909f95b6ef8c359188db3b9569c28e19b5081"
+  },
+  "text-class.inc": {
+    "source": "original/TextIterator.h",
+    "ranges": [
+      [
+        432,
+        2969
+      ]
+    ],
+    "sha256": "0fc2dbcca0806a3f2df58b2613e2a7953aa49366083dcf64e1179b0d9d0809c6"
+  },
+  "unicode-class.inc": {
+    "source": "original/Unicode.h",
+    "ranges": [
+      [
+        380,
+        5244
+      ]
+    ],
+    "sha256": "a74a83c41405582cf07f4cfd4bcb40a8da14f4e89256ace575dd0a461b544b5a"
+  },
+  "glob-ctor.inc": {
+    "source": "original/Glob.cpp",
+    "ranges": [
+      [
+        435,
+        530
+      ]
+    ],
+    "sha256": "d2b6d84fe3b6656516acf182e2a5378f83510477f692c11cb04d8d0d3d4a9d06"
+  },
+  "glob-dtor.inc": {
+    "source": "original/Glob.cpp",
+    "ranges": [
+      [
+        533,
+        550
+      ]
+    ],
+    "sha256": "e5e8a7889d4d0fd05553fefe8b71651836c7082fc9bd08a1215e3efedf9f8c90"
+  },
+  "glob-match.inc": {
+    "source": "original/Glob.cpp",
+    "ranges": [
+      [
+        553,
+        908
+      ]
+    ],
+    "sha256": "5bc62b13ffb4ee500bd42c197b33d57fff341ccebbeb7ed33c1217e3bd0ec0bc"
+  },
+  "glob-inner.inc": {
+    "source": "original/Glob.cpp",
+    "ranges": [
+      [
+        2421,
+        3545
+      ]
+    ],
+    "sha256": "3c47e3bff3c995a1abe6658663a9b523a3ee6c5d66f530eb48def3175e827384"
+  },
+  "glob-star.inc": {
+    "source": "original/Glob.cpp",
+    "ranges": [
+      [
+        3548,
+        3706
+      ]
+    ],
+    "sha256": "0ca552fa4e1f0f8d9725063dc30270a6241d597ba75bcc536db29a38aee656a7"
+  },
+  "glob-set.inc": {
+    "source": "original/Glob.cpp",
+    "ranges": [
+      [
+        3709,
+        4701
+      ]
+    ],
+    "sha256": "28389161de5d7d0daa411eb99a5b5190bd68545917aadd1a27405c2ca83e902d"
+  },
+  "utf-ctor.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        2144,
+        2176
+      ]
+    ],
+    "sha256": "e2193c40d28001648bd5147422e96008984bd4097096099077903980fc7a46bf"
+  },
+  "utf-dtor.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        2179,
+        2212
+      ]
+    ],
+    "sha256": "702f31f6272667fbbf9191147fe4b33407d3b8229b29608350b228a602a55d48"
+  },
+  "utf-query.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        3885,
+        4327
+      ]
+    ],
+    "sha256": "9eaae847f059a542b7663d807ea2a345d670bf1c463ba170d07ede5b9703dd43"
+  },
+  "utf-sequence.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        4330,
+        4532
+      ]
+    ],
+    "sha256": "cd82e71b5de4fb08daf680e774012b4437fcb5df2dd7d8272b7a5b40a2b055a2"
+  },
+  "utf-legal.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        4535,
+        5631
+      ]
+    ],
+    "sha256": "47673b2bfc6364d74174d89a8668dded995befb0e07dbaad35362249e9a00e29"
+  },
+  "unicode-properties.inc": {
+    "source": "original/Unicode.cpp",
+    "ranges": [
+      [
+        337,
+        673
+      ]
+    ],
+    "sha256": "e12581eff96bc524e585bf3cc85a52ac3120676bd161cae86554a6dd54943418"
+  },
+  "unicode-lower.inc": {
+    "source": "original/Unicode.cpp",
+    "ranges": [
+      [
+        676,
+        814
+      ]
+    ],
+    "sha256": "5ea12bae45ce938b0590fd922ab86d3d2be6de8f37bcc3f5a025376579cc2ab1"
+  },
+  "unicode-isupper.inc": {
+    "source": "original/Unicode.h",
+    "ranges": [
+      [
+        5976,
+        6145
+      ]
+    ],
+    "sha256": "59a1f8e9bd86d02ed9d608ead89b4e38e709a1c098afb79474b3c9a3a9fb73aa"
+  },
+  "utf-table.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        383,
+        2141
+      ]
+    ],
+    "sha256": "cf6dd022cc10b8540dbbd524b866fe0bd2ec0917ece5806d5b166367638b9fc0"
+  },
+  "text-bodies.inc": {
+    "source": "original/TextIterator.cpp",
+    "ranges": [
+      [
+        338,
+        2776
+      ]
+    ],
+    "sha256": "747f75051e54495bc643aaab846dc00fb4a34798fae390ba265248ed3329872f"
+  },
+  "text-inlines.inc": {
+    "source": "original/TextIterator.h",
+    "ranges": [
+      [
+        2989,
+        3351
+      ]
+    ],
+    "sha256": "b946a964343ac9c535968c32e392a2300220eec18d96a799c9c052fd95adc509"
+  }
+}

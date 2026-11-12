@@ -1,0 +1,15 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "path": "Testing/GoogleTest/FilterEngine/FilterExpression_test.cpp",
+  "sha256": "6085462e5f22b6cc57cd8de828928ca7176184cbc7e8e5e522e53483416cc243",
+  "size": 187534,
+  "blob": "8a96ded7d8fa5bfa158833a4f65c52474c69c715",
+  "span": {
+    "startByte": 163363,
+    "endByte": 165009,
+    "startLine": 3982,
+    "endLine": 4004,
+    "sha256": "1ee34346a9ad0c85c39ddf85cd6f50acb7cffee1af25be4408a557478e8f67f5"
+  },
+  "description": "Existing five assertions cover interior, both inclusive boundaries, before and after. Read-only evidence; not executed by adapter."
+}

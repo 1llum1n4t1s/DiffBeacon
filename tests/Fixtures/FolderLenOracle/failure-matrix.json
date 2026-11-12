@@ -1,0 +1,12 @@
+{
+  "scope": "LenFuncとUTF-8 helperの直接実行、constructor引数数検証ブロックは別観測。無効Unicode/parser/optimizer/.fltは対象外",
+  "failures": [
+    "配列を再帰的に数える、scalarと同じ1にする",
+    "文字列をUTF-8 byte数/UTF-16 code-unit数/grapheme数で数える",
+    "空文字列/NUL/結合文字列の文字数を誤る",
+    "none=0と他scalar=1を混同する",
+    "式の重複評価や例外隠蔽",
+    "arity 1..1の拒否前に式評価する",
+    "原典span・Git blob・二回独立stdoutの不一致を見逃す"
+  ]
+}

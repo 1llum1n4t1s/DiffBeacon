@@ -1,0 +1,17 @@
+{
+  "scope": "Supplemental original source, source-derived expectations only; not added to native executed closure",
+  "files": [
+    {
+      "path": "Src/FilterEngine/FilterExpression.cpp",
+      "size": 17750,
+      "sha256": "c12f272bf860632a187b3260faa194b00b963da1a72017413cb53f003254d383",
+      "gitBlobSha1": "a26f27d8c8df2112c5e198b3787629d1e6c10ca7"
+    },
+    {
+      "path": "Src/FileFilter.cpp",
+      "size": 11512,
+      "sha256": "50a2716b0fa5d04978b9d47fa56f47ecc99f840f5cb05a49b0f3e6e512dd3e7f",
+      "gitBlobSha1": "c989ff46e763188344fd1c68b03d6ea3c825988f"
+    }
+  ]
+}

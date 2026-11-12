@@ -19,7 +19,7 @@ internal static class HeadlessIndependentTextInputSelectionCriticalChecks
         if (Directory.Exists(folder)) throw new IOException("新規critical run出力が必要です。");
         Directory.CreateDirectory(folder);
         var fixture = Path.GetFullPath("tests/Fixtures/IndependentTextInputSelectionCritical");
-        var receipts = new List<Action<Utf8JsonWriter>>();
+        var receipts = new List<JsonElement>();
         string[] roles = ["left", "middle", "right"];
         void Jobs() { Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick(); Dispatcher.UIThread.RunJobs(); }
         void Click(Button button) => button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -233,7 +233,7 @@ internal static class HeadlessIndependentTextInputSelectionCriticalChecks
                 var pendingHex = initialBinary?.RightHex.Text;
                 var binaryAfter = binaryRetained ? initialBinary!.ProjectSides.Select(side => initialBinary.CaptureApplied(side).CopyBytes()).ToArray() : null;
                 if (mode == "pending-hex") Verify(mode + " same Binary panel applied bytes and pending Hex retained", binaryRetained && pendingHex == "GG" && binaryBefore!.Zip(binaryAfter!).All(pair => pair.First.AsSpan().SequenceEqual(pair.Second)));
-                receipts.Add(writer =>
+                receipts.Add(CaptureReceipt(writer =>
                 {
                     writer.WriteStartObject(); writer.WriteString("id", mode); writer.WriteBoolean("accepted", accepted == true); writer.WriteNumber("tabsBefore", tabsBefore); writer.WriteNumber("tabsAfter", tabsAfter);
                     writer.WriteNumber("storeBefore", generation); writer.WriteNumber("storeAfter", finalGeneration); writer.WriteNumber("noopGeneration", noopGeneration);
@@ -253,7 +253,7 @@ internal static class HeadlessIndependentTextInputSelectionCriticalChecks
                     writer.WriteStartArray("clicks"); foreach (var value in clicks) writer.WriteStringValue(value); writer.WriteEndArray();
                     writer.WriteStartArray("diagnostics"); foreach (var value in diagnostics) writer.WriteStringValue(value); writer.WriteEndArray();
                     writer.WriteString("rawTiming", mode == "sha-before-first-read" ? "browser-confirmed-before-first-candidate-read" : "none"); writer.WriteEndObject();
-                });
+                }));
             }
             finally
             {
@@ -275,13 +275,22 @@ internal static class HeadlessIndependentTextInputSelectionCriticalChecks
         foreach (var mode in new[] { "working-cache", "metadata-false", "metadata-true", "metadata-null", "metadata-omitted", "default-archive", "physical-readonly", "parent-body", "parent-role", "parent-pair", "parent-readonly", "pending-hex", "store-save", "parent-close", "window-close", "sha-before-first-read" }) Execute(mode);
         using var file = File.Create(Path.Combine(folder, "observations.json")); using var json = new Utf8JsonWriter(file, new() { Indented = true });
         json.WriteStartObject(); json.WriteString("schema", "input-selection-critical-observations-v1"); json.WriteString("status", "critical-subset-only");
-        json.WriteStartArray("cases"); foreach (var receipt in receipts) receipt(json); json.WriteEndArray(); json.WriteEndObject();
+        json.WriteStartArray("cases"); foreach (var receipt in receipts) receipt.WriteTo(json); json.WriteEndArray(); json.WriteEndObject();
     }
 
     private static void SavePng(Window window, string path)
     {
         using var frame = window.CaptureRenderedFrame() ?? throw new InvalidOperationException("実描画PNG未取得");
         using var file = File.Create(path); frame.Save(file, new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
+    }
+
+    private static JsonElement CaptureReceipt(Action<Utf8JsonWriter> write)
+    {
+        // caseのJSONをその場で値へ確定し、閉じたhostを参照するclosureを保持しない。
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream)) write(writer);
+        using var document = JsonDocument.Parse(stream.ToArray());
+        return document.RootElement.Clone();
     }
 
     private static void ExerciseReadOnly(ComparisonPane actual, MainWindow host, string mode, List<string> clicks, List<string> diagnostics,

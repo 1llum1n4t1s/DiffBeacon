@@ -1,0 +1,41 @@
+{
+  "command": [
+    "C:\\Users\\IMT\\AppData\\Roaming\\uv\\python\\cpython-3.14.7-windows-x86_64-none\\python.exe",
+    "-B",
+    "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\native_execution_supervisor.authoritative.py",
+    "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710",
+    "--execute-parent-go"
+  ],
+  "pid": 25140,
+  "birthFileTime": 134362700473213597,
+  "osExitFileTime": 134362700498705971,
+  "heldProcessHandle": 540,
+  "birthMatchedAfterExit": true,
+  "waitResult": 0,
+  "osExitCode": 0,
+  "pythonExitCode": 0,
+  "stdout": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\wrapper-execution-proof\\supervisor.stdout.bin",
+    "size": 77,
+    "sha256": "c6fecb36c01e765f666cfabce64697ae4985d39501d032cc492fcf75d6c21c19",
+    "eof": true,
+    "utc": "2026-10-12T09:14:09.871909+00:00"
+  },
+  "stderr": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\wrapper-execution-proof\\supervisor.stderr.bin",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "eof": true,
+    "utc": "2026-10-12T09:14:09.871772+00:00"
+  },
+  "bothEof": true,
+  "handleHeldThroughOsExitAndBothEof": true,
+  "jobAssigned": true,
+  "jobKillOnClose": true,
+  "stopReason": null,
+  "terminationRequested": null,
+  "errors": [],
+  "finishedUtc": "2026-10-12T09:14:09.942431+00:00",
+  "noResubmission": true,
+  "authoritativeSourceUnchanged": true
+}

@@ -7,7 +7,7 @@ Each of the original two saved-reload cases starts at the real input-selection b
 ```powershell
 python -B -X utf8 tests/Fixtures/IndependentTextInputSavedArchives/verify.py --fixture-only
 dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/new-saved-archives --independent-text-input-saved-archives-only
-dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-text-input-saved-archives artifacts/verification/new-saved-archives
+dotnet Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll --self-test-independent-text-input-saved-archives artifacts/verification/new-saved-archives
 python -B -X utf8 tests/Fixtures/IndependentTextInputSavedArchives/verify.py --gui-report artifacts/verification/new-saved-archives/ui-report.json --output artifacts/verification/new-saved-archives-reader.json
 ```
 

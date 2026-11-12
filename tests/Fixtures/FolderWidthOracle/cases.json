@@ -1,0 +1,4817 @@
+[
+  {
+    "id": "tohalfwidth-empty",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-ascii",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 012 !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-fullwidth-ascii",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\uff22\uff23\u3000\uff58\uff59\uff5a\u3000\uff10\uff11\uff12\u3000\uff01\uff02\uff03\uff04\uff05\uff06\uff07\uff08\uff09\uff0a\uff0b\uff0c\uff0d\uff0e\uff0f\uff1a\uff1b\uff1c\uff1d\uff1e\uff1f\uff20\uff3b\uff3c\uff3d\uff3e\uff3f\uff40\uff5b\uff5c\uff5d\uff5e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-spaces",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": " \u3000\u00a0\u2002\u2003\u2009\t\r\n"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-kana",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30a2\u30a4\u30a6\u30a8\u30aa\u30ab\u30ad\u30af\u30b1\u30b3\u30b5\u30b7\u30b9\u30bb\u30bd\u30bf\u30c1\u30c4\u30c6\u30c8\u30ca\u30cb\u30cc\u30cd\u30ce\u30cf\u30d2\u30d5\u30d8\u30db\u30de\u30df\u30e0\u30e1\u30e2\u30e4\u30e6\u30e8\u30e9\u30ea\u30eb\u30ec\u30ed\u30ef\u30f2\u30f3\u30a1\u30a3\u30a5\u30a7\u30a9\u30c3\u30e3\u30e5\u30e7\u30fc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-half-kana",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff71\uff72\uff73\uff74\uff75\uff76\uff77\uff78\uff79\uff7a\uff76\uff9e\uff77\uff9e\uff78\uff9e\uff79\uff9e\uff7a\uff9e\uff8a\uff9f\uff8b\uff9f\uff8c\uff9f\uff8d\uff9f\uff8e\uff9f\uff73\uff9e\uff67\uff68\uff69\uff6a\uff6b\uff6f\uff6c\uff6d\uff6e\uff70"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-voiced",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u30ae\u30b0\u30b2\u30b4\u30b6\u30b8\u30ba\u30bc\u30be\u30c0\u30c2\u30c5\u30c7\u30c9\u30d0\u30d3\u30d6\u30d9\u30dc\u30d1\u30d4\u30d7\u30da\u30dd\u30f4\u30f7\u30f8\u30f9\u30fa"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-dakuten",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\u30cf\u309a\u309b\u309c\uff9e\uff9f"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-punctuation",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3002\u300c\u300d\u3001\u30fb\u30fc\u300e\u300f\u3010\u3011\u3008\u3009\u300a\u300b\u3014\u3015\u2026\uffe5\uffe6\u00a2\u00a3\u00ac\u00af\u00a6\u00a5\u20a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-hiragana",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3042\u3044\u3046\u3048\u304a\u304c\u304e\u3050\u3052\u3054\u3071\u3074\u3077\u307a\u307d\u3094\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085\u3087\u308e\u3095\u3096\u309d\u309e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-katakana-iteration",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u30bf\u30ab\u30ca\u30f5\u30f6\u30ee\u30fd\u30fe\u30ff"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-chinese-simplified",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6c49\u8bed\u9f99\u95e8\u9a6c\u8f66\u4e66\u56fd\u4f53\u53d1\u540e\u949f\u53f0\u4e07\u4e1c\u5e7f\u4e1c"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-chinese-traditional",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6f22\u8a9e\u9f8d\u9580\u99ac\u8eca\u66f8\u570b\u9ad4\u767c\u5f8c\u9418\u81fa\u842c\u6771\u5ee3\u6771"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-unrelated-compatibility",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\u2460\u2163\u212b\u338f\u337f\ufa19"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-combining",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301a\u0315\u0300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-hangul",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uac00\uac01\u1100\u1161\u11a8"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-supplementary",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud840\udc00\ud83c\uddef\ud83c\uddf5"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-mixed",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21B\uff112\u3000\uff76\uff9e\u30ac\u304c\u6f22\u6c49\ufb03\u2460\ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-nul",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u0000\u30ac\u0000B"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-nul-leading",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000\uff21"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-nul-trailing",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u0000"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-type-0",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-1",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-2",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-3",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-4",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "int",
+        "value": "-42"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-5",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-6",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-7",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "-0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-8",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-type-9",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "INFINITY"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-type-10",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-type-11",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-type-12",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-13",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "\uff21\uff76\uff9e"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "12"
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-type-14",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\uff21\uff76\uff9e"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "value": []
+          },
+          {
+            "type": "string",
+            "value": "\uff21\u30ac"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohalfwidth-bytes-0",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-1",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbca100e382ac"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-2",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-3",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-4",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-5",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-6",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-7",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ffefbca1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-8",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-9",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-bytes-10",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-value-throws",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-arity-zero",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-arity-two",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohalfwidth-arity-null",
+    "functionIndex": 0,
+    "function": "ToHalfWidth",
+    "registeredName": "tohalfwidth",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-empty",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-ascii",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 012 !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-fullwidth-ascii",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\uff22\uff23\u3000\uff58\uff59\uff5a\u3000\uff10\uff11\uff12\u3000\uff01\uff02\uff03\uff04\uff05\uff06\uff07\uff08\uff09\uff0a\uff0b\uff0c\uff0d\uff0e\uff0f\uff1a\uff1b\uff1c\uff1d\uff1e\uff1f\uff20\uff3b\uff3c\uff3d\uff3e\uff3f\uff40\uff5b\uff5c\uff5d\uff5e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-spaces",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": " \u3000\u00a0\u2002\u2003\u2009\t\r\n"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-kana",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30a2\u30a4\u30a6\u30a8\u30aa\u30ab\u30ad\u30af\u30b1\u30b3\u30b5\u30b7\u30b9\u30bb\u30bd\u30bf\u30c1\u30c4\u30c6\u30c8\u30ca\u30cb\u30cc\u30cd\u30ce\u30cf\u30d2\u30d5\u30d8\u30db\u30de\u30df\u30e0\u30e1\u30e2\u30e4\u30e6\u30e8\u30e9\u30ea\u30eb\u30ec\u30ed\u30ef\u30f2\u30f3\u30a1\u30a3\u30a5\u30a7\u30a9\u30c3\u30e3\u30e5\u30e7\u30fc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-half-kana",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff71\uff72\uff73\uff74\uff75\uff76\uff77\uff78\uff79\uff7a\uff76\uff9e\uff77\uff9e\uff78\uff9e\uff79\uff9e\uff7a\uff9e\uff8a\uff9f\uff8b\uff9f\uff8c\uff9f\uff8d\uff9f\uff8e\uff9f\uff73\uff9e\uff67\uff68\uff69\uff6a\uff6b\uff6f\uff6c\uff6d\uff6e\uff70"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-voiced",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u30ae\u30b0\u30b2\u30b4\u30b6\u30b8\u30ba\u30bc\u30be\u30c0\u30c2\u30c5\u30c7\u30c9\u30d0\u30d3\u30d6\u30d9\u30dc\u30d1\u30d4\u30d7\u30da\u30dd\u30f4\u30f7\u30f8\u30f9\u30fa"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-dakuten",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\u30cf\u309a\u309b\u309c\uff9e\uff9f"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-punctuation",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3002\u300c\u300d\u3001\u30fb\u30fc\u300e\u300f\u3010\u3011\u3008\u3009\u300a\u300b\u3014\u3015\u2026\uffe5\uffe6\u00a2\u00a3\u00ac\u00af\u00a6\u00a5\u20a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-hiragana",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3042\u3044\u3046\u3048\u304a\u304c\u304e\u3050\u3052\u3054\u3071\u3074\u3077\u307a\u307d\u3094\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085\u3087\u308e\u3095\u3096\u309d\u309e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-katakana-iteration",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u30bf\u30ab\u30ca\u30f5\u30f6\u30ee\u30fd\u30fe\u30ff"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-chinese-simplified",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6c49\u8bed\u9f99\u95e8\u9a6c\u8f66\u4e66\u56fd\u4f53\u53d1\u540e\u949f\u53f0\u4e07\u4e1c\u5e7f\u4e1c"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-chinese-traditional",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6f22\u8a9e\u9f8d\u9580\u99ac\u8eca\u66f8\u570b\u9ad4\u767c\u5f8c\u9418\u81fa\u842c\u6771\u5ee3\u6771"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-unrelated-compatibility",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\u2460\u2163\u212b\u338f\u337f\ufa19"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-combining",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301a\u0315\u0300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-hangul",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uac00\uac01\u1100\u1161\u11a8"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-supplementary",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud840\udc00\ud83c\uddef\ud83c\uddf5"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-mixed",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21B\uff112\u3000\uff76\uff9e\u30ac\u304c\u6f22\u6c49\ufb03\u2460\ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-nul",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u0000\u30ac\u0000B"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-nul-leading",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000\uff21"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-nul-trailing",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u0000"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-type-0",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-1",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-2",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-3",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-4",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "int",
+        "value": "-42"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-5",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-6",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-7",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "-0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-8",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-type-9",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "double",
+        "value": "INFINITY"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-type-10",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-type-11",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-type-12",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-13",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "\uff21\uff76\uff9e"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "12"
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-type-14",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\uff21\uff76\uff9e"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "value": []
+          },
+          {
+            "type": "string",
+            "value": "\uff21\u30ac"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tofullwidth-bytes-0",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-1",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbca100e382ac"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-2",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-3",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-4",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-5",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-6",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-7",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ffefbca1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-8",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-9",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-bytes-10",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-value-throws",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-arity-zero",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-arity-two",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tofullwidth-arity-null",
+    "functionIndex": 1,
+    "function": "ToFullWidth",
+    "registeredName": "tofullwidth",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-empty",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-ascii",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 012 !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-fullwidth-ascii",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\uff22\uff23\u3000\uff58\uff59\uff5a\u3000\uff10\uff11\uff12\u3000\uff01\uff02\uff03\uff04\uff05\uff06\uff07\uff08\uff09\uff0a\uff0b\uff0c\uff0d\uff0e\uff0f\uff1a\uff1b\uff1c\uff1d\uff1e\uff1f\uff20\uff3b\uff3c\uff3d\uff3e\uff3f\uff40\uff5b\uff5c\uff5d\uff5e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-spaces",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": " \u3000\u00a0\u2002\u2003\u2009\t\r\n"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-kana",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30a2\u30a4\u30a6\u30a8\u30aa\u30ab\u30ad\u30af\u30b1\u30b3\u30b5\u30b7\u30b9\u30bb\u30bd\u30bf\u30c1\u30c4\u30c6\u30c8\u30ca\u30cb\u30cc\u30cd\u30ce\u30cf\u30d2\u30d5\u30d8\u30db\u30de\u30df\u30e0\u30e1\u30e2\u30e4\u30e6\u30e8\u30e9\u30ea\u30eb\u30ec\u30ed\u30ef\u30f2\u30f3\u30a1\u30a3\u30a5\u30a7\u30a9\u30c3\u30e3\u30e5\u30e7\u30fc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-half-kana",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff71\uff72\uff73\uff74\uff75\uff76\uff77\uff78\uff79\uff7a\uff76\uff9e\uff77\uff9e\uff78\uff9e\uff79\uff9e\uff7a\uff9e\uff8a\uff9f\uff8b\uff9f\uff8c\uff9f\uff8d\uff9f\uff8e\uff9f\uff73\uff9e\uff67\uff68\uff69\uff6a\uff6b\uff6f\uff6c\uff6d\uff6e\uff70"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-voiced",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u30ae\u30b0\u30b2\u30b4\u30b6\u30b8\u30ba\u30bc\u30be\u30c0\u30c2\u30c5\u30c7\u30c9\u30d0\u30d3\u30d6\u30d9\u30dc\u30d1\u30d4\u30d7\u30da\u30dd\u30f4\u30f7\u30f8\u30f9\u30fa"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-dakuten",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\u30cf\u309a\u309b\u309c\uff9e\uff9f"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-punctuation",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3002\u300c\u300d\u3001\u30fb\u30fc\u300e\u300f\u3010\u3011\u3008\u3009\u300a\u300b\u3014\u3015\u2026\uffe5\uffe6\u00a2\u00a3\u00ac\u00af\u00a6\u00a5\u20a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-hiragana",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3042\u3044\u3046\u3048\u304a\u304c\u304e\u3050\u3052\u3054\u3071\u3074\u3077\u307a\u307d\u3094\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085\u3087\u308e\u3095\u3096\u309d\u309e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-katakana-iteration",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u30bf\u30ab\u30ca\u30f5\u30f6\u30ee\u30fd\u30fe\u30ff"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-chinese-simplified",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6c49\u8bed\u9f99\u95e8\u9a6c\u8f66\u4e66\u56fd\u4f53\u53d1\u540e\u949f\u53f0\u4e07\u4e1c\u5e7f\u4e1c"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-chinese-traditional",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6f22\u8a9e\u9f8d\u9580\u99ac\u8eca\u66f8\u570b\u9ad4\u767c\u5f8c\u9418\u81fa\u842c\u6771\u5ee3\u6771"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-unrelated-compatibility",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\u2460\u2163\u212b\u338f\u337f\ufa19"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-combining",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301a\u0315\u0300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-hangul",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uac00\uac01\u1100\u1161\u11a8"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-supplementary",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud840\udc00\ud83c\uddef\ud83c\uddf5"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-mixed",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21B\uff112\u3000\uff76\uff9e\u30ac\u304c\u6f22\u6c49\ufb03\u2460\ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-nul",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u0000\u30ac\u0000B"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-nul-leading",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000\uff21"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-nul-trailing",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u0000"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-type-0",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-1",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-2",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-3",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-4",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "int",
+        "value": "-42"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-5",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-6",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-7",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "double",
+        "value": "-0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-8",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-type-9",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "double",
+        "value": "INFINITY"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-type-10",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-type-11",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-type-12",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-13",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "\uff21\uff76\uff9e"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "12"
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-type-14",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\uff21\uff76\uff9e"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "value": []
+          },
+          {
+            "type": "string",
+            "value": "\uff21\u30ac"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tohiragana-bytes-0",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-1",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbca100e382ac"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-2",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-3",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-4",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-5",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-6",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-7",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ffefbca1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-8",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-9",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-bytes-10",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-value-throws",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-arity-zero",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-arity-two",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tohiragana-arity-null",
+    "functionIndex": 2,
+    "function": "ToHiragana",
+    "registeredName": "tohiragana",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-empty",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-ascii",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 012 !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-fullwidth-ascii",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\uff22\uff23\u3000\uff58\uff59\uff5a\u3000\uff10\uff11\uff12\u3000\uff01\uff02\uff03\uff04\uff05\uff06\uff07\uff08\uff09\uff0a\uff0b\uff0c\uff0d\uff0e\uff0f\uff1a\uff1b\uff1c\uff1d\uff1e\uff1f\uff20\uff3b\uff3c\uff3d\uff3e\uff3f\uff40\uff5b\uff5c\uff5d\uff5e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-spaces",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": " \u3000\u00a0\u2002\u2003\u2009\t\r\n"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-kana",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30a2\u30a4\u30a6\u30a8\u30aa\u30ab\u30ad\u30af\u30b1\u30b3\u30b5\u30b7\u30b9\u30bb\u30bd\u30bf\u30c1\u30c4\u30c6\u30c8\u30ca\u30cb\u30cc\u30cd\u30ce\u30cf\u30d2\u30d5\u30d8\u30db\u30de\u30df\u30e0\u30e1\u30e2\u30e4\u30e6\u30e8\u30e9\u30ea\u30eb\u30ec\u30ed\u30ef\u30f2\u30f3\u30a1\u30a3\u30a5\u30a7\u30a9\u30c3\u30e3\u30e5\u30e7\u30fc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-half-kana",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff71\uff72\uff73\uff74\uff75\uff76\uff77\uff78\uff79\uff7a\uff76\uff9e\uff77\uff9e\uff78\uff9e\uff79\uff9e\uff7a\uff9e\uff8a\uff9f\uff8b\uff9f\uff8c\uff9f\uff8d\uff9f\uff8e\uff9f\uff73\uff9e\uff67\uff68\uff69\uff6a\uff6b\uff6f\uff6c\uff6d\uff6e\uff70"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-voiced",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u30ae\u30b0\u30b2\u30b4\u30b6\u30b8\u30ba\u30bc\u30be\u30c0\u30c2\u30c5\u30c7\u30c9\u30d0\u30d3\u30d6\u30d9\u30dc\u30d1\u30d4\u30d7\u30da\u30dd\u30f4\u30f7\u30f8\u30f9\u30fa"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-dakuten",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\u30cf\u309a\u309b\u309c\uff9e\uff9f"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-punctuation",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3002\u300c\u300d\u3001\u30fb\u30fc\u300e\u300f\u3010\u3011\u3008\u3009\u300a\u300b\u3014\u3015\u2026\uffe5\uffe6\u00a2\u00a3\u00ac\u00af\u00a6\u00a5\u20a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-hiragana",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3042\u3044\u3046\u3048\u304a\u304c\u304e\u3050\u3052\u3054\u3071\u3074\u3077\u307a\u307d\u3094\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085\u3087\u308e\u3095\u3096\u309d\u309e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-katakana-iteration",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u30bf\u30ab\u30ca\u30f5\u30f6\u30ee\u30fd\u30fe\u30ff"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-chinese-simplified",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6c49\u8bed\u9f99\u95e8\u9a6c\u8f66\u4e66\u56fd\u4f53\u53d1\u540e\u949f\u53f0\u4e07\u4e1c\u5e7f\u4e1c"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-chinese-traditional",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6f22\u8a9e\u9f8d\u9580\u99ac\u8eca\u66f8\u570b\u9ad4\u767c\u5f8c\u9418\u81fa\u842c\u6771\u5ee3\u6771"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-unrelated-compatibility",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\u2460\u2163\u212b\u338f\u337f\ufa19"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-combining",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301a\u0315\u0300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-hangul",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uac00\uac01\u1100\u1161\u11a8"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-supplementary",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud840\udc00\ud83c\uddef\ud83c\uddf5"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-mixed",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21B\uff112\u3000\uff76\uff9e\u30ac\u304c\u6f22\u6c49\ufb03\u2460\ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-nul",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u0000\u30ac\u0000B"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-nul-leading",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000\uff21"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-nul-trailing",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u0000"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-type-0",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-1",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-2",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-3",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-4",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "int",
+        "value": "-42"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-5",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-6",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-7",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "double",
+        "value": "-0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-8",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-type-9",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "double",
+        "value": "INFINITY"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-type-10",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-type-11",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-type-12",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-13",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "\uff21\uff76\uff9e"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "12"
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-type-14",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\uff21\uff76\uff9e"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "value": []
+          },
+          {
+            "type": "string",
+            "value": "\uff21\u30ac"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tokatakana-bytes-0",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-1",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbca100e382ac"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-2",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-3",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-4",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-5",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-6",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-7",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ffefbca1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-8",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-9",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-bytes-10",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-value-throws",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-arity-zero",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-arity-two",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tokatakana-arity-null",
+    "functionIndex": 3,
+    "function": "ToKatakana",
+    "registeredName": "tokatakana",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-empty",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-ascii",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 012 !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-fullwidth-ascii",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\uff22\uff23\u3000\uff58\uff59\uff5a\u3000\uff10\uff11\uff12\u3000\uff01\uff02\uff03\uff04\uff05\uff06\uff07\uff08\uff09\uff0a\uff0b\uff0c\uff0d\uff0e\uff0f\uff1a\uff1b\uff1c\uff1d\uff1e\uff1f\uff20\uff3b\uff3c\uff3d\uff3e\uff3f\uff40\uff5b\uff5c\uff5d\uff5e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-spaces",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": " \u3000\u00a0\u2002\u2003\u2009\t\r\n"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-kana",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30a2\u30a4\u30a6\u30a8\u30aa\u30ab\u30ad\u30af\u30b1\u30b3\u30b5\u30b7\u30b9\u30bb\u30bd\u30bf\u30c1\u30c4\u30c6\u30c8\u30ca\u30cb\u30cc\u30cd\u30ce\u30cf\u30d2\u30d5\u30d8\u30db\u30de\u30df\u30e0\u30e1\u30e2\u30e4\u30e6\u30e8\u30e9\u30ea\u30eb\u30ec\u30ed\u30ef\u30f2\u30f3\u30a1\u30a3\u30a5\u30a7\u30a9\u30c3\u30e3\u30e5\u30e7\u30fc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-half-kana",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff71\uff72\uff73\uff74\uff75\uff76\uff77\uff78\uff79\uff7a\uff76\uff9e\uff77\uff9e\uff78\uff9e\uff79\uff9e\uff7a\uff9e\uff8a\uff9f\uff8b\uff9f\uff8c\uff9f\uff8d\uff9f\uff8e\uff9f\uff73\uff9e\uff67\uff68\uff69\uff6a\uff6b\uff6f\uff6c\uff6d\uff6e\uff70"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-voiced",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u30ae\u30b0\u30b2\u30b4\u30b6\u30b8\u30ba\u30bc\u30be\u30c0\u30c2\u30c5\u30c7\u30c9\u30d0\u30d3\u30d6\u30d9\u30dc\u30d1\u30d4\u30d7\u30da\u30dd\u30f4\u30f7\u30f8\u30f9\u30fa"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-dakuten",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\u30cf\u309a\u309b\u309c\uff9e\uff9f"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-punctuation",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3002\u300c\u300d\u3001\u30fb\u30fc\u300e\u300f\u3010\u3011\u3008\u3009\u300a\u300b\u3014\u3015\u2026\uffe5\uffe6\u00a2\u00a3\u00ac\u00af\u00a6\u00a5\u20a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-hiragana",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3042\u3044\u3046\u3048\u304a\u304c\u304e\u3050\u3052\u3054\u3071\u3074\u3077\u307a\u307d\u3094\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085\u3087\u308e\u3095\u3096\u309d\u309e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-katakana-iteration",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u30bf\u30ab\u30ca\u30f5\u30f6\u30ee\u30fd\u30fe\u30ff"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-chinese-simplified",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6c49\u8bed\u9f99\u95e8\u9a6c\u8f66\u4e66\u56fd\u4f53\u53d1\u540e\u949f\u53f0\u4e07\u4e1c\u5e7f\u4e1c"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-chinese-traditional",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6f22\u8a9e\u9f8d\u9580\u99ac\u8eca\u66f8\u570b\u9ad4\u767c\u5f8c\u9418\u81fa\u842c\u6771\u5ee3\u6771"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-unrelated-compatibility",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\u2460\u2163\u212b\u338f\u337f\ufa19"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-combining",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301a\u0315\u0300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-hangul",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uac00\uac01\u1100\u1161\u11a8"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-supplementary",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud840\udc00\ud83c\uddef\ud83c\uddf5"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-mixed",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21B\uff112\u3000\uff76\uff9e\u30ac\u304c\u6f22\u6c49\ufb03\u2460\ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-nul",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u0000\u30ac\u0000B"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-nul-leading",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000\uff21"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-nul-trailing",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u0000"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-type-0",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-1",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-2",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-3",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-4",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "int",
+        "value": "-42"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-5",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-6",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-7",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "-0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-8",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-type-9",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "INFINITY"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-type-10",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-type-11",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-type-12",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-13",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "\uff21\uff76\uff9e"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "12"
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-type-14",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\uff21\uff76\uff9e"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "value": []
+          },
+          {
+            "type": "string",
+            "value": "\uff21\u30ac"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-0",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-1",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbca100e382ac"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-2",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-3",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-4",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-5",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-6",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-7",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ffefbca1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-8",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-9",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-bytes-10",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-value-throws",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-arity-zero",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-arity-two",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "tosimplifiedchinese-arity-null",
+    "functionIndex": 4,
+    "function": "ToSimplifiedChinese",
+    "registeredName": "tosimplifiedchinese",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-empty",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-ascii",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 012 !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-fullwidth-ascii",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\uff22\uff23\u3000\uff58\uff59\uff5a\u3000\uff10\uff11\uff12\u3000\uff01\uff02\uff03\uff04\uff05\uff06\uff07\uff08\uff09\uff0a\uff0b\uff0c\uff0d\uff0e\uff0f\uff1a\uff1b\uff1c\uff1d\uff1e\uff1f\uff20\uff3b\uff3c\uff3d\uff3e\uff3f\uff40\uff5b\uff5c\uff5d\uff5e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-spaces",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": " \u3000\u00a0\u2002\u2003\u2009\t\r\n"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-kana",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30a2\u30a4\u30a6\u30a8\u30aa\u30ab\u30ad\u30af\u30b1\u30b3\u30b5\u30b7\u30b9\u30bb\u30bd\u30bf\u30c1\u30c4\u30c6\u30c8\u30ca\u30cb\u30cc\u30cd\u30ce\u30cf\u30d2\u30d5\u30d8\u30db\u30de\u30df\u30e0\u30e1\u30e2\u30e4\u30e6\u30e8\u30e9\u30ea\u30eb\u30ec\u30ed\u30ef\u30f2\u30f3\u30a1\u30a3\u30a5\u30a7\u30a9\u30c3\u30e3\u30e5\u30e7\u30fc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-half-kana",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff71\uff72\uff73\uff74\uff75\uff76\uff77\uff78\uff79\uff7a\uff76\uff9e\uff77\uff9e\uff78\uff9e\uff79\uff9e\uff7a\uff9e\uff8a\uff9f\uff8b\uff9f\uff8c\uff9f\uff8d\uff9f\uff8e\uff9f\uff73\uff9e\uff67\uff68\uff69\uff6a\uff6b\uff6f\uff6c\uff6d\uff6e\uff70"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-voiced",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u30ae\u30b0\u30b2\u30b4\u30b6\u30b8\u30ba\u30bc\u30be\u30c0\u30c2\u30c5\u30c7\u30c9\u30d0\u30d3\u30d6\u30d9\u30dc\u30d1\u30d4\u30d7\u30da\u30dd\u30f4\u30f7\u30f8\u30f9\u30fa"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-dakuten",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\u30cf\u309a\u309b\u309c\uff9e\uff9f"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-punctuation",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3002\u300c\u300d\u3001\u30fb\u30fc\u300e\u300f\u3010\u3011\u3008\u3009\u300a\u300b\u3014\u3015\u2026\uffe5\uffe6\u00a2\u00a3\u00ac\u00af\u00a6\u00a5\u20a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-hiragana",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u3042\u3044\u3046\u3048\u304a\u304c\u304e\u3050\u3052\u3054\u3071\u3074\u3077\u307a\u307d\u3094\u3041\u3043\u3045\u3047\u3049\u3063\u3083\u3085\u3087\u308e\u3095\u3096\u309d\u309e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-katakana-iteration",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u30bf\u30ab\u30ca\u30f5\u30f6\u30ee\u30fd\u30fe\u30ff"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-chinese-simplified",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6c49\u8bed\u9f99\u95e8\u9a6c\u8f66\u4e66\u56fd\u4f53\u53d1\u540e\u949f\u53f0\u4e07\u4e1c\u5e7f\u4e1c"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-chinese-traditional",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u6f22\u8a9e\u9f8d\u9580\u99ac\u8eca\u66f8\u570b\u9ad4\u767c\u5f8c\u9418\u81fa\u842c\u6771\u5ee3\u6771"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-unrelated-compatibility",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\u2460\u2163\u212b\u338f\u337f\ufa19"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-combining",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301a\u0315\u0300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-hangul",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uac00\uac01\u1100\u1161\u11a8"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-supplementary",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud840\udc00\ud83c\uddef\ud83c\uddf5"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-mixed",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21B\uff112\u3000\uff76\uff9e\u30ac\u304c\u6f22\u6c49\ufb03\u2460\ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-nul",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u0000\u30ac\u0000B"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-nul-leading",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0000\uff21"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-nul-trailing",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ac\u0000"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-type-0",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-1",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-2",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-3",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-4",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "int",
+        "value": "-42"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-5",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-6",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-7",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "-0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-8",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-type-9",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "double",
+        "value": "INFINITY"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-type-10",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-type-11",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-type-12",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-13",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "\uff21\uff76\uff9e"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "12"
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-type-14",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\uff21\uff76\uff9e"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "value": []
+          },
+          {
+            "type": "string",
+            "value": "\uff21\u30ac"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "totraditionalchinese-bytes-0",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-1",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbca100e382ac"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-2",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-3",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-4",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-5",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-6",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-7",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ffefbca1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-8",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-9",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-bytes-10",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-value-throws",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-arity-zero",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-arity-two",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "totraditionalchinese-arity-null",
+    "functionIndex": 5,
+    "function": "ToTraditionalChinese",
+    "registeredName": "totraditionalchinese",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "native-only"
+  },
+  {
+    "id": "native-invalid-flags-0",
+    "functionIndex": 6,
+    "function": "NativeInvalidFlags",
+    "registeredName": "native_invalid_flags",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u30acabc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "native-invalid-flags-1",
+    "functionIndex": 6,
+    "function": "NativeInvalidFlags",
+    "registeredName": "native_invalid_flags",
+    "args": [
+      {
+        "type": "string",
+        "value": "\uff21\u0000\u30ac"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "native-invalid-flags-2",
+    "functionIndex": 6,
+    "function": "NativeInvalidFlags",
+    "registeredName": "native_invalid_flags",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  }
+]

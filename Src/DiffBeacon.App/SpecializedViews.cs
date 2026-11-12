@@ -32,11 +32,21 @@ public static partial class SpecializedViews
         var rightSnapshot = await ImageComparisonEngine.OpenAsync(right, cancellationToken);
         var middleSnapshot = string.IsNullOrWhiteSpace(middle) ? null : await ImageComparisonEngine.OpenAsync(middle, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
+        return await ImagesFromSnapshotsAsync(leftSnapshot, rightSnapshot, middleSnapshot,
+            middleSnapshot is null ? [left, right] : [left, middle!, right], settings, applicationOptions, cancellationToken);
+    }
+
+    internal static async Task<Control> ImagesFromSnapshotsAsync(ImageComparisonEngine.Snapshot leftSnapshot,
+        ImageComparisonEngine.Snapshot rightSnapshot, ImageComparisonEngine.Snapshot? middleSnapshot,
+        IReadOnlyList<string> paths, ImageViewSettings? settings, ImageApplicationOptionsStore? applicationOptions,
+        CancellationToken cancellationToken, bool fixedReadOnly = false)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
         var panel = new ImagePanel(leftSnapshot, rightSnapshot, middleSnapshot, applicationOptions);
-        panel.ConfigureEditing(middleSnapshot is null ? [left, right] : [left, middle!, right],
-            new bool[middleSnapshot is null ? 2 : 3]);
         try
         {
+            var readOnly = Enumerable.Repeat(fixedReadOnly, middleSnapshot is null ? 2 : 3).ToArray();
+            panel.ConfigureEditing(paths, readOnly, fixedReadOnly: fixedReadOnly ? readOnly : null);
             await panel.ApplySettingsAsync(settings ?? new(), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             return panel;
@@ -78,16 +88,16 @@ public static partial class SpecializedViews
     private static async Task<byte[]> ReadBinaryAsync(string path, int limit, CancellationToken token)
     {
         await using var input = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 64 * 1024, true);
-        using var output = new MemoryStream(); await CopyBoundedAsync(input, output, limit, token); return output.ToArray();
+        using var output = new MemoryStream(); await CopyBoundedAsync(input, output, limit, token).ConfigureAwait(false); return output.ToArray();
     }
     private static async Task CopyBoundedAsync(Stream input, Stream output, long limit, CancellationToken token)
     {
         var buffer = new byte[64 * 1024]; long total = 0;
         while (true)
         {
-            var count = await input.ReadAsync(buffer, token); if (count == 0) return;
+            var count = await input.ReadAsync(buffer, token).ConfigureAwait(false); if (count == 0) return;
             total += count; if (total > limit) throw new InvalidDataException("ファイルの読込サイズが上限を超えました。");
-            await output.WriteAsync(buffer.AsMemory(0, count), token);
+            await output.WriteAsync(buffer.AsMemory(0, count), token).ConfigureAwait(false);
         }
     }
     public static void SetProjectReadOnly(Control? control, bool left, bool right, bool middle = false)

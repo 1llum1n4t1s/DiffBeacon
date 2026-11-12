@@ -8,19 +8,38 @@ public static partial class FolderOperations
         Action<string>? validateDestination = null, Action? validateContext = null,
         CancellationToken cancellationToken = default)
     {
+        return ExecuteAsync(plan, validateDestination, validateContext, cancellationToken, null);
+    }
+
+    public static Task<FolderCopyResult> ExecuteAsync(FolderCopyPlan plan,
+        Action<string>? validateDestination, Action? validateContext, CancellationToken cancellationToken,
+        Action<string, Action>? outputPublisher)
+    {
         ArgumentNullException.ThrowIfNull(plan);
         // callback の thread は保証しない。UI 側は必要な dispatcher 照合を実施する。
-        return Task.Run(() => ExecuteCoreAsync(plan, validateDestination, validateContext, cancellationToken));
+        return Task.Run(() => ExecuteCoreAsync(plan, validateDestination, validateContext, cancellationToken, outputPublisher));
     }
 
     private static async Task<FolderCopyResult> ExecuteCoreAsync(FolderCopyPlan plan,
-        Action<string>? destinationGuard, Action? validateContext, CancellationToken token)
+        Action<string>? destinationGuard, Action? validateContext, CancellationToken token, Action<string, Action>? outputPublisher)
     {
         // 既存root上の祖先は検査だけ行い、出力callbackへ渡さない。新規作成が必要な親は渡す。
         Action<string>? validateDestination = destinationGuard is null ? null : path =>
         {
             if (SameOrInside(path, plan.DestinationRoot) || !Directory.Exists(path)) destinationGuard(path);
         };
+        // 最終検査と変更を同じdispatcher区間で実行し、従来callerのcallback契約も維持する。
+        void Publish(string path, Action mutation)
+        {
+            void CheckedMutation()
+            {
+                Guard(token, validateContext);
+                validateDestination?.Invoke(path);
+                mutation();
+            }
+            if (outputPublisher is null) CheckedMutation();
+            else outputPublisher(path, CheckedMutation);
+        }
         var budget = new CopyBudget(plan.Limits, plan.PreparationReadBytes, plan.MetadataRetainedBytes,
             plan.PreparationMetadataQueryBytes, plan.PreparationMetadataNativeOperations);
         WindowsExecutionState? windows = null;
@@ -111,7 +130,7 @@ public static partial class FolderOperations
                 ValidateDestinationChain(entry.DestinationPath, plan.DestinationRoot, destinationState, token, validateDestination, validateContext, windows);
                 if (entry.Kind == DirectoryEntryKind.Directory)
                 {
-                    EnsureDirectory(entry.DestinationPath, plan.DestinationRoot, destinationState, item, token, validateDestination, validateContext, windows);
+                    EnsureDirectory(entry.DestinationPath, plan.DestinationRoot, destinationState, item, token, validateDestination, validateContext, Publish, windows);
                     if (entry.Children.Count == 0)
                     {
                         Guard(token, validateContext);
@@ -119,8 +138,11 @@ public static partial class FolderOperations
                         RequireSourceSnapshot(entry.SourcePath, entry.Source);
                         RequireMembership(entry.SourcePath, entry.Children, token);
                         // 独立 Shell API reference に合わせ、empty root と empty leaf の mtime を保持する。
-                        Directory.SetLastWriteTimeUtc(entry.DestinationPath, entry.LastWriteTimeUtc);
-                        item.Mutated = true;
+                        Publish(entry.DestinationPath, () =>
+                        {
+                            Directory.SetLastWriteTimeUtc(entry.DestinationPath, entry.LastWriteTimeUtc);
+                            item.Mutated = true;
+                        });
                         if (windows is null) RefreshDestinationState(entry.DestinationPath, destinationState);
                         else windows.RefreshKnownParentMtime(entry.DestinationPath, token, validateContext);
                     }
@@ -130,7 +152,7 @@ public static partial class FolderOperations
                 else
                 {
                     await CopyFileAsync(entry, plan.DestinationRoot, budget, sourceState, destinationState, item,
-                        token, validateDestination, validateContext, windows).ConfigureAwait(false);
+                        token, validateDestination, validateContext, Publish, windows).ConfigureAwait(false);
                 }
             }
             catch (Exception exception) when (IsCopyFailure(exception))
@@ -265,7 +287,8 @@ public static partial class FolderOperations
     }
 
     private static void EnsureDirectory(string path, string destinationRoot, Dictionary<string, FolderCopySnapshot?> state, CopyMutation item,
-        CancellationToken token, Action<string>? validateDestination, Action? validateContext, WindowsExecutionState? windows = null)
+        CancellationToken token, Action<string>? validateDestination, Action? validateContext,
+        Action<string, Action> publish, WindowsExecutionState? windows = null)
     {
         var missing = new Stack<string>();
         for (var current = path; current is not null && ReadSnapshot(current) is null; current = Path.GetDirectoryName(current))
@@ -274,8 +297,11 @@ public static partial class FolderOperations
         {
             Guard(token, validateContext);
             ValidateDestinationChain(directory, destinationRoot, state, token, validateDestination, validateContext, windows);
-            Directory.CreateDirectory(directory);
-            item.Mutated = true;
+            publish(directory, () =>
+            {
+                Directory.CreateDirectory(directory);
+                item.Mutated = true;
+            });
             if (windows is null) RefreshDestinationState(directory, state);
             else
             {
@@ -294,10 +320,11 @@ public static partial class FolderOperations
 
     private static async Task CopyFileAsync(FolderCopyEntry entry, string destinationRoot, CopyBudget budget,
         Dictionary<string, FolderCopyEntry> sourceState, Dictionary<string, FolderCopySnapshot?> state, CopyMutation item, CancellationToken token,
-        Action<string>? validateDestination, Action? validateContext, WindowsExecutionState? windows = null)
+        Action<string>? validateDestination, Action? validateContext, Action<string, Action> publish,
+        WindowsExecutionState? windows = null)
     {
         var parent = Path.GetDirectoryName(entry.DestinationPath)!;
-        EnsureDirectory(parent, destinationRoot, state, item, token, validateDestination, validateContext, windows);
+        EnsureDirectory(parent, destinationRoot, state, item, token, validateDestination, validateContext, publish, windows);
         Guard(token, validateContext);
         ValidateDestinationChain(entry.DestinationPath, destinationRoot, state, token, validateDestination, validateContext, windows);
         RequireSourceSnapshot(entry.SourcePath, entry.Source);
@@ -318,7 +345,7 @@ public static partial class FolderOperations
         {
             windows.RequireSourceChain(entry.SourcePath, token, validateContext);
             await CopyWindowsFileAsync(entry, temporary, budget, sourceState, state, windows, item, destinationRoot,
-                token, validateDestination, validateContext).ConfigureAwait(false);
+                token, validateDestination, validateContext, publish).ConfigureAwait(false);
             return;
         }
         File.SetLastWriteTimeUtc(temporary, entry.LastWriteTimeUtc);
@@ -335,17 +362,21 @@ public static partial class FolderOperations
         ValidateDestinationChain(entry.DestinationPath, destinationRoot, state, token, validateDestination, validateContext, windows);
         RequireStreamLayout(temporary, entry.Size, entry.SourceStreams!, entry.DestinationSupportsNamedStreams, token);
         RejectLinks(temporary);
-        File.Move(temporary, entry.DestinationPath, overwrite: true);
-        item.Published = true;
-        item.Mutated = true;
-        item.TemporaryPath = null;
+        publish(entry.DestinationPath, () =>
+        {
+            File.Move(temporary, entry.DestinationPath, overwrite: true);
+            item.Published = true;
+            item.Mutated = true;
+            item.TemporaryPath = null;
+        });
         RefreshDestinationState(entry.DestinationPath, state);
         // Windows の readonly は Move 後に設定する。失敗しても Published を失わない。
         if (OperatingSystem.IsWindows() && (entry.Attributes & FileAttributes.ReadOnly) != 0)
         {
             Guard(token, validateContext);
             ValidateDestinationChain(entry.DestinationPath, destinationRoot, state, token, validateDestination, validateContext, windows);
-            File.SetAttributes(entry.DestinationPath, File.GetAttributes(entry.DestinationPath) | FileAttributes.ReadOnly);
+            publish(entry.DestinationPath, () =>
+                File.SetAttributes(entry.DestinationPath, File.GetAttributes(entry.DestinationPath) | FileAttributes.ReadOnly));
         }
         RefreshDestinationState(entry.DestinationPath, state);
     }

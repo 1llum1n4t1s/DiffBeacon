@@ -1,0 +1,18 @@
+{
+  "caseCount": 41,
+  "files": {
+    ".gitattributes": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992",
+    "adapter.cpp": "d7afd688e0182354754c64624f1bab54d2fefde315cb23fa11ebf490348f6c06",
+    "capture-index.json": "fc09ba576a6fc9299a205874803fea9f597fe6a243420cbf8cf78fff68d14bfb",
+    "cases.json": "277d90ebc063f8865f621dc1830f0336e89b316edc459948b97f30b32354b252",
+    "failure-matrix.md": "ca7e619b7bab65546f9b0951b627e22a372eaf2c36a9a521a53182a74e42ac3e",
+    "golden.ndjson": "960f7b625490c165db774d4b8c3f27f6c89b7b4ab042411dd99f168f8a2ad7e3",
+    "original/COPYING": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900",
+    "original/FilterExpressionNodes.cpp": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+    "original/FilterExpressionNodes.h": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736",
+    "provenance.json": "9f667157a13404c40e30966fbb43fbde0aa819eca95da31a935c537e9acd665e",
+    "README.md": "df955215a5dba157bc33f6fd77c880cb39039fde8864d68b4d24e0de15155dd6",
+    "reproduce.py": "1b1cf8baa4f867e62ad80ee49c46c72170a135b15fd0686f90465fcaaa67a889",
+    "verify.py": "650568c154313b688658eee005f71f62a454530c3b3c494e10fec7a5da925d52"
+  }
+}

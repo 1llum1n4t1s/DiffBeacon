@@ -13,6 +13,65 @@ public static class TextDiffer
         CancellationToken cancellationToken = default)
         => CompareCore(left, right, options, null, cancellationToken);
 
+    public static DiffResult CompareWithSourcePaths(string left, string right, TextComparisonSourcePaths sourcePaths,
+        ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sourcePaths);
+        return CompareCore(left, right, options, null, cancellationToken, sourcePaths: sourcePaths);
+    }
+
+    internal static DiffResult CompareWithContext(string left, string right, ComparisonOptions options,
+        TextFilterContext context, TablePaneMask leftPane, TablePaneMask rightPane, CancellationToken token)
+        => CompareCore(left, right, options, null, token, context, leftPane, rightPane);
+
+    public static DiffResult CompareForPanes(string left, string right, TablePaneMask leftPane,
+        TablePaneMask rightPane, ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+        => CompareForPanesCore(left, right, leftPane, rightPane, options, cancellationToken, null);
+
+    public static DiffResult CompareForPanesWithSourcePaths(string left, string right, TablePaneMask leftPane,
+        TablePaneMask rightPane, TextComparisonSourcePaths sourcePaths, ComparisonOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sourcePaths);
+        return CompareForPanesCore(left, right, leftPane, rightPane, options, cancellationToken, sourcePaths);
+    }
+
+    private static DiffResult CompareForPanesCore(string left, string right, TablePaneMask leftPane,
+        TablePaneMask rightPane, ComparisonOptions? options, CancellationToken cancellationToken, TextComparisonSourcePaths? sourcePaths)
+    {
+        if (leftPane is not (TablePaneMask.Left or TablePaneMask.Base or TablePaneMask.Right) ||
+            rightPane is not (TablePaneMask.Left or TablePaneMask.Base or TablePaneMask.Right) || leftPane == rightPane)
+            throw new ArgumentException("比較する二つの側を左・祖先・右から指定してください。");
+        options ??= new();
+        return CompareWithContext(left, right, options, new TextFilterContext(options, cancellationToken, sourcePaths),
+            leftPane, rightPane, cancellationToken);
+    }
+
+    public static (DiffResult BaseLeft, DiffResult BaseRight, DiffResult LeftRight) CompareThree(
+        string left, string ancestor, string right, ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+        => CompareThreeCore(left, ancestor, right, options, cancellationToken, null);
+
+    public static (DiffResult BaseLeft, DiffResult BaseRight, DiffResult LeftRight) CompareThreeWithSourcePaths(
+        string left, string ancestor, string right, TextComparisonSourcePaths sourcePaths,
+        ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sourcePaths);
+        return CompareThreeCore(left, ancestor, right, options, cancellationToken, sourcePaths);
+    }
+
+    private static (DiffResult BaseLeft, DiffResult BaseRight, DiffResult LeftRight) CompareThreeCore(
+        string left, string ancestor, string right, ComparisonOptions? options, CancellationToken cancellationToken,
+        TextComparisonSourcePaths? sourcePaths)
+    {
+        options ??= new();
+        var context = new TextFilterContext(options, cancellationToken, sourcePaths);
+        var baseLeft = CompareWithContext(ancestor, left, options, context, TablePaneMask.Base, TablePaneMask.Left, cancellationToken);
+        var baseRight = CompareWithContext(ancestor, right, options, context, TablePaneMask.Base, TablePaneMask.Right, cancellationToken);
+        var leftRight = CompareWithContext(left, right, options, context, TablePaneMask.Left, TablePaneMask.Right, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        return (baseLeft, baseRight, leftRight);
+    }
+
     public static DiffResult CompareWithSyncPoints(string left, string right,
         IReadOnlyList<TextSyncPoint> syncPoints, ComparisonOptions? options = null,
         CancellationToken cancellationToken = default)
@@ -21,19 +80,58 @@ public static class TextDiffer
         return CompareCore(left, right, options, syncPoints, cancellationToken);
     }
 
+    public static DiffResult CompareWithSyncPointsWithSourcePaths(string left, string right,
+        IReadOnlyList<TextSyncPoint> syncPoints, TextComparisonSourcePaths sourcePaths,
+        ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(syncPoints);
+        ArgumentNullException.ThrowIfNull(sourcePaths);
+        return CompareCore(left, right, options, syncPoints, cancellationToken, sourcePaths: sourcePaths);
+    }
+
+    public static DiffResult CompareWithSyncPointsForPanes(string left, string right,
+        IReadOnlyList<TextSyncPoint> syncPoints, TablePaneMask leftPane, TablePaneMask rightPane,
+        ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+        => CompareWithSyncPointsForPanesCore(left, right, syncPoints, leftPane, rightPane, options, cancellationToken, null);
+
+    public static DiffResult CompareWithSyncPointsForPanesWithSourcePaths(string left, string right,
+        IReadOnlyList<TextSyncPoint> syncPoints, TablePaneMask leftPane, TablePaneMask rightPane,
+        TextComparisonSourcePaths sourcePaths, ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sourcePaths);
+        return CompareWithSyncPointsForPanesCore(left, right, syncPoints, leftPane, rightPane, options, cancellationToken, sourcePaths);
+    }
+
+    private static DiffResult CompareWithSyncPointsForPanesCore(string left, string right,
+        IReadOnlyList<TextSyncPoint> syncPoints, TablePaneMask leftPane, TablePaneMask rightPane,
+        ComparisonOptions? options, CancellationToken cancellationToken, TextComparisonSourcePaths? sourcePaths)
+    {
+        ArgumentNullException.ThrowIfNull(syncPoints);
+        if (leftPane is not (TablePaneMask.Left or TablePaneMask.Base or TablePaneMask.Right) ||
+            rightPane is not (TablePaneMask.Left or TablePaneMask.Base or TablePaneMask.Right) || leftPane == rightPane)
+            throw new ArgumentException("比較する二つの側を左・祖先・右から指定してください。");
+        return CompareCore(left, right, options, syncPoints, cancellationToken, null, leftPane, rightPane, sourcePaths);
+    }
+
     private static DiffResult CompareCore(string left, string right, ComparisonOptions? options,
-        IReadOnlyList<TextSyncPoint>? syncPoints, CancellationToken cancellationToken)
+        IReadOnlyList<TextSyncPoint>? syncPoints, CancellationToken cancellationToken,
+        TextFilterContext? filterContext = null, TablePaneMask leftPane = TablePaneMask.Left,
+        TablePaneMask rightPane = TablePaneMask.Right, TextComparisonSourcePaths? sourcePaths = null)
     {
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(right);
         cancellationToken.ThrowIfCancellationRequested();
         options ??= new();
+        WordDiffer.ValidateSeparators(options.WordBreakSeparators, nameof(options));
         var a = TextLines.Parse(left, cancellationToken);
         var b = TextLines.Parse(right, cancellationToken);
         var preprocessor = new TextPreprocessor(options, cancellationToken);
         var ignoredPattern = options.CreateIgnoredLineRegex();
-        var preparedA = Prepare(a, options, preprocessor, ignoredPattern, cancellationToken);
-        var preparedB = Prepare(b, options, preprocessor, ignoredPattern, cancellationToken);
+        filterContext ??= new TextFilterContext(options, cancellationToken, sourcePaths);
+        var preparedA = Prepare(a, options, preprocessor, ignoredPattern, cancellationToken,
+            filterContext.Transform(left, a, leftPane));
+        var preparedB = Prepare(b, options, preprocessor, ignoredPattern, cancellationToken,
+            filterContext.Transform(right, b, rightPane));
         var ignoredA = preparedA.Ignored;
         var ignoredB = preparedB.Ignored;
         var activeA = preparedA.Active;
@@ -102,7 +200,11 @@ public static class TextDiffer
         void AddRow(int? ai, int? bi, DiffKind kind)
         {
             var row = new DiffRow(ai + 1, bi + 1, ai.HasValue ? a[ai.Value].Content : null,
-                bi.HasValue ? b[bi.Value].Content : null, kind);
+                bi.HasValue ? b[bi.Value].Content : null, kind)
+            {
+                IsIgnored = options.LineTransformRules.Count > 0 && kind == DiffKind.Equal &&
+                    (ai.HasValue != bi.HasValue || ai.HasValue && bi.HasValue && a[ai.Value].Raw != b[bi.Value].Raw)
+            };
             rows.Add(row);
         }
         void AddSegment(int stopA, int stopB)
@@ -171,7 +273,9 @@ public static class TextDiffer
                 WhitespaceMode.IgnoreChanges => WordWhitespaceMode.IgnoreChanges,
                 _ => WordWhitespaceMode.CompareAll
             },
-            Eol = options.CompareLineEndings ? WordEolMode.Strict : WordEolMode.Ignore
+            Eol = options.CompareLineEndings ? WordEolMode.Strict : WordEolMode.Ignore,
+            BreakOnSeparators = options.BreakOnSeparators,
+            Separators = options.WordBreakSeparators
         };
         foreach (var block in blocks)
         {
@@ -281,9 +385,9 @@ public static class TextDiffer
     // 通常比較とfolder Fullで、構文状態・無視行・原文座標・終端キーを共用する。
     internal static PreparedText Prepare(IReadOnlyList<TextLine> lines, ComparisonOptions options,
         TextPreprocessor preprocessor, System.Text.RegularExpressions.Regex? ignoredPattern,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken, IReadOnlyList<string>? transformed = null)
     {
-        var filtered = preprocessor.Process(lines);
+        var filtered = preprocessor.Process(lines, transformed);
         var ignored = new bool[lines.Count];
         var active = new List<int>();
         var keys = new List<GnuLineKey>();
@@ -291,10 +395,11 @@ public static class TextDiffer
         {
             cancellationToken.ThrowIfCancellationRequested();
             var line = lines[index];
-            if (ignoredPattern is not null) TextPreprocessor.CheckRegexInput(line.Content);
+            var content = transformed is null ? line.Content : transformed[index];
+            if (ignoredPattern is not null) TextPreprocessor.CheckRegexInput(content);
             ignored[index] = filtered.CommentOnly[index] ||
-                (options.IgnoreBlankLines && string.IsNullOrWhiteSpace(line.Content)) ||
-                (ignoredPattern?.IsMatch(line.Content) ?? false);
+                (options.IgnoreBlankLines && string.IsNullOrWhiteSpace(content)) ||
+                (ignoredPattern?.IsMatch(content) ?? false);
             if (ignored[index]) continue;
             active.Add(index);
             keys.Add(new(filtered.Keys[index], options.CompareLineEndings ? line.Ending : "",

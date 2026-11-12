@@ -109,6 +109,20 @@ internal static class LineAlignmentScenarios
             check(name + "-anchors", snapshot.Mapping.Any(row => row[0] == 2 && row[1] == 2)
                 && snapshot.Mapping.Any(row => row[0] == 4 && row[1] == 4), snapshot.Raw);
         }
+
+        var punctuationTexts = new[] { "a,b!\na.c?\n", "a.c!\na,b?\n" };
+        var punctuationDefault = await Compare("line-alignment-punctuation-default", punctuationTexts, ["--word-level"], 1);
+        var punctuationDisabled = await Compare("line-alignment-punctuation-disabled", punctuationTexts,
+            ["--word-level", "--no-separators"], 1);
+        var punctuationCustom = await Compare("line-alignment-punctuation-custom", punctuationTexts,
+            ["--word-level", "--separators", "."], 1);
+        if (punctuationDefault is not null)
+            check("line-alignment-default-separator-map", SameMap([[1, 1], [2, 2]], punctuationDefault.Mapping),
+                Describe([[1, 1], [2, 2]], punctuationDefault.Mapping));
+        if (punctuationCustom is not null && punctuationDisabled is not null)
+            check("line-alignment-custom-separators-change-map", !SameMap(punctuationCustom.Mapping, punctuationDisabled.Mapping),
+                Describe(punctuationCustom.Mapping, punctuationDisabled.Mapping));
+
         var errorLeft = Write("line-alignment-errors-left", "keep,one\r\n");
         var errorRight = Write("line-alignment-errors-right", "keep,two\r\n");
         var originals = new[] { File.ReadAllBytes(errorLeft), File.ReadAllBytes(errorRight) };
@@ -117,6 +131,7 @@ internal static class LineAlignmentScenarios
             ("unknown", ["--unknown-table-flag"]), ("negative", ["--max-work", "-1"]),
             ("excessive", ["--max-work", "8000001"]), ("bad-budget", ["--max-work", "bad"]),
             ("missing-budget", ["--max-work"]), ("unknown-eol", ["--eol", "space"]),
+            ("missing-separators", ["--separators"]),
             ("missing-base", ["--base"]), ("duplicate-base", ["--base", errorLeft, "--base", errorRight]),
             ("missing-file", ["--base", Path.Combine(folder, "does-not-exist.csv")])
         };

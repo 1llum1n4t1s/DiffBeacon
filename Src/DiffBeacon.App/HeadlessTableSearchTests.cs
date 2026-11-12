@@ -12,7 +12,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessTableSearchTests
 {
     internal static void Run(MainWindow window, ComparisonPane pane, string output, Action<string, bool, string> check,
-        Action<string> screenshot, Action<Task> pump)
+        Action<string> screenshot, Action<Task> pump, bool rawOnly = false)
     {
         var directory = Path.Combine(output, "table-search"); Directory.CreateDirectory(directory);
         var records = new List<(string Name, bool Passed, string Detail, string Left, string Right)>();
@@ -51,8 +51,129 @@ internal static class HeadlessTableSearchTests
         { panel.SelectCell(side, row, column); Box(panel, "全ペイン").IsChecked = false; }
         int Find(TablePanel panel, string text, int direction = 1)
         { panel.SearchText.Text = text; Click(panel, direction > 0 ? "次の一致" : "前の一致"); return panel.CellEditor.SelectionStart; }
+        bool RawAt(TablePanel panel, int start, int length) => panel.SearchStatus.Contains($"CSV原文 offset {start} · {length}文字の一致", StringComparison.Ordinal);
+        void RawChecks()
+        {
+            const string source = "alpha;'a;b';'raw''quote'\r\nlast;end";
+            var rawPanel = Load("raw-literal", source); Select(rawPanel);
+            Verify("raw mode is disabled by default", Box(rawPanel, "CSV原文を検索").IsChecked == false);
+            Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Find(rawPanel, ";"); Verify("raw finds separator without changing cell text", RawAt(rawPanel, 5, 1) && rawPanel.CellEditor.Text == "alpha" && rawPanel.CellEditor.SelectionStart == 5 && rawPanel.CellEditor.SelectionEnd == 5);
+            Find(rawPanel, ";"); Verify("raw finds quoted delimiter at exact source offset", RawAt(rawPanel, 8, 1) && rawPanel.CellEditor.Text == "a;b" && rawPanel.CellEditor.SelectionStart == 1 && rawPanel.CellEditor.SelectionEnd == 2);
+            Select(rawPanel); Find(rawPanel, "'a;b'");
+            Verify("raw finds literal surrounding quotes and projects decoded selection", RawAt(rawPanel, 6, 5) && rawPanel.CellEditor.SelectionStart == 0 && rawPanel.CellEditor.SelectionEnd == 3);
+            Select(rawPanel); Find(rawPanel, "''");
+            Verify("raw finds escaped quote pair and selects one decoded quote", RawAt(rawPanel, source.IndexOf("''", StringComparison.Ordinal), 2) && rawPanel.CellEditor.Text == "raw'quote" && rawPanel.CellEditor.SelectionStart == 3 && rawPanel.CellEditor.SelectionEnd == 4);
+            Select(rawPanel); Box(rawPanel, "正規表現").IsChecked = true;
+            Find(rawPanel, @"(?s)a;b';.*?\r\nlast;");
+            var multilineStart = source.IndexOf("a;b", StringComparison.Ordinal); var multilineEnd = source.IndexOf("end", StringComparison.Ordinal);
+            Verify("raw regex spans cells and logical rows without decoded reconstruction", RawAt(rawPanel, multilineStart, multilineEnd - multilineStart) && rawPanel.CellEditor.SelectionEnd == 3);
+            screenshot("table-search-raw-literal.png");
+
+            rawPanel = Load("raw-directions", "a;a;a"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Find(rawPanel, "a"); Verify("raw starts at first source match", RawAt(rawPanel, 0, 1));
+            Find(rawPanel, "a"); Verify("raw next crosses source delimiter", RawAt(rawPanel, 2, 1));
+            Find(rawPanel, "a", -1); Verify("raw reverse returns previous source match", RawAt(rawPanel, 0, 1));
+            Find(rawPanel, "a", -1); Verify("raw reverse wraps to final source match", RawAt(rawPanel, 4, 1));
+            Box(rawPanel, "折返し").IsChecked = false; Find(rawPanel, "a");
+            Verify("raw no-wrap preserves current cell selection", rawPanel.SearchStatus == "一致する文字列はありません。" && rawPanel.CellEditor.Text == "a" && rawPanel.CellEditor.SelectionEnd == 1);
+            Box(rawPanel, "折返し").IsChecked = true; Find(rawPanel, "a"); Verify("raw forward wraps to first source match", RawAt(rawPanel, 0, 1));
+            Box(rawPanel, "全ペイン").IsChecked = true; Find(rawPanel, "a"); Find(rawPanel, "a"); Find(rawPanel, "a");
+            Verify("raw all-panes advances to next document", RawAt(rawPanel, 0, 1) && rawPanel.GetVisualDescendants().OfType<ComboBox>().First().SelectedIndex == 1);
+
+            rawPanel = Load("raw-structure", "left;right\r\nnext;tail"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Find(rawPanel, ";"); rawPanel.ReplacementText.Text = "\r\n"; Click(rawPanel, "この一致を置換");
+            const string changed = "left\r\nright\r\nnext;tail";
+            Verify("raw current replacement changes row structure with one active pane", pane.LeftEditor.Text == changed && pane.RightEditor.Text == "left;right\r\nnext;tail" && rawPanel.Comparison.Documents[0].Rows.Count == 3);
+            Click(rawPanel, "セル編集を戻す"); Verify("raw undo restores exact separators and CRLF", pane.LeftEditor.Text == "left;right\r\nnext;tail");
+            Click(rawPanel, "セル編集をやり直す"); Verify("raw redo restores structural replacement", pane.LeftEditor.Text == changed);
+            rawPanel.SearchText.Text = ";"; rawPanel.ReplacementText.Text = "\r\n"; Click(rawPanel, "ペイン内を全置換");
+            Verify("raw all replacement parses changed table structure", pane.LeftEditor.Text == "left\r\nright\r\nnext\r\ntail" && rawPanel.Comparison.Documents[0].Rows.Count == 4);
+            Click(rawPanel, "セル編集を戻す"); Verify("raw all replacement has one shared undo item", pane.LeftEditor.Text == changed);
+            screenshot("table-search-raw-structure.png");
+
+            rawPanel = Load("raw-remove-all", "a;b\r\nc;d"); Select(rawPanel, row: 1, column: 1); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Box(rawPanel, "正規表現").IsChecked = true; rawPanel.SearchText.Text = "(?s).+"; rawPanel.ReplacementText.Text = "";
+            Click(rawPanel, "ペイン内を全置換"); Verify("raw replace-all can remove entire table without stale selection", pane.LeftEditor.Text == "" && rawPanel.Comparison.Documents[0].Rows.Count == 0 && !rawPanel.HasPendingCellEdit);
+            Click(rawPanel, "セル編集を戻す"); Verify("raw empty table undo restores source", pane.LeftEditor.Text == "a;b\r\nc;d");
+            Click(rawPanel, "セル編集をやり直す"); Verify("raw empty table redo has valid coordinates", pane.LeftEditor.Text == "");
+
+            rawPanel = Load("raw-fixed", "prefix;'hit hit';hit"); Select(rawPanel, column: 1); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            rawPanel.CellEditor.SelectionStart = 0; rawPanel.CellEditor.SelectionEnd = 7; Click(rawPanel, "検索範囲を固定");
+            rawPanel.SearchText.Text = "hit"; rawPanel.ReplacementText.Text = "long"; Click(rawPanel, "ペイン内を全置換");
+            Verify("raw fixed selection excludes quotes separators and outside cells", pane.LeftEditor.Text == "prefix;'long long';hit");
+            rawPanel.ReplacementText.Text = "x"; rawPanel.SearchText.Text = "long"; Click(rawPanel, "ペイン内を全置換");
+            Verify("raw fixed selection tracks exact replacement length", pane.LeftEditor.Text == "prefix;'x x';hit");
+            Click(rawPanel, "セル編集を戻す"); Verify("raw scope and shared undo restore prior range", pane.LeftEditor.Text == "prefix;'long long';hit");
+            rawPanel.ReplacementText.Text = "y"; Click(rawPanel, "ペイン内を全置換");
+            Verify("raw undo restores expanded fixed range", pane.LeftEditor.Text == "prefix;'y y';hit");
+
+            rawPanel = Load("raw-captures", "a;b"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Box(rawPanel, "正規表現").IsChecked = true; rawPanel.SearchText.Text = "(?<separator>;)"; rawPanel.ReplacementText.Text = "${separator}$`$'";
+            Click(rawPanel, "ペイン内を全置換"); Verify("raw regex replacement expands full source prefix suffix and group", pane.LeftEditor.Text == "a;abb");
+            rawPanel = Load("raw-flags", "Cat;cat;scatter"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true; Box(rawPanel, "単語単位").IsChecked = true;
+            rawPanel.SearchText.Text = "cat"; rawPanel.ReplacementText.Text = "dog"; Box(rawPanel, "大小文字を区別").IsChecked = true;
+            Click(rawPanel, "ペイン内を全置換"); Verify("raw case and whole-word settings use full source context", pane.LeftEditor.Text == "Cat;dog;scatter");
+
+            rawPanel = Load("raw-readonly", "a;b", leftReadOnly: true); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Find(rawPanel, ";"); rawPanel.ReplacementText.Text = "\n";
+            Verify("raw read-only permits search and refuses current and all replacement", RawAt(rawPanel, 1, 1) && Refused(rawPanel.ReplaceCurrentAsync) && Refused(rawPanel.ReplaceAllAsync) && pane.LeftEditor.Text == "a;b");
+            rawPanel = Load("raw-malformed", "a;'quoted';b"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Find(rawPanel, "'quoted'"); rawPanel.ReplacementText.Text = "'broken";
+            Verify("raw malformed current replacement preserves source model file and selection", Refused(rawPanel.ReplaceCurrentAsync) && pane.LeftEditor.Text == "a;'quoted';b" && rawPanel.Comparison.Documents[0].SourceText == "a;'quoted';b" && File.ReadAllText(leftPath) == "a;'quoted';b" && RawAt(rawPanel, 2, 8));
+            Verify("raw malformed all replacement preserves source", Refused(rawPanel.ReplaceAllAsync) && pane.LeftEditor.Text == "a;'quoted';b");
+            Click(rawPanel, "セル編集を戻す"); Verify("raw refusal adds no history", pane.LeftEditor.Text == "a;'quoted';b");
+            rawPanel = Load("raw-forbidden-newline", "'quoted'", allowNewlines: false); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            rawPanel.SearchText.Text = "quoted"; rawPanel.ReplacementText.Text = "first\nlast";
+            Verify("raw forbidden quoted newline is rejected before publishing", Refused(rawPanel.ReplaceAllAsync) && pane.LeftEditor.Text == "'quoted'" && rawPanel.Comparison.Documents[0].SourceText == "'quoted'");
+            rawPanel = Load("raw-regex-timeout", new string('a', 100_000) + "!"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Box(rawPanel, "正規表現").IsChecked = true; rawPanel.SearchText.Text = "(a+)+$"; rawPanel.ReplacementText.Text = "X";
+            var timedOut = false; try { pump(rawPanel.ReplaceAllAsync()); } catch (RegexMatchTimeoutException) { timedOut = true; }
+            Verify("raw regex timeout preserves source and comparison", timedOut && pane.LeftEditor.Text == new string('a', 100_000) + "!" && rawPanel.Comparison.Documents[0].SourceText == pane.LeftEditor.Text);
+            rawPanel = Load("raw-crlf-unicode", "😀\r\nend"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            Box(rawPanel, "正規表現").IsChecked = true; rawPanel.SearchText.Text = "\\r|\\n|[\\uD800-\\uDFFF]"; rawPanel.ReplacementText.Text = "X";
+            Click(rawPanel, "ペイン内を全置換"); Verify("raw replacement does not split surrogate or CRLF boundaries", pane.LeftEditor.Text == "😀\r\nend");
+            rawPanel.SearchText.Text = "(?=)"; rawPanel.ReplacementText.Text = "|";
+            Click(rawPanel, "ペイン内を全置換"); Verify("raw empty matches preserve Unicode and CRLF scalar boundaries", pane.LeftEditor.Text == "|😀|\r\n|e|n|d|");
+            var cancellationSource = string.Concat(Enumerable.Repeat("a;a;a;a\n", 50_000));
+            rawPanel = Load("raw-pending-cancellation", cancellationSource); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            rawPanel.SearchText.Text = "a"; rawPanel.ReplacementText.Text = "b";
+            Button(rawPanel, "ペイン内を全置換").RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
+            var pending = rawPanel.PendingOperation ?? throw new InvalidOperationException("原文置換操作のTaskがありません。");
+            Verify("raw cancellation exercises pending real button operation", !pending.IsCompleted);
+            pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中止")).RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent));
+            var canceled = false; try { pump(pending); } catch (OperationCanceledException) { canceled = true; }
+            Dispatcher.UIThread.RunJobs();
+            Verify("raw cancellation preserves source model file and history", canceled && pane.LeftEditor.Text == cancellationSource && rawPanel.Comparison.Documents[0].SourceText == cancellationSource && File.ReadAllText(leftPath) == cancellationSource);
+            Click(rawPanel, "セル編集を戻す"); Verify("raw canceled operation adds no undo item", pane.LeftEditor.Text == cancellationSource);
+            rawPanel = Load("raw-stale-query", cancellationSource); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            rawPanel.SearchText.Text = "a"; rawPanel.ReplacementText.Text = "b";
+            var staleOperation = rawPanel.ReplaceAllAsync(); rawPanel.SearchText.Text = "changed";
+            Verify("raw changed query rejects stale replacement plan", Refused(() => staleOperation) && pane.LeftEditor.Text == cancellationSource && rawPanel.Comparison.Documents[0].SourceText == cancellationSource);
+
+            rawPanel = Load("raw-post-write-cancel", "a;a;a;a\n"); Select(rawPanel); Box(rawPanel, "CSV原文を検索").IsChecked = true;
+            rawPanel.SearchText.Text = "a"; rawPanel.ReplacementText.Text = "b";
+            var rawWritten = false;
+            var rawStopAfterWrite = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中止"));
+            void ObserveRawWrite(object? sender, Avalonia.AvaloniaPropertyChangedEventArgs args)
+            {
+                if (!rawWritten && args.Property == TextBox.TextProperty && pane.LeftEditor.Text == "b;b;b;b\n")
+                { rawWritten = true; rawStopAfterWrite.RaiseEvent(new RoutedEventArgs(Avalonia.Controls.Button.ClickEvent)); }
+            }
+            pane.LeftEditor.PropertyChanged += ObserveRawWrite;
+            try
+            {
+                Verify("raw cancellation after write rolls back source model and file", Refused(rawPanel.ReplaceAllAsync) && rawWritten
+                    && pane.LeftEditor.Text == "a;a;a;a\n" && rawPanel.Comparison.Documents[0].SourceText == "a;a;a;a\n" && File.ReadAllText(leftPath) == "a;a;a;a\n");
+            }
+            finally { pane.LeftEditor.PropertyChanged -= ObserveRawWrite; }
+            Click(rawPanel, "セル編集を戻す"); Verify("raw rollback adds no undo item", pane.LeftEditor.Text == "a;a;a;a\n");
+            screenshot("table-search-raw-preserved.png");
+        }
         try
         {
+            RawChecks();
+            if (rawOnly) return;
             var panel = Load("offsets", "hit hit hit"); Select(panel);
             Verify("next visits first same-cell match", Find(panel, "hit") == 0);
             Verify("next visits second same-cell match", Find(panel, "hit") == 4);
@@ -142,7 +263,7 @@ internal static class HeadlessTableSearchTests
             Click(panel, "未反映セルを破棄"); Verify("explicit discard clears pending decoded edit", !pane.HasUnsavedChanges && panel.CellEditor.Text == "hit");
 
             panel = Load("pane-cursor", "aaaaaaX", "X X"); Select(panel); Box(panel, "折返し").IsChecked = false; Find(panel, "X");
-            panel.GetVisualDescendants().OfType<ComboBox>().Single().SelectedIndex = 1;
+        panel.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "table-side").SelectedIndex = 1;
             Verify("changing search pane does not carry old decoded offset", Find(panel, "X") == 0 && panel.CellEditor.Text == "X X");
             panel = Load("moved-highlight", "hit hit"); Select(panel); Find(panel, "hit"); panel.ReplacementText.Text = "X";
             panel.CellEditor.SelectionStart = 4; panel.CellEditor.SelectionEnd = 7;

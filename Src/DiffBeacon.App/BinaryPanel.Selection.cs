@@ -54,7 +54,7 @@ public static partial class SpecializedViews
                     }, RoutingStrategies.Tunnel);
                     editor.PropertyChanged += (_, args) =>
                     {
-                        if (_updating || Pending(side) || args.Property != TextBox.CaretIndexProperty && args.Property != TextBox.SelectionStartProperty && args.Property != TextBox.SelectionEndProperty) return;
+                        if (_disposed || _updating || Pending(side) || args.Property != TextBox.CaretIndexProperty && args.Property != TextBox.SelectionStartProperty && args.Property != TextBox.SelectionEndProperty) return;
                         var length = Session.Length(LocalSide(side)); var selection = Selection(side);
                         var caret = Math.Min(length, _pageStart + Position(editor.CaretIndex, ascii));
                         var start = Math.Min(editor.SelectionStart, editor.SelectionEnd); var end = Math.Max(editor.SelectionStart, editor.SelectionEnd);
@@ -66,6 +66,7 @@ public static partial class SpecializedViews
                         else { selection.Caret = caret; selection.Anchor = caret; selection.Selected = false; }
                         selection.LowNibble = !ascii && editor.CaretIndex % 3 == 1; SelectionVersion++;
                         UpdateSearchButtons();
+                        UpdateReplaceButtons();
                     };
                 }
             }
@@ -146,6 +147,7 @@ public static partial class SpecializedViews
         {
             var command = args.KeyModifiers.HasFlag(KeyModifiers.Control) || args.KeyModifiers.HasFlag(KeyModifiers.Meta);
             if (command && args.Key == Key.F) { _ = RunAsync(() => SearchDialogAsync(side)); return true; }
+            if (command && args.Key == Key.H) { _ = RunAsync(() => CurrentReplacementDialogOperation = ReplaceDialogAsync(side)); return true; }
             if (args.Key == Key.F3) { _ = RunAsync(() => SearchNextAsync(side, args.KeyModifiers.HasFlag(KeyModifiers.Shift))); return true; }
             if (command && args.Key is Key.C or Key.X or Key.V)
             { _ = RunAsync(() => ClipboardAsync(side, args.Key == Key.C ? BinaryClipboardCommand.Copy : args.Key == Key.X ? BinaryClipboardCommand.Cut : BinaryClipboardCommand.FastPaste)); return true; }

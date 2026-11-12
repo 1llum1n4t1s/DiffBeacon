@@ -1,0 +1,181 @@
+{
+  "schema": "size-literal-native-draft-fixed-v1",
+  "scope": "Formal fixture derived from the immutable external Native95 capture; raw native sources, golden, proof and case/probe plans unchanged. README placement and two verification-management files added by parent.",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "adapter.cpp",
+      "size": 7857,
+      "sha256": "60d6fe2e9552fc9c41266cdcb136b81164b8bdd38937de9d39a60875c463d257"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Ascii.h",
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/String.h",
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Timestamp.h",
+      "size": 6256,
+      "sha256": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Types.h",
+      "size": 4608,
+      "sha256": "a9aa7e44ea8ff34d8c97aba0fc8fb6719b788cec13314844ccd8e204c9192a20"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Ascii.cpp",
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Timestamp.cpp",
+      "size": 3853,
+      "sha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19"
+    },
+    {
+      "path": "additional-original/Src/FileTransform.cpp",
+      "size": 51547,
+      "sha256": "a37500cf3ad1e1713752474a9d3e3e400e4ed3806c23ef22d220fdbdf7f6f599"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterError.h",
+      "size": 1391,
+      "sha256": "160a03bf7f2a0ed0a4db66a3d5211a8dccd7445e7eb0d2b7fd640c3fa914fa2b"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterExpression.cpp",
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterExpression.h",
+      "size": 3539,
+      "sha256": "115ff8a8cef7760ae6a2019b57ab6c760a55fe6b4484c1e1c4c5a9cf845b0f0c"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterLexer.re",
+      "size": 3901,
+      "sha256": "36b06326ab1d6569b74a64edc071829cbe314d3543b7f6b70249e4d4d244a1c6"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterParser.y",
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/ILineDataProvider.h",
+      "size": 1300,
+      "sha256": "841545932977bc270fb7d2a61f421fe9930c285200502e619e9061f77f8f555b"
+    },
+    {
+      "path": "additional-original-manifest.json",
+      "size": 691,
+      "sha256": "4dd3e7180a98abdc1b54be4ce25eca2dcea6d6d206e2103adb5e0c104d8a46ee"
+    },
+    {
+      "path": "capture.py",
+      "size": 5498,
+      "sha256": "a9be1cbf9058698fdc36fbec7447fb2c98992e6e2595d53b3b59e75f5079156a"
+    },
+    {
+      "path": "cases.inc",
+      "size": 13111,
+      "sha256": "4b221c594c1a51b289ae07e6c84dc1bf056a168bd7226a2e2862ae24311fa915"
+    },
+    {
+      "path": "cases.json",
+      "size": 31867,
+      "sha256": "cd23d342d38e489155e6e4fb83229f0bafefebb599c073517ebac1448e3ce07e"
+    },
+    {
+      "path": "extractions.json",
+      "size": 22859,
+      "sha256": "41e2727c1213700c9e1a77945333551a82007c50c61b324ca809c59a7858ab47"
+    },
+    {
+      "path": "first-host-interface-failure-manifest.json",
+      "size": 1407,
+      "sha256": "e869716c11bbb98190f0e186ac3630c2d80ede1091beb86afabaa218e65fb851"
+    },
+    {
+      "path": "first-host-interface-failure.zip",
+      "size": 10981,
+      "sha256": "47966b5efb25c2577fd84ec990d3e3f142782882bcaed92e078b6ab57e3f893e"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 41943,
+      "sha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8"
+    },
+    {
+      "path": "initial92-probe-history-manifest.json",
+      "size": 896,
+      "sha256": "8865a182ce75053a51414efed4284e4d05a78eb949eb283cd847fb2cc753b364"
+    },
+    {
+      "path": "initial92-probe-history.zip",
+      "size": 10821,
+      "sha256": "56183dfd54dee258a94d3cf47cb31154108c9d861bbe8833ba7c28bd31dc0290"
+    },
+    {
+      "path": "native-proof-manifest.json",
+      "size": 25351,
+      "sha256": "cfcd923719ca66e43e866634f19764f5c0aeab5cbecbdbe3aa988163175a2ccb"
+    },
+    {
+      "path": "native-proof.zip",
+      "size": 417398,
+      "sha256": "e8f149d4e038ce36ea1e425d6c69c7862e0dee2bb0cb52990547d545f7588b0a"
+    },
+    {
+      "path": "path-and-failure-plan.json",
+      "size": 1083,
+      "sha256": "5168892cb798301a218ef5f605c3b525d560ca7366a72a6c8394ec00cf446570"
+    },
+    {
+      "path": "public-case-plan.json",
+      "size": 178612,
+      "sha256": "0dd0b444ef54e84e873acda883492bac623df932721b9f52bd7fdd0ec3632243"
+    },
+    {
+      "path": "public-probes-and-boundaries.json",
+      "size": 5236,
+      "sha256": "f853a327f2e166e45bfe569066a112bc2cae062ec9e50579920c4d18ef5690f5"
+    },
+    {
+      "path": "README.md",
+      "size": 6529,
+      "sha256": "180912c7404bf312a47cfce02d2dab2add8805f5e11d89f77da3262f3b0e5aa9"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 960,
+      "sha256": "4c5942ad52a060a0fd2412990aa4bc569f8bb14e96e2003afba80db2a61e86e3"
+    },
+    {
+      "path": "source-manifest.json",
+      "size": 6684,
+      "sha256": "5d4b6326c5697755252d14b0115fa198fee6871bf9ba7c481ad6ad9010f5252d"
+    },
+    {
+      "path": "verify-public.py",
+      "size": 13685,
+      "sha256": "20ac16e6651826f7112bdc8bbb55435d3f4b3ca6467d441f249509652495d4d5"
+    },
+    {
+      "path": "verify.py",
+      "size": 7902,
+      "sha256": "1eba66d26ce04d9fd8b35636e6cdb2c9886efc4b5807d168e4b966a6b13c0c62"
+    }
+  ]
+}

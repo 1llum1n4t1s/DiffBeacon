@@ -21,6 +21,24 @@ internal static class RawByteEquivalence
             throw new ArgumentException("fixed GNU has no IgnoreFinalNewLine flag");
         var pa = PreparedUtf8.Prepare(a, flags.HasFlag(NativeLineFlags.IgnoreEol), spend, reserve, textProfile);
         var pb = PreparedUtf8.Prepare(b, flags.HasFlag(NativeLineFlags.IgnoreEol), spend, reserve, textProfile);
+        return ClassifyPrepared(pa, pb, options, spend, reserve, flags, productBody, token);
+    }
+
+    internal static Classified ClassifyRows(IReadOnlyList<TextLine> a, IReadOnlyList<TextLine> b, ComparisonOptions options,
+        Action<long> spend, Action<long> reserve, FourPaneTextProfile textProfile, CancellationToken token)
+    {
+        var flags = FourPaneByteBridge.NativeFlags(options, textProfile);
+        var productBody = textProfile == FourPaneTextProfile.DecodedBody;
+        if (options.IgnoreFinalNewLine && !productBody)
+            throw new ArgumentException("fixed GNU has no IgnoreFinalNewLine flag");
+        var pa = PreparedUtf8.PrepareRows(a, flags.HasFlag(NativeLineFlags.IgnoreEol), spend, reserve, textProfile);
+        var pb = PreparedUtf8.PrepareRows(b, flags.HasFlag(NativeLineFlags.IgnoreEol), spend, reserve, textProfile);
+        return ClassifyPrepared(pa, pb, options, spend, reserve, flags, productBody, token);
+    }
+
+    private static Classified ClassifyPrepared(PreparedUtf8 pa, PreparedUtf8 pb, ComparisonOptions options,
+        Action<long> spend, Action<long> reserve, NativeLineFlags flags, bool productBody, CancellationToken token)
+    {
         if (productBody) return ClassifyProductBody(pa, pb, options, spend, reserve, token);
         var varies = flags.HasFlag(NativeLineFlags.IgnoreAllSpace) || flags.HasFlag(NativeLineFlags.IgnoreSpaceChange);
         var buckets = new Dictionary<uint, List<(byte[] Bytes, int Length, int Id)>>();
@@ -76,8 +94,7 @@ internal static class RawByteEquivalence
             for (var i = 0; i < keys.Length; i++)
             {
                 token.ThrowIfCancellationRequested(); spend(1);
-                var key = LegacyLineComparator.ProductKey(input.Lines[i],
-                    i == keys.Length - 1 && input.MissingNewline, options, spend, reserve, token);
+                var key = input.ProductKey(i, options, spend, reserve, token);
                 // 製品キーのhash/equalityも同じ共有作業枠へ計上する。
                 spend((long)key.Content.Length + key.Ending.Length + 1);
                 if (!classes.TryGetValue(key, out var id))
@@ -126,6 +143,6 @@ internal static class RawByteEquivalence
     }
 
     internal static TextLine[] BoundaryLines(PreparedUtf8 p)
-        => p.Lines.Select((bytes, i) => new TextLine(Encoding.Latin1.GetString(bytes,
+        => p.StructuredRows ?? p.Lines.Select((bytes, i) => new TextLine(Encoding.Latin1.GetString(bytes,
             0, bytes.Length - (i == p.Lines.Length - 1 && p.MissingNewline ? 1 : 0)), "")).ToArray();
 }

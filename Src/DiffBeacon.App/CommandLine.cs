@@ -11,11 +11,14 @@ internal static class CommandLine
     {
         try
         {
+            if (args[0] != "--table" && (args.Contains("--table-ignore-column", StringComparer.Ordinal)
+                || args.Contains("--table-column-range", StringComparer.Ordinal)))
+                throw new ArgumentException("--table-ignore-column と --table-column-range は --table にだけ指定できます。");
             if (args[0] is "--help" or "--version")
             {
-                Console.WriteLine("DiffBeacon · .NET 10 / Avalonia\n"
+                Console.WriteLine("DiffBeacon · .NET 11 / Avalonia\n"
                     + "GUI: DiffBeacon LEFT [BASE] RIGHT\n"
-                    + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--substitute PATTERN REPLACEMENT] [--max-work N]\n"
+                    + "--compare LEFT RIGHT [--ignore-case] [--ignore-space] [--ignore-blank] [--ignore-regex PATTERN] [--ignore-numbers] [--comments cstyle|csharp|python|xml|none] [--whitespace none|trim|changes|all] [--no-separators] [--separators TEXT] [--substitute PATTERN REPLACEMENT] [--max-work N]\n"
                     + "独立三者Text: --compare LEFT RIGHT --middle MIDDLE --independent-text [--pair left-middle|middle-right|left-right] [comparison options]\n"
                     + "--word-diff LEFT RIGHT [--word-level] [--ignore-case] [--ignore-numbers] [--whitespace none|changes|all] [--eol strict|ignore|space] [--no-separators] [--separators TEXT] [--max-work N]\n"
                     + "開発用: --gnu-line-script INPUT_JSON [--max-work N]\n"
@@ -30,7 +33,7 @@ internal static class CommandLine
                     + "画像の差分色: --image / --report-project に --highlight-alpha X（0～1、既定0.7）\n"
                     + "--directory / --folder LEFT RIGHT [--middle MIDDLE] [folder options]\n--binary LEFT RIGHT\n--image LEFT [MIDDLE] RIGHT [--left-frame N [--middle-frame N] --right-frame N] [--threshold X] [--block-size N] [--left-orientation ANGLE,HORIZONTAL,VERTICAL] [--middle-orientation ANGLE,HORIZONTAL,VERTICAL] [--right-orientation ANGLE,HORIZONTAL,VERTICAL] [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y]\n"
                     + "--provider ID LEFT RIGHT\n--external-provider EXE LEFT RIGHT FORMAT\n"
-                    + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--word-level] [--eol strict|ignore] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y] [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]\n"
+                    + "--json LEFT RIGHT\n--table LEFT RIGHT [--base BASE] [--table-ignore-column N[:all|left|base|right]] [--table-column-range SPEC[:all|left|base|right]] [--word-level] [--eol strict|ignore] [--no-separators] [--separators TEXT] [comparison options]\n--report LEFT RIGHT OUTPUT_HTML\n--report-project INPUT_PROJECT OUTPUT_HTML [--left-offset X,Y [--middle-offset X,Y] --right-offset X,Y] [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X]\n"
                     + "--project-copy INPUT_PROJECT OUTPUT_PROJECT\n--package-project INPUT_PROJECT OUTPUT_ARCHIVE [--entries 1,3] [--report] [--patch] [--no-documents] [--no-project]\n--folder-copy SOURCE_ROOT DEST_ROOT RELATIVE\n"
                     + "--folder-plan LEFT RIGHT [--middle MIDDLE] --direction DIRECTION --copy all|diff --select RELATIVE [--select RELATIVE ...] [folder options]\n"
                     + "--folder-sync LEFT RIGHT [--middle MIDDLE] --direction DIRECTION --copy all|diff --select RELATIVE [--select RELATIVE ...] [folder options]\n"
@@ -108,7 +111,7 @@ internal static class CommandLine
                     {
                         // 値を含む既存比較オプションは従来parserへ一組のまま渡す。
                         var option = args[index]; comparisonArguments.Add(option);
-                        var count = option == "--substitute" ? 2 : option is "--eol" or "--comments" or "--whitespace"
+                        var count = option is "--substitute" or "--line-transform" ? 2 : option is "--eol" or "--comments" or "--whitespace" or "--separators"
                             or "--ignore-regex" or "--max-work" ? 1 : 0;
                         while (count-- > 0 && index + 1 < args.Length) comparisonArguments.Add(args[++index]);
                     }
@@ -122,7 +125,11 @@ internal static class CommandLine
                 TextDocument[] documents = middle is null ? [left, right] : [left, middle, right];
                 var pair = selectedPair ?? "LeftMiddle";
                 var (first, second) = independent ? IndependentTextReport.PairSides(pair) : (0, 1);
-                var result = TextDiffer.Compare(documents[first].Text, documents[second].Text, options, token);
+                var sourcePaths = TextComparisonSources.FromDocuments(left, middle, right);
+                var result = independent ? TextDiffer.CompareForPanesWithSourcePaths(documents[first].Text, documents[second].Text,
+                    first == 0 ? TablePaneMask.Left : first == 1 ? TablePaneMask.Base : TablePaneMask.Right,
+                    second == 0 ? TablePaneMask.Left : second == 1 ? TablePaneMask.Base : TablePaneMask.Right, sourcePaths, options, token)
+                    : TextDiffer.CompareWithSourcePaths(documents[first].Text, documents[second].Text, sourcePaths, options, token);
                 Action<Utf8JsonWriter> writeComparison = writer =>
                 {
                     if (independent)
@@ -161,7 +168,7 @@ internal static class CommandLine
                     foreach (var row in result.Rows)
                     {
                         if (independent) token.ThrowIfCancellationRequested();
-                        writer.WriteStartObject(); writer.WriteString("kind", row.Kind.ToString());
+                        writer.WriteStartObject(); writer.WriteString("kind", row.Kind.ToString()); writer.WriteBoolean("ignored", row.IsIgnored);
                         writer.WriteString("left", row.LeftText); writer.WriteString("right", row.RightText);
                         if (row.LeftLineNumber is int ln) writer.WriteNumber("leftLine", ln);
                         if (row.RightLineNumber is int rn) writer.WriteNumber("rightLine", rn);
@@ -188,7 +195,7 @@ internal static class CommandLine
             if (command == "--project-copy")
             {
                 var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], token);
-                if (workspace.Entries.Length == 1 && workspace.FormatVersion is not (8 or 9)) await WorkspaceStore.SaveAsync(args[2], workspace.Entries[0], token, args[1]);
+                if (workspace.Entries.Length == 1 && workspace.FormatVersion is not (8 or 9 or 10)) await WorkspaceStore.SaveAsync(args[2], workspace.Entries[0], token, args[1]);
                 else await WorkspaceStore.SaveWorkspaceAsync(args[2], workspace, token, args[1]);
                 WriteJson(w => { w.WriteString("output", Path.GetFullPath(args[2])); w.WriteNumber("entries", workspace.Entries.Length); w.WriteNumber("activeEntryIndex", workspace.ActiveEntryIndex); }); return 0;
             }
@@ -217,7 +224,11 @@ internal static class CommandLine
                 var plan = await FolderOperations.PrepareAsync(selection.Selection, cancellationToken: token);
                 selection.RequireInputsUnchanged();
                 selection.ValidateOutputs(plan);
-                var result = await FolderOperations.ExecuteAsync(plan, selection.ValidateDestination, cancellationToken: token);
+                var result = await FolderOperations.ExecuteAsync(plan, path =>
+                {
+                    selection.RequireInputsUnchanged();
+                    selection.ValidateDestination(path);
+                }, cancellationToken: token);
                 WriteJson(w => FolderCommands.WriteExecution(w, plan, result));
                 return result.Succeeded ? 0 : 2;
             }
@@ -232,9 +243,25 @@ internal static class CommandLine
                 var delimiter = Path.GetExtension(args[1]).Equals(".tsv", StringComparison.OrdinalIgnoreCase) ? '\t' : ',';
                 string? basePath = null;
                 var tableFlags = new List<string>();
+                var ignoredColumns = new List<TableColumnIgnoreRule>();
+                var columnRanges = new List<TableColumnRangeRule>();
                 for (var index = 3; index < args.Length; index++)
                 {
-                    if (args[index] == "--base")
+                    if (args[index] == "--table-ignore-column")
+                    {
+                        if (++index >= args.Length) throw new ArgumentException("--table-ignore-column には列番号が必要です。");
+                        if (ignoredColumns.Count >= TableColumnIgnoreRule.MaximumColumnsAndRules)
+                            throw new ArgumentException("比較から除外する列の件数が上限を越えています。");
+                        ignoredColumns.Add(ParseTableColumnIgnoreRule(args[index]));
+                    }
+                    else if (args[index] == "--table-column-range")
+                    {
+                        if (++index >= args.Length) throw new ArgumentException("--table-column-range には範囲指定が必要です。");
+                        if (columnRanges.Count >= TableColumnRangeRule.MaximumRules)
+                            throw new ArgumentException("列範囲の件数が上限を越えています。");
+                        columnRanges.Add(ParseTableColumnRangeRule(args[index]));
+                    }
+                    else if (args[index] == "--base")
                     {
                         if (basePath is not null || ++index >= args.Length) throw new ArgumentException("--baseには一つの基準ファイルが必要です。");
                         basePath = args[index];
@@ -243,7 +270,8 @@ internal static class CommandLine
                     {
                         var values = args[index] switch
                         {
-                            "--substitute" => 2,
+                            "--substitute" or "--line-transform" => 2,
+                            "--separators" => 1,
                             "--comments" or "--whitespace" or "--ignore-regex" or "--max-work" or "--eol" => 1,
                             _ => 0
                         };
@@ -255,19 +283,30 @@ internal static class CommandLine
                         }
                     }
                 }
-                var tableOptions = ParseOptions(tableFlags.ToArray());
+                var tableOptions = ParseOptions(tableFlags.ToArray()) with
+                {
+                    TableColumnIgnoreRules = Array.AsReadOnly(ignoredColumns.ToArray()),
+                    TableColumnRangeRules = Array.AsReadOnly(columnRanges.ToArray())
+                };
                 var ancestor = basePath is null ? null : await TextDocument.LoadAsync(basePath, token);
-                var table = StructuredComparer.CompareTables(ancestor is null ? [left.Text, right.Text] : [left.Text, ancestor.Text, right.Text],
-                    new(delimiter), tableOptions, token);
+                var table = StructuredComparer.CompareTablesWithSourcePaths(ancestor is null ? [left.Text, right.Text] : [left.Text, ancestor.Text, right.Text],
+                    TextComparisonSources.FromDocuments(left, ancestor, right), new(delimiter), tableOptions, token);
                 WriteJson(w =>
                 {
                     w.WriteBoolean("different", table.HasDifferences); w.WriteNumber("rows", table.Documents.Max(document => document.Rows.Count));
                     w.WriteNumber("cols", table.ColumnCount); w.WriteNumber("alignedRows", table.Rows.Count); w.WriteBoolean("alignmentFallback", table.AlignmentFallback);
                     w.WriteNumber("alignmentWorkUsed", table.AlignmentWorkUsed); w.WriteString("alignmentFallbackReason", table.AlignmentFallbackReason);
                     w.WriteStartArray("mapping");
-                    foreach (var row in table.Rows)
+                    for (var rowIndex = 0; rowIndex < table.Rows.Count; rowIndex++)
                     {
+                        var row = table.Rows[rowIndex];
                         w.WriteStartObject();
+                        if (table.UsesLineTransforms)
+                        {
+                            w.WriteString("leftKind", table.GetRowKind(0, rowIndex).ToString());
+                            if (ancestor is not null) w.WriteString("baseKind", table.GetRowKind(1, rowIndex).ToString());
+                            w.WriteString("rightKind", table.GetRowKind(table.Documents.Count - 1, rowIndex).ToString());
+                        }
                         if (row.LeftRow is int l) w.WriteNumber("left", l); else w.WriteNull("left");
                         if (ancestor is not null) { if (row.BaseRow is int b) w.WriteNumber("base", b); else w.WriteNull("base"); }
                         if (row.RightRow is int r) w.WriteNumber("right", r); else w.WriteNull("right");
@@ -284,7 +323,7 @@ internal static class CommandLine
                 var left = await TextDocument.LoadAsync(args[2], token);
                 var right = await TextDocument.LoadAsync(args[3], token);
                 var materialized = FourPaneMaterialization.CreateThreeWay(ancestor.Text, left.Text, right.Text,
-                    options: null, autoResolve: true, settings: new FourPaneMaterializationSettings { DefaultEol = ancestor.NewLine }, token: token);
+                    options: null, autoResolve: true, settings: new FourPaneMaterializationSettings { DefaultEol = ancestor.NewLine, SourcePaths = TextComparisonSources.FromDocuments(left, ancestor, right) }, token: token);
                 var session = materialized.InitialSession;
                 if (command == "--merge-select")
                 {
@@ -358,7 +397,7 @@ internal static class CommandLine
 
     internal static ComparisonOptions ParseOptions(string[] args)
     {
-        var options = new ComparisonOptions();
+        var options = new ComparisonOptions { LineTransformLogEnvironment = LineTransformLogEnvironments.StandardError };
         for (var index = 0; index < args.Length; index++)
         {
             options = args[index] switch
@@ -368,6 +407,8 @@ internal static class CommandLine
                 "--ignore-blank" => options with { IgnoreBlankLines = true },
                 "--ignore-numbers" => options with { IgnoreNumbers = true },
                 "--word-level" => options with { InlineCharacterLevel = false },
+                "--no-separators" => options with { BreakOnSeparators = false },
+                "--separators" when index + 1 < args.Length => options with { WordBreakSeparators = args[++index] },
                 "--eol" when index + 1 < args.Length => options with { CompareLineEndings = args[++index] switch
                 {
                     "strict" => true, "ignore" => false, _ => throw new ArgumentException("改行モードはstrict、ignoreです。")
@@ -375,13 +416,58 @@ internal static class CommandLine
                 "--comments" when index + 1 < args.Length => options with { CommentSyntax = ParseCommentSyntax(args[++index]) },
                 "--whitespace" when index + 1 < args.Length => options with { Whitespace = ParseWhitespace(args[++index]), IgnoreWhitespace = false },
                 "--substitute" when index + 2 < args.Length => options with { SubstitutionRules = [.. options.SubstitutionRules, new SubstitutionRule(args[++index], args[++index])] },
+                "--line-transform" when index + 2 < args.Length => options with { LineTransformRules = [.. options.LineTransformRules, ParseLineTransformRule(args, ref index)] },
                 "--ignore-regex" when index + 1 < args.Length => options with { IgnoreLinePattern = args[++index] },
                 "--max-work" when index + 1 < args.Length => options with { MaxFallbackComparisons = ParseMaxWork(args[++index]) },
                 "--independent-text" or "--pair" => throw new ArgumentException("独立三者Textと比較ペアは --compare にだけ指定できます。"),
                 _ => throw new ArgumentException($"不明な比較オプション: {args[index]}")
             };
         }
-        return options;
+        return options with
+        {
+            LineTransformTimestampEnvironment = LineTransformTimestampEnvironments.ForRules(options.LineTransformRules),
+            LineTransformStringEnvironment = LineTransformStringEnvironments.ForRules(options.LineTransformRules),
+            LineTransformListEnvironment = LineTransformListEnvironments.Create(LineTransformLogEnvironments.StandardError)
+        };
+    }
+
+    private static LineTransformRule ParseLineTransformRule(string[] args, ref int index)
+    {
+        var pane = args[++index].ToLowerInvariant() switch
+        {
+            "all" => TablePaneMask.All, "left" => TablePaneMask.Left,
+            "base" => TablePaneMask.Base, "right" => TablePaneMask.Right,
+            _ => throw new ArgumentException("行変換の対象はall、left、base、rightです。")
+        };
+        return new(args[++index], pane);
+    }
+
+    private static TableColumnIgnoreRule ParseTableColumnIgnoreRule(string value)
+    {
+        var parts = value.Split(':');
+        if (parts.Length is < 1 or > 2 || !int.TryParse(parts[0], System.Globalization.NumberStyles.None,
+            System.Globalization.CultureInfo.InvariantCulture, out var column) || column is < 1 or > TableColumnIgnoreRule.MaximumColumnsAndRules)
+            throw new ArgumentException($"除外列は1から{TableColumnIgnoreRule.MaximumColumnsAndRules}の列番号と任意の対象ペインで指定してください。");
+        var panes = parts.Length == 1 ? TablePaneMask.All : parts[1].ToLowerInvariant() switch
+        {
+            "all" => TablePaneMask.All, "left" => TablePaneMask.Left, "base" => TablePaneMask.Base, "right" => TablePaneMask.Right,
+            _ => throw new ArgumentException("除外列の対象ペインはall、left、base、rightです。")
+        };
+        return new(column, panes);
+    }
+
+    private static TableColumnRangeRule ParseTableColumnRangeRule(string value)
+    {
+        var separator = value.LastIndexOf(':');
+        var specification = separator < 0 ? value : value[..separator];
+        var panes = separator < 0 ? TablePaneMask.All : value[(separator + 1)..].ToLowerInvariant() switch
+        {
+            "all" => TablePaneMask.All, "left" => TablePaneMask.Left, "base" => TablePaneMask.Base, "right" => TablePaneMask.Right,
+            _ => throw new ArgumentException("列範囲の対象ペインはall、base、left、rightです。")
+        };
+        var rule = new TableColumnRangeRule(specification, panes);
+        TableColumnRangeRule.ValidateRules([rule]);
+        return rule;
     }
 
     private static CommentSyntax ParseCommentSyntax(string value) => Enum.TryParse<CommentSyntax>(value, true, out var syntax) && Enum.IsDefined(syntax)

@@ -1,0 +1,19 @@
+{
+  "adapterChanges": [
+    {
+      "before": "std::string result,error;bool regexNeedle=false,folded=false;",
+      "after": "std::string result,error,serialized;bool serializationApplied=false;bool regexNeedle=false,folded=false;"
+    },
+    {
+      "before": "result=valueJson(f->Evaluate(c));",
+      "after": "auto val=f->Evaluate(c);result=valueJson(val);serialized=hex(ToStringValue(val));serializationApplied=true;"
+    },
+    {
+      "before": "<<\"}\\n\";",
+      "after": "<<\",\\\"serializedUtf8Hex\\\":\"<<(serializationApplied?\"\\\"\"+serialized+\"\\\"\":\"null\")<<\",\\\"serializationApplied\\\":\"<<(serializationApplied?\"true\":\"false\")<<\"}\\n\";"
+    }
+  ],
+  "additionalNativeOperation": "ToStringValue(val), executed once after the original evaluator result; UTF-8 bytes encoded as hex; exceptions retain original row and mark serialization not applied",
+  "originalSerializerBodyUnchanged": true,
+  "baselineRestore": "baseline-capture.py and baseline-adapter.cpp restore the external copies; existing KEEP originals remain untouched"
+}

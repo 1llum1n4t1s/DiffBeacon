@@ -32,7 +32,8 @@ internal static class PackageCommands
         try
         {
             var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], cancel.Token);
-            await ComparisonPackage.CreateAsync(workspace, args[2], new(documents, report, patch, project), indices, cancel.Token, args[1]);
+            await ComparisonPackage.CreateAsync(workspace, args[2], new(documents, report, patch, project), indices, cancel.Token, args[1],
+                logEnvironment: LineTransformLogEnvironments.StandardError);
             CommandLine.WriteJson(writer => { writer.WriteString("output", Path.GetFullPath(args[2])); writer.WriteNumber("entries", indices?.Length ?? workspace.Entries.Length); });
             return 0;
         }

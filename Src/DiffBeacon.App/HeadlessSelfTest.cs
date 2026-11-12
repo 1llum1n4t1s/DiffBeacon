@@ -17,8 +17,10 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false, bool binarySearchOnly = false, bool imageDefaultsOnly = false, bool bareGZipOnly = false, bool bareCompressionOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false, bool binarySearchOnly = false, bool imageCopyOnly = false, bool imageDefaultsOnly = false, bool bareGZipOnly = false, bool bareCompressionOnly = false, bool tableHeadersOnly = false, bool textBookmarksOnly = false, bool tableRawSearchOnly = false, bool tableColumnIgnoreOnly = false, bool tableColumnRangeOnly = false, bool binaryReplaceOnly = false, bool lineTransformOnly = false, bool lineTransformReplaceListsOnly = false, bool folderPropertiesOnly = false)
     {
+        try { DiffBeacon.Development.DevelopmentOutputGuard.Validate(output); }
+        catch (IOException error) { Console.Error.WriteLine(error.Message); return 2; }
         var artifactOutput = Path.GetFullPath(output); Directory.CreateDirectory(artifactOutput);
         // 前回の入力・出力を残したまま再実行し、CreateNewや新規展開先と衝突させない。
         output = Path.Combine(artifactOutput, "fixtures", DateTime.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N")[..8]);
@@ -27,11 +29,22 @@ internal static class HeadlessSelfTest
         MainWindow? window = null;
         var progressClock = Stopwatch.StartNew();
         var progressStages = new List<(string Stage, string State, long ElapsedMs, int Passed, int Failed)>();
-        long stageStart = 0;
+        var stageStarts = new Dictionary<string, long>(StringComparer.Ordinal);
         void Progress(string stage, string state)
         {
-            var elapsed = state == "start" ? 0 : progressClock.ElapsedMilliseconds - stageStart;
-            if (state == "start") stageStart = progressClock.ElapsedMilliseconds;
+            var now = progressClock.ElapsedMilliseconds;
+            long elapsed;
+            if (state == "start")
+            {
+                if (!stageStarts.TryAdd(stage, now)) throw new InvalidOperationException($"Self-test stage already started: {stage}");
+                elapsed = 0;
+            }
+            else if (state == "complete")
+            {
+                if (!stageStarts.Remove(stage, out var started)) throw new InvalidOperationException($"Self-test stage completed without a start: {stage}");
+                elapsed = now - started;
+            }
+            else throw new InvalidOperationException($"Unknown self-test progress state: {state}");
             progressStages.Add((stage, state, elapsed, assertions.Count(item => item.Passed), assertions.Count(item => !item.Passed)));
             Console.WriteLine($"self-test {stage} {state} elapsed={elapsed}ms passed={progressStages[^1].Passed} failed={progressStages[^1].Failed}");
             var progressTemporary = Path.Combine(artifactOutput, ".self-test-progress-" + Guid.NewGuid().ToString("N") + ".tmp");
@@ -61,6 +74,67 @@ internal static class HeadlessSelfTest
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
             var pane = window.ActivePane;
+            if (lineTransformReplaceListsOnly)
+            {
+                Progress("initial-ui", "complete");
+                HeadlessLineTransformReplaceListChecks.Run(window, pane, output, Check, Screenshot, Pump);
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (lineTransformOnly)
+            {
+                Progress("initial-ui", "complete");
+                RunLineTransforms();
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (tableRawSearchOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessTableRawSearchChecks", "start");
+                HeadlessTableSearchTests.Run(window, pane, output, Check, Screenshot, Pump, rawOnly: true);
+                Progress("HeadlessTableRawSearchChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (tableColumnIgnoreOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessTableColumnIgnoreChecks", "start");
+                HeadlessTableColumnIgnoreChecks.Run(window, pane, output, Check, Screenshot, Pump);
+                Progress("HeadlessTableColumnIgnoreChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (tableColumnRangeOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessTableColumnRangeChecks", "start");
+                HeadlessTableColumnRangeChecks.Run(window, pane, output, Check, Screenshot, Pump);
+                Progress("HeadlessTableColumnRangeChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (imageCopyOnly)
+            {
+                ImageFixture("same-first-left.gif"); ImageFixture("same-first-right.gif");
+                Progress("initial-ui", "complete");
+                Progress("HeadlessImageCopyChecks", "start");
+                HeadlessImageCopyChecks.Run(window, pane, output, artifactOutput, Pump, Check, Screenshot);
+                Progress("HeadlessImageCopyChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (tableHeadersOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessTableColumnHeaderChecks", "start");
+                HeadlessTableColumnHeaderChecks.Run(window, pane, output, Check, Screenshot, Pump);
+                Progress("HeadlessTableColumnHeaderChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (textBookmarksOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessLineBookmarkChecks", "start");
+                HeadlessLineBookmarkChecks.Run(window, pane, output, Check, Screenshot);
+                Progress("HeadlessLineBookmarkChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (bareCompressionOnly)
             {
                 HeadlessBareCompressionChecks.Run(window, pane, output, Pump, Check, Screenshot);
@@ -136,6 +210,11 @@ internal static class HeadlessSelfTest
                 Progress("HeadlessIndependentTextChecks", "complete");
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
+            if (folderPropertiesOnly)
+            {
+                HeadlessFolderPropertyChecks.Run(window, pane, output, Check, Screenshot, Pump);
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
             if (folderThreeWayOnly)
             {
                 Progress("HeadlessFolderThreeWayChecks", "start");
@@ -154,6 +233,11 @@ internal static class HeadlessSelfTest
             if (binarySearchOnly)
             {
                 RunBinarySearch();
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (binaryReplaceOnly)
+            {
+                RunBinaryReplace();
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
             if (binaryClipboardOnly)
@@ -201,7 +285,8 @@ internal static class HeadlessSelfTest
             if (archiveWorkingReviewOnly)
             {
                 Progress("HeadlessArchiveWorkingReviewChecks", "start");
-                RunArchiveWorkingReview();
+                RunLineTransforms();
+            RunArchiveWorkingReview();
                 Progress("HeadlessArchiveWorkingReviewChecks", "complete");
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
@@ -209,7 +294,8 @@ internal static class HeadlessSelfTest
             {
                 Progress("HeadlessArchiveSourceChecks", "start");
                 HeadlessArchiveSourceChecks.Run(window, pane, output, Pump, Check, Screenshot);
-                RunArchiveWorkingReview();
+                RunLineTransforms();
+            RunArchiveWorkingReview();
                 Progress("HeadlessArchiveSourceChecks", "complete");
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
@@ -239,6 +325,7 @@ internal static class HeadlessSelfTest
                 && System.Text.RegularExpressions.Regex.Matches(wordHtml, "<span class=\"inline-diff\">new</span>").Count == 2);
             Check("word diff preview and report retain original source files", File.ReadAllText(left) == "title\r\nleft value\r\ntail\r\n"
                 && File.ReadAllText(right) == "title\r\nright value\r\ntail\r\n");
+            HeadlessWordBreakSettingsChecks.Run(pane, output, Check, Pump, Screenshot);
             pane.LeftEditor.Text = "a\nb\na\n"; pane.RightEditor.Text = "b\na\nb\n";
             pane.CompareEditors(); Screenshot("gnu-line-repeated.png");
             Check("GNU repeated lines retain original script in GUI", pane.CurrentDiff is { LineFallback: false, Blocks.Count: 2 }
@@ -1311,11 +1398,11 @@ internal static class HeadlessSelfTest
             Check("table search finds decoded escaped quote and selects its text", tablePanel.CellEditor.Text == "raw'quote"
                 && tablePanel.CellEditor.SelectionEnd - tablePanel.CellEditor.SelectionStart == "raw'quote".Length);
             Pump(tablePanel.FindAsync(1));
-            Check("table next search includes readonly ancestor", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single().SelectedIndex == 1 && tablePanel.CellEditor.IsReadOnly);
+            Check("table next search includes readonly ancestor", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "table-side").SelectedIndex == 1 && tablePanel.CellEditor.IsReadOnly);
             Pump(tablePanel.FindAsync(-1));
-            Check("table previous search returns to writable left cell", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single().SelectedIndex == 0 && !tablePanel.CellEditor.IsReadOnly);
+            Check("table previous search returns to writable left cell", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "table-side").SelectedIndex == 0 && !tablePanel.CellEditor.IsReadOnly);
             tablePanel.SelectCell(2, 3, 2); Pump(tablePanel.FindAsync(1));
-            Check("table wrap search preserves display side column order", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single().SelectedIndex == 0 && tablePanel.CellEditor.Text == "raw'quote");
+            Check("table wrap search preserves display side column order", tablePanel.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "table-side").SelectedIndex == 0 && tablePanel.CellEditor.Text == "raw'quote");
             tablePanel.SelectCell(0, 0, 0); tablePanel.SearchText.Text = "RAW'QUOTE";
             tablePanel.GetVisualDescendants().OfType<CheckBox>().Single(box => Equals(box.Content, "大小文字を区別")).IsChecked = true;
             Pump(tablePanel.FindAsync(1));
@@ -1400,12 +1487,21 @@ internal static class HeadlessSelfTest
                 $"elapsedMilliseconds={sparseTimer.ElapsedMilliseconds};actualCellsPerPane=20000;rectangularCoordinates=200020000");
             Screenshot("table-sparse-paged.png");
             Progress("table-editing", "complete");
+            Progress("HeadlessTableColumnHeaderChecks", "start");
+            HeadlessTableColumnHeaderChecks.Run(window, reportPane, output, Check, Screenshot, Pump);
+            Progress("HeadlessTableColumnHeaderChecks", "complete");
             Progress("HeadlessTableSearchTests", "start");
             HeadlessTableSearchTests.Run(window, reportPane, output, Check, Screenshot, Pump);
             Progress("HeadlessTableSearchTests", "complete");
+            Progress("HeadlessLineBookmarkChecks", "start");
+            HeadlessLineBookmarkChecks.Run(window, reportPane, output, Check, Screenshot);
+            Progress("HeadlessLineBookmarkChecks", "complete");
+            RunLineTransforms();
+            Progress("finalize", "start");
             RunArchiveWorkingReview();
             Progress("finalize", "complete");
             Progress("HeadlessBinaryWorkingChecks", "start"); RunBinaryWorking(); Progress("HeadlessBinaryWorkingChecks", "complete");
+            HeadlessFolderPropertyChecks.Run(window, window.ActivePane, output, Check, Screenshot, Pump);
             Progress("HeadlessFolderCopyChecks", "start"); RunFolderCopy(); Progress("HeadlessFolderCopyChecks", "complete");
             Progress("HeadlessFolderThreeWayChecks", "start"); RunFolderThreeWay(); Progress("HeadlessFolderThreeWayChecks", "complete");
             Progress("HeadlessIndependentTextChecks", "start"); RunIndependentText(); Progress("HeadlessIndependentTextChecks", "complete");
@@ -1426,8 +1522,9 @@ internal static class HeadlessSelfTest
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteString("runtime", System.Runtime.InteropServices.RuntimeInformation.RuntimeIdentifier); writer.WriteString("fixtures", output);
             writer.WriteBoolean("binarySearchOnly", binarySearchOnly);
+            writer.WriteBoolean("binaryReplaceOnly", binaryReplaceOnly);
             writer.WriteBoolean("binaryClipboardOnly", binaryClipboardOnly);
-            writer.WriteString("scope", bareCompressionOnly ? "bare-compression-only" : bareGZipOnly ? "bare-gzip-only" : imageDefaultsOnly ? "image-defaults-only" : independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binarySearchOnly ? "binary-search-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", folderPropertiesOnly ? "folder-properties-only" : lineTransformReplaceListsOnly ? "line-transform-replace-lists-only" : lineTransformOnly ? "line-transform-only" : tableRawSearchOnly ? "table-raw-search-only" : tableColumnRangeOnly ? "table-column-range-only" : tableColumnIgnoreOnly ? "table-column-ignore-only" : tableHeadersOnly ? "table-headers-only" : bareCompressionOnly ? "bare-compression-only" : bareGZipOnly ? "bare-gzip-only" : imageCopyOnly ? "image-copy-only" : imageDefaultsOnly ? "image-defaults-only" : independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryReplaceOnly ? "binary-replace-only": binarySearchOnly ? "binary-search-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -1454,7 +1551,7 @@ internal static class HeadlessSelfTest
         {
             var prior = window;
             var binary = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "binary-image-options.json"))) { Width = 1280, Height = 850 };
-            try { window = binary; binary.Show(); HeadlessBinaryWorkingChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryThreeWayChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryCopyAllChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryRangeEditChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryClipboardChecks.Run(binary, output, Pump, Check, Screenshot); RunBinarySearch(); }
+            try { window = binary; binary.Show(); HeadlessBinaryWorkingChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryThreeWayChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryCopyAllChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryRangeEditChecks.Run(binary, output, Pump, Check, Screenshot); HeadlessBinaryClipboardChecks.Run(binary, output, Pump, Check, Screenshot); RunBinarySearch(); RunBinaryReplace(); }
             finally { foreach (var session in binary.SessionPanes) session.DiscardChanges(); binary.Close(); window = prior; }
             Check("Binary window close releases shared assets and credentials", binary.ArchiveLifetime.Assets.Length == 0 && binary.ArchiveLifetime.CredentialCount == 0);
         }
@@ -1474,6 +1571,50 @@ internal static class HeadlessSelfTest
             window = owner;
             try { owner.Show(); HeadlessBinarySearchChecks.Run(owner, output, Pump, Check, Screenshot); }
             finally { owner.Close(); window = previous; }
+        }
+
+        void RunLineTransforms()
+        {
+            Progress("HeadlessLineTransformChecks", "start");
+            var previous = window;
+            var owner = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "line-transform-application-options.json")));
+            window = owner;
+            try
+            {
+                owner.Show(); HeadlessLineTransformChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformFolderChecks.Run(output, Check, Pump);
+                HeadlessLineTransformArrayChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformSearchChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformReplaceChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformRangeChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformWithinChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformAggregateChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformSizeLiteralChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformDurationLiteralChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformVersionLiteralChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformTimestampLiteralChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformTimestampFunctionChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformTimestampCalendarChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformTimestampClockChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformCasingChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformUnicodeNormalizationChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformCharacterMappingChecks.Run(output, Check);
+                HeadlessLineTransformContentChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+                HeadlessLineTransformReplaceListChecks.Run(owner, owner.ActivePane, output, Check, Screenshot, Pump);
+            }
+            finally { owner.Close(); window = previous; }
+            Progress("HeadlessLineTransformChecks", "complete");
+        }
+
+        void RunBinaryReplace()
+        {
+            Progress("HeadlessBinaryReplaceChecks", "start");
+            var previous = window;
+            var owner = new MainWindow(null);
+            window = owner;
+            try { owner.Show(); HeadlessBinaryReplaceChecks.Run(owner, output, Pump, Check, Screenshot); }
+            finally { owner.Close(); window = previous; }
+            Progress("HeadlessBinaryReplaceChecks", "complete");
         }
 
         void RunImageDefaults()

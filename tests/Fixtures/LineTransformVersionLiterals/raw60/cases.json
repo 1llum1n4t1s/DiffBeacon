@@ -1,0 +1,302 @@
+[
+  {
+    "id": "zero",
+    "inputHex": "30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "empty",
+    "inputHex": "",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "text",
+    "inputHex": "616263",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "dot",
+    "inputHex": "2e",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "missing2",
+    "inputHex": "31",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "missing3",
+    "inputHex": "312e32",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "missing4",
+    "inputHex": "312e322e33",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "all",
+    "inputHex": "312e322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "double-dot",
+    "inputHex": "312e2e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "missing-first",
+    "inputHex": "2e322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "stop2",
+    "inputHex": "312e782e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "stop3",
+    "inputHex": "312e322e782e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "stop4",
+    "inputHex": "312e322e332e78",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "end-dot",
+    "inputHex": "312e322e332e",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "trailing-dot",
+    "inputHex": "312e322e332e342e",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "trailing5",
+    "inputHex": "312e322e332e342e35",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "tail",
+    "inputHex": "312e322e332e347461696c",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "leading-ws",
+    "inputHex": "20090d0a312e322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "space-after-dot",
+    "inputHex": "312e20322e20332e2034",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "space-before-dot",
+    "inputHex": "31202e322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "space-middle",
+    "inputHex": "312e32202e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "tabs-after-dot",
+    "inputHex": "312e09322e0a332e0d34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "plus-all",
+    "inputHex": "2b312e2b322e2b332e2b34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "plus-zero",
+    "inputHex": "2b302e2b302e2b302e2b30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "negative-zero",
+    "inputHex": "2d302e2d302e2d302e2d30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "minus-revision",
+    "inputHex": "302e302e302e2d31",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "negative-min-revision",
+    "inputHex": "302e302e302e2d32313437343833363438",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "negative-revision-upper",
+    "inputHex": "33323736372e36353533352e36353533352e2d31",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "leading-zeros",
+    "inputHex": "303030312e303030322e303030332e30303034",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "hex-looking",
+    "inputHex": "3078312e322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "exponent-looking",
+    "inputHex": "3165322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "backslash",
+    "inputHex": "315c2e322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "escaped-n",
+    "inputHex": "312e322e332e345c6e",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "quote-tail",
+    "inputHex": "312e322e332e3422",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "zero-all",
+    "inputHex": "302e302e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "revision-65534",
+    "inputHex": "302e302e302e3635353334",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "revision-65535",
+    "inputHex": "302e302e302e3635353335",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "revision-65536",
+    "inputHex": "302e302e302e3635353336",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "revision-overlap",
+    "inputHex": "302e302e312e3635353336",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "build-65534",
+    "inputHex": "302e302e36353533342e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "build-65535",
+    "inputHex": "302e302e36353533352e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "build-65536",
+    "inputHex": "302e302e36353533362e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "build-overlap",
+    "inputHex": "302e312e36353533362e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "minor-65534",
+    "inputHex": "302e36353533342e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "minor-65535",
+    "inputHex": "302e36353533352e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "minor-65536",
+    "inputHex": "302e36353533362e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "minor-overlap",
+    "inputHex": "312e36353533362e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "major-32766",
+    "inputHex": "33323736362e302e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "major-32767",
+    "inputHex": "33323736372e302e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "positive-max",
+    "inputHex": "33323736372e36353533352e36353533352e3635353335",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "build-int-max",
+    "inputHex": "302e302e323134373438333634372e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "minor-int-max",
+    "inputHex": "302e323134373438333634372e302e30",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "revision-int-max",
+    "inputHex": "302e302e302e32313437343833363437",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "many-tail",
+    "inputHex": "312e322e332e342e352e362e37",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "sign-without-number",
+    "inputHex": "312e322e332e2b",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "start-plus",
+    "inputHex": "2b",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "bare-sign-after-dot",
+    "inputHex": "312e2d2e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "vertical-space",
+    "inputHex": "0b0c312e322e332e34",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "revision-leading-space",
+    "inputHex": "302e302e302e202d31",
+    "scope": "direct-original-constructor-only"
+  },
+  {
+    "id": "nul-stop",
+    "inputHex": "312e32002e332e34",
+    "scope": "direct-original-constructor-only"
+  }
+]

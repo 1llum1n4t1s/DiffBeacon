@@ -1,0 +1,5127 @@
+{
+  "schema": "replace-public-case-plan-v1",
+  "status": "read-only candidate design; not actual App/E2E verification",
+  "assumption": "future Replace exactly-three-arguments registration; root LineTransformRule/LineTransformPlan unchanged",
+  "count": 100,
+  "modes": {
+    "selectedOptimizer": 12,
+    "noopt": 88
+  },
+  "summary": [
+    {
+      "classification": "adapter-throw-boundary",
+      "count": 4
+    },
+    {
+      "classification": "constructor-boundary",
+      "count": 6
+    },
+    {
+      "classification": "generated-crlf-boundary",
+      "count": 2
+    },
+    {
+      "classification": "nul-literal-boundary",
+      "count": 2
+    },
+    {
+      "classification": "optimizer-error-boundary-pending",
+      "count": 1
+    },
+    {
+      "classification": "oracle-match-candidate",
+      "count": 78
+    },
+    {
+      "classification": "raw-invalid-utf8-boundary",
+      "count": 3
+    },
+    {
+      "classification": "typed-regex-boundary",
+      "count": 4
+    }
+  ],
+  "serializationSidecar": "Additional fixed-original C++ capture needed for all 100 IDs, preserving golden.ndjson byte-for-byte; cannot claim final-string coverage from valueJson alone",
+  "currentCoreSha256": "8F46F401AA2D8EAC639BCFCA689AAA5DE13A74F6758A8EBB674803B3EC627A1F",
+  "originalNodesSha256": "A2FCCA950BD5E5CFA48F3FF43E4436AE0F5FD55EFF9661DA1D5A979CC9051135",
+  "keepReason": "Parent verification and future public fixture projection",
+  "deletionCondition": "After accepted fixture/public reader carries the same verified evidence and resume material no longer needed",
+  "cases": [
+    {
+      "id": "null-args",
+      "expression": "@cs @noopt Replace()",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "constructor-boundary",
+      "reason": "Original direct body accepts invalid arity as none, except selected opt arity-four throws during fold. Public constructor requires exactly 3. Null args pointer cannot be distinguished from empty list by Replace(). Arity-4 includes adapter ThrowNode and has no exact source expression.",
+      "phase": "compile",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [],
+      "originalNullArgs": true,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "arity-0",
+      "expression": "@cs @noopt Replace()",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "constructor-boundary",
+      "reason": "Original direct body accepts invalid arity as none, except selected opt arity-four throws during fold. Public constructor requires exactly 3. Null args pointer cannot be distinguished from empty list by Replace(). Arity-4 includes adapter ThrowNode and has no exact source expression.",
+      "phase": "compile",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "arity-1",
+      "expression": "@cs @noopt Replace(\"a\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "constructor-boundary",
+      "reason": "Original direct body accepts invalid arity as none, except selected opt arity-four throws during fold. Public constructor requires exactly 3. Null args pointer cannot be distinguished from empty list by Replace(). Arity-4 includes adapter ThrowNode and has no exact source expression.",
+      "phase": "compile",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "arity-2",
+      "expression": "@cs @noopt Replace(\"a\",\"a\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "constructor-boundary",
+      "reason": "Original direct body accepts invalid arity as none, except selected opt arity-four throws during fold. Public constructor requires exactly 3. Null args pointer cannot be distinguished from empty list by Replace(). Arity-4 includes adapter ThrowNode and has no exact source expression.",
+      "phase": "compile",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "arity-4",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "constructor-boundary",
+      "reason": "Original direct body accepts invalid arity as none, except selected opt arity-four throws during fold. Public constructor requires exactly 3. Null args pointer cannot be distinguished from empty list by Replace(). Arity-4 includes adapter ThrowNode and has no exact source expression.",
+      "phase": "compile",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "throw",
+          "value": "arity must not evaluate"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "eager-throw-0",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "adapter-throw-boundary",
+      "reason": "ThrowNode is custom adapter node. No registered Throw expression; replacing with division-by-zero would invent a different AST/error. Preserve golden evaluated trace and error bytes only as internal value-engine evidence.",
+      "phase": "unrepresentable",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "throw",
+          "value": "throw-0"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "eager-throw-1",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "adapter-throw-boundary",
+      "reason": "ThrowNode is custom adapter node. No registered Throw expression; replacing with division-by-zero would invent a different AST/error. Preserve golden evaluated trace and error bytes only as internal value-engine evidence.",
+      "phase": "unrepresentable",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "throw",
+          "value": "throw-1"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "eager-throw-2",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "adapter-throw-boundary",
+      "reason": "ThrowNode is custom adapter node. No registered Throw expression; replacing with division-by-zero would invent a different AST/error. Preserve golden evaluated trace and error bytes only as internal value-engine evidence.",
+      "phase": "unrepresentable",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "throw",
+          "value": "throw-2"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "needle-type-none",
+      "expression": "@cs @noopt Replace(\"abc\",none,\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "replacement-type-none",
+      "expression": "@cs @noopt Replace(\"abc\",\"a\",none)",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "none"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "needle-type-integer",
+      "expression": "@cs @noopt Replace(\"abc\",12,\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "integer",
+          "value": 12
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "replacement-type-integer",
+      "expression": "@cs @noopt Replace(\"abc\",\"a\",12)",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "integer",
+          "value": 12
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "needle-type-double",
+      "expression": "@cs @noopt Replace(\"abc\",1.5,\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "double",
+          "value": 1.5
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "replacement-type-double",
+      "expression": "@cs @noopt Replace(\"abc\",\"a\",1.5)",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "double",
+          "value": 1.5
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "needle-type-bool",
+      "expression": "@cs @noopt Replace(\"abc\",true,\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "bool",
+          "value": true
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "replacement-type-bool",
+      "expression": "@cs @noopt Replace(\"abc\",\"a\",true)",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "bool",
+          "value": true
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "needle-type-array",
+      "expression": "@cs @noopt Replace(\"abc\",Array(),\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "array",
+          "value": []
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "replacement-type-array",
+      "expression": "@cs @noopt Replace(\"abc\",\"a\",Array())",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "array",
+          "value": []
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "invalid-needle-eager-throw",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "adapter-throw-boundary",
+      "reason": "ThrowNode is custom adapter node. No registered Throw expression; replacing with division-by-zero would invent a different AST/error. Preserve golden evaluated trace and error bytes only as internal value-engine evidence.",
+      "phase": "unrepresentable",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "throw",
+          "value": "replacement evaluated"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "subject-none",
+      "expression": "@cs @noopt Replace(none,\"1\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "none"
+        },
+        {
+          "type": "string",
+          "value": "1"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "subject-integer",
+      "expression": "@cs @noopt Replace(1212,\"1\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1212
+        },
+        {
+          "type": "string",
+          "value": "1"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "subject-double",
+      "expression": "@cs @noopt Replace(1.5,\"1\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 1.5
+        },
+        {
+          "type": "string",
+          "value": "1"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "subject-bool",
+      "expression": "@cs @noopt Replace(true,\"1\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "bool",
+          "value": true
+        },
+        {
+          "type": "string",
+          "value": "1"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-array",
+      "expression": "@cs @noopt Replace(Array(),\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": []
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "mixed-array",
+      "expression": "@cs @noopt Replace(Array(\"aba\",none,121,true),\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "aba"
+            },
+            {
+              "type": "none"
+            },
+            {
+              "type": "integer",
+              "value": 121
+            },
+            {
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "nested-array",
+      "expression": "@cs @noopt Replace(Array(Array(\"aba\",none,Array(\"a\")),\"aba\"),\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "string",
+                  "value": "aba"
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "string",
+                      "value": "a"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "value": "aba"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "ascii-cs",
+      "expression": "@cs @noopt Replace(\"AbCaBc\",\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "AbCaBc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "ascii-ci",
+      "expression": "@ci @noopt Replace(\"AbCaBc\",\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "AbCaBc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-latin-cs",
+      "expression": "@cs @noopt Replace(\"ÉéÄä\",\"é\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "ÉéÄä"
+        },
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-latin-ci",
+      "expression": "@ci @noopt Replace(\"ÉéÄä\",\"é\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "ÉéÄä"
+        },
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-kelvin-cs",
+      "expression": "@cs @noopt Replace(\"KkK\",\"k\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "KkK"
+        },
+        {
+          "type": "string",
+          "value": "k"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-kelvin-ci",
+      "expression": "@ci @noopt Replace(\"KkK\",\"k\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "KkK"
+        },
+        {
+          "type": "string",
+          "value": "k"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-greek-cs",
+      "expression": "@cs @noopt Replace(\"Σσς\",\"σ\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "Σσς"
+        },
+        {
+          "type": "string",
+          "value": "σ"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-greek-ci",
+      "expression": "@ci @noopt Replace(\"Σσς\",\"σ\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "Σσς"
+        },
+        {
+          "type": "string",
+          "value": "σ"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-turkish-cs",
+      "expression": "@cs @noopt Replace(\"İiIı\",\"i\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "İiIı"
+        },
+        {
+          "type": "string",
+          "value": "i"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-turkish-ci",
+      "expression": "@ci @noopt Replace(\"İiIı\",\"i\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "İiIı"
+        },
+        {
+          "type": "string",
+          "value": "i"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-sharp-s-cs",
+      "expression": "@cs @noopt Replace(\"ßSSss\",\"ß\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "ßSSss"
+        },
+        {
+          "type": "string",
+          "value": "ß"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-sharp-s-ci",
+      "expression": "@ci @noopt Replace(\"ßSSss\",\"ß\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "ßSSss"
+        },
+        {
+          "type": "string",
+          "value": "ß"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-japanese-cs",
+      "expression": "@cs @noopt Replace(\"あいあ\",\"あ\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "あいあ"
+        },
+        {
+          "type": "string",
+          "value": "あ"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "unicode-japanese-ci",
+      "expression": "@ci @noopt Replace(\"あいあ\",\"あ\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "あいあ"
+        },
+        {
+          "type": "string",
+          "value": "あ"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "no-match-cs",
+      "expression": "@cs @noopt Replace(\"abc\",\"Z\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "Z"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "no-match-ci",
+      "expression": "@ci @noopt Replace(\"abc\",\"Z\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "Z"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "overlap-cs",
+      "expression": "@cs @noopt Replace(\"aaaaa\",\"aa\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aaaaa"
+        },
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "overlap-ci",
+      "expression": "@ci @noopt Replace(\"aaaaa\",\"aa\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aaaaa"
+        },
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-subject-cs",
+      "expression": "@cs @noopt Replace(\"\",\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-subject-ci",
+      "expression": "@ci @noopt Replace(\"\",\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-needle-cs",
+      "expression": "@cs @noopt Replace(\"abc\",\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-needle-ci",
+      "expression": "@ci @noopt Replace(\"abc\",\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-both-cs",
+      "expression": "@cs @noopt Replace(\"\",\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-both-ci",
+      "expression": "@ci @noopt Replace(\"\",\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "erase-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "erase-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "self-replacement-cs",
+      "expression": "@cs @noopt Replace(\"aa\",\"a\",\"a\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "self-replacement-ci",
+      "expression": "@ci @noopt Replace(\"aa\",\"a\",\"a\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "expanding-cs",
+      "expression": "@cs @noopt Replace(\"aa\",\"a\",\"aa\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "aa"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "expanding-ci",
+      "expression": "@ci @noopt Replace(\"aa\",\"a\",\"aa\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aa"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "aa"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "physical-newline-cs",
+      "expression": "@cs @noopt Replace(\"a\r\nb\nc\rd\",\"\n\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "generated-crlf-boundary",
+      "reason": "Actual literal CR/LF allowed by lexer except NUL; body output hex 610d586258630d64 retains CR, then public TransformCore rejects generated CR/LF. Preserve input/key original bytes and outer EOL on diagnostic failure.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a\r\nb\nc\rd"
+        },
+        {
+          "type": "string",
+          "value": "\n"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "physical-newline-ci",
+      "expression": "@ci @noopt Replace(\"a\r\nb\nc\rd\",\"\n\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "generated-crlf-boundary",
+      "reason": "Actual literal CR/LF allowed by lexer except NUL; body output hex 610d586258630d64 retains CR, then public TransformCore rejects generated CR/LF. Preserve input/key original bytes and outer EOL on diagnostic failure.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a\r\nb\nc\rd"
+        },
+        {
+          "type": "string",
+          "value": "\n"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "physical-crlf-cs",
+      "expression": "@cs @noopt Replace(\"a\r\nb\r\n\",\"\r\n\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Literal subject contains physical CRLF, but both occurrences are removed by Replace; actual body output hex 61586258 has no CR/LF, so public result is oracle-match candidate. Do not reject solely because source expression literal contains CRLF.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a\r\nb\r\n"
+        },
+        {
+          "type": "string",
+          "value": "\r\n"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "physical-crlf-ci",
+      "expression": "@ci @noopt Replace(\"a\r\nb\r\n\",\"\r\n\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Literal subject contains physical CRLF, but both occurrences are removed by Replace; actual body output hex 61586258 has no CR/LF, so public result is oracle-match candidate. Do not reject solely because source expression literal contains CRLF.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a\r\nb\r\n"
+        },
+        {
+          "type": "string",
+          "value": "\r\n"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "regex-meta-cs",
+      "expression": "@cs @noopt Replace(\". ^ $ * + ? { } [ ] \\ | ( )\",\".\",\"$0\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ". ^ $ * + ? { } [ ] \\ | ( )"
+        },
+        {
+          "type": "string",
+          "value": "."
+        },
+        {
+          "type": "string",
+          "value": "$0"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "regex-meta-ci",
+      "expression": "@ci @noopt Replace(\". ^ $ * + ? { } [ ] \\ | ( )\",\".\",\"$0\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ". ^ $ * + ? { } [ ] \\ | ( )"
+        },
+        {
+          "type": "string",
+          "value": "."
+        },
+        {
+          "type": "string",
+          "value": "$0"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "regex-meta-all-cs",
+      "expression": "@cs @noopt Replace(\"a.*[x]$(y)\\\",\".*[x]$(y)\\\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a.*[x]$(y)\\"
+        },
+        {
+          "type": "string",
+          "value": ".*[x]$(y)\\"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "regex-meta-all-ci",
+      "expression": "@ci @noopt Replace(\"a.*[x]$(y)\\\",\".*[x]$(y)\\\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a.*[x]$(y)\\"
+        },
+        {
+          "type": "string",
+          "value": ".*[x]$(y)\\"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-zero-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"$0\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$0"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-zero-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"$0\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$0"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-one-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"$1\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$1"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-one-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"$1\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$1"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-ten-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"$10\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$10"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-ten-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"$10\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$10"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-double-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"$$\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$$"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-double-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"$$\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$$"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-trailing-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"X$\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X$"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-trailing-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"X$\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X$"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-letter-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"$x\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$x"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-letter-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"$x\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$x"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-mixed-cs",
+      "expression": "@cs @noopt Replace(\"aba\",\"a\",\"$0:$1:$10:$$:$x:$\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$0:$1:$10:$$:$x:$"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "dollar-mixed-ci",
+      "expression": "@ci @noopt Replace(\"aba\",\"a\",\"$0:$1:$10:$$:$x:$\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$0:$1:$10:$$:$x:$"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "regex-group",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "typed-regex-boundary",
+      "reason": "Typed Regex/lazy-regex is adapter input, not a string needle. Current parser has no regex construction syntax. Future typed literal remains separate increment; lazy invalid regex currently throws while evaluating argument 1, so compile-time rejection would be a documented phase boundary.",
+      "phase": "future-typed-literal-unresolved",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "regex",
+          "value": "(a)"
+        },
+        {
+          "type": "string",
+          "value": "$0/$1/$10/$$"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "regex-zero-width",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "typed-regex-boundary",
+      "reason": "Typed Regex/lazy-regex is adapter input, not a string needle. Current parser has no regex construction syntax. Future typed literal remains separate increment; lazy invalid regex currently throws while evaluating argument 1, so compile-time rejection would be a documented phase boundary.",
+      "phase": "future-typed-literal-unresolved",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "regex",
+          "value": "(?=b)"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "regex-empty",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "typed-regex-boundary",
+      "reason": "Typed Regex/lazy-regex is adapter input, not a string needle. Current parser has no regex construction syntax. Future typed literal remains separate increment; lazy invalid regex currently throws while evaluating argument 1, so compile-time rejection would be a documented phase boundary.",
+      "phase": "future-typed-literal-unresolved",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "regex",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-empty",
+      "expression": "@ci @opt Replace(\"abc\",\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": true,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-empty-subject",
+      "expression": "@ci @opt Replace(\"\",\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": true,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-normal",
+      "expression": "@ci @opt Replace(\"aba\",\"a\",\"$0:$1\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "aba"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "$0:$1"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": true,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-meta",
+      "expression": "@ci @opt Replace(\"a.*b\",\".*\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a.*b"
+        },
+        {
+          "type": "string",
+          "value": ".*"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": true,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-unicode",
+      "expression": "@ci @opt Replace(\"Éé\",\"é\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "Éé"
+        },
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": false,
+      "oracleTrace": {
+        "folded": true,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-dynamic-subject",
+      "expression": "@cs @opt Replace(Line,\"\",\"X\")",
+      "context": {
+        "kind": "nonliteral-subject-getter",
+        "sourceLineHex": "616263",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "Original DynamicNode(StringLiteral abc) projects to nonliteral Line; row bytes exactly abc; retain case context",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "@opt Replace(Line,\"\",\"X\") keeps subject nonliteral, needle literal => regexNeedle true/folded false, actual oracle value XXX. Literalizing subject changes optimizer fold branch.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "dynamic",
+          "value": {
+            "type": "string",
+            "value": "abc"
+          }
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-dynamic-needle",
+      "expression": "@cs @opt Replace(\"abc\",Line,\"X\")",
+      "context": {
+        "kind": "nonliteral-needle-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "Original DynamicNode(StringLiteral empty) projects to nonliteral Line; explicit one empty EOF row, not zero rows",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "@opt Replace(\"abc\",Line,\"X\") keeps needle nonliteral => regexNeedle false/folded false, actual oracle none. Literalizing empty needle instead produces XXX. Getter/provider projection is supplementary caller context, not old parser execution.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "dynamic",
+          "value": {
+            "type": "string",
+            "value": ""
+          }
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-arity-four",
+      "expression": "@cs @opt Replace(\"abc\",\"a\",\"X\",\"ignored\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "constructor-boundary",
+      "reason": "Original direct body accepts invalid arity as none, except selected opt arity-four throws during fold. Public constructor requires exactly 3. Null args pointer cannot be distinguished from empty list by Replace(). Arity-4 includes adapter ThrowNode and has no exact source expression.",
+      "phase": "compile",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        },
+        {
+          "type": "string",
+          "value": "ignored"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-non-string-replacement",
+      "expression": "@cs @opt Replace(\"abc\",\"a\",12)",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "integer",
+          "value": 12
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "invalid-regex-rejection",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "typed-regex-boundary",
+      "reason": "Typed Regex/lazy-regex is adapter input, not a string needle. Current parser has no regex construction syntax. Future typed literal remains separate increment; lazy invalid regex currently throws while evaluating argument 1, so compile-time rejection would be a documented phase boundary.",
+      "phase": "future-typed-literal-unresolved",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "lazy-regex",
+          "value": "("
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "invalid-utf8-subject",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "raw-invalid-utf8-boundary",
+      "reason": "Raw byte 0xff cannot be represented faithfully by UTF-16 string expression or valid UTF-8 input context. Original body result none/none/raw ff differs from generated CR/LF rejection. Replacement U+FFFD or surrogate is not this oracle case; do not infer input-decoder error policy.",
+      "phase": "input-or-lexical-unresolved",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "raw-string",
+          "value": [
+            97,
+            255,
+            98
+          ]
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "invalid-utf8-needle",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "raw-invalid-utf8-boundary",
+      "reason": "Raw byte 0xff cannot be represented faithfully by UTF-16 string expression or valid UTF-8 input context. Original body result none/none/raw ff differs from generated CR/LF rejection. Replacement U+FFFD or surrogate is not this oracle case; do not infer input-decoder error policy.",
+      "phase": "input-or-lexical-unresolved",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "raw-string",
+          "value": [
+            255
+          ]
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "raw-replacement-bytes",
+      "expression": null,
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "raw-invalid-utf8-boundary",
+      "reason": "Raw byte 0xff cannot be represented faithfully by UTF-16 string expression or valid UTF-8 input context. Original body result none/none/raw ff differs from generated CR/LF rejection. Replacement U+FFFD or surrogate is not this oracle case; do not infer input-decoder error policy.",
+      "phase": "input-or-lexical-unresolved",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "raw-string",
+          "value": [
+            255
+          ]
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "embedded-nul-subject",
+      "expression": "@cs @noopt Replace(\"a\u0000a\",\"a\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "nul-literal-boundary",
+      "reason": "Raw bytes are valid UTF-8 including U+0000, but parser Next rejects NUL inside quoted literal at LineTransformExpression.cs:951. Expression stores actual NUL, never backslash-u escape. Moving argument to Line/Column is a supplemental getter case and cannot relabel this literal AST as matched.",
+      "phase": "compile",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "raw-string",
+          "value": [
+            97,
+            0,
+            97
+          ]
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "embedded-nul-needle",
+      "expression": "@cs @noopt Replace(\"a\u0000a\",\"\u0000\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "nul-literal-boundary",
+      "reason": "Raw bytes are valid UTF-8 including U+0000, but parser Next rejects NUL inside quoted literal at LineTransformExpression.cs:951. Expression stores actual NUL, never backslash-u escape. Moving argument to Line/Column is a supplemental getter case and cannot relabel this literal AST as matched.",
+      "phase": "compile",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "raw-string",
+          "value": [
+            97,
+            0,
+            97
+          ]
+        },
+        {
+          "type": "raw-string",
+          "value": [
+            0
+          ]
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-empty-delete",
+      "expression": "@cs @opt Replace(\"abc\",\"\",\"\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "abc"
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": true,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-empty-utf8",
+      "expression": "@cs @opt Replace(\"あい\",\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "optimizer-error-boundary-pending",
+      "reason": "Original empty regex Unicode substitution produces none; selected branch std::get<string> throws bad_variant_access during fold. @opt is essential. Future actual public compile failure requires verification; @noopt would instead yield none and is a different case.",
+      "phase": "compile",
+      "originalCapturePhase": "selectedOptimize",
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "あい"
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "empty-needle-array",
+      "expression": "@cs @noopt Replace(Array(\"abc\",none),\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "function-body-noopt",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "function-body-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "abc"
+            },
+            {
+              "type": "none"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [
+          0,
+          1,
+          2
+        ],
+        "regexNeedle": false
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    },
+    {
+      "id": "opt-empty-array",
+      "expression": "@cs @opt Replace(Array(\"abc\",none),\"\",\"X\")",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "provenance": "caller bridge proposed; oracle AST has no provider/input row",
+        "forbidRetargeting": true
+      },
+      "mode": "optimizer-selected-branch",
+      "oracleMatchedOrBoundary": "oracle-match-candidate",
+      "reason": "Original argument scalar/array types and caseSensitive can be expressed; final serialization still requires C++ sidecar; no actual public execution performed.",
+      "phase": "evaluate",
+      "originalCapturePhase": "selectedOptimize-then-evaluate",
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "abc"
+            },
+            {
+              "type": "none"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "X"
+        }
+      ],
+      "originalNullArgs": false,
+      "originalCaseSensitive": true,
+      "oracleTrace": {
+        "folded": false,
+        "evaluated": [],
+        "regexNeedle": true
+      },
+      "serializedOracleSidecarNeed": {
+        "capture": "same original AST, selected mode; evaluate once; capture original ToStringValue(value) raw bytes on success and original error bytes on failure",
+        "prohibition": "No Python pseudo-formatter; no golden modification; errors have no final key string",
+        "required": true
+      }
+    }
+  ]
+}

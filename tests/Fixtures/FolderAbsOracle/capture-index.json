@@ -1,0 +1,18 @@
+{
+  "runs": [
+    {
+      "name": "run1",
+      "receiptSha256": "360be080f387db1192bead58b3eccaf589a595a5a22fe96d1ca46852b8c8dfbd",
+      "compilePid": 17532,
+      "runPid": 41560,
+      "stdoutSha256": "960f7b625490c165db774d4b8c3f27f6c89b7b4ab042411dd99f168f8a2ad7e3"
+    },
+    {
+      "name": "run2",
+      "receiptSha256": "5eb2ff2a2bc16e6251c95c14ae1be2a4a1d6afe286a9a5577d38cec78e7d99f1",
+      "compilePid": 19308,
+      "runPid": 8484,
+      "stdoutSha256": "960f7b625490c165db774d4b8c3f27f6c89b7b4ab042411dd99f168f8a2ad7e3"
+    }
+  ]
+}

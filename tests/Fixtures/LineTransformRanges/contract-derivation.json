@@ -1,0 +1,10 @@
+{
+  "schema": "inrange-captured-diagnostic-projection-v1",
+  "archiveSha256": "86c61ac35548f85b2d44da368b14ba9b58421d77d0d57c0fc8274defe4321626",
+  "actualEntry": "evidence/final-native-public-1.stdout",
+  "actualSha256": "5a74c06c0ba35afd4af201c353abceb6e7a61ddc2a61898871668d4fbe72cf92",
+  "probeEntry": "evidence/constructor-probes.stdout",
+  "probeSha256": "196d7cae34b1982aaa767ed6969afc01c53338c56a079ed29a6dfc5e66291f5d",
+  "operation": "Only copy sourceLineCount and rowIndex from each actual captured context to normative top-level fields. All keys/status/errors/data retain real process output; no formatter/math/managed execution.",
+  "sourceFrozenPublicPlanSha256": "f201d12937d34271ec05e851830c641110b941ae469542ec442a0ad6a8083f1d"
+}

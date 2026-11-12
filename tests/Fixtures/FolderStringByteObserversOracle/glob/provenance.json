@@ -1,0 +1,77 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "sources": [
+    {
+      "path": "Externals/poco/Foundation/include/Poco/Glob.h",
+      "file": "original/Glob.h",
+      "blob": "e23e9b214e0467ef35d6f006ad057e1a6c08d65b",
+      "sha256": "4d5eeb05bef2e80b8748f357905d7b81e653b57dca4d272525222806b8dbc178",
+      "size": 5286
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/TextIterator.h",
+      "file": "original/TextIterator.h",
+      "blob": "f78fb868b6bd1dd173875056cbafc515d01178f2",
+      "sha256": "5b0a46eb888ef9450792b69b474c3bab72049dce6812bcd6449a977fe91943ba",
+      "size": 3416
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/UTF8Encoding.h",
+      "file": "original/UTF8Encoding.h",
+      "blob": "ea56f6aee09d3967eec65c333f0d4bc6661589e4",
+      "sha256": "410daec2a6491a45f77b1a40a3b0f6ea1bd219c3b83eeb35d4d61b6ac10c631d",
+      "size": 1732
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/TextEncoding.h",
+      "file": "original/TextEncoding.h",
+      "blob": "b3236a40a33a50e3f06567581567a0e5ff9f2a21",
+      "sha256": "8c8a67667e568ed6c60589769552a28cbebf280cc3b9867061690f9379a64ed7",
+      "size": 6929
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/Unicode.h",
+      "file": "original/Unicode.h",
+      "blob": "c6a534592baf892a19dfb97ba1448db34dfe2767",
+      "sha256": "64815d99f3f999fc0707be372620065e0a0bae84736f15ce39cfaeb568335f64",
+      "size": 6208
+    },
+    {
+      "path": "Externals/poco/Foundation/src/Glob.cpp",
+      "file": "original/Glob.cpp",
+      "blob": "f1cc88167a8ddbee457efb3b06969f6998acc302",
+      "sha256": "bf896839dcb97dfc8458ce077a26d8f7051aaa25474b336ea084120a0db3c889",
+      "size": 6112
+    },
+    {
+      "path": "Externals/poco/Foundation/src/TextIterator.cpp",
+      "file": "original/TextIterator.cpp",
+      "blob": "7fc4bf944684d22c64ea8208dcbeb7935263ab78",
+      "sha256": "8b4c092d5a637bd1487f08819df6548516f6bbb7b55ea7a0d8a7f6b8d6183cb8",
+      "size": 2796
+    },
+    {
+      "path": "Externals/poco/Foundation/src/UTF8Encoding.cpp",
+      "file": "original/UTF8Encoding.cpp",
+      "blob": "5b88f41a03e9c31fde5424c5639f7cb1c2fcdb8f",
+      "sha256": "d61f56ed798ebc3776459979b49246527a16796fa143aec289082722a0ffdeef",
+      "size": 5654
+    },
+    {
+      "path": "Externals/poco/Foundation/src/Unicode.cpp",
+      "file": "original/Unicode.cpp",
+      "blob": "4cd74d3e0aa464d9c273a7b36d2ebe4a4f4aabb6",
+      "sha256": "6d7bca3abc2bc0aedb781664a534b1613805976a9f2e08ef0a83cddb03faa4e2",
+      "size": 978
+    },
+    {
+      "path": "Externals/poco/LICENSE",
+      "file": "original/LICENSE",
+      "blob": "2f2f957ce4f48733875f0791d0d383e8d9319205",
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5",
+      "size": 1678
+    }
+  ],
+  "pcreArchive": "../consumers/reference-source.zip",
+  "pcreArchiveSha256": "18ed25d74eba5e151bf5fd1a2e811b2490af2ce4c3e39b273a2d563abe8da4e7"
+}

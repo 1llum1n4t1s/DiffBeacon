@@ -1,0 +1,482 @@
+[
+  {
+    "id": "zero",
+    "inputHex": "30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "3022",
+    "classification": "public-proposal",
+    "raw60Id": "zero"
+  },
+  {
+    "id": "empty",
+    "inputHex": "",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "22",
+    "classification": "public-proposal",
+    "raw60Id": "empty"
+  },
+  {
+    "id": "text",
+    "inputHex": "616263",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "61626322",
+    "classification": "public-proposal",
+    "raw60Id": "text"
+  },
+  {
+    "id": "dot",
+    "inputHex": "2e",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "2e22",
+    "classification": "public-proposal",
+    "raw60Id": "dot"
+  },
+  {
+    "id": "missing2",
+    "inputHex": "31",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "3122",
+    "classification": "public-proposal",
+    "raw60Id": "missing2"
+  },
+  {
+    "id": "missing3",
+    "inputHex": "312e32",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e3222",
+    "classification": "public-proposal",
+    "raw60Id": "missing3"
+  },
+  {
+    "id": "missing4",
+    "inputHex": "312e322e33",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e3322",
+    "classification": "public-proposal",
+    "raw60Id": "missing4"
+  },
+  {
+    "id": "all",
+    "inputHex": "312e322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "all"
+  },
+  {
+    "id": "double-dot",
+    "inputHex": "312e2e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e2e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "double-dot"
+  },
+  {
+    "id": "missing-first",
+    "inputHex": "2e322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "2e322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "missing-first"
+  },
+  {
+    "id": "stop2",
+    "inputHex": "312e782e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e782e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "stop2"
+  },
+  {
+    "id": "stop3",
+    "inputHex": "312e322e782e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e782e3422",
+    "classification": "public-proposal",
+    "raw60Id": "stop3"
+  },
+  {
+    "id": "stop4",
+    "inputHex": "312e322e332e78",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e7822",
+    "classification": "public-proposal",
+    "raw60Id": "stop4"
+  },
+  {
+    "id": "end-dot",
+    "inputHex": "312e322e332e",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e22",
+    "classification": "public-proposal",
+    "raw60Id": "end-dot"
+  },
+  {
+    "id": "trailing-dot",
+    "inputHex": "312e322e332e342e",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e342e22",
+    "classification": "public-proposal",
+    "raw60Id": "trailing-dot"
+  },
+  {
+    "id": "trailing5",
+    "inputHex": "312e322e332e342e35",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e342e3522",
+    "classification": "public-proposal",
+    "raw60Id": "trailing5"
+  },
+  {
+    "id": "tail",
+    "inputHex": "312e322e332e347461696c",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e347461696c22",
+    "classification": "public-proposal",
+    "raw60Id": "tail"
+  },
+  {
+    "id": "leading-ws",
+    "inputHex": "20090d0a312e322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "20090d0a312e322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "leading-ws"
+  },
+  {
+    "id": "space-after-dot",
+    "inputHex": "312e20322e20332e2034",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e20322e20332e203422",
+    "classification": "public-proposal",
+    "raw60Id": "space-after-dot"
+  },
+  {
+    "id": "space-before-dot",
+    "inputHex": "31202e322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "31202e322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "space-before-dot"
+  },
+  {
+    "id": "space-middle",
+    "inputHex": "312e32202e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e32202e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "space-middle"
+  },
+  {
+    "id": "tabs-after-dot",
+    "inputHex": "312e09322e0a332e0d34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e09322e0a332e0d3422",
+    "classification": "public-proposal",
+    "raw60Id": "tabs-after-dot"
+  },
+  {
+    "id": "plus-all",
+    "inputHex": "2b312e2b322e2b332e2b34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "2b312e2b322e2b332e2b3422",
+    "classification": "public-proposal",
+    "raw60Id": "plus-all"
+  },
+  {
+    "id": "plus-zero",
+    "inputHex": "2b302e2b302e2b302e2b30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "2b302e2b302e2b302e2b3022",
+    "classification": "public-proposal",
+    "raw60Id": "plus-zero"
+  },
+  {
+    "id": "negative-zero",
+    "inputHex": "2d302e2d302e2d302e2d30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "2d302e2d302e2d302e2d3022",
+    "classification": "public-proposal",
+    "raw60Id": "negative-zero"
+  },
+  {
+    "id": "minus-revision",
+    "inputHex": "302e302e302e2d31",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e2d3122",
+    "classification": "public-proposal",
+    "raw60Id": "minus-revision"
+  },
+  {
+    "id": "negative-min-revision",
+    "inputHex": "302e302e302e2d32313437343833363438",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e2d3231343734383336343822",
+    "classification": "public-proposal",
+    "raw60Id": "negative-min-revision"
+  },
+  {
+    "id": "negative-revision-upper",
+    "inputHex": "33323736372e36353533352e36353533352e2d31",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "33323736372e36353533352e36353533352e2d3122",
+    "classification": "public-proposal",
+    "raw60Id": "negative-revision-upper"
+  },
+  {
+    "id": "leading-zeros",
+    "inputHex": "303030312e303030322e303030332e30303034",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "303030312e303030322e303030332e3030303422",
+    "classification": "public-proposal",
+    "raw60Id": "leading-zeros"
+  },
+  {
+    "id": "hex-looking",
+    "inputHex": "3078312e322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "3078312e322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "hex-looking"
+  },
+  {
+    "id": "exponent-looking",
+    "inputHex": "3165322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "3165322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "exponent-looking"
+  },
+  {
+    "id": "backslash",
+    "inputHex": "315c2e322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "315c2e322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "backslash"
+  },
+  {
+    "id": "escaped-n",
+    "inputHex": "312e322e332e345c6e",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e345c6e22",
+    "classification": "public-proposal",
+    "raw60Id": "escaped-n"
+  },
+  {
+    "id": "quote-tail",
+    "inputHex": "312e322e332e3422",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e34222222",
+    "classification": "public-proposal",
+    "raw60Id": "quote-tail"
+  },
+  {
+    "id": "zero-all",
+    "inputHex": "302e302e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "zero-all"
+  },
+  {
+    "id": "revision-65534",
+    "inputHex": "302e302e302e3635353334",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e363535333422",
+    "classification": "public-proposal",
+    "raw60Id": "revision-65534"
+  },
+  {
+    "id": "revision-65535",
+    "inputHex": "302e302e302e3635353335",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e363535333522",
+    "classification": "public-proposal",
+    "raw60Id": "revision-65535"
+  },
+  {
+    "id": "revision-65536",
+    "inputHex": "302e302e302e3635353336",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e363535333622",
+    "classification": "public-proposal",
+    "raw60Id": "revision-65536"
+  },
+  {
+    "id": "revision-overlap",
+    "inputHex": "302e302e312e3635353336",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e312e363535333622",
+    "classification": "public-proposal",
+    "raw60Id": "revision-overlap"
+  },
+  {
+    "id": "build-65534",
+    "inputHex": "302e302e36353533342e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e36353533342e3022",
+    "classification": "public-proposal",
+    "raw60Id": "build-65534"
+  },
+  {
+    "id": "build-65535",
+    "inputHex": "302e302e36353533352e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e36353533352e3022",
+    "classification": "public-proposal",
+    "raw60Id": "build-65535"
+  },
+  {
+    "id": "build-65536",
+    "inputHex": "302e302e36353533362e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e36353533362e3022",
+    "classification": "public-proposal",
+    "raw60Id": "build-65536"
+  },
+  {
+    "id": "build-overlap",
+    "inputHex": "302e312e36353533362e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e312e36353533362e3022",
+    "classification": "public-proposal",
+    "raw60Id": "build-overlap"
+  },
+  {
+    "id": "minor-65534",
+    "inputHex": "302e36353533342e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e36353533342e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "minor-65534"
+  },
+  {
+    "id": "minor-65535",
+    "inputHex": "302e36353533352e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e36353533352e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "minor-65535"
+  },
+  {
+    "id": "minor-65536",
+    "inputHex": "302e36353533362e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e36353533362e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "minor-65536"
+  },
+  {
+    "id": "minor-overlap",
+    "inputHex": "312e36353533362e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e36353533362e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "minor-overlap"
+  },
+  {
+    "id": "major-32766",
+    "inputHex": "33323736362e302e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "33323736362e302e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "major-32766"
+  },
+  {
+    "id": "major-32767",
+    "inputHex": "33323736372e302e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "33323736372e302e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "major-32767"
+  },
+  {
+    "id": "positive-max",
+    "inputHex": "33323736372e36353533352e36353533352e3635353335",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "33323736372e36353533352e36353533352e363535333522",
+    "classification": "public-proposal",
+    "raw60Id": "positive-max"
+  },
+  {
+    "id": "build-int-max",
+    "inputHex": "302e302e323134373438333634372e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e323134373438333634372e3022",
+    "classification": "public-proposal",
+    "raw60Id": "build-int-max"
+  },
+  {
+    "id": "minor-int-max",
+    "inputHex": "302e323134373438333634372e302e30",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e323134373438333634372e302e3022",
+    "classification": "public-proposal",
+    "raw60Id": "minor-int-max"
+  },
+  {
+    "id": "revision-int-max",
+    "inputHex": "302e302e302e32313437343833363437",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e3231343734383336343722",
+    "classification": "public-proposal",
+    "raw60Id": "revision-int-max"
+  },
+  {
+    "id": "many-tail",
+    "inputHex": "312e322e332e342e352e362e37",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e342e352e362e3722",
+    "classification": "public-proposal",
+    "raw60Id": "many-tail"
+  },
+  {
+    "id": "sign-without-number",
+    "inputHex": "312e322e332e2b",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e322e332e2b22",
+    "classification": "public-proposal",
+    "raw60Id": "sign-without-number"
+  },
+  {
+    "id": "start-plus",
+    "inputHex": "2b",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "2b22",
+    "classification": "public-proposal",
+    "raw60Id": "start-plus"
+  },
+  {
+    "id": "bare-sign-after-dot",
+    "inputHex": "312e2d2e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e2d2e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "bare-sign-after-dot"
+  },
+  {
+    "id": "vertical-space",
+    "inputHex": "0b0c312e322e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "0b0c312e322e332e3422",
+    "classification": "public-proposal",
+    "raw60Id": "vertical-space"
+  },
+  {
+    "id": "revision-leading-space",
+    "inputHex": "302e302e302e202d31",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "302e302e302e202d3122",
+    "classification": "public-proposal",
+    "raw60Id": "revision-leading-space"
+  },
+  {
+    "id": "nul-stop",
+    "inputHex": "312e32002e332e34",
+    "scope": "direct-original-constructor-only",
+    "quotedBodyHex": "312e32002e332e3422",
+    "classification": "constructor-only-public-rejected",
+    "raw60Id": "nul-stop"
+  }
+]

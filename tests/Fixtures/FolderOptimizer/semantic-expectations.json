@@ -1,0 +1,311 @@
+{
+  "fixedBeforeManagedExecution": true,
+  "observationsUsedToChangeExpected": false,
+  "sourceReferences": {
+    "double": "native-proof.zip/source/Src/FilterEngine/FilterLexer.re:65-71 (std::stod Double, std::stoi Int32)",
+    "size": "native-proof.zip/source/Src/FilterEngine/FilterExpressionNodes.cpp:4495-4517 (stod then int64 truncation)",
+    "typed": "native-proof.zip/source/Src/FilterEngine/FilterExpressionNodes.cpp:581-803 (typed scalar Compare and None; Bool subtraction runtime vs folded)",
+    "grammar": "native-proof.zip/source/Src/FilterEngine/FilterParser.y:82-119 (untyped root/logical/comparison/arithmetic; unary minus)",
+    "global": "source-support.zip/Src/FileFilter.cpp:268-280; native-proof.zip/source/Src/FilterEngine/FilterExpressionNodes.cpp:1614,1659-1677 (DIFFITEM global, arrays for dirs>1)",
+    "missing": "native-proof.zip/source/Src/FilterEngine/FilterExpressionNodes.cpp:1054-1058 (absent Size None, present Int64)",
+    "root": "source-support.zip/Src/FilterEngine/FilterExpression.cpp:328-357 (ContainsTrue result, no static RequireBoolean)",
+    "opt": "native-proof.zip/source/Src/FilterEngine/FilterExpressionNodes.cpp:254-364,518,786; function-optimize-evaluate.inc (whole child walk, literal provenance)"
+  },
+  "cases": [
+    {
+      "id": "double-precision",
+      "predicate": "0.1000000000000000000000000001 != 0.1",
+      "old": {
+        "selected": 4
+      },
+      "new": {
+        "compileAccepted": true,
+        "selected": 0,
+        "cliExit": 0
+      },
+      "refs": [
+        "double",
+        "typed"
+      ],
+      "scope": "source-derived public regression; native full lexer not executed"
+    },
+    {
+      "id": "large-double",
+      "predicate": "1e100 > 0",
+      "old": {
+        "compileRejected": true,
+        "cliExit": 2
+      },
+      "new": {
+        "compileAccepted": true,
+        "predicate": true,
+        "selected": 4,
+        "cliExit": 0
+      },
+      "refs": [
+        "double",
+        "typed"
+      ],
+      "scope": "source-derived finite Double; compile acceptance, truth, selected count and equal-input exit are separate"
+    },
+    {
+      "id": "fractional-size",
+      "predicate": "Size == 1.5001KB",
+      "input": "1536-byte left-only file",
+      "old": {
+        "selected": 0,
+        "cliExit": 0
+      },
+      "new": {
+        "compileAccepted": true,
+        "selected": 1,
+        "cliExit": 1
+      },
+      "refs": [
+        "size",
+        "typed",
+        "global"
+      ],
+      "scope": "source-derived Int64 size literal"
+    },
+    {
+      "id": "missing-none-no-property",
+      "predicate": "((Size>0)==None)",
+      "input": "1-byte right-only file",
+      "old": {
+        "selected": 0,
+        "cliExit": 0
+      },
+      "new": {
+        "compileAccepted": true,
+        "selected": 1,
+        "cliExit": 1,
+        "left": null,
+        "rightKind": "File",
+        "rightSize": 1
+      },
+      "refs": [
+        "global",
+        "missing",
+        "typed"
+      ],
+      "scope": "source-derived side wrapper; None native value remains unchanged by property collection"
+    },
+    {
+      "id": "missing-none-property",
+      "predicate": "((Size>0)==None) and Prop(\"System.Size\")!=None",
+      "input": "Windows 1-byte right-only file",
+      "old": {
+        "selected": 1,
+        "cliExit": 1
+      },
+      "new": {
+        "selected": 1,
+        "cliExit": 1,
+        "left": null,
+        "rightKind": "File",
+        "rightSize": 1
+      },
+      "refs": [
+        "global",
+        "missing",
+        "typed"
+      ],
+      "scope": "source-derived Windows host-property control, not native provider-present measurement"
+    },
+    {
+      "id": "mixed-name-number",
+      "predicate": "Name == 1",
+      "old": {
+        "staticTypeRejected": true,
+        "cliExit": 2
+      },
+      "new": {
+        "compileAccepted": true,
+        "predicate": false,
+        "selected": 0,
+        "cliExit": 0
+      },
+      "refs": [
+        "grammar",
+        "typed"
+      ],
+      "scope": "source-derived removal of legacy static comparison restriction"
+    },
+    {
+      "id": "bare-number-none",
+      "predicates": [
+        "7",
+        "None",
+        "not None"
+      ],
+      "old": {
+        "staticBooleanRejected": true
+      },
+      "new": {
+        "compileAccepted": true,
+        "predicate": false,
+        "selected": 0,
+        "cliExit": 0
+      },
+      "refs": [
+        "grammar",
+        "root"
+      ],
+      "nativeIds": [
+        "c00313",
+        "c00315",
+        "c00317"
+      ],
+      "nativeObserved": "Not(None) gives None; number root consumer result is source-derived"
+    },
+    {
+      "id": "bare-case-name",
+      "predicate": "@cs LeftExists and Name=='Foo.txt'",
+      "input": "matching case with equal abc bytes on all present sides",
+      "old": {
+        "sideLocalFiltering": true,
+        "cliExit": 1
+      },
+      "new": {
+        "allPresentSidesFiltered": false,
+        "cliExit": 0
+      },
+      "refs": [
+        "global"
+      ],
+      "scope": "source-derived global AST versus preserved side-local f/d regex"
+    },
+    {
+      "id": "bare-size-date",
+      "predicates": [
+        "Size",
+        "Date",
+        "Modified",
+        "DateStr"
+      ],
+      "input": "existing mask fixtures and comparison predicates in main",
+      "old": {
+        "onlyLeftSideCanBeUnfiltered": true
+      },
+      "new": {
+        "allPresentSidesFiltered": "false iff fixture mask has left side; otherwise true"
+      },
+      "refs": [
+        "global",
+        "missing"
+      ],
+      "scope": "source-derived alias/prefix and mask behavior; see copied main exact predicates"
+    },
+    {
+      "id": "scalar-double-unit-and-separate-rule",
+      "input": "existing bare-double/bare-unit/separate-rules fixtures",
+      "old": {
+        "included": false
+      },
+      "new": {
+        "included": true
+      },
+      "refs": [
+        "double",
+        "size",
+        "global"
+      ],
+      "scope": "source-derived global native meaning for fe/de/e"
+    },
+    {
+      "id": "bool-subtract",
+      "predicates": [
+        "@opt (true-false)==1",
+        "@noopt (true-false)==-1"
+      ],
+      "new": {
+        "predicate": true
+      },
+      "refs": [
+        "opt",
+        "typed"
+      ],
+      "nativeIds": [
+        "c03433",
+        "c03435",
+        "c03437"
+      ],
+      "nativeObserved": {
+        "c03433": "integer 1",
+        "c03435": "integer 1",
+        "c03437": "integer -1"
+      },
+      "scope": "direct native typed-value difference retained, public equality consumer derived"
+    },
+    {
+      "id": "whole-tree-rejection",
+      "predicates": [
+        "@opt true or (1/0)",
+        "@opt LineAt(ColumnRange(Substr(\"0\",0)))"
+      ],
+      "new": {
+        "cliExit": 2
+      },
+      "refs": [
+        "opt"
+      ],
+      "nativeIds": [
+        "c03879",
+        "c03915",
+        "c03939"
+      ],
+      "nativeObserved": {
+        "c03879": "compile code 12",
+        "c03915": "compile code 15",
+        "c03939": "compile code 15"
+      },
+      "scope": "public failure boundary only; phase/exception equivalence requires host checks"
+    },
+    {
+      "id": "list-freeze",
+      "nativeIds": [
+        "c06123",
+        "c06147"
+      ],
+      "nativeObserved": "compile literal list read once; first and second native values first after physical second mutation",
+      "new": {
+        "publicConsumer": "first evaluation only",
+        "secondEvaluationQualified": false,
+        "readCountQualified": false
+      },
+      "refs": [
+        "opt"
+      ],
+      "scope": "direct native lifetime evidence; pending real App host lifetime evidence"
+    }
+  ],
+  "extensions": {
+    "retained": [
+      "KiB/MiB/GiB/TiB",
+      "signed Int64 integer width",
+      "immediate numeric leading + including +.5 and +1KB",
+      "immediate -9223372036854775808"
+    ],
+    "rejected": [
+      "positive integer above Int64.MaxValue",
+      "+Identifier",
+      "+(expr)",
+      "++1"
+    ],
+    "nativeDifference": "Original integer lexer std::stoi is Int32 and Parser has unary minus only; extension regression is separate from native grammar qualification"
+  },
+  "numericGrammarImpactConditions": [
+    "All fe/de/e and ParseExpression ASTs share native runtime kinds; @noopt disables Optimize but does not select old decimal arithmetic.",
+    "Finite real literals use Double rounding; decimal precision and decimal overflow expectations change. Nonfinite 1e9999 remains rejected.",
+    "Native B/KB/MB/GB/TB size literals truncate Double product to Int64; legacy IEC unit extensions remain separately identified.",
+    "Arithmetic precedence and unary minus, Duration and Version typed literals now parse; old unsupported-syntax failures may become accepted values or runtime None.",
+    "Root and logical/comparison operands are not statically restricted to Bool/String/matching kinds; runtime Bool/None/Array short circuit and typed Compare decide the result.",
+    "Typed Compare preserves source combinations and asymmetry: Int/Double compare numerically, incompatible kinds fall through to EQ false/NE true, Double-left String retains its special None contract. Non-String text operators return None; root ContainsTrue can be false after successful compilation.",
+    "Default Optimize and explicit @opt visit children left to right even below runtime short circuit or absent providers; @noopt preserves runtime short circuit.",
+    "Int/Double/String/Bool/DateTime/Array/Regex/None runtime kind does not replace Size/Duration/Version literal AST provenance when folding.",
+    "Unprefixed field arrays for dirs 2/3 and missing sides are global independently of Prop collection; explicit prefixes/aliases remain scalar where defined.",
+    "Rule e/fe/de dispatch still depends on each side kind; f/d/f!/d! regular-expression matching and standalone one-pane Matches remain unchanged.",
+    "Unknown function, arity, explicit function type guards, cancellation, work limits, property name collection and input/output protection remain required checks."
+  ]
+}

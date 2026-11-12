@@ -1,0 +1,20 @@
+{
+  "files": {
+    ".gitattributes": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992",
+    "adapter.cpp": "fc2eb9e7249f7d4cfc9ddd1887824e192e348858d9db18247852a1036286a66c",
+    "capture.json": "5cc0e254e857609f99285f3953950b780f12c1f4d3e682a09b11eb993800d047",
+    "capture.py": "a977ee9155b38878ae152e2c3a2d7caa11a65ce608e08614a583673fee25505b",
+    "cases.json": "51847c6ecdb986a335d445fe1f57dad6ddb07439de41afe4b93c3cc56e005873",
+    "generate-cases.py": "f7a4deb76b8b91ba47d8cba4a2eb486fef00bf5f58603bccf71835fc389d7ffa",
+    "golden.ndjson": "2264f26555ca884c93071fca6d88a559d8c869d8e138d3f94e493bb7cc168ef6",
+    "native-proof.zip": "c8449c59d1722b7c975d7f824dd9f2ffa9aafc1653260cc784104e0d2bb06ffc",
+    "README.md": "004e206c0ce2dbc332c8ff1ae80a7a7c530983b8ace4eb84c9d98b874c39da02",
+    "reference-source.zip": "fa2694012cb92d726e7e12471567179925615893c5e279a4e057a8a85cb1f27d",
+    "source-manifest.json": "3129c9eb4ab538665418bdc343038922d83bb66f239b5dbd3b356001b0c2fdfe",
+    "source_tools.py": "904a7eac49503c7334a8895c2affbd86ea8978fba4170daabad2f041ebb4baa3",
+    "support/Poco/Foundation.h": "c5b6100d6bc1c3093638db5683d7c8d787f06d5de01a18292501102c23d94536",
+    "support/Poco/String.h": "2f4a505fdceab3e1505b8da03e5e954f73aede9747dbc9075bf21f9e575582af",
+    "support/Poco/TextEncoding.h": "0644ffa672997e3edc4ee1858dbcdf411e87f535b22cf47f7b0653c2b625c190",
+    "verify.py": "04b4a632bb1ded0ac8dba9c0f2e0e23061021fa32065a415caa56d2ca800fa0d"
+  }
+}

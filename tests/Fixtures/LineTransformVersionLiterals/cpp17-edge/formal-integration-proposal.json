@@ -1,0 +1,1674 @@
+{
+  "status": "planned/unexecuted",
+  "base60": [
+    {
+      "id": "zero",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "3022",
+      "decodedHex": "30",
+      "expressionUtf8HexCandidates": [
+        "76223022",
+        "56223022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 0,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 1,
+        "nativeSerializedRecordIndex": 0,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "empty",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "22",
+      "decodedHex": "",
+      "expressionUtf8HexCandidates": [
+        "762222",
+        "562222"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 1,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 3,
+        "nativeSerializedRecordIndex": 2,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "text",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "61626322",
+      "decodedHex": "616263",
+      "expressionUtf8HexCandidates": [
+        "762261626322",
+        "562261626322"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 2,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 5,
+        "nativeSerializedRecordIndex": 4,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "2e22",
+      "decodedHex": "2e",
+      "expressionUtf8HexCandidates": [
+        "76222e22",
+        "56222e22"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 3,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 7,
+        "nativeSerializedRecordIndex": 6,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "missing2",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "3122",
+      "decodedHex": "31",
+      "expressionUtf8HexCandidates": [
+        "76223122",
+        "56223122"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 4,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 9,
+        "nativeSerializedRecordIndex": 8,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "missing3",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566645248",
+      "serializedUtf8Hex": "323831343833353636363435323438",
+      "quotedBodyHex": "312e3222",
+      "decodedHex": "312e32",
+      "expressionUtf8HexCandidates": [
+        "7622312e3222",
+        "5622312e3222"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 5,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 11,
+        "nativeSerializedRecordIndex": 10,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "missing4",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841856",
+      "serializedUtf8Hex": "323831343833353636383431383536",
+      "quotedBodyHex": "312e322e3322",
+      "decodedHex": "312e322e33",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e3322",
+        "5622312e322e3322"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 6,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 13,
+        "nativeSerializedRecordIndex": 12,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "all",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e322e332e3422",
+      "decodedHex": "312e322e332e34",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e3422",
+        "5622312e322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 7,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 15,
+        "nativeSerializedRecordIndex": 14,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "double-dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "312e2e332e3422",
+      "decodedHex": "312e2e332e34",
+      "expressionUtf8HexCandidates": [
+        "7622312e2e332e3422",
+        "5622312e2e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 8,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 17,
+        "nativeSerializedRecordIndex": 16,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "missing-first",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "2e322e332e3422",
+      "decodedHex": "2e322e332e34",
+      "expressionUtf8HexCandidates": [
+        "76222e322e332e3422",
+        "56222e322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 9,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 19,
+        "nativeSerializedRecordIndex": 18,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "stop2",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "312e782e332e3422",
+      "decodedHex": "312e782e332e34",
+      "expressionUtf8HexCandidates": [
+        "7622312e782e332e3422",
+        "5622312e782e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 10,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 21,
+        "nativeSerializedRecordIndex": 20,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "stop3",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566645248",
+      "serializedUtf8Hex": "323831343833353636363435323438",
+      "quotedBodyHex": "312e322e782e3422",
+      "decodedHex": "312e322e782e34",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e782e3422",
+        "5622312e322e782e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 11,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 23,
+        "nativeSerializedRecordIndex": 22,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "stop4",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841856",
+      "serializedUtf8Hex": "323831343833353636383431383536",
+      "quotedBodyHex": "312e322e332e7822",
+      "decodedHex": "312e322e332e78",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e7822",
+        "5622312e322e332e7822"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 12,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 25,
+        "nativeSerializedRecordIndex": 24,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "end-dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841856",
+      "serializedUtf8Hex": "323831343833353636383431383536",
+      "quotedBodyHex": "312e322e332e22",
+      "decodedHex": "312e322e332e",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e22",
+        "5622312e322e332e22"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 13,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 27,
+        "nativeSerializedRecordIndex": 26,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "trailing-dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e322e332e342e22",
+      "decodedHex": "312e322e332e342e",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e342e22",
+        "5622312e322e332e342e22"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 14,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 29,
+        "nativeSerializedRecordIndex": 28,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "trailing5",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e322e332e342e3522",
+      "decodedHex": "312e322e332e342e35",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e342e3522",
+        "5622312e322e332e342e3522"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 15,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 31,
+        "nativeSerializedRecordIndex": 30,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e322e332e347461696c22",
+      "decodedHex": "312e322e332e347461696c",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e347461696c22",
+        "5622312e322e332e347461696c22"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 16,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 33,
+        "nativeSerializedRecordIndex": 32,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "leading-ws",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "20090d0a312e322e332e3422",
+      "decodedHex": "20090d0a312e322e332e34",
+      "expressionUtf8HexCandidates": [
+        "762220090d0a312e322e332e3422",
+        "562220090d0a312e322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 17,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 35,
+        "nativeSerializedRecordIndex": 34,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "space-after-dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e20322e20332e203422",
+      "decodedHex": "312e20322e20332e2034",
+      "expressionUtf8HexCandidates": [
+        "7622312e20322e20332e203422",
+        "5622312e20322e20332e203422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 18,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 37,
+        "nativeSerializedRecordIndex": 36,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "space-before-dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "31202e322e332e3422",
+      "decodedHex": "31202e322e332e34",
+      "expressionUtf8HexCandidates": [
+        "762231202e322e332e3422",
+        "562231202e322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 19,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 39,
+        "nativeSerializedRecordIndex": 38,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "space-middle",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566645248",
+      "serializedUtf8Hex": "323831343833353636363435323438",
+      "quotedBodyHex": "312e32202e332e3422",
+      "decodedHex": "312e32202e332e34",
+      "expressionUtf8HexCandidates": [
+        "7622312e32202e332e3422",
+        "5622312e32202e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 20,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 41,
+        "nativeSerializedRecordIndex": 40,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "tabs-after-dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e09322e0a332e0d3422",
+      "decodedHex": "312e09322e0a332e0d34",
+      "expressionUtf8HexCandidates": [
+        "7622312e09322e0a332e0d3422",
+        "5622312e09322e0a332e0d3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 21,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 43,
+        "nativeSerializedRecordIndex": 42,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "plus-all",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "2b312e2b322e2b332e2b3422",
+      "decodedHex": "2b312e2b322e2b332e2b34",
+      "expressionUtf8HexCandidates": [
+        "76222b312e2b322e2b332e2b3422",
+        "56222b312e2b322e2b332e2b3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 22,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 45,
+        "nativeSerializedRecordIndex": 44,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "plus-zero",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "2b302e2b302e2b302e2b3022",
+      "decodedHex": "2b302e2b302e2b302e2b30",
+      "expressionUtf8HexCandidates": [
+        "76222b302e2b302e2b302e2b3022",
+        "56222b302e2b302e2b302e2b3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 23,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 47,
+        "nativeSerializedRecordIndex": 46,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "negative-zero",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "2d302e2d302e2d302e2d3022",
+      "decodedHex": "2d302e2d302e2d302e2d30",
+      "expressionUtf8HexCandidates": [
+        "76222d302e2d302e2d302e2d3022",
+        "56222d302e2d302e2d302e2d3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 24,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 49,
+        "nativeSerializedRecordIndex": 48,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "minus-revision",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-1",
+      "serializedUtf8Hex": "2d31",
+      "quotedBodyHex": "302e302e302e2d3122",
+      "decodedHex": "302e302e302e2d31",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e2d3122",
+        "5622302e302e302e2d3122"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 25,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 51,
+        "nativeSerializedRecordIndex": 50,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "negative-min-revision",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-2147483648",
+      "serializedUtf8Hex": "2d32313437343833363438",
+      "quotedBodyHex": "302e302e302e2d3231343734383336343822",
+      "decodedHex": "302e302e302e2d32313437343833363438",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e2d3231343734383336343822",
+        "5622302e302e302e2d3231343734383336343822"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 26,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 53,
+        "nativeSerializedRecordIndex": 52,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "negative-revision-upper",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "9223372036854710271",
+      "serializedUtf8Hex": "39323233333732303336383534373130323731",
+      "quotedBodyHex": "33323736372e36353533352e36353533352e2d3122",
+      "decodedHex": "33323736372e36353533352e36353533352e2d31",
+      "expressionUtf8HexCandidates": [
+        "762233323736372e36353533352e36353533352e2d3122",
+        "562233323736372e36353533352e36353533352e2d3122"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 27,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 55,
+        "nativeSerializedRecordIndex": 54,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "leading-zeros",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "303030312e303030322e303030332e3030303422",
+      "decodedHex": "303030312e303030322e303030332e30303034",
+      "expressionUtf8HexCandidates": [
+        "7622303030312e303030322e303030332e3030303422",
+        "5622303030312e303030322e303030332e3030303422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 28,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 57,
+        "nativeSerializedRecordIndex": 56,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "hex-looking",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "3078312e322e332e3422",
+      "decodedHex": "3078312e322e332e34",
+      "expressionUtf8HexCandidates": [
+        "76223078312e322e332e3422",
+        "56223078312e322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 29,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 59,
+        "nativeSerializedRecordIndex": 58,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "exponent-looking",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "3165322e332e3422",
+      "decodedHex": "3165322e332e34",
+      "expressionUtf8HexCandidates": [
+        "76223165322e332e3422",
+        "56223165322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 30,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 61,
+        "nativeSerializedRecordIndex": 60,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "backslash",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "315c2e322e332e3422",
+      "decodedHex": "315c2e322e332e34",
+      "expressionUtf8HexCandidates": [
+        "7622315c2e322e332e3422",
+        "5622315c2e322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 31,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 63,
+        "nativeSerializedRecordIndex": 62,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "escaped-n",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e322e332e345c6e22",
+      "decodedHex": "312e322e332e345c6e",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e345c6e22",
+        "5622312e322e332e345c6e22"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 32,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 65,
+        "nativeSerializedRecordIndex": 64,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "quote-tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e322e332e34222222",
+      "decodedHex": "312e322e332e3422",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e34222222",
+        "5622312e322e332e34222222"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 33,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 67,
+        "nativeSerializedRecordIndex": 66,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "zero-all",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "302e302e302e3022",
+      "decodedHex": "302e302e302e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e3022",
+        "5622302e302e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 34,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 69,
+        "nativeSerializedRecordIndex": 68,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "revision-65534",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "65534",
+      "serializedUtf8Hex": "3635353334",
+      "quotedBodyHex": "302e302e302e363535333422",
+      "decodedHex": "302e302e302e3635353334",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e363535333422",
+        "5622302e302e302e363535333422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 35,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 71,
+        "nativeSerializedRecordIndex": 70,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "revision-65535",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "65535",
+      "serializedUtf8Hex": "3635353335",
+      "quotedBodyHex": "302e302e302e363535333522",
+      "decodedHex": "302e302e302e3635353335",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e363535333522",
+        "5622302e302e302e363535333522"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 36,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 73,
+        "nativeSerializedRecordIndex": 72,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "revision-65536",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "65536",
+      "serializedUtf8Hex": "3635353336",
+      "quotedBodyHex": "302e302e302e363535333622",
+      "decodedHex": "302e302e302e3635353336",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e363535333622",
+        "5622302e302e302e363535333622"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 37,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 75,
+        "nativeSerializedRecordIndex": 74,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "revision-overlap",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "131072",
+      "serializedUtf8Hex": "313331303732",
+      "quotedBodyHex": "302e302e312e363535333622",
+      "decodedHex": "302e302e312e3635353336",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e312e363535333622",
+        "5622302e302e312e363535333622"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 38,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 77,
+        "nativeSerializedRecordIndex": 76,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "build-65534",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "4294836224",
+      "serializedUtf8Hex": "34323934383336323234",
+      "quotedBodyHex": "302e302e36353533342e3022",
+      "decodedHex": "302e302e36353533342e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e36353533342e3022",
+        "5622302e302e36353533342e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 39,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 79,
+        "nativeSerializedRecordIndex": 78,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "build-65535",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "4294901760",
+      "serializedUtf8Hex": "34323934393031373630",
+      "quotedBodyHex": "302e302e36353533352e3022",
+      "decodedHex": "302e302e36353533352e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e36353533352e3022",
+        "5622302e302e36353533352e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 40,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 81,
+        "nativeSerializedRecordIndex": 80,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "build-65536",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "4294967296",
+      "serializedUtf8Hex": "34323934393637323936",
+      "quotedBodyHex": "302e302e36353533362e3022",
+      "decodedHex": "302e302e36353533362e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e36353533362e3022",
+        "5622302e302e36353533362e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 41,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 83,
+        "nativeSerializedRecordIndex": 82,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "build-overlap",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "8589934592",
+      "serializedUtf8Hex": "38353839393334353932",
+      "quotedBodyHex": "302e312e36353533362e3022",
+      "decodedHex": "302e312e36353533362e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e312e36353533362e3022",
+        "5622302e312e36353533362e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 42,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 85,
+        "nativeSerializedRecordIndex": 84,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "minor-65534",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281466386776064",
+      "serializedUtf8Hex": "323831343636333836373736303634",
+      "quotedBodyHex": "302e36353533342e302e3022",
+      "decodedHex": "302e36353533342e302e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e36353533342e302e3022",
+        "5622302e36353533342e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 43,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 87,
+        "nativeSerializedRecordIndex": 86,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "minor-65535",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281470681743360",
+      "serializedUtf8Hex": "323831343730363831373433333630",
+      "quotedBodyHex": "302e36353533352e302e3022",
+      "decodedHex": "302e36353533352e302e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e36353533352e302e3022",
+        "5622302e36353533352e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 44,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 89,
+        "nativeSerializedRecordIndex": 88,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "minor-65536",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "302e36353533362e302e3022",
+      "decodedHex": "302e36353533362e302e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e36353533362e302e3022",
+        "5622302e36353533362e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 45,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 91,
+        "nativeSerializedRecordIndex": 90,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "minor-overlap",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "562949953421312",
+      "serializedUtf8Hex": "353632393439393533343231333132",
+      "quotedBodyHex": "312e36353533362e302e3022",
+      "decodedHex": "312e36353533362e302e30",
+      "expressionUtf8HexCandidates": [
+        "7622312e36353533362e302e3022",
+        "5622312e36353533362e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 46,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 93,
+        "nativeSerializedRecordIndex": 92,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "major-32766",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "9222809086901354496",
+      "serializedUtf8Hex": "39323232383039303836393031333534343936",
+      "quotedBodyHex": "33323736362e302e302e3022",
+      "decodedHex": "33323736362e302e302e30",
+      "expressionUtf8HexCandidates": [
+        "762233323736362e302e302e3022",
+        "562233323736362e302e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 47,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 95,
+        "nativeSerializedRecordIndex": 94,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "major-32767",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "9223090561878065152",
+      "serializedUtf8Hex": "39323233303930353631383738303635313532",
+      "quotedBodyHex": "33323736372e302e302e3022",
+      "decodedHex": "33323736372e302e302e30",
+      "expressionUtf8HexCandidates": [
+        "762233323736372e302e302e3022",
+        "562233323736372e302e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 48,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 97,
+        "nativeSerializedRecordIndex": 96,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "positive-max",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "9223372036854775807",
+      "serializedUtf8Hex": "39323233333732303336383534373735383037",
+      "quotedBodyHex": "33323736372e36353533352e36353533352e363535333522",
+      "decodedHex": "33323736372e36353533352e36353533352e3635353335",
+      "expressionUtf8HexCandidates": [
+        "762233323736372e36353533352e36353533352e363535333522",
+        "562233323736372e36353533352e36353533352e363535333522"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 49,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 99,
+        "nativeSerializedRecordIndex": 98,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "build-int-max",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "140737488289792",
+      "serializedUtf8Hex": "313430373337343838323839373932",
+      "quotedBodyHex": "302e302e323134373438333634372e3022",
+      "decodedHex": "302e302e323134373438333634372e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e323134373438333634372e3022",
+        "5622302e302e323134373438333634372e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 50,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 101,
+        "nativeSerializedRecordIndex": 100,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "minor-int-max",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "9223372032559808512",
+      "serializedUtf8Hex": "39323233333732303332353539383038353132",
+      "quotedBodyHex": "302e323134373438333634372e302e3022",
+      "decodedHex": "302e323134373438333634372e302e30",
+      "expressionUtf8HexCandidates": [
+        "7622302e323134373438333634372e302e3022",
+        "5622302e323134373438333634372e302e3022"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 51,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 103,
+        "nativeSerializedRecordIndex": 102,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "revision-int-max",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "2147483647",
+      "serializedUtf8Hex": "32313437343833363437",
+      "quotedBodyHex": "302e302e302e3231343734383336343722",
+      "decodedHex": "302e302e302e32313437343833363437",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e3231343734383336343722",
+        "5622302e302e302e3231343734383336343722"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 52,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 105,
+        "nativeSerializedRecordIndex": 104,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "many-tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "312e322e332e342e352e362e3722",
+      "decodedHex": "312e322e332e342e352e362e37",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e342e352e362e3722",
+        "5622312e322e332e342e352e362e3722"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 53,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 107,
+        "nativeSerializedRecordIndex": 106,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "sign-without-number",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841856",
+      "serializedUtf8Hex": "323831343833353636383431383536",
+      "quotedBodyHex": "312e322e332e2b22",
+      "decodedHex": "312e322e332e2b",
+      "expressionUtf8HexCandidates": [
+        "7622312e322e332e2b22",
+        "5622312e322e332e2b22"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 54,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 109,
+        "nativeSerializedRecordIndex": 108,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "start-plus",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "0",
+      "serializedUtf8Hex": "30",
+      "quotedBodyHex": "2b22",
+      "decodedHex": "2b",
+      "expressionUtf8HexCandidates": [
+        "76222b22",
+        "56222b22"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 55,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 111,
+        "nativeSerializedRecordIndex": 110,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "bare-sign-after-dot",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281474976710656",
+      "serializedUtf8Hex": "323831343734393736373130363536",
+      "quotedBodyHex": "312e2d2e332e3422",
+      "decodedHex": "312e2d2e332e34",
+      "expressionUtf8HexCandidates": [
+        "7622312e2d2e332e3422",
+        "5622312e2d2e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 56,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 113,
+        "nativeSerializedRecordIndex": 112,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "vertical-space",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566841860",
+      "serializedUtf8Hex": "323831343833353636383431383630",
+      "quotedBodyHex": "0b0c312e322e332e3422",
+      "decodedHex": "0b0c312e322e332e34",
+      "expressionUtf8HexCandidates": [
+        "76220b0c312e322e332e3422",
+        "56220b0c312e322e332e3422"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 57,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 115,
+        "nativeSerializedRecordIndex": 114,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "revision-leading-space",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-1",
+      "serializedUtf8Hex": "2d31",
+      "quotedBodyHex": "302e302e302e202d3122",
+      "decodedHex": "302e302e302e202d31",
+      "expressionUtf8HexCandidates": [
+        "7622302e302e302e202d3122",
+        "5622302e302e302e202d3122"
+      ],
+      "provenance": {
+        "raw60RecordIndex": 58,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 117,
+        "nativeSerializedRecordIndex": 116,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    },
+    {
+      "id": "nul-stop",
+      "classification": "constructor-only-public-rejected",
+      "status": "planned/unexecuted",
+      "nativeValue": "281483566645248",
+      "serializedUtf8Hex": "323831343833353636363435323438",
+      "quotedBodyHex": "312e32002e332e3422",
+      "decodedHex": "312e32",
+      "expressionUtf8HexCandidates": [],
+      "provenance": {
+        "raw60RecordIndex": 59,
+        "raw60StdoutSha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2",
+        "nativeQuoteRecordIndex": 119,
+        "nativeSerializedRecordIndex": 118,
+        "supplementStdoutSha256": "7e025ebae1fbf0a19b4f1c361a593f6ee7e25eac48579a5d09cc43424fb0907d",
+        "prefixEvidence": "re2c-flags-static.inc and version-token-static.inc; yylex unexecuted",
+        "numericConstructorOrigin": "VersionLiteral; original ValueType int64 arm3; full AST unqualified"
+      }
+    }
+  ],
+  "edge18": [
+    {
+      "id": "major32768-zero",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9223372036854775808",
+      "serializedUtf8Hex": "2d39323233333732303336383534373735383038",
+      "expressionUtf8HexCandidates": [
+        "762233323736382e302e302e3022",
+        "562233323736382e302e302e3022"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 0,
+        "nativeQuoteRecordIndex": 1,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32769-zero",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9223090561878065152",
+      "serializedUtf8Hex": "2d39323233303930353631383738303635313532",
+      "expressionUtf8HexCandidates": [
+        "762233323736392e302e302e3022",
+        "562233323736392e302e302e3022"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 2,
+        "nativeQuoteRecordIndex": 3,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65534-zero",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-562949953421312",
+      "serializedUtf8Hex": "2d353632393439393533343231333132",
+      "expressionUtf8HexCandidates": [
+        "762236353533342e302e302e3022",
+        "562236353533342e302e302e3022"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 4,
+        "nativeQuoteRecordIndex": 5,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65535-zero",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-281474976710656",
+      "serializedUtf8Hex": "2d323831343734393736373130363536",
+      "expressionUtf8HexCandidates": [
+        "762236353533352e302e302e3022",
+        "562236353533352e302e302e3022"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 6,
+        "nativeQuoteRecordIndex": 7,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32768-positive-tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9223090561878065153",
+      "serializedUtf8Hex": "2d39323233303930353631383738303635313533",
+      "expressionUtf8HexCandidates": [
+        "762233323736382e36353533352e36353533352e363535333522",
+        "562233323736382e36353533352e36353533352e363535333522"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 8,
+        "nativeQuoteRecordIndex": 9,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32769-positive-tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9222809086901354497",
+      "serializedUtf8Hex": "2d39323232383039303836393031333534343937",
+      "expressionUtf8HexCandidates": [
+        "762233323736392e36353533352e36353533352e363535333522",
+        "562233323736392e36353533352e36353533352e363535333522"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 10,
+        "nativeQuoteRecordIndex": 11,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65534-positive-tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-281474976710657",
+      "serializedUtf8Hex": "2d323831343734393736373130363537",
+      "expressionUtf8HexCandidates": [
+        "762236353533342e36353533352e36353533352e363535333522",
+        "562236353533342e36353533352e36353533352e363535333522"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 12,
+        "nativeQuoteRecordIndex": 13,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65535-positive-tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-1",
+      "serializedUtf8Hex": "2d31",
+      "expressionUtf8HexCandidates": [
+        "762236353533352e36353533352e36353533352e363535333522",
+        "562236353533352e36353533352e36353533352e363535333522"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 14,
+        "nativeQuoteRecordIndex": 15,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32768-minor-intmax",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-4294967296",
+      "serializedUtf8Hex": "2d34323934393637323936",
+      "expressionUtf8HexCandidates": [
+        "762233323736382e323134373438333634372e302e3022",
+        "562233323736382e323134373438333634372e302e3022"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 16,
+        "nativeQuoteRecordIndex": 17,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32769-build-intmax",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9222949824389775360",
+      "serializedUtf8Hex": "2d39323232393439383234333839373735333630",
+      "expressionUtf8HexCandidates": [
+        "762233323736392e302e323134373438333634372e3022",
+        "562233323736392e302e323134373438333634372e3022"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 18,
+        "nativeQuoteRecordIndex": 19,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65534-revision-intmax",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-562947805937665",
+      "serializedUtf8Hex": "2d353632393437383035393337363635",
+      "expressionUtf8HexCandidates": [
+        "762236353533342e302e302e3231343734383336343722",
+        "562236353533342e302e302e3231343734383336343722"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 20,
+        "nativeQuoteRecordIndex": 21,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65535-all-intmax",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "9223231297218871295",
+      "serializedUtf8Hex": "39323233323331323937323138383731323935",
+      "expressionUtf8HexCandidates": [
+        "762236353533352e323134373438333634372e323134373438333634372e3231343734383336343722",
+        "562236353533352e323134373438333634372e323134373438333634372e3231343734383336343722"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 22,
+        "nativeQuoteRecordIndex": 23,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32768-partial",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9223372028264841216",
+      "serializedUtf8Hex": "2d39323233333732303238323634383431323136",
+      "expressionUtf8HexCandidates": [
+        "762233323736382e3222",
+        "562233323736382e3222"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 24,
+        "nativeQuoteRecordIndex": 25,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65535-partial-stop",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-281474976710656",
+      "serializedUtf8Hex": "2d323831343734393736373130363536",
+      "expressionUtf8HexCandidates": [
+        "762236353533352e2e3322",
+        "562236353533352e2e3322"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 26,
+        "nativeQuoteRecordIndex": 27,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32768-whitespace-plus",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9223372036854775808",
+      "serializedUtf8Hex": "2d39323233333732303336383534373735383038",
+      "expressionUtf8HexCandidates": [
+        "762220092b33323736382e2b302e2b302e2b3022",
+        "562220092b33323736382e2b302e2b302e2b3022"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 28,
+        "nativeQuoteRecordIndex": 29,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65535-space-tail",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-1",
+      "serializedUtf8Hex": "2d31",
+      "expressionUtf8HexCandidates": [
+        "762236353533352e2036353533352e2036353533352e2036353533357461696c22",
+        "562236353533352e2036353533352e2036353533352e2036353533357461696c22"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 30,
+        "nativeQuoteRecordIndex": 31,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major32769-negative-revision",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-9223090561878065153",
+      "serializedUtf8Hex": "2d39323233303930353631383738303635313533",
+      "expressionUtf8HexCandidates": [
+        "762233323736392e302e302e2d3122",
+        "562233323736392e302e302e2d3122"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 32,
+        "nativeQuoteRecordIndex": 33,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    },
+    {
+      "id": "major65535-negative-revision-intmin",
+      "classification": "public-proposal",
+      "status": "planned/unexecuted",
+      "nativeValue": "-281477124194304",
+      "serializedUtf8Hex": "2d323831343737313234313934333034",
+      "expressionUtf8HexCandidates": [
+        "762236353533352e302e302e2d3231343734383336343822",
+        "562236353533352e302e302e2d3231343734383336343822"
+      ],
+      "provenance": {
+        "nativeSerializedRecordIndex": 34,
+        "nativeQuoteRecordIndex": 35,
+        "edgeStdoutSha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17",
+        "nativeOrigin": "VersionLiteral int64/Evaluate/ToStringValue; MSVC /std:c++17 implementation-defined signbit conversion",
+        "sourceStandardEvidence": "SourceCppStandardEvidence.json",
+        "prefixEvidence": "re2c-flags-static.inc + version-token-static.inc; yylex unexecuted"
+      }
+    }
+  ],
+  "counts": {
+    "baseQuotedProposals": 59,
+    "baseConstructorOnlyNul": 1,
+    "newSignbitProposals": 18,
+    "totalQuotedProposals": 77
+  },
+  "oldEvidenceImmutable": true,
+  "newEvidenceSupersedes": "signbit=UB assumption only; no old source/golden/proposal edited"
+}

@@ -1,0 +1,72 @@
+{
+  "id": "CF-SUPP-01",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "nativeProof": "native-casefold-proof.zip",
+  "nativeProofSha256": "014fa78df132e1897bf93681d27afce7f86b287e262b93af7324cbf61a8370be",
+  "nativeIndexedEntries": 62,
+  "nativeRawSourceBlobs": 61,
+  "nativeUnchangedSourceSpans": 42,
+  "nativeRowsPerChild": 1132,
+  "nativeIndependentChildren": 2,
+  "nativeDirectRows": 1128,
+  "nativeDirections": 564,
+  "nativeListRows": 4,
+  "nativeRulesPerDirectionSeparatedList": 282,
+  "nativeSourceManifest": "../LineTransformReplaceLists/source-manifest.json",
+  "nativeOriginalSources": [
+    "../LineTransformRegex/reference-source.zip",
+    "../LineTransformReplaceLists/additional-original"
+  ],
+  "nativeSourceAndSpanHashes": "native-casefold-proof.zip!provenance.json",
+  "nativeReceipts": [
+    "native-casefold-proof.zip!run1-receipt.json",
+    "native-casefold-proof.zip!run2-receipt.json"
+  ],
+  "licenses": [
+    "LICENSE.WinMerge.md",
+    "LICENSE.Poco.txt",
+    "LICENSE.PCRE2.txt"
+  ],
+  "publicProjection": {
+    "directArrayCommandsPerSideCount": 72,
+    "directNativeRowsPerSideCount": 1128,
+    "literalListCommandsPerSideCount": 72,
+    "literalListNativeRowsPerSideCount": 4,
+    "literalListChunkRules": 16,
+    "literalListChunksPerNativeList": 18,
+    "sideCounts": [
+      2,
+      3
+    ],
+    "derivedControlCommands": 22,
+    "totalCommands": 310,
+    "qualification": "Native function-body observations are projected with explicit @noopt. Direct Arrays and literal lists use ordered 16-scalar chunks; token and evaluation budgets are unchanged.",
+    "directArrayChunkSize": 16,
+    "functionBodyDirective": "@noopt"
+  },
+  "notNativeObservations": [
+    "derived-cases.json",
+    "public 2/3-side inclusion models",
+    "public 16-rule list slices"
+  ],
+  "productRunnerSourceSha256": "cfd2efb924d1e025504b8f79a40320982d48ac871c5908c2a8a1f62df927b319",
+  "historicalManagedRunnerSourceAnchor": {
+    "productRunnerSourceSha256": "a2f9d00429659169f9a5d1c156a73f8bda4d4dce0da5752e1cb5d218d1992617",
+    "role": "Historical canonical repo Program, not current compiled Program; original69 token equality retained in optimizer runner source chain"
+  },
+  "managedRunnerSource": {
+    "file": "managed-runner-source.zip",
+    "sha256": "b8aa0c2fc641fc9b235473130ac24716896cf23a141c98c696c0dd472374dcb8",
+    "entries": {
+      "Program.cs": {
+        "size": 215412,
+        "sha256": "cfd2efb924d1e025504b8f79a40320982d48ac871c5908c2a8a1f62df927b319"
+      },
+      "source-binding.json": {
+        "size": 7698,
+        "sha256": "2f3a248b80c0d2b1617e08678fde5985f27f02c4c83c153e1cae2b808f8595d2"
+      }
+    }
+  },
+  "managedSourceQualification": "Fixed source bytes only; actual compile/runner DLL authentication belongs to combined outer build/runtime chain. No actual product execution."
+}

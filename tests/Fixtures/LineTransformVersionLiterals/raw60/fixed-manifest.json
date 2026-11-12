@@ -1,0 +1,102 @@
+[
+  {
+    "path": "adapter.cpp",
+    "size": 960,
+    "sha256": "967125e497a2532815b3748a15efadf91ca0c5c6ff8d353192cf3ad228d27fec"
+  },
+  {
+    "path": "capture.py",
+    "size": 4232,
+    "sha256": "178bf505ffcd9b81c6c041eb6dafd79d38516909e58bcd9dd41d61279fc2c0f3"
+  },
+  {
+    "path": "cases.inc",
+    "size": 2389,
+    "sha256": "5f8c14044885c0be82ebeaa170b4d37fc2e2b5b195b2939fa659f9827826b0d8"
+  },
+  {
+    "path": "cases.json",
+    "size": 7252,
+    "sha256": "be387f914fd87d2f957fda5e5e3fd09b59603b378547f74758dca1efe156b2c0"
+  },
+  {
+    "path": "expr-node.inc",
+    "size": 163,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  {
+    "path": "extractions.json",
+    "size": 991,
+    "sha256": "0eaaf16982afde3e9522bc149411547ca7284667c3d1f1bc33008eb540c2eb1a"
+  },
+  {
+    "path": "failure-list.json",
+    "size": 975,
+    "sha256": "f432d6dae2c2897dc5f197dca37651cfa8d44488f24935d23089830ab7a4d79e"
+  },
+  {
+    "path": "golden.ndjson",
+    "size": 5655,
+    "sha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2"
+  },
+  {
+    "path": "LICENSE-GPL-2.0.md",
+    "size": 17895,
+    "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e"
+  },
+  {
+    "path": "native-proof-manifest.json",
+    "size": 5718,
+    "sha256": "fb7fbf58860f0f2243f5a9e4dcc068e61c9cc42f08c487f4c88fb2ae807774f2"
+  },
+  {
+    "path": "native-proof.zip",
+    "size": 302980,
+    "sha256": "2c91b8bf865590a4e9ff29171e9eef456aed07d52b165c0efc318823dc631383"
+  },
+  {
+    "path": "proposals-and-exclusions.json",
+    "size": 1783,
+    "sha256": "c239c1e0264d33d8c74174eaa793407c9602390806c71ef6f619e487d24a27cd"
+  },
+  {
+    "path": "public-case-plan.json",
+    "size": 6271,
+    "sha256": "ba7c9eeef0ccc241bf0ea4c500b545e082a24f7170dea4a1c29c6f8fac887eaf"
+  },
+  {
+    "path": "README.md",
+    "size": 5138,
+    "sha256": "4386d0925b139d3c9c209aee26ee72f6c8e8ecdba4ef3fb077ee7fdf9df18ef7"
+  },
+  {
+    "path": "reproduce.py",
+    "size": 1249,
+    "sha256": "f3adf99012f3aabae847fe399c10be42b0cfdb265d53c100af38b5b3342cd8de"
+  },
+  {
+    "path": "scope.json",
+    "size": 729,
+    "sha256": "6137bd98b6892cc8f8c795cd243390f8b6449820ad5785d8ce00c6d759f654df"
+  },
+  {
+    "path": "source-manifest.json",
+    "size": 938,
+    "sha256": "a74d39325191737cf5f30768c757216b9e871bb8078474273cbf7b7f7536fe0d"
+  },
+  {
+    "path": "verify.py",
+    "size": 5482,
+    "sha256": "7d9bb670f7e75c9f92e8fd8569efa31cb73e5565b310242fc7bf21f34732019d"
+  },
+  {
+    "path": "version-ctor.inc",
+    "size": 313,
+    "sha256": "9b62a2b64995f6d16db2ecb026308c0e651f16ccffe498d6bd9b264fc82152e7"
+  },
+  {
+    "path": "version-node.inc",
+    "size": 191,
+    "sha256": "a85a2cdfeee501a8f7f1c7d4408033ff439f0fed282cbb6368e11e19f357ecb2"
+  }
+]

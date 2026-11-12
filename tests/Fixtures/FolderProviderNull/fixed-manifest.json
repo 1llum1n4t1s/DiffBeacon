@@ -1,0 +1,54 @@
+{
+  ".gitattributes": {
+    "size": 8,
+    "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+  },
+  "failure-matrix.json": {
+    "size": 174860,
+    "sha256": "e7be1c7c76c73c9e36811c458006df388df9dfc9ed9bd5f90b7d384bd7eaec8d"
+  },
+  "GPL-2.0.txt": {
+    "size": 17895,
+    "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e"
+  },
+  "native-folder-null-proof.zip": {
+    "size": 71828,
+    "sha256": "48fdbeda29a72c4e3515ef83951e2f3400495a64d05afd375c0ddcf4f72b111a"
+  },
+  "Poco-BSL-1.0.txt": {
+    "size": 1678,
+    "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+  },
+  "projection-map.json": {
+    "size": 88277,
+    "sha256": "1d3adff8f53dedd648d28bcb5a51efb418f3d9c1f669de15fad7396307a40d17"
+  },
+  "proof-receipt.json": {
+    "size": 264,
+    "sha256": "9e9942560c069f01a0579aa42c9f26a324968b11de1c8b61cbff51455b480c5a"
+  },
+  "property-preparation-source.json": {
+    "size": 3489,
+    "sha256": "679e3a8f941f6e3e715e5506414aa28a71e2bd0741ce34d361eac92b07bd3273"
+  },
+  "public-plan.json": {
+    "size": 290776,
+    "sha256": "ab7e9a7caa0797185c025d96a5ec57b2338d57a0ad030c668465e8628ec0362b"
+  },
+  "README.md": {
+    "size": 8407,
+    "sha256": "4cb92507b8a47890a1ee6590a5ea41bc51b6185e81fbdad7075cb243b59e7d3c"
+  },
+  "runner-source.json": {
+    "size": 2866,
+    "sha256": "8590a3582eb40844813302dbdbf0a0d7c28090b502acbd80df2be240164aa99d"
+  },
+  "verify-native.py": {
+    "size": 5798,
+    "sha256": "fb446e9c07e6940d9238add2a6cacbae40f25b36ff32cb7a5fe9b120ec5124ce"
+  },
+  "verify.py": {
+    "size": 16638,
+    "sha256": "68462f104807d3516326c1a919b6ee9980d0ba4969a24fb458220ebb8ede32a4"
+  }
+}

@@ -1,0 +1,1921 @@
+[
+  {
+    "id": "exact-raw",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "abc"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"abc\" matches \"abc\""
+  },
+  {
+    "id": "exact-opt",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "abc"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"abc\" matches \"abc\""
+  },
+  {
+    "id": "prefix-raw",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "ab"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"abc\" matches \"ab\""
+  },
+  {
+    "id": "prefix-opt",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "ab"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"abc\" matches \"ab\""
+  },
+  {
+    "id": "suffix-raw",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "bc"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"abc\" matches \"bc\""
+  },
+  {
+    "id": "suffix-opt",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "bc"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"abc\" matches \"bc\""
+  },
+  {
+    "id": "substring-raw",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "b"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"abc\" matches \"b\""
+  },
+  {
+    "id": "substring-opt",
+    "left": {
+      "type": "string",
+      "value": "abc"
+    },
+    "right": {
+      "type": "string",
+      "value": "b"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"abc\" matches \"b\""
+  },
+  {
+    "id": "empty-empty-raw",
+    "left": {
+      "type": "string",
+      "value": ""
+    },
+    "right": {
+      "type": "string",
+      "value": ""
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"\" matches \"\""
+  },
+  {
+    "id": "empty-empty-opt",
+    "left": {
+      "type": "string",
+      "value": ""
+    },
+    "right": {
+      "type": "string",
+      "value": ""
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"\" matches \"\""
+  },
+  {
+    "id": "empty-star-raw",
+    "left": {
+      "type": "string",
+      "value": ""
+    },
+    "right": {
+      "type": "string",
+      "value": "a*"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"\" matches \"a*\""
+  },
+  {
+    "id": "empty-star-opt",
+    "left": {
+      "type": "string",
+      "value": ""
+    },
+    "right": {
+      "type": "string",
+      "value": "a*"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"\" matches \"a*\""
+  },
+  {
+    "id": "empty-anchor-raw",
+    "left": {
+      "type": "string",
+      "value": ""
+    },
+    "right": {
+      "type": "string",
+      "value": "^$"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"\" matches \"^$\""
+  },
+  {
+    "id": "empty-anchor-opt",
+    "left": {
+      "type": "string",
+      "value": ""
+    },
+    "right": {
+      "type": "string",
+      "value": "^$"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"\" matches \"^$\""
+  },
+  {
+    "id": "empty-pattern-raw",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": ""
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches \"\""
+  },
+  {
+    "id": "empty-pattern-opt",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": ""
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches \"\""
+  },
+  {
+    "id": "empty-first-raw",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "|a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches \"|a\""
+  },
+  {
+    "id": "empty-first-opt",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "|a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches \"|a\""
+  },
+  {
+    "id": "nonempty-first-raw",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "a|"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches \"a|\""
+  },
+  {
+    "id": "nonempty-first-opt",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "a|"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches \"a|\""
+  },
+  {
+    "id": "first-partial-raw",
+    "left": {
+      "type": "string",
+      "value": "ab"
+    },
+    "right": {
+      "type": "string",
+      "value": "a|ab"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"ab\" matches \"a|ab\""
+  },
+  {
+    "id": "first-partial-opt",
+    "left": {
+      "type": "string",
+      "value": "ab"
+    },
+    "right": {
+      "type": "string",
+      "value": "a|ab"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"ab\" matches \"a|ab\""
+  },
+  {
+    "id": "first-full-raw",
+    "left": {
+      "type": "string",
+      "value": "ab"
+    },
+    "right": {
+      "type": "string",
+      "value": "ab|a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"ab\" matches \"ab|a\""
+  },
+  {
+    "id": "first-full-opt",
+    "left": {
+      "type": "string",
+      "value": "ab"
+    },
+    "right": {
+      "type": "string",
+      "value": "ab|a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"ab\" matches \"ab|a\""
+  },
+  {
+    "id": "lazy-partial-raw",
+    "left": {
+      "type": "string",
+      "value": "aa"
+    },
+    "right": {
+      "type": "string",
+      "value": "a*?"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"aa\" matches \"a*?\""
+  },
+  {
+    "id": "lazy-partial-opt",
+    "left": {
+      "type": "string",
+      "value": "aa"
+    },
+    "right": {
+      "type": "string",
+      "value": "a*?"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"aa\" matches \"a*?\""
+  },
+  {
+    "id": "greedy-full-raw",
+    "left": {
+      "type": "string",
+      "value": "aa"
+    },
+    "right": {
+      "type": "string",
+      "value": "a*"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"aa\" matches \"a*\""
+  },
+  {
+    "id": "greedy-full-opt",
+    "left": {
+      "type": "string",
+      "value": "aa"
+    },
+    "right": {
+      "type": "string",
+      "value": "a*"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"aa\" matches \"a*\""
+  },
+  {
+    "id": "zero-first-raw",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "\\b|a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches \"\\b|a\""
+  },
+  {
+    "id": "zero-first-opt",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "\\b|a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches \"\\b|a\""
+  },
+  {
+    "id": "lookahead-raw",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "(?=a)|a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches \"(?=a)|a\""
+  },
+  {
+    "id": "lookahead-opt",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "(?=a)|a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches \"(?=a)|a\""
+  },
+  {
+    "id": "anchor-newline-raw",
+    "left": {
+      "type": "string",
+      "value": "a\n"
+    },
+    "right": {
+      "type": "string",
+      "value": "a$"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\n\" matches \"a$\""
+  },
+  {
+    "id": "anchor-newline-opt",
+    "left": {
+      "type": "string",
+      "value": "a\n"
+    },
+    "right": {
+      "type": "string",
+      "value": "a$"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\n\" matches \"a$\""
+  },
+  {
+    "id": "crlf-dot-raw",
+    "left": {
+      "type": "string",
+      "value": "a\r\nb"
+    },
+    "right": {
+      "type": "string",
+      "value": "a.*b"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\r\nb\" matches \"a.*b\""
+  },
+  {
+    "id": "crlf-dot-opt",
+    "left": {
+      "type": "string",
+      "value": "a\r\nb"
+    },
+    "right": {
+      "type": "string",
+      "value": "a.*b"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\r\nb\" matches \"a.*b\""
+  },
+  {
+    "id": "capture-backref-raw",
+    "left": {
+      "type": "string",
+      "value": "abab"
+    },
+    "right": {
+      "type": "string",
+      "value": "(ab)\\1"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"abab\" matches \"(ab)\\1\""
+  },
+  {
+    "id": "capture-backref-opt",
+    "left": {
+      "type": "string",
+      "value": "abab"
+    },
+    "right": {
+      "type": "string",
+      "value": "(ab)\\1"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"abab\" matches \"(ab)\\1\""
+  },
+  {
+    "id": "unicode-dot-raw",
+    "left": {
+      "type": "string",
+      "value": "😀"
+    },
+    "right": {
+      "type": "string",
+      "value": "."
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"😀\" matches \".\""
+  },
+  {
+    "id": "unicode-dot-opt",
+    "left": {
+      "type": "string",
+      "value": "😀"
+    },
+    "right": {
+      "type": "string",
+      "value": "."
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"😀\" matches \".\""
+  },
+  {
+    "id": "unicode-pair-raw",
+    "left": {
+      "type": "string",
+      "value": "é😀"
+    },
+    "right": {
+      "type": "string",
+      "value": ".."
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"é😀\" matches \"..\""
+  },
+  {
+    "id": "unicode-pair-opt",
+    "left": {
+      "type": "string",
+      "value": "é😀"
+    },
+    "right": {
+      "type": "string",
+      "value": ".."
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"é😀\" matches \"..\""
+  },
+  {
+    "id": "case-sensitive-raw",
+    "left": {
+      "type": "string",
+      "value": "AbC"
+    },
+    "right": {
+      "type": "string",
+      "value": "abc"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"AbC\" matches \"abc\""
+  },
+  {
+    "id": "case-sensitive-opt",
+    "left": {
+      "type": "string",
+      "value": "AbC"
+    },
+    "right": {
+      "type": "string",
+      "value": "abc"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"AbC\" matches \"abc\""
+  },
+  {
+    "id": "inline-ci-raw",
+    "left": {
+      "type": "string",
+      "value": "AbC"
+    },
+    "right": {
+      "type": "string",
+      "value": "(?i)abc"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"AbC\" matches \"(?i)abc\""
+  },
+  {
+    "id": "inline-ci-opt",
+    "left": {
+      "type": "string",
+      "value": "AbC"
+    },
+    "right": {
+      "type": "string",
+      "value": "(?i)abc"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"AbC\" matches \"(?i)abc\""
+  },
+  {
+    "id": "optional-raw",
+    "left": {
+      "type": "string",
+      "value": "ab"
+    },
+    "right": {
+      "type": "string",
+      "value": "a?b"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"ab\" matches \"a?b\""
+  },
+  {
+    "id": "optional-opt",
+    "left": {
+      "type": "string",
+      "value": "ab"
+    },
+    "right": {
+      "type": "string",
+      "value": "a?b"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"ab\" matches \"a?b\""
+  },
+  {
+    "id": "class-raw",
+    "left": {
+      "type": "string",
+      "value": "123"
+    },
+    "right": {
+      "type": "string",
+      "value": "[0-9]+"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"123\" matches \"[0-9]+\""
+  },
+  {
+    "id": "class-opt",
+    "left": {
+      "type": "string",
+      "value": "123"
+    },
+    "right": {
+      "type": "string",
+      "value": "[0-9]+"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"123\" matches \"[0-9]+\""
+  },
+  {
+    "id": "ciFalse",
+    "left": {
+      "type": "string",
+      "value": "AbC"
+    },
+    "right": {
+      "type": "string",
+      "value": "abc"
+    },
+    "optimize": false,
+    "caseSensitive": false,
+    "negate": false,
+    "expression": "@noopt @ci \"AbC\" matches \"abc\""
+  },
+  {
+    "id": "ci-unicodeFalse",
+    "left": {
+      "type": "string",
+      "value": "É"
+    },
+    "right": {
+      "type": "string",
+      "value": "é"
+    },
+    "optimize": false,
+    "caseSensitive": false,
+    "negate": false,
+    "expression": "@noopt @ci \"É\" matches \"é\""
+  },
+  {
+    "id": "ciTrue",
+    "left": {
+      "type": "string",
+      "value": "AbC"
+    },
+    "right": {
+      "type": "string",
+      "value": "abc"
+    },
+    "optimize": true,
+    "caseSensitive": false,
+    "negate": false,
+    "expression": "@ci \"AbC\" matches \"abc\""
+  },
+  {
+    "id": "ci-unicodeTrue",
+    "left": {
+      "type": "string",
+      "value": "É"
+    },
+    "right": {
+      "type": "string",
+      "value": "é"
+    },
+    "optimize": true,
+    "caseSensitive": false,
+    "negate": false,
+    "expression": "@ci \"É\" matches \"é\""
+  },
+  {
+    "id": "left-arrayFalseFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs Array(\"a\",\"b\",none,ToInt(1)) matches \"a\""
+  },
+  {
+    "id": "left-arrayFalseTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@noopt @cs Array(\"a\",\"b\",none,ToInt(1)) not matches \"a\""
+  },
+  {
+    "id": "left-arrayTrueFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs Array(\"a\",\"b\",none,ToInt(1)) matches \"a\""
+  },
+  {
+    "id": "left-arrayTrueTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@cs Array(\"a\",\"b\",none,ToInt(1)) not matches \"a\""
+  },
+  {
+    "id": "right-arrayFalseFalse",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        }
+      ]
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches Array(\"a\",\"b\",none)"
+  },
+  {
+    "id": "right-arrayFalseTrue",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        }
+      ]
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@noopt @cs \"a\" not matches Array(\"a\",\"b\",none)"
+  },
+  {
+    "id": "right-arrayTrueFalse",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        }
+      ]
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches Array(\"a\",\"b\",none)"
+  },
+  {
+    "id": "right-arrayTrueTrue",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "none"
+        }
+      ]
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@cs \"a\" not matches Array(\"a\",\"b\",none)"
+  },
+  {
+    "id": "both-arrayFalseFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ]
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "x"
+        }
+      ]
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs Array(\"a\",\"b\",\"c\") matches Array(\"a\",\"x\")"
+  },
+  {
+    "id": "both-arrayFalseTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ]
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "x"
+        }
+      ]
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@noopt @cs Array(\"a\",\"b\",\"c\") not matches Array(\"a\",\"x\")"
+  },
+  {
+    "id": "both-arrayTrueFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ]
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "x"
+        }
+      ]
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs Array(\"a\",\"b\",\"c\") matches Array(\"a\",\"x\")"
+  },
+  {
+    "id": "both-arrayTrueTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ]
+    },
+    "right": {
+      "type": "array",
+      "value": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "x"
+        }
+      ]
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@cs Array(\"a\",\"b\",\"c\") not matches Array(\"a\",\"x\")"
+  },
+  {
+    "id": "nested-arrayFalseFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs Array(Array(\"a\"),\"b\") matches \"a\""
+  },
+  {
+    "id": "nested-arrayFalseTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@noopt @cs Array(Array(\"a\"),\"b\") not matches \"a\""
+  },
+  {
+    "id": "nested-arrayTrueFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs Array(Array(\"a\"),\"b\") matches \"a\""
+  },
+  {
+    "id": "nested-arrayTrueTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@cs Array(Array(\"a\"),\"b\") not matches \"a\""
+  },
+  {
+    "id": "empty-leftFalseFalse",
+    "left": {
+      "type": "array",
+      "value": []
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs Array() matches \"a\""
+  },
+  {
+    "id": "empty-leftFalseTrue",
+    "left": {
+      "type": "array",
+      "value": []
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@noopt @cs Array() not matches \"a\""
+  },
+  {
+    "id": "empty-leftTrueFalse",
+    "left": {
+      "type": "array",
+      "value": []
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs Array() matches \"a\""
+  },
+  {
+    "id": "empty-leftTrueTrue",
+    "left": {
+      "type": "array",
+      "value": []
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@cs Array() not matches \"a\""
+  },
+  {
+    "id": "empty-rightFalseFalse",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": []
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches Array()"
+  },
+  {
+    "id": "empty-rightFalseTrue",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": []
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@noopt @cs \"a\" not matches Array()"
+  },
+  {
+    "id": "empty-rightTrueFalse",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": []
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches Array()"
+  },
+  {
+    "id": "empty-rightTrueTrue",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "array",
+      "value": []
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@cs \"a\" not matches Array()"
+  },
+  {
+    "id": "mixed-typesFalseFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "bool",
+          "value": true
+        },
+        {
+          "type": "string",
+          "value": "1"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "1"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs Array(ToInt(1),none,true,\"1\") matches \"1\""
+  },
+  {
+    "id": "mixed-typesFalseTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "bool",
+          "value": true
+        },
+        {
+          "type": "string",
+          "value": "1"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "1"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@noopt @cs Array(ToInt(1),none,true,\"1\") not matches \"1\""
+  },
+  {
+    "id": "mixed-typesTrueFalse",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "bool",
+          "value": true
+        },
+        {
+          "type": "string",
+          "value": "1"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "1"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs Array(ToInt(1),none,true,\"1\") matches \"1\""
+  },
+  {
+    "id": "mixed-typesTrueTrue",
+    "left": {
+      "type": "array",
+      "value": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "bool",
+          "value": true
+        },
+        {
+          "type": "string",
+          "value": "1"
+        }
+      ]
+    },
+    "right": {
+      "type": "string",
+      "value": "1"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": true,
+    "expression": "@cs Array(ToInt(1),none,true,\"1\") not matches \"1\""
+  },
+  {
+    "id": "none-leftFalse",
+    "left": {
+      "type": "none"
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs none matches \"a\""
+  },
+  {
+    "id": "none-leftTrue",
+    "left": {
+      "type": "none"
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs none matches \"a\""
+  },
+  {
+    "id": "number-leftFalse",
+    "left": {
+      "type": "integer",
+      "value": 1
+    },
+    "right": {
+      "type": "string",
+      "value": "1"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs ToInt(1) matches \"1\""
+  },
+  {
+    "id": "number-leftTrue",
+    "left": {
+      "type": "integer",
+      "value": 1
+    },
+    "right": {
+      "type": "string",
+      "value": "1"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs ToInt(1) matches \"1\""
+  },
+  {
+    "id": "none-rightFalse",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "none"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches none"
+  },
+  {
+    "id": "none-rightTrue",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "none"
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches none"
+  },
+  {
+    "id": "number-rightFalse",
+    "left": {
+      "type": "string",
+      "value": "1"
+    },
+    "right": {
+      "type": "integer",
+      "value": 1
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"1\" matches ToInt(1)"
+  },
+  {
+    "id": "number-rightTrue",
+    "left": {
+      "type": "string",
+      "value": "1"
+    },
+    "right": {
+      "type": "integer",
+      "value": 1
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"1\" matches ToInt(1)"
+  },
+  {
+    "id": "invalidFalse",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "["
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches \"[\""
+  },
+  {
+    "id": "invalidTrue",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "["
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches \"[\""
+  },
+  {
+    "id": "invalid-nonstringFalse",
+    "left": {
+      "type": "none"
+    },
+    "right": {
+      "type": "string",
+      "value": "["
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs none matches \"[\""
+  },
+  {
+    "id": "invalid-nonstringTrue",
+    "left": {
+      "type": "none"
+    },
+    "right": {
+      "type": "string",
+      "value": "["
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs none matches \"[\""
+  },
+  {
+    "id": "invalid-empty-arrayFalse",
+    "left": {
+      "type": "array",
+      "value": []
+    },
+    "right": {
+      "type": "string",
+      "value": "["
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs Array() matches \"[\""
+  },
+  {
+    "id": "invalid-empty-arrayTrue",
+    "left": {
+      "type": "array",
+      "value": []
+    },
+    "right": {
+      "type": "string",
+      "value": "["
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs Array() matches \"[\""
+  },
+  {
+    "id": "dynamic-invalidFalse",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "dynamic",
+      "value": {
+        "type": "string",
+        "value": "["
+      }
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches If(LineNumber>0,\"[\",none)"
+  },
+  {
+    "id": "dynamic-invalidTrue",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "dynamic",
+      "value": {
+        "type": "string",
+        "value": "["
+      }
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"a\" matches If(LineNumber>0,\"[\",none)"
+  },
+  {
+    "id": "dynamic-invalid-noneFalse",
+    "left": {
+      "type": "none"
+    },
+    "right": {
+      "type": "dynamic",
+      "value": {
+        "type": "string",
+        "value": "["
+      }
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs none matches If(LineNumber>0,\"[\",none)"
+  },
+  {
+    "id": "dynamic-invalid-noneTrue",
+    "left": {
+      "type": "none"
+    },
+    "right": {
+      "type": "dynamic",
+      "value": {
+        "type": "string",
+        "value": "["
+      }
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs none matches If(LineNumber>0,\"[\",none)"
+  },
+  {
+    "id": "dynamic-validFalse",
+    "left": {
+      "type": "string",
+      "value": "aa"
+    },
+    "right": {
+      "type": "dynamic",
+      "value": {
+        "type": "string",
+        "value": "a+"
+      }
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"aa\" matches If(LineNumber>0,\"a+\",none)"
+  },
+  {
+    "id": "dynamic-validTrue",
+    "left": {
+      "type": "string",
+      "value": "aa"
+    },
+    "right": {
+      "type": "dynamic",
+      "value": {
+        "type": "string",
+        "value": "a+"
+      }
+    },
+    "optimize": true,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@cs \"aa\" matches If(LineNumber>0,\"a+\",none)"
+  },
+  {
+    "id": "order",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches \"a\""
+  },
+  {
+    "id": "left-throw",
+    "left": {
+      "type": "throw",
+      "value": "left"
+    },
+    "right": {
+      "type": "string",
+      "value": "a"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs 1/(LineNumber-LineNumber) matches \"a\""
+  },
+  {
+    "id": "right-throw",
+    "left": {
+      "type": "string",
+      "value": "a"
+    },
+    "right": {
+      "type": "throw",
+      "value": "right"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs \"a\" matches 1/(LineNumber-LineNumber)"
+  },
+  {
+    "id": "none-right-throw",
+    "left": {
+      "type": "none"
+    },
+    "right": {
+      "type": "throw",
+      "value": "right"
+    },
+    "optimize": false,
+    "caseSensitive": true,
+    "negate": false,
+    "expression": "@noopt @cs none matches 1/(LineNumber-LineNumber)"
+  }
+]

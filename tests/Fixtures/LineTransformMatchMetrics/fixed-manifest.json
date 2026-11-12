@@ -1,0 +1,91 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "caseCount": 160,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "adapter.cpp",
+      "size": 9262,
+      "sha256": "be76965f767822f364ea70393a139aca1ad3253eadc09b6944b0a57042ebf5df"
+    },
+    {
+      "path": "capture.py",
+      "size": 12873,
+      "sha256": "5f200e0e4f056920c28d4e9a4413e507ff5ad83a0e22de1f79f11cab4d708762"
+    },
+    {
+      "path": "cases.json",
+      "size": 93013,
+      "sha256": "67df1a418cf70df220b6912ac0f69fa3af760483360e3acc89033382bc0aae69"
+    },
+    {
+      "path": "contract.json",
+      "size": 1334,
+      "sha256": "4a48d8681d560abf64a8069d4c73ef7b084dfe34f20c1a54479e666e4aa7cb28"
+    },
+    {
+      "path": "generate-cases.py",
+      "size": 3117,
+      "sha256": "2f61eba1343b156f8040084cb2764dab090e0a3dab655d9240d5308f95160e11"
+    },
+    {
+      "path": "generate-public-plan.py",
+      "size": 2423,
+      "sha256": "60fda28fba0f0e9780344b3a3de4e54edb4db0ac5e18cab0004afc32a90eebcf"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 256703,
+      "sha256": "6caf46dfc9c137a5f390932754bd4cc6a9fb32e180a74a15e093bd0541e98da7"
+    },
+    {
+      "path": "native-proof.zip",
+      "size": 90353,
+      "sha256": "d7e3af4a74ebf9f9afc2d4c33cefb16224d24904c58968e3f381ac5da01504df"
+    },
+    {
+      "path": "proof-manifest.json",
+      "size": 22010,
+      "sha256": "e32174e4f5ffdf02c0afd302945108779cf1db48a9f615a47d2aee1e7085a1f4"
+    },
+    {
+      "path": "provenance.json",
+      "size": 29823,
+      "sha256": "e054c533fc3ea061f00cac2c19ef3b79573f50c39ece3936d7d47864560fd135"
+    },
+    {
+      "path": "public-case-plan.json",
+      "size": 63039,
+      "sha256": "e7342331abcf5556d11260dbc1e70aa2319ec86d8da0a108637eab283859b1ec"
+    },
+    {
+      "path": "README.md",
+      "size": 6652,
+      "sha256": "e28cb6efcb3ae39e4a1d635c14c0c84626c9a2678d7d7066fe3a47db79d4a73f"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 1009,
+      "sha256": "283113d441d80e78c17aa482597dcc394611b2a34b4775f88327fa8868b3e418"
+    },
+    {
+      "path": "source-manifest.json",
+      "size": 5789,
+      "sha256": "4836ea6b8079603782457f9d8091056746c3117c3bc155b5db9e6dfbc448c8c8"
+    },
+    {
+      "path": "verify-public.py",
+      "size": 2227,
+      "sha256": "aae21abee319ee8aa0ea701b4655fe3461310bde34ed91c7aee6d90b0451e02f"
+    },
+    {
+      "path": "verify.py",
+      "size": 6331,
+      "sha256": "138440046f6c3db1c485de190371a6b40e5522d6ec4d27da3a77533fe79a1b2d"
+    }
+  ]
+}

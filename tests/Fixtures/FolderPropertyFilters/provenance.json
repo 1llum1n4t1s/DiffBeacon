@@ -1,0 +1,191 @@
+[
+  {
+    "output": "conversion.inc",
+    "path": "Src/FilterEngine/FunctionNodeProperty.cpp",
+    "startByte": 253,
+    "endByte": 1573,
+    "startLine": 11,
+    "endLine": 59,
+    "sha256": "7142ec3de854725657c2b0caab3d08c00980498e7039b0bf7e134b2faf367be1"
+  },
+  {
+    "output": "prop.inc",
+    "path": "Src/FilterEngine/FunctionNodeProperty.cpp",
+    "startByte": 1575,
+    "endByte": 2607,
+    "startLine": 61,
+    "endLine": 85,
+    "sha256": "f9bbef4d84a283e697f0dbf61be6e6111ed464ec096309a57a25244ba948835b"
+  },
+  {
+    "output": "propary.inc",
+    "path": "Src/FilterEngine/FunctionNodeProperty.cpp",
+    "startByte": 2609,
+    "endByte": 2955,
+    "startLine": 87,
+    "endLine": 94,
+    "sha256": "85e72bed4f62588cfa23c4514a3fa31bf95071e0578d94ef5ac6699e04d79da7"
+  },
+  {
+    "output": "set.inc",
+    "path": "Src/FilterEngine/FunctionNodeProperty.cpp",
+    "startByte": 2957,
+    "endByte": 3903,
+    "startLine": 96,
+    "endLine": 114,
+    "sha256": "395c131c82e52fd41cc8eaa452775ab32dade3ddfba4724689397153fa113c42"
+  },
+  {
+    "output": "prefix.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 49146,
+    "endByte": 49410,
+    "startLine": 1509,
+    "endLine": 1518,
+    "sha256": "2b23f00bae99eac8de50b7164e50cbc934f49bec231342d15120fcd17bf78ce6"
+  },
+  {
+    "output": "bool.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "startByte": 819,
+    "endByte": 1275,
+    "startLine": 34,
+    "endLine": 49,
+    "sha256": "ab367bcd4047fd964659bf4bc32cce58652ddea759d0b86c845a3832a308e4a5"
+  },
+  {
+    "output": "contains.inc",
+    "path": "Src/FilterEngine/FilterExpression.cpp",
+    "startByte": 8401,
+    "endByte": 8739,
+    "startLine": 336,
+    "endLine": 350,
+    "sha256": "3469eee1af0d5a7bf44c617b91d4a310e9934882d01e0f3680472370c674eae9"
+  },
+  {
+    "output": "property-header.inc",
+    "path": "Src/PropertySystem.h",
+    "startByte": 278,
+    "endByte": 1955,
+    "startLine": 18,
+    "endLine": 64,
+    "sha256": "a1ce94dad0a0847c6a4f45fe91bb1e6e60b3811cb18a6e04c4a4d6868f622456"
+  },
+  {
+    "output": "hash.inc",
+    "path": "Src/HashCalc.cpp",
+    "startByte": 170,
+    "endByte": 1845,
+    "startLine": 13,
+    "endLine": 69,
+    "sha256": "0d62536b645dd294f179154cbe48d2d5e0ff5b6ac895d2f1fe3f9be3eb453ab3"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 372,
+    "endByte": 2085,
+    "startLine": 21,
+    "endLine": 77,
+    "sha256": "e035c849de8ed50d0f9e0dfc514dcaa6aba732ccd0a1f8a038d57158e84974d9"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 2085,
+    "endByte": 2128,
+    "startLine": 77,
+    "endLine": 77,
+    "sha256": "1b42591f6c274387d42d7cc0a0bb70a41a2a33d275a1c6351f28ebd66e08992d"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 2130,
+    "endByte": 2225,
+    "startLine": 79,
+    "endLine": 83,
+    "sha256": "2ac9dacb28d2e51161be5131d09e9cca73f7ca57e7affb0fef1da3a34ff79ca6"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 5207,
+    "endByte": 5316,
+    "startLine": 182,
+    "endLine": 185,
+    "sha256": "a38ac8267036d9279485786f3f161399bfeae17bf96c07e8b41ccdd32a1f73ba"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 5318,
+    "endByte": 5767,
+    "startLine": 187,
+    "endLine": 209,
+    "sha256": "16aa3ba2eaf66d8bef8c80cab9d33ac1b0ddc80510f0e1fffc867948791660e9"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 5769,
+    "endByte": 5912,
+    "startLine": 211,
+    "endLine": 215,
+    "sha256": "95789a6d5f2419a27acdb164c16c3c43e29fbf2a4431eb0be06956549425bda0"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 5914,
+    "endByte": 6713,
+    "startLine": 217,
+    "endLine": 247,
+    "sha256": "fdce5afe93a5cb3f35324b4c85d48a1cb4738599a9ba7dd703527255cb09e2f8"
+  },
+  {
+    "output": "property-system.inc",
+    "path": "Src/PropertySystem.cpp",
+    "startByte": 6715,
+    "endByte": 6990,
+    "startLine": 249,
+    "endLine": 255,
+    "sha256": "7491cf1640fde5082adf9b26427bf33445008556c89b1f14601868f6a1a81f21"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1167,
+    "endByte": 1214,
+    "startLine": 58,
+    "endLine": 61,
+    "sha256": "237bccfb53e209a276ec96e9f60493486d60f476432810d7af55e6213ee34531"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1217,
+    "endByte": 1283,
+    "startLine": 64,
+    "endLine": 67,
+    "sha256": "5d52e64c0f807545cd763cfe426f7fdb4438ac73c40259686117c7c2a4fbe0a5"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 1286,
+    "endByte": 1313,
+    "startLine": 70,
+    "endLine": 72,
+    "sha256": "085376444119a0c2113ef85eb210ad20ca3b320edd1dae02934f5c8f7061e071"
+  },
+  {
+    "output": "timestamp.inc",
+    "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+    "startByte": 3073,
+    "endByte": 3451,
+    "startLine": 171,
+    "endLine": 183,
+    "sha256": "78e258be254c6e6686b2668a94cd43f4ccabae24be5e643f7d4f48ad2aaec435"
+  }
+]

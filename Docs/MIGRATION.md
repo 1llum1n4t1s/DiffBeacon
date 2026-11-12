@@ -1,4 +1,505 @@
-# .NET 10 / Avalonia 移行の到達点
+# .NET 11 / Avalonia 移行の到達点
+
+## フォルダー側別関数の子Optimize fold（2026-11-12、限定検証）
+
+固定原本の `required-unimplemented.json` に残した `@opt LineAt(ColumnRange(Substr('0',0)))` は、既存ASTの子先行foldで原典 `FunctionNode::Optimize` と同じく、provider guardより前に `invalid column specification` で拒否される。固定原本は書き換えず、E2Eの別checkで二者／三者の固定式・接頭辞なし（拒否）、`@noopt`・`Substr('1',0)` 対照（受理・全行除外表示）と入力SHAの保持を確認した。新しい限定selector `--folder-side-functions-only` はWindows x64 Release（警告0）で2,102命令・10,831成功／0失敗／1 skip（266秒）、子fold checkは24件すべて成功した。固定readerの `completeFeatureVerification:false` と、provider-presentの本文取得・全parser／ASTが未移植であることは変えない。全体E2E・全体UI・Native AOTはCIの結果で確認する。
+
+同時に、WIPで説明を編集したFolder*Oracle 6件のREADMEと、provider-nullのrunner固定を付け直した。provider-nullのreaderは、E2E runnerの全体SHAと行番号を照合せず、改行を正規化した本文に固定spanがちょうど1回あることを照合する方式へ変えた。
+
+## フォルダー式の最適化・全側評価（2026-10-23、限定検証）
+
+既存ASTの6種のOptimize override、部分fold、共有65,536作業予算とリストcacheに対応した。全条件式は全側DIFFITEMで一度評価し、正規表現f:／d:は側別評価を保つ。存在属性のBool、FileExists／FileMissing／Missing、側prefix付きIsFolderとDateStr、括弧付き文字列literal一つだけのProp引数を扱う。式の二重引用符は引用符の二重化とraw backslashを使い、単一引用符のescape拡張とf:／d:の旧quote規則を維持する。全parser／AST・provider-presentの本文取得・40 field全体は未移植である。
+
+外部候補のManagedSolution buildは実終了0・警告0／エラー0で、source／fixture 152件、変更source 15件、5 DLL・Content 67件とApp optimizer fixture Content 19件のbinary chainを確認した。runtime05 HostPropertiesは実終了0・1,104 checks全成功、独立Host readerはHost 255件・existence 150件・入力15件のbytesを確認した。独立Date readerはDate 94件・UI 94件・models 80件・snapshots 808件・原本file 20件＋directory 20件・stat／bytes・年境界6件を確認した。DateStrは既存formatterと通常fixed-offset source contractを使い、年[-4713,9999]・year 0許容・年10000拒否を扱うが、実mtime pre-1970／unsigned FileTimestampとnative year 0実oracleは未認定である。SourceAuthのnormal CLI04は実終了0、5 negativeはsame-algorithmの有限校正として成功した。
+
+runtime05のoptimizer 5,304件とLexer 22件は実CLI全5,326命令・20,951成功／0失敗／1 scope skip、独立optimizer reader 2件が成功した。実終了0・handle解放・EOF・Disposeと保護対象不変を確認し、assertions SHA-256は`F1DA24BE56BC110D934115CA125793FA6CFA660194686A411C69E223B40070A8`。skipはHost専用typed／AST／compile-phase／list-read範囲で、Lexerには別独立readerの資格を付けない。runtime06 ReplaceListsは542命令・2,585成功／0失敗／0 skip、必須native／public reader 4件が成功した。CF public 310件（direct 144＋list 144＋derived 22）をstrict outer Arrayで照合し351件を保護、Regex folder-readerは想定拒否54件を含む220命令と303件の保護を確認した。事前承認した4分岐のうち、二者・三者のリンク作成が双方成功する分岐を採用し、固定540＋任意2命令・固定名2,561 unique＋重複名7＋任意10の2,585件を実行した。期待値は実測出力から生成していない。実終了0・強制終了なし・両stream EOF・handle解放・Disposeとrun内のcohort入力不変を確認した。preparerの最終不変条件も確認済みで、runtime06資格記録のSHA-256は`5703B81A4922A488A1EF96302064D5C0C304FCADBE73385B68544A8AFC427227`。統合plan04はsource 15件・Content 67件・physical 475件・protected 1,444件とXML追加のみの差分について独立レビューを通過した。
+
+以上は外部候補の限定検証であり、正本適用後のbuild・全体E2E・全体UI・Native AOT・macOSは未認定。既存full Nativeの600秒timeoutも未解決である。過去App04のproperties 1,010成功／0失敗（withhost 255）、foldercopy 1,127成功／0失敗とUI 6 PNG／bounds確認は別cohortとして保持し、今回の全体実行へ流用しない。
+
+## フォルダー関数・補助平面case-foldの統合範囲（2026-10-23、R3の限定検証記録）
+
+Core2・E2E4・self-test工程計測1の計7コードとfixture47件を、外部candidate03のWindows x64 Release限定検証を経て取り込む。待機poll描画の変更は速度改善を示さなかったため採用しない。FileFiltersの対応summaryだけはコンパイル済みcandidate03へ文書修正を加え、実行コード不変とraw SHAの差を統合planに保持する。
+
+R3 `--folder-replace-lists-only` は2,585成功／0失敗／0省略・542命令、独立reader14件すべて合格で、補助平面case-fold310命令を含む。`--folder-properties-only` は42,101成功／0失敗／3省略・10,581命令、独立reader49件すべて合格となり、provider-null864命令とside-functions2,094命令を含む。同じ製品PIDのWin32実終了0・終了FILETIME・handle解放・log EOFを確認し、元source417件・旧新DLL各5本・lock5件・実行fixture47件は不変だった。初回observerの1,800秒timeoutとwrapper失敗は保持し、同一PID／birthへの追加観測で製品の自然終了を確認した。製品を再起動した結果でも、最初の監視失敗を合格へ書き換えたものでもない。
+
+省略3件は、provider-nullのlexer／depth／取消／子Optimizeの公開注入、side-functionsのinternal／cache／provider-presentおよび未実装条件1件、macOS実FIFOである。SideのcompleteFeatureVerification=false／nativeFullAstEquivalent=false、providerのnativeDefaultOptimizationQualified=falseを保持する。旧新版の実CLI対照16起動では旧CI4件だけ原典期待と不一致、旧CS4件と新版8件は一致した。補助sideFilteredの旧計画誤記は元の失敗を残し、原典ではなく製品のフィルター伝播ソースに基づく別改訂で既存観測を照合した。同一cohortの全体E2E・全体UI・Native AOT・macOS実機は未認定である。
+
+R3時点では、provider不在body-onlyの原典投影は明示`@noopt`に限り、default／`@opt`のfull Native Optimize、子fold-before-provider-guard、provider-presentの本文取得は未対応だった。既存ASTの子foldは上記新候補で追加するが、このR3成功票をその検証には流用しない。側別6関数の正式名・prefixと現在の対応範囲はCore READMEを参照する。CFの文字class／escape／backreference等の未採取経路と任意PCRE互換も認定しない。固定golden・native proof・public planを製品出力から再生成しない。R3 fixture原本との差分はREADME、SideFunctionsの固定SHA保護用`* -text`属性、その対応固定manifest entryだけで、実測原本と文書整備版のSHA chainを別に残す。
+
+## フォルダー置換リストと出力公開の依存保護（2026-10-23）
+
+フォルダー`.flt`へ`RegexReplaceWithList(source,listOrPath)`を接続した。inline pairとホストから読むfile listを順次適用し、Coreの直接I/Oを除いた。採用済みの依存pathは比較結果に保持し、取消・古い候補では旧依存を維持する。CLIコピーはstaging後にも依存内容を再検査し、GUIは全タブの入力・外部リストを最終検査してから、同じ同期UI区間でファイル公開・新規ディレクトリ作成・空ディレクトリの日時変更を行う。HTML・workspace・包装・派生assetにも依存保護を引き継ぎ、実行時依存情報自体は永続化しない。
+
+Windows x64 Releaseの最終buildは0警告／0エラー。管理者STAの`--folder-copy-only`は**156成功／0失敗／1 skip、78命令**、内包headlessは**1,127成功／0失敗**。独立readerは既存依存5件・出力保護12件・新規公開6件を照合し、固定FolderSync readerも合格した。新規6件は公開直前の依存採用、queued採用の順序、取消、失敗、新規親、空ディレクトリを対象に、bytes・SHA・mtime・staging清掃を確認する。独立ソースレビューは追加指摘なし。skipはMac FIFO／socketの実OS検証であり、portable経路はsource確認のみ。この結果を全体E2E・全体UI・AOT・他RIDの合格へ広げない。
+
+証拠は`<作業フォルダー>\DiffBeacon\folder-publication-20261023-r1`の`e2e-final-r2/assertions.json`、`e2e-final-r2-exit.json`、`source-hashes-final.json`、`dll-hashes-final.json`へ保持する。関数本体の先行限定CLI（432成功／0失敗）は`replacelist-20261020-impl01/verify-reportpaths-20261020-01/focused-r4`であり、今回の最終DLLの全体資格とは区別する。
+
+同じDLLの全体E2Eは`full-e2e-admin-final01/assertions.json`で**221,647成功／3失敗／6 skip、21,663命令**となった。失敗は長いlocalhost UNC別名でのフォルダーコピー両方向と、その結果を照合する独立readerの3件。`unc-repro-final01/results.json`でも通常の長いデバイスパスは両方向成功、UNC別名は両方向で公開前のコピー先状態検査に失敗し、入力bytesを保持した。この全体実行は不合格であり、全体UI・AOTの後続資格はまだ与えない。以前のBareCompression独立readerの出力root制約による2失敗は今回の失敗一覧には含まれない。
+
+UNCの親ディレクトリで属性cacheが自身のtemp作成後も古い日時を返すことを実測し、UNC directoryの通常snapshotだけを`READ_ATTRIBUTES | READ_EA`の単一handle照会へ変更した。no-follow・属性・mtimeの検査とchecked closeを維持し、高度metadataの保持資格は広げない。検査対象のUNC directory・祖先にも`READ_EA`が必要で、拒否時は古いcacheへfallbackしない。別SMB server・制限付きACL・native API失敗注入は未検証。修正後の最小再現4件、外部mtime変更の公開前拒否、`--folder-threeway-only` **92成功／0失敗／1 skip、47命令**、`--folder-copy-only` **156成功／0失敗／1 skip、78命令**と独立readerが合格した。関連GUIは三者105項目、コピー1,127項目に合格し、独立レビューは追加指摘なし。証拠は`<作業フォルダー>\DiffBeacon\unc-copy-20261023-fix01`へ保持する。
+
+修正後DLL（App SHA-256 `6987869EBE3469DD99D608B1BA9D2120362EC6B0D78390AEBED8EBD1CF7C8C98`）の管理者STA全体E2Eは、同runの`full-e2e-admin-final01/assertions.json`で**221,654成功／0失敗／6 skip、21,663命令**、実終了0となった。以前失敗したUNCコピー両方向と独立readerの3項目も合格し、実行前後の5 DLLと公式Z decoderのSHAが不変である。skipはWindowsでのUnix mode、macOSのcase alias／FIFO／socket、実デスクトップ操作と任意入力互換の範囲外、case衝突を作れないfilesystemの条件であり、成功へ数えない。同じDLLの管理者STA全体UIは`verification/managed-final01/ui-report.json`で**18,059成功／0失敗**、実終了0となり、DLL・decoderのSHAは不変だった。独立readerは依存5件・出力保護12件・公開6件と、FolderSyncの44観測・6 PNG・toolbar到達15操作を照合した。通常の最小／多数タブPNGも確認し、ネイティブ保存dialogや実OS pointerの検証とは区別する。Windows x64 Native AOTは`aot-final01/publish/win-x64/DiffBeacon.exe`の生成後、全体自己検証が600秒の制限に達して実終了1となった。最終`ui-report.json`と発行manifestはなく、途中の15,204成功／0失敗を全体合格へ数えない。同一SHA-256のnative実行ファイルを別出力先へ発行した1回の再検証も600秒でtimeoutし、publisher終了1／native終了-1、最終report／manifestなしだった（`aot-final01/quiet01-final-evidence-summary.json`）。開始時の競合検査は合格したが、実行中に別Prunlet dry-runのCPU負荷を観測しており、静穏継続や遅延原因は断定しない。native CPU時間は407.266秒、最後の工程記録は約485.848秒でFolderCopy開始・15,204成功／0失敗だった。元source 417件・旧DLL 5本・元lock 5本・前回失敗証拠は不変で、両実行の失敗ログと途中成果物を保持する。追加の同条件再試行はせず、工程別計測の修正と待機中の描画費用の検証へ進む。AOT・他RIDは未認定のままである。
+
+## フォルダー `.flt` の `RegexReplace`（2026-10-20、Windows x64 Release限定E2E済み）
+
+`RegexReplace(source, pattern, replacement)`をfolder-property evaluatorへ移植した。ちょうど3引数をsource→pattern→replacementの順に一度ずつ評価し、pattern／replacementの型を検査する。sourceはscalarまたは一階層のArrayへ適用し、nested値はnativeと同じ文字列化を行う。既存の`LineTransformRegex` backendを共有し、全置換、replacement token、zero-width、Unicode、case指定を処理する。folder側は65,536共有予算と100ms timeoutを適用し、不正source／patternはNone、未参加capture・未対応grammar・上限超過は明示失敗とする。
+
+固定[Regex原典](../tests/Fixtures/LineTransformRegex/README.md)107 IDを分類し、公開可能74本文（50 String／17 None／6 Array／1本文例外、NUL3件）を二者／三者の148投影へ照合した。除外33件はoptimizer14／typed Regex4／raw FF・FE byte binding3／null args1／arity5／Throw6であり、native optimizerやtyped Regexまで移植したとは扱わない。C3 replacementは最初の実match後だけbyte-preserving経路へ通し、raw-invalid replacementの適用はpatternが空・通常literal・escaped regexp punctuationと確認できる場合に限る。一般のraw patternやlookbehind互換は主張しない。`RegexReplace('aba','a',Substr('é',0,1))`のC3 62 C3はnative FF 62 FF結果と共通`regexSubst`／Poco再探索位置から導いたsource-derived期待値で、新しいC3 native採取ではない。
+
+Windows x64 Releaseの`--folder-properties-only`は6,651 command・21,963成功／0失敗／2環境skip。RegexReplace独立readerは278 command、148投影、期待エラー48件、入力保持295件を照合した。`--line-transform-regex-only`は359 command・1,056成功／0失敗／0 skip。skipはmacOS実FIFO検査とWindows filesystemのcase-sensitive別名検査。全体E2E・UI自己検証・Native AOT・macOSはこの時点のRegexReplace専用記録では未検証で、限定実行を代替扱いしない。
+
+## フォルダー `.flt` の `RegexFind`／`RegexExtract`（2026-10-20、Windows x64 Release限定E2E済み）
+
+`RegexFind(source,pattern[,group[,occurrence]])` と `RegexExtract` をWinMerge `.flt` folder-property evaluatorへ移植した。固定原典は[FolderReplaceOracle](../tests/Fixtures/FolderReplaceOracle/README.md)の`FilterExpressionNodes.cpp:3033–3104,3148–3218,3826–3827`。2～4引数をsource→pattern→group→occurrenceの順に一度ずつ評価し、Int64 guard、guard後のString pattern判定、浅いArrayとNoneを保つ。Findはcapture開始位置のUTF-8 byte offset、ExtractはcaptureのStringを返し、共通の有限時間Regex本体・65,536 work／生成量予算・診断を再利用する。
+
+固定[Regex原典](../tests/Fixtures/LineTransformRegex/README.md)の各122ケースから各94公開本文を選び、各52成功・33 None・4 Array・5評価例外と28除外を保持した。二者／三者376投影、source等の評価順、zero-widthのbyte進行、timeout／予算、rowと全側metadataを検査する。readerはgoldenから型付き期待式を独立再生成し、stdout／stderr／終了コードと入力／filter SHAを照合する。複数row間の走査順、native例外本文との完全一致、`--folder`に指定のない永続出力先の保護は資格化していない。
+
+Windows x64 Releaseの`--folder-properties-only`は20,663 assertions成功／0失敗／2 platform skips、6,373 command。各関数の独立readerは332 command・188投影・期待エラー60（Find）／62（Extract）・保持確認349件を照合した。skipはmacOS FIFOとcase-sensitiveな別名ファイル検査。`--line-transform-regex-only`は359 command・1,056 assertion成功／0失敗／0 skip、Release buildは警告0／エラー0。共有予算の残量を使ったpattern準備の102／104文字境界と単独104文字の通過も実測した。
+
+全PCRE構文、typed Regex／NUL／任意native raw入力、optimizer、新しいnative Date／Timestamp採取、公開取消注入、GUI、Native AOT、macOS／全体E2Eは今回の限定検証の対象外。
+
+## フォルダー `.flt` の `RegexCount`（2026-10-20、Windows x64 Release限定E2E済み）
+
+厳密2引数の `RegexCount(source, pattern)` を実装した。source→patternを左から一度ずつ評価し、String patternだけを受け付ける。pattern型不一致は呼出し全体のNoneとし、Scalarまたは一階層のArrayへ適用する。Noneは変換／compileをせず、nested Arrayは再帰mapせずnative形式へ文字列化する。source変換後のString byteを保持してpatternを遅延準備する。原典 `FolderReplaceOracle/original/FilterExpressionNodes.cpp:3105–3145` のgetAsString→createRegex→match順に従い、不正source＋不正patternはNoneを返す。有効patternでのsource不正UTF-8・zero-width継続byte・timeout・共有予算超過は評価失敗として伝播する。
+
+LineTransformRegexの準備／翻訳／探索本体を共有するため、同ファイル内に内部work contextと予算relayを設けた。既存LineTransform Contextの呼出し元・RegexPatternの型identityを保ち、元のwork／生成量・CancellationTokenをそのまま委譲する。既存100msとUnicode境界・診断を維持し、Folderだけは同predicateの65,536予算へworkと生成量を課金する。Native filter外側の例外→false回復は採用しない。
+
+固定 [Regex原典](../tests/Fixtures/LineTransformRegex/README.md) のreaderを `--verify --git` で再実行し、432観測（RegexCount 81）・57原本／40抽出／97ZIP entryを照合した。golden SHA-256は `3e4dbfa2e88eace81f62bc41ae2d8eb58bff6f2a7c98dfd224ec708241a708f7`。公開本文候補59件（44 Int64／9 None／4 Array／2例外）とnative-only 22件を明示する。原典例外の `bad offset into UTF string` はmanaged継続byte診断との評価段階を照合し、本文一致とはしない。
+
+Windows x64 Releaseの `--folder-properties-only` は17,565 assertions成功／0失敗／2 platform skips。RegexCount専用readerはWindows 220 command・二者／三者118公開投影・期待エラー46件・入力等237件の保持を照合した。row内の評価順と呼出し回数は資格化したが、複数row間の走査順・native外側例外からの回復・取消注入は資格化していない。2 skipsはmacOS FIFO検査とcase-sensitiveな別名を区別できないWindows file systemでの検査。別実行の `--line-transform-regex-only` は359 command・1,056 assertions成功／0失敗／0 skip。Release再buildは警告0／エラー0。readerはケース／goldenから型付き期待式を再生成し、rowと実在側集合・streams／終了コード・入力／filterのSHAを検査する。`--folder` の失敗時には空stdout／部分JSONなしを要求し、指定のない永続出力先の保護は主張しない。
+
+PCRE全構文、typed Regex、NUL／raw native入力自体、optimizer、Date／Timestamp専用native採取、取消注入、GUI、Native AOT、macOS／全体E2Eは今回の限定検証の資格外。固定fixture・package・unit testは追加していない。
+
+## フォルダー `.flt` のログ関数（2026-10-20）
+
+`LogError`／`LogWarn`／`LogInfo` をフォルダー式へ接続した。最小1引数を要求し、各引数を左から一度ずつ評価して直ちにnative形式へ文字列化する。全引数が完了してから単一空白で連結した本文をerror／warn／infoへ一度渡し、最後の型付き値を返す。式の有効な `@name` だけを `[name] ` として付け、ファイルの表示用 `name:` は混入させない。既存のroot共有評価を用い、二者／三者の同じDIFFITEMでsideごとに再実行しない。If／and／orと先行ルールの短絡、途中失敗前に完了した内側ログの保持を維持する。
+
+Coreのログ環境は既存APIの末尾optional引数に追加した。CLIの直接filter読込みと保護対象filterのbytes読込みは既存StandardError logger、GUIのfilter読込み／旧式読込みは既存Trace loggerへ接続する。日時値のログ文字列化には既存Timestamp serializerと注入環境を使い、既存の他関数からの文字列化経路は維持する。共有評価予算の拒否やsink例外は伝播し、未完成の外側イベントを公開しない。
+
+固定 [LineTransformLogging原典](../tests/Fixtures/LineTransformLogging/README.md) の独立readerは35ケース・別nativeプロセス2回を照合した。関数登録表のmin1に合わない直接本文zero-args 2件と、既存managed directive文法との差を含む5件をnative-onlyとして区別する。実フォルダーE2Eは二者／三者の110命令で、25成功本文×2＝50投影、3途中例外本文のイベントをmanaged予算拒否で検査する6投影、arity／lazy／metadata／欠損側／ルール境界を確認した。型付き結果はstrict AllEqualを通る公開predicateで照合する。複数rowでは名前別のイベントと反対の採否を要求し、期待row path／非null側集合をC#と独立Pythonで完全照合する。row間の走査順は固定せず、件数と重複を保つevent行配列で比較し、本文内の引数／入れ子順は厳密に守る。
+
+Windows managed実測runは `<作業フォルダー>\DiffBeacon\folder-logging-20261020-impl01`。Release明示Rebuildは `--no-restore` で警告0・エラー0、限定 `--folder-properties-only` は5,489命令・16,772合格・0失敗・環境依存skip 2件（16,774 assertions）で終了0。`e2e-r2/assertions.json`、runner summary、logging reader結果、129入力／filter／既存sentinelのSHA、5 lockfilesのSHA／長さ／属性／更新時刻の不変、RebuildからE2Eまでの担当ファイルhash不変を記録した。初回の5失敗はInt64投影に付けたサイズ単位接尾辞とrow間順序の検査前提を修正して解消し、原典goldenと製品処理は合わせ込んでいない。
+
+原典外側の例外→false回復は採用せず、managedの例外伝播を保つ。今回の本文goldenの値範囲はnone／bool／Int64／double／String／Arrayであり、日時ログ専用の新native採取は追加していない。不正UTF-8のsink bytes、GUI Traceの実採取、注入sink例外の実プロセス検査、他CLIの出力先保護、macOS／AOT／全体E2Eは今回の限定検証の資格外。GUIとsink例外の接続・伝播はsource reviewの根拠とする。
+
+## フォルダー `.flt` の `Now` / `Today`（2026-10-20）
+
+大小無視・厳密0引数の `Now()`／`Today()` を追加した。各Parser生成の最初、最初の `Advance()` より前に、明示された `ILineTransformTimestampClockEnvironment` からnowとtodayを一組だけ確定する。既存 `LineTransformTimestampParser.Today` とadapterを再利用し、全ノード・file・side評価は同じ値を使う。fe／de／eごとにParserを作り、同じe由来のfile／directory ruleは同rootを共有する。環境なしの非時計Core式は従来通りで、環境なし／clock拡張なしのNow／Todayは解析拒否とする。clock／local calendarの例外をNoneや現在時刻へのfallbackで隠さない。解析ノードは既存日時関数と同じDynamic、runtime値はTimestampで、Date比較と既存serializer契約を保つ。
+
+固定clock closureのSHAは `23339417df345ce7332b4dfaf4146cad32d51d1fde433beb1d7a42d8a969a1d0`。独立readerが437 source rows・11 raw spans・35 inherited-object receipt joins・4実command・2 Native runs／4 snapshots・Update4／Now12／Today12を照合し、同snapshot・capture前後区間・local midnightの動的関係を確認した。過去の保存epochを現在の時計goldenへ流用せず、Nativeの再採取やactor絶対pathの読取りは行っていない。
+
+Windows x64 Release buildとE2E明示Rebuildは警告0／エラー0。r3の `--folder-properties-only` は **16,404成功／0失敗／2環境skip、5,379命令・16,406 assertion、実終了0**。時計62命令・198チェックがすべて成功し、大小文字・arity・構文・型／array・短絡・反復snapshot・fe／de／e・directory枝刈り・入力保持を確認した。補助関数なしの `Now() >= Date` はsideごとの過去／未来mtimeを持つ同名入力で、全側共有の採否と実mtimeを照合した。
+
+Nowは2,048境界×100msの204.7秒幅で実採用／実除外点から区間を推定し、二者／三者とも推定区間全体がbefore／after UTC内に収まった。実測準備時間＋実runnerの30秒上限を包含することも確認した。範囲・解像度・clock資格が不足する場合は理由付き資格外とし、曖昧overlapを合格にしない。Todayの独立期待は自然Windows ja-JP／LCID1041／Tokyo固定offset・DSTなし・TZ overrideなしの条件をBCL変換前に検査し、invalid／ambiguousのlocal midnightを先に拒否する。前日／当日／翌日0時の入力から当日だけを採用した。他profile／macOS／DSTではこの直接期待を作らず、公開のsnapshot／日付関係検査と区別する。原典はTZ環境変数を記録していないため、現在のoverride拒否をNative TZ同一性の資格とはしない。
+
+初回は静的TimestampノードによるDate型／boolの解析拒否で27命令・76成功／15失敗となり、runtime型を変えずDynamicノードへ修正した。r2は5,373命令・16,380成功／0失敗だったが、build中の追記がコンパイラー入力へ未反映でtree4命令の実行資格がなかった。r3は全編集後にE2Eを明示Rebuildし、tree4命令／bare Date2命令の存在とsource／doc hashのビルド前後・実行中の不変を照合した。5 lockfileはプロジェクト別locked restoreと以後の `--no-restore` build／`--no-build` runを通じ、SHA／サイズ／属性／更新時刻が不変だった。
+
+証跡は `<作業フォルダー>\DiffBeacon\nowtoday-20261020-impl01` のfailure matrix・build／Rebuild log・`e2e-r3/assertions.json`・runner summary・`folder-clock-projections.json`・`independent-folder-clock-oracle.json`・lock／担当file hash台帳へ保持する。2skipは既存macOS FIFOとWindows case-sensitive distinct file。clock capture call count・lexing前順序・Parser分離／同e root共有・環境なしCore API・clock／calendar故障伝播はsource reviewの根拠であり、CLI注入で検証済みとはしない。Core直接console／unit testは追加していない。全体E2E／UI／Native AOT／他OS・DST・実midnight跨ぎ・clock backward・原典全AST／parser／Optimizeはこの限定検証の資格に含めない。
+
+## フォルダー `.flt` の週・月・年の初め（2026-10-20）
+
+大小無視の1引数関数 `StartOfWeek(value)`／`StartOfMonth(value)`／`StartOfYear(value)` を追加した。引数を一度評価し、文字列とTimestamp（既存Date literalを含む）を明示した日時環境のローカル暦開始へ変換する。他型と入れ子arrayはNone、直下arrayだけを順番にmapし、空／不正文字列・暦構築・OS変換の失敗は候補全体を例外で拒否する。既存 `LineTransformTimestampParser.Construct`／`StartOf` とadapterを再利用し、週だけのUTC時間軸による曜日分の減算と再構築を保つ。固定Tokyoのepoch近傍ではWeekが例外、Month／Yearが `-32400000000us` を正常に返す差を隠さない。旧 `.flt` のLiteral／System serializer互換は変更しない。
+
+固定closureの全66entry、参照原典394entry、SHA・サイズ・CRC・receipt・raw126行×2・typed goldenを独立readerで照合した。自然なWindows ja-JP／LCID1041／Tokyo／Tzd32400に一致し、108本体（70成功／38例外）を二者／三者へ計216投影した。型・epoch・配列、正常140／期待例外76のCLI終了・stdout／stderr・全側採否を確認し、18静的除外はnative-onlyのまま保つ。成功した負epoch Timestampのnative serializer System文字列14観測は本体例外と区別して保持し、非負Timestampだけ固定表示bytesも照合した。
+
+Windows x64 Release buildは警告0／エラー0、`--folder-properties-only` は **16,182成功／0失敗／2環境skip、5,311命令・16,184 assertion**。追加516命令・1,787チェックがすべて成功し、大小文字・arity・一度評価の予算対照・短絡・共有65,536予算・Date／Modified／Propと欠落側・異なるmtimeの全側metadata依存・入力／filter／sentinel SHAも確認した。別のCLI readerは全216投影をrawにjoinし、JSON全entry／実在側の採否・streams・exit・入力13ファイルのSHAを独立照合した。証跡は `<作業フォルダー>\DiffBeacon\startof-20261020-impl01` のbuild log・`e2e/assertions.json`・`startof-projections.json`・独立reader JSONに保持する。skipはmacOS実FIFOとWindowsのcase-sensitive distinct fileで、今回の固定profile skipはない。
+
+このsliceで製品E2Eの初回失敗はなかった。限定実行は `dotnet run --no-build`（`--no-restore`を含意）を使用した。原典Nativeの再実行、他profile／DST／macOS、原典全AST／parser／Optimize、公開CLIへ注入できないcallback副作用・取消・host失敗、全体E2E／UI／Native AOTはこの限定検証の資格に含めない。
+
+## フォルダー `.flt` の `ToDateStr`（2026-10-20）
+
+大小無視の1引数関数 `ToDateStr(value)` を追加した。引数を一度評価し、StringとTimestamp（既存Date literalを含む）を明示した日時環境のローカル日付文字列へ変換する。他の型と入れ子arrayはNone、直下arrayだけを順番にmapする。空／不正文字列、日時構築・formatter・OS変換の失敗は例外で候補全体を拒否し、Noneへ隠さない。既存 `LineTransformTimestampParser.Construct`／`FormatLocalDate` とadapterを再利用し、現在localeから日付を書式推測しない。符号付きepoch microsecondsを保ち、Windows原典のepoch -1us成功／-1秒失敗をそのまま照合する。
+
+実装前にE2E source commentへ失敗行列を記録した。固定 `LineTransformTimestampFunctions` のToDateStr52本体（正常33／例外19）を二者／三者CLIへすべて投影し、8件のnative-only静的除外はgoldenを作らず保持する。自然なja-JP／LCID1041／Tokyo／Tzd32400 profile一致時だけ期待値を適用する。正常結果は `AllEqual(Array(actual, expected))` でString／None／arrayの型と値を確認し、例外は終了2・stdout空を確認する。Date／Timestampのmicrosecond往復、metadata／Prop、arity・一度評価・短絡、共有65,536予算と入力／既存sentinelのSHA保持も実CLIで検証する。
+
+ToDateTimeの全側metadata依存回帰も追加した。専用の同一bytes `probe.bin` に左epoch+1秒、中央+3秒、右+2秒を設定・読戻しし、直接predicate `ToDateTime('1970-01-01T00:00:01Z') == Date` の二者／三者JSONで各側のmtimeと全 `filtered=false` を照合する。既存fixtureの時刻は変更しない。
+
+Windows x64 Release buildは警告0／エラー0、最終 `--folder-properties-only` は **14,395成功／0失敗／2環境skip、4,795命令・14,397 assertion**。ToDateStr追加156命令・412チェック、ToDateTime依存回帰2命令・13チェックがすべて成功した。自然な固定profile一致で原典52件×二者／三者の104投影（正常66／例外38）を実行し、epoch -1us成功／-1秒失敗とDate／Timestampのmicrosecond境界も確認した。5つのpackages.lock.jsonのSHA-256は前後で一致した。skipはmacOS実FIFOとWindows標準filesystemでのcase-sensitive distinct fileの環境限定である。
+
+初回は14,385成功／4失敗／2skipだった。新規fixtureの1970年mtimeをこのホストのWindows ShellがSystem.DateModified=Noneとして返した2件と、650引数×2の共有予算式が512token上限へ先に達した2件が原因だった。既存fixtureを保持して新規ToDateStr fixtureだけを2023年へ変更し、Lower7500文字→Substr0→IfでLeftDateを返す短い式へ差し替えた。各halfの実Consumeは約37,550で正常、合計15,176文字・512token未満の2halfだけが65,536診断で拒否されるcontrolを確認した。製品本体を変えずに全限定を再実行し、4失敗すべての解消を確認した。
+
+証拠は `<作業フォルダー>\DiffBeacon\todatestr-20261020-impl01` の `build-r1.log`／`build-r2.log`、`targeted-r1/e2e/assertions.json`（初回）／`targeted-r1/e2e-r2/assertions.json`（最終）、projection／独立reader JSON・入力・stdout/stderr、property-time／half-budget／shared-budget probeとowned前後SHA／lock監査へ保持する。全体E2E・UI・Native AOT・他OSと独立レビューは親の別検証範囲で、この限定結果には含めない。
+
+
+## フォルダー `.flt` の `ToDateTime`（2026-10-20）
+
+大小無視の1引数関数 `ToDateTime(value)` を追加した。引数を一度だけ評価し、非空文字列を既存 `LineTransformTimestampParser.Construct` でTimestampへ変換する。空／不正文字列と非文字列（既存Timestampを含む）はNone、配列は順序と要素数を保って直下だけ変換し、入れ子はNoneとする。日時literalの文法は変更しない。共通パーサーのformat順・6桁精度・Windows locale fallback・timezone挙動を再利用し、非Syntax host例外をNoneへ隠さない。
+
+Coreへ `ILineTransformTimestampEnvironment` を注入し、CLI filter読込み、保護付きCLI selection、GUI／projectの3経路すべてで遅延host環境を生成する。文字列変換と同じフォルダー式の共有65,536予算を使う。取消は既存呼出側の境界を維持し、CLIの取消注入を検証済みにしない。
+
+固定 `LineTransformTimestampFunctions` 原典59本体から公開文法へ投影可能な52件（文字列34＝Timestamp23／None11、Timestamp入力11、その他scalar4、配列3）を選び、二者／三者の実CLIで型とepoch microsecondsを厳密照合するE2Eを追加した。公開arityと異なる0引数1件、date literalで表せないInt64両極Timestamp入力2件、年0000とlocaleの期待Timestamp4件は除外理由を保持する。Native期待値は自然なja-JP／Tokyo／Tzd32400 profile一致時だけ実行する。原典bodyと公開parser／AST／Optimizeの証拠を区別し、非Syntax host例外の原典実測を追加したとは扱わない。
+
+Windows x64 Release buildは警告0／エラー0、修正後の限定 `--folder-properties-only` は **13,970成功／0失敗／2環境skip、4,637命令・13,972 assertion**。追加146命令・424チェックはすべて成功し、固定profile一致で52候補×二者／三者の104原典投影を実行した。独立readerはclosure52項目・source394項目・raw121行×2を照合した。補足の実CLIで1～6桁のfraction・+09:00明示offset・Modified配列・文字列Prop／Name配列も確認した。
+
+初回は共有予算用の1,900文字×2が実際には65,536未満となり、二者／三者それぞれの終了コード・stdout確認の計4チェックが失敗した。実Consumeを合算し2,100文字×2へ訂正した後、同じ全限定を再実行して4失敗すべての解消を確認した。skipはmacOS実FIFOとWindows標準filesystemでのcase-sensitive distinct fileの環境限定である。5つのpackages.lock.jsonのSHA-256は実行前後で一致した。
+
+証拠は `<作業フォルダー>\DiffBeacon\todatetime-20261020-impl01` の `build-r1.log`／`build-r2.log`、`targeted-r1/e2e/assertions.json`（初回）、`targeted-r1/e2e-r2/assertions.json`（最終）、projection／reader JSON・入力・stdout/stderr・supplemental出力・owned前後hashへ保持する。全体E2E・UI自己検証・Native AOT・macOS／他RIDは親の別検証範囲で、この限定結果には含めない。
+
+
+## フォルダー `.flt` の幅・文字種6関数（2026-10-20）
+
+`ToHalfWidth`／`ToFullWidth`／`ToHiragana`／`ToKatakana`／`ToSimplifiedChinese`／`ToTraditionalChinese`を大小無視の1引数関数へ追加した。登録名から既存`LineTransformCharacterMapping`を厳密に選び、`ILineTransformStringEnvironment.MapCharacters`へ渡す。Appの既存Windows `LCMapStringEx`とmacOS環境を再利用し、NFKC等の別アルゴリズムをCoreへ追加しない。Windows旗・null locale・既存API失敗時の原文保持契約は変更しない。
+
+引数は一度評価し、Noneを保持する。その他は既存NativeString→NativeUtf16、直下Arrayだけのmap、nested arrayの文字列化を使う。array slot・文字列化・復号・変換結果は共有65,536予算で検査し、property・side／全側metadata・folder contextとnative数値literalの依存を伝播する。実変換時にCore環境が無ければ既存LineTransform式と同じ明示環境要求で拒否する。None／空Arrayはcallbackを呼ばず、環境例外をNoneへ隠さない。これらの注入境界はsource契約として照合し、App環境を必ず注入する公開CLIの実測と区別する。
+
+固定[FolderWidthOracle](../tests/Fixtures/FolderWidthOracle/README.md)の309件＝174公開候補＋135 native-onlyを正本にする。公開候補のtyped result/itemsを二者／三者へ全投影し、native-onlyのraw bytes／NUL／内部型／非有限値／throw／arity／API不正flagは別証拠として理由を保持する。追加aliasは存在せず、parserの大文字小文字と誤alias拒否は公開E2Eで確認する。全Unicode／locale・XP fallback・API第2呼出だけの失敗・macOS同値性や専用GUIの実測を意味しない。
+
+Windows x64 Release buildは警告0／エラー0、限定`--folder-properties-only`は**13,546成功／0失敗／2環境skip、4,491命令・13,548 assertion**。Width追加564命令・1,625チェック（専用569、命令共通1,056）がすべて成功した。174固定行×二者／三者の348投影、metadata・欠落側・Prop・Folder／FullPath、直接double、arity・誤alias拒否、一度評価と共有予算の対照、入力SHA保持を確認した。両native raw captureの独立readerは309件・8改変拒否・直接Windows API 261値・`actualVerified=true`で合格した。
+
+成果物は`<作業フォルダー>\DiffBeacon\width-20261020-impl01`の`build-final.log`、`final-runner/build.log`、`e2e/assertions.json`、`capture-a-reader.json`／`capture-b-reader.json`とprojection／reader JSON・入力・stdout/stderrへ保持する。CoreとAppはrootのRelease DLL、E2E runnerはFolder検証を長さ照合へ修正後に同rootの`final-runner`へ確定buildしたDLLを使った。開始時の指定4対象SHA／原本を採り、既存未コミット変更と今回分を区別する。skipはmacOS実FIFOとWindows case-sensitive distinct file環境。全体E2E・UI・Native AOTは今回未実施である。
+
+## フォルダー `.flt` の `NormalizeUnicode`（2026-10-20）
+
+`NormalizeUnicode(value[, form])`を1〜2引数の公開`.flt`関数へ追加した。formを先に一度評価し、無効なstring／Int64形式はNoneでvalueを読まない。形式名はASCII大小無視のNFC/C・NFD/D・NFKC/KC・NFKD/KD、Int64は1/2/5/6だけを受理する。未指定やdouble・bool・None・array等のwrong-typeはNFC既定で、double 2.0／5.0を整数aliasへ変換しない。形式名の空白をtrimしない。
+
+形式解決後にvalueを一度評価する。Noneを保ち、直下arrayだけを変換し、nested arrayと他の型は既存native形式で文字列化する。valueとform双方のproperty・side／全側metadata・folder contextとnative数値literalの依存を伝播する。既存casingの固定Poco UTF8→UTF16処理をprivate helperへ共通化し、共有予算への課金を維持した。array slot・文字列化・復号・正規化結果を同じ65,536作業予算で検査し、環境例外や予算超過をNoneへ置き換えない。
+
+Appの既存`.flt`環境注入を使い、Windowsでは既存`NormalizeString`実装を呼ぶ。OS API失敗時の変換前UTF16文字列の保持も既存実装に従う。Coreの環境省略時はmanaged `string.Normalize`を使い、その例外を伝播する。固定[FolderNormalizeOracle](../tests/Fixtures/FolderNormalizeOracle/README.md)178件のうち95件をgoldenのtyped result/itemsから厳密な`AllEqual(Array(NormalizeUnicode(args), expected))`へ投影し、83件は固定fixtureのnative-only区分として理由を保持する。公開CLIの共有予算対照とnative throw traceを別証拠として扱う。全Unicode／他OSの同一結果、Poco Timestamp・XP fallback・任意raw bindingの公開検証は意味しない。
+
+Windows x64 Release buildは警告0／エラー0、限定`--folder-properties-only`は**11,921成功／0失敗／2環境skip、3,927 CLI命令・11,923 assertion**。追加246命令・724チェックがすべて成功した。95固定行の二者／三者全投影に加え、形式とvalue双方のmetadata・欠落側・Prop・FullPath、厳密arity、形式先行／一度評価の公開予算対照、予算拒否時stdout空と入力SHA保持を確認した。2つの固定native raw captureは178件・8改変拒否確認・`actualVerified=true`を独立readerで再確認した。
+
+同じbuildの既存フォルダーproperty GUI回帰scopeは754成功／0失敗で、PNG・JSONも確認した。新しい正規化専用GUI操作、全体E2E・全体UI・Native AOT・他OSは今回の限定結果に含めない。skipはmacOS実FIFOとWindows case-sensitive distinct file環境。成果物は`<作業フォルダー>\DiffBeacon\normalize-20261020-impl01`の`build.log`、`e2e/assertions.json`、`ui/ui-report.json`、`capture-d-reader.json`／`capture-e-reader.json`へ保持する。変更対象4ファイルの開始時SHA／原本を採り、既存未コミット変更と今回分を区別した。
+
+## フォルダー `.flt` の `ToLower` / `ToUpper`（2026-10-20）
+
+大小文字変換を1引数の`ToLower(value)`／`ToUpper(value)`として公開`.flt`式へ追加した。引数を一度評価し、Noneを保持し、その他の型は既存native形式で文字列化する。配列は直下だけをmapし、入れ子は文字列化して変換する。property・全側／個別側metadata・FullPathの依存とnative数値literalのcontextを伝播し、文字列化・復号・map結果と配列slotを共有65,536作業予算で検査する。
+
+WindowsのCLI・GUI・workspace復元は既存`ILineTransformStringEnvironment`の`LCMapStringEx`経路を注入する。Coreの`Load`／`ParseBytes`／`Parse`／`ParseExpression`は任意の環境を受け取り、省略時は現在カルチャの`TextInfo`を使う。注入環境の例外はNoneやfalseに置き換えない。既存のWindows API失敗時の原文返却契約は維持する。legacy glob maskの合成規則は変更しない。
+
+[固定native oracle](../tests/Fixtures/FolderCasingOracle/README.md)は70件で、Windows ja-JP環境の独立した2回のMSVC buildと独立readerを照合した。大小文字関数のUTF8境界だけは固定Poco `UnicodeConverter`／`TextIterator`と同じ単位幅を使い、不正な単位をU+FFFFへ変換する。NULは明示長で保持する。Substrが保持するraw bytes、比較・検索・Trim等の他observerは変更しない。全locale／全Unicode／他OSとの同一結果、任意のnative内部型／raw bytes／注入throwの公開表現、XP fallbackやPoco Timestampの追加原典採取を意味しない。
+
+Windows x64 Release solution buildは警告0／エラー0、実Python絶対パスを指定した`--folder-properties-only`は**11,197成功／0失敗／2環境skip、3,681 CLI命令・11,199 assertion**。追加144命令・415チェックはすべて成功し、固定46行を二者／三者へ投影、24行はnative-onlyの理由を`casing-projections.json`へ記録した。20件の独立readerも成功した。skipはmacOS実FIFOとWindowsのcase-sensitive distinct file環境である。5 root lockfileはSHA・size・属性・creation/writeTicksが一致した。
+
+限定UI自己検証は**754成功／0失敗**。追加15チェックでCoreの省略環境、注入環境と引数の1回評価・例外伝播・Noneの省略、両関数の二者／三者GUI `.flt` 比較とworkspace保存／復元を確認した。既存`AttrStr contains ''`の古い期待値は、固定consumer oracleの`search-control-998/999`がfalseであることを確認して除外へ修正した。製品のcontains処理は変更していない。
+
+成果物は`<作業フォルダー>\DiffBeacon\casing-20261020-impl01`の`build-final.log`、`e2e-python01/e2e/assertions.json`、`ui-recheck01/ui/ui-report.json`とPNG・JSONに保持する。CLI限定は初回buildの不変DLL、UIは期待値修正後に別buildしたDLLを使い、CLI限定からheadless自己検証を呼んだ扱いにはしない。Python aliasで独立reader20件が起動できなかった初回`e2e`と、古いGUI期待値で停止した初回`ui`も失敗証拠として保持した。全体E2E・全体UI・Native AOT・他OSはこの限定検証の結果に含めない。
+
+## フォルダー `.flt` の `Substr` とString byte保持（2026-10-20、Windows x64 Release限定E2E済み）
+
+`Substr(source, start, length)`は2〜3引数で、start→任意length→startのInt64型検査→sourceの順に評価する。startが非Int64ならNoneでsourceを読まず、lengthだけが非Int64なら省略と同じ末尾までのsliceになる。UTF-8のbyte位置で切り出し、負startはbyte長から数える。範囲外startは空文字、負lengthは残りbyte長との和を0へclampする。sourceのNoneはNone、source配列は浅いmap、その他の型とnested arrayは既存native形式で文字列化する。Int64極値の加算／切出しと、配列・文字列化・コピー・後続observerは共有作業予算内で処理する。
+
+内部Stringは同じ値種別のraw UTF-8 bytesになり、文字の途中で切れたsliceを拒否・U+FFFDへ置換しない。AllEqualの厳密等値と比較・順序・検索はbytesを保持する。case-sensitive順序はunsigned byte、case-insensitive比較／rangeは固定PocoのASCII foldとsigned byte順、containsは記録したCRT C localeのunsigned-byte foldを使う。Len／Strlenはstrict decoderではなく原典のlead-byte幅で数え、Trimはspace／tab／CR／LFのbytesだけを除く。数値変換の全消費検査とregexのstrict UTF-8境界はそれぞれ維持し、`like`はPoco TextIteratorのinvalid token `-1`と既存の固定Unicode lower表を使う。行変換側の既存lower課金経路は変更していない。
+
+固定WinMerge commit `6780924ba35f7f55af0f6f14dd302561175830a6`の[Substr境界](../tests/Fixtures/FolderSubstrOracle/boundaries.md)、[byte observer](../tests/Fixtures/FolderStringByteObserversOracle/boundaries.md)、[consumer](../tests/Fixtures/FolderStringByteObserversOracle/consumers/boundaries.md)、[Glob](../tests/Fixtures/FolderStringByteObserversOracle/glob/boundaries.md)を正本にする。固定readerの3,292行と親工程の二回ずつのMSVC raw採取照合を、公開parser／CLIの証拠と区別する。公開E2Eは2,088行を二者／三者へ投影し（Substr260、observer989、consumer489、Glob350）、1,204行はnative-only理由をJSONへ保持する。Substr未投影8行はarity3行・注入throw5行である。任意の不正byte binding、`Plus`／直接`ToString`、動的／不正構文regex pattern、全Unicode／全locale／全PCRE機能の移植は意味しない。
+
+NULの「公開表現なし」という初期前提は実CLIで反証した。BOM付きUTF-8 filterの引用符内raw `00`は受理され、SubstrのNULと空文字、等値・長さ・検索・Trim等を公開投影に含める。`def: exclude`で`filtered=false`はpredicateの成功を意味する。Release solution buildは警告0／エラー0、最終`--folder-properties-only`は**10,782成功／0失敗／2環境skip、3,537命令・10,784 assertion**で、Substr追加1,106命令・3,305チェックは全成功した。入力SHA、非変更sentinel、構文拒否のstdout空、実際の65,536作業量拒否と不正start時のsource省略を確認した。取消のnative注入traceとscannerの既存検査は区別し、新しい公開取消hookは設けていない。
+
+成果物は`<作業フォルダー>\DiffBeacon\substr-20261020-impl01`の`build-verified.log`／`build-nul-runner.log`／`e2e-nul-final`／`nul-public-probe`へ保持する。E2E runnerだけを同runの`nul-runner`で再buildし、App/Coreは同一SHAの最終DLLを使用した。初回の公開regex構文誤投影・token上限probe・比較の追加課金によるChoose exact-limit回帰は初回結果を保持して修正し、最終実行で解消した。skipはmacOS実FIFOとWindows case-sensitive filesystemで、全体E2E・全体UI・Native AOT・他OSは今回未実施である。
+
+共有lower表の回帰は同一App/Core DLLの`--line-transform-only`で**33,853成功／0失敗／0 skip、6,617命令**を確認した。既存`like`と限定GUI scope=`line-transform-only`の2,833 assertionを含み、全体UIの結果とは区別する。5 root lockfileは`lock-before.json`／`lock-after.json`／`lock-comparison.json`でSHA・size・全属性・creation/writeTicksが一致し、accessTicksのみ変化した（時刻の書戻しなし）。対象ソース3件・App/Core DLL・最終E2E runnerも検証前後のSHA／size／writeTicksが一致し、`git diff --check`は成功した。
+
+## フォルダー `.flt` の `IsWithin` 関数（2026-10-20、Windows x64 Release限定E2E済み）
+
+`IsWithin(value, lower, upper)`は3引数固定で両端を含み、境界を並べ替えない。既存InRangeのscalar評価器に上端包含モードを追加し、lower→upper→value評価、辺ごとのInt64／Double昇格、Date／metadataのTimestamp正規化、固定MSVC ABIの文字列順序、浅い値配列mapと共有作業予算を共用する。InRangeの上端除外と行変換のWithinは維持する。
+
+固定原典はWinMerge commit `6780924ba35f7f55af0f6f14dd302561175830a6`の`IsWithinFunc`（2157–2234）、shallow helper、登録3..3とconstructor arity検査である。[FolderIsWithinOracle](../tests/Fixtures/FolderIsWithinOracle/README.md)は159件、golden SHA-256は`015f153b16c156444226763d7525f7187eed922772b995b593819556abd894f6`で、独立readerの固定照合と親工程による二回のMSVC raw evidence照合が成功した。公開CLIでは上端・同値境界の受理をInRangeとの対照で確認し、逆順拒否、混在精度、Timestamp／string、配列・metadata／Prop／FullPath、不正構文と予算拒否を確認する。native typed binding／throw traceと公開CLIの値・filter結果は区別し、投影できない行は理由を記録する。
+
+Windows x64 Release最終buildは警告0／エラー0、限定`--folder-properties-only`は**7,477成功／0失敗／2環境skip、2,431命令・7,479 assertion**。134固定行を二者／三者の公開CLIへ投影し、25行をnative専用として理由を記録した。IsWithin追加の346命令・1,022チェック（専用352、命令共通670）と、既存を含む15件の独立reader確認がすべて成功した。既存InRangeを同じ実行で継続検証している。
+
+他関数を含まない`IsWithin(1.5,1,1.5)`は通常版で終了1／両行採用、共有rangeノードのnative-context flagだけfalseにした変異版で終了0／両行除外となり、回帰を検知した。元コードはbytes／SHA一致で復元後、最終buildとE2Eを逐次実行した。予算専用入力はASCII basename 128 bytesで最小超過を保証し、二者／三者ともUTF-8 FullPath長263・下限158,928>65,536で終了2／stdout空となった。不正構文・予算の三者は`--middle`を明示し、入力SHAと既存sentinelを保持した。directory CLIは出力fileを指定しないため、sentinelは非変更の証拠に限る。
+
+成果物は`<作業フォルダー>\DiffBeacon\iswithin-20261020-impl01`の`build-final.log`／`e2e-final`／`mutation-probe/evidence.json`へ保持する。bin/obj・TEMP/TMP・fixtureはすべて同run配下で、既存D設定propsは変更していない。5つのroot lockfileは`lockfiles-before.json`と最終build／E2E後の`lockfiles-after-final.json`／`lockfiles-comparison-final.json`でSHA・size・全属性・creation/writeTicksが一致し、accessTicksのみ変化した。時刻は書き戻していない。skipはmacOS実FIFOとWindows case-sensitive filesystemの環境限定で、全体E2E・UI自己検証・Native AOT・他OSは今回未実施である。
+
+## フォルダー `.flt` の `InRange` 関数（2026-10-20、Windows x64 Release限定E2E済み）
+
+`InRange(value, lower, upper)`は3引数固定で、lower→upper→valueの順に全引数を評価してから型を検査する。区間は下限を含み上限を含まない。値の配列だけを浅く同順序でmapし、配列境界・nested値・不正型はNoneとなる。Int64／Doubleの混在は各辺だけで昇格し、他方の整数比較を維持する。Date literalとmetadata日時は既存のTimestampマイクロ秒表現へ正規化し、数値との異型比較を拒否する。
+
+文字列は通常のComparisonを使わず、`@cs`でunsigned UTF-8 byte順、`@ci`でASCIIだけをfoldしたMSVC x64 signed-char byte順を使う。`InRange('é','','z')`はcs=false／ci=trueであり、Unicode case foldingを行わない。この順序は固定MSVC ABIへの互換方針であり、他OSのC++ char ABIへ一般化したものではない。全引数のproperty／side metadata／比較contextを継承し、配列確保・UTF-8変換・比較は共有EvaluationBudgetを消費する。
+
+[FolderInRangeOracle](../tests/Fixtures/FolderInRangeOracle/README.md)は固定原典145件で、golden SHA-256は`6cf9d8a007ce311c366c89c71f095255c1d642abde90e21763420dac2340be42`。独立readerの固定golden照合と、親工程で採取・独立照合した二回のMSVC raw evidenceを、公開CLIの投影とは区別する。評価trace・throw注入・constructor arity・直接typed bindingはnative証拠であり、公開CLIへ同じspyを注入した扱いにはしない。公開投影から除いたNUL／Regex／FileContentやDateTime範囲外のTimestamp等は`inrange-projections.json`へ理由を記録する。
+
+Windows x64 Releaseの最終buildは警告0／エラー0、限定`--folder-properties-only`は**6,455成功／0失敗／2環境skip、2,085命令・6,457 assertion**。固定121行を二者／三者の公開CLIへ投影し、24行はnative専用へ区分した。InRange追加の306命令・902チェック（専用312、命令共通590）と、既存を含む14件の独立reader確認がすべて成功した。高bitを値／下限／上限へ置いたcs／ciの順序、65,536共有予算の超過時拒否、入力SHAと既存sentinelの保持を確認した。directory CLIには出力file指定がないため、sentinelは非変更の証拠に限る。
+
+他の関数を含まない`InRange(1.5,1,2)`は、通常版の終了1／両行採用に対してInRangeのflagだけfalseにした変異版が終了0／両行除外となり、値型context回帰を検出した。元コードはbytes／SHA一致で復元後、最終buildとE2Eを逐次実行した。成果物は`<作業フォルダー>\DiffBeacon\inrange-20261020-impl01`の`build-budget-final.log`／`e2e-final`／`mutation-probe/evidence.json`へ保持する。build/bin/obj・temp・E2E fixtureはすべて同run配下で、既存D設定propsは変更していない。
+
+共有予算の拒否fixtureは短いrun pathへの依存を除き、ASCII basename 128 bytesの専用入力へ修正した。200反復の作業量`602*L+602`は、FullPathのUTF-8長L>=128から最小77,658>65,536を保証する。最終二者／三者はともにL=261・下限157,724で終了2／stdout空となり、新入力SHAも保持した。三者には`--middle`を明示する。修正前の成功runは`e2e`として保持している。
+
+5つのroot lockfileは`lockfiles-before.json`と、最終build／E2E後の`lockfiles-after-final.json`／`lockfiles-comparison-final.json`でSHA・size・全属性・creation/writeTicksが一致し、accessTicksのみ変化した。最終アクセス時刻は書き戻していない。初回比較資料も保持する。skipはmacOS実FIFOとWindows case-sensitive filesystemの環境限定である。今回の小追加では全体E2E・UI自己検証・Native AOT・他OSは実行していない。
+
+## フォルダー `.flt` の `Abs` 関数（2026-10-20、Windows x64 Release限定E2E済み）
+
+`Abs(value)`はちょうど1引数を評価し、Int64／Doubleの型を保って絶対値を返す。配列は直下だけを写し、nested arrayと非数値はNoneとなる。範囲外decimalも拒否する。Int64最小値は固定MSVC原典で観測された最小値のまま保持し、Doubleは符号bitだけを除去する。子のproperty／side metadata／比較contextを継承し、全側共通の値型評価を使う。
+
+[FolderAbsOracle](../tests/Fixtures/FolderAbsOracle/README.md)は固定commitの原典を無変更抽出した41件で、独立readerと保存済み二プロセスのraw evidenceを照合する。golden SHA-256は`960f7b625490c165db774d4b8c3f27f6c89b7b4ab042411dd99f168f8a2ad7e3`。公開CLIでは整数端点・finite・±zero・ToDouble経由のinfinity／NaN・配列・metadata／Prop／FullPath・構文拒否を確認する。符号ゼロのbit、NaN payload、直接typed binding、throw trace、FunctionNode constructorの未対応arityはnative oracle専用の証拠であり、公開parser／optimizerやmanaged評価traceの同等性とは区別する。Int64最小値の結果もC++の移植性保証ではなく、このMSVC原典の観測へ合わせたものである。
+
+Release buildは警告0／エラー0、最終`--folder-properties-only`は**5,553成功／0失敗／2環境skip、1,779命令・5,555 assertion**。Abs追加の56命令・155チェック（専用59、命令共通96）、既存を含む13件の独立reader確認もすべて成功した。skipはmacOS実FIFOとWindows case-sensitive filesystemの環境限定である。`Abs(-1.5) == 1.5`は他関数の値型flagへ依存しないpredicateで、通常版の終了1／両行採用に対し、Absの`UsesAllSideMetadata`だけfalseにした変異版が終了0／両行除外となることを別processで確認した。元コードはbytes／SHA一致で復元後、最終buildとE2Eを逐次実行した。
+
+検証出力は`<作業フォルダー>\DiffBeacon\abs-20261020-impl01`の`build-final.log`／`e2e-final`、変異検証は`mutation-probe/evidence.json`とraw stdout／stderrへ保持する。5つのroot lockfileは前後snapshotでSHA・length・全属性・creation/writeTicksが一致したが、accessTicksだけ変化した。最終アクセス時刻は書き戻しておらず、全時刻不変とは扱わない。この小追加では全体E2E・UI自己検証・Native AOT・他OSは実行していない。
+
+## フォルダー `.flt` の `StrCount`／`StrFind` 関数（2026-10-19、Windows x64 Release folder-property E2E済み）
+
+Windowsのフォルダー比較で `StrCount(haystack, needle)` と `StrFind(haystack, needle, occurrence)` を評価する。両関数は一致を重ねて数えず、`StrFind` は0始まりの非重複一致番号を受け取り、見つかった位置をUTF-8 byte offsetで返す。第3引数は省略時0、明示時はInt64のみで、負数・範囲外はNoneとなる。空／非string needleもNone。`@cs`／`@ci`に従い、大小文字変換はASCII byteだけに適用する。配列は直下だけを写し、Noneを保持し、それ以外の値とnested arrayは旧nativeの文字列化規則に従う。
+
+固定native oracle 93行のうち、公開`.flt`式へ投影できる78行をReleaseアプリCLIで照合し、null引数・不正arity・throw nodeの15行は理由付きでnative body専用に記録した。Windows x64 Releaseの限定`--folder-properties-only`は1,620 CLI命令・4,809成功／0失敗／2件の想定platform skip（macOS FIFO、Windows case-sensitive filesystem）。StrSearchは139 CLI命令・466 assertionがすべて成功し、8,001 byte source／6,001 byte needleの長い共通prefixも両関数で通過した。この有限入力は線形計算量の証明として扱わない。Release buildは警告0／エラー0、5 source lock fileのSHA・サイズ・属性・UTC時刻は実行前後で一致した。全体E2E、UI自己検証、Native AOT、他OSは未検証で、残りの`.flt`全文法の移植完了を意味しない。
+
+## フォルダー `.flt` の `Array(...)` 関数（2026-10-19、Windows x64 Release全体E2E・UI・Native AOT済み）
+
+Windowsのフォルダー比較で `Array(...)` を評価する。引数は0個以上で、左から一度ずつ評価し、値の型・順序・入れ子を保った配列を返す。配列をfilter predicateとして使う場合は入れ子までBoolean `true` を探索する一方、`AnyOf`／`AllOf`は直下のBoolean要素だけを判定する。
+
+固定native oracleは50ケースを二回の独立実行で一致させた（golden SHA-256 `31e439ea586ba539b462e5912069c01b1e904c311e1f7493ff01bc3d741948a0`）。限定folder-property E2Eは2,581成功／0失敗／2件の想定platform skip（macOS FIFO、Windowsのcase-collision filesystem条件）、80件のArray assertionをすべて確認した。Windows x64 Release全体E2Eは15,760 command・201,848成功／0失敗／6件の想定platform skipで、全commandの実終了を観測した。全体managed UI自己検証は17,977成功／0失敗、Array関連304件もすべて成功した。
+
+Windows x64 Native AOTはSDK 10.0.402／`win-x64`、manifest `nativeAot=true`・`selfTest=passed`、自己検証755.97秒（上限1,200秒）。14 payloadのサイズ・SHA-256、5ライセンスを照合し、5 source lock fileのSHA・サイズ・属性・UTC時刻を維持した。これはWindows x64と上記Array経路の実測であり、残りの `.flt` 全文法や他RIDの移植完了を意味しない。
+
+## フォルダー .flt の側別相対パス属性（2026-10-19、Windows x64 Release全体E2E・UI・Native AOT済み）
+
+LeftRelPath／MiddleRelPath／RightRelPathは各比較側rootからの相対パスをスラッシュ区切りで返す。MiddleRelPathは三者比較のindex 1、二者比較では右側を示し、存在しない側はNoneとなる。ファイルとディレクトリに使え、比較走査が保持する相対パスを参照するため追加のfilesystem／Shell問い合わせは行わない。既存のRelPathは先頭root基準のまま維持する。旧WinMergeはWindowsのバックスラッシュ区切りを返すため、区切りを含む旧filter expressionは新しいスラッシュ表記へ合わせる必要がある。
+
+限定folder-property E2Eは2,501成功／0失敗／2件の想定platform skip（macOS FIFO、Windows case-sensitive filesystem）、837 command。全体Release E2Eは15,729 command・201,768成功／0失敗／6件の想定platform skipで、RelPath assertion 72件もすべて成功した。全体managed UI self-testは17,968 assertion成功／0失敗。Windows x64 Native AOTはSDK 10.0.402／win-x64、manifest nativeAot=true・selfTest=passed、自己検証804.0秒（上限1,200秒）。14 payloadのサイズ・SHA-256一致、5ライセンス同梱、5 source lock filesのSHA・size・属性・mtime不変を確認した。検証範囲はWindows x64であり、他RID／OSの実測や残り .flt 全文法の移植完了を意味しない。
+
+## フォルダー `.flt` の `Strlen` 関数（2026-10-19、Windows x64 Release全体E2E・UI・Native AOT済み）
+
+Windowsのフォルダー比較で `.flt` の `Strlen(value)` を評価する。文字列ではUTF-8 code point数を返し、`None` は `None` のまま扱う。配列には直下の要素へ一度だけ適用して形を保ち、入れ子配列やその他の値は旧実装と同じ文字列形式にしてから数える。整数は十進表記、doubleは小数点以下6桁、boolは小文字、timestampはローカル `YYYY-MM-DD HH:MM:SS` 表記を使う。`Strlen` は数値関数なので、filter predicateとして単独ではなく比較式の中で使う。
+
+固定native oracleの45ケース（golden SHA-256 `4d31dbab06e96df545b2346481b36721d7cc394d9365a74578ce127aa01ab0d6`）は独立readerで一致した。限定folder-property E2Eは2,441成功／0失敗／2件の想定platform skip、限定UI自己検証は730成功／0失敗。Windows x64 Release全体E2Eは15,707 command・201,702成功／0失敗／6件の想定platform skip、全体managed UI自己検証は17,968成功／0失敗。
+
+Windows x64 Native AOTはSDK 10.0.402／runtime .NET 10.0.13、manifest `nativeAot=true`・`selfTest=passed`、自己検証889.91秒（上限1,200秒）。14 payloadすべてのsize・SHA-256がmanifestと一致し、5ライセンスを同梱した。実行前の5 source lock fileは各SHA・size・属性を維持した。検証したRIDはwin-x64のみで、他RID・macOS・CIや旧 `.flt` 全文法の移植完了は意味しない。
+
+## .flt 関数内比較のスタンドアロン互換性（2026-10-18、Windows x64 Release全体E2E・UI・Native AOT済み）
+
+関数を含む規則では、旧 .flt の値意味を入れ子の比較とliteralまで伝える。これにより、standalone FileFilter.Matches で AllEqual(1.0 == None, false) はfalse、AllOf(None < 0) == None と Len(None < 0) == 0 はtrueとなり、旧native評価に一致する。関数を含まない通常のstandalone評価と、フォルダー側別metadataの経路は既存のまま保つ。
+
+限定フォルダーproperty E2Eは2,294成功／0失敗／2件の想定platform skip（766 command、各process exit観測済み）。独立oracleはAllEqual 90件・AllOf 53件・AnyOf 62件・NotEach 67件・Len 38件を全件照合した。限定managed UI自己検証は685 assertion成功／0失敗で、上記3つのstandalone回帰例を含む。
+
+Windows x64 Release全体E2Eは15,656 command・201,555成功／0失敗／6件の想定platform skip、独立／oracle assertionは2,021件成功。全体managed UIは17,923 assertion成功／0失敗。Native AOTはSDK 10.0.402／runtime .NET 10.0.13、manifest nativeAot=true・selfTest=passed、自己検証892.71秒で、14 payloadの全サイズ・SHA-256と5ライセンスの同梱、5つのsource lock fileのSHA・サイズ・属性不変を確認した。検証したRIDはwin-x64のみで、他RIDや旧 .flt 全文法の移植完了は意味しない。
+
+## フォルダー `.flt` の `AllEqual` 条件（2026-10-17、Windows x64 Release全体E2E・UI・Native AOT済み）
+
+Windows のフォルダー比較で `.flt` の `AllEqual(...)` を評価する。scalar引数は左から再帰的な型厳密比較を行い、不一致で後続評価を止める。先頭引数が配列の場合は配列要素を比較し、後続引数を評価しない。Shell `Prop` を含む規則は各フォルダー階層の全側メタデータを一度に評価し、欠落側は `None` とする。scalar-only規則の側別評価と独立したまま、公開 `FileFilter.Matches` のフォルダー外scalar評価も保つ。
+
+限定E2Eは1,937成功／0失敗／2件の想定platform skipで、AllEqual 25 assertion と独立した旧ソース oracle 90ケースを確認した。Windows x64 Release全体E2Eは201,198成功／0失敗／6件の想定platform skipでAllEqual 32 assertionがすべて成功した。全体managed UI自己検証とNative AOT UI自己検証はそれぞれ17,737成功／0失敗で、AllEqual assertionは各28件すべて成功した。
+
+Native AOT manifest は `win-x64`／SDK 10.0.402／`selfTest=passed`、自己検証910.8秒（上限1,200秒）を記録し、manifestの14ファイルすべてで実体のSHA-256とサイズが一致した。JpegLibrary／SharpCompress／TiffLibraryのライセンスと、5個のsource lock fileのSHA不変を確認した。PNGとJSONではサイズ条件が `same.bin` のみを残し、配列先頭の条件が後続SHA引数を無視して `different.bin` と `same.bin` を残す。これはAllEqualの対応範囲であり、残る `.flt` 関数・算術・PCRE固有構文・全文法の移植完了や他RIDの検証を意味しない。
+
+## `.flt` の側別プロパティと絶対パス条件（2026-10-17、Windows x64 Release全体E2E・UI・Native AOT済み）
+
+Windowsのフォルダー比較で `.flt` の `FullPath`／`LeftFullPath`／`MiddleFullPath`／`RightFullPath` を評価する。値はShell property serviceを介さず走査snapshotの絶対パス文字列を使い、不在側は `None`。bare `FullPath` は側順配列、side指定は各位置を参照し、`MiddleFullPath` はindex 1（二者では右）。`FullPath` またはShell `Prop` を含む一つのmetadata規則は全側配列で一度評価し、どちらも含まない既存のscalar metadata規則と別々の規則は側ごとに評価する。directory frontierは各側の直接の子を集めてから評価し、除外・不在・走査失敗の親を越えた子の取得・再帰をしない。`FullPath` はフォルダーroot contextを必要とする。
+
+限定E2Eは1,912成功／0失敗／1件の想定macOS FIFOスキップで、二者・三者の14個のFullPath assertionをすべて確認した。Windows x64 Release全体E2Eは15,496 command・201,122成功／0失敗／6件の想定platform skip、全体managed UI自己検証は17,709成功／0失敗。Windows x64 Native AOT発行のmanifestは `nativeAot=true`・`selfTest=passed` を記録し、同じ17,709 UI assertionがすべて成功した。残る `.flt` 関数・算術・PCRE固有構文・全文法の移植完了を意味せず、他RIDの検証結果にも広げない。
+
+## 一般行変換の置換リスト（2026-10-16、Windows x64 Release限定検証）
+
+`ReplaceWithList`／`RegexReplaceWithList`をinline配列とfile pathの両方で接続した。前者はcompiled regex pairだけ、後者はcompiled／string pattern pairを順に適用する。CoreはI/Oを持たず、Appから有界・取消可能なloaderを注入する。literal pathは最適化時、dynamic pathと`@noopt`は評価時に読み、既存原文・編集本文を保持する。blank／先頭`#`／TABなしの行を飛ばし、最初のTABで分割して後続列を無視する。通常loaderのescape、不正regex ruleの診断／skip、UTF-8 BOMを確認した。
+
+[固定原典70件](../tests/Fixtures/LineTransformReplaceLists/README.md)の独立reader（原本SHA・source span・二回native採取・Git属性）と公開readerが成功した。公開planは18 serialized-key比較（opt／noopt両方）、4実行拒否、6解析拒否。さらにfileの32原典をopt／nooptの64観測でnative serialized keyへ照合した。Windows x64 Release限定E2Eは425 assertion成功／0失敗／0 skip、限定GUI自己検証は12成功／0失敗。実ボタン・原文保持・compile／各行の読込み寿命・予算／取消・失敗時の確定表示保持をPNG／JSONで確認した。buildは0警告／0エラー、5正本lockのSHAと属性は不変だった。
+
+project/paneの依存としてstatic候補とloaded dynamic pathを保護し、HTML・workspace複製・Table・包装／展開を確認した。包装は式を変えずv10 logical path→相対asset mapへ保存し、元リストの変更後も同梱snapshotから再読込みする。別workspaceへ複製したassetも確認した。literal・文字列連結・If／Choose／At(Array(...))から列挙できる候補は同梱し、行本文から作る未列挙pathは通常比較で使えるが包装は明示拒否する。
+
+fixtureのfile層はUTF-8 adapterで、旧UniMemFileのOS I/O・環境変数・任意codepage推定／lossy処理を実行していない。Appは既存のBOM／strict UTF-8／windows-1252 fallbackを使い、その同等性は主張しない。公開typed regex identity・全PCRE構文・旧parser全体も対象外。この変更の全体E2E・全体UI・Native AOT・macOSはまだ未実行で、以前の機能の成功記録を本変更へ転用しない。
+
+2026-10-17の追加修正では、dialogの追加／適用でlistのI/O・検証エラーを表示し、スクロール領域内のエラー位置へ移動する。JSONの構造検証はlist内容を読み込まず、相対asset解決後の検証とclone／GUI設定適用／HTML／CLI上書きはprojectのmapを渡す。文字列以外を含む連結pathは依存を動的として包装拒否する。workspaceのlist assetはtempへの書込み・flush・保護再確認後のatomic moveで公開し、作成したtempだけを失敗時に除去する。既存の一致assetも保存元windowの保護登録へ渡す。
+
+追加2件を含む再検証のWindows x64 Release限定E2Eは147 command・468成功／0失敗／0 skip、限定GUIは22成功／0失敗。oversized／不在の元リストから独立した包装復元、CLI上書き、数値連結の既存包装出力保持、エラー文が見える追加／適用と訂正、公開衝突時のJSON／既存asset保持・temp除去・同target再試行、包装Aから既存Bへ保存した再利用assetへのalias Text SaveAs拒否を確認した。buildは0警告／0エラー。独立readerの原典70件・公開18件のopt／noopt比較と拒否ケースは成功し、上記の同等性範囲を広げていない。文字列連結のIf／Choose／At(Array)と入れ子選択でも非string枝を動的依存として保持し、通常評価を変えず包装を拒否した。相対DTO直列化のcloneも構造検証へ分離し、実体は相対化前の絶対mapで検証する。CWDの同名oversized assetを置いたworkspace保存・包装・asset出力拒否をGUIで確認し、Windows junctionの同名pathでも保存・包装が成功する4 CLI実行とPythonによる全list bytes／ZIP CRC照合を追加確認した。この追加修正の全体E2E・独立レビュー・全体UI・Native AOT・他OSは未検証である。
+
+## 一般行変換の `like`／`not like`（2026-10-16、Windows x64 Release全体E2E・Native AOT済み）
+
+`like`／`not like`をtyped-ASTの二項演算へ接続した。Poco Globの全文一致を使い、`*`・Unicode scalar単位の`?`・文字集合／範囲・否定集合・backslash escapeを扱う。case-insensitive時は固定した原典由来のUnicode小文字表を使い、正規表現やfilesystem globのslash／dot規則は適用しない。配列は既存の演算子lift、文字列以外とopaque `Content`は`none`、`not like`は既存の真偽集約を保つ。共有作業予算と取消確認を適用する。
+
+[固定Poco原典](../tests/Fixtures/LineTransformLike/README.md)は99ケース／60 source file／独立native実行2回で、golden SHA-256は`2264f26555ca884c93071fca6d88a559d8c869d8e138d3f94e493bb7cc168ef6`。Release buildは警告0・エラー0、Windows x64限定E2E `--line-transform-like-only`は235 command・1,158 assertion成功／0失敗／0 skip。固定fixtureの独立readerも99ケースと原本・二回採取を検証した。E2Eはoptimized／`@noopt`、`@cs`／`@ci`、invalid setの入力依存拒否、配列・Content、評価順、予算超過時の入力／既存出力保持を確認する。
+
+同じRelease buildの全体E2Eは14,719 command・198,720成功／0失敗／5 skipで完了し、全体managed UI自己検証も17,216成功／0失敗だった。Windows x64 Native AOTは.NET SDK 10.0.402／runtime .NET 10.0.13で発行し、manifestは`nativeAot=true`・`selfTest=passed`・14 payloadを記録した。AOT全体UI自己検証は17,216成功／0失敗、837.479秒／1,200秒枠。
+
+## 一般行変換のMatch関数（2026-10-16、Windows x64 Release全体E2E・Native AOT済み）
+
+`MatchContext`・`MatchBlockCount`・`MatchBlockNumber`・`MatchBlockSize`・`MatchBlockOffset`をtyped-AST行変換へ接続した。`MatchContext(predicate, before, after)`はpredicateを第1引数に受け取り、境界式をbefore→afterの順に評価してからpredicateを走査する。直前の一致block距離を`after`、次の一致block距離を`before`と比較する。predicateはscalarのbool、または外側arrayに直接含まれるbool trueだけを真とする。範囲cacheはAST node identityとshared context内に限定し、走査成功後だけ公開する。
+
+[固定原典](../tests/Fixtures/LineTransformMatches/README.md)は無変更C++原典132件／61 source spanで、golden SHA-256は`9b4bb8a2c856658165618c5f3df0a537027956d5439686546b6b5e1a2c9fabf6`。Windows x64 Release限定E2E `--line-transform-match-only`は555 assertion・123 command成功、0失敗・0スキップ。独立readerは91件の公開serialized-key比較、11件のruntime拒否、30件のnative専用probeを分類し、native／public readerとも成功した。公開結果は全行の比較JSON`different=false`による間接観測で、typed value・AST・cache・例外classの直接同等性を主張しない。
+
+同じRelease buildの全体E2Eは191,830成功／0失敗／5スキップ、13,201 commandで完了し、Match関連57 assertionも全件成功した。全体managed UI自己検証は17,216成功／0失敗、`HeadlessLineTransformChecks`は13,654成功／0失敗だった。Windows x64 Native AOTは.NET SDK 10.0.402／runtime .NET 10.0.13で発行し、manifestは`nativeAot=true`・`selfTest=passed`・14 payloadを記録した。AOT全体UIは17,216成功／0失敗、821.849秒／1,800秒枠。AOT実行ファイルのMatch限定E2Eも555成功／0失敗／0スキップで、両独立readerが成功した。
+
+## 一般行変換の正規表現関数（2026-10-16、Windows x64 Release全体E2E・Native AOT済み）
+
+`RegexFind`・`RegexCount`・`RegexExtract`・`RegexReplace`を共通行変換へ接続した。固定原典はWinMerge由来のPCRE2／Poco実装で、実行時は追加native依存なしの.NET regexへ、照合した互換構文を変換する。Findはcapture開始位置をUTF-8 byte offsetで返し、Extractはcapture番号と0始まりの一致番号を受け取る。Replaceは原典の単一桁capture参照・`$$`展開・置換後subject上のglobal検索と、UTF-8 byte単位のzero-width進行を再現する。case directive、型付きpattern、scalar／一段array、定数化と動的引数の最適化分岐を保つ。実行には100 ms timeout・共有作業予算・取消確認を適用する。
+
+[固定原典](../tests/Fixtures/LineTransformRegex/README.md)は432ケース（390件のfunction-body no-opt、42件のoptimizer分岐）で、golden SHA-256は `3e4dbfa2e88eace81f62bc41ae2d8eb58bff6f2a7c98dfd224ec708241a708f7`。Windows x64 Releaseの限定E2E `--line-transform-regex-only` は359 command・1,056 assertion成功、0失敗・0スキップだった。358件の公開観測のうち343件を値／実行エラーgoldenと比較し、15件のwrong-arityは公開parserの拒否、15件の実行エラーは固定goldenとの一致を確認した。全原典432件のうち107件がRegexReplaceで、出力上限の拒否も終了コード2・stdout空で確認した。fixture専用のraw invalid UTF-8とThrowNodeは公開入力面に含めない。
+
+この互換層は任意PCRE2入力との完全互換を主張しない。補助面Han property照合とUnicode scalar途中のcaptureは拒否する。ゼロ幅一致後は原典どおりUTF-8 byte単位で次位置へ進み、複数byte文字上の継続に伴う例外も保持する。固定原典の範囲を超える構文・locale差とmacOS／Linuxでの実測は未資格である。
+
+同じWindows x64 Release buildの最新全体E2Eは191,830 assertion成功・0失敗・5スキップ、13,201 commandで完了した。`line-transform-regex-*` assertionは1,050件すべて成功した。5スキップはUnix 0600属性、macOSのcase alias・FIFO/socket、実デスクトップの全入力互換性、包装入力名のcase collisionである。Native AOTのWindows x64自己検証は17,216 assertion成功・0失敗で、実行時間は821.849秒だった。最新AOT実行ファイルを使った限定Regex E2Eも1,056 assertion成功・0失敗・0スキップで、固定原典432件と出力上限拒否を確認した。
+
+## 一般行変換の `matches`／`not matches` 演算子（2026-10-16、Windows x64 Release全体E2E・Native AOT検証済み）
+
+一般行変換式へ `matches`／`not matches` を追加した。文字列subjectと文字列または型付きregex patternを照合し、先頭位置で得た最初の非空一致がsubject全体を覆う場合に `matches` をtrueとする。終端anchorをpatternへ追加して代替を再試行しないため、`"ab" matches "a|ab"` はfalse、`"ab" matches "ab|a"` はtrueとなる。`not matches` は既存のbool集約結果を論理否定し、配列要素ごとの反転ではない。`@cs`／`@ci`、既定Optimizeと `@noopt` の分岐、共有処理予算、取消、regexの100 ms timeoutを維持する。既定Optimizeは文字列literal patternの不正regexを式の解析時に拒否し、動的または `@noopt` の不正patternは `matches` をfalseにする。対応範囲は既存のregex互換変換器に従い、任意PCRE2構文の完全互換を主張しない。
+
+[固定原典](../tests/Fixtures/LineTransformMatchesOperator/README.md)は106件（成功100件・例外6件）で、golden SHA-256は `1e656f041600072588ac168fc4ad546eb2abbea78ca7e762c36b6e17ef5598ff`。公開readerは106件のCLI観測をnative由来の結果と照合する。Windows x64 Releaseの限定E2Eは334成功／0失敗／0スキップ、全体E2Eは193,382成功／0失敗／5スキップだった。Release buildは0 warning／0 errorで、5つのpackage lockfileは不変。Windows x64 Native AOTは `nativeAot=true`／`selfTest=passed`、全体UI自己検証17,216成功／0失敗（827.357秒）、限定E2E334成功／0失敗／0スキップで、独立readerも成功した。macOS／Linuxの実測は未実施。
+
+## 一般行変換のlogger関数（2026-10-16、Windows x64検証済み）
+
+`LogError`／`LogWarn`／`LogInfo`と`@name`をtyped-AST評価へ接続した。引数を左から一度ずつ評価し、全件が成功した後にseverity・名前・単一空白区切りの本文をloggerへ渡し、最後の引数の型付き値を返す。未選択枝は評価せず、例外前の未完成メッセージを記録しない。最適化後もログ副作用を保持する。
+
+[固定C++原典](../tests/Fixtures/LineTransformLogging/README.md)の35ケースをMSVCで独立に二回実行し、goldenと実行証拠をreaderで照合した。Content containsを含む最新Release buildの全体E2Eは190,221成功／0失敗／5 skip、12,719 commandsで、logger assertions 105件・固定原典reader・Text／Table／report-project／package-projectのsink経路も成功した。GUI自己検証は注入sinkを確認する。
+
+このfixtureはtyped-AST関数・directive adapterの契約であり、レガシー全体parser・optimizerの一致を証明しない。GUIの実Trace listener表示、他OS／RIDは未検証で、全機能移植の完了を意味しない。
+
+## 原文Contentの行数・部分行（2026-10-16、Windows x64検証済み）
+
+`Content`、`LineCount(Content)`、`Sublines(Content,start[,len])`を原文snapshotに限定して実装した。Coreは比較前に渡された全文字列を使い、入力fileの再読込みはしない。実在するText／Table入力では、互換文字列化のためだけに元の絶対pathを一時的に受け取り、`<FileContent:{path}>`を返す。未保存・仮想入力のpathはnullで`<Content>`となる。pathはworkspaceやreportの保存値へ追加しない。Sublinesを含む式の複数行結果は一つのopaque比較キーとし、元の行数・EOL・原文を保つ。既存の非Sublines式の生成CR/LF拒否と固定readerは維持する。
+
+この初版のWindows Release buildは警告0／エラー0。手定義の[固定契約](../tests/Fixtures/LineTransformContent/README.md)と`--line-transform-content-only`は842成功／0失敗／0省略、143 commandsで、独立readerが108成功ケースと26件の期待するarity／evaluation拒否を確認した。`HeadlessLineTransformChecks`は2,788成功／0失敗。これらは後続の`Content contains`追加前の記録である。
+
+Windows x64 Native AOTの初版は.NET SDK 10.0.402／runtime .NET 10.0.13で発行した。`publish-manifest.json`は`nativeAot=true`・`selfTest=passed`を記録し、14 payloadすべてのサイズ／SHA-256が一致した。全体headless UIは17,193成功／0失敗、849.300秒／1,800秒枠。外側の検証wrapperは実行後のTemp内Core／Providers lock seed変更を不変性違反として失敗を記録したが、リポジトリの5 `packages.lock.json` は実行前後で同一SHA-256だった。
+
+## 原文Contentの行単位contains検索（2026-10-16、Windows x64検証済み）
+
+`Content contains "needle"`は比較前に確定したsnapshotの各物理行を検索し、CR／LF／CRLFを含めず、行をまたぐ一致を作らない。空needleはfalseで、`@cs`／`@ci`を尊重する。`@ci`は既存のscalar `contains`と同じ決定的なASCII大小文字foldであり、旧Windows localeのUnicode case-fold goldenとは主張しない。遅延行offsetを使って入力fileを再読込みせず、行・文字比較を共有作業予算に課金し、取消を確認する。
+
+追加後のRelease全体E2Eは190,221成功／0失敗／5 skip、12,719 commands。Content contains assertions 126件、logger assertions 105件、全体の独立reader assertions 2,032件がすべて成功した。独立・oracle reader関連の110 process commandはすべてPID・実終了時刻・終了コードが記録され、期待する比較差分と拒否結果を各E2E assertionで確認した。5 skipはUnix 0600／macOS case alias／macOS FIFO・socket／実デスクトップ・任意入力互換／case-collision filesystemのWindows外または実OS限定範囲である。`--line-transform-content-only`単独実行はこの更新後には再実行せず、同シナリオを含む全体E2Eと全体UIで検証した。
+
+Windows x64 Native AOTは.NET SDK 10.0.402／runtime .NET 10.0.13で発行し、manifestは`nativeAot=true`・`selfTest=passed`、14 payloadを記録した。全体headless UIは17,216成功／0失敗、865.023秒／1,800秒枠で、Content関連51 assertionsもすべて成功した。`Prop`、pathを引数に受けるLineCount、FileContentRefの原本byte／metadata比較、任意path読込み、一般`.flt`全体の移植完了、他OS／RIDの実測を意味しない。
+
+## 一般行変換のUnicode正規化（2026-10-16、Windows x64検証済み）
+
+`NormalizeUnicode(value[,form])`を共通評価へ追加した。既定はNFCで、formはNFC／C／1、NFD／D／2、NFKC／KC／5、NFKD／KD／6を受け付ける。無効な文字列／整数formはvalueを評価する前に拒否し、その他のform型はNFCとして扱う。Windowsは`NormalizeString`、その他のOSはmanaged `string.Normalize`を使い、失敗時は入力文字列を保つ。none・scalar文字列化・一段array・表列・通常／`@noopt`・定数化しない境界、case directive、共有作業／出力予算と取消を検証する。
+
+最新Release buildの限定E2E`--line-transform-unicode-normalization-only`は580成功／0失敗／0省略、85 commands。全体E2EとWindows x64 Native AOT全体UIは前節の同じソースの記録を参照する。期待値は手定義で、Windows `NormalizeString`のOSデータと他OSの.NET Unicodeデータ、Native WinMerge goldenの完全一致を主張しない。
+
+## 一般行変換の文字種変換（2026-10-16、Windows x64検証済み）
+
+`ToHalfWidth`／`ToFullWidth`／`ToHiragana`／`ToKatakana`／`ToSimplifiedChinese`／`ToTraditionalChinese`を追加した。原典`FilterExpressionNodes.cpp:2808-2859`の一引数・none保持・直下配列適用・scalar文字列化を共通経路へ接続し、原文を保持する。Windowsは`unicoder.cpp:1447-1474`と同じ個別LCMAPフラグの`LCMapStringEx`、macOSは固定CoreFoundation frameworkの`CFStringTransform`を使用する。NFKC/NFKDは併用しない。
+
+macOSのAPI根拠は[Apple公式CFString.h](https://raw.githubusercontent.com/apple-oss-distributions/CF/main/CFString.h)の全文範囲・逆変換・ICU ID契約、変換IDは[ICU公式root.txt](https://raw.githubusercontent.com/unicode-org/icu/main/icu4c/source/data/translit/root.txt)の`Fullwidth-Halfwidth`／`Hiragana-Katakana`／`Traditional-Simplified`／`Simplified-Traditional`による。UTF-16明示長、pointer幅のCFIndexと1byte Boolean、finallyでの全CF所有参照解放を使用し、反射や動的DLL探索は追加しない。OSの変換データの完全一致は保証しない。
+
+最新Release buildでの限定E2E`--line-transform-character-mapping-only`は626成功／0失敗／0省略、99 commands。全体headless UIの`HeadlessLineTransformChecks`は2,788成功／0失敗で、前節に記録した同一ソースのmanaged全体E2EとWindows x64 Native AOT全体UIも成功した。Native WinMerge golden、OS間の全Unicode一致、macOS現物と他RIDのAOTは検証済みと扱わない。
+
+## 一般行変換の時計関数（2026-10-13、Windows限定検証済み・全体検証継続）
+
+Now／TodayをCore・App・CLI／GUIへ採用した。compile一式で一snapshotを取得して全行で共有し、別式・再compileではfreshにする。Todayのlocal日付0時UTC構築と23／25時間、Timestamp origin fold／`@noopt`を保持する。E2Eの時計3呼出し元では明示した`--python`を独立readerへ渡す。
+
+WindowsのRelease buildは警告・エラー0、時計限定E2Eは329件、一般行変換限定UIは2430件が合格した。win-x64 Native AOT発行物は実14ファイル＋manifest・ライセンス5件を親が照合し、Native時計E2E329件と限定UI2430件も独立資格化した。Native E2Eの旧postcontrollerは古い出力名の照合で失敗したまま保全し、製品再実行なしの独立reader資格と区別する。Native UIの650出力・297 PNG・時計bounds31行を照合し、通常／最小多数タブのPNGを親が目視した。
+
+全体UIの製品実行は16835件・失敗0／OS0だが、全stream／PNG／workspaceの独立成果物資格は継続中である。全体E2Eは検証用の264〜294文字pathでOSごみ箱への安全な移動を確認できず、2103成功・7失敗・2省略／1000 commandsで途中終了した。同じE:・同じ製品の短いpathでFolder GUI1060件・7ごみ箱caseを独立照合した。長いpathでの永久削除拒否を維持し、短namespaceの全体E2E再実行を準備済みだがC:空き9GiBの開始条件の回復を待っている。全体E2Eの合格、Error本文の視覚到達、通常desktop／ネイティブ保存dialog、macOS／他RIDは未資格。自然Windows時計6観測は原典body／source-derived predicateの限定照合であり、native TZ一致・原典全AST／Optimize・全API一致は未資格。
+
+## 一般行変換の週・月・年の初め（2026-10-13、Windows製品検証済み）
+
+StartOfWeek／StartOfMonth／StartOfYearをCoreとAppの日時環境へ採用した。文字列またはTimestampを対象に、ローカル暦0時の構築、週だけのUTC時間軸による曜日分の減算と再構築、配列の順序・非対応型のnone・途中例外による候補全体拒否を保つ。日時literalだけを定数化し、StringLiteralの関数は実行時に評価する。
+
+固定原典bodyは126記録×2の108body／18除外、Windows自然ja-JP／Tokyoで実終了0・保持出生・両EOFまで採取した。body成功70／例外38と、成功Timestampのserializerが返すSystem exception文字列14件を分ける。外部候補の公開E2Eは原典108bodyの582投影とsource由来62項目の計644項目に合格した。Windows製品cohortはRelease buildがwarning／error 0、全体E2E 187,434 pass／失敗0／既存skip5、全体UI 16,759 pass／失敗0を確認した。win-x64 Native AOT発行と暦関数限定E2E 2,603 pass／失敗0、一般行変換限定UI 2,354 pass／失敗0も実終了0と出力回収まで確認した。Native UIの全258 PNGと暦関数の操作bounds 26行（dialog6行）を独立照合し、親が通常／最小・多数タブと設定dialogを目視した。全Native E2E／UI、通常desktop、実OS dialog／pointer、他RID、CI制限内完了は未実測である。NUL／nullarray／unsafe値・他profile／macOS／DST・原典全AST／parser／Optimizeは未資格とし、原典closureを再実行せず固定SHAと全entry CRCで照合する。
+
+## 一般行変換の日時変換関数（2026-10-13、Windows製品検証済み）
+
+ToDateTimeとToDateStrをCoreへ採用した。前者は文字列をTimestampへ変換し非文字列・空文字列・解釈失敗をnoneとし、後者は文字列またはTimestampからローカル日付を返しconstructor／hostの失敗を例外で拒否する。配列は直下要素だけを順番に変換し、入れ子はnone、途中失敗は候補全体を拒否する。成功した文字列literalのToDateTimeだけを日時literalへ最適化し、ToDateStrは評価時に実行する。
+
+固定原典bodyは121記録×2、111body／10除外を実OS終了0・保持出生・両EOFで採取した。原典ToDateTime59bodyはTimestamp27／none29／array3、ToDateStr52bodyは成功33／例外19。日時serializerが返すSystem exception文字列と関数bodyの例外を分けた。公開planの外部E2Eは原典110bodyの502投影とsource-derived24観測の計526項目に合格した。残る1bodyは公開arityと異なる原典ToDateTimeの0引数であり公開互換には数えない。NUL2／nullarray2／unsafe ToDateStr Timestamp2／unsafe locale ToDateStr3／ToDateStr0引数1は未実行、原典ToDateTime非Syntax例外枝も未観測。初回harnessの大整数入力生成を既存ToInt(string)へ訂正した失敗記録を保持し、同じcompiled候補で再照合した。製品cohort b48はRelease build警告0、全体managed UI 16,633項目、全体E2E 184,832合格／既存5スキップで検証した。Windows x64 Native AOT発行は警告0、Nativeの日時変換限定E2E 1,041項目／191実アプリ呼出し、一般行変換限定UI 2,228項目に合格した。実終了0・保持出生・両EOF・ソース不変を確認し、Native UIの224PNGを独立復号、日時変換の6PNGを目視、12公開観測・6ダイアログboundsを照合した。Native全体UI／E2E・他RID／macOS・実OSダイアログ・原典全AST／parser／Optimize・他profileは未資格である。
+
+## 一般行変換の日時literal（2026-10-12、b47検証）
+
+純Coreへ`d"…"`／`D"…"`と原典の8日時形式を採用した。値はTimestamp型の符号付き64bit epoch microsecondsとして保持し、日時同士の6比較、日時±整数・日時差（microseconds）、`InRange`／`IsWithin`、混在型の`Minimum`／`Maximum`を扱う。日時は`Sum`／`Average`の数値集計に寄与しない。公開NULを拒否し、原典で未定義の符号付き演算になる値の文字列化を拒否する。共有予算・取消・原文を保持し、hostのlocale・現在時差・対象日時のDSTはruntime注入へ分離して保存DTOへ含めない。年の負値表示を符号込み最小4桁へ合わせ、UTC値とlocal変換後の有効性を別々に検査した。
+
+[日時fixture](../tests/Fixtures/LineTransformTimestampLiterals/README.md)に原典constructor31件とguarded48件のsource・raw出力を保持する。primary31のNULはforensicのみ、guarded48のrawCtor12は公開構文なし、unsafe locale3はserializer未実行、NUL1は公開拒否として分ける。原典と同じWindows profileでのみsafe32（24 serialized／8 constructor error）をd/D・通常／@nooptで直接照合し、他profileは理由付きskipとする。安定する演算のsource-derived engineering観測と原典constructor／serializer観測を区別し、Pocoの浮動小数点に関わる最小年境界・他localeを同等性確認済みとはしない。原典全AST／lexer／parser・typed公開観測・全機能移植の完了を意味しない。
+
+凍結source b47のRelease buildは警告0／エラー0、既存5 lockfileを保持した。managed全体UIは16,589成功・失敗0と14独立reader、managed全体E2Eは183,792成功・失敗0・既存skip5・11,563命令を確認した。E2Eは実PID29868の保持handle・OS終了0・両EOF・timeoutなし、3,525.622秒で完了した。最初の全体E2Eは274文字の対象ファイルパスでごみ箱削除のOS guardに拒否され、保護を維持したまま同じ製品を短い外部Tempで再実行して成功した。
+
+Windows x64 Native AOTは実PID26104・142.080秒・警告0・OS終了0・保持handle・両EOFで生成を完了した。PE32+／AMD64、実行file SHA-256 `40afaceb23e05efffd26e6772765fa2fb696a9cc1a42e5ae91b19e598bd2a780`、14製品fileと別manifest1、自然に同梱された5ライセンスを照合した。Publish内蔵自己検証は省略した。生成物のNative行変換UIは2,184成功・失敗0・218 PNGと日時dialogの6操作boundsを照合した。Native日時限定E2Eは3,922成功・失敗0・skip0・1,372命令、実PID31056の保持出生・OS終了0・両EOF・74.804秒を確認した。初回の計測toolは一時fileの列挙と属性取得の間の消失で停止したが、子の消失だけを計測で許容する外部toolへ修正し、root不在・reparse・容量制限の拒否を保持して新しい短いrunで再検証した。旧tool失敗を成功へ置き換えていない。Native全体E2E・他RID・macOS現物・CI600秒枠・通常desktop／実OS pointer・dialogは未資格化。
+## 一般行変換のVersion literal（2026-10-12、製品検証中）
+
+純Coreへ`v"…"`／`V"…"`とASCII scanf四部品の部分変換を採用した。majorの符号bit、未変換部品0、非マスクの左結合加算とIntLiteral専用最適化のconstructor originを原典へ照合し、未定義shift／変換／加算は拒否する。原典constructor60件、原典quote・int64文字列化128観測、C++17のsafe sign-bit18件・36観測を保持した。原MSVCの`32768.0.0.0`は`-9223372036854775808`であり、親の独立readerが原典・コンパイラ・実process終了／両EOFを照合した。最終b44はRelease警告0／エラー0、限定E2E14,513成功・失敗0・skip0・1,934命令、実GUI2,140成功・失敗0。公開156観測（154 serialized成功・NUL2解析拒否）、別12 Compile-only probe・34 engineering観測、原セル・行対応・HTML・保存・復元・包装を確認し、親が14独立reader・36操作boundsと通常／最小／37タブのPNGを照合した。managed全体UIは16,545成功・失敗0で、実process終了0・保持handle・両EOF・timeoutなし、追加14独立readerも合格した。managed全体E2Eは179,871成功・失敗0・固定skip5・10,191命令、実終了0・保持handle・両EOF・timeoutなし。skipはUnix mode・macOS case alias・Mac FIFO/socket・実desktop等の範囲外・case collisionの既存5項目として記録した。Windows x64 AOTの生成は165.801秒で実終了0・保持handle・両EOF。13製品file・別manifest1・4ライセンスのSHAを照合した。Publish内蔵自己検証は指定により省略した。生成物へ別プロセスで実行したNative全体UIは二回とも16,545成功・失敗0（936.928秒／810.675秒）、28独立reader・各824描画PNG／50 bounds、限定E2E14,513成功・失敗0・skip0・1,934命令（実GUI2,140成功）、独立テキスト互換95成功・失敗0・40命令を確認した。全子processの実終了・出力回収を照合し、元集計wrapperの整形JSON読込み失敗は保持したまま、親の新しいJSON全文readerと画像再照合を実終了0・両EOFで完了した。ローカル上限1,800秒の検証であり、Native全体E2E・CI600秒枠・他RID・実OS pointer／dialogは未資格化。Native全lexer／parser・typed AST・他OS／RIDと全機能移植完了を意味しない。
+
+## 一般行変換の期間literal（2026-10-12、製品検証中）
+
+純Coreへ週・日・時・分・秒・ミリ秒の22 ASCII unitを数値へ直結するliteralを採用した。原典のdoubleの段階倍率とmicrosecond整数への切捨て・単項負号、数値解析失敗時0を保ち、倍率後の未定義64bit castは拒否する。固定106原典の92公開serialized候補・10constructor専用・4platform丸め未実行、別21解析probeと24engineering観測・共有規則予算を分ける。原典Native二回・17 source blobs・62 spansと実process終了／両EOFは独立readerで照合済み。Durationのみのb39はRelease警告0／エラー0、限定E2E9,732成功・失敗0・skip0・1,369命令、実GUI1,854成功・失敗0。親が12独立reader・36操作boundsと通常／最小／37タブPNGを照合した。Version追加後のb44でも限定14,513成功・失敗0、managed全体UI16,545成功・失敗0と14独立readerの原典・公開照合が合格し、実process終了0・保持handle・両EOF・timeoutなしを確認した。managed全体E2Eも179,871成功・失敗0・固定skip5・10,191命令で、実終了0・保持handle・両EOF・timeoutなし。AOT生成と別プロセスのNative全体UI二回（各16,545成功・失敗0）、28独立reader、限定E2E14,513成功・失敗0・1,934命令と独立テキスト互換95成功・40命令を確認した。元集計失敗を保持し、親のJSON全文readerによる集計と画像再照合は実終了0・両EOF。Native全体E2E・CI600秒枠・他RID・実OS pointer／dialogは未資格化。Native全parser・typed AST・cache互換と全機能移植完了を意味しない。
+
+## 一般行変換の容量literal（2026-10-12）
+
+純Coreへ整数／小数とB／KB／MB／GB／TBの直結literalを採用した。原典のdoubleの段階的1024倍・整数切捨て・単項負号、解析失敗時0を維持し、倍率後の未定義64bit castは拒否する。固定95原典は77公開serialized候補・14constructor専用・4platform丸めを分け、別18probeと隣接token／丸めの追加engineering観測を保持する。原典17 blobs・62 spans・実Native二回と両EOFを独立readerへ照合した。最終b33はRelease警告0／エラー0、限定E2E7,586成功・失敗0・1,074命令、実GUI1,616成功・失敗0。managed全体E2E172,944成功・失敗0・固定skip5・9,331命令、全体UI16,021成功・失敗0で、実process終了0・保持handle・両EOF・timeoutなしを確認した。Windows x64 Native AOTは内部／独立全体UI各16,021成功・失敗0、限定7,586成功、互換95成功。親の独立readerは95 Native原典と77公開serialized一致・18未実行、別18probe、原セル・履歴・保存・包装、通常／最小／37タブのPNGと操作boundsを照合した。AOT発行985.343秒・独立UI818.854秒はローカル1,800秒枠での実測であり、CI600秒・他OS／RID・Native全体E2E・実OS pointer／dialogは未検証。全機能の移植は未完了。
+
+## 一般行変換の集計（2026-10-12）
+
+純Coreへ`Average`・`Sum`・`Maximum`・`Minimum`を採用した。最初に到達したproviderの全行、条件→値、直下array、最初の有効型と全scalar件数、各変換／ルールの成功cacheを固定原典へ照合した。公開変換は失敗時に私有候補全体を拒否し、非有限値と64bit範囲外の整数化は明示拒否する。141 Native原典を104件の公開serialized-key派生観測と37件の表現不能・未実行へ分け、別の引数数probe8件を保持する。原AST・特殊context・IEEE bitsと全parserの同等性は含めない。
+
+最終b30はRelease警告0／エラー0、限定E2E5,748成功・失敗0・820命令、実GUI1,400成功・失敗0。managed全体E2E171,106成功・失敗0・固定skip5・9,077命令、全体UI15,805成功・失敗0で、実process終了0・保持handle・両EOF・timeoutなしを確認した。Windows x64 Native AOTは内部／独立全体UI各15,805成功・失敗0、限定5,748成功、互換95成功。親が849証拠file、13発行payloadと4,395限定E2E entryの全SHA／size／CRC、355ソースと保護1,178件を確認し、別の8readerと通常／最小／37タブのPNG3枚で原セル・編集・保存操作の到達を照合した。AOT発行1,051.018秒、独立UI806.999秒はローカル1,800秒枠の実測であり、CI600秒・他OS／RID・Native全体E2E・実OS pointer／dialogは未検証。復元用backupは全15,383 regular fileと208 named streamを保持する。後続のmodule scope限定検査・36 leaf linkと通常rootの37段階commonTrash清掃で旧Native作業rootと今回のごみ箱実体／管理情報の不在を確認し、既存bin597項目を保持した。全機能の移植は未完了。
+
+## 一般行変換の包含範囲判定（2026-10-12）
+
+純Coreへ`IsWithin(value, lower, upper)`を採用した。下限と上限を両方含み、両端が等しい場合もその端を含む。評価順・型・配列・UTF-8／ASCII比較・共有予算・取消は`InRange`の経路を共有する。[包含範囲fixture](../tests/Fixtures/LineTransformWithin/README.md)は72原典を59公開serialized-key一致・3解析拒否・10表現不能の未実行に分け、別の四引数probeと12件のvalue／keyだけのToInt bridgeを保持する。原典200 checksと採用後の公開診断を独立readerへ照合した。typed AST／Timestamp／全parser互換を意味しない。
+
+最終b26はRelease build警告0／エラー0、限定E2E3,511成功・失敗0・537命令、実GUI1,124成功・失敗0。managed全体E2E168,869成功・失敗0・環境等skip5・8,794命令、全体UI15,529成功・失敗0で、実process終了0・保持handle・両EOF・timeoutなしを確認した。Windows x64 Native AOTの内部／独立全体UIも各15,529成功・失敗0、限定3,511件と互換95件が成功した。親の別readerで従来五系統とIsWithin59一致／3拒否／10未実行・別probe1を照合し、同じ上端をInRangeだけ除外すること、表の原セル保持・編集履歴、通常／最小／37タブの操作到達をPNG・JSONへ照合した。348ソース・保護1,178件と13発行payloadのSHA／sizeを維持し、原本・復元証拠を外部へ保持した。AOT発行997.920秒、内部UI872.277秒、独立UI810.141秒はローカル1,800秒枠での実測であり、CI600秒・他OS／RID・Native全体E2E・実OS pointer／dialogは未検証。全機能の移植は未完了。
+
+## 一般行変換の範囲判定（2026-10-12）
+
+純Coreへ`InRange(value, lower, upper)`を採用した。下限を含み上限を含まない判定、下限・上限・値の評価順、整数辺のexact比較とdouble辺だけの変換、UTF-8順／Poco ASCII fold、scalar／直下arrayを固定C++関数本体へ照合する。型不一致はnone、引数数は解析時に拒否し、既存の共有予算・取消と原文保持を使う。[範囲fixture](../tests/Fixtures/LineTransformRanges/README.md)は72原典を59公開serialized-key一致候補・3公開引数数拒否・10表現不能の未実行に分け、別の四引数probeを保持する。12件のToInt decimal bridgeは最終value／keyの一致だけで、typed ASTや全parserの互換を意味しない。
+
+最終b25はRelease build警告0／エラー0、限定E2E2,825成功・失敗0・450命令、実GUI846成功・失敗0。managed全体E2E168,183成功・失敗0・環境等skip5・8,707命令、全体UI15,251成功・失敗0、実process終了0・保持handle・両EOF・timeoutなしを確認した。1命令の壁時計逆転は同時刻のWindows時刻補正イベントへ照合し、補正後178.039 msとStopwatch178 msが一致した。Windows x64 Native AOTも内部／独立全体UI各15,251成功・失敗0、限定2,825件と互換95件が成功した。親の別readerでscalar500／array465／search370 fields・Replace78一致／10拒否／12未実行・InRange59一致／3拒否／10未実行と別probe1を照合した。344ソース・保護1,178件と13発行payloadのSHA／sizeを維持し、原本・復元証拠を外部へ保持した。CI600秒・他OS／RID・Native全体E2E・実OS pointer／dialog、旧parser／Optimize全体は未検証。全機能の移植は未完了。
+
+## 一般行変換の文字列置換（2026-10-12）
+
+純Coreへ文字列needleの`Replace`を採用した。三引数の先行評価、scalar／直下array、非重複一致、置換結果を再検索しないこと、Pocoの`$0`展開、定数needleのempty-matchとOptimizeの拒否を固定原典へ照合する。`@ci`はこの関数だけ固定PCRE2 10.47／Unicode 16.0.0のcaseless集合で扱い、既存比較／検索のASCII foldを保つ。外部runtime依存は追加せず、生成表のBSD告知を通常／AOT binaryへ同梱する。[Core契約](../Src/DiffBeacon.Core/README.md#一般行変換)、[固定原典と独立reader](../tests/Fixtures/LineTransformReplace/README.md)を参照する。
+
+実C++ sidecarは原典100件を元のvalue／trace／modeを変えずserializedし、93結果・7例外を二回のcompileと実processの終了／EOFへ照合した。公開式は78件のserialized bytes一致・10拒否・12表現不能の未実行を区別する。生成表は全1,114,112 codepoint・2,938 relations／1,484 pairsを検査した。新しい文脈の独立レビューに成立P1／P2はない。採用後のRelease buildは警告0・エラー0、限定E2Eは2,144成功・失敗0／363 commands、実GUIは572成功・失敗0。managed全体E2Eは167,502成功・失敗0・環境等skip5／8,620 commands、全体UIは14,977成功・失敗0。Windows x64 Native AOTの発行と独立全体UIは14,977成功・失敗0（851.714秒）、同限定E2Eと互換95件も成功した。実processの終了0・保持ハンドル・両EOFと、342ソース／保護1,178件のSHA、13発行payloadと告知の同梱を親が独立照合した。CIの600秒制限・他OS／RID・Native全体E2E・実OS pointer／dialogは未検証。typed regexと旧parser／Optimize全体は未完了で、全100件の公開互換完了とは扱わない。
+
+## 一般行変換の検索関数（2026-10-12）
+
+純Coreへ`StrCount`／`StrFind`を追加した。重ならない一致数、0始まりの一致回、UTF-8 byte位置、ASCIIのcase fold、第一引数のscalar／直下arrayへの適用を旧関数本体に照合する。検索patternは関数評価内で遅延生成し、none・空配列・全noneでは作らない。UTF-8 bytesとKMP prefixの容量を確保前に共有予算へ計上し、超過は候補全体を拒否する。Text／RAW表、三者maskとgroup順、共通dialog、保存／復元・HTML・包装は既存経路を使用し、原文セルと保存本文を保持する。[Core契約](../Src/DiffBeacon.Core/README.md#一般行変換)、[固定原典と境界](../tests/Fixtures/LineTransformSearch/README.md)、[限定E2E](../tests/DiffBeacon.E2E/README.md#一般行変換の限定検証)を参照。
+
+最終b14/e11はRelease build警告0・エラー0、実App限定E2E1,367成功・0失敗・0skip（252命令）、UI231成功・0失敗。実PID34240・birth・保持handle・終了0・両EOF・timeoutなし、54.662秒を確認した。別readerは検索68ケースの62原典一致と引数数不正6件の公開compile拒否・原文保持、全370 fieldsを照合し、従来scalar500／array465 fieldsも維持した。原典の6評価エラーと公開constructorの6解析エラーを同じ資格として扱わない。RAW Column2の引用符を含む位置5、dialogの二重適用・取消、三者表の編集・Undo／Redo・明示保存・再読込み、HTMLと古い候補の拒否をPNGとJSONで確認した。256規則・60,000 byte needleの不要pattern6例は成功し、検索元のある2例は共有上限で拒否して入力・workspace・既存HTMLのSHAを保持した。公開stderrはworkと生成量の理由をまとめるため、個別カウンターの先着は断定しない。旧C++ parser／Optimize全体、他OS／RID、実OS dialog／pointer／clipboardは未検証で、残る関数／typed literal等の移植は未完了。
+
+この検索増分を含む全体managed E2Eは166,725成功・0失敗・5skip、8,509主命令（ScopeArchive12件込みstdout file8,521）。実PID15780・birth・保持handle・終了0・両EOF・timeoutなし、2,445.133秒を確認した。5skipはUnixFileMode、APFSのcase alias、Mac FIFO／socket、三者の実desktop／全入力互換、case collisionの環境・範囲制限として理由を保持する。全体managed UIは14,636成功・0失敗、実PID21968・終了0・両EOF・829.868秒。終了した全体UIを親の別プロセスreaderでもscalar500／array465／search370 fieldsへ再照合した。
+
+Windows x64 Native AOTも全体UI14,636成功・0失敗（860.202秒）、対象UI231成功・限定E2E1,367成功・互換性確認95成功。実Publish10520、native UI29856、限定13920、互換32376の保持handle・実終了0と最終集計を確認し、外側Publish／限定runner／独立readerは両EOF・timeoutなし。内部native UIの独立stdout／stderr EOFは未採取で、ローカル1,800秒枠をCI600秒の資格へ流用しない。12 payloadのSHA／size、338 source、5 lock＋bin／obj1,173 file（保護集合1,178）のSHAとpathset不変を親でも照合した。新しい文脈の独立レビューに成立P1／P2はなく、検索原典のreaderも一致した。全体native E2E、他OS／RID・実OS dialog／pointer／clipboard、旧C++ parser／Optimize全体は未検証。
+
+## 一般行変換の配列演算（2026-10-12）
+
+純Coreへ入れ子の配列、Array／At、AnyOf／AllOf／AllEqual、要素ごとの論理・IfEach・Choose／ChooseEach、scalarとの算術・比較・文字列関数適用を追加した。Text／RAW表、三者maskとgroup順、共通dialog、保存／復元・HTML・包装は既存の一般行変換経路を使い、元のセル・本文・外側EOLを保持する。配列の確保前に共有予算を検査し、累積1,048,576 slotsを超える比較候補を拒否する。詳細は [Coreの契約](../Src/DiffBeacon.Core/README.md#一般行変換) を参照。
+
+b11e9の実App限定E2Eは734成功・0失敗・0skip（146命令）、描画・操作UIは203成功・0失敗。別プロセスreaderで既存scalar86件・500 fieldsを維持し、配列90件・465 fieldsは89件の原典一致と、物理CR/LF生成の1件の評価拒否・原文保持を確認した。[配列fixture](../tests/Fixtures/LineTransformArrays/README.md)は原典90件を無改変で保持する。CLIの原典25例、128要素×8192行の成功／8193行の拒否、実dialog・RAW表編集・Undo／Redo・保存再読込み・設定復元・取消と古い候補の拒否、PNGを確認した。Release buildは警告0・エラー0、5 lockfileは変更なし。
+
+前の全体E2Eでは一般変換なしの表JSONへ追加した行分類フィールドにより既存readerが1件失敗した。一般変換を使用する表にだけ分類を出力するよう修正し、b11のIndependentText限定E2Eは95成功・0失敗（40命令）で既存JSON契約を確認した。この修正と配列を含む全体managed E2Eは166,092成功・0失敗・5環境skip、8,403主命令（stdout fileはScopeArchive12件込み8,415）。実PID33204・終了0・保持handle・両EOF・timeoutなし、2,375.984秒を確認した。全体managed UIは14,608成功・0失敗、実PID27988・終了0・両EOF・791.514秒。Windows x64 Native AOTの全体UIも14,608成功・0失敗、対象UI203成功・限定E2E734成功・互換性確認95成功、12 payloadのSHA／sizeと335 source・5 lock／repo bin・objの1,178 entry不変を確認した。Native全体UIは853.866秒のローカル1,800秒枠で、CI600秒の資格にはしない。子Native UIは保持handle・実終了0・最終集計を確認したが、Publish内の明示stdout／stderr EOFは採取していない。外側Publishと限定E2E／readerのEOFは確認済み。他OS／RID・実OS dialog／pointer／clipboard、全体native E2E、旧C++ Optimize実行は未検証。旧parser全体、生成改行の原行写像、残る関数／typed literal等の移植は未完了。
+
+## 一般行変換の基本pipeline（2026-10-11）
+
+純Coreの式解析・provider・共有予算、Text／Tableと三者の実pane mask、同期点・フォルダー三者・4ペイン結果へ一般行変換を接続した。共通の「行変換…」dialog、繰返し指定の`--line-transform all|left|base|right EXPRESSION`、project／workspaceのoptional規則、`--report-project`の保存規則と同flagによる上書き、HTMLの原文・ignored分類と設定表示を追加した。動的`ColumnRange`・基本scalar式・同mask／異maskの順序付きpipeline・プレーンテキスト適用は対応する。静的列範囲／列除外は引き続き行対応補助であり、一般変換を元セルへ再適用しない。
+
+対応構文と拒否範囲は [Core README](../Src/DiffBeacon.Core/README.md#一般行変換)、RAW入力とセル表示は [表の契約](TABLE-EDITOR.md#一般行変換と静的な列指定)、限定実行は [E2E手順](../tests/DiffBeacon.E2E/README.md#一般行変換の限定検証) を参照。生成CR/LFの原行写像・非ASCII区切り文字／引用符・PCRE typed pattern／日時／typed literal／Unicode case等の残る旧言語とparser全体、旧callerの全file I/Oは未完了。旧WinMergeの一般フィルター全機能の互換完了とは扱わない。
+
+最終b10e8ビルドの限定実測は実App E2E 444成功・0失敗・0skip（96命令）、UI 180成功・0失敗、C++固定原典86ケース（73正常・13拒否）の独立reader 500 fields一致。実PID・birth・終了コード0、保持したprocess handleとstdout／stderr EOF、timeoutなしを確認した。原典関数本体と明示AST adapterの境界は [fixture記録](../tests/Fixtures/LineTransforms/README.md) に固定する。二者で未使用のBase規則、静的Right指定、元セル同一で比較キーだけ異なる行のGUI／CLI／HTML分類、変換後の正規表現・空行無視、古い候補の拒否、原文保存とdialog PNGも確認した。処理予算0で一般キーが異なる場合は退避理由を保持し、静的指定だけで意味差を無視しない。この基本pipelineを含む最新の全体managed UI／E2E・Windows x64 Native AOT検証は直前の配列演算節のb11記録を参照する。他OS／RID、実OS dialog／pointer／clipboardの資格へは流用しない。
+
+## 表の行対応に使う静的な列範囲（2026-10-11）
+
+表パネルと `--table-column-range SPEC[:all|left|base|right]` で、行対応キーに使う列範囲を指定できる。包含・除外、末尾までの範囲、指定順と重複抑止、左右・祖先ごとのscopeに対応し、範囲を各行の実セル数へ切り詰める。選択した復号セルを区切り文字で連結して初期行対応に使い、セル値・原文・通常のセル差分表示を保つ。規則は比較プロジェクトとworkspaceに保存し、`--report-project`でも適用する。一般行変換の動的条件式・pipeline・プレーンテキスト適用は本記録の一般行変換節を参照。旧言語の残る構文とparser全体は未完了。
+
+Release buildは警告0・エラー0。限定`--table-column-range-only`は108成功・0失敗・0skipで、列範囲の104 assertionsとheadless UIの11 checksがすべて成功した。
+
+最新managed全体UI自己検証は14,152成功・0失敗。全体managed E2Eは8,252 commands、165,343成功・0失敗・5環境skipで、列範囲の103 assertionsはすべて成功した。E2E本体の`assertions.json`は完了し、ソースの終了分岐からreturn 0となることを確認したが、実行ラッパーのresult JSONは生成されなかった。
+
+Windows x64 Native AOT全体UI自己検証は14,152成功・0失敗（718.107秒）。publish manifestの12ファイルのSHA-256・サイズ照合と、列範囲のAOT限定E2E（108成功・0失敗・0skip）を確認した。repoの`bin/obj`は発行前後で1,173ファイル・2,696,055,885 bytes・aggregate SHAが一致し、5つのpackage lockは発行前の内容へ復元後に各hash一致を再確認した。
+
+実デスクトップ操作は未検証。この実行環境ではWindowsアプリ一覧・起動APIをComputer Useから取得できず、Skyの前回起動も`GetCursorPos failed: アクセスが拒否されました (0x80070005)`で失敗した。macOS／他RID／4 RID CIも未実施。
+
+## 表の行対応から列を除外（2026-10-11）
+
+表パネルで1始まりの列番号を指定し、左右・祖先の全ペインまたは選択ペインだけを行対応キーから除外できる。規則の置換・追加・全解除に対応し、比較プロジェクトとworkspaceに保存する。CLIには`--table-ignore-column N[:all|left|base|right]`を追加した。除外は初期の行対応キーだけに適用し、セル値・セル差分色・原文のraw範囲照合を保つ。一般行変換の動的条件式・pipeline・プレーンテキスト適用は本記録の一般行変換節を参照。旧言語の残る構文とparser全体は未完了。行対応用の静的列範囲は本記録の別節を参照。
+
+Release buildは警告0・エラー0。managed限定E2Eは122成功・0失敗、限定`--table-column-ignore-only` UIは15成功・0失敗、最新の全体managed UIは14,152成功・0失敗。全体managed E2Eは8,233 command、165,240成功・0失敗・5環境スキップで、列除外の111 assertionもすべて成功した。Windows x64 Native AOTの全体UI自己検証は14,152成功・0失敗（704.897秒）、manifestは`nativeAot=true`／`selfTest=passed`。発行物12件のSHA-256・サイズ、発行前後のrepo `bin/obj` 1,173件、5つのsource package lockの不変を照合した。最新AOT発行物の限定E2Eは122成功・0失敗・0skip。実デスクトップ操作はSky起動が`GetCursorPos failed: アクセスが拒否されました (0x80070005)`で失敗し、再取得後もDiffBeaconの対象窓がなかったため未検証。macOS／他RID／4 RID CIも未実施。
+
+## 表の先頭行見出し設定の保存とタブ共有（2026-10-11）
+
+表パネルの「先頭行を列見出しにする」は既定でオフ。設定をLocalAppDataへ保存し、同じアプリの開いている表タブへ同期し、新しい比較と次回起動時に復元する。設定出力を比較入力などの保護対象へ向けた場合は拒否し、設定とチェック状態を元に戻す。
+
+Release buildは警告0・エラー0。限定`--table-headers-only`は26成功・0失敗。最新managed全体headless UIは14,094成功・0失敗で、全体managed E2Eは8,211命令・165,117成功・0失敗・5環境スキップ。Windows x64 Native AOT発行と全体UI自己検証も成功し、UIは14,094成功・0失敗、発行manifestの自己検証は724.539秒、5個のpackage lock hashは発行前と一致した。実デスクトップGUI操作はComputer Useのnative APIが使えず実施していない。最新AOT発行物のE2E、macOS／他RID、4 RID CIは未実施。証拠は `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\tp1011\ui-full`、`C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\tp1011\e2e-full`、`C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\tp1011-aot\publish` に保持している。
+
+## WinMerge テキスト行ブックマーク（2026-10-11）
+
+Text比較の左右ペインに、通常ブックマークと10個の番号付きブックマークを移植した。各側で一覧・次／前への周回移動・消去ができ、行編集では挿入／削除に応じて位置を追従または除去する。ブックマークは比較セッション内だけに保持し、workspaceへは保存しない。
+
+Release buildは警告0・エラー0。限定`--text-bookmarks-only`は18成功・0失敗。全体managed UIとWindows x64 Native AOT自己検証は各14,086成功・0失敗で、AOT manifestは`nativeAot=true`／`selfTest=passed`、自己検証797.697秒を記録した。全体managed E2Eは165,117成功・0失敗・5環境スキップ。最新コードのAOT E2EとmacOS／他RIDは未実施。Windows x64 AOT発行物・自己検証は `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\bm-aot1011\publish` に保持している。E2E入力・出力・PNG・JSON・ログは `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\lb1011\full` に保持している。
+
+## WinMerge単語区切り設定のGUI・workspace対応（2026-10-11）
+
+高度な比較フィルターに「句読点で単語を分割」と区切り文字欄を接続し、`ComparisonOptions`から`TextDiffer`の行内span、`WordLineAlignment`のraw採点へ設定を渡す。比較プロジェクト／workspaceの保存・復元とGUIレポートへの反映を実測し、旧workspaceで項目が欠ける場合はWinMerge既定へ戻る。設定は最大256 UTF-16単位で、カスタム区切りはU+00FF以下に適用し、それより大きい文字は固定分類を使う。直接`WordDiffer`の既存既定と6,048件のgoldenは維持する。WinMergeの全Unicode境界互換は未確認。
+
+Release buildは警告0・エラー0。限定`--word-diff-only`は914成功・0失敗・0skip。最新managed全体headless UIは14,068成功・0失敗で、単語境界設定の既定・独自区切り・無効化・workspace往復・レポート反映と表のヘッダー／列幅チェックを確認した。全体E2Eは8,211 command、165,117成功・0失敗・5環境スキップ。スキップはWindowsのUnixFileMode、macOS/APFSのcase aliasとFIFO/socket、headless対象外の実デスクトップ操作、case-collisionを作れないfilesystemによる。入力・出力・PNG・JSON・ログは `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\sui-retry-1011\full` に保持。34,357 files／2,010,117,417 bytesと28個のテスト生成reparse pointを含むため、圧縮・清掃しない。
+
+Windows x64 Native AOTも最新コードを発行し、全体UI自己検証は14,068成功・0失敗、681.839秒。発行manifestは`nativeAot=true`／`selfTest=passed`を記録した。今回のAOT発行物に対する全体E2Eは未実施で、前候補の165,091件を最新コードへ流用しない。発行物とUI証拠は `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\aot1011-mig4\publish`、managed UI reportは `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\separator-ui-20261011-ed1c1af6\ui-full\ui-report.json` にある。完了時のC:空きは88.66 GiB。
+
+## WinMergeの文字単位／単語単位行内差分（2026-10-11）
+
+比較設定に行内差分レベルを追加した。既定はWinMergeの`OPT_BREAK_ON_WORDS=false`に合わせて文字単位とし、単語単位では変更した単語全体を強調する。GUIの詳細フィルターとCLIの`--word-level`で切り替え、比較プロジェクト／workspaceへ保存・復元し、HTMLレポートの設定情報にも反映する。旧workspaceで設定が欠ける場合も文字単位へ戻る。
+
+Release buildは警告0・エラー0、限定`--word-diff-only`は914成功・0失敗・0スキップ。managed全体headless UIは14,096成功・0失敗で行内差分設定7件を確認した。全体managed E2Eは8,213命令・165,123成功・0失敗・5環境スキップで、word-level関連20件はすべて成功した。Windows x64 Native AOTは発行process終了0、manifestは`nativeAot=true`／`selfTest=passed`、自己検証721.032秒を記録し、全体UIは14,096成功・0失敗、行内差分設定7件も成功した。発行前後で5個のリポジトリpackage lock hashは一致した。5スキップはWindows UnixFileMode、非macOSのAPFS case alias、macOS FIFO/socket、実デスクトップ・全入力互換の範囲外、case-collision非対応filesystemによる。実デスクトップ操作、AOT発行物のE2E、他RIDと4 RID CIは未実施。E2Eは `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\e46c813a7`、AOT manifest・UI reportは `C:\Users\IMT\AppData\Local\Codex\TaskArtifacts\DiffBeacon\word-diff-level-20261011-45de69e3c97240fc84d6473ac4eab257\aot-lock-guard-8f24a2dff82d4863a15c0faf31880e96` に記録した。
+
+## アーカイブ内画像の読取り専用比較（2026-10-10）
+
+アーカイブ一覧から画像を「自動」または「画像」で開けるようにしました。左右の実在するleafを既存の画像比較パネルへ渡し、内包画像は固定読取り専用です。workspaceにはroot SHA・entry chain・leafを保存し、復元後は「比較」を押すまで画像を読み込みません。内包画像のCLIレポート・包装と、元アーカイブへの編集書戻しは引き続き未対応です。
+
+Release buildは警告0・エラー0。`--archive-sources-only` の実GUI自己検証は154成功・0失敗で、自動／明示Image、全GIF frame、Save拒否、workspace復元、破損画像の拒否、停止・再読込・親終了での候補破棄を確認しました。`--archive-present-only` は68成功・0失敗・0skip。Python標準libraryでouter／inner ZIP、GIF原本SHA、左右全フレームのBGRA SHA-256とworkspaceのtyped入力を独立照合し、表示PNGも目視確認しました。Windows Native AOTはMSVC x64 tools componentが未導入のため未実施、macOSのAOT／起動と4 RID CIは未確認です。
 
 ## 手動Text同期点（2026-10-10）
 
@@ -57,6 +558,13 @@ typed Sourceと保存版は`containerGZipPayloadKinds`にroot＋各containerの�
 先行候補E131／E2E5636の限定実行は1,672成功／8失敗／646命令・実終了1でした。空matrixのgzip生成が有効な空memberを出しておらず、期待成功の3 entry枝が欠落しました。また明示v8・全Auto単一entryの複製が旧envelopeへ落ちる2件の失敗がありました。有効な空gzip20 bytesを独立PythonでCRC／ISIZE検証し、v8 envelopeと包装を保持する修正後に上記651命令を再確認しました。旧PID33644の失敗・1,292 raw・期待649との差3と8失敗の原本は `source284-payload-kind-candidate617-340941f252934b428d8471022af194fd/candidate-limited-failure-closeout.json`（SHA `E3C830873FCFD1DFAC8918A667044503D27A677873F982014C652D407DC576C4`）に保持しています。
 
 27fileのrepo取り込み後、通常solutionのmanaged buildは実PID20392・出生FILETIME134359985863828641・held2404・終了0／EOF、58.881秒・警告0／エラー0で完了しました。source284と通常bin／objの原本不変を確認しています。App SHAは `666AF2883E762C2056D170F8A9C6770E7F01877814435BD58EEA818C5E549BB0`、E2Eは `B725F2623A983C502A0FEF2A02EE0910A0287B4A4023A1D6B9DF5495B98D6F56`、外部 `solution-source284-prep-8a4bbf0dc7754237abc04f7d546f351b/build-result.json` SHAは `8B877A2BFFAE2DD3F0D696FAEB617855C9BEF6124713B3FD62BC67C927F8D0C4` です。build-resultのruntime未開始とqualified=falseは原本のまま保持しています。この初回build時点では新DLLの全体UI／E2E、Native AOT、他RIDは未実施でした。後続のsource284通常版の検証は上の履歴に分け、build-result原本のruntime未開始を変更しません。従来source282の全体成功やNative成功をsource284へ拡張せず、下記の旧検証履歴もその時点の記録として保持します。
+
+## バイナリ置換（2026-10-11、Windows managed限定実測）
+
+Coreのdecoded-byte置換と各側の実Avalonia置換ダイアログへ、選択置換・前方／後方全置換・次／前検索を接続した。固定Frhed commit `a0a2f13fe4c37a8f979407e997186680450ad7ca` の51原本を全bytes・実置換数・選択／caretで照合し、旧順序を保持する。全置換の原子的候補と一つのUndo、不正入力・共有予算の拒否、復号bytesによる同一判定は意図的な安全差異である。取消・readonly・未適用Hex・タブ移動後に戻るABAを含む古い完了で本文・履歴・保存点を保持する。
+
+限定 `--binary-replace-only` はmanaged／Windows x64 Native AOTとも17成功／0失敗／0skip、内部GUIは各253成功／0失敗。独立readerは原本51件、GUI104状態、保存56件、通常／内包の複製・包装2群の全bytesとZIP CRCを照合した。managed全体E2Eは165,359成功／0失敗／環境別省略5件、8,257コマンド、実終了0・37分15秒・両stream回収完了。省略はUnixモード、実APFS別名、macOS FIFO/socket、実デスクトップを含む全入力互換性、現在のfilesystemで作れない大小文字衝突である。managed全体UIとWindows x64 Native全体UIは各14,405成功／0失敗で、各全体出力の置換原本・保存bytesも独立readerへ照合した。Nativeのローカル自己検証は制限1,800秒・実836.47秒であり、Windows CIの600秒制限内の成功を証明したものではない。Nativeの全体E2E、他RID／現在版のCI、通常デスクトップのpointer・ネイティブ保存ダイアログ・実OSクリップボードはこの実測に含めない。証拠と復元用ZIPは外部 `C:\Users\IMT\AppData\Local\Codex\TaskArtifacts\DiffBeacon\binary-replace-20261011-a2e71c4b` に保持し、過去の全体／4RID検証へ合算しない。[限定手順と独立reader](../tests/Fixtures/BinaryReplace/README.md)を参照する。
+
 
 ## バイナリ検索と画像初期設定（gzip実装前のWindows基準）
 
@@ -290,16 +798,16 @@ Windowsのcreation・owner/group/DACL・EA・file identityを取得する新部�
 
 | 旧機能・処理分岐 | 新しい実装の範囲 | 判定・残作業 |
 | --- | --- | --- |
-| テキストの二者比較・三者マージ | 差分行・行内強調、差分移動、両方向コピー、編集、保存、競合表示、CLI、左・祖先・右・結果の4ペイン、差分単位の順序付き採用・Undo/Redo・未解決状態・行の由来 | [マージ結果セッション](MERGE-SESSION.md)を実装。旧エディターの構文強調、矩形選択、ブックマーク、同期点、移動行、全ショートカット、由来の行番号マージン表示・セッション永続化は未完了 |
-| フォルダー比較 | 二者／三者、側別kind／filtered／走査状態と階層、内容／SHA／日時、除外表示、ツリー折り畳み・初期展開方針・新比較への全体設定引継ぎ、Ctrl/Shift複数選択、確認付き左右「すべて／差分」コピー、取消・部分結果と再比較、共通CLI | Windows全file ADS転送・全stream鮮度・共有予算・中止表示を含む通常版とWindows x64 Native AOTの全体検証を前段の記録で確認。通常／最小／45タブの操作到達は確認済み。三者の基準版4RID資格と、source271のツリー／全体設定のmanaged・Windows x64 Native資格は前段の記録へ結ぶ。移動・削除、EFS／SACL／非NTFS等の旧Shell操作の完全な同等性と、source271のMac／ARM実測は未完了。[操作と対応範囲](FOLDER-COPY.md) |
-| 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換・全WordDiff設定とフィルター座標、raw buffer横断検索・PCRE/Rx互換・矩形文字編集・ヘッダー設定・列条件・同期点・全パーサー分岐は未完了 |
-| Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲／全体コピー、任意位置の挿入・上書き・削除、直接ニブル／ASCII入力・任意byte選択、Copy／Cut／Paste／FastPaste dialog、repeat／skip・Insert／Overwrite・AsText・endian・ANSI／OEM、共有Undo／Redo、通常／別名保存、内包作業版の保存・復元・レポートなし包装 | 表示・編集は各16 MiB、共有履歴64 MiB／256操作上限。同じオフセットで比較。挿入位置の再整列・旧検索・全旧Hex操作の同等性は未完了。Binary HTML／patchは未対応。旧HexのGenerateReportは空実装なのでBinary HTMLを旧機能移植の完了条件には数えない（Src/HexMergeDoc.h:74）。新clipboardの実OS／Native／全4RIDは後続検証と区別する |
-| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG別名保存、回転・反転と手動位置ずらし、行列の挿入削除の表示／コピー／設定保存、編集済み原画のHTML、GUI矩形選択／移動／複製・Copy／Cut／Delete・浮動貼り付け・3辺Resize、差分色の不透明度と設定保存 | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存、旧全体設定の一括移行は未完了。XOR／Alpha／ANIM・点滅・共通設定と通常CLI／HTML／包装の接続は実装し、最終通常版の全体E2E・UIが成功した。変更後のNative／4RID検証はSHA dc20aaの全構成で成功した（TAR.Z節の実測を参照） |
+| テキストの二者比較・三者マージ | 差分行・行内強調、差分移動、両方向コピー、編集、保存、競合表示、CLI、左・祖先・右・結果の4ペイン、差分単位の順序付き採用・Undo/Redo・未解決状態・行の由来、比較セッション内の手動同期点追加・解除、通常／番号付き行ブックマーク | [マージ結果セッション](MERGE-SESSION.md)を実装。旧エディターの構文強調、矩形選択、移動行、全ショートカット、由来の行番号マージン表示・セッション永続化は未完了 |
+| フォルダー比較 | 二者／三者、側別kind／filtered／走査状態と階層、内容／SHA／日時、除外表示、ツリー折り畳み・初期展開方針・新比較への全体設定引継ぎ、Ctrl/Shift複数選択、確認付き左右「すべて／差分」コピー、同一ボリューム内で移動先を上書きしない通常ファイル移動、選択した差分通常ファイルのOSごみ箱移動、取消・部分結果と再比較、共通CLI | Windows全file ADS転送・全stream鮮度・共有予算・中止表示を含む通常版とWindows x64 Native AOTの全体検証を前段の記録で確認。通常／最小／45タブの操作到達は確認済み。三者の基準版4RID資格と、source271のツリー／全体設定のmanaged・Windows x64 Native資格は前段の記録へ結ぶ。ファイル移動は同一ボリュームの通常ファイルのみ。ごみ箱移動は通常ファイルのみで、ディレクトリとリンクは対象外。ディレクトリ移動、既存移動先の置換、EFS／SACL／非NTFS等の旧Shell操作の完全な同等性、今回の変更に対するWindows/macOS実行および4RID CI実測は未完了。[操作と対応範囲](FOLDER-COPY.md) |
+| 表形式 | 原文区間付き解析、raw WordDiff共通文字量・best-pair・三者01/12/20行合わせ、セル編集・Undo/Redo・同セル内前後検索・固定文字範囲・一件/全置換、CSV原文バッファーの横断検索・構造置換・raw offset範囲固定、区切り文字・引用符・引用内改行指定、GUI/CLI/HTMLの共通モデル、先頭行の列見出し表示と設定の保存・開いている表タブ間の共有、全ペイン・全行からの列幅自動調整（32列ページ間共有）、行対応からの列除外（GUI/CLI/workspace）、行対応キー用の静的列範囲（GUI/CLI/project/workspace/report-project） | [表の操作](TABLE-EDITOR.md)。旧callerのraw CSV入力変換、残るWordDiff設定とフィルター座標、PCRE/Rx互換・矩形文字編集、一般行変換の残る旧言語構文・parser全体・生成改行の原行写像、同期点は未完了 |
+| Hex / バイナリ | バイト比較、ページ単位の16進編集、差分範囲／全体コピー、任意位置の挿入・上書き・削除、直接ニブル／ASCII入力・任意byte選択、検索・選択置換・前方／後方全置換、Copy／Cut／Paste／FastPaste dialog、repeat／skip・Insert／Overwrite・AsText・endian・ANSI／OEM、共有Undo／Redo、通常／別名保存、内包作業版の保存・復元・レポートなし包装 | 表示・編集は各16 MiB、共有履歴64 MiB／256操作上限。同じオフセットで比較。挿入位置の再整列・全旧Hex操作の同等性は未完了。置換はmanaged全体E2E／UI、Windows x64 Native全体UIと限定E2Eを実測した。Native全体E2E・他RID／現在版のCIは別途確認する。Binary HTML／patchは未対応。旧HexのGenerateReportは空実装なのでBinary HTMLを旧機能移植の完了条件には数えない（Src/HexMergeDoc.h:74）。新clipboardの実OS／Native／全4RIDは後続検証と区別する |
+| 画像 | 二者・三者表示、原本領域強調と差分／競合移動、重ね合わせ、倍率・閾値、ピクセル差分、GIF/WebP/APNGのフレーム選択・前後移動・同期移動、TIFF／BigTIFFの主ページ比較、ページ・表示設定のプロジェクト保存、全フレーム／選択組のCLI比較とPNG埋込みHTML、包装レポート、GUI／開発用CLIの静止画領域コピー・共有Undo／Redo・PNG／単ページTIFF別名保存、回転・反転と手動位置ずらし、行列の挿入削除の表示／コピー／設定保存、編集済み原画のHTML、GUI矩形選択／移動／複製・Copy／Cut／Delete・浮動貼り付け・3辺Resize、差分色の不透明度と設定保存 | [画像の契約](IMAGE-VIEWER.md)。入力・画素・枚数・復号量とHTMLの上限を維持。TIFFの未検証構成と残りの旧画像形式、ベクター、OCR、元形式／多ページ保存、旧全体設定の一括移行は未完了。XOR／Alpha／ANIM・点滅・共通設定と通常CLI／HTML／包装の接続は実装し、最終通常版の全体E2E・UIが成功した。変更後のNative／4RID検証はSHA dc20aaの全構成で成功した（TAR.Z節の実測を参照） |
 | Web / XML / HTML / Office | XML正規化、HTML静的本文、HTTP応答のソース・本文、DOCX/PPTX/XLSX本文 | 標準プロバイダーを明示選択。ブラウザーのDOM・JavaScript・画面・リソースツリー、Officeの書式・旧形式・PDF/OCRは未完了。詳細はプロバイダーREADME |
 | Archive / プラグイン | 7z/RAR/ZIP/TAR/TAR.GZ/TAR.BZ2/TAR.ZとZIP派生/7z/RAR/TAR/短縮TAR拡張子の明示的gz/bz2/Z鎖の内容比較、初期再試行、暗号化ヘッダー/内容・solid読込み、プレビュー・エントリ保存・全件抽出、非暗号化7z/ZIP派生/TAR系作成・再梱包、単一ファイルの裸gzip/BZip2/Z作成・再梱包、保存済み比較文書・HTML/patch/projectの包装、Sourceの多段Text／Binary／Archive子比較・片側不在入力・未命名Textの外部保存・実在Text／Binaryの作業保存・相対asset workspace・leaf HTML／patch包装、実行ファイル用JSON契約 | 旧submoduleの通常ビルド依存は解除。TAR.Zはmanagedで読書きし、通常アプリに外部圧縮ツールは不要。全形式の詳細レポート・一時ZIPのクリップボード包装、深いcontainerの再梱包／全件展開・画像／provider子比較・複合wrapper作成、CAB/LZH/ISO等の全旧読込み形式、属性・全日時保存、旧ActiveX/DLL ABIは未完了。7zのCRC省略と値0の区別は現行ライブラリの公開APIでは未確認。変換結果を元ファイルへテキスト保存しない |
 | シェル統合 | 通常のデスクトップ起動、CLI、macOS `.app` 生成 | Explorer / Finder 拡張、旧コンテキストメニュー、インストーラー登録は未実装 |
 | 多言語 | 新 UI は日本語を中心に実装 | 旧翻訳カタログとローカライズ切替、RTL、全ダイアログの同等性は未完了 |
-| 詳細フィルター | 大文字小文字、4種の空白処理、空行、行正規表現、ASCII数字・CStyle/CSharp/Python/XMLコメントの除外、順序付き置換、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式 | 比較前処理は原文を保持し、GUI・CLI・フォルダーへ適用。同梱12 `.flt` の読込みを確認。内容検索、左右別属性、関数・算術、PCRE固有構文、全旧構文のコメント処理、複数行置換、全表示フィルターは未完了 |
+| 詳細フィルター | 大文字小文字、4種の空白処理、空行、行正規表現、ASCII数字・CStyle/CSharp/Python/XMLコメントの除外、順序付き置換、旧`.flt` include/exclude、名前・拡張子・サイズ・日時の条件式、Windows Shell `Prop` 系、フォルダー比較の絶対パス `FullPath` 系、フォルダー `.flt` の `AllEqual(...)` | 比較前処理は原文を保持し、GUI・CLI・フォルダーへ適用。同梱12 `.flt` の読込みを確認。内容検索、`FullPath` 系以外の汎用path属性、残る汎用関数・算術、PCRE固有構文、全旧構文のコメント処理、複数行置換、全表示フィルターは未完了 |
 | プロジェクト / レポート | source-generated JSONの全タブ保存・復元、複数組`.WinMerge` XML読込み、HTML / JSONレポート、相対JSON参照とGUI起動時プロジェクト読込み、テキスト・表・JSONの二者／三者HTML、画像の二者／三者全／選択HTML | 順序・選択位置、説明・各readonly・再帰・フォルダー方式・除外・表設定を保持し適用。HTMLは祖先アンカー整列・行内差分・表セル・JSON正規化・画像画素を単体GUI／CLI／包装へ適用。旧filterは対応範囲以外を明示拒否。未対応オプション・プラグイン名は保持・警告し実行しない。旧middleの第三比較ペインと祖先マージの厳密な対応、画像の全旧形式とWeb描画レポート、全旧オプション、結果本文・採用状態の永続化は未完了 |
 | Native AOT Windows x64 / ARM64 | 対応 RID と同 OS 発行スクリプト、CI マトリクス | 両アーキテクチャのGitHub runnerで発行・UI自己検証・CLI E2E成功。実測結果は下表 |
 | Native AOT macOS x64 / ARM64 | 対応 RID、`.app` / tar、CI マトリクス | Intel / Apple SiliconのGitHub runnerで発行・UI自己検証・CLI E2E成功。署名・公証・公開は実施しない |
@@ -332,7 +840,7 @@ SHA `dc20aaade17913cf0d4445386c6386f7523c52e1` の[4RID CI](https://github.com/1
 
 原本4 translation unitを変更せずMSVCで実行した6,048ケースと全UTF-16文字分類を採取した。CRT C / Windows分類を固定して全OSで使用する。実測で発見したタイトルケース・上付き数字の差を修正した。これは元ソース実行との比較であり、旧GUI配布バイナリの全設定・全字素規則との一致ではない。NULファイルは既存TextDocument契約により拒否する。詳細な出典と失敗条件は [WordDiff E2E](../tests/Fixtures/WordDiffs/README.md) を参照する。
 
-表の変更ブロックはraw WordDiffの共通文字量・best-pair・4096本文上限・三者20写像へ接続した。全ブロック共有予算と不変条件による安全なzipを追加し、CLI三者指定と単語/EOL/予算設定を接続した。三者の統合区間でも復号一致アンカーを保持し、引用表記の違いだけで無変更側の行が追加・削除になる回帰を修正した。後続のGNU行算法接続は下記に記載する。旧callerの全設定、フィルター後の座標、全Unicode/パーサー分岐とプロジェクトの追加設定は引き続き未完了。元関数goldenの出典は[表行対応fixture](../tests/Fixtures/LineAlignment/README.md)。
+表の変更ブロックはraw WordDiffの共通文字量・best-pair・4096本文上限・三者20写像へ接続した。全ブロック共有予算と不変条件による安全なzipを追加し、CLI三者指定と単語/EOL/予算設定を接続した。WinMergeの句読点区切りモードと区切り文字列も比較設定へ加え、CLIの`--no-separators`／`--separators TEXT`を`--compare`・`--word-diff`・`--table`に追加した。GUIの詳細フィルターから設定でき、比較プロジェクト／workspaceへ保存・復元する。三者の統合区間でも復号一致アンカーを保持し、引用表記の違いだけで無変更側の行が追加・削除になる回帰を修正した。後続のGNU行算法接続は下記に記載する。旧callerのraw CSV一時文書・引用内改行escape、残る設定UI・全フィルター座標、全Unicode/パーサー分岐とプロジェクトの追加設定は引き続き未完了。元関数goldenの出典は[表行対応fixture](../tests/Fixtures/LineAlignment/README.md)。
 
 再開後の通常DLL全E2Eは5,778成功・0失敗・8スキップ、表行対応の限定E2Eは1,948成功・0失敗、headless UIは230成功・0失敗。Windows x64 Native AOTは5,809 E2E成功・0失敗・3スキップ、230 UI成功。SDK10.0.401、buildとAOT発行のCS/IL/MSB警告0。独立レビューの成立した三者一致回帰を修正し、実CLI/HTMLとGUIで照合した。入力・対応JSON・PNG・ログは `artifacts/verification/table-line-alignment` に保持する。
 
@@ -462,9 +970,9 @@ WinIMerge v1.0.54の原本関数を無改変で採取し、二／三者のblock�
 
 取得した8成果物のmanifest64ファイルのSHA・サイズが全一致。証拠は `E:/DiffBeacon-artifacts/github/36884448976`、集計は `artifacts/verification/image-copy-cli/ci-36884448976-summary.json` に保持した。upload-artifactのNode非推奨annotation4件はコンパイラー警告と区別する。全watch・download・verifierは終了0。GUIの画像編集接続と通常デスクトップ／ネイティブ保存ダイアログの実測は、この結果に含まれない。
 
-## 静止画像GUIの編集・PNG保存
+## 静止画像GUIの編集・PNG／TIFF保存
 
-二者の両方向・三者の6方向の選択／全領域コピー、競合以外の自動コピー、共有Undo／Redoを通常画像ビューへ接続した。保存は原画PNGの別名保存とし、成功した側だけのパス・比較済みパス・snapshot・保存点を更新する。閾値再比較は編集を保持し、HTMLは未保存の原画も反映する。未保存画像の包装は拒否する。仮sessionと描画をまとめて採用し、取消・古い完了では直前の状態を保持する。保存中の編集・再比較・破棄を拒否し、全タブの入力・フィルター・workspace・readonly・リンクを置換直前にも確認する。
+二者の両方向・三者の6方向の選択／全領域コピー、競合以外の自動コピー、共有Undo／Redoを通常画像ビューへ接続した。保存は原画PNGまたは単ページTIFFの別名保存とし、成功した側だけのパス・比較済みパス・snapshot・保存点を更新する。閾値再比較は編集を保持し、HTMLは未保存の原画も反映する。未保存画像の包装は拒否する。仮sessionと描画をまとめて採用し、取消・古い完了では直前の状態を保持する。保存中の編集・再比較・破棄を拒否し、全タブの入力・フィルター・workspace・readonly・リンクを置換直前にも確認する。
 
 2026-10-02の最終Release buildは警告0・エラー0。通常DLL全体E2Eは26342成功・0失敗・10skip、通常DLLとWindows x64 Native AOTのheadless UIは各812成功・0失敗。無改変コピー原本の代表12操作列・66状態で全原画・領域・履歴・dirtyを照合し、両実行形式の観測JSONはSHAも一致した。PNGは独立BCL復号と再読込み、HTMLは現在の原画と採取後の編集分離を確認した。最小850×550でも画像viewportとスクロール後の保存操作を確認した。最終Native AOT全体E2Eは26387成功・0失敗・3skip、管理者実行のリンク拒否も成功した。証拠は `E:/DiffBeacon-artifacts/local/image-copy-gui-33a67`、過去の途中結果は `artifacts/retention/index.json` から参照する。Native発行は `Publish.ps1 -SkipVerification` とし、UI自己検証をEドライブへ別途出力した。GUI接続のMac／ARM CIと通常デスクトップ操作はこの記録時点では未実測。元形式／多ページ編集保存、FreeImageの完全互換と残りの画像操作は引き続き未完了。
 
@@ -511,13 +1019,23 @@ Macの700px画面では一覧高21・セルY15で文字の下端が切れてお�
 
 ## 表の行合わせ・セル編集
 
-原文区間付き文書と共有行対応モデルを導入し、GUI・`--table`・単体/包装HTMLの判定を統一した。完全一致アンカーの間で上限付き類似対応、三者では祖先対応と左右挿入対応を統合する。セル編集は一つの原文区間だけを変更し、Undo/Redo、readonly・祖先・ghost・古い座標の拒否、既存保存へ接続した。検索は前後・折返し・case・regex・word・ペイン指定、画面は32列ページと行仮想化。同セル内検索、固定文字範囲、一件/選択ペイン全置換と一括Undoへ拡張した。旧方式の全スコア・矩形文字編集・raw横断検索は未完了。[表の契約](TABLE-EDITOR.md)を参照する。
+原文区間付き文書と共有行対応モデルを導入し、GUI・`--table`・単体/包装HTMLの判定を統一した。完全一致アンカーの間で上限付き類似対応、三者では祖先対応と左右挿入対応を統合する。セル編集は一つの原文区間だけを変更し、Undo/Redo、readonly・祖先・ghost・古い座標の拒否、既存保存へ接続した。検索は前後・折返し・case・regex・word・ペイン指定、画面は32列ページと行仮想化。同セル内検索、固定文字範囲、一件/選択ペイン全置換と一括Undoに加え、CSV原文バッファーの区切り・引用符・改行をまたぐ検索、raw offsetでの範囲固定、構造置換と一括Undoに対応した。先頭行を列見出しとして固定表示し、旧 `AutoFitColumn(-1)` に相当する全ペイン・全行からの列幅調整も追加した。ページ表示は幅計算を限定せず、列幅はペイン間・ページ間で共有し、長い値は画面幅相当で上限を設ける。旧方式の全スコア・PCRE/Rx互換・矩形文字編集は未完了。[表の契約](TABLE-EDITOR.md)を参照する。
 
 通常DLLの全E2Eは2954成功・0失敗・8スキップ、headless UIは139成功・0失敗。ローカルWindows x64 Native AOTの発行と139 UI成功を確認した。入力・出力・行対応JSON・実テキスト入力/ボタン操作・UTF16BE BOM保存後のbytes・PNGを`artifacts/e2e/table-full`・`artifacts/verification/table-repaired`へ保存する。疎な表は各側2万実セル/1万列/10001行で、表示コントロール数を制限し、従来2億座標相当の検索を実セルのみで完了した（ローカル通常DLLの1実測25 ms、比較用benchmarkではない）。
 
 ローカルWindows x64 Native AOT全E2Eは2985成功・0失敗・3スキップ。[GitHub .NET CI 36796867483](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36796867483)は実装SHA `d14a9a9932c771a53e7bb8840b9dc4a84e32ea46` の4構成で成功。Windows x64/ARM64は各2985成功・0失敗・3スキップ、Mac Intel/ARM64は各2994成功・0失敗・2スキップ、UIは各139成功。SDK10.0.401、CS/IL/MSB警告0をログ・manifestで確認。同SHAの[CodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36796867472)もワークフロー成功。全構成の入力・出力・PNG・JSON・ログを`artifacts/github/36796867483`へ保存した。WindowsのUnixモードとMac固有経路、ファイルシステムのcase/NFC alias作成可否によるスキップを集計へ保持する。GUIでUTF16BE BOM付き保存した表を別のNative AOTプロセスで再読込みし、Python標準CSVパーサーで三者の全セル値・順序を照合して一致した（`external-reload-oracle.json`）。新規文脈のレビューはagent thread limitで未実施。既存担当の補足確認でクリック例外・疎な表示/検索の膨張を修正し、記録を`artifacts/verification/table-next`に保持する。headless操作と通常デスクトップの実測は区別する。
 
+2026-10-11の列幅自動調整変更後、Release buildは警告0・エラー0、`--table-headers-only`は18成功・0失敗でした。全体headless UIも14,063成功・0失敗で、先頭行見出しと全行・全ペインを計測する列幅調整、32列ページ間の幅共有、viewport上限、原文と比較結果の保持を確認した。全体E2Eは165,055成功・0失敗・5スキップ。スキップはWindowsで利用できないUnix/macOS機能、実OS操作、case alias作成可否などの環境差による。E2EはPython 3.14.7と固定Z decoderを明示して実行した。入力・出力・PNG・JSON・ログは `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\e2e-20261011c\full-e2e` に保存している。検証用リンクを含むため、このE2E出力は圧縮・清掃せず保持する。
+
 ## 実行した検証
+
+2026-10-11 JST、WinMergeのText行ブックマークを移植した。左右各ペインで通常マークと番号付き10枠を使い、一覧、前後の周回移動、個別／一括消去を行える。行挿入でマークを移動し、削除された行のマークを除去する。限定UI自己検証は18成功・0失敗で、マーク操作が原文を変えないことも確認した。全体managed UIとWindows x64 Native AOT自己検証は各14,086成功・0失敗。AOT manifestの自己検証時間は797.697秒。最新コードでのmanaged全体E2Eは165,117成功・0失敗・5環境スキップ。Windows Native AOT発行と自己検証は確認したが、最新コードのAOT E2E、macOS・他RID・4 RID CIは未実施。
+
+2026-10-11 JST、WinMergeの比較設定に単語境界の区切り方式を接続した。`ComparisonOptions`へ `BreakOnSeparators` と `WordBreakSeparators` を追加し、WinMergeの既定区切り設定を `TextDiffer` の行内spanと `WordLineAlignment` のraw採点へ渡す。`--compare` と `--table` で `--no-separators`／`--separators TEXT` を選べ、HTMLには両設定を記録する。カンマ既定・独自のピリオド・区切り無効の各spanと表対応を検証した。既存の直接 `WordDiffer` 呼び出しと6,048件の旧golden既定は維持した。GUIの詳細フィルターで設定でき、比較プロジェクト／workspace保存・復元とGUIレポートへの反映を実測した。設定文字列は最大256 UTF-16単位でU+00FF以下だけに適用し、それより大きい文字は固定分類を使う。WinMergeの全Unicode境界互換は未確認。
+
+2026-10-11 JST、WinMergeのCSV原文バッファー検索・置換を表UIへ追加した。「CSV原文を検索」では区切り・囲み引用符・escaped quote・複数セル／レコードにまたがる一致をraw offsetと長さで示し、該当セルの復号値へ範囲を投影する。一致置換・選択ペイン内全置換は原文区間へ適用して再解析し、行構造の変化も共有Undo/Redoへまとめる。引用符不整合・改行禁止・読取り専用・取消・検索条件変更を拒否し、再比較取消後は書いた原文を戻してモデル・入力ファイル・履歴を保つ。Release buildは警告0・エラー0、`--table-raw-search-only` は5件成功・0失敗・0スキップ、raw限定headless UIは56成功・0失敗で、書込み後の再比較取消によるrollbackも個別に確認した。最新managed全体E2Eは8,213コマンド・165,123件成功・失敗0・環境スキップ5、全体managed UIは14,149件成功・失敗0。Windows x64 Native AOTの発行時自己検証は14,152件成功・失敗0（843.516秒）で、publish manifestの12ファイルのSHA-256・サイズ、元package lock 5件、repo bin／obj不変も確認した。最新コードのAOT全体E2E、通常デスクトップの実操作（Computer UseがGetCursorPos access deniedで起動拒否）、macOS・他RID・4 RID CIは未実施。
+
+前候補の検証記録：managed全体UIとWindows x64 Native AOT発行時自己検証は各14,063成功・0失敗。managed全体E2Eと同Native AOT exeの全体E2Eは各165,091成功・0失敗・5環境スキップ。5件の環境スキップは、Windowsで公開されないUnixFileMode、APFS case aliasとmacOS FIFO/socket、headless対象外の実デスクトップpointer/dialog・広範な三者互換、case-collisionを作れないfilesystemによる。AOT限定E2Eは行対応1,974成功、WordDiff888成功（各0失敗・0skip）。AOT出力は `C:\Users\IMT\AppData\Local\Temp\Codex\DiffBeacon\aw1011-48d\full-aot\assertions.json` に記録し、34,323 files／2,009,800,746 bytes・テスト生成reparse point28件を保持した。この候補の結果は履歴として残し、最新コードのAOT全体E2Eへ読み替えない。
 
 2026-10-01 JST、WordDiffと変更ブロックの行内強調を移植したコード `760900e5a4efec5c5175f446036b3eda91c03e2c` は、[GitHub run 36811104557](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36811104557) の4構成でNative AOT発行・headless UI・CLI E2Eに成功した。[同SHAのCodeQL](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/36811104538) も成功。SDKは全構成10.0.401、CS/IL/MSBコンパイラー警告0件。
 
@@ -703,3 +1221,13 @@ Native発行の自動UIは11,303成功／0失敗・454.911秒で600秒枠内。�
 全45段階と最終集計が存在し、Windows600秒／macOS1,200秒の枠内だった。814枚のPNGを画素まで独立復号し、三者の通常／最小画面と全6方向の固定原本コピー・保護を照合した。証拠は`artifacts/local/folder-threeway-next/ci65/config70.json`、`accept70-receipt.json`（SHA `B1A59F4EF13624459BEF318ABBA155AC39928B9B7C430E7EB733F8FBB85F6BB3`）、`accept70.stdout.json`（SHA `751069BA4B39B50AC5AD7D98E88E7413DE8C9A74A14BCC10AA067F0708E4A753`）。独立レビューでも実Git全2009 blob・採取138 source・計28,158命令の生stream・Mac LaunchEvidence・親readerの実終了と出力SHAに不一致はなかった。元producerが記録しない旧Python readerのPIDは捏造せず、固定sourceの実終了0述語と保存rawstreamへ結合した。独立readerのローカル再実行はしていない。通常デスクトップのpointer・native保存dialog、SMB／非NTFS／任意owner・SACL・EFS・敵対的外部FILE_OBJECT競合、folderコピーのUndo／Binary HTMLなど未対応項目もこの資格へ含めない。Windowsの5skipはOS／filesystem固有項目と三者の実desktop・全入力互換の範囲外を理由付きで保持した。今回のコードはまだ全WinMerge機能の移植完了を意味しない。
 
 最初の同SHA CI `f26b0c0147236c306742665f5d2a343a81f5e032` では、Windows二構成の全体E2Eが原文SHA検査1件で失敗した。win-x64は161,761成功／1失敗／5skip・7,030命令で、参照adapter `build/LegacyGnuReference/OriginalTranslationUnit.c` のcheckout改行変換が原因だった。固定sourceのcheckout filterを再現すると、WindowsではLFのadapter2件、MacではCRLFの採取元15件が記録SHAと不一致になる。provenanceの17採取元を無変換属性へ固定し、staged Git blobと両OS filterで全17件一致を確認した。本文・原本・slice・golden・provenanceと通常C# codeは変更していない。修正後の同じNative exeによる限定三者E2Eは88成功／0失敗／1範囲外skip。修正後の`11bfca921`の4RID CIは上表のとおり成功し、原文17件のGit blobもprovenance SHAと一致した。失敗した旧runの全体成功や省略されたOS clipboard／native artifactを資格に流用しない。
+
+## フォルダー `.flt` 数値変換（2026-10-20）
+
+Coreの`FileFilters`に`ToInt`・`ToDouble`・`ToNumber`を追加した。関数名は大文字小文字を区別せず、公開parserは引数をちょうど1個要求する。値は1回だけ評価し、文字列だけを受け取り、ASCII commaを全除去した後に全入力を消費して変換できなければ`None`を返す。直下arrayだけをmapし、nested arrayは再帰変換しない。`ToInt`は符号付きInt64、`ToDouble`は固定したWindows MSVC `std::stod`の結果、`ToNumber`は文字列に`.`・`e`・`E`を含む場合だけDouble、それ以外はInt64を返す。Dynamic値のmetadata/context伝播も追加し、整数とDoubleの型を公開比較で識別できる。
+
+固定fixture `FolderNumericConversionOracle`は246ケース・3評価例外を保持し、golden SHAは`52d07df1d5b0da74350a3d946c344ea8e6fc5aada7513fdedebccb852c2e125a`。公開E2Eは198 string候補（各関数66）を型付き期待値へ投影し、typed binding・embedded NUL・body専用の48件は公開CLIで表現可能と装わずoracle専用に分ける。別の直接`std::stod`実測は長いhex mantissaとの指数相殺で±5200を受理し、±5201を`out_of_range`にすることを確認した。この6入力に対して別processを各2回起動し、返り値／例外・消費長・bitsが一致した。公開E2Eは4入力を実アプリCLIへ投影し、二者／三者双方で通した。
+
+NaN文字列化の独立MSVC probeで、8つの`std::stod`入力表記を`std::to_string`へ渡し、さらに9個の直接IEEE-754 bit patternを別プログラムで文字列化した。各プログラムを別process 2回で実行し、stdout SHAは`3B87441DE28F35744723AB914B2A2C73A596538BF0B095D71E09430A28D3751D`／`E0FEAC43DEFE550227A2BC12C3E5A522BA4C363A8A73D8D707E39BAD2086BC01`で一致した。`0xfff8000000000000`は`-nan(ind)`、signaling NaNは符号付き`nan(snan)`、ほかのquiet NaNは符号だけを付けた`nan`となることを確かめた。`FloatingString`はこの分類を再現し、公開E2Eで`nan(ind)`と符号付き`nan(snan)`の`ToDouble`→`Trim`／`Strlen`を二者／三者の双方で照合する。
+
+検証はRelease build 0警告／0エラー、`--folder-properties-only` **5,398成功／0失敗／2 skip、1,723命令・5,400 assertion**。skipはmacOSの実FIFOとWindows標準filesystemでのcase-sensitive distinct fileで、いずれも環境限定である。5つのroot `packages.lock.json` は`numeric-20261020-impl01/lockfiles-before.json`と`lockfiles-after.json`の双方に対し、SHA・size・属性・creation/write tickが一致した。E2E cohortは`<作業フォルダー>\DiffBeacon\nan-fix-final-20261020-r1\e2e-final`、NaN文字列化probeは`<作業フォルダー>\DiffBeacon\nan-string-20261020-r1`に保持した。この検証は公開managed CLIの評価trace、全体E2E、UI自己検証、Native AOT、macOS／他RIDの結果を含まない。

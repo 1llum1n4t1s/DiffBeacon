@@ -13,6 +13,8 @@ public sealed record ComparisonProject
 {
     [JsonIgnore]
     internal string[] ProtectedArchiveAssets { get; set; } = [];
+    [JsonIgnore]
+    internal string[] FolderListDependencies { get; set; } = [];
     // set を使い、source generation が省略された init 項目を default で上書きすることを防ぐ。
     public string LeftPath { get; set; } = "";
     public string BasePath { get; set; } = "";
@@ -34,7 +36,17 @@ public sealed record ComparisonProject
     public bool IgnoreNumbers { get; set; }
     public CommentSyntax CommentSyntax { get; set; }
     public WhitespaceMode Whitespace { get; set; }
+    public bool InlineCharacterLevel { get; set; } = true;
+    public bool BreakOnSeparators { get; set; } = true;
+    public string WordBreakSeparators { get; set; } = ComparisonOptions.DefaultWordBreakSeparators;
     public SubstitutionRule[] SubstitutionRules { get; set; } = [];
+    public LineTransformRule[] LineTransformRules { get; set; } = [];
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Dictionary<string, string>? LineTransformListAssets { get; set; }
+    [JsonIgnore]
+    internal LineTransformListState LineTransformListState { get; set; } = new();
+    public TableColumnIgnoreRule[] TableColumnIgnoreRules { get; set; } = [];
+    public TableColumnRangeRule[] TableColumnRangeRules { get; set; } = [];
     public string? LeftDescription { get; set; }
     public string? BaseDescription { get; set; }
     public string? RightDescription { get; set; }
@@ -122,7 +134,7 @@ public static class WorkspaceStore
     public static Task SaveAsync(string path, ComparisonProject project, CancellationToken token = default, string? sourceProject = null)
     {
         ArgumentNullException.ThrowIfNull(project);
-        if (project.TextInputs is not null || ProjectInputs.HasArchives(project))
+        if (project.TextInputs is not null || ProjectInputs.HasArchives(project) || project.LineTransformListAssets is not null)
             return SaveWorkspaceAsync(path, new ComparisonWorkspace { Entries = [project] }, token, sourceProject);
         Validate(new ComparisonWorkspace { Entries = [project] });
         token.ThrowIfCancellationRequested();
@@ -130,7 +142,11 @@ public static class WorkspaceStore
         return SaveBytesAsync(path, JsonSerializer.SerializeToUtf8Bytes(snapshot, ProjectJsonContext.Default.ComparisonProject), token, [snapshot], sourceProject);
     }
 
-    public static async Task SaveWorkspaceAsync(string path, ComparisonWorkspace workspace, CancellationToken token = default, string? sourceProject = null, Action<string>? publishedAsset = null)
+    public static Task SaveWorkspaceAsync(string path, ComparisonWorkspace workspace, CancellationToken token = default, string? sourceProject = null, Action<string>? publishedAsset = null)
+        => SaveWorkspaceWithOutputGuardAsync(path, workspace, token, sourceProject, publishedAsset, null);
+
+    internal static async Task SaveWorkspaceWithOutputGuardAsync(string path, ComparisonWorkspace workspace, CancellationToken token,
+        string? sourceProject, Action<string>? publishedAsset, Action<string, Action>? outputPublisher)
     {
         token.ThrowIfCancellationRequested();
         _ = SerializeWorkspace(workspace);
@@ -140,6 +156,7 @@ public static class WorkspaceStore
         if (File.Exists(fullPath) && (File.GetAttributes(fullPath) & FileAttributes.ReadOnly) != 0)
             throw new UnauthorizedAccessException("読み取り専用の比較プロジェクトは保存できません。");
         var directory = Path.GetDirectoryName(fullPath)!;
+        await LineTransformListEnvironments.SaveAssetsAsync(snapshot, fullPath, sourceProject, publishedAsset, token, outputPublisher);
         foreach (var input in snapshot.Entries.SelectMany(project => Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side))).OfType<ArchiveProjectInput>())
             foreach (var copy in input.WorkingDocuments ?? [])
             {
@@ -160,9 +177,13 @@ public static class WorkspaceStore
                     {
                         await using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, 65536, FileOptions.Asynchronous | FileOptions.WriteThrough))
                         { await stream.WriteAsync(bytes, token); await stream.FlushAsync(token); stream.Flush(true); }
-                        token.ThrowIfCancellationRequested(); EnsureNoLinks(asset);
-                        ProjectInputs.EnsureOutput(asset, snapshot.Entries, sourceProject);
-                        File.Move(temporary, asset, overwrite: false);
+                        void Publish()
+                        {
+                            token.ThrowIfCancellationRequested(); EnsureNoLinks(asset);
+                            ProjectInputs.EnsureOutput(asset, snapshot.Entries, sourceProject);
+                            token.ThrowIfCancellationRequested(); File.Move(temporary, asset, overwrite: false);
+                        }
+                        if (outputPublisher is null) Publish(); else outputPublisher(asset, Publish);
                     }
                     finally { if (File.Exists(temporary)) File.Delete(temporary); }
                 }
@@ -172,7 +193,7 @@ public static class WorkspaceStore
             }
         // 不変snapshotを先に公開し、既存projectは最後のatomic置換まで保持する。
         // project公開前に取消／失敗したassetは同じ保存先に保持し、次回SHA照合して再利用する。
-        await SaveBytesAsync(path, SerializeWorkspace(snapshot), token, snapshot.Entries, sourceProject);
+        await SaveBytesAsync(path, SerializeWorkspace(snapshot), token, snapshot.Entries, sourceProject, outputPublisher);
     }
 
     internal static async Task<byte[]> ReadWorkingSnapshotAsync(string path, ArchiveWorkingSnapshot copy, CancellationToken token)
@@ -187,20 +208,22 @@ public static class WorkspaceStore
     internal static byte[] SerializeWorkspace(ComparisonWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        if (workspace.FormatVersion is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
-        workspace = workspace with { Entries = workspace.Entries?.Select(project => project is null ? null! : CloneProject(project)).ToArray()! };
-        if (workspace.Entries?.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side) is { } input
+        if (workspace.FormatVersion is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        workspace = workspace with { Entries = workspace.Entries?.Select(project => project is null ? null! : CloneProject(project, validateListContents: false)).ToArray()! };
+        if (workspace.Entries?.Any(project => project?.LineTransformListAssets is not null) == true)
+            workspace = workspace with { FormatVersion = 10 };
+        else if (workspace.Entries?.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side) is { } input
             && (ArchivePayloadSettings.HasNonAutoCompression(input.ContainerCompressionPayloadKinds) || input.WorkingDocuments?.Any(copy => ArchivePayloadSettings.HasNonAutoCompression(copy.ContainerCompressionPayloadKinds)) == true))) == true)
             workspace = workspace with { FormatVersion = 9 };
-        else if (workspace.FormatVersion != 9 && workspace.Entries?.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side) is { } input
+        else if (workspace.FormatVersion is not (9 or 10) && workspace.Entries?.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side) is { } input
             && (ArchivePayloadSettings.HasNonAuto(input.ContainerGZipPayloadKinds) || input.WorkingDocuments?.Any(copy => ArchivePayloadSettings.HasNonAuto(copy.ContainerGZipPayloadKinds)) == true))) == true)
             workspace = workspace with { FormatVersion = 8 };
-        else if (workspace.FormatVersion is not (8 or 9) && workspace.Entries?.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side) is { } input
+        else if (workspace.FormatVersion is not (8 or 9 or 10) && workspace.Entries?.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side) is { } input
             && (input.ContainerNameCodePages is not null || input.WorkingDocuments?.Any(copy => copy.ContainerNameCodePages is not null) == true))) == true)
             workspace = workspace with { FormatVersion = 7 };
-        else if (workspace.FormatVersion is not (7 or 8 or 9) && workspace.Entries?.Any(project => project?.TextInputs is not null) == true)
+        else if (workspace.FormatVersion is not (7 or 8 or 9 or 10) && workspace.Entries?.Any(project => project?.TextInputs is not null) == true)
             workspace = workspace with { FormatVersion = 6 };
-        else if (workspace.FormatVersion is not (6 or 7 or 8 or 9) && workspace.Entries?.Any(project => project is not null && ProjectInputs.HasArchives(project)) == true)
+        else if (workspace.FormatVersion is not (6 or 7 or 8 or 9 or 10) && workspace.Entries?.Any(project => project is not null && ProjectInputs.HasArchives(project)) == true)
             workspace = workspace with { FormatVersion = workspace.Entries.Any(project => project is not null && Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side)?.WorkingDocuments is not null))
                 ? workspace.Entries.Any(project => Enumerable.Range(0, 3).Any(side => ProjectInputs.Archive(project, side)?.WorkingDocuments?.Any(copy => copy.IsBinary) == true)) ? 5 : 4 : workspace.Entries.Any(project => project is not null && ProjectInputs.HasMissing(project)) ? 3 : 2 };
         Validate(workspace);
@@ -209,16 +232,53 @@ public static class WorkspaceStore
         return bytes;
     }
 
-    internal static ComparisonProject CloneProject(ComparisonProject project) => project with
+    internal static ComparisonProject CloneProject(ComparisonProject project) => CloneProject(project, validateListContents: true);
+
+    // 相対DTOの直列化は構造だけをコピーする。実体は相対化前の絶対mapで検証する。
+    private static ComparisonProject CloneProject(ComparisonProject project, bool validateListContents) => project with
     {
         SubstitutionRules = project.SubstitutionRules.ToArray(), LegacySettings = new(project.LegacySettings),
+        LineTransformRules = CloneLineTransformRules(project.LineTransformRules, project, validateListContents),
+        LineTransformListAssets = project.LineTransformListAssets is null ? null : new(project.LineTransformListAssets, StringComparer.Ordinal),
+        TableColumnIgnoreRules = CloneTableColumnIgnoreRules(project.TableColumnIgnoreRules),
+        TableColumnRangeRules = CloneTableColumnRangeRules(project.TableColumnRangeRules),
         ImageSettings = project.ImageSettings with { }, LeftArchiveInput = project.LeftArchiveInput?.Copy(),
         BaseArchiveInput = project.BaseArchiveInput?.Copy(), RightArchiveInput = project.RightArchiveInput?.Copy(),
-        ProtectedArchiveAssets = project.ProtectedArchiveAssets.ToArray(), TextInputs = project.TextInputs?.Copy()
+        ProtectedArchiveAssets = project.ProtectedArchiveAssets.ToArray(), FolderListDependencies = project.FolderListDependencies.ToArray(), TextInputs = project.TextInputs?.Copy()
     };
 
+    internal static TableColumnIgnoreRule[] CloneTableColumnIgnoreRules(IReadOnlyList<TableColumnIgnoreRule>? rules)
+    {
+        try { TableColumnIgnoreRule.ValidateRules(rules); }
+        catch (ArgumentException exception) { throw new InvalidDataException("比較プロジェクトの除外列が不正です。", exception); }
+        return rules!.ToArray();
+    }
+
+    internal static TableColumnRangeRule[] CloneTableColumnRangeRules(IReadOnlyList<TableColumnRangeRule>? rules)
+    {
+        try { TableColumnRangeRule.ValidateRules(rules); }
+        catch (ArgumentException exception) { throw new InvalidDataException("比較プロジェクトの列範囲が不正です。", exception); }
+        return rules!.Select(rule => rule with { }).ToArray();
+    }
+
+    internal static LineTransformRule[] CloneLineTransformRules(IReadOnlyList<LineTransformRule>? rules, ComparisonProject? project = null, bool validateListContents = true)
+    {
+        try
+        {
+            LineTransformRule.ValidateRules(rules);
+            _ = LineTransformPlan.Compile(rules!, new LineTransformBudget(),
+                timestampEnvironment: LineTransformTimestampEnvironments.ForRules(rules!),
+                stringEnvironment: LineTransformStringEnvironments.ForRules(rules!),
+                listEnvironment: validateListContents ? LineTransformListEnvironments.Create(LineTransformLogEnvironments.Trace, project)
+                    : LineTransformListEnvironments.ValidationOnly);
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        { throw new InvalidDataException("比較プロジェクトの行変換が不正です。", exception); }
+        return rules!.Select(rule => rule with { }).ToArray();
+    }
+
     private static async Task SaveBytesAsync(string path, byte[] bytes, CancellationToken token,
-        IReadOnlyList<ComparisonProject> protectedProjects, string? sourceProject = null)
+        IReadOnlyList<ComparisonProject> protectedProjects, string? sourceProject = null, Action<string, Action>? outputPublisher = null)
     {
         if (bytes.Length > MaxFileBytes) throw new InvalidDataException("比較プロジェクトは 4 MiB 以下にしてください。");
         var fullPath = Path.GetFullPath(path);
@@ -250,12 +310,15 @@ public static class WorkspaceStore
                 var preserved = attributes & (FileAttributes.Hidden | FileAttributes.System | FileAttributes.Archive | FileAttributes.NotContentIndexed);
                 File.SetAttributes(temporaryPath, preserved == 0 ? FileAttributes.Normal : preserved);
             }
-            EnsureNoLinks(fullPath);
-            ProjectInputs.EnsureOutput(fullPath, protectedProjects, sourceProject);
-            if (File.Exists(fullPath) && (File.GetAttributes(fullPath) & FileAttributes.ReadOnly) != 0)
-                throw new UnauthorizedAccessException("読み取り専用の比較プロジェクトは保存できません。");
-            token.ThrowIfCancellationRequested();
-            File.Move(temporaryPath, fullPath, overwrite: true);
+            void Publish()
+            {
+                EnsureNoLinks(fullPath);
+                ProjectInputs.EnsureOutput(fullPath, protectedProjects, sourceProject);
+                if (File.Exists(fullPath) && (File.GetAttributes(fullPath) & FileAttributes.ReadOnly) != 0)
+                    throw new UnauthorizedAccessException("読み取り専用の比較プロジェクトは保存できません。");
+                token.ThrowIfCancellationRequested(); File.Move(temporaryPath, fullPath, overwrite: true);
+            }
+            if (outputPublisher is null) Publish(); else outputPublisher(fullPath, Publish);
         }
         finally { if (File.Exists(temporaryPath)) File.Delete(temporaryPath); }
     }
@@ -277,7 +340,7 @@ public static class WorkspaceStore
         if (root.ValueKind != JsonValueKind.Object) throw new InvalidDataException("比較プロジェクトがオブジェクトではありません。");
         var wrapper = root.TryGetProperty("entries", out _) || root.TryGetProperty("formatVersion", out _) || root.TryGetProperty("activeEntryIndex", out _);
         // v6のenvelopeを先に確認し、重複versionの最後の値でschemaを切り替えない。
-        if (wrapper && root.EnumerateObject().Any(field => field.Name == "formatVersion" && field.Value.ValueKind == JsonValueKind.Number && field.Value.TryGetInt32(out var value) && value is 6 or 7 or 8 or 9))
+        if (wrapper && root.EnumerateObject().Any(field => field.Name == "formatVersion" && field.Value.ValueKind == JsonValueKind.Number && field.Value.TryGetInt32(out var value) && value is 6 or 7 or 8 or 9 or 10))
         {
             var fields = new HashSet<string>(StringComparer.Ordinal);
             foreach (var field in root.EnumerateObject())
@@ -307,9 +370,13 @@ public static class WorkspaceStore
                 LeftArchiveInput = ResolveArchive(project.LeftArchiveInput, directory),
                 BaseArchiveInput = ResolveArchive(project.BaseArchiveInput, directory),
                 RightArchiveInput = ResolveArchive(project.RightArchiveInput, directory),
-                FileFilterPath = ResolveJsonPath(project.FileFilterPath, directory)
+                FileFilterPath = ResolveJsonPath(project.FileFilterPath, directory),
+                LineTransformListAssets = project.LineTransformListAssets?.ToDictionary(pair => pair.Key,
+                    pair => ResolveJsonPath(pair.Value, directory)!, StringComparer.Ordinal)
             }).ToArray()
         };
+        foreach (var project in workspace.Entries)
+            _ = CloneLineTransformRules(project.LineTransformRules, project);
         var readAssets = new Dictionary<string, byte[]>(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         long retainedAssetBytes = 0;
         foreach (var project in workspace.Entries)
@@ -354,19 +421,34 @@ public static class WorkspaceStore
     {
         if (project.ValueKind != JsonValueKind.Object) return;
         var fields = new HashSet<string>(StringComparer.Ordinal);
-        var knownFields = version is 6 or 7 or 8 or 9 ? ProjectJsonContext.Default.ComparisonProject.Properties.Select(property => property.Name).ToHashSet(StringComparer.Ordinal) : null;
+        var knownFields = version is 6 or 7 or 8 or 9 or 10 ? ProjectJsonContext.Default.ComparisonProject.Properties.Select(property => property.Name).ToHashSet(StringComparer.Ordinal) : null;
         var descriptorSeen = false;
         foreach (var field in project.EnumerateObject())
         {
-            if (version is 6 or 7 or 8 or 9 && (!knownFields!.Contains(field.Name) || !fields.Add(field.Name)))
+            if (field.Name == "lineTransformListAssets" && field.Value.ValueKind != JsonValueKind.Null)
+            {
+                if (version != 10 || field.Value.ValueKind != JsonValueKind.Object)
+                    throw new InvalidDataException("置換リストassetにはv10のパスmapが必要です。");
+                var keys = new HashSet<string>(StringComparer.Ordinal);
+                foreach (var asset in field.Value.EnumerateObject())
+                {
+                    if (!keys.Add(asset.Name) || keys.Count > 16_384 || asset.Value.ValueKind != JsonValueKind.String)
+                        throw new InvalidDataException("置換リストassetのパスmapが不正です。");
+                    var path = asset.Value.GetString()!;
+                    if (string.IsNullOrWhiteSpace(path) || Path.IsPathRooted(path) || path.Contains(':')
+                        || path.Replace('\\', '/').Split('/').Any(part => part is ".." or "."))
+                        throw new InvalidDataException("置換リストassetにはプロジェクト内の相対pathを指定してください。");
+                }
+            }
+            if (version is 6 or 7 or 8 or 9 or 10 && (!knownFields!.Contains(field.Name) || !fields.Add(field.Name)))
                 throw new InvalidDataException("v6比較プロジェクトに未対応または重複した項目があります。");
-            if (field.Name == "textComparisonPair" && field.Value.ValueKind != JsonValueKind.Null && version is not (6 or 7 or 8 or 9))
+            if (field.Name == "textComparisonPair" && field.Value.ValueKind != JsonValueKind.Null && version is not (6 or 7 or 8 or 9 or 10))
                 throw new InvalidDataException("Textの比較ペアには形式バージョン6が必要です。");
             if (field.Name != "textInputs") continue;
             if (descriptorSeen) throw new InvalidDataException("Text入力のdescriptorが重複しています。");
             descriptorSeen = true;
             if (field.Value.ValueKind == JsonValueKind.Null) continue;
-            if (version is not (6 or 7 or 8 or 9)) throw new InvalidDataException("typed Text入力には形式バージョン6が必要です。");
+            if (version is not (6 or 7 or 8 or 9 or 10)) throw new InvalidDataException("typed Text入力には形式バージョン6が必要です。");
             TextInputDescriptor.ValidateJson(field.Value);
             if (!project.TryGetProperty("mode", out var mode) || mode.ValueKind != JsonValueKind.String || !string.Equals(mode.GetString(), "Text", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidDataException("typed Text入力にはTextの明示形式が必要です。");
@@ -390,7 +472,7 @@ public static class WorkspaceStore
             foreach (var field in side.Value.EnumerateObject())
             {
                 if (field.Name is not ("rootPath" or "entryChain" or "leafEntry" or "rootSha256" or "missingEntryChain" or "inheritedReadOnly" or "workingTexts" or "containerNameCodePages" or "containerGZipPayloadKinds" or "containerCompressionPayloadKinds")
-                    || field.Name == "containerCompressionPayloadKinds" && version != 9 || field.Name == "containerGZipPayloadKinds" && version is not (8 or 9) || field.Name == "containerNameCodePages" && version is not (7 or 8 or 9) || !fields.Add(field.Name))
+                    || field.Name == "containerCompressionPayloadKinds" && version is not (9 or 10) || field.Name == "containerGZipPayloadKinds" && version is not (8 or 9 or 10) || field.Name == "containerNameCodePages" && version is not (7 or 8 or 9 or 10) || !fields.Add(field.Name))
                     throw new InvalidDataException("内包入力に未対応または重複した項目があります。");
                 if (field.Name == "containerGZipPayloadKinds") ValidatePayloadJson(field.Value, side.Value);
                 if (field.Name == "containerCompressionPayloadKinds") ValidateCompressionPayloadJson(field.Value, side.Value);
@@ -411,7 +493,7 @@ public static class WorkspaceStore
                         var snapshotFields = new HashSet<string>(StringComparer.Ordinal);
                         foreach (var item in snapshot.EnumerateObject())
                             if (item.Name is not ("entryChain" or "leafEntry" or "snapshotPath" or "sha256" or "encodingName" or "hasBom" or "kind" or "containerNameCodePages" or "containerGZipPayloadKinds" or "containerCompressionPayloadKinds")
-                                || item.Name == "containerCompressionPayloadKinds" && version != 9 || item.Name == "containerGZipPayloadKinds" && version is not (8 or 9) || item.Name == "containerNameCodePages" && version is not (7 or 8 or 9) || !snapshotFields.Add(item.Name) || item.Name == "kind" && (version is not (5 or 6 or 7 or 8 or 9) || item.Value.ValueKind != JsonValueKind.String || item.Value.GetString() != "Binary"))
+                                || item.Name == "containerCompressionPayloadKinds" && version is not (9 or 10) || item.Name == "containerGZipPayloadKinds" && version is not (8 or 9 or 10) || item.Name == "containerNameCodePages" && version is not (7 or 8 or 9 or 10) || !snapshotFields.Add(item.Name) || item.Name == "kind" && (version is not (5 or 6 or 7 or 8 or 9 or 10) || item.Value.ValueKind != JsonValueKind.String || item.Value.GetString() != "Binary"))
                                 throw new InvalidDataException("作業文書に未対応または重複した項目があります。");
                         if (snapshot.TryGetProperty("containerGZipPayloadKinds", out var payloadKinds)) ValidatePayloadJson(payloadKinds, snapshot);
                         if (snapshot.TryGetProperty("containerCompressionPayloadKinds", out var compressionKinds)) ValidateCompressionPayloadJson(compressionKinds, snapshot);
@@ -468,7 +550,7 @@ public static class WorkspaceStore
     private static void Validate(ComparisonWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
-        if (workspace.FormatVersion is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
+        if (workspace.FormatVersion is not (1 or 2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10)) throw new InvalidDataException("比較ワークスペースの形式バージョンに対応していません。");
         if (workspace.Entries is null || workspace.Entries.Length is < 1 or > MaxEntries)
             throw new InvalidDataException($"比較は 1 ～ {MaxEntries} 件を指定してください。");
         if (workspace.ActiveEntryIndex < 0 || workspace.ActiveEntryIndex >= workspace.Entries.Length)
@@ -479,51 +561,65 @@ public static class WorkspaceStore
                 project.Mode is null || project.FolderMode is null || project.SubstitutionRules is null || project.LegacySettings is null)
                 throw new InvalidDataException("比較プロジェクトの必須項目が null です。");
             var knownMode = KnownModes.Contains(project.Mode, StringComparer.OrdinalIgnoreCase);
+            if (project.LineTransformListAssets is { } listAssets)
+            {
+                if (workspace.FormatVersion != 10 || listAssets.Count > 16_384
+                    || listAssets.Any(pair => pair.Key is null || pair.Value is null || pair.Key.Length > LineTransformRule.MaximumExpressionLength
+                        || string.IsNullOrWhiteSpace(pair.Value)))
+                    throw new InvalidDataException("置換リストassetには有効なv10のパスmapが必要です。");
+            }
             if (!knownMode && !(int.TryParse(project.Mode, NumberStyles.Integer, CultureInfo.InvariantCulture, out var oldMode) && oldMode is >= 0 and <= 8))
                 throw new InvalidDataException($"未対応の比較形式です: {project.Mode}");
             if (project.FolderMode is not ("Content" or "Hash" or "TimestampAndSize"))
                 throw new InvalidDataException("フォルダー比較方式が不正です。");
             if (project.TextInputs is { } textInputs)
             {
-                if (workspace.FormatVersion is not (6 or 7 or 8 or 9)) throw new InvalidDataException("typed Text入力には形式バージョン6が必要です。");
+                if (workspace.FormatVersion is not (6 or 7 or 8 or 9 or 10)) throw new InvalidDataException("typed Text入力には形式バージョン6が必要です。");
                 textInputs.Validate(project);
             }
-            if (project.TextComparisonPair is not null && (workspace.FormatVersion is not (6 or 7 or 8 or 9) || !ProjectInputs.IsIndependentText(project)
+            if (project.TextComparisonPair is not null && (workspace.FormatVersion is not (6 or 7 or 8 or 9 or 10) || !ProjectInputs.IsIndependentText(project)
                 || project.TextComparisonPair is not ("LeftMiddle" or "MiddleRight" or "LeftRight")))
                 throw new InvalidDataException("Textの比較ペアはv6の独立Textで明示してください。");
             if (ProjectInputs.HasArchives(project))
             {
-                if (workspace.FormatVersion is not (2 or 3 or 4 or 5 or 6 or 7 or 8 or 9)) throw new InvalidDataException("内包入力には形式バージョン2以降のワークスペースが必要です。");
-                if (ProjectInputs.HasMissing(project) && workspace.FormatVersion is not (3 or 4 or 5 or 6 or 7 or 8 or 9))
+                if (workspace.FormatVersion is not (2 or 3 or 4 or 5 or 6 or 7 or 8 or 9 or 10)) throw new InvalidDataException("内包入力には形式バージョン2以降のワークスペースが必要です。");
+                if (ProjectInputs.HasMissing(project) && workspace.FormatVersion is not (3 or 4 or 5 or 6 or 7 or 8 or 9 or 10))
                     throw new InvalidDataException("不在入力には形式バージョン3のワークスペースが必要です。");
                 var mode = project.Mode.ToLowerInvariant();
-                if (mode is not ("text" or "1" or "binary" or "3" or "archive" or "7"))
-                    throw new InvalidDataException("内包入力はText／Binary／Archiveの明示形式で開いてください。");
+                if (mode is not ("text" or "1" or "binary" or "3" or "image" or "4" or "archive" or "7"))
+                    throw new InvalidDataException("内包入力はText／Binary／Image／Archiveの明示形式で開いてください。");
+                ArchiveImageInputValidation.Validate(project);
                 if (mode is "archive" or "7" && ProjectInputs.HasBase(project))
                     throw new InvalidDataException("内包入力の中央指定はText／Binary比較だけで使用できます。");
                 for (var side = 0; side < 3; side++)
                 {
                     var input = ProjectInputs.Archive(project, side);
                     if (input is null) continue;
-                    if (workspace.FormatVersion != 9 && (ArchivePayloadSettings.HasNonAutoCompression(input.ContainerCompressionPayloadKinds) || input.WorkingDocuments?.Any(copy => ArchivePayloadSettings.HasNonAutoCompression(copy.ContainerCompressionPayloadKinds)) == true))
+                    if (workspace.FormatVersion is not (9 or 10) && (ArchivePayloadSettings.HasNonAutoCompression(input.ContainerCompressionPayloadKinds) || input.WorkingDocuments?.Any(copy => ArchivePayloadSettings.HasNonAutoCompression(copy.ContainerCompressionPayloadKinds)) == true))
                         throw new InvalidDataException("BZip2／Z本文の形式には形式バージョン9が必要です。");
-                    if (workspace.FormatVersion is not (8 or 9) && (ArchivePayloadSettings.HasNonAuto(input.ContainerGZipPayloadKinds) || input.WorkingDocuments?.Any(copy => ArchivePayloadSettings.HasNonAuto(copy.ContainerGZipPayloadKinds)) == true))
+                    if (workspace.FormatVersion is not (8 or 9 or 10) && (ArchivePayloadSettings.HasNonAuto(input.ContainerGZipPayloadKinds) || input.WorkingDocuments?.Any(copy => ArchivePayloadSettings.HasNonAuto(copy.ContainerGZipPayloadKinds)) == true))
                         throw new InvalidDataException("gzip本文の形式には形式バージョン8が必要です。");
-                    if (workspace.FormatVersion is not (7 or 8 or 9) && (input.ContainerNameCodePages is not null || input.WorkingDocuments?.Any(copy => copy.ContainerNameCodePages is not null) == true))
+                    if (workspace.FormatVersion is not (7 or 8 or 9 or 10) && (input.ContainerNameCodePages is not null || input.WorkingDocuments?.Any(copy => copy.ContainerNameCodePages is not null) == true))
                         throw new InvalidDataException("格納名の文字コードには形式バージョン7が必要です。");
-                    if (input.WorkingDocuments is not null && (workspace.FormatVersion is not (4 or 5 or 6 or 7 or 8 or 9) || mode is not ("text" or "1" or "binary" or "3" or "archive" or "7")))
+                    if (input.WorkingDocuments is not null && (workspace.FormatVersion is not (4 or 5 or 6 or 7 or 8 or 9 or 10) || mode is not ("text" or "1" or "binary" or "3" or "archive" or "7")))
                         throw new InvalidDataException("作業版には形式バージョン4以降とText／Binary／Archive比較が必要です。");
                     var oldPath = side switch { 0 => project.LeftPath, 1 => project.BasePath, _ => project.RightPath };
                     if (!string.IsNullOrEmpty(oldPath)) throw new InvalidDataException("物理pathと内包入力を同じ側へ指定できません。");
                     if (side == 1 && mode is not ("text" or "1" or "binary" or "3")) throw new InvalidDataException("中央の内包入力はText／Binary比較だけで使用できます。");
                     // v6でもkind省略はv4のText、明示Binaryだけはv5のBinary／Archive制約を維持する。
-                    if (input.WorkingDocuments?.Any(copy => copy.IsBinary) == true && (workspace.FormatVersion is not (5 or 6 or 7 or 8 or 9) || mode is "text" or "1"))
+                    if (input.WorkingDocuments?.Any(copy => copy.IsBinary) == true && (workspace.FormatVersion is not (5 or 6 or 7 or 8 or 9 or 10) || mode is "text" or "1"))
                         throw new InvalidDataException("Binary作業版には形式バージョン5とBinary／Archive比較が必要です。");
                     input.Validate(mode is "archive" or "7", side switch { 0 => project.LeftReadOnly, 1 => project.BaseReadOnly, _ => project.RightReadOnly });
                 }
             }
             if (!Enum.IsDefined(project.CommentSyntax) || !Enum.IsDefined(project.Whitespace))
                 throw new InvalidDataException("比較プロジェクトのコメント構文または空白の比較方式が不正です。");
+            if (project.WordBreakSeparators is null || project.WordBreakSeparators.Length > ComparisonOptions.MaximumWordBreakSeparatorsLength)
+                throw new InvalidDataException($"単語区切り文字は {ComparisonOptions.MaximumWordBreakSeparatorsLength} 文字まで指定できます。");
+            _ = CloneTableColumnIgnoreRules(project.TableColumnIgnoreRules);
+            _ = CloneTableColumnRangeRules(project.TableColumnRangeRules);
+            // JSON構造の検証では相対assetをまだ読み込まない。解決後のclone/採用で内容を検証する。
+            _ = CloneLineTransformRules(project.LineTransformRules, project, validateListContents: false);
             if (project.SubstitutionRules.Any(rule => rule is null || rule.Pattern is null || rule.Replacement is null))
                 throw new InvalidDataException("置換ルールの必須項目が null です。");
             if (project.LegacySettings.Values.Any(value => value is null))

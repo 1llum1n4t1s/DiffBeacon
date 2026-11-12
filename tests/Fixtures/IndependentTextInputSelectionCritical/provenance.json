@@ -13,7 +13,7 @@
   },
   "sourceClass": {
     "path": "Src/DiffBeacon.App/HeadlessIndependentTextInputSelectionCriticalChecks.cs",
-    "sha256": "876A54ABE5393DA12515DF4DFE9380FDB72C5C00EC54936E63C4E10284C429BD"
+    "sha256": "6B84DD252184B98F1AC6BEE649FA5B2AF0C8D9AE38008D87630048D182D8C75D"
   },
-  "scope": "critical-subset-only; parent build and product execution pending"
+  "scope": "critical-subset-only; parent build and product execution captured by E2E"
 }

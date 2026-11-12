@@ -76,7 +76,9 @@ public static class FileComparer
                 cancellationToken: cancellationToken), null, null);
         var left = TextDocument.FromBytes(leftPath, leftBytes, new());
         var right = TextDocument.FromBytes(rightPath, rightBytes, new());
-        return new(leftPath, rightPath, false, TextDiffer.Compare(left.Text, right.Text, options, cancellationToken), null, left, right);
+        return new(leftPath, rightPath, false, TextDiffer.CompareWithSourcePaths(left.Text, right.Text,
+            new(left: left.Path, right: right.Path, leftEncodingName: left.EncodingName, rightEncodingName: right.EncodingName),
+            options, cancellationToken), null, left, right);
     }
 }
 
@@ -94,6 +96,7 @@ public sealed record DirectoryComparisonOptions
     public IReadOnlyList<string> ExcludePatterns { get; init; } = [];
     public ComparisonOptions? TextOptions { get; init; }
     public FileFilter? FileFilter { get; init; }
+    public IFileFilterPropertyService? PropertyService { get; init; }
     public bool ShowFiltered { get; init; }
     public int MaximumEntries { get; init; } = 100_000;
     public int MaximumDepth { get; init; } = 256;
@@ -155,8 +158,9 @@ public static partial class DirectoryComparer
         // macOS/Linux のパスは大文字・小文字を区別する。リンクは再帰対象にしない。
         var comparer = OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
         var results = new List<DirectoryEntry>();
-        var left = Scan(leftPath, options, comparer, cancellationToken);
-        var right = Scan(rightPath, options, comparer, cancellationToken);
+        var scannedSides = ScanSides([leftPath, rightPath], options, comparer, cancellationToken);
+        var left = scannedSides[0];
+        var right = scannedSides[1];
         var relativePaths = left.Keys.Union(right.Keys, comparer).Order(comparer).ToArray();
         if (relativePaths.Length > options.MaximumEntries)
             throw new InvalidDataException("フォルダー比較の項目数の上限を超えています。");
@@ -239,57 +243,116 @@ public static partial class DirectoryComparer
         };
     }
 
-    private static Dictionary<string, DirectorySideSnapshot> Scan(string root, DirectoryComparisonOptions options,
+    private static Dictionary<string, DirectorySideSnapshot>[] ScanSides(string[] roots, DirectoryComparisonOptions options,
         StringComparer comparer, CancellationToken cancellationToken)
     {
-        var entries = new Dictionary<string, DirectorySideSnapshot>(comparer);
-        var pending = new Stack<string>();
-        pending.Push(root);
+        var sides = roots.Select(_ => new Dictionary<string, DirectorySideSnapshot>(comparer)).ToArray();
+        var propertyNames = options.FileFilter?.PropertyNames ?? [];
+        if (propertyNames.Count != 0)
+        {
+            if (options.PropertyService is null) throw new PlatformNotSupportedException("プロパティフィルターには Windows property service が必要です。");
+            options.PropertyService.ValidateNames(propertyNames);
+        }
+        foreach (var root in roots)
+            if ((File.GetAttributes(root) & FileAttributes.ReparsePoint) != 0)
+                throw new IOException("フォルダー比較のルートにリンクを指定できません。");
+        var known = new HashSet<string>(comparer);
+        var pending = new Stack<(string Relative, bool[] Active)>();
+        pending.Push(("", roots.Select(_ => true).ToArray()));
         while (pending.Count > 0)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var directory = pending.Pop();
-            try
+            var (parent, active) = pending.Pop();
+            var children = new HashSet<string>(comparer);
+            for (var side = 0; side < roots.Length; side++)
             {
-                foreach (var item in new DirectoryInfo(directory).EnumerateFileSystemInfos())
+                if (!active[side]) continue;
+                var entries = sides[side];
+                var directory = parent.Length == 0 ? roots[side] : entries[parent].Path;
+                try
+                {
+                    if ((File.GetAttributes(directory) & FileAttributes.ReparsePoint) != 0)
+                        throw new IOException("リンクへ変更されたフォルダーは走査できません。");
+                    options.EntryTypeValidator?.Invoke(directory, DirectoryEntryKind.Directory);
+                    foreach (var item in new DirectoryInfo(directory).EnumerateFileSystemInfos())
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        var relative = Path.GetRelativePath(roots[side], item.FullName).Replace('\\', '/');
+                        children.Add(relative);
+                        known.Add(relative);
+                        if (known.Count > options.MaximumEntries || relative.Count(character => character == '/') + 1 > options.MaximumDepth)
+                            throw new InvalidDataException("フォルダー比較の項目数または深度の上限を超えています。");
+                        var attributes = item.Attributes;
+                        var link = (attributes & FileAttributes.ReparsePoint) != 0;
+                        var kind = link ? DirectoryEntryKind.SymbolicLink : item is DirectoryInfo ? DirectoryEntryKind.Directory : DirectoryEntryKind.File;
+                        try { if (!link) options.EntryTypeValidator?.Invoke(item.FullName, kind); }
+                        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+                        {
+                            entries[relative] = new(item.FullName, kind, 0, item.LastWriteTimeUtc, attributes,
+                                false, DirectoryScanState.Error, Error: error.Message);
+                            continue;
+                        }
+                        var size = item is FileInfo file && !link ? file.Length : 0;
+                        var writeTime = item.LastWriteTimeUtc;
+                        entries[relative] = new(item.FullName, kind, size, writeTime, attributes, false,
+                            kind == DirectoryEntryKind.Directory ? DirectoryScanState.Unscanned : DirectoryScanState.NotApplicable,
+                            link ? item.LinkTarget : null);
+                    }
+                    if (entries.TryGetValue(parent, out var scanned))
+                        entries[parent] = scanned with { ScanState = DirectoryScanState.Scanned };
+                }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+                {
+                    active[side] = false;
+                    var relative = Path.GetRelativePath(roots[side], directory).Replace('\\', '/');
+                    if (!entries.TryGetValue(relative, out var failed))
+                        failed = new(directory, DirectoryEntryKind.Directory, 0, DateTime.MinValue,
+                            FileAttributes.Directory, false, DirectoryScanState.Error);
+                    entries[relative] = failed with { ScanState = DirectoryScanState.Error, Error = error.Message };
+                }
+            }
+            foreach (var relative in children.OrderDescending(comparer))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (!sides.Any(side => side.ContainsKey(relative))) continue;
+                if (options.ExcludePatterns.Any(pattern => GlobMatches(relative, pattern, comparer == StringComparer.OrdinalIgnoreCase)))
+                {
+                    foreach (var entries in sides)
+                        if (entries.TryGetValue(relative, out var excluded) && excluded.Error is null)
+                            entries[relative] = excluded with { IsFiltered = true };
+                    continue;
+                }
+                Dictionary<(int Side, string Name), FileFilterPropertyValue>? propertyCache = propertyNames.Count == 0 ? null : [];
+                FileFilterPropertyValue ReadProperty(int side, string name)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var relative = Path.GetRelativePath(root, item.FullName).Replace('\\', '/');
-                    if (entries.Count >= options.MaximumEntries || relative.Count(character => character == '/') + 1 > options.MaximumDepth)
-                        throw new InvalidDataException("フォルダー比較の項目数または深度の上限を超えています。");
-                    var attributes = item.Attributes;
-                    var link = (attributes & FileAttributes.ReparsePoint) != 0;
-                    var kind = link ? DirectoryEntryKind.SymbolicLink : item is DirectoryInfo ? DirectoryEntryKind.Directory : DirectoryEntryKind.File;
-                    try { if (!link) options.EntryTypeValidator?.Invoke(item.FullName, kind); }
-                    catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-                    {
-                        entries[relative] = new(item.FullName, kind, 0, item.LastWriteTimeUtc, attributes,
-                            false, DirectoryScanState.Error, Error: error.Message);
-                        continue;
-                    }
-                    var size = item is FileInfo file && !link ? file.Length : 0;
-                    var writeTime = item.LastWriteTimeUtc;
-                    var filtered = options.ExcludePatterns.Any(pattern => GlobMatches(relative, pattern, comparer == StringComparer.OrdinalIgnoreCase))
-                        || options.FileFilter is not null && !options.FileFilter.Matches(relative, item is DirectoryInfo, size, writeTime);
-                    entries[relative] = new(item.FullName, kind, size, writeTime, attributes, filtered,
-                        kind == DirectoryEntryKind.Directory ? DirectoryScanState.Unscanned : DirectoryScanState.NotApplicable,
-                        link ? item.LinkTarget : null);
-                    if (kind == DirectoryEntryKind.Directory && options.Recursive && !filtered) pending.Push(item.FullName);
+                    if (propertyCache!.TryGetValue((side, name), out var cached)) return cached;
+                    if (!active[side] || !sides[side].TryGetValue(relative, out var item) || item.Kind == DirectoryEntryKind.SymbolicLink || item.Error is not null)
+                        return FileFilterPropertyValue.None;
+                    // store の成功フラグが false でも hash 値は返る。到達した側・名前だけを一度取得する。
+                    options.PropertyService!.Read(item.Path, [name], cancellationToken, out var values);
+                    if (values.Count != 1) throw new InvalidDataException("Property service の値数が一致しません。");
+                    cancellationToken.ThrowIfCancellationRequested();
+                    propertyCache.Add((side, name), values[0]);
+                    return values[0];
                 }
-                var directoryRelative = Path.GetRelativePath(root, directory).Replace('\\', '/');
-                if (entries.TryGetValue(directoryRelative, out var scanned))
-                    entries[directoryRelative] = scanned with { ScanState = DirectoryScanState.Scanned };
-            }
-            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-            {
-                var relative = Path.GetRelativePath(root, directory).Replace('\\', '/');
-                if (!entries.TryGetValue(relative, out var failed))
-                    failed = new(directory, DirectoryEntryKind.Directory, 0, DateTime.MinValue,
-                        FileAttributes.Directory, false, DirectoryScanState.Error);
-                entries[relative] = failed with { ScanState = DirectoryScanState.Error, Error = error.Message };
+                var filterMatches = options.FileFilter?.MatchesSides(relative,
+                    sides.Select(side => side.GetValueOrDefault(relative)).ToArray(), propertyCache is null ? null : ReadProperty,
+                    sides.Select((entries, index) => entries.TryGetValue(relative, out var item) ? Path.GetRelativePath(roots[index], item.Path)
+                        : parent.Length != 0 && entries.TryGetValue(parent, out var directory)
+                            ? Path.Combine(Path.GetRelativePath(roots[index], directory.Path), Path.GetFileName(relative)) : relative).ToArray(), cancellationToken);
+                var recurse = new bool[roots.Length];
+                for (var side = 0; side < roots.Length; side++)
+                {
+                    if (!sides[side].TryGetValue(relative, out var item) || item.Error is not null) continue;
+                    var filtered = filterMatches is not null && !filterMatches[side];
+                    sides[side][relative] = item with { IsFiltered = filtered };
+                    recurse[side] = active[side] && !filtered && item.Kind == DirectoryEntryKind.Directory && options.Recursive;
+                }
+                if (recurse.Any(value => value)) pending.Push((relative, recurse));
             }
         }
-        return entries;
+        return sides;
     }
 
     public static bool GlobMatches(string path, string pattern, bool ignoreCase = false)

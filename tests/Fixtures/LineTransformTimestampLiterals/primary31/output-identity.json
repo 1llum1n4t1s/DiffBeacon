@@ -1,0 +1,14 @@
+{
+  "logicalStage": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-formal-20261012-174238-38351a15",
+  "canonicalStage": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-formal-20261012-174238-38351a15",
+  "samefile": true,
+  "logicalStatDevice": 6773523219503864147,
+  "logicalStatFileId": 16607023628472640,
+  "canonicalStatDevice": 6773523219503864147,
+  "canonicalStatFileId": 16607023628472640,
+  "workLogical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-formal-20261012-174238-38351a15",
+  "workCanonical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-formal-20261012-174238-38351a15",
+  "allOutsideRepoCodex": true,
+  "knownLocalCacheAlias": true,
+  "runtimeReproductionNotExecuted": true
+}

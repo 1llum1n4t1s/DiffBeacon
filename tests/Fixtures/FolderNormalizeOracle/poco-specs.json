@@ -1,0 +1,92 @@
+{
+  "text-class.inc": {
+    "source": "original/TextIterator.h",
+    "ranges": [
+      [
+        432,
+        2969
+      ]
+    ],
+    "sha256": "0fc2dbcca0806a3f2df58b2613e2a7953aa49366083dcf64e1179b0d9d0809c6"
+  },
+  "utf-ctor.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        2144,
+        2176
+      ]
+    ],
+    "sha256": "e2193c40d28001648bd5147422e96008984bd4097096099077903980fc7a46bf"
+  },
+  "utf-dtor.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        2179,
+        2212
+      ]
+    ],
+    "sha256": "702f31f6272667fbbf9191147fe4b33407d3b8229b29608350b228a602a55d48"
+  },
+  "utf-query.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        3885,
+        4327
+      ]
+    ],
+    "sha256": "9eaae847f059a542b7663d807ea2a345d670bf1c463ba170d07ede5b9703dd43"
+  },
+  "utf-sequence.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        4330,
+        4532
+      ]
+    ],
+    "sha256": "cd82e71b5de4fb08daf680e774012b4437fcb5df2dd7d8272b7a5b40a2b055a2"
+  },
+  "utf-legal.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        4535,
+        5631
+      ]
+    ],
+    "sha256": "47673b2bfc6364d74174d89a8668dded995befb0e07dbaad35362249e9a00e29"
+  },
+  "utf-table.inc": {
+    "source": "original/UTF8Encoding.cpp",
+    "ranges": [
+      [
+        383,
+        2141
+      ]
+    ],
+    "sha256": "cf6dd022cc10b8540dbbd524b866fe0bd2ec0917ece5806d5b166367638b9fc0"
+  },
+  "text-bodies.inc": {
+    "source": "original/TextIterator.cpp",
+    "ranges": [
+      [
+        338,
+        2776
+      ]
+    ],
+    "sha256": "747f75051e54495bc643aaab846dc00fb4a34798fae390ba265248ed3329872f"
+  },
+  "text-inlines.inc": {
+    "source": "original/TextIterator.h",
+    "ranges": [
+      [
+        2989,
+        3351
+      ]
+    ],
+    "sha256": "b946a964343ac9c535968c32e392a2300220eec18d96a799c9c052fd95adc509"
+  }
+}

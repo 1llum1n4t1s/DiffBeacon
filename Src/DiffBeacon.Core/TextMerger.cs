@@ -40,15 +40,19 @@ public static class ThreeWayMerger
         ComparisonOptions? options = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (left == right || left == baseText || right == baseText)
+        options ??= new();
+        var context = new TextFilterContext(options, cancellationToken);
+        if (options.LineTransformRules.Count == 0 && (left == right || left == baseText || right == baseText))
             return Uncontested(baseText, left, right, options, cancellationToken);
         var baseLines = TextLines.Parse(baseText);
         var leftLines = TextLines.Parse(left);
         var rightLines = TextLines.Parse(right);
         var edits = new List<Edit>();
-        foreach (var block in TextDiffer.Compare(baseText, left, options, cancellationToken).Blocks)
+        foreach (var block in TextDiffer.CompareWithContext(baseText, left, options, context,
+            TablePaneMask.Base, TablePaneMask.Left, cancellationToken).Blocks)
             edits.Add(new(block.LeftStart, block.LeftCount, leftLines.GetRange(block.RightStart, block.RightCount), true));
-        foreach (var block in TextDiffer.Compare(baseText, right, options, cancellationToken).Blocks)
+        foreach (var block in TextDiffer.CompareWithContext(baseText, right, options, context,
+            TablePaneMask.Base, TablePaneMask.Right, cancellationToken).Blocks)
             edits.Add(new(block.LeftStart, block.LeftCount, rightLines.GetRange(block.RightStart, block.RightCount), false));
         edits.Sort((a, b) => a.Start != b.Start ? a.Start.CompareTo(b.Start) : a.Count.CompareTo(b.Count));
         var conflicts = new List<MergeConflict>();

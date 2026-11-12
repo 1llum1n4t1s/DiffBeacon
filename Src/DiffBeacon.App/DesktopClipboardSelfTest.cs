@@ -35,6 +35,8 @@ internal static class DesktopClipboardSelfTest
         var binary = phase.StartsWith("--binary-", StringComparison.Ordinal); var writing = phase is "--write" or "--binary-write";
         var binaryBytes = Enumerable.Range(0, 256).Select(value => (byte)value).Concat(new byte[] { 0, 65, 255 }).ToArray();
         var destination = Path.GetFullPath(output);
+        try { DiffBeacon.Development.DevelopmentOutputGuard.Validate(destination); }
+        catch (IOException error) { Console.Error.WriteLine(error.Message); return 2; }
         Directory.CreateDirectory(destination);
         var checks = new List<(string Name, bool Passed, string Detail)>();
         var mode = phase[2..];

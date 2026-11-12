@@ -93,10 +93,10 @@ for case in expected['cases']:
    for candidate in doc['candidates']:
     path=candidate['path'];kind=side_info(group,source_side,path)[0]
     assert candidate['physicalDirectory']==(kind=='Directory')
-    args=case['args'];filtered=('--exclude' in args and path=='filtered-dir') or ('{typeFilter}' in args and source_side=='left' and path in ('conflict','reverse-conflict')) or ('{sizeFilter}' in args and source_side=='right' and path=='size-side.bin')
+    args=case['args'];filtered=('--exclude' in args and path=='filtered-dir') or ('{typeFilter}' in args and source_side=='left' and path in ('conflict','reverse-conflict')) or ('{sizeFilter}' in args and path=='size-side.bin')
     scan='Unscanned' if '--no-recursive' in args or filtered else 'Scanned'
     verify_side(candidate['source'],group,source_side,path,filtered,scan)
-    dest_filtered=('--exclude' in args and path=='filtered-dir') or ('{typeFilter}' in args and dest_side=='left' and path in ('conflict','reverse-conflict')) or ('{sizeFilter}' in args and dest_side=='right' and path=='size-side.bin')
+    dest_filtered=('--exclude' in args and path=='filtered-dir') or ('{typeFilter}' in args and dest_side=='left' and path in ('conflict','reverse-conflict')) or ('{sizeFilter}' in args and path=='size-side.bin')
     verify_side(candidate['destination'],group,dest_side,path,dest_filtered,'Unscanned' if '--no-recursive' in args or dest_filtered else 'Scanned')
    runs.append(dict(id=case['id'],exit=0,candidates=paths,physicalDirectory=[c['path'] for c in doc['candidates'] if c['physicalDirectory']]))
  except Exception:

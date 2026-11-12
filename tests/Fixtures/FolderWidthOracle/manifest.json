@@ -1,0 +1,114 @@
+{
+  "files": [
+    {
+      "file": ".gitattributes",
+      "size": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    {
+      "file": "adapter.cpp",
+      "size": 5222,
+      "sha256": "154af47f2aadf8e873707c6f17cd0afb5fa2bcb3397d08a21278bc32cd4a9a12"
+    },
+    {
+      "file": "capture-index.json",
+      "size": 16685,
+      "sha256": "e2aae7a4d3e082b60424e8f7fb162cb6244c2fc59a10be97039f52f8937ed0e5"
+    },
+    {
+      "file": "cases.json",
+      "size": 115889,
+      "sha256": "8efa46b92917cec37a76390f716f137bc5772c922e21dc3e42c6cfa439118356"
+    },
+    {
+      "file": "failure-matrix.md",
+      "size": 989,
+      "sha256": "875c4e081884caa2e73f9c089a7accfdce83ddf0eb9fc60b3e39ca85075582ba"
+    },
+    {
+      "file": "functions.json",
+      "size": 1818,
+      "sha256": "b624244d9f1cab8990b5caee3fd02708dd5505455214684f6dbb05472dc20358"
+    },
+    {
+      "file": "generate-cases.py",
+      "size": 4420,
+      "sha256": "afe35baf3f62950a8ad9366acf37e214e92ff68b96c64fb454fb31623d44a31b"
+    },
+    {
+      "file": "golden.ndjson",
+      "size": 65018,
+      "sha256": "8a397b6857cc5113b80f7d212f38846a97d33ca35828876fae0e9b92863ec6a0"
+    },
+    {
+      "file": "original/COPYING",
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    {
+      "file": "original/FilterExpressionNodes.cpp",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    {
+      "file": "original/Poco-LICENSE",
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    {
+      "file": "original/TextIterator.cpp",
+      "size": 2796,
+      "sha256": "8b4c092d5a637bd1487f08819df6548516f6bbb7b55ea7a0d8a7f6b8d6183cb8"
+    },
+    {
+      "file": "original/TextIterator.h",
+      "size": 3416,
+      "sha256": "5b0a46eb888ef9450792b69b474c3bab72049dce6812bcd6449a977fe91943ba"
+    },
+    {
+      "file": "original/UnicodeConverter.cpp",
+      "size": 3652,
+      "sha256": "60813871b28d2f6f5f6e8e2f0d318276ad337bf5b930d1184805a8d96b477be9"
+    },
+    {
+      "file": "original/UnicodeConverter.h",
+      "size": 4193,
+      "sha256": "21f97e1c1ff15af01065f45a7af0ab3d3f14be19a66f94586b516cc92dad0a1a"
+    },
+    {
+      "file": "original/unicoder.cpp",
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7"
+    },
+    {
+      "file": "original/UTF8Encoding.cpp",
+      "size": 5654,
+      "sha256": "d61f56ed798ebc3776459979b49246527a16796fa143aec289082722a0ffdeef"
+    },
+    {
+      "file": "poco-specs.json",
+      "size": 2039,
+      "sha256": "6883ba6b3bdbf35ee3d0009eac0131a44b6edfd4ad048ad7a65da6c91e4773ec"
+    },
+    {
+      "file": "provenance.json",
+      "size": 3223,
+      "sha256": "f81fb61d8aa2cbfc65e3e61cc3aa9cebaf762582d33e2d176587307d2d03b629"
+    },
+    {
+      "file": "README.md",
+      "size": 5095,
+      "sha256": "b2eba5da4522f1f7b2e9b508da06922fdc81d8f4b4132a1ef6fca7d86c2ee061"
+    },
+    {
+      "file": "reproduce.py",
+      "size": 6901,
+      "sha256": "d25f0933fa807b23dfcf6246591a1b7d1f4d0d06f4f7c1167b94817ff748dc14"
+    },
+    {
+      "file": "verify.py",
+      "size": 5298,
+      "sha256": "4ffbcfec5f779e33baadaa2298175b44a8043da611efd58aeb0032ec866609c1"
+    }
+  ]
+}

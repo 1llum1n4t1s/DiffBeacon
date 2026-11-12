@@ -111,3 +111,6 @@ tests/Fixtures/IndependentTextInputSelectionArchives/** -text !eol
 tests/Fixtures/IndependentTextInputSelectionCipher/** -text !eol
 tests/Fixtures/Archives/BareGZip/** -text !eol
 build/WinIMergeDllReference/** -text !eol
+tests/Fixtures/FolderSubstrOracle/** -text
+tests/Fixtures/FolderStringByteObserversOracle/** -text
+tests/Fixtures/FolderReplaceOracle/** -text

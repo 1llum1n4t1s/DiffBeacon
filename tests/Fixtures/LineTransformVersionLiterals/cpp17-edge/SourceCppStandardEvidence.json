@@ -1,0 +1,72 @@
+{
+  "sourceCurrentReadonlyPath": "C:\\Users\\IMT\\dev\\DiffBeacon\\Src\\Merge.vcxproj",
+  "sourceCurrentReadonlySha256": "5dd1ec8efee4d6a4a1ac093093e6ae15af3803c1b386c81d35fe0feb61819186",
+  "retainedBytes": "current-project-evidence.vcxproj",
+  "languageStandards": [
+    {
+      "line": 317,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 378,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 435,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 491,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 547,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 600,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 653,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 703,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 752,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 801,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 850,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    },
+    {
+      "line": 898,
+      "text": "<LanguageStandard>stdcpp17</LanguageStandard>"
+    }
+  ],
+  "fixedReferenceZipContainsProject": false,
+  "fixedReferenceZipProjectStandardQualified": false,
+  "compileSwitch": "/std:c++17",
+  "primarySourceCitations": [
+    {
+      "url": "https://timsong-cpp.github.io/cppwp/n4659/expr.shift#2",
+      "paragraph": "N4659 [expr.shift] paragraph2",
+      "finding": "A nonnegative signed shift is permitted when its mathematical shifted value fits the corresponding unsigned type; conversion to signed result follows."
+    },
+    {
+      "url": "https://timsong-cpp.github.io/cppwp/n4659/conv.integral#3",
+      "paragraph": "N4659 [conv.integral] paragraph3",
+      "finding": "Conversion to signed when not representable is implementation-defined; captured negative values are MSVC C++17 observations."
+    }
+  ],
+  "adapterCpp20TransportReplaced": false,
+  "adapterTransport": "Existing supplement adapter uses only C++17-compatible standard APIs. No bit_cast or other C++20 feature exists. Quote probes are omitted in this edge-only adapter; original methods remain unchanged."
+}

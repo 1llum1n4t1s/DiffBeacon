@@ -7,6 +7,7 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using DiffBeacon.Core;
 using DiffBeacon.Providers;
 
@@ -20,6 +21,8 @@ public sealed partial class MainWindow : Window
     internal ScrollViewer? SessionHeaders { get; private set; }
     internal ImageApplicationOptionsStore ImageOptions { get; }
     internal FolderApplicationOptionsStore FolderOptions { get; }
+    internal TableApplicationOptionsStore TableOptions { get; }
+    internal long SessionSelectionGeneration { get; private set; }
     internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
     public ComparisonPane ActivePane => (ComparisonPane)((TabItem)_tabs.SelectedItem!).Content!;
@@ -30,11 +33,19 @@ public sealed partial class MainWindow : Window
         : this(arguments, imageOptions, new FolderApplicationOptionsStore()) { }
 
     internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions, FolderApplicationOptionsStore folderOptions)
+        : this(arguments, imageOptions, folderOptions, new TableApplicationOptionsStore()) { }
+
+    internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions, FolderApplicationOptionsStore folderOptions,
+        TableApplicationOptionsStore tableOptions)
     {
-        ImageOptions = imageOptions; FolderOptions = folderOptions;
+        ImageOptions = imageOptions; FolderOptions = folderOptions; TableOptions = tableOptions;
         Action<string> folderGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
+        Action<string> tableGuard = path => { foreach (var pane in SessionPanes) pane.EnsureTableOptionsOutputWritable(path); };
         FolderOptions.AddOutputGuard(folderGuard);
-        Closed += (_, _) => FolderOptions.RemoveOutputGuard(folderGuard);
+        TableOptions.AddOutputGuard(tableGuard);
+        TableOptions.Changed += OnTableApplicationOptionsChanged;
+        Closed += (_, _) => { FolderOptions.RemoveOutputGuard(folderGuard); TableOptions.RemoveOutputGuard(tableGuard); };
+        Closed += (_, _) => TableOptions.Changed -= OnTableApplicationOptionsChanged;
         Closed += (_, _) => { _independentTextInputWindowClosed = true; ArchiveTexts.Clear(); ArchiveLifetime.Clear(); };
         Title = "DiffBeacon";
         Width = 1280;
@@ -70,8 +81,9 @@ public sealed partial class MainWindow : Window
             SessionHeaders.SizeChanged += (_, _) => QueueSelectedHeader();
             QueueSelectedHeader();
         };
-        _tabs.SelectionChanged += (_, _) =>
+        _tabs.SelectionChanged += (_, args) =>
         {
+            if (ReferenceEquals(args.Source, _tabs)) SessionSelectionGeneration++;
             UpdateImageDisplayVisibility();
             foreach (var pane in SessionPanes) pane.CancelInactiveFolderCopy(ReferenceEquals(pane, ActivePane));
             QueueSelectedHeader();
@@ -106,6 +118,12 @@ public sealed partial class MainWindow : Window
                 Close();
             }
         };
+    }
+
+    private void OnTableApplicationOptionsChanged()
+    {
+        var enabled = TableOptions.Current.UseFirstRowAsHeaders;
+        foreach (var pane in SessionPanes) pane.SetTableHeaderPreference(enabled);
     }
 
     private void QueueSelectedHeader()
@@ -261,6 +279,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(options, "検索", () => { Find(); return Task.CompletedTask; });
         top.Children.Add(options);
         top.Children.Add(CreateAdvancedFilters());
+        top.Children.Add(CreateLineBookmarkToolbar());
         top.Children.Add(CreateMergeToolbar());
         var toolbar = new ScrollViewer { Content = top, MaxHeight = 400,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
@@ -282,6 +301,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         LeftEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
         RightEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
         UpdateEditorLayout(false);
+        InitializeLineBookmarks();
         _resultTab = new TabItem { Header = "マージ結果", Content = CreateMergeResultView() };
         _views.ItemsSource = new[] { _diffTab, new TabItem { Header = "編集 / 4ペイン", Content = _editGrid }, _resultTab, _specialTab };
         _views.SelectedItem = _diffTab;
@@ -339,7 +359,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         catch (OperationCanceledException) { _status.Text = "比較を中止しました。"; }
         catch (Exception ex) { _status.Text = ex.Message; await Dialogs.MessageAsync(_owner, "操作を完了できませんでした", ex.Message); }
     }
-    private ComparisonOptions Options() => new() { IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true, IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex, Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, SubstitutionRules = _substitutions, IgnoreLinePattern = string.IsNullOrWhiteSpace(_ignoreRegex.Text) ? null : _ignoreRegex.Text };
+    private ComparisonOptions Options() => new() { IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true, IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex, Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, InlineCharacterLevel = _inlineDiffLevel.SelectedIndex != 1, BreakOnSeparators = _breakOnSeparators.IsChecked == true, WordBreakSeparators = _wordBreakSeparators.Text ?? "", SubstitutionRules = _substitutions, LineTransformRules = Array.AsReadOnly(_projectMetadata.LineTransformRules.ToArray()), LineTransformTimestampEnvironment = LineTransformTimestampEnvironments.ForRules(_projectMetadata.LineTransformRules), LineTransformStringEnvironment = LineTransformStringEnvironments.ForRules(_projectMetadata.LineTransformRules), LineTransformLogEnvironment = LineTransformLogEnvironments.Trace, LineTransformListEnvironment = LineTransformListEnvironments.Create(LineTransformLogEnvironments.Trace, _projectMetadata), TableColumnIgnoreRules = Array.AsReadOnly(_projectMetadata.TableColumnIgnoreRules.ToArray()), TableColumnRangeRules = Array.AsReadOnly(_projectMetadata.TableColumnRangeRules.ToArray()), IgnoreLinePattern = string.IsNullOrWhiteSpace(_ignoreRegex.Text) ? null : _ignoreRegex.Text };
 
     public async Task ComparePathsAsync()
     {
@@ -368,6 +388,10 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var comparisonForPackaging = (left, BasePath.Text ?? "", right, _mode.SelectedIndex, _provider.SelectedItem as string);
         var previousBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
         var previousBinaryStamp = previousBinary?.StateStamp;
+        var previousTable = _specialTab.Content as TablePanel;
+        var previousTableComparison = previousTable?.Comparison;
+        var previousTableText = (LeftEditor.Text, RightEditor.Text, _baseText);
+        var lineTransformsAtStart = _projectMetadata.LineTransformRules.ToArray();
         var candidateTextRole = _textRole.SelectedIndex;
         var syncPointRevisionAtStart = _syncPointRevision;
         var resultHost = _resultHost; var resultVersion = resultHost?.Session.Current.Version;
@@ -376,6 +400,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         {
             var valid = !token.IsCancellationRequested && !_disposed && ReferenceEquals(_operation, operation)
                 && previousBinary?.StateStamp == previousBinaryStamp
+                && (previousTable is null || ReferenceEquals(previousTable.Comparison, previousTableComparison)
+                    && previousTableText == (LeftEditor.Text, RightEditor.Text, _baseText))
+                && lineTransformsAtStart.SequenceEqual(_projectMetadata.LineTransformRules)
                 && !MergeHasPendingComposition && ReferenceEquals(resultHost, _resultHost) && resultVersion == _resultHost?.Session.Current.Version
                 && candidateTextRole == _textRole.SelectedIndex
                 && syncPointRevisionAtStart == _syncPointRevision
@@ -389,6 +416,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         {
             AdoptLegacyTextRole();
             ResetMergeSession(); _lastPackageComparison = null;
+            ResetLineBookmarks();
             _textSaveAllowed = false; _baseText = null; CurrentDiff = null;
         }
         if (string.IsNullOrWhiteSpace(left) && string.IsNullOrWhiteSpace(right))
@@ -507,7 +535,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             var textOptions = Options();
             var useCurrentSyncPoints = (mode is 0 or 1) && LeftEditor.Text == leftDocument.Text && RightEditor.Text == rightDocument.Text;
             var syncPoints = useCurrentSyncPoints ? TextSyncPointsFor(0, 2).ToArray() : Array.Empty<TextSyncPoint>();
-            var textDiff = mode is 5 or 6 ? null : await Task.Run(() => CompareTextWithSyncPoints(leftDocument.Text, rightDocument.Text, syncPoints, textOptions, token), token);
+            var textDiff = mode is 5 or 6 ? null : await Task.Run(() => CompareTextWithSyncPoints(leftDocument.Text, rightDocument.Text, syncPoints, textOptions, token, sourcePaths: TextComparisonSources.FromDocuments(leftDocument, baseDocument, rightDocument)), token);
             var tableCandidate = mode == 6 ? await CreateTableViewAsync(leftDocument, rightDocument, baseDocument, token) : default;
             LegacyTextReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested();
@@ -549,7 +577,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var token = _operation?.Token ?? CancellationToken.None;
         var syncPointRevision = _syncPointRevision;
         var syncPoints = _mode.SelectedIndex is 0 or 1 ? TextSyncPointsFor(0, 2).ToArray() : Array.Empty<TextSyncPoint>();
-        var diff = await Task.Run(() => CompareTextWithSyncPoints(left, right, syncPoints, options, token), token);
+        var sourcePaths = CurrentTextSourcePaths();
+        var diff = await Task.Run(() => CompareTextWithSyncPoints(left, right, syncPoints, options, token, sourcePaths: sourcePaths), token);
         if (left == LeftEditor.Text && right == RightEditor.Text && syncPointRevision == _syncPointRevision) ApplyDiff(diff);
     }
     private Task RefreshEditorsAsync()
@@ -633,7 +662,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var folder = _views.SelectedItem == _specialTab && ReferenceEquals(_specialTab.Content, _folderView);
         var independentText = IndependentText && _views.SelectedItem != _specialTab;
         var fraction = independentText ? .25 : folder ? .15 : _views.SelectedItem == _specialTab
-            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel) ? .2 : .5;
+            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel or TablePanel) ? .2 : .5;
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, independentText ? 100 : folder ? 60 : 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
@@ -700,8 +729,16 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var sourceProject = workspaceWindow?.WorkspaceSourcePath;
         foreach (var pane in panes) pane.EnsureProjectOutputWritable(path);
         var protectedEntries = panes.Select(pane => pane.CaptureProject()).ToArray();
+        Action<string, Action> outputPublisher = (destination, publish) =>
+        {
+            void Publish() { EnsureProjectOutputWritable(destination); publish(); }
+            if (Dispatcher.UIThread.CheckAccess()) Publish();
+            else Dispatcher.UIThread.InvokeAsync(Publish).GetAwaiter().GetResult();
+        };
+        if (workspaceWindow is not null) outputPublisher = workspaceWindow.CaptureOutputPublisher();
         var left = LeftEditor.Text ?? ""; var right = RightEditor.Text ?? ""; var ancestor = IndependentText ? MiddleEditor.Text ?? "" : _baseText;
         var textSnapshots = IndependentText ? CaptureIndependentTextDocuments() : null;
+        var textSourcePaths = CurrentTextSourcePaths();
         ImageComparisonEngine.ReportInput? imageInput = null;
         if (ProjectReport.IsImage(project))
         {
@@ -721,12 +758,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 : project.Mode is "Provider" or "Web"
                 ? HtmlReport.CreateText([new((project.LeftDescription ?? project.LeftPath) + "（変換後のテキスト）", left),
                     new((project.RightDescription ?? project.RightPath) + "（変換後のテキスト）", right)], ProjectReport.Options(project), ProjectReport.MaximumBytes, cancellation)
-                : ProjectReport.Create(project, left, ancestor, right, cancellation, snapshots: textSnapshots), cancellation);
+                : ProjectReport.Create(project, left, ancestor, right, cancellation, snapshots: textSnapshots, sourcePaths: textSourcePaths), cancellation);
             // 生成開始時の入力と、生成中に開いた・保存した現行プロジェクトの両方を保護する。
             var currentPanes = workspaceWindow?.SessionPanes ?? [this];
             var currentSource = new ComparisonProject { LeftPath = workspaceWindow?.WorkspaceSourcePath ?? "" };
             await ProjectReport.SaveAsync(path, html, protectedEntries.Concat(currentPanes.Select(pane => pane.CaptureProject())).Append(currentSource),
-                sourceProject, cancellation);
+                sourceProject, cancellation, outputPublisher);
             _status.Text = "HTMLレポートを保存しました。";
         }
         finally { _reportOperation = null; }
@@ -823,21 +860,27 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var folderGeneration = _folderContextGeneration;
         var previousFolderModel = _directoryComparison;
         var configuration = CaptureFolderConfiguration();
-        var filterStamp = FolderFilterStamp();
+        var filterDocumentStamp = FolderFilterDocumentStamp();
+        var listDependencies = new FolderFilterListState(LineTransformLogEnvironments.Trace, FolderListReadProgress);
         var textOptions = Options();
         var filtered = textOptions.IgnoreCase || textOptions.IgnoreWhitespace || textOptions.IgnoreBlankLines || textOptions.IgnoreLinePattern is not null
-            || textOptions.IgnoreNumbers || textOptions.CommentSyntax != CommentSyntax.None || textOptions.Whitespace != WhitespaceMode.None || textOptions.SubstitutionRules.Any(rule => rule.Enabled);
-        var filter = ResolveProjectFilter();
-        var options = new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, FileFilter = filter, ShowFiltered = _showFilteredDirectories.IsChecked == true };
+            || textOptions.IgnoreNumbers || textOptions.CommentSyntax != CommentSyntax.None || textOptions.Whitespace != WhitespaceMode.None || textOptions.SubstitutionRules.Any(rule => rule.Enabled) || textOptions.LineTransformRules.Count > 0;
+        // UI値を先に固定する。最適化のlist I/O中も中止と世代変更を受け付ける。
+        var filterPath = _fileFilter.Text;
+        var legacyFilter = _projectMetadata.LegacyFilter;
+        var options = new DirectoryComparisonOptions { Recursive = _recursive.IsChecked == true, Mode = (DirectoryComparisonMode)_folderMode.SelectedIndex, ExcludePatterns = (_excludes.Text ?? "").Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), TextOptions = filtered ? textOptions : null, ShowFiltered = _showFilteredDirectories.IsChecked == true };
+        var filter = await Task.Run(() => ResolveProjectFilter(filterPath, legacyFilter, listDependencies, token), token);
+        options = options with { FileFilter = filter };
         var result = string.IsNullOrWhiteSpace(middle) ? await FolderComparisons.CompareAsync(left, right, options, token)
             : await FolderComparisons.CompareAsync(left, middle, right, options, token);
         DirectoryReadyForAdoption?.Invoke();
         token.ThrowIfCancellationRequested();
         if (!canAdopt() || _folderContextGeneration != folderGeneration
             || !ReferenceEquals(_directoryComparison, previousFolderModel)
-            || !FolderConfigurationMatches(configuration) || FolderFilterStamp() != filterStamp) return false;
+            || !FolderConfigurationMatches(configuration) || FolderFilterDocumentStamp() != filterDocumentStamp) return false;
+        var filterStamp = FolderFilterStamp(listDependencies, token);
         // 表示を破棄する前に投影と継承状態を準備し、取消と採用条件を最後に再確認する。
-        var candidate = PrepareFolderCandidate(result, configuration, filterStamp, token);
+        var candidate = PrepareFolderCandidate(result, configuration, filterStamp, listDependencies, token);
         token.ThrowIfCancellationRequested();
         if (!canAdopt() || !FolderCandidateContextCurrent(candidate)) return false;
         prepareAdoption();

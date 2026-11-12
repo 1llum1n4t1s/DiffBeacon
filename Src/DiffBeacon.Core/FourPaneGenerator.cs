@@ -27,6 +27,8 @@ public sealed partial class FourPaneGenerator
     private readonly GnuLineMatcher.LineBudget budget;
     private readonly long capacity;
     private readonly FourPaneTextProfile textProfile;
+    private readonly TextFilterContext lineTransforms;
+    private readonly Dictionary<IReadOnlyList<TextLine>, IReadOnlyList<TextLine>> transformedSources = new(ReferenceEqualityComparer.Instance);
     private long retained;
     private readonly List<string> reasons = [];
     private bool consumed;
@@ -35,13 +37,21 @@ public sealed partial class FourPaneGenerator
     public FourPaneGenerator(ComparisonOptions options, CancellationToken token = default,
         long maximumRetainedCharacters = 64 * 1024 * 1024,
         FourPaneTextProfile textProfile = FourPaneTextProfile.LegacyRawUtf8)
+        : this(options, token, maximumRetainedCharacters, textProfile, null) { }
+
+    public FourPaneGenerator(ComparisonOptions options, CancellationToken token, long maximumRetainedCharacters,
+        FourPaneTextProfile textProfile, TextComparisonSourcePaths? sourcePaths)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(options.SubstitutionRules);
+        ArgumentNullException.ThrowIfNull(options.LineTransformRules);
         if (options.SubstitutionRules.Count > 256) throw new ArgumentException("置換規則は256個までです。");
         ArgumentOutOfRangeException.ThrowIfNegative(maximumRetainedCharacters);
         if (!Enum.IsDefined(textProfile)) throw new ArgumentOutOfRangeException(nameof(textProfile));
-        this.options = options with { SubstitutionRules = options.SubstitutionRules.ToArray() };
+        if (textProfile == FourPaneTextProfile.LegacyRawUtf8 && options.LineTransformRules.Count != 0)
+            throw new ArgumentException("LegacyRawUtf8はGNU原本照合用のため、行変換を使用できません。", nameof(options));
+        this.options = options with { SubstitutionRules = options.SubstitutionRules.ToArray(), LineTransformRules = options.LineTransformRules.ToArray() };
+        lineTransforms = new TextFilterContext(this.options, token, sourcePaths);
         this.token = token;
         budget = new(Math.Clamp(options.MaxFallbackComparisons, 0, GnuLineDiffer.MaximumWork), token);
         capacity = maximumRetainedCharacters;
@@ -63,9 +73,13 @@ public sealed partial class FourPaneGenerator
             // replacement token一個の最大一時量を先に予約する。
             if (options.SubstitutionRules.Any(x => x.Enabled)) Reserve(TextPreprocessor.MaxRegexTextLength);
             var a = Parse(ancestor); var l = Parse(left); var r = Parse(right);
+            PrepareTransformed(ancestor, a, TablePaneMask.Base);
+            PrepareTransformed(left, l, TablePaneMask.Left);
+            PrepareTransformed(right, r, TablePaneMask.Right);
             counts = [l.Count, a.Count, r.Count];
-            var branchBytes = new FourPaneByteBridge(left, right, l.Count, r.Count, options,
-                budget, token, Reserve, textProfile);
+            var branchBytes = transformedSources.ContainsKey(l) || transformedSources.ContainsKey(r)
+                ? new FourPaneByteBridge(Comparable(l), Comparable(r), options, budget, token, Reserve, textProfile)
+                : new FourPaneByteBridge(left, right, l.Count, r.Count, options, budget, token, Reserve, textProfile);
             if (apparentCountAdapter != null)
                 apparent = [Count(0, new(0, l.Count)), Count(1, new(0, a.Count)), Count(2, new(0, r.Count))];
             // 全文の文脈でコメント解析するが、raw scriptには使わない。
@@ -112,17 +126,23 @@ public sealed partial class FourPaneGenerator
 
     private (string[] Keys, bool[] CommentOnly) Comments(IReadOnlyList<TextLine> lines)
     {
+        lines = Comparable(lines);
         Reserve(checked(8L * lines.Count + lines.Sum(x => (long)x.Content.Length)));
         return new TextPreprocessor(new() { CommentSyntax = options.CommentSyntax }, token).Process(lines);
     }
 
     private List<FourPanePairSpan> Compare(IReadOnlyList<TextLine> a, IReadOnlyList<TextLine> b,
-        int offsetA = 0, int offsetB = 0)
+        int offsetA = 0, int offsetB = 0, bool preserveRows = false)
     {
+        var structured = preserveRows || transformedSources.ContainsKey(a) || transformedSources.ContainsKey(b);
+        a = Comparable(a); b = Comparable(b);
         Reserve(checked(12L * (a.Count + b.Count)));
-        Reserve(a.Sum(x => (long)x.Raw.Length) + b.Sum(x => (long)x.Raw.Length));
-        var classified = RawByteEquivalence.Classify(string.Concat(a.Select(x => x.Raw)),
-            string.Concat(b.Select(x => x.Raw)), options, RawSpend, Reserve, textProfile, token);
+        if (!structured)
+            Reserve(a.Sum(x => (long)x.Content.Length + x.Ending.Length) + b.Sum(x => (long)x.Content.Length + x.Ending.Length));
+        var classified = structured
+            ? RawByteEquivalence.ClassifyRows(a, b, options, RawSpend, Reserve, textProfile, token)
+            : RawByteEquivalence.Classify(string.Concat(a.Select(x => x.Raw)),
+                string.Concat(b.Select(x => x.Raw)), options, RawSpend, Reserve, textProfile, token);
         if (classified.Left.Length != a.Count || classified.Right.Length != b.Count)
             throw new ArgumentException("BOM-only raw/prepared line mapping is outside raw pair adapter");
         var boundaryA = RawByteEquivalence.BoundaryLines(classified.A);
@@ -145,34 +165,59 @@ public sealed partial class FourPaneGenerator
             x + offsetA - 1, y + offsetB - 1, false));
     }
 
+    private void PrepareTransformed(string source, IReadOnlyList<TextLine> lines, TablePaneMask pane)
+    {
+        var keys = lineTransforms.Transform(source, lines, pane);
+        if (keys is null) return;
+        Reserve(checked(8L * keys.Length + keys.Sum(key => (long)key.Length)));
+        transformedSources.Add(lines, keys.Select((key, index) => new TextLine(key, lines[index].Ending)).ToArray());
+    }
+
+    private IReadOnlyList<TextLine> Comparable(IReadOnlyList<TextLine> lines)
+        => transformedSources.GetValueOrDefault(lines, lines);
+
     private PairLedger Pair(IReadOnlyList<TextLine> a, IReadOnlyList<TextLine> b,
         (string[] Keys, bool[] CommentOnly) ac, (string[] Keys, bool[] CommentOnly) bc, bool applyPostFilter = true)
     {
         var raw = Compare(a, b);
         if (!applyPostFilter) return new(raw.AsReadOnly(), raw.AsReadOnly());
+        var preserveRows = raw.Count != 0 && (HasOpaqueKeys(a) || HasOpaqueKeys(b));
         var filtered = new List<FourPanePairSpan>();
         var regex = options.CreateIgnoredLineRegex();
         foreach (var gap in raw)
         {
             Spend();
             var an = gap.BaseEnd - gap.BaseBegin + 1; var bn = gap.SideEnd - gap.SideBegin + 1;
-            var at = Filter(a, ac, gap.BaseBegin, an, regex);
-            var bt = Filter(b, bc, gap.SideBegin, bn, regex);
-            if (regex != null && at.AllRegex && bt.AllRegex)
-            { filtered.Add(gap with { Trivial = true }); continue; }
-            var ast = Substitute(at.Text); var bst = Substitute(bt.Text);
-            if (ast == bst) { filtered.Add(gap with { Trivial = true }); continue; }
-            var aa = TextLines.Parse(ast, token); var bb = TextLines.Parse(bst, token);
-            // 原典SplitLinesは空の最終実行を一行だけ補完する。
-            if (aa.Count < an) aa.Add(new("", ""));
-            if (bb.Count < bn) bb.Add(new("", ""));
-            // 置換の改行変更は原典同様にraw hunkを維持。任意の1:1対応を作らない。
-            if (aa.Count != an || bb.Count != bn)
+            List<TextLine> aa; List<TextLine> bb;
+            if (preserveRows)
             {
-                reasons.Add($"postfilter-line-count-preserved-raw:{gap.BaseBegin}:{gap.SideBegin}");
-                filtered.Add(gap); continue;
+                // opaqueキーの内部改行をhunkの行境界として再解釈しない。
+                var at = FilterRows(a, ac, gap.BaseBegin, an, regex);
+                var bt = FilterRows(b, bc, gap.SideBegin, bn, regex);
+                if (regex != null && at.AllRegex && bt.AllRegex)
+                { filtered.Add(gap with { Trivial = true }); continue; }
+                aa = at.Rows; bb = bt.Rows;
             }
-            var changes = Compare(aa, bb, gap.BaseBegin, gap.SideBegin);
+            else
+            {
+                var at = Filter(a, ac, gap.BaseBegin, an, regex);
+                var bt = Filter(b, bc, gap.SideBegin, bn, regex);
+                if (regex != null && at.AllRegex && bt.AllRegex)
+                { filtered.Add(gap with { Trivial = true }); continue; }
+                var ast = Substitute(at.Text); var bst = Substitute(bt.Text);
+                if (ast == bst) { filtered.Add(gap with { Trivial = true }); continue; }
+                aa = TextLines.Parse(ast, token); bb = TextLines.Parse(bst, token);
+                // 原典SplitLinesは空の最終実行を一行だけ補完する。
+                if (aa.Count < an) aa.Add(new("", ""));
+                if (bb.Count < bn) bb.Add(new("", ""));
+                // 置換の改行変更は原典同様にraw hunkを維持。任意の1:1対応を作らない。
+                if (aa.Count != an || bb.Count != bn)
+                {
+                    reasons.Add($"postfilter-line-count-preserved-raw:{gap.BaseBegin}:{gap.SideBegin}");
+                    filtered.Add(gap); continue;
+                }
+            }
+            var changes = Compare(aa, bb, gap.BaseBegin, gap.SideBegin, preserveRows);
             var ai = gap.BaseBegin; var bi = gap.SideBegin;
             foreach (var c in changes)
             {
@@ -207,6 +252,33 @@ public sealed partial class FourPaneGenerator
     private bool Ignorable(TextLine line, bool commentOnly)
     { Spend(line.Content.Length); return commentOnly || line.Content == FilteredLine ||
         (options.IgnoreBlankLines && CProfileBlank(line.Content)); }
+
+    private bool HasOpaqueKeys(IReadOnlyList<TextLine> lines)
+    {
+        if (!transformedSources.TryGetValue(lines, out var transformed)) return false;
+        foreach (var row in transformed)
+        {
+            Spend(row.Content.Length);
+            if (row.Content.AsSpan().IndexOfAny('\r', '\n') >= 0) return true;
+        }
+        return false;
+    }
+
+    private (List<TextLine> Rows, bool AllRegex) FilterRows(IReadOnlyList<TextLine> lines,
+        (string[] Keys, bool[] CommentOnly) comments, int start, int count, Regex? regex)
+    {
+        Reserve(checked(16L * count));
+        var result = new List<TextLine>(count); var all = true;
+        for (var index = start; index < start + count; index++)
+        {
+            Spend(comments.Keys[index].Length);
+            TextPreprocessor.CheckRegexInput(comments.Keys[index]);
+            var matches = regex?.IsMatch(comments.Keys[index]) ?? false; all &= matches;
+            var content = Substitute(matches ? FilteredLine : comments.Keys[index]);
+            result.Add(new(content, lines[index].Ending));
+        }
+        return (result, all);
+    }
 
     private bool CProfileBlank(string text)
     {

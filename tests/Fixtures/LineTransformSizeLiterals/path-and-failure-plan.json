@@ -1,0 +1,17 @@
+{
+  "temp": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\size-literal-fixture-20261012-404b849f",
+  "keep": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\line-transform-size-literals-20261012-404b849f",
+  "repo": "C:\\Users\\IMT\\dev\\DiffBeacon",
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "tempCleanup": "No deletion authorized; retain minimal resume bytes until parent GO",
+  "failurePlan": [
+    "Git raw or shared reference integrity mismatch aborts",
+    "Compile/run/EOF/heldhandle/timeout/inconsistent stdout is not native success",
+    "Do not execute out-of-range casts or NaN/Infinity",
+    "Constructor invalid stod observations do not qualify lexer/parser",
+    "Unary/array/aggregate node boundaries must use unmodified original blocks",
+    "No full parser or @noopt path execution can be claimed without real parser",
+    "Double rounding inside defined cast range is platform observation separated from ordinary safe bridge",
+    "No product/canonical/dependency/cache/Git mutation or deletes"
+  ]
+}

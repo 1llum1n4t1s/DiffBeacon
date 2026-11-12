@@ -48,7 +48,7 @@ internal static partial class HeadlessFolderCopyChecks
             Put(left, "typeconflict", [0x60]); Put(right, "typeconflict/one.bin", [0x61]);
             pane = AddOwnedSession(); pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, RightPath = right, ExcludedPaths = "filtered" });
             wait(pane.ComparePathsAsync()); activate(pane);
-            var tree = TreeMode(pane); Hit(tree); View("initial", roots);
+            var tree = TreeMode(pane); Hit(tree); View("initial", roots); Layout("before-toolbar-actions");
             Hit(TreeButton(pane, "同じフォルダーを展開")); View("identical", ["empty", "equal", "equal/same.bin", "leftonly", "modified", "rightonly", "tree", "typeconflict"]);
             Hit(TreeButton(pane, "異なるフォルダーを展開")); View("add-different", all);
             Hit(TreeButton(pane, "すべて折り畳み")); View("collapse", roots);
@@ -418,6 +418,8 @@ internal static partial class HeadlessFolderCopyChecks
         void Layout(string name)
         {
             Jobs(); var list = List(pane!); var first = list.Items.OfType<DirectoryEntry>().First(); var row = Row(pane!, first.RelativePath);
+            var listBoundsOrigin = list.TranslatePoint(default, window)!.Value;
+            var listBounds = new Rect(listBoundsOrigin, list.Bounds.Size);
             var reachable = new List<string>();
             var controls = new Control[] { TreeMode(pane!) }.Concat(Titles.Select(title => TreeButton(pane!, title))).Concat(new[] { "← 選択をすべてコピー", "選択をすべてコピー →", "← 選択の差分をコピー", "選択の差分をコピー →" }.Select(title => TreeButton(pane!, title))).ToArray();
             using var stream = File.Create(Path.Combine(root, name + "-bounds.json")); using var json = new Utf8JsonWriter(stream);
@@ -430,9 +432,13 @@ internal static partial class HeadlessFolderCopyChecks
                 var viewport = control.GetVisualAncestors().OfType<ScrollViewer>().FirstOrDefault();
                 var viewportPoint = viewport is null ? default : control.TranslatePoint(default, viewport)!.Value;
                 if (viewport is not null) inside &= viewportPoint.Y >= -.01 && viewportPoint.Y + control.Bounds.Height <= viewport.Viewport.Height + .01;
+                var controlBounds = new Rect(point, control.Bounds.Size);
+                var listOverlap = Intersect(controlBounds, listBounds);
+                var overlapsList = listOverlap.Width > 0 && listOverlap.Height > 0;
+                inside &= !overlapsList;
                 var title = control is ContentControl content ? content.Content?.ToString() ?? "" : control.Name ?? "";
                 if (inside) reachable.Add(title); Report(name + " reachable " + title, inside);
-                json.WriteStartObject(); json.WriteString("name", title); json.WriteNumber("x", point.X); json.WriteNumber("y", point.Y); json.WriteNumber("width", control.Bounds.Width); json.WriteNumber("height", control.Bounds.Height); json.WriteBoolean("reachable", inside); if (viewport is not null) { json.WriteNumber("viewportY", viewportPoint.Y); json.WriteNumber("viewportHeight", viewport.Viewport.Height); } json.WriteEndObject();
+                json.WriteStartObject(); json.WriteString("name", title); json.WriteNumber("x", point.X); json.WriteNumber("y", point.Y); json.WriteNumber("width", control.Bounds.Width); json.WriteNumber("height", control.Bounds.Height); json.WriteBoolean("reachable", inside); json.WriteBoolean("overlapsList", overlapsList); if (viewport is not null) { json.WriteNumber("viewportY", viewportPoint.Y); json.WriteNumber("viewportHeight", viewport.Viewport.Height); } json.WriteEndObject();
             }
             json.WriteEndArray();
             // ウィンドウ内だけでなく、実一覧のスクロールviewportに先頭行が見えることを測る。

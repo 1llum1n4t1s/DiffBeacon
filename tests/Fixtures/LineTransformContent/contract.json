@@ -1,0 +1,447 @@
+{
+  "qualification": "hand-authored snapshot contract; nativeGolden=false",
+  "cases": [
+    {
+      "id": "count",
+      "expression": "LineCount(Content)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "4"
+    },
+    {
+      "id": "marker",
+      "expression": "Content",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "<Content>"
+    },
+    {
+      "id": "count-array",
+      "expression": "LineCount(Array(Content,none,1,\"path\",Array(Content)))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[4, none, none, none, none]"
+    },
+    {
+      "id": "count-empty-array",
+      "expression": "LineCount(Array())",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[]"
+    },
+    {
+      "id": "count-path",
+      "expression": "LineCount(\"C:\\missing.txt\")",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "count-none",
+      "expression": "LineCount(none)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "count-double",
+      "expression": "LineCount(1.0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "content-array",
+      "expression": "Array(Content,none)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[<Content>, none]"
+    },
+    {
+      "id": "all",
+      "expression": "Sublines(Content,0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "alpha\r\n\rβeta\nlast"
+    },
+    {
+      "id": "middle",
+      "expression": "Sublines(Content,1,2)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "\rβeta\n"
+    },
+    {
+      "id": "empty-row",
+      "expression": "Sublines(Content,1,1)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "\r"
+    },
+    {
+      "id": "last",
+      "expression": "Sublines(Content,-1)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "last"
+    },
+    {
+      "id": "negative-start",
+      "expression": "Sublines(Content,-2)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "βeta\nlast"
+    },
+    {
+      "id": "start-clamp",
+      "expression": "Sublines(Content,-100,1)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "alpha\r\n"
+    },
+    {
+      "id": "start-min",
+      "expression": "Sublines(Content,ToInt(\"-9223372036854775808\"),1)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "alpha\r\n"
+    },
+    {
+      "id": "start-max",
+      "expression": "Sublines(Content,ToInt(\"9223372036854775807\"))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": ""
+    },
+    {
+      "id": "start-count",
+      "expression": "Sublines(Content,4)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": ""
+    },
+    {
+      "id": "start-double",
+      "expression": "Sublines(Content,0.0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "start-none",
+      "expression": "Sublines(Content,none)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "start-array",
+      "expression": "Sublines(Content,Array(0))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "length-zero",
+      "expression": "Sublines(Content,1,0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": ""
+    },
+    {
+      "id": "length-clamp",
+      "expression": "Sublines(Content,2,100)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "βeta\nlast"
+    },
+    {
+      "id": "length-max",
+      "expression": "Sublines(Content,-1,ToInt(\"9223372036854775807\"))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "last"
+    },
+    {
+      "id": "length-negative",
+      "expression": "Sublines(Content,1,-2)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "\rβeta\n"
+    },
+    {
+      "id": "length-negative-empty",
+      "expression": "Sublines(Content,1,-4)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": ""
+    },
+    {
+      "id": "length-min",
+      "expression": "Sublines(Content,0,ToInt(\"-9223372036854775808\"))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": ""
+    },
+    {
+      "id": "length-double",
+      "expression": "Sublines(Content,2,1.0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "βeta\nlast"
+    },
+    {
+      "id": "length-none",
+      "expression": "Sublines(Content,2,none)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "βeta\nlast"
+    },
+    {
+      "id": "length-array",
+      "expression": "Sublines(Content,2,Array(1))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "βeta\nlast"
+    },
+    {
+      "id": "sub-array",
+      "expression": "Sublines(Array(Content,none,1,Array(Content)),3,1)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[last, none, none, none]"
+    },
+    {
+      "id": "sub-empty-array",
+      "expression": "Sublines(Array(),0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[]"
+    },
+    {
+      "id": "sub-path",
+      "expression": "Sublines(\"path\",0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "sub-none",
+      "expression": "Sublines(none,0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "lazy",
+      "expression": "If(true,LineCount(Content),1/(LineNumber-LineNumber))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "4"
+    },
+    {
+      "id": "no-content-fold",
+      "expression": "Sublines(Content,If(true,3,0))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "last"
+    },
+    {
+      "id": "final-eol",
+      "expression": "LineCount(Content)",
+      "source": "a\r\nb\n",
+      "expectedKey": "2"
+    },
+    {
+      "id": "one-empty-row",
+      "expression": "LineCount(Content)",
+      "source": "\n",
+      "expectedKey": "1"
+    },
+    {
+      "id": "no-eol",
+      "expression": "LineCount(Content)",
+      "source": "last",
+      "expectedKey": "1"
+    },
+    {
+      "id": "snapshot-before-transform",
+      "expression": "Sublines(Content,0)",
+      "source": "a\r\nb\n",
+      "expectedKey": "a\r\nb\n",
+      "preExpression": "\"mutated\""
+    },
+    {
+      "id": "table-physical-count",
+      "expression": "LineCount(Content)",
+      "source": "\"alpha\nbeta\",1\r\nend,2",
+      "expectedKey": "3",
+      "mode": "Table"
+    },
+    {
+      "id": "table-raw-eol",
+      "expression": "Sublines(Content,0,1)",
+      "source": "\"alpha\nbeta\",1\r\nend,2",
+      "expectedKey": "\"alpha\n",
+      "mode": "Table"
+    },
+    {
+      "id": "sub-multiline-array",
+      "expression": "Sublines(Array(Content,none,Array(Content)),0,2)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[alpha\r\n\r, none, none]"
+    },
+    {
+      "id": "sub-multiline-concat",
+      "expression": "\"prefix:\"+Sublines(Content,0,1)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "prefix:alpha\r\n"
+    },
+    {
+      "id": "sub-after-sub-is-string",
+      "expression": "Sublines(Sublines(Content,0),0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "opaque-following-rule",
+      "expression": "Sublines(Content,0)",
+      "postExpression": "Trim(Line)",
+      "source": "a\r\nb\n",
+      "expectedKey": "a\r\nb"
+    },
+    {
+      "id": "count-marker-string-is-not-content",
+      "expression": "LineCount(\"<Content>\")",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "sub-marker-string-is-not-content",
+      "expression": "Sublines(\"<Content>\",0)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "none"
+    },
+    {
+      "id": "typed-marker-array",
+      "expression": "LineCount(Array(\"<Content>\",Content))",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[none, 4]"
+    },
+    {
+      "id": "array-of-sublines",
+      "expression": "Array(Sublines(Content,0,1),Sublines(Content,-1),none)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[alpha\r\n, last, none]"
+    },
+    {
+      "id": "opaque-cross-row-getter",
+      "expression": "If(LineNumber=1,Sublines(Content,0,1),\"plain\")",
+      "postExpression": "LineAt(1)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "alpha\r\n"
+    },
+    {
+      "id": "opaque-following-array",
+      "expression": "Sublines(Content,0,1)",
+      "postExpression": "Array(Line)",
+      "source": "alpha\r\n\rβeta\nlast",
+      "expectedKey": "[alpha\r\n]"
+    },
+    {
+      "id": "opaque-minimum-cache",
+      "preExpression": "Sublines(Content,0,1)",
+      "expression": "Minimum(Line)",
+      "source": "a\nb",
+      "expectedKey": "a\n"
+    },
+    {
+      "id": "opaque-nested-minimum-cache",
+      "preExpression": "Sublines(Content,0,1)",
+      "expression": "Minimum(Minimum(Line))",
+      "source": "a\nb",
+      "expectedKey": "a\n"
+    },
+    {
+      "id": "opaque-minimum-cache-composition",
+      "preExpression": "Sublines(Content,0,1)",
+      "expression": "\"prefix:\"+Minimum(Line)",
+      "source": "a\nb",
+      "expectedKey": "prefix:a\n"
+    },
+    {
+      "id": "contains-case-sensitive-hit",
+      "expression": "If(Content contains \"needle\",\"hit\",\"miss\")",
+      "source": "first\r\nneedle\r\nlast",
+      "expectedKey": "hit"
+    },
+    {
+      "id": "contains-case-sensitive-miss",
+      "expression": "If(Content contains \"NEEDLE\",\"hit\",\"miss\")",
+      "source": "first\r\nneedle\r\nlast",
+      "expectedKey": "miss"
+    },
+    {
+      "id": "contains-case-insensitive-ascii",
+      "caseSensitive": false,
+      "expression": "If(Content contains \"NEEDLE\",\"hit\",\"miss\")",
+      "source": "first\r\nneedle\r\nlast",
+      "expectedKey": "hit"
+    },
+    {
+      "id": "contains-empty-needle",
+      "expression": "If(Content contains \"\",\"hit\",\"miss\")",
+      "source": "needle\r\n",
+      "expectedKey": "miss"
+    },
+    {
+      "id": "contains-crlf-no-crossline",
+      "expression": "If(Content contains \"first\r\nsecond\",\"hit\",\"miss\")",
+      "source": "first\r\nsecond",
+      "expectedKey": "miss"
+    },
+    {
+      "id": "contains-cr-no-crossline",
+      "expression": "If(Content contains \"first\rsecond\",\"hit\",\"miss\")",
+      "source": "first\rsecond",
+      "expectedKey": "miss"
+    },
+    {
+      "id": "contains-lf-no-crossline",
+      "expression": "If(Content contains \"first\nsecond\",\"hit\",\"miss\")",
+      "source": "first\nsecond",
+      "expectedKey": "miss"
+    },
+    {
+      "id": "contains-final-line-no-eol",
+      "expression": "If(Content contains \"needle\",\"hit\",\"miss\")",
+      "source": "first\r\nneedle",
+      "expectedKey": "hit"
+    },
+    {
+      "id": "contains-first-line-eol",
+      "expression": "If(Content contains \"needle\",\"hit\",\"miss\")",
+      "source": "needle\r\nother",
+      "expectedKey": "hit"
+    }
+  ],
+  "errors": [
+    {
+      "id": "content-before-start",
+      "expression": "Sublines(1/0,none,0)"
+    },
+    {
+      "id": "start-before-length",
+      "expression": "Sublines(Content,1/0,none)"
+    },
+    {
+      "id": "length-before-typecheck",
+      "expression": "Sublines(Content,none,1/0)"
+    },
+    {
+      "id": "length-non-content",
+      "expression": "Sublines(none,0,1/0)"
+    },
+    {
+      "id": "count-eager",
+      "expression": "LineCount(1/0)"
+    },
+    {
+      "id": "count-zero",
+      "expression": "LineCount()"
+    },
+    {
+      "id": "count-two",
+      "expression": "LineCount(Content,1)"
+    },
+    {
+      "id": "sub-one",
+      "expression": "Sublines(Content)"
+    },
+    {
+      "id": "sub-four",
+      "expression": "Sublines(Content,0,1,2)"
+    },
+    {
+      "id": "content-call",
+      "expression": "Content()"
+    },
+    {
+      "id": "prop",
+      "expression": "Prop(Content,\"size\")"
+    },
+    {
+      "id": "content-alone-does-not-lift-eol",
+      "expression": "If(true,\"a\r\nb\",Content)"
+    },
+    {
+      "id": "count-does-not-lift-eol",
+      "expression": "LineCount(Content)+\"a\nb\""
+    }
+  ]
+}

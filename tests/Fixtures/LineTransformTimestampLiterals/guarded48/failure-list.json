@@ -1,0 +1,16 @@
+{
+  "failures": [
+    "changed immutable raw/source/proof/copied bytes",
+    "unsafe/traversing/symlink/duplicate ZIP or local path",
+    "CRC/SHA/size/Git blob/raw span mismatch",
+    "budget greater than64MiB",
+    "Native caller/raw decimal/hex joins mismatch",
+    "unsafe6 empty hex presented as serializer observation",
+    "raw12 or NUL public proposal introduced",
+    "unsafe3 proposals receive empty serialized expectation",
+    "public type/TypedOrigin/private observation manufactured",
+    "default verifier opens old actor path or invokes Native/golden math"
+  ],
+  "stopOnFailure": true,
+  "newNativeOrGoldenForbidden": true
+}

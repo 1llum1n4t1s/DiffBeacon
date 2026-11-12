@@ -1,0 +1,7 @@
+{
+  "unicode": "code points; supplementary, combining, ZWJ, NUL, controls",
+  "scalar": "none stays none; int64, six decimal double, boolean, local Timestamp",
+  "array": "direct map once; nested stringify recursively with separators",
+  "evaluation": "one evaluation; propagated throw; arity evaluates nothing",
+  "arity": "0/2/3 rejected; 1 accepted"
+}

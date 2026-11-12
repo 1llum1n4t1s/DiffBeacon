@@ -1,0 +1,95 @@
+{
+  "id": "CF-SUPP-01",
+  "recordedBeforeE2eImplementation": true,
+  "nativeRowsPerChild": 1132,
+  "nativeIndependentChildren": 2,
+  "publicSideCounts": [
+    2,
+    3
+  ],
+  "conditions": [
+    {
+      "id": "direct-ci",
+      "failure": "raw supplementary literal ignores othercase",
+      "expected": "all 564 directions return native X; unfixed backend fails"
+    },
+    {
+      "id": "direct-cs",
+      "failure": "new expansion leaks into case sensitive expressions",
+      "expected": "native original source bytes retained"
+    },
+    {
+      "id": "list-ci",
+      "failure": "escaped literal list omits supplementary fold",
+      "expected": "direction-separated chunks cover every original native source/result scalar in order; unfixed backend fails"
+    },
+    {
+      "id": "list-cs",
+      "failure": "list changes case sensitive bytes",
+      "expected": "each native source scalar retained"
+    },
+    {
+      "id": "projection",
+      "failure": "both direction rules or missing/duplicated source positions hide a failed fold",
+      "expected": "282 rules per direction, nonoverlapping contiguous chunks, exact reassembly; no opposite-case fallback rule"
+    },
+    {
+      "id": "budget",
+      "failure": "full 282-rule public list is forced through the unchanged 65536 budget",
+      "expected": "use 16-rule chunks; scalar-validation lower bound 282*282=79524 excludes full-list success"
+    },
+    {
+      "id": "scope",
+      "failure": "scoped i enable/disable or restore changes",
+      "expected": "derived public RegexReplace control expressions retain scope"
+    },
+    {
+      "id": "quantifier-capture",
+      "failure": "surrogate grouping/capture numbering changes",
+      "expected": "derived public RegexReplace and RegexExtract retain whole scalar and original captured bytes"
+    },
+    {
+      "id": "bmp",
+      "failure": "existing ASCII/BMP or noncased supplementary literals change",
+      "expected": "derived public controls retain values"
+    },
+    {
+      "id": "side-output",
+      "failure": "inclusion or side presence is inferred from exit code alone",
+      "expected": "independent reader checks one row.bin, exact 2/3 present sides, file kind, status, filtered flags, size and stdout/stderr"
+    },
+    {
+      "id": "preservation",
+      "failure": "inputs/list/filter are modified",
+      "expected": "reader hashes bytes before/after every command and final retained paths"
+    },
+    {
+      "id": "direct-token-limit",
+      "failure": "282-element direct Array exceeds unchanged 512 token limit",
+      "expected": "18 ordered chunks per direction and case; 144 direct commands; no budget relaxation"
+    },
+    {
+      "id": "function-body-phase",
+      "failure": "native function-body observations confused with optimizer phase",
+      "expected": "direct/list use explicit @noopt; derived controls retain original expressions"
+    },
+    {
+      "id": "platform-completion",
+      "failure": "Mac-only LaunchEvidence required for canonical Windows runner or absent Mac evidence accepted",
+      "expected": "actual reader host/explicit platform/row platform match, Windows PID/timestamps/duration/exit and null evidence; Mac Terminal/EOF/cleanup required"
+    }
+  ],
+  "notClaimed": [
+    "cancellation",
+    "budget injection",
+    "escaped supplementary regex syntax",
+    "supplementary character class/range",
+    "case insensitive supplementary backreference",
+    "line direct Replace backend equivalence"
+  ],
+  "publicCommands": 310,
+  "directArrayCommands": 144,
+  "listChunkCommands": 144,
+  "derivedCommands": 22,
+  "completionContract": "actual reader host/platform, canonical runner SHA, Windows PID/UTC/order/duration/expected exit/streams with null Mac evidence; macOS retains Terminal/EOF/cleanup"
+}

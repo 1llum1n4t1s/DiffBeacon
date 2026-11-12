@@ -150,11 +150,11 @@ public sealed partial class ComparisonPane
     };
 
     private sealed record FolderDirectoryCandidate(DirectoryComparisonResult Model, FolderConfiguration Configuration,
-        string? FilterStamp, FolderTreeProjection Projection, string[] Selection,
+        string? FilterStamp, FolderFilterListState ListDependencies, FolderTreeProjection Projection, string[] Selection,
         DirectoryComparisonResult? PreviousModel, long ContextGeneration, bool TreeMode, int InitialPolicy);
 
     private FolderDirectoryCandidate PrepareFolderCandidate(DirectoryComparisonResult result,
-        FolderConfiguration configuration, string? filterStamp, CancellationToken token)
+        FolderConfiguration configuration, string? filterStamp, FolderFilterListState listDependencies, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
         var previousModel = _directoryComparison;
@@ -166,7 +166,7 @@ public sealed partial class ComparisonPane
             ? _directoryList.SelectedItems?.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).ToArray() ?? [] : [];
         var projection = PrepareFolderTree(result, expanded, treeMode && result.Options.Recursive, token);
         token.ThrowIfCancellationRequested();
-        return new(result, configuration, filterStamp, projection, selection, previousModel, contextGeneration, treeMode, _folderInitialPolicy);
+        return new(result, configuration, filterStamp, listDependencies, projection, selection, previousModel, contextGeneration, treeMode, _folderInitialPolicy);
     }
 
     private bool FolderCandidateContextCurrent(FolderDirectoryCandidate candidate)
@@ -174,7 +174,7 @@ public sealed partial class ComparisonPane
             && _folderContextGeneration == candidate.ContextGeneration
             && (_folderTreeMode.IsChecked == true) == candidate.TreeMode
             && _folderInitialPolicy == candidate.InitialPolicy
-            && FolderConfigurationMatches(candidate.Configuration) && FolderFilterStamp() == candidate.FilterStamp;
+            && FolderConfigurationMatches(candidate.Configuration) && FolderFilterStamp(candidate.ListDependencies) == candidate.FilterStamp;
 
     private void SaveFolderDisplayOptions(bool changeMode)
     {

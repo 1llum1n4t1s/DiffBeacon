@@ -1,4 +1,5 @@
 using System.Globalization;
+using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
@@ -16,10 +17,19 @@ internal static class ReportCommands
         ImageOffset? leftOffset = null, middleOffset = null, rightOffset = null;
         string? wipeMode = null, wipePosition = null;
         var displayOptions = new ImageDisplayOptions();
+        var lineTransforms = new List<LineTransformRule>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
         for (var optionIndex = 3; optionIndex < args.Length; optionIndex += 2)
         {
             var option = args[optionIndex];
+            if (option == "--line-transform")
+            {
+                if (optionIndex + 2 >= args.Length) throw new ArgumentException("--line-transform TARGET EXPRESSION");
+                var parsed = CommandLine.ParseOptions(args[optionIndex..(optionIndex + 3)]);
+                lineTransforms.AddRange(parsed.LineTransformRules);
+                optionIndex++;
+                continue;
+            }
             if (option is not ("--entry" or "--left-frame" or "--middle-frame" or "--right-frame" or "--threshold" or "--highlight-alpha"
                 or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode" or "--wipe-mode" or "--wipe-position") && !ImageDisplayOptions.IsOption(option) || !seen.Add(option)
                 || optionIndex + 1 >= args.Length)
@@ -67,8 +77,17 @@ internal static class ReportCommands
         {
             var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], cancellation.Token);
             var entry = index ?? workspace.ActiveEntryIndex;
+            if (lineTransforms.Count > 0)
+            {
+                if (entry < 0 || entry >= workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entry));
+                if (!ProjectReport.IsTextual(workspace.Entries[entry]))
+                    throw new ArgumentException("行変換の上書きにはText・Table・JSONのプロジェクトが必要です。");
+                workspace = workspace with { Entries = workspace.Entries.Select((project, at) => at == entry
+                    ? project with { LineTransformRules = WorkspaceStore.CloneLineTransformRules(lineTransforms, project) } : project).ToArray() };
+            }
             await ProjectReport.ExportWithWipeAsync(workspace, entry, args[2], args[1], cancellation.Token, leftFrame, rightFrame, threshold, middleFrame,
-                leftOffset, middleOffset, rightOffset, insertionDeletionMode, highlightAlpha, wipe, displayOptions);
+                leftOffset, middleOffset, rightOffset, insertionDeletionMode, highlightAlpha, wipe, displayOptions,
+                LineTransformLogEnvironments.StandardError);
             CommandLine.WriteJson(writer => { writer.WriteString("output", Path.GetFullPath(args[2])); writer.WriteNumber("entry", entry + 1); });
             return 0;
         }

@@ -18,12 +18,14 @@ public static class ComparisonPackage
 
     public static Task CreateAsync(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
         IReadOnlyList<int>? selectedIndices = null, CancellationToken token = default, string? sourceProject = null,
-        IReadOnlyDictionary<int, IReadOnlyList<string>>? textSnapshots = null)
-        => CreateWithImageDisplaysAsync(workspace, output, options, selectedIndices, token, sourceProject, null, textSnapshots);
+        IReadOnlyDictionary<int, IReadOnlyList<string>>? textSnapshots = null,
+        ILineTransformLogEnvironment? logEnvironment = null)
+        => CreateWithImageDisplaysAsync(workspace, output, options, selectedIndices, token, sourceProject, null, textSnapshots, logEnvironment);
 
     internal static Task CreateWithImageDisplaysAsync(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
         IReadOnlyList<int>? selectedIndices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplayCapture>? displays,
-        IReadOnlyDictionary<int, IReadOnlyList<string>>? textSnapshots = null)
+        IReadOnlyDictionary<int, IReadOnlyList<string>>? textSnapshots = null, ILineTransformLogEnvironment? logEnvironment = null,
+        Action<string, Action>? outputPublisher = null)
     {
         // UI の値を await 前に確定し、編集中の配列・辞書をバックグラウンドで共有しない。
         WorkspaceStore.SerializeWorkspace(workspace);
@@ -44,11 +46,12 @@ public static class ComparisonPackage
             throw new ArgumentException("文書・レポート・パッチ・プロジェクトのいずれかを含めてください。");
         var capturedDisplays = displays?.ToDictionary(pair => pair.Key, pair => pair.Value);
         if (capturedDisplays is not null) foreach (var display in capturedDisplays.Values) display.Settings.Validate();
-        return Task.Run(() => Create(clone, output, options, indices, token, sourceProject, capturedDisplays), token);
+        return Task.Run(() => Create(clone, output, options, indices, token, sourceProject, capturedDisplays, logEnvironment, outputPublisher), token);
     }
 
     private static void Create(ComparisonWorkspace workspace, string output, ComparisonPackageOptions options,
-        int[] indices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplayCapture>? displays)
+        int[] indices, CancellationToken token, string? sourceProject, IReadOnlyDictionary<int, ImageReportDisplayCapture>? displays,
+        ILineTransformLogEnvironment? logEnvironment, Action<string, Action>? outputPublisher)
     {
         token.ThrowIfCancellationRequested();
         var target = ValidateLocal(output);
@@ -93,7 +96,7 @@ public static class ComparisonPackage
             var inputs = new List<Input>();
             var names = new Dictionary<string, Input>(StringComparer.OrdinalIgnoreCase);
             long total = 0;
-            Input Snapshot(string source, string name)
+            Input Snapshot(string source, string name, long maximumBytes = MaximumFileBytes)
             {
                 token.ThrowIfCancellationRequested(); ValidateLocal(source);
                 var key = name.Normalize(NormalizationForm.FormC);
@@ -116,7 +119,7 @@ public static class ComparisonPackage
                 using (var original = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (var copy = new FileStream(snapshot, FileMode.CreateNew, FileAccess.Write, FileShare.None))
                 {
-                    if (original.Length > MaximumFileBytes || original.Length > MaximumInputBytes - total)
+                    if (original.Length > maximumBytes || original.Length > MaximumInputBytes - total)
                         throw new InvalidDataException("包装する入力の合計は1 GiBまでです。");
                     var buffer = new byte[65536]; long copied = 0;
                     while (true)
@@ -124,7 +127,7 @@ public static class ComparisonPackage
                         token.ThrowIfCancellationRequested(); var count = original.Read(buffer);
                         if (count == 0) break;
                         copied += count;
-                        if (copied > MaximumFileBytes || copied > MaximumInputBytes - total) throw new InvalidDataException("包装する入力のサイズ上限を超えました。");
+                        if (copied > maximumBytes || copied > MaximumInputBytes - total) throw new InvalidDataException("包装する入力のサイズ上限を超えました。");
                         copy.Write(buffer, 0, count);
                     }
                     if (copied != initialSize || File.GetLastWriteTimeUtc(source) != initialModified)
@@ -141,6 +144,21 @@ public static class ComparisonPackage
             for (var i = 0; i < selected.Length; i++)
             {
                 var project = selected[i]; var three = ProjectInputs.HasBase(project);
+                var dependencies = LineTransformListEnvironments.Dependencies(project);
+                if (dependencies.Any(dependency => dependency.Dynamic))
+                    throw new InvalidOperationException("行や実行時の計算で作る置換リストのパスは包装できません。literal、If、Chooseの有限なパス候補を指定してください。");
+                Dictionary<string, string>? listAssets = project.LineTransformListAssets is null && dependencies.Count == 0 ? null : new(StringComparer.Ordinal);
+                Dictionary<string, string>? stagedLists = listAssets is null ? null : new(StringComparer.Ordinal);
+                foreach (var logical in dependencies.Select(dependency => dependency.Path).OfType<string>().Distinct(StringComparer.Ordinal))
+                {
+                    var source = project.LineTransformListAssets is { } existing
+                        ? existing.TryGetValue(logical, out var asset) ? asset : throw new InvalidDataException("置換リストのassetがありません。")
+                        : Path.GetFullPath(Environment.ExpandEnvironmentVariables(logical));
+                    var input = Snapshot(source, $"replace-lists/{i + 1}/{listAssets!.Count + 1}-" + Path.GetFileName(source),
+                        LineTransformListEnvironments.MaximumFileBytes);
+                    listAssets.Add(logical, input.Name); stagedLists!.Add(logical, input.Snapshot);
+                }
+                selected[i] = project with { LineTransformListAssets = stagedLists };
                 var paths = new string[3]; var files = new Input?[3];
                 for (var side = 0; side < 3; side++)
                 {
@@ -186,7 +204,7 @@ public static class ComparisonPackage
                 packed[i] = project with
                 {
                     LeftPath = project.LeftArchiveInput is null ? paths[0] : "", BasePath = project.BaseArchiveInput is null ? paths[1] : "",
-                    RightPath = project.RightArchiveInput is null ? paths[2] : "", FileFilterPath = filter,
+                    RightPath = project.RightArchiveInput is null ? paths[2] : "", FileFilterPath = filter, LineTransformListAssets = listAssets,
                     LeftArchiveInput = PackedInput(0), BaseArchiveInput = PackedInput(1), RightArchiveInput = PackedInput(2)
                 };
                 pairInputs[i] = files;
@@ -218,6 +236,11 @@ public static class ComparisonPackage
                 {
                     leftText = ProjectInputReader.ReadTextAsync(project, 0, token, left?.Snapshot).GetAwaiter().GetResult();
                     rightText = ProjectInputReader.ReadTextAsync(project, 2, token, right?.Snapshot).GetAwaiter().GetResult();
+                    // 包装snapshotの本文を保持し、Contentの由来には元の実ファイル名だけを使う。
+                    if (ProjectInputs.Archive(project, 0) is null && left is not null)
+                        leftText = leftText.SavedCopy(left.Source, leftText.Text);
+                    if (ProjectInputs.Archive(project, 2) is null && right is not null)
+                        rightText = rightText.SavedCopy(right.Source, rightText.Text);
                     a = leftText.Text; b = rightText.Text;
                 }
                 if (options.IncludePatch && textMode && project.Mode.ToLowerInvariant() is not ("json" or "5"))
@@ -237,6 +260,8 @@ public static class ComparisonPackage
                     indexReport.Append("<li><a href=\"report.files/").Append(i + 1).Append(".html\">").Append(WebUtility.HtmlEncode(title)).Append("</a></li>");
                     var ancestorDocument = textMode && ProjectInputs.HasBase(project)
                         ? ProjectInputReader.ReadTextAsync(project, 1, token, pairInputs[i][1]?.Snapshot).GetAwaiter().GetResult() : null;
+                    if (ancestorDocument is not null && ProjectInputs.Archive(project, 1) is null && pairInputs[i][1] is { } ancestorInput)
+                        ancestorDocument = ancestorDocument.SavedCopy(ancestorInput.Source, ancestorDocument.Text);
                     var ancestor = ancestorDocument?.Text;
                     string report;
                     if (ProjectReport.IsImage(project))
@@ -263,7 +288,8 @@ public static class ComparisonPackage
                                 : [project.LeftDescription ?? left.Name, project.BaseDescription ?? middleInput!.Name, project.RightDescription ?? right.Name], token);
                     }
                     else report = textMode ? ProjectReport.Create(project, a!, ancestor, b!, token, left?.Name, pairInputs[i][1]?.Name, right?.Name,
-                        ProjectInputs.IsIndependentText(project) ? new[] { leftText!, ancestorDocument!, rightText! } : null)
+                        ProjectInputs.IsIndependentText(project) ? new[] { leftText!, ancestorDocument!, rightText! } : null,
+                        TextComparisonSources.ForProject(project, leftText, ancestorDocument, rightText), logEnvironment)
                         : MetadataReport(project, pairInputs[i]);
                     Generated($"report.files/{i + 1}.html", report);
                 }
@@ -273,7 +299,7 @@ public static class ComparisonPackage
             if (options.IncludeProject)
             {
                 var active = Array.IndexOf(indices, workspace.ActiveEntryIndex);
-                GeneratedBytes("project.json", WorkspaceStore.SerializeWorkspace(new ComparisonWorkspace { FormatVersion = workspace.FormatVersion is 8 or 9 ? workspace.FormatVersion : 1, Entries = packed, ActiveEntryIndex = Math.Max(0, active) }));
+                GeneratedBytes("project.json", WorkspaceStore.SerializeWorkspace(new ComparisonWorkspace { FormatVersion = workspace.FormatVersion is 8 or 9 or 10 ? workspace.FormatVersion : 1, Entries = packed, ActiveEntryIndex = Math.Max(0, active) }));
             }
             IEnumerable<ManagedArchiveWriteEntry> Content()
             {
@@ -286,7 +312,8 @@ public static class ComparisonPackage
                 }
                 foreach (var entry in generated) { token.ThrowIfCancellationRequested(); yield return new(entry.Name, File.ReadAllBytes(entry.Snapshot)); }
             }
-            new ManagedArchive().WriteArchive(target, Content(), token);
+            if (outputPublisher is null) new ManagedArchive().WriteArchive(target, Content(), token);
+            else new ManagedArchive().WriteArchive(target, Content(), token, null, outputPublisher);
         }
         finally
         {

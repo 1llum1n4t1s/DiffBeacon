@@ -26,7 +26,7 @@ internal static class HeadlessIndependentTextInputSelectionChecks
         CopyFixedRunInput(Path.Combine(fixture, "manifest.json"), Path.Combine(folder, "manifest.json"));
         using var manifest = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(folder, "manifest.json")));
         var cases = manifest.RootElement.GetProperty("cases").EnumerateArray().Select(c => c.Clone()).ToArray();
-        var receipts = new List<Action<Utf8JsonWriter>>();
+        var receipts = new List<JsonElement>();
         var layouts = new List<Action<Utf8JsonWriter>>();
         void Verify(string id, bool condition, string detail = "") => check("Independent Text Input Selection " + id, condition, detail);
         void Click(Button button) => button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
@@ -246,7 +246,7 @@ internal static class HeadlessIndependentTextInputSelectionChecks
                 var project = actual?.CaptureProject();
                 var oldOutput = File.ReadAllBytes(existingOutput);
                 var parentSameIdentity = Equals(beforeIdentity, parent.CaptureIndependentTextState());
-                receipts.Add(w =>
+                receipts.Add(CaptureReceipt(w =>
                 {
                     w.WriteStartObject(); w.WriteString("id", id); w.WriteString("fixtureCase", spec.GetProperty("id").GetString()); w.WriteString("mode", mode);
                     w.WriteBoolean("accepted", accepted == true); w.WriteNumber("candidateCount", candidates); w.WriteNumber("tabsBefore", initialTabs); w.WriteNumber("tabsAfter", finalTabs);
@@ -281,7 +281,7 @@ internal static class HeadlessIndependentTextInputSelectionChecks
                         w.WriteEndArray();
                     }
                     w.WriteEndObject();
-                });
+                }));
             }
             finally
             {
@@ -305,7 +305,7 @@ internal static class HeadlessIndependentTextInputSelectionChecks
         using (var writer = new Utf8JsonWriter(file, new() { Indented = true }))
         {
             writer.WriteStartObject(); writer.WriteString("schema", "input-selection-observations-v1"); writer.WriteString("status", "completed-minimum-set");
-            writer.WriteStartArray("cases"); foreach (var receipt in receipts) receipt(writer); writer.WriteEndArray();
+            writer.WriteStartArray("cases"); foreach (var receipt in receipts) receipt.WriteTo(writer); writer.WriteEndArray();
             writer.WriteStartArray("layouts"); foreach (var layout in layouts) layout(writer); writer.WriteEndArray(); writer.WriteEndObject();
         }
 
@@ -367,6 +367,15 @@ internal static class HeadlessIndependentTextInputSelectionChecks
         }
     }
     private static DateTime FixedRunInputUtc => new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(1234567);
+    private static JsonElement CaptureReceipt(Action<Utf8JsonWriter> write)
+    {
+        // caseのJSONをその場で値へ確定し、閉じたhostを参照するclosureを保持しない。
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream)) write(writer);
+        using var document = JsonDocument.Parse(stream.ToArray());
+        return document.RootElement.Clone();
+    }
+
     private static void SetFixedRunInputTime(string path)
     {
         // 新規run copyは初回読込みより前に100ns表現可能な時刻へ固定する。

@@ -35,9 +35,9 @@ public static partial class SpecializedViews
         internal bool FixedRightReadOnly { get; init; }
         internal Func<int, bool>? RequiredReadOnly { get; set; }
         internal bool ReadOnly(int side) { _ = LocalSide(side); return _readOnly[side] || (side == 0 && FixedLeftReadOnly) || (side == 2 && FixedRightReadOnly) || RequiredReadOnly?.Invoke(side) == true; }
-        public bool LeftReadOnly { get => ReadOnly(0); set { if (_readOnly[0] != value) { _readOnly[0] = value; StateVersion++; } } }
-        public bool MiddleReadOnly { get => ReadOnly(1); set { if (_readOnly[1] != value) { _readOnly[1] = value; StateVersion++; } } }
-        public bool RightReadOnly { get => ReadOnly(2); set { if (_readOnly[2] != value) { _readOnly[2] = value; StateVersion++; } } }
+        public bool LeftReadOnly { get => ReadOnly(0); set { if (_readOnly[0] != value) { _readOnly[0] = value; StateVersion++; ApplyReadOnly?.Invoke(); UpdateReplaceButtons(); } } }
+        public bool MiddleReadOnly { get => ReadOnly(1); set { if (_readOnly[1] != value) { _readOnly[1] = value; StateVersion++; ApplyReadOnly?.Invoke(); UpdateReplaceButtons(); } } }
+        public bool RightReadOnly { get => ReadOnly(2); set { if (_readOnly[2] != value) { _readOnly[2] = value; StateVersion++; ApplyReadOnly?.Invoke(); UpdateReplaceButtons(); } } }
         public Action? ApplyReadOnly { get; }
         internal Func<int, string?, CancellationToken, Task>? SaveContent { get; set; }
         internal Func<int, Task<string?>>? SavePathPicker { get; set; }
@@ -70,7 +70,7 @@ public static partial class SpecializedViews
             IsDirty = () => ProjectSides.Any(Dirty);
             MarkClean = () => { Session.MarkClean(); foreach (var side in ProjectSides) _baseline[side] = Editor(side).Text ?? ""; };
             ApplyReadOnly = () => { foreach (var side in ProjectSides) { Session.SetReadOnly(LocalSide(side), ReadOnly(side)); Editor(side).IsReadOnly = ReadOnly(side); } };
-            foreach (var side in ProjectSides) Editor(side).TextChanged += (_, _) => { if (!_updating) StateVersion++; };
+            foreach (var side in ProjectSides) Editor(side).TextChanged += (_, _) => { if (!_updating) { StateVersion++; UpdateReplaceButtons(); } };
             InitializeByteEditing();
             _offset.ValueChanged += (_, _) =>
             {
@@ -106,6 +106,7 @@ public static partial class SpecializedViews
                     AddButton(actions, Name(side) + " " + BinaryClipboardDialog.Label(command), () => RunAsync(() => ClipboardAsync(side, command)));
                 AddByteModes(actions, side);
                 AddSearchButtons(actions, side);
+                AddReplaceButton(actions, side);
                 foreach (var kind in Enum.GetValues<BinaryRangeKind>())
                     AddButton(actions, Name(side) + " " + BinaryRangeDialog.Label(kind), () => RunAsync(() => RangeEditAsync(side, kind)));
                 AddButton(actions, Name(side) + "を保存", () => SaveAsync(side));
@@ -199,8 +200,9 @@ public static partial class SpecializedViews
             _status.Text = string.Join(" / ", ProjectSides.Select(side => $"{(side switch { 0 => "左", 1 => "中央", _ => "右" })} {Session.Length(LocalSide(side)):N0} bytes"))
                 + $" · 差分範囲 {total:N0} · 表示先頭 0x{_pageStart:X8}（最大4096 bytes）。Hexは1桁ずつ、下欄は文字入力。Shiftで選択、Insertで挿入/上書き切替。";
             UpdateSearchButtons();
+            UpdateReplaceButtons();
             _updating = false;
         }
-        public void Dispose() { if (_disposed) return; _disposed = true; CancelSearch(true); CaptureSearchContext = null; SaveContent = null; SavePathPicker = null; CopyAllContent = null; RangeEditContent = null; ClipboardContent = null; RequiredReadOnly = null; Session.Dispose(); }
+        public void Dispose() { if (_disposed) return; _disposed = true; CancelSearch(true); CancelReplacement(true); ReplacementReadyForAdoption = null; ReplacementSnapshotObserved = null; CaptureSearchContext = null; SaveContent = null; SavePathPicker = null; CopyAllContent = null; RangeEditContent = null; ClipboardContent = null; RequiredReadOnly = null; Session.Dispose(); }
     }
 }

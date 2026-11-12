@@ -1,0 +1,56 @@
+{
+  "files": {
+    ".gitattributes": {
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "adapter.cpp": {
+      "size": 4649,
+      "sha256": "4f981f43a542a0df317ac083c08ddb63f43d9d9f2e54d1cc86d6f113f8ae8239"
+    },
+    "capture.py": {
+      "size": 6390,
+      "sha256": "54fbce9e579de0c522ac3e4c4aa4623497d8fe86400c9f794be3770d20611144"
+    },
+    "cases.json": {
+      "size": 10323,
+      "sha256": "2ef230026c716340b181cad2c45c9a8cee5f091ec490ee5d8d9deabb3f79963f"
+    },
+    "golden.ndjson": {
+      "size": 11928,
+      "sha256": "cd9d2700315908a9bd7e5de5ffdd7aca671c3376340486f5e2af0e31fa50d156"
+    },
+    "native-proof-manifest.json": {
+      "size": 5625,
+      "sha256": "1a96c2cd3df6ca52ca00749766b8ab3a593b9d5a9cca1483c03fbfba614c64d9"
+    },
+    "native-proof.zip": {
+      "size": 630558,
+      "sha256": "73385de54e6681ecf05316921ada2affd108f0c47b21a7ea9bbc4d07a2bbb974"
+    },
+    "original/Src/FilterEngine/FilterError.h": {
+      "size": 1391,
+      "sha256": "160a03bf7f2a0ed0a4db66a3d5211a8dccd7445e7eb0d2b7fd640c3fa914fa2b"
+    },
+    "original/Src/FilterEngine/FilterExpression.cpp": {
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e"
+    },
+    "original/Src/FilterEngine/FilterExpressionNodes.cpp": {
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    "README.md": {
+      "size": 5186,
+      "sha256": "39aa64eed020ef8751e6d6a92eded396d6bde34aab114d61bd9779481d71ec5f"
+    },
+    "source-manifest.json": {
+      "size": 799,
+      "sha256": "346e2fa8e1b513f6e97981575adee9d2e0bed29af0ecd0aa205eab11ed9734cf"
+    },
+    "verify.py": {
+      "size": 5611,
+      "sha256": "da0ba706d05f3d2c0b49a78e0ac99d340545f2e1990556134856eaf03d384440"
+    }
+  }
+}

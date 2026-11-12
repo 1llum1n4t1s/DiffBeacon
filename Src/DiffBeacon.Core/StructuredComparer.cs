@@ -174,12 +174,25 @@ public static class StructuredComparer
 
     public static TableComparisonResult CompareTables(IReadOnlyList<string> texts, DelimitedSyntax? syntax = null,
         ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+        => CompareTablesCore(texts, syntax, options, cancellationToken, null);
+
+    public static TableComparisonResult CompareTablesWithSourcePaths(IReadOnlyList<string> texts,
+        TextComparisonSourcePaths sourcePaths, DelimitedSyntax? syntax = null, ComparisonOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sourcePaths);
+        return CompareTablesCore(texts, syntax, options, cancellationToken, sourcePaths);
+    }
+
+    private static TableComparisonResult CompareTablesCore(IReadOnlyList<string> texts, DelimitedSyntax? syntax,
+        ComparisonOptions? options, CancellationToken cancellationToken, TextComparisonSourcePaths? sourcePaths)
     {
         ArgumentNullException.ThrowIfNull(texts);
         if (texts.Count is not (2 or 3)) throw new ArgumentException("表比較には二つまたは三つの文書が必要です。", nameof(texts));
         cancellationToken.ThrowIfCancellationRequested();
         options ??= new();
         ArgumentNullException.ThrowIfNull(options.SubstitutionRules);
+        WordDiffer.ValidateSeparators(options.WordBreakSeparators, nameof(options));
         if (options.SubstitutionRules.Count > 256) throw new ArgumentException("置換規則は 256 個までです。", nameof(options));
         if (!Enum.IsDefined(options.Whitespace)) throw new ArgumentOutOfRangeException(nameof(options.Whitespace));
         var rules = new SubstitutionRule[options.SubstitutionRules.Count];
@@ -190,10 +203,37 @@ public static class StructuredComparer
             ArgumentNullException.ThrowIfNull(rule);
             rules[index] = rule with { };
         }
-        var snapshot = options with { SubstitutionRules = Array.AsReadOnly(rules) };
+        ArgumentNullException.ThrowIfNull(options.TableColumnIgnoreRules);
+        if (options.TableColumnIgnoreRules.Count > TableColumnIgnoreRule.MaximumColumnsAndRules)
+            throw new ArgumentException("比較から除外する列の件数が上限を越えています。", nameof(options));
+        var ignoredColumns = new TableColumnIgnoreRule[options.TableColumnIgnoreRules.Count];
+        for (var index = 0; index < ignoredColumns.Length; index++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ignoredColumns[index] = options.TableColumnIgnoreRules[index];
+        }
+        TableColumnIgnoreRule.ValidateRules(ignoredColumns, cancellationToken);
+        ArgumentNullException.ThrowIfNull(options.TableColumnRangeRules);
+        if (options.TableColumnRangeRules.Count > TableColumnRangeRule.MaximumRules)
+            throw new ArgumentException("列範囲の件数が上限を越えています。", nameof(options));
+        var columnRanges = new TableColumnRangeRule[options.TableColumnRangeRules.Count];
+        for (var index = 0; index < columnRanges.Length; index++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var rule = options.TableColumnRangeRules[index];
+            ArgumentNullException.ThrowIfNull(rule);
+            columnRanges[index] = rule with { };
+        }
+        TableColumnRangeRule.ValidateRules(columnRanges, cancellationToken);
+        var snapshot = options with
+        {
+            SubstitutionRules = Array.AsReadOnly(rules),
+            TableColumnIgnoreRules = Array.AsReadOnly(ignoredColumns),
+            TableColumnRangeRules = Array.AsReadOnly(columnRanges)
+        };
         var documents = new TableDocument[texts.Count];
         for (var side = 0; side < texts.Count; side++) documents[side] = ParseTable(texts[side], syntax, cancellationToken);
-        return TableAlignment.Compare(documents, snapshot, cancellationToken);
+        return TableAlignment.Compare(documents, snapshot, cancellationToken, sourcePaths);
     }
 
     public static StructuredDiffResult CompareDelimited(string left, string right, char delimiter = ',',

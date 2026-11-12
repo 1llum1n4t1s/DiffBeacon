@@ -1,0 +1,206 @@
+[
+  {
+    "path": "run1/adapter.cpp",
+    "size": 960,
+    "crc32": 2136967033,
+    "sha256": "967125e497a2532815b3748a15efadf91ca0c5c6ff8d353192cf3ad228d27fec"
+  },
+  {
+    "path": "run1/cases.inc",
+    "size": 2389,
+    "crc32": 1720217726,
+    "sha256": "5f8c14044885c0be82ebeaa170b4d37fc2e2b5b195b2939fa659f9827826b0d8"
+  },
+  {
+    "path": "run1/compile-receipt.json",
+    "size": 875,
+    "crc32": 3268297426,
+    "sha256": "1415c9df5a3c5b2065a30205ea61fe9c4b32a0ef3ead3034e7b82c4c70a8b15b"
+  },
+  {
+    "path": "run1/compile.rsp",
+    "size": 427,
+    "crc32": 3764121188,
+    "sha256": "1050bbbefa1d873a58f688d531b122d30b4b49bf71a87d4bfe04dfbef6c6e404"
+  },
+  {
+    "path": "run1/compile.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run1/compile.stdout.raw",
+    "size": 13,
+    "crc32": 1466176782,
+    "sha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7"
+  },
+  {
+    "path": "run1/compiler-env-receipt.json",
+    "size": 805,
+    "crc32": 3813840491,
+    "sha256": "b5b3634e7d17c835002b0ebbd5c431d1de84a1f27ea8bb341888707799b823bb"
+  },
+  {
+    "path": "run1/compiler-env.cmd",
+    "size": 180,
+    "crc32": 2228547846,
+    "sha256": "78f6cd9eb2cf48d1482fd19c5faa1cede822b426f5323fe17863b9c4114999cc"
+  },
+  {
+    "path": "run1/compiler-env.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run1/compiler-env.stdout.raw",
+    "size": 4488,
+    "crc32": 1208908022,
+    "sha256": "a2169451c2fdfef9a55b40889318b7014519d901c6f9fbbb5071c3bc4433245b"
+  },
+  {
+    "path": "run1/expr-node.inc",
+    "size": 163,
+    "crc32": 1348959164,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  {
+    "path": "run1/native-receipt.json",
+    "size": 754,
+    "crc32": 1655918241,
+    "sha256": "07ab0c9bdc4527b127f7746d38ca615cd5439c5a2f488dcd89239a3f1509138c"
+  },
+  {
+    "path": "run1/native.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run1/native.stdout.raw",
+    "size": 5655,
+    "crc32": 3222155945,
+    "sha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2"
+  },
+  {
+    "path": "run1/reference.exe",
+    "size": 293888,
+    "crc32": 1602933151,
+    "sha256": "0ad3c2b3e2bcff01ae4a6ba641660615ded8498ece0b7712f93e9f7e4ea43c0c"
+  },
+  {
+    "path": "run1/version-ctor.inc",
+    "size": 313,
+    "crc32": 1463603583,
+    "sha256": "9b62a2b64995f6d16db2ecb026308c0e651f16ccffe498d6bd9b264fc82152e7"
+  },
+  {
+    "path": "run1/version-node.inc",
+    "size": 191,
+    "crc32": 2834923247,
+    "sha256": "a85a2cdfeee501a8f7f1c7d4408033ff439f0fed282cbb6368e11e19f357ecb2"
+  },
+  {
+    "path": "run2/adapter.cpp",
+    "size": 960,
+    "crc32": 2136967033,
+    "sha256": "967125e497a2532815b3748a15efadf91ca0c5c6ff8d353192cf3ad228d27fec"
+  },
+  {
+    "path": "run2/cases.inc",
+    "size": 2389,
+    "crc32": 1720217726,
+    "sha256": "5f8c14044885c0be82ebeaa170b4d37fc2e2b5b195b2939fa659f9827826b0d8"
+  },
+  {
+    "path": "run2/compile-receipt.json",
+    "size": 875,
+    "crc32": 501319046,
+    "sha256": "da1a0a39da0e61d061beae2829d5955e92d453475921e4cff6fc64d72abfca60"
+  },
+  {
+    "path": "run2/compile.rsp",
+    "size": 427,
+    "crc32": 2339959202,
+    "sha256": "642d83bc34bcf3156a41be9d13125252a33f73942537cf63f08b8defe26e20d0"
+  },
+  {
+    "path": "run2/compile.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run2/compile.stdout.raw",
+    "size": 13,
+    "crc32": 1466176782,
+    "sha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7"
+  },
+  {
+    "path": "run2/compiler-env-receipt.json",
+    "size": 805,
+    "crc32": 2830801686,
+    "sha256": "30336d2c5d01b3a6d944f2a420341166171a8a7ec487fd2d242e5fa7da0438d8"
+  },
+  {
+    "path": "run2/compiler-env.cmd",
+    "size": 180,
+    "crc32": 2228547846,
+    "sha256": "78f6cd9eb2cf48d1482fd19c5faa1cede822b426f5323fe17863b9c4114999cc"
+  },
+  {
+    "path": "run2/compiler-env.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run2/compiler-env.stdout.raw",
+    "size": 4488,
+    "crc32": 1208908022,
+    "sha256": "a2169451c2fdfef9a55b40889318b7014519d901c6f9fbbb5071c3bc4433245b"
+  },
+  {
+    "path": "run2/expr-node.inc",
+    "size": 163,
+    "crc32": 1348959164,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  {
+    "path": "run2/native-receipt.json",
+    "size": 754,
+    "crc32": 2829619314,
+    "sha256": "98cfeb413f88e116c03c52a0abe3bc414b8f5ee4ea0cbae8418b6b06e927e25c"
+  },
+  {
+    "path": "run2/native.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run2/native.stdout.raw",
+    "size": 5655,
+    "crc32": 3222155945,
+    "sha256": "598e0085594f5a17bd8e1eaa0e89a40dbe78e0f2fe4c921354f1d3f8702e9cf2"
+  },
+  {
+    "path": "run2/reference.exe",
+    "size": 293888,
+    "crc32": 2953564617,
+    "sha256": "2aeb570df5216f12de5f24579dc362ed3cce1fc4ec30118c11f68797698a6da8"
+  },
+  {
+    "path": "run2/version-ctor.inc",
+    "size": 313,
+    "crc32": 1463603583,
+    "sha256": "9b62a2b64995f6d16db2ecb026308c0e651f16ccffe498d6bd9b264fc82152e7"
+  },
+  {
+    "path": "run2/version-node.inc",
+    "size": 191,
+    "crc32": 2834923247,
+    "sha256": "a85a2cdfeee501a8f7f1c7d4408033ff439f0fed282cbb6368e11e19f357ecb2"
+  }
+]

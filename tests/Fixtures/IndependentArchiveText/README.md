@@ -9,7 +9,7 @@
 ```powershell
 python -B -X utf8 tests/Fixtures/IndependentArchiveText/verify.py
 dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output <新しいrun> --independent-archive-text-only
-dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-archive-text <新しいUIrun>
+dotnet Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll --self-test-independent-archive-text <新しいUIrun>
 python -B -X utf8 tests/Fixtures/IndependentArchiveText/verify-products.py --work <E2Erun/fixtures/run-ID/independent-archive-text> --receipt <独立照合JSON>
 ```
 

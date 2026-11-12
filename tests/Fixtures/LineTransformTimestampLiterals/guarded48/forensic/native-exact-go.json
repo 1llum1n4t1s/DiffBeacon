@@ -1,0 +1,19 @@
+{
+  "approved": true,
+  "scope": "fresh UTF8 compiler boundary adapter1,immutable35obj,link1,guarded48twoNative",
+  "authoritySha256": "e922ff1d9accc9d5c61e4da605a4afe8926b581ef20d5e3ff9808d3651caed28",
+  "supervisorSha256": "d4a8540cfb981eb598dedeb4c73d3bd02f3ff08074212053f00ea015a97b71f5",
+  "wrapperSha256": "bc6fea30ed39629881dbf42fae2dbd7406c03e5058ad1c78c7728c2fa289f7e8",
+  "launchContractSha256": "2b30936b90317bc56eb6c8e2cb2e0fb4a7013d1f3d3e75ff17c859fa4d5c6b28",
+  "planSha256": "b3760e5a1f2d5703a62a7785b99bcd1007dc07a384b60b5af8bfc0f9b8eda53d",
+  "parentPreflightPid": 41032,
+  "parentPreflightBirthUtc": "2026-10-12T09:12:47.2849805Z",
+  "parentPreflightReceiptSha256": "73A146FE39736814D2DDA45B63C38CE3F4B5B8DF220B1683F0DC711AA9A73B4F",
+  "sourceUtf8OnlyNewCompileFlagApproved": true,
+  "unsafeUtcTimeOriginalArmMustRemainUncalled": true,
+  "noResubmission": true,
+  "oldFailedScopesAndObjectsPreserved": true,
+  "goldenGenerationApproved": false,
+  "productAndGitChangesApproved": false,
+  "ownedFreshJobTerminationOnly": true
+}

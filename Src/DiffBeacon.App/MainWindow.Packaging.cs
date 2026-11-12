@@ -76,12 +76,13 @@ public sealed partial class MainWindow
         foreach (var index in indices) panes[index].EnsureComparedForPackaging();
         var workspace = new ComparisonWorkspace { Entries = panes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = Array.IndexOf(panes, ActivePane) };
         var sourceProject = WorkspaceSourcePath;
+        var outputPublisher = CaptureOutputPublisher();
         var packageOptions = options ?? new();
         var displays = (packageOptions.IncludeReport ? indices : []).Select(index => (Index: index, Display: panes[index].CapturePackagingImageDisplay()))
             .Where(item => item.Display is not null).ToDictionary(item => item.Index, item => item.Display!);
         _packaging = true;
         _packagingOperation = CancellationTokenSource.CreateLinkedTokenSource(token);
-        try { await ComparisonPackage.CreateWithImageDisplaysAsync(workspace, output, packageOptions, indices, _packagingOperation.Token, sourceProject, displays); }
+        try { await ComparisonPackage.CreateWithImageDisplaysAsync(workspace, output, packageOptions, indices, _packagingOperation.Token, sourceProject, displays, outputPublisher: outputPublisher); }
         finally { _packagingOperation.Dispose(); _packagingOperation = null; _packaging = false; }
     }
 

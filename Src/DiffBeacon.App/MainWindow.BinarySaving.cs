@@ -43,6 +43,8 @@ public sealed partial class ComparisonPane
         // bind時のoperationに固定せず、検索を始めた時点のowner文脈を返す。
         panel.CaptureSearchContext = () =>
         {
+            var owner = TopLevel.GetTopLevel(this) as MainWindow;
+            var tabGeneration = owner?.SessionSelectionGeneration;
             var stamp = panel.StateStamp; var generation = _binarySaveGeneration; var operation = _operation;
             var inputEpoch = _binarySearchInputEpoch;
             var identity = ArchiveComparisonIdentity(CaptureProject());
@@ -54,13 +56,14 @@ public sealed partial class ComparisonPane
             {
                 token.ThrowIfCancellationRequested();
                 if (_disposed || panel.IsDisposed || !ReferenceEquals(_specialTab.Content, panel)
+                    || tabGeneration != owner?.SessionSelectionGeneration
                     || generation != _binarySaveGeneration || !ReferenceEquals(operation, _operation) || operation?.IsCancellationRequested == true
                     || stamp != panel.StateStamp || identity != ArchiveComparisonIdentity(CaptureProject()) || identity != _binaryLoadedIdentity
                     || inputEpoch != _binarySearchInputEpoch
                     || inputs != (LeftPath.Text, BasePath.Text, RightPath.Text, _mode.SelectedIndex, _provider.SelectedItem)
                     || !panel.ProjectSides.Select(panel.ReadOnly).SequenceEqual(readOnly)
                     || !panel.ProjectSides.Select(value => panel.Session.Revision(panel.LocalSide(value))).SequenceEqual(revisions))
-                    throw new OperationCanceledException("検索中に比較、本文、選択または読取り専用の状態が変更されました。元のバイトと選択を保持しています。");
+                    throw new OperationCanceledException("検索・置換中にタブ、比較、本文、選択または読取り専用の状態が変更されました。元のバイトと選択を保持しています。");
             };
         };
         panel.ClipboardContent = async (side, command) =>

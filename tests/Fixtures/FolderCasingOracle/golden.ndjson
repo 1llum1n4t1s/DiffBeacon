@@ -1,0 +1,70 @@
+{"id":"lower-ascii","status":"ok","result":{"type":"string","hex":"6162632078797a203031395f2d2f"},"stringHex":"6162632078797a203031395f2d2f","trace":[0]}
+{"id":"upper-ascii","status":"ok","result":{"type":"string","hex":"4142432058595a203031395f2d2f"},"stringHex":"4142432058595a203031395f2d2f","trace":[0]}
+{"id":"lower-empty","status":"ok","result":{"type":"string","hex":""},"stringHex":"","trace":[0]}
+{"id":"upper-empty","status":"ok","result":{"type":"string","hex":""},"stringHex":"","trace":[0]}
+{"id":"lower-turkish","status":"ok","result":{"type":"string","hex":"69206920c4b020c4b1"},"stringHex":"69206920c4b020c4b1","trace":[0]}
+{"id":"upper-turkish","status":"ok","result":{"type":"string","hex":"49204920c4b020c4b1"},"stringHex":"49204920c4b020c4b1","trace":[0]}
+{"id":"lower-sharp-s","status":"ok","result":{"type":"string","hex":"c39f20e1ba9e2073747261c39f65"},"stringHex":"c39f20e1ba9e2073747261c39f65","trace":[0]}
+{"id":"upper-sharp-s","status":"ok","result":{"type":"string","hex":"c39f20e1ba9e2053545241c39f45"},"stringHex":"c39f20e1ba9e2053545241c39f45","trace":[0]}
+{"id":"lower-sigma","status":"ok","result":{"type":"string","hex":"cf8320cf8320cf8220cebfcf8320cebfcf83ceb1"},"stringHex":"cf8320cf8320cf8220cebfcf8320cebfcf83ceb1","trace":[0]}
+{"id":"upper-sigma","status":"ok","result":{"type":"string","hex":"cea320cea320cf8220ce9fcea320ce9fcea3ce91"},"stringHex":"cea320cea320cf8220ce9fcea320ce9fcea3ce91","trace":[0]}
+{"id":"lower-combining","status":"ok","result":{"type":"string","hex":"69cc872061cc8a2065cc81"},"stringHex":"69cc872061cc8a2065cc81","trace":[0]}
+{"id":"upper-combining","status":"ok","result":{"type":"string","hex":"49cc872041cc8a2045cc81"},"stringHex":"49cc872041cc8a2045cc81","trace":[0]}
+{"id":"lower-supplementary","status":"ok","result":{"type":"string","hex":"f09090a8f09090a820f09ea480f09ea4a220f09f9880"},"stringHex":"f09090a8f09090a820f09ea480f09ea4a220f09f9880","trace":[0]}
+{"id":"upper-supplementary","status":"ok","result":{"type":"string","hex":"f0909080f090908020f09ea480f09ea4a220f09f9880"},"stringHex":"f0909080f090908020f09ea480f09ea4a220f09f9880","trace":[0]}
+{"id":"lower-embedded-nul","status":"ok","result":{"type":"string","hex":"61007a"},"stringHex":"61007a","trace":[0]}
+{"id":"upper-embedded-nul","status":"ok","result":{"type":"string","hex":"41005a"},"stringHex":"41005a","trace":[0]}
+{"id":"lower-ligatures","status":"ok","result":{"type":"string","hex":"efac8020efac8120efac83"},"stringHex":"efac8020efac8120efac83","trace":[0]}
+{"id":"upper-ligatures","status":"ok","result":{"type":"string","hex":"efac8020efac8120efac83"},"stringHex":"efac8020efac8120efac83","trace":[0]}
+{"id":"lower-latin","status":"ok","result":{"type":"string","hex":"c3a0c3a9c3a620c59320c582"},"stringHex":"c3a0c3a9c3a620c59320c582","trace":[0]}
+{"id":"upper-latin","status":"ok","result":{"type":"string","hex":"c380c389c38620c59220c581"},"stringHex":"c380c389c38620c59220c581","trace":[0]}
+{"id":"lower-cyrillic","status":"ok","result":{"type":"string","hex":"d0b0d0b1d0b220d0b0d0b1d0b2"},"stringHex":"d0b0d0b1d0b220d0b0d0b1d0b2","trace":[0]}
+{"id":"upper-cyrillic","status":"ok","result":{"type":"string","hex":"d090d091d09220d090d091d092"},"stringHex":"d090d091d09220d090d091d092","trace":[0]}
+{"id":"lower-none","status":"ok","result":{"type":"none"},"stringHex":"6e6f6e65","trace":[0]}
+{"id":"upper-none","status":"ok","result":{"type":"none"},"stringHex":"6e6f6e65","trace":[0]}
+{"id":"lower-bool-true","status":"ok","result":{"type":"string","hex":"74727565"},"stringHex":"74727565","trace":[0]}
+{"id":"upper-bool-true","status":"ok","result":{"type":"string","hex":"54525545"},"stringHex":"54525545","trace":[0]}
+{"id":"lower-bool-false","status":"ok","result":{"type":"string","hex":"66616c7365"},"stringHex":"66616c7365","trace":[0]}
+{"id":"upper-bool-false","status":"ok","result":{"type":"string","hex":"46414c5345"},"stringHex":"46414c5345","trace":[0]}
+{"id":"lower-integer","status":"ok","result":{"type":"string","hex":"2d313233"},"stringHex":"2d313233","trace":[0]}
+{"id":"upper-integer","status":"ok","result":{"type":"string","hex":"2d313233"},"stringHex":"2d313233","trace":[0]}
+{"id":"lower-double","status":"ok","result":{"type":"string","hex":"312e323530303030"},"stringHex":"312e323530303030","trace":[0]}
+{"id":"upper-double","status":"ok","result":{"type":"string","hex":"312e323530303030"},"stringHex":"312e323530303030","trace":[0]}
+{"id":"lower-regex","status":"ok","result":{"type":"string","hex":"3c72656765783e"},"stringHex":"3c72656765783e","trace":[0]}
+{"id":"upper-regex","status":"ok","result":{"type":"string","hex":"3c52454745583e"},"stringHex":"3c52454745583e","trace":[0]}
+{"id":"lower-file","status":"ok","result":{"type":"string","hex":"3c66696c65636f6e74656e743a6162633e"},"stringHex":"3c66696c65636f6e74656e743a6162633e","trace":[0]}
+{"id":"upper-file","status":"ok","result":{"type":"string","hex":"3c46494c45434f4e54454e543a4142433e"},"stringHex":"3c46494c45434f4e54454e543a4142433e","trace":[0]}
+{"id":"lower-shallow","status":"ok","result":{"type":"array","items":[{"type":"string","hex":"616263"},{"type":"none"},{"type":"string","hex":"74727565"},{"type":"string","hex":"34"},{"type":"string","hex":"5bc4b0cf832c206e6f6e655d"}]},"stringHex":"5b6162632c206e6f6e652c20747275652c20342c205bc4b0cf832c206e6f6e655d5d","trace":[0]}
+{"id":"upper-shallow","status":"ok","result":{"type":"array","items":[{"type":"string","hex":"414243"},{"type":"none"},{"type":"string","hex":"54525545"},{"type":"string","hex":"34"},{"type":"string","hex":"5bc4b0cea32c204e4f4e455d"}]},"stringHex":"5b4142432c206e6f6e652c20545255452c20342c205bc4b0cea32c204e4f4e455d5d","trace":[0]}
+{"id":"lower-empty-array","status":"ok","result":{"type":"array","items":[]},"stringHex":"5b5d","trace":[0]}
+{"id":"upper-empty-array","status":"ok","result":{"type":"array","items":[]},"stringHex":"5b5d","trace":[0]}
+{"id":"lower-throws","status":"error","error":"injected-evaluation-error","trace":[0]}
+{"id":"upper-throws","status":"error","error":"injected-evaluation-error","trace":[0]}
+{"id":"lower-zero","status":"error","error":"tolower function requires at least 1 argument","trace":[]}
+{"id":"lower-null","status":"error","error":"tolower function requires at least 1 argument","trace":[]}
+{"id":"lower-two","status":"error","error":"tolower function requires at most 1 argument","trace":[]}
+{"id":"upper-zero","status":"error","error":"toupper function requires at least 1 argument","trace":[]}
+{"id":"upper-null","status":"error","error":"toupper function requires at least 1 argument","trace":[]}
+{"id":"upper-two","status":"error","error":"toupper function requires at most 1 argument","trace":[]}
+{"id":"lower-substr-continuation","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-substr-continuation","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-substr-lead","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-substr-lead","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-truncated-three","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-truncated-three","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-truncated-four","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-truncated-four","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-stray-continuations","status":"ok","result":{"type":"string","hex":"efbfbfefbfbf"},"stringHex":"efbfbfefbfbf","trace":[0]}
+{"id":"upper-stray-continuations","status":"ok","result":{"type":"string","hex":"efbfbfefbfbf"},"stringHex":"efbfbfefbfbf","trace":[0]}
+{"id":"lower-overlong","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-overlong","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-surrogate","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-surrogate","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-too-high","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-too-high","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-bad-sequence-ascii","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"upper-bad-sequence-ascii","status":"ok","result":{"type":"string","hex":"efbfbf"},"stringHex":"efbfbf","trace":[0]}
+{"id":"lower-ff-ascii","status":"ok","result":{"type":"string","hex":"efbfbf6162"},"stringHex":"efbfbf6162","trace":[0]}
+{"id":"upper-ff-ascii","status":"ok","result":{"type":"string","hex":"efbfbf4142"},"stringHex":"efbfbf4142","trace":[0]}
+{"id":"lower-nul-bad-nul","status":"ok","result":{"type":"string","hex":"00efbfbf"},"stringHex":"00efbfbf","trace":[0]}
+{"id":"upper-nul-bad-nul","status":"ok","result":{"type":"string","hex":"00efbfbf"},"stringHex":"00efbfbf","trace":[0]}

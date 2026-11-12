@@ -1,0 +1,15 @@
+{
+  "nativeParserExecuted": false,
+  "nativeDirectiveExecuted": false,
+  "publicProducerCompiled": false,
+  "publicProducerExecuted": false,
+  "nativeTypedValuesObserved": true,
+  "publicTypedValuesObserved": false,
+  "contextEquivalent": false,
+  "sourceScope": "Unmodified DurationLiteral ctor/inline Evaluate/serializer/Negate optimizer and evaluation/ArrayFunc/Aggregate node connection only.",
+  "excluded": "Nonfinite or >=2^63 scaled casts, signed-negation overflow, nonASCII ctype, typed timestamp/regex, real parser/directive/caller equivalence.",
+  "definedRoundingRows": 4,
+  "catch0Rows": 2,
+  "originalStdoutBytesRetained": true,
+  "proofLocation": "Separate sibling proof directory supplied explicitly to reader."
+}

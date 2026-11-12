@@ -62,6 +62,8 @@ public sealed partial class ComparisonPane
 
     internal void WorkingTextSaved()
     {
+        // 内包Imageは原本rootとleafを再読込みする比較recipeで、共有作業版を参照しない。
+        if (_projectMetadata.Mode == "Image" && ProjectInputs.HasArchives(_projectMetadata)) return;
         var changed = false;
         var selectedView = _views.SelectedItem;
         for (var side = 0; side <= 2; side++)

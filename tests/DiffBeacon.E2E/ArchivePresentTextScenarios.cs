@@ -11,6 +11,7 @@ internal static class ArchivePresentTextScenarios
         var work = Path.Combine(fixtures, "archive-present-text"); Directory.CreateDirectory(work);
         var gui = Path.Combine(work, "gui");
         await run("archive-present-gui", 0, false, ["--self-test", gui, "--archive-sources-only"]);
+        await ArchiveImageIndependent();
         var proof = await Independent("first", null);
         if (proof is null) return;
         var workspace = proof.RootElement.GetProperty("workspace").GetString()!;
@@ -76,6 +77,18 @@ internal static class ArchivePresentTextScenarios
             File.WriteAllText(Path.Combine(work, name + "-independent.stdout.txt"), text); File.WriteAllText(Path.Combine(work, name + "-independent.stderr.txt"), errors);
             check("archive present independent " + name, process.ExitCode == 0, text + errors);
             return process.ExitCode == 0 ? JsonDocument.Parse(text) : null;
+        }
+
+        async Task ArchiveImageIndependent()
+        {
+            var info = new ProcessStartInfo(python) { RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false };
+            foreach (var argument in new[] { "-X", "utf8", Path.GetFullPath("tests/Fixtures/Images/verify_archive_child.py"),
+                Path.GetFullPath(gui), Path.GetFullPath("tests/Fixtures/Images/expectations.json") }) info.ArgumentList.Add(argument);
+            using var process = Process.Start(info)!; var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
+            await process.WaitForExitAsync(); var text = await stdout; var errors = await stderr;
+            File.WriteAllText(Path.Combine(work, "archive-image-independent.stdout.txt"), text);
+            File.WriteAllText(Path.Combine(work, "archive-image-independent.stderr.txt"), errors);
+            check("archive image independent full-frame verification", process.ExitCode == 0, text + errors);
         }
     }
     private static string Hash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));

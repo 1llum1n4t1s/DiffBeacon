@@ -1,0 +1,62 @@
+{
+  "files": {
+    ".gitattributes": {
+      "size": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    "adapter.cpp": {
+      "size": 3923,
+      "sha256": "d68a3dc2139a7a26d1dee621d1c654ede14b4d115e08108225d320529ef072d9"
+    },
+    "capture.json": {
+      "size": 3636,
+      "sha256": "dc19c346166c8c7de3eb15d7149592fcab73c315a417ccffd8303d511dca4719"
+    },
+    "cases.json": {
+      "size": 56870,
+      "sha256": "9b71acb9b99b1d656738ee1639c9caaf0ce667b906c41818381a71a35872e184"
+    },
+    "FAILURE-MATRIX.md": {
+      "size": 1438,
+      "sha256": "2e60c38c307e20b1b641c4125eb1f12c4567fcc3ae08e38fd7e4d249778734e9"
+    },
+    "golden.ndjson": {
+      "size": 51711,
+      "sha256": "52d07df1d5b0da74350a3d946c344ea8e6fc5aada7513fdedebccb852c2e125a"
+    },
+    "original/COPYING": {
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    "original/FilterExpressionNodes.cpp": {
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    "original/FilterExpressionNodes.h": {
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    "original/Poco-LICENSE": {
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    "provenance.json": {
+      "size": 2207,
+      "sha256": "68a1c62329ee8837f422116bc94b604d6fdf382cf1e7a2bae46f8db933cdd78f"
+    },
+    "README.md": {
+      "size": 5244,
+      "sha256": "00561e094ae89412f1d5991da4b0299a0fb94e9bb883d0cc3d7d8242c7924340"
+    },
+    "reproduce.py": {
+      "size": 4905,
+      "sha256": "82f53677c194bcb9397a0971da877bd92390e864e4e18deb3dab5e7775063ee1"
+    },
+    "verify.py": {
+      "size": 5684,
+      "sha256": "d58e4034b4ae5a962fa101a10c1a4baaf1a026223373079113d4843b6a0f02de"
+    }
+  },
+  "caseCount": 246,
+  "format": "typed-value-native-oracle-v1"
+}

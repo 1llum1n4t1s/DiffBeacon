@@ -24,8 +24,15 @@ public static class DirectoryTextComparer
         ComparisonOptions? options = null, CancellationToken cancellationToken = default)
         => CompareDetailed(left, middle, right, options, cancellationToken).Result;
 
+    public static DirectoryTextThreeWayResult CompareThreeWayWithSourcePaths(string left, string middle, string right,
+        TextComparisonSourcePaths sourcePaths, ComparisonOptions? options = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sourcePaths);
+        return CompareDetailed(left, middle, right, options, cancellationToken, sourcePaths).Result;
+    }
+
     internal static DirectoryTextAnalysis CompareDetailed(string left, string middle, string right,
-        ComparisonOptions? options, CancellationToken cancellationToken)
+        ComparisonOptions? options, CancellationToken cancellationToken, TextComparisonSourcePaths? sourcePaths = null)
     {
         ArgumentNullException.ThrowIfNull(left);
         ArgumentNullException.ThrowIfNull(middle);
@@ -36,8 +43,11 @@ public static class DirectoryTextComparer
             TextLines.Parse(right, cancellationToken) };
         var preprocessor = new TextPreprocessor(options, cancellationToken);
         var ignoredPattern = options.CreateIgnoredLineRegex();
-        var texts = lines.Select(value => TextDiffer.Prepare(value, options, preprocessor,
-            ignoredPattern, cancellationToken)).ToArray();
+        var context = new TextFilterContext(options, cancellationToken, sourcePaths);
+        var sources = new[] { left, middle, right };
+        var panes = new[] { TablePaneMask.Left, TablePaneMask.Base, TablePaneMask.Right };
+        var texts = lines.Select((value, side) => TextDiffer.Prepare(value, options, preprocessor,
+            ignoredPattern, cancellationToken, context.Transform(sources[side], value, panes[side]))).ToArray();
         var budget = new GnuLineMatcher.LineBudget(options.MaxFallbackComparisons, cancellationToken);
         var pairs = new IReadOnlyList<DirectoryTextRange>[3];
         var equal = new bool[3];

@@ -1,0 +1,51 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "referenceArchiveSha256": "18ed25d74eba5e151bf5fd1a2e811b2490af2ce4c3e39b273a2d563abe8da4e7",
+  "sources": [
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+      "gitBlob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833",
+      "origin": "fixed-reference-zip",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736",
+      "gitBlob": "c5533753a5d4f3200f077e0302cc28c2f3871cc9",
+      "origin": "fixed-reference-zip",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "LICENSE.md",
+      "size": 17895,
+      "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e",
+      "gitBlob": "28fbecabf5c0c4489cdd781e297cdf1c4cd7fde6",
+      "origin": "fixed-reference-zip",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FilterEngine/FilterLexer.re",
+      "size": 3901,
+      "sha256": "36b06326ab1d6569b74a64edc071829cbe314d3543b7f6b70249e4d4d244a1c6",
+      "gitBlob": "6163d1a1f5433de3c81eb214530c5f825f694290",
+      "origin": "fixed-git-blob-additional-original",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FilterEngine/FilterLexer.h",
+      "size": 1032,
+      "sha256": "6d84235dd0ac7be1deadab88e77fe5fb548464ebc93569259cc61b4d5b0ef906",
+      "gitBlob": "6891df502b9d7d8baa5a965ca52625ba7837e6cf",
+      "origin": "fixed-git-blob-additional-original",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    }
+  ]
+}

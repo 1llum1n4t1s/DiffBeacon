@@ -11,7 +11,9 @@ import zipfile
 
 def inventory(root):
     files, directories = [], []
-    for base, names, leaves in os.walk(root, followlinks=False):
+    def walk_error(error):
+        raise error
+    for base, names, leaves in os.walk(root, followlinks=False, onerror=walk_error):
         for name in sorted(names + leaves):
             path = Path(base, name)
             info = path.lstat()

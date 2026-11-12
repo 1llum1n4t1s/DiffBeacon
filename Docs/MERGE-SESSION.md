@@ -2,7 +2,7 @@
 
 GUIは固定 `feature/4pane-merge` 原典の分類・見かけ行配置・採用順序を参照し、二者、独立三者、祖先三者を分ける。中央が比較対象の場合は祖先として自動解決しない。二者に中央／祖先の採用はない。
 
-`FourPaneGenerator` は固定GNU行算法を使う。製品の `DecodedBody` は復号済み本文とBOMを区別し、本文先頭のU+FEFFを保持する。比較キーは既存 `ComparisonOptions.NormalizeKey` と共通で、Trim、Unicodeの大小文字・空白設定を原文へ適用しない。`LegacyRawUtf8` は採取したGNU原本との照合用であり、通常GUIの入力経路には使わない。
+`FourPaneGenerator` は固定GNU行算法を使う。製品の `DecodedBody` は復号済み本文とBOMを区別し、本文先頭のU+FEFFを保持する。比較キーは既存 `ComparisonOptions.NormalizeKey` と共通で、Trim、Unicodeの大小文字・空白設定を原文へ適用しない。`LegacyRawUtf8` は採取したGNU原本との照合用であり、通常GUIの入力経路には使わない。有効な `LineTransformRules` を指定すると拒否する。
 
 `FourPaneAlignment` は元diffの文脈と全原文を保持してEOF・ghost・実空行を同期する。`FourPaneMaterialization` は生成済み作業量と保持予約を引き継ぎ、配置、原文対応、結果、祖先自動採用の準備を合計予算内で行う。上限・取消・不正設定では候補を採用せず、旧表示・本文・履歴を保持する。保持予約は実ヒープ使用量の測定値ではない。
 

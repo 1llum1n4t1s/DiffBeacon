@@ -1,0 +1,29 @@
+[
+  {
+    "path": "Src/FilterEngine/FilterExpression.cpp",
+    "sourceSha256": "c12f272bf860632a187b3260faa194b00b963da1a72017413cb53f003254d383",
+    "startLine": 98,
+    "endLine": 125,
+    "spanSha256": "6c49310c0fd50cedd029ebe012d8130eb86103ebde98910f798ca24fb764f4b7",
+    "spanUtf8": "\t}\r\n\telse if (const auto funcNode = dynamic_cast<const FunctionNode*>(node))\r\n\t{\r\n\t\tfor (const auto& arg : *funcNode->args)\r\n\t\t\ttraverseExprTree(arg, func);\r\n\t}\r\n}\r\n\r\nstatic void collectPropertyNames(const ExprNode* root, std::vector<std::string>& names)\r\n{\r\n\ttraverseExprTree(root, [&](const ExprNode* node)\r\n\t\t{\r\n\t\t\tconst auto funcNode = dynamic_cast<const FunctionNode*>(node);\r\n\t\t\tif (!funcNode) return;\r\n\r\n\t\t\tconst auto& fn = funcNode->functionName;\r\n\t\t\tif (fn == \"prop\" || fn == \"leftprop\" || fn == \"middleprop\" || fn == \"rightprop\")\r\n\t\t\t{\r\n\t\t\t\tif (funcNode->args && funcNode->args->size() == 1)\r\n\t\t\t\t{\r\n\t\t\t\t\tif (const auto strLit = dynamic_cast<const StringLiteral*>((*funcNode->args)[0]))\r\n\t\t\t\t\t{\r\n\t\t\t\t\t\tif (std::find(names.begin(), names.end(), strLit->value) == names.end())\r\n\t\t\t\t\t\t\tnames.push_back(strLit->value);\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n\t\t\t}\r\n\t\t});\r\n",
+    "phase": "source-only property discovery/constructor/host preparation; not native proof execution"
+  },
+  {
+    "path": "Src/DirDoc.cpp",
+    "sourceSha256": "6d8aea88b4f1bc76af2548ae718ace93cf804eeea2efba1556087ad3714cf32e",
+    "startLine": 312,
+    "endLine": 322,
+    "spanSha256": "d30cd09c6c38d70140144f9a4f6a8a7d61d74e8fde1d604bb7f67de734c2b859",
+    "spanUtf8": "\tfor (const auto& name : pGlobalFileFilter->GetPropertyNames())\r\n\t\tnameSet.insert(name);\r\n\tif (pCtxt->m_pAdditionalCompareExpression)\r\n\t\tfor (const auto& name : pCtxt->m_pAdditionalCompareExpression->GetPropertyNames())\r\n\t\t\tnameSet.insert(ucr::toTString(name));\r\n\tif (pCtxt->m_pRenameMoveDetection)\r\n\t\tfor (const auto& name : pCtxt->m_pRenameMoveDetection->GetRenameMoveKeyExpression()->GetPropertyNames())\r\n\t\t\tnameSet.insert(ucr::toTString(name));\r\n\tstd::vector<String> names(nameSet.begin(), nameSet.end());\r\n\tpCtxt->m_pPropertySystem.reset(new PropertySystem(names));\r\n\r\n",
+    "phase": "source-only property discovery/constructor/host preparation; not native proof execution"
+  },
+  {
+    "path": "Src/FilterEngine/FunctionNodeProperty.cpp",
+    "sourceSha256": "a25fa0e57c83012c49f5d2eb6f3a60f8a7a90c59e1d1fbf0db1682e658c4dbf1",
+    "startLine": 95,
+    "endLine": 108,
+    "spanSha256": "9599309ef75569f8d7f170ad11f30a91495874e8b2fd51856d5412e85763f5df",
+    "spanUtf8": "\r\nvoid FunctionNode::SetPropFunc(int side, int prefixlen, bool singlePane)\r\n{\r\n\tif (!args || args->size() != 1)\r\n\t\tthrow InvalidArgumentCountError(functionName + \" function requires 1 argument\");\r\n\tauto strLit = dynamic_cast<StringLiteral*>((*args)[0]);\r\n\tif (!strLit)\r\n\t\tthrow InvalidArgumentError(functionName + \" function requires a string literal as argument\");\r\n\tString propName = ucr::toTString(strLit->value);\r\n\tPropertySystem propSys({ propName });\r\n\tconst int propindex = propSys.GetPropertyIndex(propName);\r\n\tif (propindex < 0)\r\n\t\tthrow InvalidPropertyNameError(strLit->value);\r\n\tif (prefixlen == 0 && !singlePane)\r\n",
+    "phase": "source-only property discovery/constructor/host preparation; not native proof execution"
+  }
+]

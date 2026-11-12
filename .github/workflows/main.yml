@@ -32,7 +32,9 @@ jobs:
           submodules: false
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
       - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
@@ -40,8 +42,12 @@ jobs:
         run: |
           $runRoot = Join-Path $env:RUNNER_TEMP 'Codex/DiffBeacon/ci-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}'
           "DIFFBEACON_RUN_ROOT=$runRoot" >> $env:GITHUB_ENV
-      - name: Build managed projects
-        run: dotnet build DiffBeacon.slnx -c Release
+      - name: Build verification projects
+        run: |
+          dotnet build tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet build tests/DiffBeacon.FakeProvider/DiffBeacon.FakeProvider.csproj -c Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify macOS SDK file kind ABI
         if: startsWith(matrix.rid, 'osx-')
         run: pwsh -NoProfile -File build/Build-FolderMacReference.ps1 -OutputDirectory '${{ env.DIFFBEACON_RUN_ROOT }}/folder-reference'
@@ -79,7 +85,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload verification evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: verification-${{ matrix.rid }}
           path: |
@@ -92,7 +98,7 @@ jobs:
             ${{ env.DIFFBEACON_RUN_ROOT }}/evidence.json
           if-no-files-found: warn
       - name: Upload native application
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: DiffBeacon-${{ matrix.rid }}
           path: ${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/

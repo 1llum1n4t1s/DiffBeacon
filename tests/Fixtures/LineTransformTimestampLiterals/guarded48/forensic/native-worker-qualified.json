@@ -1,0 +1,369 @@
+{
+  "qualified": true,
+  "checkedUtc": "2026-10-12T09:16:38.561460+00:00",
+  "scope": "original-ctor-evaluate-timestamp-arm-only-with-adapter-utcTime-guard",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "originalSourceCount": 375,
+  "originalSourceCountIncludesAtomicTu": true,
+  "originalRawSpans": 12,
+  "boundaryRawSpans": 3,
+  "originalSourcesGitBlobsAndRawBytesQualified": true,
+  "inheritedObjectCount": 35,
+  "inheritedObjectShaAndIdentityBeforeAfterQualified": true,
+  "newCompile": 1,
+  "newLink": 1,
+  "nativeRuns": 2,
+  "casesPerRun": 48,
+  "publicLexerParserWholeAstFullToStringOtherArmsQualified": false,
+  "publicTypedParserObservationQualified": false,
+  "sourceQualifierBound": "real original DateTimeLiteral string/Timestamp ctor, real ValueType/Evaluate, unchanged Timestamp serializer arm only when adapter observed-epoch guard permits; public parser/full AST not qualified",
+  "guardAdapterOnly": true,
+  "unsafeEpochNeverSentToSerializerArmQualified": true,
+  "unsafeCount": 6,
+  "unsafeCases": [
+    {
+      "id": "raw-int64-min",
+      "callerKind": "rawTimestampCtor",
+      "status": "ok",
+      "epochMicrosecondsInt64Decimal": "-9223372036854775808",
+      "serializationRequested": false,
+      "serializationStatus": "not-requested-unsafe-original-utcTime",
+      "timestampArmSerializedUtf8Hex": "",
+      "errorPhase": "",
+      "errorMessageHex": ""
+    },
+    {
+      "id": "raw-int64-max",
+      "callerKind": "rawTimestampCtor",
+      "status": "ok",
+      "epochMicrosecondsInt64Decimal": "9223372036854775807",
+      "serializationRequested": false,
+      "serializationStatus": "not-requested-unsafe-original-utcTime",
+      "timestampArmSerializedUtf8Hex": "",
+      "errorPhase": "",
+      "errorMessageHex": ""
+    },
+    {
+      "id": "string-locale-1900",
+      "callerKind": "stringCtor",
+      "status": "ok",
+      "epochMicrosecondsInt64Decimal": "1842465483615955161",
+      "serializationRequested": false,
+      "serializationStatus": "not-requested-unsafe-original-utcTime",
+      "timestampArmSerializedUtf8Hex": "",
+      "errorPhase": "",
+      "errorMessageHex": ""
+    },
+    {
+      "id": "string-locale-1969",
+      "callerKind": "stringCtor",
+      "status": "ok",
+      "epochMicrosecondsInt64Decimal": "1844674374969955161",
+      "serializationRequested": false,
+      "serializationStatus": "not-requested-unsafe-original-utcTime",
+      "timestampArmSerializedUtf8Hex": "",
+      "errorPhase": "",
+      "errorMessageHex": ""
+    },
+    {
+      "id": "string-locale-1970",
+      "callerKind": "stringCtor",
+      "status": "ok",
+      "epochMicrosecondsInt64Decimal": "1844674374970955161",
+      "serializationRequested": false,
+      "serializationStatus": "not-requested-unsafe-original-utcTime",
+      "timestampArmSerializedUtf8Hex": "",
+      "errorPhase": "",
+      "errorMessageHex": ""
+    },
+    {
+      "id": "string-embedded-nul-forensic-guard",
+      "callerKind": "stringCtor",
+      "status": "ok",
+      "epochMicrosecondsInt64Decimal": "1844674374970955161",
+      "serializationRequested": false,
+      "serializationStatus": "not-requested-unsafe-original-utcTime",
+      "timestampArmSerializedUtf8Hex": "",
+      "errorPhase": "",
+      "errorMessageHex": ""
+    }
+  ],
+  "statusCounts": {
+    "ok": 40,
+    "error": 8
+  },
+  "serializationStatusCounts": {
+    "not-requested-unsafe-original-utcTime": 6,
+    "completed": 34,
+    "not-reached": 8
+  },
+  "guardObservations": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\boundary-native-guard-observations.json",
+    "sha256": "4187c11461bfedccbf321f1239d9c8e3de829e4d3a98fea44d55eec566db3042",
+    "size": 18817
+  },
+  "sameSemantic": true,
+  "sameAmbient": true,
+  "ambientProfile": {
+    "userLcid": 1041,
+    "userLocaleUtf8Hex": "6a612d4a50",
+    "timezoneState": 0,
+    "timezoneStandardNameUtf8Hex": "e69db1e4baac2028e6a899e6ba96e6998229",
+    "timezoneBiasMinutes": -540,
+    "timezoneStandardBiasMinutes": 0,
+    "timezoneDaylightBiasMinutes": -60,
+    "pocoTimezoneTzdSeconds": 32400
+  },
+  "authority": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\execution-authority.json",
+    "sha256": "e922ff1d9accc9d5c61e4da605a4afe8926b581ef20d5e3ff9808d3651caed28",
+    "size": 2815
+  },
+  "supervisor": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\native_execution_supervisor.authoritative.py",
+    "sha256": "d4a8540cfb981eb598dedeb4c73d3bd02f3ff08074212053f00ea015a97b71f5",
+    "size": 23998
+  },
+  "wrapper": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\run_boundary_native_held.authoritative.py",
+    "sha256": "bc6fea30ed39629881dbf42fae2dbd7406c03e5058ad1c78c7728c2fa289f7e8",
+    "size": 7571
+  },
+  "launchContract": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\execution-launch-contract.json",
+    "sha256": "2b30936b90317bc56eb6c8e2cb2e0fb4a7013d1f3d3e75ff17c859fa4d5c6b28",
+    "size": 992
+  },
+  "plan": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\native-execution-plan.authoritative.json",
+    "sha256": "b3760e5a1f2d5703a62a7785b99bcd1007dc07a384b60b5af8bfc0f9b8eda53d",
+    "size": 222043
+  },
+  "GO": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\parent-exact-execution-go.json",
+    "sha256": "5323b07036d859e9a36e416516ac96075ef6c0d83afdbf6e21e921bcc5b69942",
+    "size": 1062
+  },
+  "sourceManifest": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\source-preflight-manifest.authoritative.json",
+    "sha256": "83e066a78914d1527b33952e1c0643495b34e64b64e261748a8292a1840eb435",
+    "size": 300871
+  },
+  "adapter": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\sources\\timestamp_boundary_adapter.cpp",
+    "sha256": "fc7c9b7506077035a72e897cecc4b0d1e730313a7e27b6aa983bceadf73c8454",
+    "size": 11451
+  },
+  "newObject": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\obj\\timestamp-boundary-adapter.obj",
+    "sha256": "444340f87e9eded613b3f2e6bfc05c4b02ff21f19b6944bee593b6ff25efe9c4",
+    "size": 468825,
+    "identity": {
+      "volumeSerial": 6510931,
+      "fileId": 844424932676979
+    }
+  },
+  "exe": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\exe\\timestamp-boundary-capturer.exe",
+    "sha256": "139c7b52697e2dc6f274a45671eb69573e364f368f7e88bc50663d6bc28cc89c",
+    "size": 1190400,
+    "identity": {
+      "volumeSerial": 6510931,
+      "fileId": 1407374886098295
+    }
+  },
+  "reader": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\read_boundary_native_capture.py",
+    "sha256": "4c7d85e4abc9fce13d2cc2cad2cd0c8714e7bd32f306eb0f0de6b238022083d5",
+    "size": 13926
+  },
+  "supervisorReceipt": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\wrapper-execution-proof\\supervisor-held-receipt.json",
+    "sha256": "f8ef9047e4ff7c1a7dd87c4ad31ff239f7c0cf8471171c98089c3d1b971435d7",
+    "size": 1739
+  },
+  "supervisorPid": 25140,
+  "supervisorBirthFileTime": 134362700473213597,
+  "supervisorOsExitFileTime": 134362700498705971,
+  "heldBirthOsExit0BothEOFQualified": true,
+  "receipts": [
+    {
+      "receipt": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\compile-boundary-adapter.receipt.json",
+        "sha256": "d39e6cbcabb2a819a8e812e9dc7234102faac97c83cda72bfbc2bad86158bd64",
+        "size": 6308
+      },
+      "id": "compile-boundary-adapter",
+      "pid": 32288,
+      "birthFileTime": 134362700479670808,
+      "osExitFileTime": 134362700490593638,
+      "osExitCode": 0,
+      "heldBirthAndOsExitBothEOF": true,
+      "stdout": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\compile-boundary-adapter.stdout.bin",
+        "sha256": "87c0b1fdded5bf4d3d3abcfba77f92ba8575a666e4491bcebabf7803039108c2",
+        "size": 32
+      },
+      "stderr": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\compile-boundary-adapter.stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "outputs": [
+        {
+          "path": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\obj\\timestamp-boundary-adapter.obj",
+          "size": 468825,
+          "sha256": "444340f87e9eded613b3f2e6bfc05c4b02ff21f19b6944bee593b6ff25efe9c4"
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\link-native.receipt.json",
+        "sha256": "37ff25ca22d25c4294ef4c0c1f46ca66ad5e61e7aabcf722a07f7682b9d79a55",
+        "size": 7265
+      },
+      "id": "link-native",
+      "pid": 20488,
+      "birthFileTime": 134362700492688871,
+      "osExitFileTime": 134362700495012493,
+      "osExitCode": 0,
+      "heldBirthAndOsExitBothEOF": true,
+      "stdout": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\link-native.stdout.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "stderr": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\link-native.stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "outputs": [
+        {
+          "path": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\exe\\timestamp-boundary-capturer.exe",
+          "size": 1190400,
+          "sha256": "139c7b52697e2dc6f274a45671eb69573e364f368f7e88bc50663d6bc28cc89c"
+        }
+      ]
+    },
+    {
+      "receipt": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-1.receipt.json",
+        "sha256": "fd0cba9eaf72d4f6c4ac68ed79d3782fe1404322d43a38c6757fa7f79b775c23",
+        "size": 1827
+      },
+      "id": "native-run-1",
+      "pid": 31180,
+      "birthFileTime": 134362700497246293,
+      "osExitFileTime": 134362700497412427,
+      "osExitCode": 0,
+      "heldBirthAndOsExitBothEOF": true,
+      "stdout": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-1.stdout.bin",
+        "sha256": "9702c81150a95293b2de20b27fb968a0f4fb33b890259d14ad4480012fc71d8f",
+        "size": 57623
+      },
+      "stderr": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-1.stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "outputs": []
+    },
+    {
+      "receipt": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-2.receipt.json",
+        "sha256": "10d408ea3d40c4e427bd1a0f19646f6c450fa2cab149b89abb25244d7a16238e",
+        "size": 1827
+      },
+      "id": "native-run-2",
+      "pid": 22740,
+      "birthFileTime": 134362700497952726,
+      "osExitFileTime": 134362700498063195,
+      "osExitCode": 0,
+      "heldBirthAndOsExitBothEOF": true,
+      "stdout": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-2.stdout.bin",
+        "sha256": "d82712e9020c7a957653648a9c55eb88a6ece86820538ece1b5435b39391e5dc",
+        "size": 57623
+      },
+      "stderr": {
+        "path": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\actual-proof\\native-run-2.stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "outputs": []
+    }
+  ],
+  "canonicalRoots": [
+    {
+      "logical": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710",
+      "canonical": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710",
+      "samefile": true,
+      "logicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 7318349396964025
+      },
+      "canonicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 7318349396964025
+      },
+      "aliasQualification": "known OpenAI.Codex LocalCache Local alias, samefile/volumeFileId measured",
+      "logicalAndCanonicalAncestorReparseChecked": true,
+      "kind": "stage"
+    },
+    {
+      "logical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710",
+      "canonical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710",
+      "samefile": true,
+      "logicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 5348024560047315
+      },
+      "canonicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 5348024560047315
+      },
+      "aliasQualification": "identity path",
+      "logicalAndCanonicalAncestorReparseChecked": true,
+      "kind": "work"
+    },
+    {
+      "logical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\obj",
+      "canonical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\obj",
+      "samefile": true,
+      "logicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 1688849862808877
+      },
+      "canonicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 1688849862808877
+      },
+      "aliasQualification": "identity path",
+      "logicalAndCanonicalAncestorReparseChecked": true,
+      "kind": "work"
+    },
+    {
+      "logical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\exe",
+      "canonical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\exe",
+      "samefile": true,
+      "logicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 1688849862808878
+      },
+      "canonicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 1688849862808878
+      },
+      "aliasQualification": "identity path",
+      "logicalAndCanonicalAncestorReparseChecked": true,
+      "kind": "work"
+    }
+  ],
+  "allFutureExpectedNull": true,
+  "goldenGenerated": false,
+  "productGitOrCleanupPerformed": false,
+  "originalOldSourceObjProofOverwritten": false
+}

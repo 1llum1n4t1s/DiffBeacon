@@ -23,7 +23,7 @@ python -B artifacts/local/folder-threeway-next/text-next73/input266/verify.py --
 親の配置/build後の別process検証候補:
 
 ```powershell
-dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-text-inputs artifacts/verification/input-selection
+dotnet Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll --self-test-independent-text-inputs artifacts/verification/input-selection
 dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/input-selection --independent-text-inputs-only
 ```
 

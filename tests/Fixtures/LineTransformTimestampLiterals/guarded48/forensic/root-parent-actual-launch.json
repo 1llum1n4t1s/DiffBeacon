@@ -1,0 +1,11 @@
+{
+  "pid": 24632,
+  "birthUtc": "2026-10-12T09:19:46.1790269Z",
+  "arguments": [
+    "-B",
+    "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\ltf1011\\Verify-Timestamp-Guarded48-Parent-v2.py",
+    "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710"
+  ],
+  "scriptSha256": "D24E5D1736F7F8850BFFCBE41EEB93657A043E48C48D1200F00543B08F6C3D84",
+  "heldHandle": true
+}

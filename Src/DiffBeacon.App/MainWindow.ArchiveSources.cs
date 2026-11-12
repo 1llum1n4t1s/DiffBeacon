@@ -14,7 +14,12 @@ public sealed partial class MainWindow
         if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
         var container = request.Mode == ArchiveEntryOpenMode.Archive
             || request.Mode == ArchiveEntryOpenMode.Auto && ArchivePanel.Supports(request.Row.Path);
-        var mode = container ? "Archive" : request.Mode == ArchiveEntryOpenMode.Binary ? "Binary" : "Text";
+        var image = request.Mode == ArchiveEntryOpenMode.Image
+            || request.Mode == ArchiveEntryOpenMode.Auto && !container && SpecializedViews.IsImage(request.Row.Path);
+        if (image && (request.Row.Left is null || request.Row.Right is null
+            || request.LeftMissingEntryChain is not null || request.RightMissingEntryChain is not null))
+            throw new InvalidDataException("画像比較には左右の実在する内包画像が必要です。");
+        var mode = container ? "Archive" : image ? "Image" : request.Mode == ArchiveEntryOpenMode.Binary ? "Binary" : "Text";
         var parentProject = parent.CaptureProject();
         bool InheritedReadOnly(int side) => ProjectInputs.Archive(parentProject, side) is { } typed
             ? typed.InheritedReadOnly ?? true : side == 0 ? parentProject.LeftReadOnly : parentProject.RightReadOnly;
@@ -27,13 +32,14 @@ public sealed partial class MainWindow
             EntryChain = missing is null && present && container ? source.EntryChain.Append(request.Row.Path).ToArray() : source.EntryChain.ToArray(),
             LeafEntry = missing is null && present && !container ? request.Row.Path : null, RootSha256 = source.RootSha256,
             MissingEntryChain = missing is not null ? missing.Append(request.Row.Path).ToArray() : present ? null : [request.Row.Path],
-            InheritedReadOnly = InheritedReadOnly(side)
+            InheritedReadOnly = image || InheritedReadOnly(side)
         };
         var project = new ComparisonProject
         {
             Mode = mode, LeftArchiveInput = Input(request.LeftSource, request.LeftMissingEntryChain, request.Row.Left is not null, 0),
             RightArchiveInput = Input(request.RightSource, request.RightMissingEntryChain, request.Row.Right is not null, 2),
-            LeftReadOnly = true, RightReadOnly = true, LeftDescription = request.Row.Path, RightDescription = request.Row.Path
+            LeftReadOnly = true, RightReadOnly = true, LeftDescription = request.Row.Path, RightDescription = request.Row.Path,
+            ImageSettings = image ? ImageApplicationOptionsStore.DefaultViewSettings(ImageOptions.Current) : new()
         };
         ComparisonPane? candidate = new(this);
         string?[]? left = null, right = null;
@@ -47,7 +53,7 @@ public sealed partial class MainWindow
             right = Passwords(request.RightPasswords, project.RightArchiveInput!);
             parent.ArchiveChildReadStarting?.Invoke(); request.Token.ThrowIfCancellationRequested();
             if (!Current()) return;
-            if (!await candidate.CompareArchiveProjectAsync(request.Token, left, right, request.Mode == ArchiveEntryOpenMode.Auto && !container)) return;
+            if (!await candidate.CompareArchiveProjectAsync(request.Token, left, right, request.Mode == ArchiveEntryOpenMode.Auto && !container && !image)) return;
             parent.ArchiveChildReadyForAdoption?.Invoke(candidate);
             request.Token.ThrowIfCancellationRequested();
             if (!Current()) return;
@@ -135,8 +141,9 @@ public sealed partial class ComparisonPane
         ObjectDisposedException.ThrowIf(_disposed, this);
         var project = CaptureProject();
         if (!ProjectInputs.HasArchives(project)) throw new InvalidOperationException("内包入力を指定してください。");
-        if (project.Mode is not ("Text" or "Binary" or "Archive") || project.Mode == "Archive" && ProjectInputs.HasBase(project))
+        if (project.Mode is not ("Text" or "Binary" or "Image" or "Archive") || project.Mode is "Archive" or "Image" && ProjectInputs.HasBase(project))
             throw new InvalidDataException("内包入力の比較形式または祖先指定が不正です。");
+        ArchiveImageInputValidation.Validate(project);
         var options = ProjectReport.Options(project);
         ProjectInputs.EnsureWorkingFormat(project);
         var requestedIdentity = ArchiveComparisonIdentity(project);
@@ -145,6 +152,8 @@ public sealed partial class ComparisonPane
         var initialMerge = (_resultHost, _resultHost?.Session.Current.Version);
         var initialBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
         var initialBinaryVersion = initialBinary?.StateStamp;
+        var initialImage = _specialTab.Content as SpecializedViews.ImagePanel;
+        var initialImageSettings = initialImage?.CaptureSettings();
         InvalidateTextSave();
         _operation?.Cancel(); _operation?.Dispose();
         (_specialTab.Content as ArchivePanel)?.CancelOperation();
@@ -188,6 +197,16 @@ public sealed partial class ComparisonPane
                             project.LeftArchiveInput?.MissingEntryChain, project.RightArchiveInput?.MissingEntryChain);
                         BindArchivePanel((ArchivePanel)candidate);
                     }
+                    else if (project.Mode == "Image")
+                    {
+                        var a = await ProjectInputReader.ReadBytesAsync(project, 0, ImageComparisonEngine.MaximumFileBytes, token, passwords[0]);
+                        var b = await ProjectInputReader.ReadBytesAsync(project, 2, ImageComparisonEngine.MaximumFileBytes, token, passwords[2]);
+                        var leftSnapshot = await ImageComparisonEngine.OpenBytesAsync(a, token);
+                        var rightSnapshot = await ImageComparisonEngine.OpenBytesAsync(b, token);
+                        candidate = await SpecializedViews.ImagesFromSnapshotsAsync(leftSnapshot, rightSnapshot, null,
+                            [ProjectInputs.PathFor(project, 0), ProjectInputs.PathFor(project, 2)], project.ImageSettings,
+                            (_owner as MainWindow)?.ImageOptions, token, fixedReadOnly: true);
+                    }
                     else if (project.Mode == "Binary" || autoLeaf)
                     {
                         var maximum = autoLeaf ? 64 * 1024 * 1024 : 16 * 1024 * 1024;
@@ -216,11 +235,11 @@ public sealed partial class ComparisonPane
                         left = await ProjectInputReader.ReadTextAsync(project, 0, token, passwords: passwords[0]);
                         right = await ProjectInputReader.ReadTextAsync(project, 2, token, passwords: passwords[2]);
                     }
-                    else throw new InvalidDataException("内包入力はText、Binary、Archive形式で開いてください。");
+                    else throw new InvalidDataException("内包入力はText、Binary、Image、Archive形式で開いてください。");
                     if (project.Mode == "Text")
                     {
                         if (ProjectInputs.HasBase(project)) ancestor = await ProjectInputReader.ReadTextAsync(project, 1, token, passwords: passwords[1]);
-                        diff = await Task.Run(() => TextDiffer.Compare(left!.Text, right!.Text, options, token), token);
+                        diff = await Task.Run(() => TextDiffer.CompareWithSourcePaths(left!.Text, right!.Text, TextComparisonSources.ForProject(project, left, ancestor, right), options, token), token);
                     }
                     break;
                 }
@@ -246,9 +265,11 @@ public sealed partial class ComparisonPane
             }
             ArchiveSourceReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(_operation, operation) || ArchiveComparisonIdentity(CaptureProject()) != requestedIdentity
+                || !options.LineTransformRules.SequenceEqual(_projectMetadata.LineTransformRules)
                 || workingGeneration != _workingTexts.Generation || initialText != (LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, ResultEditor.Text)
                 || initialMerge != (_resultHost, _resultHost?.Session.Current.Version) || MergeHasPendingComposition
                 || initialBinary?.StateStamp != initialBinaryVersion || candidateTextRole != _textRole.SelectedIndex
+                || initialImage is not null && initialImage.CaptureSettings() != initialImageSettings
                 || inheritedIndependentStamp is not null && !Equals(inheritedIndependentStamp, TextAdoptionStamp()))
             {
                 if (!_disposed && ReferenceEquals(_operation, operation))
@@ -262,9 +283,16 @@ public sealed partial class ComparisonPane
             ResetMergeSession();
             if (candidate is not null)
             {
-                SetSpecialView(candidate); candidate = null;
+                SetSpecialView(candidate);
+                if (candidate is SpecializedViews.ImagePanel adoptedImage) adoptedImage.EnableApplicationDefaultsPersistence();
+                candidate = null;
                 _views.SelectedItem = _specialTab; CurrentDiff = null; _textSaveAllowed = false;
-                _status.Text = project.Mode == "Archive" ? "内包アーカイブを開きました。" : "内包バイナリを比較しました。";
+                _status.Text = project.Mode switch
+                {
+                    "Archive" => "内包アーカイブを開きました。",
+                    "Image" => "内包画像を読取り専用で比較しました。",
+                    _ => "内包バイナリを比較しました。"
+                };
             }
             else
             {
@@ -276,7 +304,13 @@ public sealed partial class ComparisonPane
                 ApplyDiff(diff!); _status.Text += " · 実在する内包Textは作業版へ保存し、原本アーカイブは保持します。";
                 if (ProjectInputs.HasMissing(project)) _status.Text += " · 不在側は未作成の文書です。編集できる側は外部ファイルへ保存してください。";
             }
-            _projectMetadata.Mode = project.Mode; _mode.SelectedIndex = project.Mode switch { "Text" => 1, "Binary" => 3, _ => 7 };
+            _projectMetadata.Mode = project.Mode; _mode.SelectedIndex = project.Mode switch { "Text" => 1, "Binary" => 3, "Image" => 4, _ => 7 };
+            if (project.Mode == "Image")
+            {
+                _projectMetadata.ImageSettings = project.ImageSettings with { };
+                _lastPackageComparison = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", 4, _provider.SelectedItem as string);
+                _pendingRestoredImageSettings = false;
+            }
             ConfigureArchiveInputControls();
             LeftEditor.IsReadOnly = project.LeftReadOnly || project.LeftArchiveInput is not null || !_textSaveAllowed;
             RightEditor.IsReadOnly = project.RightReadOnly || project.RightArchiveInput is not null || !_textSaveAllowed;

@@ -37,7 +37,7 @@ internal static partial class HeadlessFolderCopyChecks
 
     private static void CloseFolderMessages(MainWindow window)
     {
-        foreach (var dialog in window.OwnedWindows.Where(d => d.Title is "操作を完了できませんでした" or "コピーを完了できませんでした").ToArray())
+        foreach (var dialog in window.OwnedWindows.Where(d => d.Title is "操作を完了できませんでした" or "コピーを完了できませんでした" or "移動を完了できませんでした" or "ごみ箱へ移せませんでした").ToArray())
             dialog.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "閉じる")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
     }
 
@@ -75,9 +75,15 @@ internal static partial class HeadlessFolderCopyChecks
                     Dispatcher.UIThread.RunJobs();
                     var direction = layout.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection");
                     var copy = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "選択をすべてコピー"));
+                    var leftTrash = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "左側の差分ファイルをゴミ箱へ"));
+                    var rightTrash = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "右側の差分ファイルをゴミ箱へ"));
+                    var threeWayTrash = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "選択側の差分ファイルをゴミ箱へ"));
                     check("Folder Three Way controls visible " + minimum,
                         direction.IsEffectivelyVisible && copy.IsEffectivelyVisible && direction.Bounds.Width > 0 && List(layout).Bounds.Height >= 100,
                         $"direction={direction.Bounds};copy={copy.Bounds};list={List(layout).Bounds}");
+                    check("Folder trash buttons match three-way mode " + minimum,
+                        !leftTrash.IsVisible && !rightTrash.IsVisible && threeWayTrash.IsVisible,
+                        $"twoWay=({leftTrash.IsVisible},{rightTrash.IsVisible});threeWay={threeWayTrash.IsVisible}");
                     screenshot("folder-threeway-" + (minimum ? "minimum" : "normal") + ".png");
                 }
                 window.Width = beforeWidth; window.Height = beforeHeight; Dispatcher.UIThread.RunJobs();

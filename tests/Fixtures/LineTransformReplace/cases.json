@@ -1,0 +1,1951 @@
+[
+  {
+    "id": "null-args",
+    "args": [],
+    "caseSensitive": true,
+    "mode": "function-body-noopt",
+    "nullArgs": true
+  },
+  {
+    "id": "arity-0",
+    "args": [],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "arity-1",
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "arity-2",
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "arity-4",
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "throw",
+        "value": "arity must not evaluate"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "eager-throw-0",
+    "args": [
+      {
+        "type": "throw",
+        "value": "throw-0"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "eager-throw-1",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "throw",
+        "value": "throw-1"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "eager-throw-2",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "throw",
+        "value": "throw-2"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "needle-type-none",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "replacement-type-none",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "needle-type-integer",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "integer",
+        "value": 12
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "replacement-type-integer",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 12
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "needle-type-double",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "double",
+        "value": 1.5
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "replacement-type-double",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "double",
+        "value": 1.5
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "needle-type-bool",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "replacement-type-bool",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "needle-type-array",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "replacement-type-array",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "invalid-needle-eager-throw",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "throw",
+        "value": "replacement evaluated"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "subject-none",
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "1"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "subject-integer",
+    "args": [
+      {
+        "type": "integer",
+        "value": 1212
+      },
+      {
+        "type": "string",
+        "value": "1"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "subject-double",
+    "args": [
+      {
+        "type": "double",
+        "value": 1.5
+      },
+      {
+        "type": "string",
+        "value": "1"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "subject-bool",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "1"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "empty-array",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "mixed-array",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "aba"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "integer",
+            "value": 121
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "nested-array",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "aba"
+              },
+              {
+                "type": "none"
+              },
+              {
+                "type": "array",
+                "value": [
+                  {
+                    "type": "string",
+                    "value": "a"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "value": "aba"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "ascii-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "AbCaBc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "ascii-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "AbCaBc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-latin-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "ÉéÄä"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-latin-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "ÉéÄä"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-kelvin-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-kelvin-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-greek-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-greek-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-turkish-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "İiIı"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-turkish-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "İiIı"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-sharp-s-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "ßSSss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-sharp-s-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "ßSSss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-japanese-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "あいあ"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "unicode-japanese-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "あいあ"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "no-match-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "Z"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "no-match-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "Z"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "overlap-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aaaaa"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "overlap-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aaaaa"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "empty-subject-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "empty-subject-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "empty-needle-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "empty-needle-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "empty-both-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "empty-both-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "erase-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "erase-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "self-replacement-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "self-replacement-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "expanding-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "expanding-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "physical-newline-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\r\nb\nc\rd"
+      },
+      {
+        "type": "string",
+        "value": "\n"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "physical-newline-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\r\nb\nc\rd"
+      },
+      {
+        "type": "string",
+        "value": "\n"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "physical-crlf-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\r\nb\r\n"
+      },
+      {
+        "type": "string",
+        "value": "\r\n"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "physical-crlf-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\r\nb\r\n"
+      },
+      {
+        "type": "string",
+        "value": "\r\n"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "regex-meta-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": ". ^ $ * + ? { } [ ] \\ | ( )"
+      },
+      {
+        "type": "string",
+        "value": "."
+      },
+      {
+        "type": "string",
+        "value": "$0"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "regex-meta-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": ". ^ $ * + ? { } [ ] \\ | ( )"
+      },
+      {
+        "type": "string",
+        "value": "."
+      },
+      {
+        "type": "string",
+        "value": "$0"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "regex-meta-all-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "a.*[x]$(y)\\"
+      },
+      {
+        "type": "string",
+        "value": ".*[x]$(y)\\"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "regex-meta-all-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "a.*[x]$(y)\\"
+      },
+      {
+        "type": "string",
+        "value": ".*[x]$(y)\\"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-zero-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$0"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-zero-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$0"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-one-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$1"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-one-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$1"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-ten-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$10"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-ten-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$10"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-double-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$$"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-double-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$$"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-trailing-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X$"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-trailing-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X$"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-letter-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$x"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-letter-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$x"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-mixed-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$0:$1:$10:$$:$x:$"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "dollar-mixed-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$0:$1:$10:$$:$x:$"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "regex-group",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "regex",
+        "value": "(a)"
+      },
+      {
+        "type": "string",
+        "value": "$0/$1/$10/$$"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "regex-zero-width",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "regex",
+        "value": "(?=b)"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "regex-empty",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "regex",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "opt-empty",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-empty-subject",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-normal",
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "$0:$1"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-meta",
+    "args": [
+      {
+        "type": "string",
+        "value": "a.*b"
+      },
+      {
+        "type": "string",
+        "value": ".*"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-unicode",
+    "args": [
+      {
+        "type": "string",
+        "value": "Éé"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": false,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-dynamic-subject",
+    "args": [
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "abc"
+        }
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-dynamic-needle",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-arity-four",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      },
+      {
+        "type": "string",
+        "value": "ignored"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-non-string-replacement",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 12
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "invalid-regex-rejection",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "lazy-regex",
+        "value": "("
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "invalid-utf8-subject",
+    "args": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          255,
+          98
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "invalid-utf8-needle",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255
+        ]
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "raw-replacement-bytes",
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255
+        ]
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "embedded-nul-subject",
+    "args": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          97
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "embedded-nul-needle",
+    "args": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          97
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          0
+        ]
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "opt-empty-delete",
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "opt-empty-utf8",
+    "args": [
+      {
+        "type": "string",
+        "value": "あい"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "optimizer-selected-branch"
+  },
+  {
+    "id": "empty-needle-array",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "abc"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "function-body-noopt"
+  },
+  {
+    "id": "opt-empty-array",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "abc"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ],
+    "caseSensitive": true,
+    "mode": "optimizer-selected-branch"
+  }
+]

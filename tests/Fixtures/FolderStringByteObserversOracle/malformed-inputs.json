@@ -1,0 +1,138 @@
+{
+  "source": "FolderSubstrOracle/golden.ndjson",
+  "sourceSha256": "2b65c7145716f0ed30a9fd63e1523574989b70be011188c98bffbe2c9a175cc1",
+  "inputs": [
+    {
+      "sourceId": "bytes-165",
+      "hex": "805a"
+    },
+    {
+      "sourceId": "bytes-167",
+      "hex": "80"
+    },
+    {
+      "sourceId": "bytes-168",
+      "hex": "805a"
+    },
+    {
+      "sourceId": "bytes-169",
+      "hex": "80"
+    },
+    {
+      "sourceId": "bytes-177",
+      "hex": "c3"
+    },
+    {
+      "sourceId": "bytes-180",
+      "hex": "a9e4b8adf09f98805a"
+    },
+    {
+      "sourceId": "bytes-182",
+      "hex": "a9"
+    },
+    {
+      "sourceId": "bytes-183",
+      "hex": "a9e4"
+    },
+    {
+      "sourceId": "bytes-184",
+      "hex": "a9e4b8adf09f9880"
+    },
+    {
+      "sourceId": "bytes-187",
+      "hex": "e4"
+    },
+    {
+      "sourceId": "bytes-188",
+      "hex": "e4b8"
+    },
+    {
+      "sourceId": "bytes-190",
+      "hex": "b8adf09f98805a"
+    },
+    {
+      "sourceId": "bytes-192",
+      "hex": "b8"
+    },
+    {
+      "sourceId": "bytes-193",
+      "hex": "b8ad"
+    },
+    {
+      "sourceId": "bytes-194",
+      "hex": "b8adf09f9880"
+    },
+    {
+      "sourceId": "bytes-195",
+      "hex": "adf09f98805a"
+    },
+    {
+      "sourceId": "bytes-197",
+      "hex": "ad"
+    },
+    {
+      "sourceId": "bytes-198",
+      "hex": "adf0"
+    },
+    {
+      "sourceId": "bytes-199",
+      "hex": "adf09f9880"
+    },
+    {
+      "sourceId": "bytes-202",
+      "hex": "f0"
+    },
+    {
+      "sourceId": "bytes-203",
+      "hex": "f09f"
+    },
+    {
+      "sourceId": "bytes-205",
+      "hex": "9f98805a"
+    },
+    {
+      "sourceId": "bytes-207",
+      "hex": "9f"
+    },
+    {
+      "sourceId": "bytes-208",
+      "hex": "9f98"
+    },
+    {
+      "sourceId": "bytes-209",
+      "hex": "9f9880"
+    },
+    {
+      "sourceId": "bytes-210",
+      "hex": "98805a"
+    },
+    {
+      "sourceId": "bytes-212",
+      "hex": "98"
+    },
+    {
+      "sourceId": "bytes-213",
+      "hex": "9880"
+    },
+    {
+      "sourceId": "bytes-214",
+      "hex": "9880"
+    },
+    {
+      "sourceId": "bytes-215",
+      "hex": "805a"
+    },
+    {
+      "sourceId": "bytes-217",
+      "hex": "80"
+    },
+    {
+      "sourceId": "bytes-218",
+      "hex": "805a"
+    },
+    {
+      "sourceId": "bytes-219",
+      "hex": "80"
+    }
+  ]
+}

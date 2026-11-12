@@ -1,0 +1,133 @@
+{
+  "schema": "diffbeacon.version-probes-plan.v1",
+  "scope": "separate public Compile-only static token/quote proposals; no serialized expected value or Native full lexer/parser qualification",
+  "records": [
+    {
+      "id": "adjacent-v-and",
+      "expressionUtf8Hex": "7622312e322e332e3422414e442074727565",
+      "expressionUtf16Hex": "007600220031002e0032002e0033002e003400220041004e004400200074007200750065",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "static version token adjacent boolean keyword; Native whole lexer/parser unexecuted"
+    },
+    {
+      "id": "adjacent-V-or",
+      "expressionUtf8Hex": "5622312e322e332e34224f522066616c7365",
+      "expressionUtf16Hex": "005600220031002e0032002e0033002e00340022004f0052002000660061006c00730065",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "static case-insensitive version token adjacent boolean keyword"
+    },
+    {
+      "id": "outer-whitespace",
+      "expressionUtf8Hex": "2009207622312e322e332e3422200d0a",
+      "expressionUtf16Hex": "002000090020007600220031002e0032002e0033002e003400220020000d000a",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "separate lexical whitespace handling, no Native numeric golden"
+    },
+    {
+      "id": "space-after-prefix",
+      "expressionUtf8Hex": "762022312e322e332e3422",
+      "expressionUtf16Hex": "0076002000220031002e0032002e0033002e00340022",
+      "expectCompile": false,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "literal prefix must be adjacent to quote"
+    },
+    {
+      "id": "doubled-quote",
+      "expressionUtf8Hex": "7622312e322e332e3422227461696c22",
+      "expressionUtf16Hex": "007600220031002e0032002e0033002e003400220022007400610069006c0022",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "direct original doubled-quote behavior, public Compile-only"
+    },
+    {
+      "id": "literal-backslash",
+      "expressionUtf8Hex": "7622312e322e332e345c6e22",
+      "expressionUtf16Hex": "007600220031002e0032002e0033002e0034005c006e0022",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "backslash has no original quote escape interpretation"
+    },
+    {
+      "id": "raw-newline",
+      "expressionUtf8Hex": "7622312e322e0a332e3422",
+      "expressionUtf16Hex": "007600220031002e0032002e000a0033002e00340022",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "original UnescapeQuotes preserves raw newline; ASCII scanf whitespace domain"
+    },
+    {
+      "id": "unterminated",
+      "expressionUtf8Hex": "7622312e322e332e34",
+      "expressionUtf16Hex": "007600220031002e0032002e0033002e0034",
+      "expectCompile": false,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "original direct quote method unterminated boundary"
+    },
+    {
+      "id": "embedded-nul",
+      "expressionUtf8Hex": "7622312e32002e332e3422",
+      "expressionUtf16Hex": "007600220031002e00320000002e0033002e00340022",
+      "expectCompile": false,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "original direct quote NUL-unterminated boundary"
+    },
+    {
+      "id": "ignored-unicode-tail",
+      "expressionUtf8Hex": "7622312e322e332e34e697a5e69cace8aa9e22",
+      "expressionUtf16Hex": "007600220031002e0032002e0033002e003465e5672c8a9e0022",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "separate product engineering boundary: safe ignored suffix, no new Native full-parser/value golden"
+    },
+    {
+      "id": "nonASCII-leading-digit",
+      "expressionUtf8Hex": "7622d9a12e322e332e3422",
+      "expressionUtf16Hex": "007600220661002e0032002e0033002e00340022",
+      "expectCompile": true,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "separate explicit product quote grammar accepts valid Unicode; ASCII scanner performs no conversion for leading U0661 and leaves zero components; only compile success observed here; Native scanf locale behavior unmeasured"
+    },
+    {
+      "id": "plain-prefix-identifier",
+      "expressionUtf8Hex": "76",
+      "expressionUtf16Hex": "0076",
+      "expectCompile": false,
+      "nativeIndex": null,
+      "provenance": null,
+      "scope": "prefix alone is not a version literal; static token source, public Compile-only"
+    }
+  ],
+  "sourceReferences": [
+    {
+      "path": "supplement128/re2c-flags-static.inc",
+      "sha256": "1de4625a2659345be6c0a1aaca1ccc2714828b8d9c465804a139f5600a783f2a"
+    },
+    {
+      "path": "supplement128/version-token-static.inc",
+      "sha256": "a00f07afd29e2c43aa6767fb96296a075fff0ad170e93b4d6e229e5fd3ec2cdc"
+    },
+    {
+      "path": "supplement128/unescape-quotes.inc",
+      "sha256": "a0ef90adf103c169a886ea7484636f037513074b49409f311a8c9e2176d971c9"
+    }
+  ],
+  "publicStatus": "planned/unexecuted",
+  "actualNativelexerExecuted": false,
+  "nativeFullParserExecuted": false,
+  "nativeTypedContextQualified": false,
+  "nativeFullAstQualified": false
+}

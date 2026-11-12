@@ -1,0 +1,200 @@
+{
+  "caseCount": 70,
+  "successfulBuilds": 2,
+  "independentExecutables": true,
+  "byteIdenticalStdout": true,
+  "stdoutSha256": "8b770bbb1abc5dbfd0b3fe4323b2eaf5827363bcf5d505ae36d0dbb68618cca8",
+  "environment": {
+    "platform": "Windows-10-10.0.26300-SP0",
+    "windowsVersion": [
+      "10",
+      "10.0.26300",
+      "SP0",
+      "Multiprocessor Free"
+    ],
+    "userDefaultLocale": "ja-JP",
+    "systemDefaultLocale": "ja-JP",
+    "threadLocale": 1033,
+    "ansiCodePage": 932,
+    "oemCodePage": 932
+  },
+  "receipts": [
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\folder-casing-oracle-20261020-r1\\build4\\receipt.json",
+      "sha256": "0a679a551d6d46cd858b7864e05c31676e968bbb372ee7fed8a102421d4cfeeb",
+      "pid": 10988,
+      "birthFileTime": 134369098138226047,
+      "exitCode": 0,
+      "stdoutEof": true,
+      "stderrEof": true,
+      "heldProcessHandleSignaled": true
+    },
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\folder-casing-oracle-20261020-r1\\build5\\receipt.json",
+      "sha256": "aab279a0e2a724766702de19edbb6ca2f1f229a74546651542c417e69b50fe0a",
+      "pid": 31804,
+      "birthFileTime": 134369098256913863,
+      "exitCode": 0,
+      "stdoutEof": true,
+      "stderrEof": true,
+      "heldProcessHandleSignaled": true
+    }
+  ],
+  "extractions": {
+    "native.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2808,
+          2830
+        ]
+      ]
+    ],
+    "get-string.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          51,
+          58
+        ]
+      ]
+    ],
+    "lifting.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          1693,
+          1704
+        ]
+      ]
+    ],
+    "stringification.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2315,
+          2357
+        ]
+      ]
+    ],
+    "windows.inc": [
+      "unicoder.cpp",
+      [
+        [
+          1398,
+          1445
+        ]
+      ]
+    ],
+    "registration.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          3850,
+          3850
+        ],
+        [
+          3854,
+          3854
+        ]
+      ]
+    ],
+    "arity.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          4269,
+          4280
+        ]
+      ]
+    ],
+    "converter.inc": [
+      "UnicodeConverter.cpp",
+      [
+        [
+          66,
+          86
+        ]
+      ]
+    ],
+    "converter-template.inc": [
+      "UnicodeConverter.h",
+      [
+        [
+          85,
+          89
+        ]
+      ]
+    ],
+    "ucs4.inc": [
+      "unicoder.cpp",
+      [
+        [
+          50,
+          106
+        ]
+      ]
+    ],
+    "to-tstring.inc": [
+      "unicoder.cpp",
+      [
+        [
+          868,
+          880
+        ]
+      ]
+    ],
+    "to-utf8-buffer.inc": [
+      "unicoder.cpp",
+      [
+        [
+          926,
+          955
+        ]
+      ]
+    ],
+    "to-utf8.inc": [
+      "unicoder.cpp",
+      [
+        [
+          903,
+          908
+        ]
+      ]
+    ]
+  },
+  "fixedInputs": {
+    "adapter.cpp": "d3e8a7c0b7d73d50c48e8e3d1874987a7ff4fd61638150752b802d3a6ec59f0d",
+    "cases.json": "e251a9a0619cce7412a564d2b3967fc1b581b55cc514d52d34ab23f731c1a5be",
+    "provenance.json": "d4ec0375bb0cdd63e322403e7e85e500ec9cc70b2cc74dea76e6f5210018ca65",
+    "reproduce.py": "40a9a60bbda59bb69e88475068ed5dc43c7324a97ecd98568b9379f84cdb6c7c",
+    "poco-specs.json": "6883ba6b3bdbf35ee3d0009eac0131a44b6edfd4ad048ad7a65da6c91e4773ec"
+  },
+  "extractedSha256": {
+    "native.inc": "eb0d8987ba4eba10c70543db3280d67fb713a00ffff2ef457451181a60e3e3b8",
+    "get-string.inc": "39ed0cb10fd00c379c27b39d32cb65d4b2b2e40ffd9261b0f91e5b73ace64f94",
+    "lifting.inc": "126cbbad74be7e91496113b1aa4bdad6a00918df254f7118388bb06eefa1fd71",
+    "stringification.inc": "adea9b9815235f0fd7de35efd59beffc5b0391e1966f6113aa0de8830ef0cdb9",
+    "windows.inc": "a2cd4663c6047acd548fe46d335cf4e4c36b1e693276a0ce14016afd97130e83",
+    "registration.inc": "5819373ed95d3680ae48eeb3d91f0f0090ce3384728ace63298c79891314c32a",
+    "arity.inc": "0c6b4bab869fe003b458486e4f6645ebd65c01ab364bafbe2e4b5594e57c27a8",
+    "converter.inc": "1505c7564898276340670433ceb50972482f2fd219cffed34c4e4ab8daf6e199",
+    "converter-template.inc": "8c7983e073acc54b20fb968a8b05da55b88e2513f70fd7bbff25363f6303f78a",
+    "ucs4.inc": "38e013b7c1f733b794ecb19a06b8af8b154a4e69069fc2ef47e6dbbcdfac59c2",
+    "to-tstring.inc": "525f8e4ee69e52a8a4795b10f4a0b2e52d9c62cffb33d83750e8c5ee7d6875cb",
+    "to-utf8-buffer.inc": "9ef06df44c8ce18a2b67c4dfc3d0aa1c64002fca817b2fa0e7957d30dd3ac456",
+    "to-utf8.inc": "a26d8c674f99b9c3050ee124a1b0093a3eaf12577f12884cf82e6c2a8da65c3c",
+    "text-class.inc": "3caaef674a88304e0b2a7d8a40dfe12f9ad34ba11f32fda0e14a804a5e31d64d",
+    "utf-ctor.inc": "67e43dae67336c176b8c83f63c423f43b21f9366896cf15fd65c4321edd58dd6",
+    "utf-dtor.inc": "123058449291ce47f580f18cd10ab4e91b830d662283f1f59a87ce0094943463",
+    "utf-query.inc": "12bca6f410e238b7d51233b7bbe1c87262c0ea39630583b458951f1124a19b8e",
+    "utf-sequence.inc": "7b21ee9d58fdcd3d8195512b8e2dfac6fd0cca51062506450f110cbaaaf1fa24",
+    "utf-legal.inc": "cd3aa22f412d275b5480caba66cc99e7c05869b82d148e9c74c84b4fd4edfda5",
+    "utf-table.inc": "093c24f389606a285eb2eb6c014d310219511ed57d25fdadcd35a044422e8ee5",
+    "text-bodies.inc": "5b3d89c562daa076b1650a4fe7fcd3472cb50472a5fe22517ab5ca61667aad4e",
+    "text-inlines.inc": "9452ea91e0527d6716bb7b1c08533e59649a09877b7edf90da72bc203b0a22a3",
+    "cases.inc": "ce350b56473d4f74168f08277c366e765cdf0cfa26c6bc16c6d51ea8497a735e"
+  },
+  "rawEvidence": "<作業フォルダー>\\DiffBeacon\\folder-casing-oracle-20261020-r1",
+  "failedAttempt": "build1: extraction included preceding closing brace; no native run. Corrected to original lines 2808-2830. Intermediate build2/3 used strict WinAPI UTF bridge for diagnosis only; excluded from final golden. Final build4/5 use unmodified Poco/ucr bridges and 70 cases."
+}

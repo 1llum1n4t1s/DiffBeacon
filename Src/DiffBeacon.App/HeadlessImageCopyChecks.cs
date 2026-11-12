@@ -93,6 +93,20 @@ internal static class HeadlessImageCopyChecks
                     }
                     State(name, step, item.GetProperty("expected").GetProperty("states")[step].GetProperty("state"), panel, evidence, check);
                 }
+                if (name == "2-transparent-copy-0to1")
+                {
+                    var beforeTiffSave = panel.CaptureEditFrames()[1];
+                    var tiff = Path.Combine(folder, "saved-static.tif");
+                    pump(panel.SaveToAsync(1, tiff));
+                    var reopened = ImageComparisonEngine.OpenAsync(tiff, default); pump(reopened);
+                    check(name + " GUI TIFF save round trip keeps every BGRA pixel",
+                        Same(beforeTiffSave, reopened.Result.Decode(1, default)), tiff);
+                    var project = pane.CaptureProject();
+                    check(name + " GUI TIFF Save As project path", Path.GetFullPath(project.RightPath) == Path.GetFullPath(tiff), project.RightPath);
+                    check(name + " GUI TIFF savepoint is clean", !panel.PaneModified(1), panel.HistoryIndex + ":" + panel.HistoryCount);
+                    var saveButton = panel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImageSavePng");
+                    check(name + " GUI save action advertises TIFF", Equals(saveButton.Content, "PNG/TIFFで別名保存…"), saveButton.Content?.ToString() ?? "");
+                }
                 check(name + " GUI preserves input files", paths.Select((path, i) => Hash(File.ReadAllBytes(path)) == inputHashes[i]).All(value => value), folder);
                 if (name is "2-transparent-copy-0to1" or "3-ring-hole-selected-last-0to1")
                 {

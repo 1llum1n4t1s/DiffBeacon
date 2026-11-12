@@ -1,0 +1,4888 @@
+{
+  "schema": "size-literal-public-draft-v1",
+  "goldenSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+  "cases": [
+    {
+      "id": "unit-0-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1B",
+      "nativeCase": {
+        "id": "unit-0-1",
+        "input": "1B",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 1,
+        "lineSha256WithoutTerminator": "901c41284cca98505c05525f27b5b9b5df613749e15d9d833e30c2189b3ccefa",
+        "record": {
+          "id": "unit-0-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-0-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5B",
+      "nativeCase": {
+        "id": "unit-0-1.5",
+        "input": "1.5B",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 2,
+        "lineSha256WithoutTerminator": "1441823eeaee4c8d4fafc00b976c38f79383aa1518edeb0dc70265c3abc3a219",
+        "record": {
+          "id": "unit-0-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e3542",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-1-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1b",
+      "nativeCase": {
+        "id": "unit-1-1",
+        "input": "1b",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1b",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 3,
+        "lineSha256WithoutTerminator": "aab3d9a823f96363eb2eec9535b6f506fc71054661559660663f373d2946635d",
+        "record": {
+          "id": "unit-1-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "3162",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-1-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5b",
+      "nativeCase": {
+        "id": "unit-1-1.5",
+        "input": "1.5b",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5b",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 4,
+        "lineSha256WithoutTerminator": "7aca70cfef71abb4c30c0649ed6ad36828dd601b472ecb1a242e6e917c9ab0c7",
+        "record": {
+          "id": "unit-1-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e3562",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-2-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1KB",
+      "nativeCase": {
+        "id": "unit-2-1",
+        "input": "1KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 5,
+        "lineSha256WithoutTerminator": "fc7fd3b2d72b66475a61927268cc4d5d98ee76e6fd93df9d2437fc1c211704ff",
+        "record": {
+          "id": "unit-2-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1024"
+          },
+          "serializedUtf8Hex": "31303234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-2-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5KB",
+      "nativeCase": {
+        "id": "unit-2-1.5",
+        "input": "1.5KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 6,
+        "lineSha256WithoutTerminator": "770e85dad0109b72774f834fe7152669a02d9f0ab698484ee0fc4d3ee93cb0bb",
+        "record": {
+          "id": "unit-2-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-3-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1Kb",
+      "nativeCase": {
+        "id": "unit-3-1",
+        "input": "1Kb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1Kb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 7,
+        "lineSha256WithoutTerminator": "a5dfcc0910ca52b029feabb4f1af88c8ca5fba38df6e1d6ccf6764d50b3a7222",
+        "record": {
+          "id": "unit-3-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314b62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1024"
+          },
+          "serializedUtf8Hex": "31303234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-3-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5Kb",
+      "nativeCase": {
+        "id": "unit-3-1.5",
+        "input": "1.5Kb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5Kb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 8,
+        "lineSha256WithoutTerminator": "05269439cded1dcbb9866d1fb63d15523f6c9410fca0f4fc0d0c93cc771c3526",
+        "record": {
+          "id": "unit-3-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-4-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1kB",
+      "nativeCase": {
+        "id": "unit-4-1",
+        "input": "1kB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1kB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 9,
+        "lineSha256WithoutTerminator": "ced6c02a816ef5a142041c6c61f2e51a56043270be8bf79585d41cb6e6ff060f",
+        "record": {
+          "id": "unit-4-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "316b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1024"
+          },
+          "serializedUtf8Hex": "31303234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-4-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5kB",
+      "nativeCase": {
+        "id": "unit-4-1.5",
+        "input": "1.5kB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5kB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 10,
+        "lineSha256WithoutTerminator": "6d574c1a34dd703566148be50a30252bfcce73d1b42b76bded08d3ffd1e85c38",
+        "record": {
+          "id": "unit-4-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e356b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-5-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1kb",
+      "nativeCase": {
+        "id": "unit-5-1",
+        "input": "1kb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1kb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 11,
+        "lineSha256WithoutTerminator": "fe2d0755a50cc41354e64f49aef6134f41605e8bfa7ff37da114a41b6441c584",
+        "record": {
+          "id": "unit-5-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "316b62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1024"
+          },
+          "serializedUtf8Hex": "31303234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-5-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5kb",
+      "nativeCase": {
+        "id": "unit-5-1.5",
+        "input": "1.5kb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5kb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 12,
+        "lineSha256WithoutTerminator": "78a765aaeeb7d8c8a9fdf0f5cef499aa49587f96a9b8e6bffd891c544ea7210a",
+        "record": {
+          "id": "unit-5-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e356b62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-6-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1MB",
+      "nativeCase": {
+        "id": "unit-6-1",
+        "input": "1MB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 13,
+        "lineSha256WithoutTerminator": "8934870888e0f66a07cf4de524ef3715823ecbe48bb4566706dba9ed40789369",
+        "record": {
+          "id": "unit-6-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1048576"
+          },
+          "serializedUtf8Hex": "31303438353736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-6-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5MB",
+      "nativeCase": {
+        "id": "unit-6-1.5",
+        "input": "1.5MB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 14,
+        "lineSha256WithoutTerminator": "6e6030532fc6f5316881de80547c1a67726a9eadea7231a10986109b0652fc2c",
+        "record": {
+          "id": "unit-6-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1572864"
+          },
+          "serializedUtf8Hex": "31353732383634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-7-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1Mb",
+      "nativeCase": {
+        "id": "unit-7-1",
+        "input": "1Mb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1Mb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 15,
+        "lineSha256WithoutTerminator": "b571a554294119837df6c4fe528abdcfb20ce00da21130bf509f8448d1173722",
+        "record": {
+          "id": "unit-7-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314d62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1048576"
+          },
+          "serializedUtf8Hex": "31303438353736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-7-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5Mb",
+      "nativeCase": {
+        "id": "unit-7-1.5",
+        "input": "1.5Mb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5Mb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 16,
+        "lineSha256WithoutTerminator": "b74f55e85c14b649494fc1db962a2105951788a9069689e8aee209b9f66c6ccc",
+        "record": {
+          "id": "unit-7-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354d62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1572864"
+          },
+          "serializedUtf8Hex": "31353732383634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-8-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1mB",
+      "nativeCase": {
+        "id": "unit-8-1",
+        "input": "1mB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1mB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 17,
+        "lineSha256WithoutTerminator": "ac4de6feac498c7e5816169d2fcde9281dc39cc5b17f2c522b5c8b42c0568e1a",
+        "record": {
+          "id": "unit-8-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "316d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1048576"
+          },
+          "serializedUtf8Hex": "31303438353736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-8-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5mB",
+      "nativeCase": {
+        "id": "unit-8-1.5",
+        "input": "1.5mB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5mB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 18,
+        "lineSha256WithoutTerminator": "e15305223a339f7148650d834befc8d269cdc5d60139e70d5b6eb98e0cb8f6e6",
+        "record": {
+          "id": "unit-8-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e356d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1572864"
+          },
+          "serializedUtf8Hex": "31353732383634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-9-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1mb",
+      "nativeCase": {
+        "id": "unit-9-1",
+        "input": "1mb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1mb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 19,
+        "lineSha256WithoutTerminator": "696cac652703512a03a6758edd5ae17ae9be965c608e949c930f5151c16f1428",
+        "record": {
+          "id": "unit-9-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "316d62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1048576"
+          },
+          "serializedUtf8Hex": "31303438353736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-9-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5mb",
+      "nativeCase": {
+        "id": "unit-9-1.5",
+        "input": "1.5mb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5mb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 20,
+        "lineSha256WithoutTerminator": "24bb50af69a301278448913f30f2adaf8246c20c8d0bf8f0705695f81b06d046",
+        "record": {
+          "id": "unit-9-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e356d62",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1572864"
+          },
+          "serializedUtf8Hex": "31353732383634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-10-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1GB",
+      "nativeCase": {
+        "id": "unit-10-1",
+        "input": "1GB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 21,
+        "lineSha256WithoutTerminator": "1b78c5b6bf295c184328bab84cba14698db2310cb3a80c4791b77a8c82eafa1f",
+        "record": {
+          "id": "unit-10-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1073741824"
+          },
+          "serializedUtf8Hex": "31303733373431383234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-10-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5GB",
+      "nativeCase": {
+        "id": "unit-10-1.5",
+        "input": "1.5GB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 22,
+        "lineSha256WithoutTerminator": "27b28fcc1a6a43d6324c5033022ac5f07678236b1476979f151d12308bf4f971",
+        "record": {
+          "id": "unit-10-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1610612736"
+          },
+          "serializedUtf8Hex": "31363130363132373336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-11-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1Gb",
+      "nativeCase": {
+        "id": "unit-11-1",
+        "input": "1Gb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1Gb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 23,
+        "lineSha256WithoutTerminator": "4a00c8d40ab05461e1f74a4f53be490c44bbdb744851f3c523c0910b7da7243e",
+        "record": {
+          "id": "unit-11-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314762",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1073741824"
+          },
+          "serializedUtf8Hex": "31303733373431383234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-11-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5Gb",
+      "nativeCase": {
+        "id": "unit-11-1.5",
+        "input": "1.5Gb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5Gb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 24,
+        "lineSha256WithoutTerminator": "5e83b52e898a36caa3e75e26f8575154ee14e97778608143c1f94a911edabda3",
+        "record": {
+          "id": "unit-11-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354762",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1610612736"
+          },
+          "serializedUtf8Hex": "31363130363132373336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-12-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1gB",
+      "nativeCase": {
+        "id": "unit-12-1",
+        "input": "1gB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1gB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 25,
+        "lineSha256WithoutTerminator": "6a54c565a57d6e2bdfef59238d2aa408e33dd73136b265b0f8da53e8cfafeedc",
+        "record": {
+          "id": "unit-12-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "316742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1073741824"
+          },
+          "serializedUtf8Hex": "31303733373431383234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-12-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5gB",
+      "nativeCase": {
+        "id": "unit-12-1.5",
+        "input": "1.5gB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5gB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 26,
+        "lineSha256WithoutTerminator": "da564226b3525fff0a41dd32329edade3faea8be06a5aa13756b7c01ae0052f9",
+        "record": {
+          "id": "unit-12-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e356742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1610612736"
+          },
+          "serializedUtf8Hex": "31363130363132373336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-13-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1gb",
+      "nativeCase": {
+        "id": "unit-13-1",
+        "input": "1gb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1gb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 27,
+        "lineSha256WithoutTerminator": "fbfb07829c72348726a8b186662a4e47916b69daf28abcdc14211703de79fe27",
+        "record": {
+          "id": "unit-13-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "316762",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1073741824"
+          },
+          "serializedUtf8Hex": "31303733373431383234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-13-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5gb",
+      "nativeCase": {
+        "id": "unit-13-1.5",
+        "input": "1.5gb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5gb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 28,
+        "lineSha256WithoutTerminator": "cf73777eca4b9524d500cb7f1363799d304edf2be5435efc7e453077a20ec895",
+        "record": {
+          "id": "unit-13-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e356762",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1610612736"
+          },
+          "serializedUtf8Hex": "31363130363132373336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-14-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1TB",
+      "nativeCase": {
+        "id": "unit-14-1",
+        "input": "1TB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 29,
+        "lineSha256WithoutTerminator": "2c0c695a7c9381a4d82232b4610b807c0811a2bd943e17efaf3a91713e8d87b6",
+        "record": {
+          "id": "unit-14-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "315442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1099511627776"
+          },
+          "serializedUtf8Hex": "31303939353131363237373736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-14-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5TB",
+      "nativeCase": {
+        "id": "unit-14-1.5",
+        "input": "1.5TB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 30,
+        "lineSha256WithoutTerminator": "5598a4180da92155190ebdf66697a067d6bfbcfe2a9609bdde5e33d959b88a87",
+        "record": {
+          "id": "unit-14-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e355442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1649267441664"
+          },
+          "serializedUtf8Hex": "31363439323637343431363634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-15-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1Tb",
+      "nativeCase": {
+        "id": "unit-15-1",
+        "input": "1Tb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1Tb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 31,
+        "lineSha256WithoutTerminator": "893aa16837b48e4a54e436ae1008cdc5b80b234ba847f7d471162e06946c2252",
+        "record": {
+          "id": "unit-15-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "315462",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1099511627776"
+          },
+          "serializedUtf8Hex": "31303939353131363237373736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-15-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5Tb",
+      "nativeCase": {
+        "id": "unit-15-1.5",
+        "input": "1.5Tb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5Tb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 32,
+        "lineSha256WithoutTerminator": "99092569df981a59595dac48c3bd72d8ef603dcaa012ff9b54b97f6de0c0ab82",
+        "record": {
+          "id": "unit-15-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e355462",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1649267441664"
+          },
+          "serializedUtf8Hex": "31363439323637343431363634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-16-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1tB",
+      "nativeCase": {
+        "id": "unit-16-1",
+        "input": "1tB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1tB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 33,
+        "lineSha256WithoutTerminator": "65cc479aaa14768f54acbc0a04f10132f50601776893abca7af63468ed6d3572",
+        "record": {
+          "id": "unit-16-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "317442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1099511627776"
+          },
+          "serializedUtf8Hex": "31303939353131363237373736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-16-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5tB",
+      "nativeCase": {
+        "id": "unit-16-1.5",
+        "input": "1.5tB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5tB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 34,
+        "lineSha256WithoutTerminator": "0ff55cd80a78b830c26f5ed8a48577701f10030d815f2e7d214c216ebceb6a87",
+        "record": {
+          "id": "unit-16-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e357442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1649267441664"
+          },
+          "serializedUtf8Hex": "31363439323637343431363634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-17-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1tb",
+      "nativeCase": {
+        "id": "unit-17-1",
+        "input": "1tb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1tb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 35,
+        "lineSha256WithoutTerminator": "f35678a442322a858173a0ca0021a34487d11efef7a905f46e40ee26a1c73c89",
+        "record": {
+          "id": "unit-17-1",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "317462",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1099511627776"
+          },
+          "serializedUtf8Hex": "31303939353131363237373736"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "unit-17-1.5",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5tb",
+      "nativeCase": {
+        "id": "unit-17-1.5",
+        "input": "1.5tb",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "1.5tb",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 36,
+        "lineSha256WithoutTerminator": "6023d5ebed71dac3478b88ef5d81a7ffac385641b2717acd8bf2d0ae563173c8",
+        "record": {
+          "id": "unit-17-1.5",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e357462",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1649267441664"
+          },
+          "serializedUtf8Hex": "31363439323637343431363634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "truncate-zero-B",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0.1B",
+      "nativeCase": {
+        "id": "truncate-zero-B",
+        "input": "0.1B",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0.1B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 37,
+        "lineSha256WithoutTerminator": "3e09a9521ad9f6d0c15baae587f8a90c2b4d133fc7a1fb64d9ce48fffc0d6d3e",
+        "record": {
+          "id": "truncate-zero-B",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e31",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3fb999999999999a"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negate-zero-B",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-0.1B",
+      "nativeCase": {
+        "id": "negate-zero-B",
+        "input": "0.1B",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "-0.1B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 38,
+        "lineSha256WithoutTerminator": "6a610df0dcfd8bfce0e6b4d2c2b6cfb2db4f752b24c13786ba3766f96a752b11",
+        "record": {
+          "id": "negate-zero-B",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e31",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3fb999999999999a"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "zero-B",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0B",
+      "nativeCase": {
+        "id": "zero-B",
+        "input": "0B",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 39,
+        "lineSha256WithoutTerminator": "e726cd667b65c0ca25e79a3daf1a21100a7caa8d84933eafc396f3f612c2e2ba",
+        "record": {
+          "id": "zero-B",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "3042",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "30",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "0000000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-noopt-B",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt -1.5B",
+      "nativeCase": {
+        "id": "negative-noopt-B",
+        "input": "1.5B",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt -1.5B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 40,
+        "lineSha256WithoutTerminator": "f550af60a4177771c650881df443267da5ddcfb17ec884e10ff1d5c09774b2ae",
+        "record": {
+          "id": "negative-noopt-B",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e3542",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1"
+          },
+          "serializedUtf8Hex": "2d31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-optimized-B",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-1.5B",
+      "nativeCase": {
+        "id": "negative-optimized-B",
+        "input": "1.5B",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "-1.5B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 41,
+        "lineSha256WithoutTerminator": "a6156ab0f7f4788f01773b8cb9e2a9fe53712c087a927b46ff96aee9b8e5ad09",
+        "record": {
+          "id": "negative-optimized-B",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e3542",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1"
+          },
+          "serializedUtf8Hex": "2d31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "literal-optimized-B",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5B",
+      "nativeCase": {
+        "id": "literal-optimized-B",
+        "input": "1.5B",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "1.5B",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 42,
+        "lineSha256WithoutTerminator": "63b9365ca6e95ce9525168a4c0371196b375eb9484773106e48b14023f209fce",
+        "record": {
+          "id": "literal-optimized-B",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e3542",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "truncate-zero-KB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0.0001KB",
+      "nativeCase": {
+        "id": "truncate-zero-KB",
+        "input": "0.0001KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0.0001KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 43,
+        "lineSha256WithoutTerminator": "826915c7227645af9b2920d18fe878f670ce9b295d33e71436d31d79b4f45661",
+        "record": {
+          "id": "truncate-zero-KB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030314b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303031",
+            "status": "returned",
+            "consumedCharacters": 6,
+            "doubleBitsHex": "3f1a36e2eb1c432d"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negate-zero-KB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-0.0001KB",
+      "nativeCase": {
+        "id": "negate-zero-KB",
+        "input": "0.0001KB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "-0.0001KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 44,
+        "lineSha256WithoutTerminator": "5501e581759437c58c391ad88c8107a789ee2f7f8166f948e1df0bed3ff5e909",
+        "record": {
+          "id": "negate-zero-KB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030314b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303031",
+            "status": "returned",
+            "consumedCharacters": 6,
+            "doubleBitsHex": "3f1a36e2eb1c432d"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "zero-KB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0KB",
+      "nativeCase": {
+        "id": "zero-KB",
+        "input": "0KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 45,
+        "lineSha256WithoutTerminator": "654fe73acb504107b1005340ef0cc3160532f48aee6b5f420e980c21d6542a9c",
+        "record": {
+          "id": "zero-KB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "304b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "30",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "0000000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-noopt-KB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt -1.5KB",
+      "nativeCase": {
+        "id": "negative-noopt-KB",
+        "input": "1.5KB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt -1.5KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 46,
+        "lineSha256WithoutTerminator": "cd90b0eb4546ca7176b829926591db9139ebc8a981481be19523b9e275c1a50b",
+        "record": {
+          "id": "negative-noopt-KB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1536"
+          },
+          "serializedUtf8Hex": "2d31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-optimized-KB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-1.5KB",
+      "nativeCase": {
+        "id": "negative-optimized-KB",
+        "input": "1.5KB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "-1.5KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 47,
+        "lineSha256WithoutTerminator": "9d6edad06d7f044ec29f516dfac88e8f246eac04237b43606ce06e988dd94703",
+        "record": {
+          "id": "negative-optimized-KB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1536"
+          },
+          "serializedUtf8Hex": "2d31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "literal-optimized-KB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5KB",
+      "nativeCase": {
+        "id": "literal-optimized-KB",
+        "input": "1.5KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "1.5KB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 48,
+        "lineSha256WithoutTerminator": "392e2bbd9fcba2728cbdbb448499f845de7ac6b4d949c1fb6b5947aef02d51db",
+        "record": {
+          "id": "literal-optimized-KB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "truncate-zero-MB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0.0000001MB",
+      "nativeCase": {
+        "id": "truncate-zero-MB",
+        "input": "0.0000001MB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0.0000001MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 49,
+        "lineSha256WithoutTerminator": "5c3d12c73b0a674b7bad9ad81c84016a7431bf230ea128c6101043ced30d5a27",
+        "record": {
+          "id": "truncate-zero-MB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030303030314d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303030303031",
+            "status": "returned",
+            "consumedCharacters": 9,
+            "doubleBitsHex": "3e7ad7f29abcaf48"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negate-zero-MB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-0.0000001MB",
+      "nativeCase": {
+        "id": "negate-zero-MB",
+        "input": "0.0000001MB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "-0.0000001MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 50,
+        "lineSha256WithoutTerminator": "0d93690ba2b6cdaa1429dd39af99916cfbe60d3b033de8616aa5b821bcffdd1c",
+        "record": {
+          "id": "negate-zero-MB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030303030314d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303030303031",
+            "status": "returned",
+            "consumedCharacters": 9,
+            "doubleBitsHex": "3e7ad7f29abcaf48"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "zero-MB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0MB",
+      "nativeCase": {
+        "id": "zero-MB",
+        "input": "0MB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 51,
+        "lineSha256WithoutTerminator": "05c51eef7343b30c7554082a8ed6db1d92b02d2a1e7414502a1bffada964a3d2",
+        "record": {
+          "id": "zero-MB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "304d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "30",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "0000000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-noopt-MB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt -1.5MB",
+      "nativeCase": {
+        "id": "negative-noopt-MB",
+        "input": "1.5MB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt -1.5MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 52,
+        "lineSha256WithoutTerminator": "3d64fd4cf27eda7ebb000a07af87067614cfe2c6f154bf918fb60d97eb08900a",
+        "record": {
+          "id": "negative-noopt-MB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1572864"
+          },
+          "serializedUtf8Hex": "2d31353732383634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-optimized-MB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-1.5MB",
+      "nativeCase": {
+        "id": "negative-optimized-MB",
+        "input": "1.5MB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "-1.5MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 53,
+        "lineSha256WithoutTerminator": "69d51fe9f73ba0831817695fdd6316722a18c90c909fe3bad5abafbd9b456812",
+        "record": {
+          "id": "negative-optimized-MB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354d42",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1572864"
+          },
+          "serializedUtf8Hex": "2d31353732383634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "literal-optimized-MB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5MB",
+      "nativeCase": {
+        "id": "literal-optimized-MB",
+        "input": "1.5MB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "1.5MB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 54,
+        "lineSha256WithoutTerminator": "20a34390ad5e77775ff2a28db14fbcbdbf9b0480d840895d6908e71c2c7ae023",
+        "record": {
+          "id": "literal-optimized-MB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354d42",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1572864"
+          },
+          "serializedUtf8Hex": "31353732383634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "truncate-zero-GB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0.0000000001GB",
+      "nativeCase": {
+        "id": "truncate-zero-GB",
+        "input": "0.0000000001GB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0.0000000001GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 55,
+        "lineSha256WithoutTerminator": "03b005aadad5c647a288c00994d9d6603a9de1114e9bb7de23dc4614a0c274d7",
+        "record": {
+          "id": "truncate-zero-GB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030303030303030314742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303030303030303031",
+            "status": "returned",
+            "consumedCharacters": 12,
+            "doubleBitsHex": "3ddb7cdfd9d7bdbb"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negate-zero-GB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-0.0000000001GB",
+      "nativeCase": {
+        "id": "negate-zero-GB",
+        "input": "0.0000000001GB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "-0.0000000001GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 56,
+        "lineSha256WithoutTerminator": "779bbfb2205aa8031dcf9e4dabad916dc9edde3a119bce1e24705efd00085e33",
+        "record": {
+          "id": "negate-zero-GB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030303030303030314742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303030303030303031",
+            "status": "returned",
+            "consumedCharacters": 12,
+            "doubleBitsHex": "3ddb7cdfd9d7bdbb"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "zero-GB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0GB",
+      "nativeCase": {
+        "id": "zero-GB",
+        "input": "0GB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 57,
+        "lineSha256WithoutTerminator": "10f2c2aeaf11bf1e2b4c06a69ba62c7c237e7d71438927098535649a5a216172",
+        "record": {
+          "id": "zero-GB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "304742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "30",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "0000000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-noopt-GB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt -1.5GB",
+      "nativeCase": {
+        "id": "negative-noopt-GB",
+        "input": "1.5GB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt -1.5GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 58,
+        "lineSha256WithoutTerminator": "94d2500981551a9eafc2b4144f9cac7f3e24416287278bd86d551ec6bbea3b76",
+        "record": {
+          "id": "negative-noopt-GB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354742",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1610612736"
+          },
+          "serializedUtf8Hex": "2d31363130363132373336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-optimized-GB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-1.5GB",
+      "nativeCase": {
+        "id": "negative-optimized-GB",
+        "input": "1.5GB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "-1.5GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 59,
+        "lineSha256WithoutTerminator": "d2f8ec38d8bf62fcf206bd1e95be8c7e3de2cd535139dd5965a42a8ed90e2f9e",
+        "record": {
+          "id": "negative-optimized-GB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354742",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1610612736"
+          },
+          "serializedUtf8Hex": "2d31363130363132373336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "literal-optimized-GB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5GB",
+      "nativeCase": {
+        "id": "literal-optimized-GB",
+        "input": "1.5GB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "1.5GB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 60,
+        "lineSha256WithoutTerminator": "4871ae771d5a74ed61616a071f8e8268fea21c0538af8594aa2d50555983e022",
+        "record": {
+          "id": "literal-optimized-GB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354742",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1610612736"
+          },
+          "serializedUtf8Hex": "31363130363132373336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "truncate-zero-TB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0.0000000000001TB",
+      "nativeCase": {
+        "id": "truncate-zero-TB",
+        "input": "0.0000000000001TB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0.0000000000001TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 61,
+        "lineSha256WithoutTerminator": "5be1754e5043d5caa0e5c0487c4da373633b6d16abc237eb0295043d8fd13172",
+        "record": {
+          "id": "truncate-zero-TB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030303030303030303030315442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303030303030303030303031",
+            "status": "returned",
+            "consumedCharacters": 15,
+            "doubleBitsHex": "3d3c25c268497682"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negate-zero-TB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-0.0000000000001TB",
+      "nativeCase": {
+        "id": "negate-zero-TB",
+        "input": "0.0000000000001TB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "-0.0000000000001TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 62,
+        "lineSha256WithoutTerminator": "e4e292af99ee5f677f9c4bad14ae31268cb1aac6396881b3a418b61b6bfcfbdf",
+        "record": {
+          "id": "negate-zero-TB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e303030303030303030303030315442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e30303030303030303030303031",
+            "status": "returned",
+            "consumedCharacters": 15,
+            "doubleBitsHex": "3d3c25c268497682"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "zero-TB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "0TB",
+      "nativeCase": {
+        "id": "zero-TB",
+        "input": "0TB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "0TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 63,
+        "lineSha256WithoutTerminator": "54368ee2e353ab797893150347a5257d6257f27e9d7429643a95506b5176dc70",
+        "record": {
+          "id": "zero-TB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "305442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "30",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "0000000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-noopt-TB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt -1.5TB",
+      "nativeCase": {
+        "id": "negative-noopt-TB",
+        "input": "1.5TB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt -1.5TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 64,
+        "lineSha256WithoutTerminator": "bcbc5b519aa96a1139f7eadfc51d22b1aeefe3f60b93f9df25047975c14ae453",
+        "record": {
+          "id": "negative-noopt-TB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e355442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1649267441664"
+          },
+          "serializedUtf8Hex": "2d31363439323637343431363634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "negative-optimized-TB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "-1.5TB",
+      "nativeCase": {
+        "id": "negative-optimized-TB",
+        "input": "1.5TB",
+        "mode": "negate",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "-1.5TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 65,
+        "lineSha256WithoutTerminator": "f87bd6283076a849cc62bb8553d3b3a5be8aa4e2926c8ff6c013c6c64a002e89",
+        "record": {
+          "id": "negative-optimized-TB",
+          "mode": "negate",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e355442",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "-1649267441664"
+          },
+          "serializedUtf8Hex": "2d31363439323637343431363634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "literal-optimized-TB",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "1.5TB",
+      "nativeCase": {
+        "id": "literal-optimized-TB",
+        "input": "1.5TB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": true,
+        "expression": "1.5TB",
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 66,
+        "lineSha256WithoutTerminator": "ee3359ca63e6295e2a21d91002d97f4d3a5962243171ee9b456471414a5eba65",
+        "record": {
+          "id": "literal-optimized-TB",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e355442",
+          "optimizerInvoked": true,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1649267441664"
+          },
+          "serializedUtf8Hex": "31363439323637343431363634"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "array-0",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "Array(1KB,1.5KB,0.1B)",
+      "nativeCase": {
+        "id": "array-0",
+        "input": "1KB,1.5KB,0.1B",
+        "mode": "array",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "Array(1KB,1.5KB,0.1B)",
+        "items": [
+          "1KB",
+          "1.5KB",
+          "0.1B"
+        ],
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 67,
+        "lineSha256WithoutTerminator": "81a34e7a3b44f28f0c55e149e6677c189cf43b04b7015bf7a1bda1adafd105b8",
+        "record": {
+          "id": "array-0",
+          "mode": "array",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314b422c312e354b422c302e3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": null,
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "array",
+            "items": [
+              {
+                "kind": "integer",
+                "decimal": "1024"
+              },
+              {
+                "kind": "integer",
+                "decimal": "1536"
+              },
+              {
+                "kind": "integer",
+                "decimal": "0"
+              }
+            ]
+          },
+          "serializedUtf8Hex": "5b313032342c20313533362c20305d"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "array-1",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "Array(1B,2MB,3GB)",
+      "nativeCase": {
+        "id": "array-1",
+        "input": "1B,2MB,3GB",
+        "mode": "array",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "Array(1B,2MB,3GB)",
+        "items": [
+          "1B",
+          "2MB",
+          "3GB"
+        ],
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 68,
+        "lineSha256WithoutTerminator": "75d60b522600cb2550379bbf6999d02dc686e0f882d8f85a978fda0dea036cea",
+        "record": {
+          "id": "array-1",
+          "mode": "array",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "31422c324d422c334742",
+          "optimizerInvoked": false,
+          "rawStodProbe": null,
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "array",
+            "items": [
+              {
+                "kind": "integer",
+                "decimal": "1"
+              },
+              {
+                "kind": "integer",
+                "decimal": "2097152"
+              },
+              {
+                "kind": "integer",
+                "decimal": "3221225472"
+              }
+            ]
+          },
+          "serializedUtf8Hex": "5b312c20323039373135322c20333232313232353437325d"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "array-2",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "Array(0.1B,0.0001KB,0.0000001MB)",
+      "nativeCase": {
+        "id": "array-2",
+        "input": "0.1B,0.0001KB,0.0000001MB",
+        "mode": "array",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "Array(0.1B,0.0001KB,0.0000001MB)",
+        "items": [
+          "0.1B",
+          "0.0001KB",
+          "0.0000001MB"
+        ],
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 69,
+        "lineSha256WithoutTerminator": "4c561a1850eda541b5f8a7ff48216e4c6f785163bd242ac6fc3f7e542986682e",
+        "record": {
+          "id": "array-2",
+          "mode": "array",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "302e31422c302e303030314b422c302e303030303030314d42",
+          "optimizerInvoked": false,
+          "rawStodProbe": null,
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "array",
+            "items": [
+              {
+                "kind": "integer",
+                "decimal": "0"
+              },
+              {
+                "kind": "integer",
+                "decimal": "0"
+              },
+              {
+                "kind": "integer",
+                "decimal": "0"
+              }
+            ]
+          },
+          "serializedUtf8Hex": "5b302c20302c20305d"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-array-Average",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "Average(Array(1KB,1.5KB,0.1B))",
+      "nativeCase": {
+        "id": "aggregate-array-Average",
+        "input": "1KB,1.5KB,0.1B",
+        "mode": "array",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "Average(Array(1KB,1.5KB,0.1B))",
+        "items": [
+          "1KB",
+          "1.5KB",
+          "0.1B"
+        ],
+        "aggregate": "Average",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 70,
+        "lineSha256WithoutTerminator": "f4982400b585bef21057584567e5fa2017b74891bfd4a24d2b968173a3b3c4e1",
+        "record": {
+          "id": "aggregate-array-Average",
+          "mode": "array",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314b422c312e354b422c302e3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": null,
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "double",
+            "bitsHex": "408aaaaaaaaaaaab"
+          },
+          "serializedUtf8Hex": "3835332e333333333333"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-scalar-noopt-Average",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt Average(1.5KB)",
+      "nativeCase": {
+        "id": "aggregate-scalar-noopt-Average",
+        "input": "1.5KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt Average(1.5KB)",
+        "items": null,
+        "aggregate": "Average",
+        "providerCount": 3,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 71,
+        "lineSha256WithoutTerminator": "1fc26f63521b7e8939872d66783bc505eb4d949c2058da2d5d7c52b10c688ace",
+        "record": {
+          "id": "aggregate-scalar-noopt-Average",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "double",
+            "bitsHex": "4098000000000000"
+          },
+          "serializedUtf8Hex": "313533362e303030303030"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-array-Sum",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "Sum(Array(1KB,1.5KB,0.1B))",
+      "nativeCase": {
+        "id": "aggregate-array-Sum",
+        "input": "1KB,1.5KB,0.1B",
+        "mode": "array",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "Sum(Array(1KB,1.5KB,0.1B))",
+        "items": [
+          "1KB",
+          "1.5KB",
+          "0.1B"
+        ],
+        "aggregate": "Sum",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 72,
+        "lineSha256WithoutTerminator": "cc675f1d35a2ff91e20bc7ffa8024235f55668cf873294624e481918293bc10b",
+        "record": {
+          "id": "aggregate-array-Sum",
+          "mode": "array",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314b422c312e354b422c302e3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": null,
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "2560"
+          },
+          "serializedUtf8Hex": "32353630"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-scalar-noopt-Sum",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt Sum(1.5KB)",
+      "nativeCase": {
+        "id": "aggregate-scalar-noopt-Sum",
+        "input": "1.5KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt Sum(1.5KB)",
+        "items": null,
+        "aggregate": "Sum",
+        "providerCount": 3,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 73,
+        "lineSha256WithoutTerminator": "32e15a4c7e3c1e782f806fc175111dcbee09e8f0bfc80943fa6b37bbcdf80dcf",
+        "record": {
+          "id": "aggregate-scalar-noopt-Sum",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "4608"
+          },
+          "serializedUtf8Hex": "34363038"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-array-Maximum",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "Maximum(Array(1KB,1.5KB,0.1B))",
+      "nativeCase": {
+        "id": "aggregate-array-Maximum",
+        "input": "1KB,1.5KB,0.1B",
+        "mode": "array",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "Maximum(Array(1KB,1.5KB,0.1B))",
+        "items": [
+          "1KB",
+          "1.5KB",
+          "0.1B"
+        ],
+        "aggregate": "Maximum",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 74,
+        "lineSha256WithoutTerminator": "c456452c069ed5bc0979d465475f748182f27e07dade19e072c5f1e365c7eb6a",
+        "record": {
+          "id": "aggregate-array-Maximum",
+          "mode": "array",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314b422c312e354b422c302e3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": null,
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-scalar-noopt-Maximum",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt Maximum(1.5KB)",
+      "nativeCase": {
+        "id": "aggregate-scalar-noopt-Maximum",
+        "input": "1.5KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt Maximum(1.5KB)",
+        "items": null,
+        "aggregate": "Maximum",
+        "providerCount": 3,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 75,
+        "lineSha256WithoutTerminator": "de634c3ffb031b568a3fb9f1f66a1c7238e3b7c5c66a3b623fa348daf059d7ab",
+        "record": {
+          "id": "aggregate-scalar-noopt-Maximum",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-array-Minimum",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "Minimum(Array(1KB,1.5KB,0.1B))",
+      "nativeCase": {
+        "id": "aggregate-array-Minimum",
+        "input": "1KB,1.5KB,0.1B",
+        "mode": "array",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "Minimum(Array(1KB,1.5KB,0.1B))",
+        "items": [
+          "1KB",
+          "1.5KB",
+          "0.1B"
+        ],
+        "aggregate": "Minimum",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 76,
+        "lineSha256WithoutTerminator": "750c8ba7eb7b9b4268fe99aa48a4408a1c5bbdfee84a10b00f04a126ee5ad86a",
+        "record": {
+          "id": "aggregate-array-Minimum",
+          "mode": "array",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "314b422c312e354b422c302e3142",
+          "optimizerInvoked": false,
+          "rawStodProbe": null,
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "aggregate-scalar-noopt-Minimum",
+      "classification": "planned-public-serialized-bridge",
+      "expression": "@noopt Minimum(1.5KB)",
+      "nativeCase": {
+        "id": "aggregate-scalar-noopt-Minimum",
+        "input": "1.5KB",
+        "mode": "literal",
+        "classification": "safe-node-observation",
+        "optimize": false,
+        "expression": "@noopt Minimum(1.5KB)",
+        "items": null,
+        "aggregate": "Minimum",
+        "providerCount": 3,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 77,
+        "lineSha256WithoutTerminator": "58b3d39580dd38e421b4c5d7b39a37bac51ad9513ca6c464d03eac857724d491",
+        "record": {
+          "id": "aggregate-scalar-noopt-Minimum",
+          "mode": "literal",
+          "classification": "safe-node-observation",
+          "inputUtf8Hex": "312e354b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e35",
+            "status": "returned",
+            "consumedCharacters": 3,
+            "doubleBitsHex": "3ff8000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1536"
+          },
+          "serializedUtf8Hex": "31353336"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Native constructor/Evaluate/serializer direct-node observation only; public Compile/Transform remains unexecuted"
+    },
+    {
+      "id": "constructor-probe-0",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-0",
+        "input": "",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 78,
+        "lineSha256WithoutTerminator": "1c5336d4420a7feadb19c37f00bb7c53f8fc94860385a2c38fcfd4c597d44079",
+        "record": {
+          "id": "constructor-probe-0",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "",
+            "status": "invalid_argument",
+            "consumedCharacters": null,
+            "doubleBitsHex": null
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-1",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-1",
+        "input": "KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 79,
+        "lineSha256WithoutTerminator": "7a1b43447cb3a3910777bea19183a669f09abed7325b0bfc35d062c6e0dcc52e",
+        "record": {
+          "id": "constructor-probe-1",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "4b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "",
+            "status": "invalid_argument",
+            "consumedCharacters": null,
+            "doubleBitsHex": null
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-2",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-2",
+        "input": ".5KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 80,
+        "lineSha256WithoutTerminator": "126ca018e46ef5905b3ebc447934489b017e821105783dbe5ac0402bb44d1f5d",
+        "record": {
+          "id": "constructor-probe-2",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "2e354b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "2e35",
+            "status": "returned",
+            "consumedCharacters": 2,
+            "doubleBitsHex": "3fe0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "512"
+          },
+          "serializedUtf8Hex": "353132"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-3",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-3",
+        "input": "1.KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 81,
+        "lineSha256WithoutTerminator": "2f32b9d1940c04428d4ba9a809837afc48ad7be37d3607b8ce5dc64056930b16",
+        "record": {
+          "id": "constructor-probe-3",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "312e4b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e",
+            "status": "returned",
+            "consumedCharacters": 2,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1024"
+          },
+          "serializedUtf8Hex": "31303234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-4",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-4",
+        "input": "1..2KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 82,
+        "lineSha256WithoutTerminator": "5596d64e0e3a88c5848bbf553d5f9b61eff6e2ad3c6471938b55349371057875",
+        "record": {
+          "id": "constructor-probe-4",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "312e2e324b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "312e2e32",
+            "status": "returned",
+            "consumedCharacters": 2,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1024"
+          },
+          "serializedUtf8Hex": "31303234"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-5",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-5",
+        "input": "1e3KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 83,
+        "lineSha256WithoutTerminator": "01da1c098b7e864cbb803349a52c66d54cfeb8224c4c9087bcade7ff82da453c",
+        "record": {
+          "id": "constructor-probe-5",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "3165334b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-6",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-6",
+        "input": "1 XB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 84,
+        "lineSha256WithoutTerminator": "d9579c1d829a72cc5981091848d3c901efcff203b6270ff6b11aa911373cc651",
+        "record": {
+          "id": "constructor-probe-6",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "31205842",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-7",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-7",
+        "input": " 1KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 85,
+        "lineSha256WithoutTerminator": "36101fe585f3d1d9849260492e34dd7dd87e0c44d22add4f20e864fe61a717b0",
+        "record": {
+          "id": "constructor-probe-7",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "20314b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "",
+            "status": "invalid_argument",
+            "consumedCharacters": null,
+            "doubleBitsHex": null
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-8",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-8",
+        "input": "-1KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 86,
+        "lineSha256WithoutTerminator": "2c4ac1795b633f9e66e3f99f03a0caa33bb6eb731e203d804ca4dc9af254ed97",
+        "record": {
+          "id": "constructor-probe-8",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "2d314b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "",
+            "status": "invalid_argument",
+            "consumedCharacters": null,
+            "doubleBitsHex": null
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-9",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-9",
+        "input": "NaNKB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 87,
+        "lineSha256WithoutTerminator": "1c1089da35086627a6920be0b87e6d67c8090907a4b2bd0a70dd23a18e255983",
+        "record": {
+          "id": "constructor-probe-9",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "4e614e4b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "",
+            "status": "invalid_argument",
+            "consumedCharacters": null,
+            "doubleBitsHex": null
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-probe-10",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-probe-10",
+        "input": "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999B",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 88,
+        "lineSha256WithoutTerminator": "79dea90c72988d1fbf26a9f9c049909874c97b3ea573b1c29b33ef899834091a",
+        "record": {
+          "id": "constructor-probe-10",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "3939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393942",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "39393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939",
+            "status": "out_of_range",
+            "consumedCharacters": null,
+            "doubleBitsHex": null
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "rounding-9007199254740991B",
+      "classification": "defined-cast-platform-rounding-observation",
+      "expression": null,
+      "nativeCase": {
+        "id": "rounding-9007199254740991B",
+        "input": "9007199254740991B",
+        "mode": "literal",
+        "classification": "defined-cast-platform-rounding-observation",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 89,
+        "lineSha256WithoutTerminator": "9e8fe0cbd902c3d588628984ad96b52cd85fa1e99f5e821bc60429272db51d01",
+        "record": {
+          "id": "rounding-9007199254740991B",
+          "mode": "literal",
+          "classification": "defined-cast-platform-rounding-observation",
+          "inputUtf8Hex": "3930303731393932353437343039393142",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "39303037313939323534373430393931",
+            "status": "returned",
+            "consumedCharacters": 16,
+            "doubleBitsHex": "433fffffffffffff"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "9007199254740991"
+          },
+          "serializedUtf8Hex": "39303037313939323534373430393931"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "rounding-9007199254740992B",
+      "classification": "defined-cast-platform-rounding-observation",
+      "expression": null,
+      "nativeCase": {
+        "id": "rounding-9007199254740992B",
+        "input": "9007199254740992B",
+        "mode": "literal",
+        "classification": "defined-cast-platform-rounding-observation",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 90,
+        "lineSha256WithoutTerminator": "9fc8779a6131eb510e93bd49a06235aba1b3a48f781420fac845f0c275474df5",
+        "record": {
+          "id": "rounding-9007199254740992B",
+          "mode": "literal",
+          "classification": "defined-cast-platform-rounding-observation",
+          "inputUtf8Hex": "3930303731393932353437343039393242",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "39303037313939323534373430393932",
+            "status": "returned",
+            "consumedCharacters": 16,
+            "doubleBitsHex": "4340000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "9007199254740992"
+          },
+          "serializedUtf8Hex": "39303037313939323534373430393932"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "rounding-9007199254740993B",
+      "classification": "defined-cast-platform-rounding-observation",
+      "expression": null,
+      "nativeCase": {
+        "id": "rounding-9007199254740993B",
+        "input": "9007199254740993B",
+        "mode": "literal",
+        "classification": "defined-cast-platform-rounding-observation",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 91,
+        "lineSha256WithoutTerminator": "39b06825bb95f7001a318ee047a51defc2a2a21a4184b64c35f12d7c0393301b",
+        "record": {
+          "id": "rounding-9007199254740993B",
+          "mode": "literal",
+          "classification": "defined-cast-platform-rounding-observation",
+          "inputUtf8Hex": "3930303731393932353437343039393342",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "39303037313939323534373430393933",
+            "status": "returned",
+            "consumedCharacters": 16,
+            "doubleBitsHex": "4340000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "9007199254740992"
+          },
+          "serializedUtf8Hex": "39303037313939323534373430393932"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "rounding-9007199254740994B",
+      "classification": "defined-cast-platform-rounding-observation",
+      "expression": null,
+      "nativeCase": {
+        "id": "rounding-9007199254740994B",
+        "input": "9007199254740994B",
+        "mode": "literal",
+        "classification": "defined-cast-platform-rounding-observation",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 92,
+        "lineSha256WithoutTerminator": "2388e8825a81a1d930c55fced7bfacf5970632233cf21770c2daee7d8413518f",
+        "record": {
+          "id": "rounding-9007199254740994B",
+          "mode": "literal",
+          "classification": "defined-cast-platform-rounding-observation",
+          "inputUtf8Hex": "3930303731393932353437343039393442",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "39303037313939323534373430393934",
+            "status": "returned",
+            "consumedCharacters": 16,
+            "doubleBitsHex": "4340000000000001"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "9007199254740994"
+          },
+          "serializedUtf8Hex": "39303037313939323534373430393934"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-space-unit",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-space-unit",
+        "input": "1 KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 93,
+        "lineSha256WithoutTerminator": "172ae6f38e156457c93367f874e4f8c63b26c4779ae29171718fd5d69e55297a",
+        "record": {
+          "id": "constructor-space-unit",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "31204b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-extra-unit-suffix",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-extra-unit-suffix",
+        "input": "1KBB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 94,
+        "lineSha256WithoutTerminator": "5013f2488b0ec83cd4603547f1a69f07d56476dab8f1fa3a29e4c27b7f21b4f0",
+        "record": {
+          "id": "constructor-extra-unit-suffix",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "314b4242",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "31",
+            "status": "returned",
+            "consumedCharacters": 1,
+            "doubleBitsHex": "3ff0000000000000"
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "1"
+          },
+          "serializedUtf8Hex": "31"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    },
+    {
+      "id": "constructor-stod-underflow",
+      "classification": "constructor-only-unsupported-public",
+      "expression": null,
+      "nativeCase": {
+        "id": "constructor-stod-underflow",
+        "input": "0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001KB",
+        "mode": "literal",
+        "classification": "constructor-only-unsupported-public",
+        "optimize": false,
+        "expression": null,
+        "items": null,
+        "aggregate": "",
+        "providerCount": 1,
+        "parserExecuted": false,
+        "directiveExecuted": false
+      },
+      "nativeReference": {
+        "file": "golden.ndjson",
+        "fileSha256": "abe36d531ca546c5683a153b36be4e1f5ed31f971b9b3c322f535cf55e1e3fe8",
+        "lineNumber": 95,
+        "lineSha256WithoutTerminator": "1187e484547a9f023fcebf2e80559cb88c9131d5b96ab654922e39ee8fd302d1",
+        "record": {
+          "id": "constructor-stod-underflow",
+          "mode": "literal",
+          "classification": "constructor-only-unsupported-public",
+          "inputUtf8Hex": "302e30303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030314b42",
+          "optimizerInvoked": false,
+          "rawStodProbe": {
+            "numberPartUtf8Hex": "302e3030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303031",
+            "status": "out_of_range",
+            "consumedCharacters": null,
+            "doubleBitsHex": null
+          },
+          "parserExecuted": false,
+          "directiveExecuted": false,
+          "returned": true,
+          "value": {
+            "kind": "integer",
+            "decimal": "0"
+          },
+          "serializedUtf8Hex": "30"
+        }
+      },
+      "producerCompiled": false,
+      "executed": false,
+      "parserEquivalent": false,
+      "directiveEquivalent": false,
+      "typedPublicValueObserved": false,
+      "reason": "Constructor permissiveness/std::stod exception and platform rounding are separate observations, not public grammar success"
+    }
+  ],
+  "counts": {
+    "planned-public-serialized-bridge": 77,
+    "constructor-only-unsupported-public": 14,
+    "defined-cast-platform-rounding-observation": 4
+  }
+}

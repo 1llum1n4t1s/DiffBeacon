@@ -6,13 +6,20 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+. "$PSScriptRoot/DevelopmentOutput.ps1"
+$developmentRoot = Get-DiffBeaconWorkRoot
+Assert-DiffBeaconEnvironment $developmentRoot
 $sourceRoot = Join-Path $repoRoot 'tests/Fixtures/Archives/TarZ/reference-source'
-$outputRoot = if ($OutputDirectory) { [IO.Path]::GetFullPath($OutputDirectory, $repoRoot) } else { Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/z-reference-' + [guid]::NewGuid().ToString('N')) }
+$defaultRoot = if ($developmentRoot) { $developmentRoot } else { Join-Path ([IO.Path]::GetTempPath()) 'Codex/DiffBeacon' }
+$outputRoot = if ($OutputDirectory) { [IO.Path]::GetFullPath($OutputDirectory, $repoRoot) } else { Join-Path $defaultRoot ('z-reference-' + [guid]::NewGuid().ToString('N')) }
+if ($developmentRoot) { $null = Assert-DiffBeaconPath $outputRoot $developmentRoot }
 # 作業出力は外部の作業別領域へ限定し、作成前に全祖先を検査する。
 $allowedOutputRoots = @(
     (Join-Path ([IO.Path]::GetTempPath()) 'Codex/DiffBeacon'),
     (Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Codex/TaskArtifacts/DiffBeacon')
 )
+if ($developmentRoot) { $allowedOutputRoots = @($developmentRoot) }
+elseif ($env:DIFFBEACON_WORK_DIRECTORY) { $allowedOutputRoots += $env:DIFFBEACON_WORK_DIRECTORY }
 if ($env:RUNNER_TEMP -and $env:GITHUB_ACTIONS -eq 'true') {
     $allowedOutputRoots += Join-Path $env:RUNNER_TEMP 'Codex/DiffBeacon'
 }

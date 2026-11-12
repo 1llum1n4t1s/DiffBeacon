@@ -1,0 +1,1288 @@
+[
+  {
+    "id": "array-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-all-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-false-first",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-false-middle",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-false-last",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-all-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": false
+                }
+              ]
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-deep",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "boolean",
+                      "value": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-none",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-none",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-none",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "none"
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-integer-one",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 1
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-integer-one",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 1
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-integer-one",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "integer",
+              "value": 1
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-integer-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-integer-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-integer-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "integer",
+              "value": 0
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-integer-negative",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-integer-negative",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": -1
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-integer-negative",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "integer",
+              "value": -1
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-double-one",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-double-one",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "double",
+              "value": 1.0
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-double-one",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "double",
+              "value": 1.0
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-double-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-double-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "double",
+              "value": 0.0
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-double-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "double",
+              "value": 0.0
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-string-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "true"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-string-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "true"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-string-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "string",
+              "value": "true"
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-string-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-string-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": ""
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-string-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "string",
+              "value": ""
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-string-unicode",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "真"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-string-unicode",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "真"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-string-unicode",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "string",
+              "value": "真"
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-timestamp",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-timestamp",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "timestamp",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-timestamp",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "timestamp",
+              "value": 7
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-only-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-middle-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "evaluation-exception",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-0",
+    "mode": "arity",
+    "args": []
+  },
+  {
+    "id": "arity-1",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-2",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-3",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-all-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-true-first",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-true-middle",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-true-last",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-true-with-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-true-before-direct-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-direct-true-before-nested-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-empty-with-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-mixed-no-direct-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "integer",
+              "value": 1
+            },
+            {
+              "type": "string",
+              "value": "true"
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  }
+]

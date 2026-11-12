@@ -3,4 +3,73 @@
     <OutputType>Exe</OutputType>
     <IsAotCompatible>false</IsAotCompatible>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="..\Fixtures\FolderOptimizer\.gitattributes" Link="tests\Fixtures\FolderOptimizer\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\README.md" Link="tests\Fixtures\FolderOptimizer\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\failure-matrix.json" Link="tests\Fixtures\FolderOptimizer\failure-matrix.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\finite-schema.py" Link="tests\Fixtures\FolderOptimizer\finite-schema.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\lexer-plan.json" Link="tests\Fixtures\FolderOptimizer\lexer-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\fixed-manifest.json" Link="tests\Fixtures\FolderOptimizer\fixed-manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\native-classification.json" Link="tests\Fixtures\FolderOptimizer\native-classification.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\native-proof.zip" Link="tests\Fixtures\FolderOptimizer\native-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\old-new-plan.json" Link="tests\Fixtures\FolderOptimizer\old-new-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\projection.py" Link="tests\Fixtures\FolderOptimizer\projection.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\proof-binding.json" Link="tests\Fixtures\FolderOptimizer\proof-binding.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\public-plan.json" Link="tests\Fixtures\FolderOptimizer\public-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\required-host-checks.json" Link="tests\Fixtures\FolderOptimizer\required-host-checks.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\runner-source-chain.json" Link="tests\Fixtures\FolderOptimizer\runner-source-chain.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\runner-source-proof.zip" Link="tests\Fixtures\FolderOptimizer\runner-source-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\semantic-expectations.json" Link="tests\Fixtures\FolderOptimizer\semantic-expectations.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\source-support.json" Link="tests\Fixtures\FolderOptimizer\source-support.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\source-support.zip" Link="tests\Fixtures\FolderOptimizer\source-support.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderOptimizer\verify.py" Link="tests\Fixtures\FolderOptimizer\verify.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderReplaceListBoundaries\.gitattributes" Link="tests\Fixtures\FolderReplaceListBoundaries\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderReplaceListBoundaries\cases.json" Link="tests\Fixtures\FolderReplaceListBoundaries\cases.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderReplaceListBoundaries\fixed-manifest.json" Link="tests\Fixtures\FolderReplaceListBoundaries\fixed-manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderReplaceListBoundaries\golden.ndjson" Link="tests\Fixtures\FolderReplaceListBoundaries\golden.ndjson" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderReplaceListBoundaries\native-boundary-proof.zip" Link="tests\Fixtures\FolderReplaceListBoundaries\native-boundary-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderReplaceListBoundaries\README.md" Link="tests\Fixtures\FolderReplaceListBoundaries\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderReplaceListBoundaries\verify.py" Link="tests\Fixtures\FolderReplaceListBoundaries\verify.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\.gitattributes" Link="tests\Fixtures\FolderSupplementaryCaseFold\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\derived-cases.json" Link="tests\Fixtures\FolderSupplementaryCaseFold\derived-cases.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\failure-matrix.json" Link="tests\Fixtures\FolderSupplementaryCaseFold\failure-matrix.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\fixed-manifest.json" Link="tests\Fixtures\FolderSupplementaryCaseFold\fixed-manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\fixed-public-plan.json" Link="tests\Fixtures\FolderSupplementaryCaseFold\fixed-public-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\LICENSE.PCRE2.txt" Link="tests\Fixtures\FolderSupplementaryCaseFold\LICENSE.PCRE2.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\LICENSE.Poco.txt" Link="tests\Fixtures\FolderSupplementaryCaseFold\LICENSE.Poco.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\LICENSE.WinMerge.md" Link="tests\Fixtures\FolderSupplementaryCaseFold\LICENSE.WinMerge.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\native-casefold-proof.zip" Link="tests\Fixtures\FolderSupplementaryCaseFold\native-casefold-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\proof-receipt.json" Link="tests\Fixtures\FolderSupplementaryCaseFold\proof-receipt.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\provenance.json" Link="tests\Fixtures\FolderSupplementaryCaseFold\provenance.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\README.md" Link="tests\Fixtures\FolderSupplementaryCaseFold\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\verify-proof.py" Link="tests\Fixtures\FolderSupplementaryCaseFold\verify-proof.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\verify.py" Link="tests\Fixtures\FolderSupplementaryCaseFold\verify.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\.gitattributes" Link="tests\Fixtures\FolderProviderNull\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\failure-matrix.json" Link="tests\Fixtures\FolderProviderNull\failure-matrix.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\fixed-manifest.json" Link="tests\Fixtures\FolderProviderNull\fixed-manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\GPL-2.0.txt" Link="tests\Fixtures\FolderProviderNull\GPL-2.0.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\native-folder-null-proof.zip" Link="tests\Fixtures\FolderProviderNull\native-folder-null-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\Poco-BSL-1.0.txt" Link="tests\Fixtures\FolderProviderNull\Poco-BSL-1.0.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\projection-map.json" Link="tests\Fixtures\FolderProviderNull\projection-map.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\proof-receipt.json" Link="tests\Fixtures\FolderProviderNull\proof-receipt.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\property-preparation-source.json" Link="tests\Fixtures\FolderProviderNull\property-preparation-source.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\public-plan.json" Link="tests\Fixtures\FolderProviderNull\public-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\README.md" Link="tests\Fixtures\FolderProviderNull\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\runner-source.json" Link="tests\Fixtures\FolderProviderNull\runner-source.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\verify-native.py" Link="tests\Fixtures\FolderProviderNull\verify-native.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderProviderNull\verify.py" Link="tests\Fixtures\FolderProviderNull\verify.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\.gitattributes" Link="tests\Fixtures\FolderSideFunctions\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\failure-matrix.json" Link="tests\Fixtures\FolderSideFunctions\failure-matrix.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\fixed-manifest.json" Link="tests\Fixtures\FolderSideFunctions\fixed-manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\GPL-2.0.txt" Link="tests\Fixtures\FolderSideFunctions\GPL-2.0.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\native-classification.json" Link="tests\Fixtures\FolderSideFunctions\native-classification.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\native-proof.zip" Link="tests\Fixtures\FolderSideFunctions\native-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\prepare.py" Link="tests\Fixtures\FolderSideFunctions\prepare.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\projection.py" Link="tests\Fixtures\FolderSideFunctions\projection.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\public-plan.json" Link="tests\Fixtures\FolderSideFunctions\public-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\README.md" Link="tests\Fixtures\FolderSideFunctions\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\required-unimplemented.json" Link="tests\Fixtures\FolderSideFunctions\required-unimplemented.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSideFunctions\verify.py" Link="tests\Fixtures\FolderSideFunctions\verify.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Fixtures\FolderSupplementaryCaseFold\managed-runner-source.zip" Link="tests\Fixtures\FolderSupplementaryCaseFold\managed-runner-source.zip" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

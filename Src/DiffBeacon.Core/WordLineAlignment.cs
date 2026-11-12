@@ -29,6 +29,8 @@ internal sealed class WordLineAlignment
             MatchCase = !options.IgnoreCase,
             IgnoreNumbers = options.IgnoreNumbers,
             Eol = options.CompareLineEndings ? WordEolMode.Strict : WordEolMode.Ignore,
+            BreakOnSeparators = options.BreakOnSeparators,
+            Separators = options.WordBreakSeparators,
             Whitespace = options.IgnoreWhitespace || options.Whitespace == WhitespaceMode.IgnoreAll ? WordWhitespaceMode.IgnoreAll :
                 options.Whitespace == WhitespaceMode.IgnoreChanges ? WordWhitespaceMode.IgnoreChanges : WordWhitespaceMode.CompareAll
         };

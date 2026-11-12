@@ -266,7 +266,7 @@ def verify(fixture, work):
         if environment["eligible"]:
             require(os.path.samefile(third, environment["middleInput"]), "GUI share actual directory identity")
             gui_protection_names.append("third-root-localhost-share")
-    expected_gui_assertions = 79 + 4 * len(gui_protection_names) + (4 if os.name == "nt" else 0)
+    expected_gui_assertions = 81 + 4 * len(gui_protection_names) + (4 if os.name == "nt" else 0)
     require(report["scope"] == "folder-threeway-only" and len(report["assertions"]) == expected_gui_assertions
             and all(row["passed"] for row in report["assertions"]), "GUI exact platform scope and final pass")
     readonly_files = list((work / "gui").rglob("folder-threeway-long-readonly.json"))

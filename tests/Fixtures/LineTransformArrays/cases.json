@@ -1,0 +1,3904 @@
+[
+  {
+    "id": "arrays-value-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": []
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array()"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-value-ints",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(1, 2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-value-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "x"
+              },
+              {
+                "op": "none"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(1, true, \"x\", None)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-value-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 2
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "bool",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(Array(), Array(1, Array(2)), false)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-value-utf8",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "string",
+                "text": "あ"
+              },
+              {
+                "op": "string",
+                "text": "😀"
+              },
+              {
+                "op": "string",
+                "text": "é"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(\"あ\", \"😀\", \"é\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-value-eol-values",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "string",
+                "text": "x\ny"
+              },
+              {
+                "op": "string",
+                "text": "z\r\n"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(\"x\ny\", \"z\r\n\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-0",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(\"a\", \"b\"), 0)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-neg1",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": -1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(\"a\", \"b\"), -1)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-neg2",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": -2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(\"a\", \"b\"), -2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-neg3",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": -3
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(\"a\", \"b\"), -3)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-2",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(\"a\", \"b\"), 2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-9223372036854775807",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  }
+                ]
+              },
+              {
+                "op": "toint",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "9223372036854775807"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(\"a\", \"b\"), ToInt(\"9223372036854775807\"))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-neg9223372036854775808",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  }
+                ]
+              },
+              {
+                "op": "toint",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "-9223372036854775808"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(\"a\", \"b\"), ToInt(\"-9223372036854775808\"))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(), 0)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-string",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "string",
+                "text": "xy"
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(\"xy\", 0)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-none",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(None, 0)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-nonint",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "1"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(1, 2), \"1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-at-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "at",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      },
+                      {
+                        "op": "integer",
+                        "integer": 2
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 3
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt At(Array(Array(1, 2), Array(3)), 0)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-anyof-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "anyof",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AnyOf(Array())"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-anyof-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "anyof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "string",
+                    "text": "true"
+                  },
+                  {
+                    "op": "none"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AnyOf(Array(true, 1, \"true\", None))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-anyof-false",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "anyof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AnyOf(Array(false, false))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-anyof-true",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "anyof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AnyOf(Array(true, true))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-anyof-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "anyof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AnyOf(Array(Array(true)))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-anyof-scalar-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "anyof",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AnyOf(1)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allof-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allof",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllOf(Array())"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allof-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "string",
+                    "text": "true"
+                  },
+                  {
+                    "op": "none"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllOf(Array(true, 1, \"true\", None))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allof-false",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllOf(Array(false, false))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allof-true",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllOf(Array(true, true))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allof-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allof",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 1
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllOf(Array(Array(true)))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allof-scalar-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allof",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllOf(1)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(Array())"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-equal",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(Array(2, 2))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-unequal",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 3
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(Array(2, 3))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-strict",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(Array(1, true))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      },
+                      {
+                        "op": "none"
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      },
+                      {
+                        "op": "none"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(Array(Array(1, None), Array(1, None)))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-nested-ne",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      },
+                      {
+                        "op": "integer",
+                        "integer": 2
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(Array(Array(1), Array(1, 2)))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-scalar-strict",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "1"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(1, \"1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-allequal-array-first-ignore",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "allequal",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": 99
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AllEqual(Array(1, 1), 99)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-andeach-lift-left",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "andeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  }
+                ]
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AndEach(Array(true, false), true)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-andeach-lift-right",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "andeach",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 0
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AndEach(false, Array(true, false))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-andeach-mismatch",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "andeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AndEach(Array(true, false, true), Array(true))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-andeach-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "andeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "none"
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AndEach(Array(true, 1, None), Array(false, true, true))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-andeach-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "andeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 1
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AndEach(Array(Array(true), Array(false)), true)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-andeach-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "andeach",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt AndEach(Array(), true)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-oreach-lift-left",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "oreach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  }
+                ]
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt OrEach(Array(true, false), true)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-oreach-lift-right",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "oreach",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 0
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt OrEach(false, Array(true, false))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-oreach-mismatch",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "oreach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt OrEach(Array(true, false, true), Array(true))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-oreach-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "oreach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "none"
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt OrEach(Array(true, 1, None), Array(false, true, true))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-oreach-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "oreach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 1
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "bool",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt OrEach(Array(Array(true), Array(false)), true)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-noteach-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "noteach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "none"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt NotEach(Array(true, false, 1, None))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-noteach-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "noteach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 1
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 0
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt NotEach(Array(Array(true), Array(false), Array()))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-ifeach-scalar",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "ifeach",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 3
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 4
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt IfEach(true, Array(1, 2), Array(3, 4))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-ifeach-lift",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "ifeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "Y"
+              },
+              {
+                "op": "string",
+                "text": "N"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt IfEach(Array(true, false, true), \"Y\", \"N\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-ifeach-mismatch",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "ifeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt IfEach(Array(true, false, true), Array(1), Array(2))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-ifeach-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "ifeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "none"
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "a"
+                  },
+                  {
+                    "op": "string",
+                    "text": "b"
+                  },
+                  {
+                    "op": "string",
+                    "text": "c"
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "N"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt IfEach(Array(1, None, true), Array(\"a\", \"b\", \"c\"), \"N\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-ifeach-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "ifeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 1
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": []
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "Y"
+              },
+              {
+                "op": "string",
+                "text": "N"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt IfEach(Array(Array(true), Array(), Array(1)), \"Y\", \"N\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-if-lazy-true",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "ok"
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt If(true, \"ok\", (1 / 0))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-if-lazy-false",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 0
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "ok"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt If(false, (1 / 0), \"ok\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-if-bool-true-any",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "yes"
+              },
+              {
+                "op": "string",
+                "text": "no"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt If(Array(false, true), \"yes\", \"no\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-if-bool-int-not-true",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "string",
+                    "text": "true"
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "yes"
+              },
+              {
+                "op": "string",
+                "text": "no"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt If(Array(1, \"true\"), \"yes\", \"no\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-ifeach-eager-true",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "ifeach",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "ok"
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt IfEach(true, \"ok\", (1 / 0))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-ifeach-eager-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "ifeach",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "ok"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt IfEach(Array(), (1 / 0), \"ok\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-choose-neg",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "choose",
+            "children": [
+              {
+                "op": "integer",
+                "integer": -1
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "string",
+                "text": "b"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Choose(-1, \"a\", \"b\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-choose-max",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "choose",
+            "children": [
+              {
+                "op": "toint",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "9223372036854775807"
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "string",
+                "text": "b"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Choose(ToInt(\"9223372036854775807\"), \"a\", \"b\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-choose-min",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "choose",
+            "children": [
+              {
+                "op": "toint",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "-9223372036854775808"
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "string",
+                "text": "b"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Choose(ToInt(\"-9223372036854775808\"), \"a\", \"b\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-choose-nonint",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "choose",
+            "children": [
+              {
+                "op": "string",
+                "text": "1"
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "string",
+                "text": "b"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Choose(\"1\", \"a\", \"b\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-choose-lazy",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "choose",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 0
+              },
+              {
+                "op": "string",
+                "text": "ok"
+              },
+              {
+                "op": "div",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Choose(0, \"ok\", (1 / 0))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-chooseeach-mixed",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "chooseeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": -1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 0
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 9
+                  },
+                  {
+                    "op": "none"
+                  },
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "string",
+                "text": "b"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt ChooseEach(Array(-1, 0, 1, 9, None, true), \"a\", \"b\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-chooseeach-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "chooseeach",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 0
+                      }
+                    ]
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "string",
+                "text": "a"
+              },
+              {
+                "op": "string",
+                "text": "b"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt ChooseEach(Array(Array(0), 1), \"a\", \"b\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-lift-left",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "add",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": 3
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (Array(1, 2) + 3)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-lift-right",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "sub",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 10
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (10 - Array(1, 2))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-mismatch",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "mul",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 3
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 4
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (Array(2, 3) * Array(4))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "add",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 2
+                      },
+                      {
+                        "op": "integer",
+                        "integer": 3
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": 10
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (Array(Array(1), Array(2, 3)) + 10)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-eq-array",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "eq",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "none"
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "none"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (Array(1, None) == Array(1, None))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-eq-length",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "eq",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ]
+              },
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (Array(1) == Array(1, 2))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-eq-lift",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "eq",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ]
+              },
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (Array(1, 2) == 1)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-bool-sub",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "sub",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "bool",
+                "integer": 0
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (true - false)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-str-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "add",
+            "children": [
+              {
+                "op": "string",
+                "text": "x"
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (\"x\" + 2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-none-str",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "add",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "string",
+                "text": "x"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (None + \"x\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-div-int",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "div",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 5
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (5 / 2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-compute-mod-negative",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "mod",
+            "children": [
+              {
+                "op": "integer",
+                "integer": -5
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt (-5 % 2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-len-empty",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "len",
+            "children": [
+              {
+                "op": "array",
+                "children": []
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Len(Array())"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-len-nested",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "len",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      }
+                    ]
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "integer",
+                        "integer": 2
+                      },
+                      {
+                        "op": "integer",
+                        "integer": 3
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Len(Array(Array(1), Array(2, 3)))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-len-utf8",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "len",
+            "children": [
+              {
+                "op": "string",
+                "text": "あ😀é"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Len(\"あ😀é\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-len-none",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "len",
+            "children": [
+              {
+                "op": "none"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Len(None)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-trim-lift",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "trim",
+            "children": [
+              {
+                "op": "array",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": " x "
+                  },
+                  {
+                    "op": "none"
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  },
+                  {
+                    "op": "array",
+                    "children": [
+                      {
+                        "op": "string",
+                        "text": " y "
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Trim(Array(\" x \", None, 1, Array(\" y \")))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-outer-eols",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a\r\n",
+      "b\n",
+      "c\r",
+      "d"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "bool",
+                "integer": 0
+              },
+              {
+                "op": "none"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(1, false, None)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-target-skipped",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 1,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 1,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(1, 2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-target-included",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 1,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 2,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(1, 2)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "arrays-group-chain",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "source\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "integer",
+                "integer": 2
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(1, 2)"
+        ]
+      },
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "array",
+            "children": [
+              {
+                "op": "line"
+              },
+              {
+                "op": "string",
+                "text": "x"
+              }
+            ]
+          }
+        ],
+        "expressions": [
+          "@cs @noopt Array(Line, \"x\")"
+        ]
+      }
+    ],
+    "note": ""
+  }
+]

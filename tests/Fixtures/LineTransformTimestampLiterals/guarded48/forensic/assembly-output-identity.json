@@ -1,0 +1,41 @@
+{
+  "roots": [
+    {
+      "logical": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-formal-20261012-183103-5dde754e",
+      "canonical": "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-formal-20261012-183103-5dde754e",
+      "samefile": true,
+      "logicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 7036874420311589
+      },
+      "canonicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 7036874420311589
+      },
+      "aliasQualification": "known OpenAI.Codex LocalCache Local alias, samefile/volumeFileId measured",
+      "logicalAndCanonicalAncestorReparseChecked": true,
+      "kind": "stage"
+    },
+    {
+      "logical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-formal-20261012-183103-5dde754e",
+      "canonical": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\timestamp-boundary-formal-20261012-183103-5dde754e",
+      "samefile": true,
+      "logicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 9570149210707723
+      },
+      "canonicalIdentity": {
+        "volumeSerial": 6510931,
+        "fileId": 9570149210707723
+      },
+      "aliasQualification": "identity path",
+      "logicalAndCanonicalAncestorReparseChecked": true,
+      "kind": "work"
+    }
+  ],
+  "pythonCanonical": "C:\\Users\\IMT\\AppData\\Roaming\\uv\\python\\cpython-3.14.7-windows-x86_64-none\\python.exe",
+  "pythonSha256": "955abd94682c5a420c414df94fe640682775bdde4983006ca1244dd487aad15b",
+  "assemblySource": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710",
+  "referenceSourceZipActor": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-formal-20261012-174238-38351a15\\reference-source.zip",
+  "actorPathsForensicOnly": true
+}

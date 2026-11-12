@@ -1,0 +1,11 @@
+{
+  "scope": "AllOfFunc直接実行とconstructor引数数検証ブロックの別観測。constructor全体/parser/.fltは対象外",
+  "failures": [
+    "空配列または全trueをfalseにする",
+    "false・非bool・nested arrayをtrueにする",
+    "scalarの非boolをfalseまたはtrueへ変換する",
+    "式の重複評価または例外の隠蔽",
+    "登録arity 1..1の拒否欠落または拒否前の式評価",
+    "原典spanまたは二回独立stdoutの不一致を見逃す"
+  ]
+}

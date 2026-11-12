@@ -1,0 +1,26 @@
+{
+  "schema": "iswithin-public-constructor-probes-v1",
+  "publicExecution": "not-executed",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "probes": [
+    {
+      "id": "public-arity-4",
+      "expression": "@cs @noopt IsWithin(1, 0, 3, none)",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "expectedPublicOutcome": "compile-constructor-rejection",
+      "publicExecution": "not-executed",
+      "nativeCase": "arity-4",
+      "relation": "Native fourth arg is unrepresentable ThrowNode but not evaluated. This separate public probe changes fourth argument to none and only tests public arity rejection; it is not exact AST/value equivalence."
+    }
+  ]
+}

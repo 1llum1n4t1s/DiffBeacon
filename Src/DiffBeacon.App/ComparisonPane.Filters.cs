@@ -11,20 +11,47 @@ public sealed partial class ComparisonPane
     private readonly CheckBox _ignoreNumbers = new() { Content = "数字を無視" };
     private readonly ComboBox _whitespace = new() { ItemsSource = new[] { "空白: 無視なし", "前後だけ無視", "空白の増減を無視", "すべての空白を無視" }, SelectedIndex = 0, Width = 195 };
     private readonly ComboBox _comments = new() { ItemsSource = new[] { "コメント: 無視なし", "C / C++ / Java", "C#", "Python", "XML / HTML" }, SelectedIndex = 0, Width = 190 };
+    private readonly ComboBox _inlineDiffLevel = new() { ItemsSource = new[] { "行内差分: 文字単位", "行内差分: 単語単位" }, SelectedIndex = 0,
+        Width = 190, Name = "comparison-inline-diff-level" };
+    private readonly CheckBox _breakOnSeparators = new() { Content = "句読点で単語を分割", IsChecked = true, Name = "comparison-break-on-separators" };
+    private readonly TextBox _wordBreakSeparators = new() { PlaceholderText = "単語区切り文字", Text = ComparisonOptions.DefaultWordBreakSeparators,
+        Width = 260, MaxLength = ComparisonOptions.MaximumWordBreakSeparatorsLength, Name = "comparison-word-break-separators" };
     private SubstitutionRule[] _substitutions = [];
     private readonly TextBlock _substitutionCount = new() { Text = "置換 0件", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8) };
+    private readonly TextBlock _lineTransformCount = new() { Text = "行変換 0件", VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8), Name = "comparison-line-transform-count" };
 
     private Control CreateAdvancedFilters()
     {
         var panel = new WrapPanel();
-        foreach (var control in new Control[] { _ignoreNumbers, _whitespace, _comments }) { control.Margin = new Thickness(8, 4); panel.Children.Add(control); }
+        ToolTip.SetTip(_wordBreakSeparators,
+            $"句読点として扱う文字を指定します。U+00FF 以下が対象で、最大 {ComparisonOptions.MaximumWordBreakSeparatorsLength} 文字です。");
+        foreach (var control in new Control[] { _ignoreNumbers, _whitespace, _comments, _inlineDiffLevel, _breakOnSeparators, _wordBreakSeparators })
+        { control.Margin = new Thickness(8, 4); panel.Children.Add(control); }
         AddAction(panel, "置換フィルター…", EditSubstitutionsAsync); panel.Children.Add(_substitutionCount);
+        AddAction(panel, "行変換…", EditLineTransformsAsync); panel.Children.Add(_lineTransformCount);
         return panel;
     }
     public void SetAdvancedFilters(bool ignoreNumbers, CommentSyntax syntax, WhitespaceMode whitespace, params SubstitutionRule[] substitutions)
     {
         _ignoreNumbers.IsChecked = ignoreNumbers; _comments.SelectedIndex = (int)syntax; _whitespace.SelectedIndex = (int)whitespace;
         _substitutions = substitutions.ToArray(); _substitutionCount.Text = $"置換 {_substitutions.Count(rule => rule.Enabled)}件";
+    }
+    public void SetLineTransforms(IReadOnlyList<LineTransformRule> rules)
+    {
+        var copy = WorkspaceStore.CloneLineTransformRules(rules, _projectMetadata);
+        _projectMetadata = _projectMetadata with { LineTransformRules = copy };
+        _lineTransformCount.Text = $"行変換 {copy.Length}件";
+    }
+
+    private async Task EditLineTransformsAsync()
+    {
+        var project = _projectMetadata;
+        var dialog = new LineTransformDialog(project.LineTransformRules, project);
+        var rules = await dialog.ShowDialog<LineTransformRule[]?>(_owner);
+        if (rules is null || _disposed) return;
+        if (!ReferenceEquals(project, _projectMetadata))
+        { _status.Text = "比較設定が変更されたため行変換を適用しませんでした。"; return; }
+        SetLineTransforms(rules);
     }
     private async Task EditSubstitutionsAsync()
     {

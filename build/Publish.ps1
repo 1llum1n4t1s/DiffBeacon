@@ -5,8 +5,10 @@ param(
     [ValidateSet('win-x64', 'win-arm64', 'osx-x64', 'osx-arm64')]
     [string] $RuntimeIdentifier,
     [switch] $SkipVerification,
+    [switch] $CheckOutputOnly,
     [switch] $OwnerAttestsQuiescentAndNoMixedWork,
     [string] $OutputRoot,
+    [string] $BuildArtifactsPath,
     [ValidateRange(1, 3600)]
     [int] $VerificationTimeoutSeconds = 600
 )
@@ -14,16 +16,27 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+. "$PSScriptRoot/DevelopmentOutput.ps1"
+$developmentRoot = Get-DiffBeaconWorkRoot
+Assert-DiffBeaconEnvironment $developmentRoot
 $isMacTarget = $RuntimeIdentifier.StartsWith('osx-')
 if (($isMacTarget -and -not $IsMacOS) -or (-not $isMacTarget -and -not $IsWindows)) {
     throw 'Native AOT は対象と同じ OS 上で発行してください。Windows と macOS 間のクロスコンパイルには対応していません。'
 }
-$publishRoot = if ($OutputRoot) { [IO.Path]::GetFullPath($OutputRoot, $repoRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) } else { Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/publish-' + [guid]::NewGuid().ToString('N')) }
+$defaultWork = if ($developmentRoot) { Join-Path $developmentRoot ('publish-' + [guid]::NewGuid().ToString('N')) } else { Join-Path ([IO.Path]::GetTempPath()) ('Codex/DiffBeacon/publish-' + [guid]::NewGuid().ToString('N')) }
+$publishRoot = if ($OutputRoot) { [IO.Path]::GetFullPath($OutputRoot, $repoRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) } else { Join-Path $defaultWork 'publish' }
+$buildArtifactsRoot = if ($BuildArtifactsPath) { [IO.Path]::GetFullPath($BuildArtifactsPath, $repoRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) } else { Join-Path $defaultWork 'build' }
+if ($developmentRoot) {
+    $null = Assert-DiffBeaconPath $publishRoot $developmentRoot
+    $null = Assert-DiffBeaconPath $buildArtifactsRoot $developmentRoot
+}
 # 作業出力は外部の作業別領域へ限定し、作成前に全祖先を検査する。
 $allowedOutputRoots = @(
     (Join-Path ([IO.Path]::GetTempPath()) 'Codex/DiffBeacon'),
     (Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'Codex/TaskArtifacts/DiffBeacon')
 )
+if ($developmentRoot) { $allowedOutputRoots = @($developmentRoot) }
+elseif ($env:DIFFBEACON_WORK_DIRECTORY) { $allowedOutputRoots += $env:DIFFBEACON_WORK_DIRECTORY }
 if ($env:RUNNER_TEMP -and $env:GITHUB_ACTIONS -eq 'true') {
     $allowedOutputRoots += Join-Path $env:RUNNER_TEMP 'Codex/DiffBeacon'
 }
@@ -38,6 +51,37 @@ $codexRoot = if ($env:CODEX_HOME) { [IO.Path]::GetFullPath($env:CODEX_HOME) } el
 $codexPrefix = $codexRoot.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
 if (-not $allowedOutput -or $publishRoot.StartsWith($repoPrefix, $comparison) -or $publishRoot.Equals($repoRoot, $comparison) -or $publishRoot.StartsWith($codexPrefix, $comparison) -or $publishRoot.Equals($codexRoot, $comparison) -or $publishRoot -match '(?i)(^|[\\/])(artifacts|\.codex)([\\/]|$)') {
     throw '生成先はrepo／Codexユーザーディレクトリ外のCodex/DiffBeacon作業別領域を指定してください。artifactsという名前のパス要素は使用できません。'
+}
+if ($buildArtifactsRoot) {
+    $buildArtifactsAllowed = $false
+    foreach ($allowedRoot in $allowedOutputRoots) {
+        $prefix = [IO.Path]::GetFullPath($allowedRoot).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+        if ($buildArtifactsRoot.StartsWith($prefix, $comparison)) { $buildArtifactsAllowed = $true; break }
+    }
+    $publishPrefix = $publishRoot.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    $buildArtifactsPrefix = $buildArtifactsRoot.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    if (-not $buildArtifactsAllowed -or $buildArtifactsRoot.StartsWith($repoPrefix, $comparison) -or $buildArtifactsRoot.Equals($repoRoot, $comparison) -or
+        $buildArtifactsRoot.StartsWith($codexPrefix, $comparison) -or $buildArtifactsRoot.Equals($codexRoot, $comparison) -or
+        $buildArtifactsRoot -match '(?i)(^|[\\/])(artifacts|\.codex)([\\/]|$)' -or
+        $buildArtifactsRoot.Equals($publishRoot, $comparison) -or $buildArtifactsRoot.StartsWith($publishPrefix, $comparison) -or $publishRoot.StartsWith($buildArtifactsPrefix, $comparison)) {
+        throw '中間出力先はrepo／Codexユーザーディレクトリと発行出力の外にある別の作業領域を指定してください。artifactsという名前のパス要素は使用できません。'
+    }
+    # 同じrunのbuild/objは再利用する。境界・発行先との分離・祖先の型/linkは前後で検査する。
+    $currentPath = $buildArtifactsRoot
+    while ($currentPath) {
+        $existingAncestor = $null
+        try { $existingAncestor = Get-Item -LiteralPath $currentPath -Force -ErrorAction Stop }
+        catch [Management.Automation.ItemNotFoundException] { }
+        if ($existingAncestor) {
+            if ($existingAncestor.PSProvider.Name -ne 'FileSystem' -or $existingAncestor -isnot [IO.DirectoryInfo]) {
+                throw "中間出力先の祖先はファイルシステムのディレクトリである必要があります: $currentPath"
+            }
+            if ($existingAncestor.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+                throw "中間出力先にリンクは使用できません: $currentPath"
+            }
+        }
+        $currentPath = [IO.Path]::GetDirectoryName($currentPath)
+    }
 }
 $currentPath = $publishRoot
 while ($currentPath) {
@@ -82,26 +126,45 @@ if (-not [IO.Path]::GetFullPath($outputPath).StartsWith($publishRoot + [IO.Path]
 }
 if (Test-Path -LiteralPath $outputPath) {
     if ($IsWindows) {
-        $WindowsCleanupHelper = Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::UserProfile)) '.codex/scripts/Remove-CodexItem.ps1'
         if (-not $OwnerAttestsQuiescentAndNoMixedWork) { throw '旧発行物の利用中プロセスなし・他作業混在なしを確認し、-OwnerAttestsQuiescentAndNoMixedWork を指定してください。' }
-        if ([Threading.Thread]::CurrentThread.ApartmentState -ne 'STA') { throw '旧発行物を清掃するWindows発行は pwsh -STA -NoProfile -File build/Publish.ps1 で実行してください。' }
-        # 旧発行物はごみ箱で今回の項目を照合し、個別に完全消去してから再生成する。
+        # PSから削除しない。呼出側が正規PrunletをCMD直接で実行するまで発行を止める。
         $cleanupRoot = Join-Path $publishRoot 'publish-cleanup'
+        if ($cleanupRoot -match '[^A-Za-z0-9_:\\./-]') { throw '既存発行先は保持しました。CMD用paths-fileを生成できる空白/特殊文字なしの未使用OutputRootへ切り替えてください。' }
+        if ($developmentRoot) { $null = Assert-DiffBeaconPath $cleanupRoot $developmentRoot }
+        for ($cursor = $cleanupRoot; $cursor; $cursor = [IO.Path]::GetDirectoryName($cursor)) {
+            if ((Test-Path -LiteralPath $cursor) -and ((Get-Item -LiteralPath $cursor -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw "削除計画のリンク祖先を拒否: $cursor" }
+        }
         New-Item -ItemType Directory -Path $cleanupRoot -Force | Out-Null
         $cleanupId = [guid]::NewGuid().ToString('N')
-        $cleanupPath = Join-Path $cleanupRoot "$RuntimeIdentifier-$cleanupId-clean.json"
-        if (-not (Test-Path -LiteralPath $WindowsCleanupHelper -PathType Leaf)) { throw '指定されたWindows共通清掃ヘルパーがないため、旧発行物を保持します。新しい-OutputRootを指定できます。' }
-        & $WindowsCleanupHelper -AllowedRoot $publishRoot -LiteralPath @($outputPath) -LedgerPath $cleanupPath
-        $cleaned = Get-Content -LiteralPath $cleanupPath -Raw | ConvertFrom-Json
-        if ($cleaned.state -ne 'complete' -or @($cleaned.items | Where-Object { -not $_.sourceAbsent -or -not $_.recycleAbsent -or -not $_.metadataAbsent }).Count -gt 0 -or (Test-Path -LiteralPath $outputPath)) { throw '旧発行物のごみ箱移動／完全消去を確認できません。' }
-    } else { Remove-Item -LiteralPath $outputPath -Recurse -Force }
+        $pathsPath = Join-Path $cleanupRoot "$RuntimeIdentifier-$cleanupId.paths.json"
+        $resultPath = Join-Path $cleanupRoot "$RuntimeIdentifier-$cleanupId.delete.json"
+        $planPath = Join-Path $cleanupRoot "$RuntimeIdentifier-$cleanupId.plan.json"
+        foreach ($plannedPath in @($pathsPath, $resultPath, $planPath)) {
+            if ($developmentRoot) { $null = Assert-DiffBeaconPath $plannedPath $developmentRoot -AllowFileLeaf }
+            if (Test-Path -LiteralPath $plannedPath) { throw "既存の削除計画は上書きしません: $plannedPath" }
+        }
+        [IO.File]::WriteAllText($pathsPath, (ConvertTo-Json -InputObject @($outputPath)), [Text.UTF8Encoding]::new($false))
+        $command = "C:\Users\IMT\.local\Prunlet\bin\prunlet.exe --config C:\Users\IMT\.local\Prunlet\config.json delete --recursive --paths-file $pathsPath > $resultPath"
+        $plan = [ordered]@{ state='awaiting-prunlet-cmd-direct'; target=$outputPath; sourceRemoved=$false; pathsFile=$pathsPath; deleteResult=$resultPath; command=$command }
+        $encoded = [Text.UTF8Encoding]::new($false).GetBytes(($plan | ConvertTo-Json -Depth 5))
+        $stream = [IO.File]::Open($planPath, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)
+        try { $stream.Write($encoded, 0, $encoded.Length); $stream.Flush($true) } finally { $stream.Dispose() }
+        Write-Host "既存発行物を保持し、発行を停止しました。削除計画: $planPath"
+        Write-Host "shell=cmd.exe, login=false で直接実行するコマンド: $command"
+        throw '呼出側で正規CMD削除の結果と元パス不在を確認してから再実行するか、正本workroot配下の未使用OutputRootで再実行してください。自動削除/purgeは行いません。'
+    } elseif (-not $CheckOutputOnly) { Remove-Item -LiteralPath $outputPath -Recurse -Force }
+}
+if ($CheckOutputOnly) {
+    [ordered]@{ outputCheckOnly=$true; output=$outputPath; build=$buildArtifactsRoot; verification=$verificationPath; existingOutput=(Test-Path -LiteralPath $outputPath) } | ConvertTo-Json
+    return
 }
 New-Item -ItemType Directory -Path $outputPath -Force | Out-Null
 Push-Location $repoRoot
 try {
     $sdkVersion = & dotnet --version
     if ($LASTEXITCODE -ne 0) { throw 'dotnet SDK の確認に失敗しました。' }
-    $publishArguments = @('publish', $projectPath, '-c', 'Release', '-r', $RuntimeIdentifier, '-p:PublishAot=true', '--self-contained', 'true', '-o', $outputPath)
+    $publishArguments = @('publish', $projectPath, '-c', 'Release', '-r', $RuntimeIdentifier, '-p:PublishAot=true', '--self-contained', 'true', '-o', $outputPath, '-noAutoResponse')
+    if ($buildArtifactsRoot) { $publishArguments += @('--artifacts-path', $buildArtifactsRoot) }
     # 制限された実行環境で OS 環境変数が欠けても、実際のホスト OS を MSBuild へ伝える。
     if ($IsWindows -and -not $env:OS) { $publishArguments += '-p:OS=Windows_NT' }
     & dotnet @publishArguments
@@ -118,7 +181,7 @@ try {
         New-Item -ItemType Directory -Path $macOsPath -Force | Out-Null
         New-Item -ItemType Directory -Path (Join-Path $bundlePath 'Contents/Resources') -Force | Out-Null
         foreach ($file in $publishedFiles) { Copy-Item -LiteralPath $file.FullName -Destination $macOsPath -Recurse -Force }
-        $bundleVersion = & dotnet msbuild $projectPath -getProperty:Version -nologo
+        $bundleVersion = & dotnet msbuild $projectPath -getProperty:Version -nologo -noAutoResponse
         if ($LASTEXITCODE -ne 0) { throw 'バンドル用バージョンの取得に失敗しました。' }
         $escapedVersion = [Security.SecurityElement]::Escape(($bundleVersion | Out-String).Trim())
         $plist = @"

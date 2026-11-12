@@ -75,7 +75,7 @@ public sealed partial class ComparisonPane
         if (_disposed) throw new ObjectDisposedException(nameof(ComparisonPane));
         CommitMergeInput();
         var options = Options();
-        var settings = new FourPaneMaterializationSettings { DefaultEol = TextDocument.Create(IndependentText ? LeftEditor.Text ?? "" : _baseText ?? LeftEditor.Text ?? "").NewLine, LeftLabel = "LEFT", MiddleLabel = IndependentText ? "MIDDLE" : "BASE", RightLabel = "RIGHT" };
+        var settings = new FourPaneMaterializationSettings { SourcePaths = CurrentTextSourcePaths(), DefaultEol = TextDocument.Create(IndependentText ? LeftEditor.Text ?? "" : _baseText ?? LeftEditor.Text ?? "").NewLine, LeftLabel = "LEFT", MiddleLabel = IndependentText ? "MIDDLE" : "BASE", RightLabel = "RIGHT" };
         var candidate = IndependentText
             ? FourPaneMaterialization.CreateIndependentThreeWay(LeftEditor.Text ?? "", MiddleEditor.Text ?? "", RightEditor.Text ?? "", options, settings)
             : _baseText is null

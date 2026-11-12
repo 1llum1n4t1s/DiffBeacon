@@ -29,6 +29,10 @@ public sealed partial class ManagedArchive
         CancellationToken cancellationToken = default, ManagedArchiveWriteOptions? writeOptions = null)
         => WriteArchiveCore(destinationPath, entries, RequireOutputFormat(destinationPath), cancellationToken, writeOptions);
 
+    public void WriteArchive(string destinationPath, IEnumerable<ManagedArchiveWriteEntry> entries,
+        CancellationToken cancellationToken, ManagedArchiveWriteOptions? writeOptions, Action<string, Action> publishOutput)
+        => WriteArchiveCore(destinationPath, entries, RequireOutputFormat(destinationPath), cancellationToken, writeOptions, publishOutput);
+
     public void Repack(string sourcePath, string destinationPath, string? password = null,
         CancellationToken cancellationToken = default, ManagedArchiveWriteOptions? writeOptions = null)
         => RepackCore(sourcePath, destinationPath, RequireOutputFormat(destinationPath), password, cancellationToken, writeOptions);
@@ -37,7 +41,7 @@ public sealed partial class ManagedArchive
         ?? throw new InvalidDataException("出力形式は 7z・ZIP 派生・TAR・tar.gz・tar.bz2・tar.Z・gzip・BZip2・Z を指定してください。");
 
     private void WriteArchiveCore(string destinationPath, IEnumerable<ManagedArchiveWriteEntry> entries,
-        string format, CancellationToken token, ManagedArchiveWriteOptions? writeOptions = null)
+        string format, CancellationToken token, ManagedArchiveWriteOptions? writeOptions = null, Action<string, Action>? publishOutput = null)
     {
         ArgumentNullException.ThrowIfNull(entries);
         SaveOutput(ValidateLocalPath(destinationPath, false), format, token, write =>
@@ -61,7 +65,7 @@ public sealed partial class ManagedArchive
                     write(name, bounded, entry.LastModifiedTime);
                 }
             }
-        }, writeOptions);
+        }, writeOptions, publishOutput);
     }
 
     private void RepackCore(string sourcePath, string destinationPath, string format, string? password, CancellationToken token, ManagedArchiveWriteOptions? writeOptions = null)
@@ -84,7 +88,7 @@ public sealed partial class ManagedArchive
     }
 
     private void SaveOutput(string destination, string format, CancellationToken token,
-        Action<Action<string, Stream?, DateTime?>> populate, ManagedArchiveWriteOptions? writeOptions = null)
+        Action<Action<string, Stream?, DateTime?>> populate, ManagedArchiveWriteOptions? writeOptions = null, Action<string, Action>? publishOutput = null)
     {
         token.ThrowIfCancellationRequested();
         ValidateOutput(destination);
@@ -155,12 +159,18 @@ public sealed partial class ManagedArchive
                 token.ThrowIfCancellationRequested();
                 file.Flush(flushToDisk: true);
             }
-            token.ThrowIfCancellationRequested();
-            ValidateOutput(destination);
-            if (!OperatingSystem.IsWindows() && File.Exists(destination)) File.SetUnixFileMode(temporary, File.GetUnixFileMode(destination));
-            if (File.Exists(destination)) File.Replace(temporary, destination, null);
-            else File.Move(temporary, destination);
-            created = false;
+            var published = false;
+            void Publish()
+            {
+                if (published) throw new InvalidOperationException("公開処理は一度だけ実行してください。");
+                token.ThrowIfCancellationRequested(); ValidateOutput(destination);
+                if (!OperatingSystem.IsWindows() && File.Exists(destination)) File.SetUnixFileMode(temporary, File.GetUnixFileMode(destination));
+                if (File.Exists(destination)) File.Replace(temporary, destination, null);
+                else File.Move(temporary, destination);
+                created = false; published = true;
+            }
+            if (publishOutput is null) Publish(); else publishOutput(destination, Publish);
+            if (!published) throw new InvalidOperationException("公開callbackは同期的に公開処理を実行してください。");
         }
         finally { if (created) File.Delete(temporary); }
     }

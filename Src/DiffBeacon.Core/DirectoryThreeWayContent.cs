@@ -50,13 +50,18 @@ public static partial class DirectoryComparer
             return new(ml, mr, lr, !ml || !mr);
         }
         // 不在は空本文としてFullへ渡す。存在補正は呼び出し元で全体statusだけに適用する。
+        var documents = new TextDocument?[3];
         var texts = new string[3];
         for (var side = 0; side < states.Length; side++)
         {
             token.ThrowIfCancellationRequested();
-            texts[side] = states[side] is null ? "" : TextDocument.FromBytes(states[side]!.Path, bytes[side], new()).Text;
+            documents[side] = states[side] is null ? null : TextDocument.FromBytes(states[side]!.Path, bytes[side], new());
+            texts[side] = documents[side]?.Text ?? "";
         }
-        var result = DirectoryTextComparer.CompareThreeWay(texts[0], texts[1], texts[2], options, token);
+        var result = DirectoryTextComparer.CompareThreeWayWithSourcePaths(texts[0], texts[1], texts[2],
+            new(left: left?.Path, @base: middle?.Path, right: right?.Path,
+                leftEncodingName: documents[0]?.EncodingName, baseEncodingName: documents[1]?.EncodingName,
+                rightEncodingName: documents[2]?.EncodingName), options, token);
         if (result.LineFallback)
             throw new InvalidDataException("三者Full比較の共有作業上限で厳密比較を完了できませんでした: " + result.LineFallbackReason);
         return new(result.MiddleLeftEqual, result.MiddleRightEqual, result.LeftRightEqual, result.HasSignificantDifferences);

@@ -1,0 +1,12 @@
+{
+  "scope": "合法arityでAllEqualFuncを直接実行。constructor/parser/.flt公開経路は対象外",
+  "failures": [
+    "scalar値の型差・値差・文字列大小文字差を一致扱いする",
+    "scalar不一致後の引数を評価する、または例外を隠す",
+    "array先頭時に残りの関数引数を評価する",
+    "空配列・1要素配列をfalseとする",
+    "nested配列の順序・長さ・型差を無視する",
+    "None、bool、integer、double、string、Timestampを混同する",
+    "無変更source span・Git blob・二回採取stdoutの不一致を見逃す"
+  ]
+}

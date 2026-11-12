@@ -19,8 +19,11 @@ internal static class HeadlessArchiveSourceChecks
         var folder = Path.Combine(output, "archive-sources"); Directory.CreateDirectory(folder);
         const string leftText = "header\r\nleft 日本\r\ntail\n", rightText = "header\r\nright 日本\r\ntail\n";
         var large = Enumerable.Range(0, 16385).Select(i => (byte)(i * 37)).ToArray();
-        var leftInner = Zip(("leaf.txt", Encoding.UTF8.GetBytes(leftText)), ("empty.txt", []), ("binary.bin", large), ("folder/", []));
-        var rightInner = Zip(("leaf.txt", Encoding.UTF8.GetBytes(rightText)), ("empty.txt", []), ("binary.bin", large), ("folder/", []));
+        var leftGif = ImageFixture("same-first-left.gif"); var rightGif = ImageFixture("same-first-right.gif");
+        var staticPng = ImageFixture("disposal-2.png");
+        var brokenGif = new byte[] { 1, 2, 3 };
+        var leftInner = Zip(("leaf.txt", Encoding.UTF8.GetBytes(leftText)), ("empty.txt", []), ("binary.bin", large), ("folder/", []), ("frames.gif", leftGif), ("still.png", staticPng), ("broken.gif", brokenGif));
+        var rightInner = Zip(("leaf.txt", Encoding.UTF8.GetBytes(rightText)), ("empty.txt", []), ("binary.bin", large), ("folder/", []), ("frames.gif", rightGif), ("still.png", staticPng), ("broken.gif", brokenGif));
         var roots = new[] { Path.Combine(folder, "left.zip"), Path.Combine(folder, "right.zip") };
         File.WriteAllBytes(roots[0], Zip(("inner.zip", leftInner), ("bad.zip", [1, 2, 3]), ("only.txt", [1])));
         File.WriteAllBytes(roots[1], Zip(("inner.zip", rightInner), ("bad.zip", [1, 2, 3])));
@@ -38,9 +41,146 @@ internal static class HeadlessArchiveSourceChecks
         Verify("nested source preserves original editable intention without unlocking archive",
             innerProject.LeftArchiveInput?.InheritedReadOnly == false && innerProject.RightArchiveInput?.InheritedReadOnly == false
             && innerProject.LeftReadOnly && innerProject.RightReadOnly);
-        Verify("nested container opens after complete preparation", count + 1 == window.SessionPanes.Count && inner.Rows.Count == 4
+        Verify("nested container opens after complete preparation", count + 1 == window.SessionPanes.Count && inner.Rows.Count == 7
             && innerProject.LeftPath == "" && innerProject.LeftArchiveInput?.RootPath == roots[0]
             && innerProject.LeftArchiveInput.EntryChain.SequenceEqual(new[] { "inner.zip" }) && innerProject.LeftArchiveInput.RootSha256 == hashes[0]);
+        var innerRowsBeforeImage = inner.Rows;
+        Select(inner, "frames.gif"); pump(inner.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var autoImagePane = window.ActivePane;
+        var autoImage = autoImagePane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+        var autoImageProject = autoImagePane.CaptureProject();
+        var autoSnapshots = autoImage.CaptureReport().Images;
+        var leftImageFrames = FrameProof(autoSnapshots[0]); var rightImageFrames = FrameProof(autoSnapshots[1]);
+        string[] leftExpectedFrames = ["62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281", "9B35F2646DFF9F19FA0DD89F334E5800C4925F9294E1F825B0DFB61DAA59D0A0"];
+        string[] rightExpectedFrames = ["62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281", "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"];
+        var leftPixelsMatch = Matches(autoSnapshots[0], leftExpectedFrames); var rightPixelsMatch = Matches(autoSnapshots[1], rightExpectedFrames);
+        var imageRootsMatch = autoImageProject.LeftArchiveInput?.RootSha256 == hashes[0] && autoImageProject.RightArchiveInput?.RootSha256 == hashes[1];
+        var imageLeavesMatch = autoImageProject.LeftArchiveInput?.LeafEntry == "frames.gif" && autoImageProject.RightArchiveInput?.LeafEntry == "frames.gif"
+            && autoImageProject.LeftArchiveInput?.EntryChain.SequenceEqual(["inner.zip"]) == true && autoImageProject.RightArchiveInput?.EntryChain.SequenceEqual(["inner.zip"]) == true;
+        var imageSourceHashesMatch = Hash(leftGif) == "6B583AA0F396699D50B0DF1C65C4667290515A99022527E1D5126A27F81567EE"
+            && Hash(rightGif) == "8B813BCBFDA2954F70B770ADFB3C5F85101978686B2C8C9750FBA5BA6488481A";
+        var persistedZoom = window.ImageOptions.Current.Zoom == 1.25 ? 1.5 : 1.25;
+        pump(autoImage.ApplySettingsAsync(autoImage.CaptureSettings() with { Zoom = persistedZoom }));
+        var persistedImageOptions = new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"));
+        Verify("adopted archived image persists changed application defaults", window.ImageOptions.Current.Zoom == persistedZoom
+            && persistedImageOptions.Current.Zoom == persistedZoom, persistedImageOptions.Current.Zoom.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        autoImageProject = autoImagePane.CaptureProject();
+        var autoModeSelected = inner.EntryKind.SelectedIndex == 0;
+        Verify("automatic image child opens both archived GIFs read-only", autoModeSelected && autoImageProject.Mode == "Image" && autoImageProject.LeftPath == "" && autoImageProject.RightPath == ""
+            && imageRootsMatch && imageLeavesMatch && autoImageProject.LeftArchiveInput?.InheritedReadOnly == true && autoImageProject.RightArchiveInput?.InheritedReadOnly == true
+            && autoImageProject.LeftReadOnly && autoImageProject.RightReadOnly && autoImage.LeftFrameCount == 2 && autoImage.RightFrameCount == 2
+            && leftPixelsMatch && rightPixelsMatch && imageSourceHashesMatch && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1],
+            $"selectedIndex={inner.EntryKind.SelectedIndex}; mode={autoImageProject.Mode}; roots={imageRootsMatch}; leaves={imageLeavesMatch}; inheritedReadonly={autoImageProject.LeftArchiveInput?.InheritedReadOnly}/{autoImageProject.RightArchiveInput?.InheritedReadOnly}; projectReadonly={autoImageProject.LeftReadOnly}/{autoImageProject.RightReadOnly}; frames={autoImage.LeftFrameCount}/{autoImage.RightFrameCount}; pixels={leftPixelsMatch}/{rightPixelsMatch}; actual={string.Join(',', leftImageFrames.Select(frame => frame.PixelSha256))}/{string.Join(',', rightImageFrames.Select(frame => frame.PixelSha256))}; imageHashes={imageSourceHashesMatch}; rootBytes={HashFile(roots[0]) == hashes[0]}/{HashFile(roots[1]) == hashes[1]}");
+        screenshot("archive-source-image.png");
+        SpecializedViews.SetProjectReadOnly(autoImage, false, false);
+        var imageSave = Path.Combine(folder, "archive-image-save.png");
+        Verify("archived animation refuses project readonly clearing", Refused(() => autoImagePane.ApplyProject(autoImageProject with { LeftReadOnly = false }))
+            && Refused(() => pump(autoImage.SaveToAsync(0, imageSave))) && !File.Exists(imageSave)
+            && autoImagePane.CaptureProject().LeftReadOnly && autoImagePane.CaptureProject().RightReadOnly
+            && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
+        var imageWorkspace = Path.Combine(folder, "image-child-workspace.json"); pump(window.SaveWorkspaceAsync(imageWorkspace));
+        var imageEntryIndex = window.SessionPanes.ToList().IndexOf(autoImagePane);
+        using (var json = JsonDocument.Parse(File.ReadAllBytes(imageWorkspace)))
+        {
+            var entry = json.RootElement.GetProperty("entries")[imageEntryIndex];
+            Verify("image workspace saves typed roots and leaf", entry.GetProperty("mode").GetString() == "Image"
+                && entry.GetProperty("leftArchiveInput").GetProperty("leafEntry").GetString() == "frames.gif"
+                && entry.GetProperty("rightArchiveInput").GetProperty("leafEntry").GetString() == "frames.gif"
+                && entry.GetProperty("leftArchiveInput").GetProperty("rootSha256").GetString() == hashes[0]
+                && entry.GetProperty("rightArchiveInput").GetProperty("rootSha256").GetString() == hashes[1]);
+        }
+        WriteImageProof(Path.Combine(folder, "image-child-proof.json"), autoImageProject, inner.EntryKind.SelectedIndex, leftGif, rightGif, leftImageFrames, rightImageFrames);
+        var imageRestore = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(folder, "image-restore-options.json")));
+        try
+        {
+            imageRestore.Show(); pump(imageRestore.OpenWorkspaceAsync(imageWorkspace, discardChanges: true));
+            var restoredImagePane = imageRestore.ActivePane; var restoredImageProject = restoredImagePane.CaptureProject();
+            Verify("restored image waits for an explicit read", restoredImageProject.Mode == "Image" && restoredImageProject.LeftPath == "" && restoredImageProject.RightPath == ""
+                && restoredImageProject.LeftArchiveInput is { LeafEntry: "frames.gif", EntryChain.Length: 1, RootSha256: var restoredLeftRoot } && restoredLeftRoot == hashes[0]
+                && restoredImageProject.RightArchiveInput is { LeafEntry: "frames.gif", EntryChain.Length: 1, RootSha256: var restoredRightRoot } && restoredRightRoot == hashes[1]
+                && !restoredImagePane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Any());
+            pump(restoredImagePane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var restoredImage = restoredImagePane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+            var restoredSnapshots = restoredImage.CaptureReport().Images;
+            Verify("restored archived image decodes every frame and remains read-only", restoredImagePane.CaptureProject().Mode == "Image"
+                && restoredImagePane.CaptureProject().LeftReadOnly && restoredImagePane.CaptureProject().RightReadOnly
+                && Matches(restoredSnapshots[0], leftExpectedFrames) && Matches(restoredSnapshots[1], rightExpectedFrames)
+                && Refused(() => pump(restoredImage.SaveToAsync(0, Path.Combine(folder, "restored-image-save.png"))))
+                && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
+
+            var imageInput = restoredImagePane.CaptureProject().LeftArchiveInput!;
+            var binaryWorkBytes = rightGif.ToArray();
+            var binaryWork = new ArchiveWorkingSnapshot
+            {
+                EntryChain = imageInput.EntryChain.ToArray(), ContainerNameCodePages = imageInput.ContainerNameCodePages?.ToArray(),
+                ContainerGZipPayloadKinds = imageInput.ContainerGZipPayloadKinds?.ToArray(),
+                ContainerCompressionPayloadKinds = imageInput.ContainerCompressionPayloadKinds?.ToArray(),
+                LeafEntry = imageInput.LeafEntry!, Bytes = binaryWorkBytes, Sha256 = Hash(binaryWorkBytes), Kind = "Binary"
+            };
+            imageRestore.ArchiveTexts.Save(imageInput, imageRestore.ArchiveTexts.Revision(imageInput), binaryWork);
+            restoredImagePane.WorkingTextSaved();
+            var binaryRevisionWorkspace = Path.Combine(folder, "image-binary-revision-workspace.json");
+            string? workspaceSaveError = null;
+            try { pump(imageRestore.SaveWorkspaceAsync(binaryRevisionWorkspace)); }
+            catch (Exception error) when (error is InvalidOperationException or InvalidDataException or IOException) { workspaceSaveError = error.Message; }
+            var workspaceOmitsBinaryWork = false;
+            if (workspaceSaveError is null)
+            {
+                using var savedWorkspace = JsonDocument.Parse(File.ReadAllBytes(binaryRevisionWorkspace));
+                var imageEntry = savedWorkspace.RootElement.GetProperty("entries").EnumerateArray()
+                    .Single(entry => entry.GetProperty("mode").GetString() == "Image"
+                        && entry.TryGetProperty("leftArchiveInput", out var leftInput) && leftInput.ValueKind == JsonValueKind.Object
+                        && leftInput.GetProperty("rootSha256").GetString() == hashes[0]
+                        && entry.TryGetProperty("rightArchiveInput", out var rightInput) && rightInput.ValueKind == JsonValueKind.Object
+                        && rightInput.GetProperty("rootSha256").GetString() == hashes[1]);
+                workspaceOmitsBinaryWork = !imageEntry.GetProperty("leftArchiveInput").TryGetProperty("workingTexts", out _)
+                    && !imageEntry.GetProperty("rightArchiveInput").TryGetProperty("workingTexts", out _);
+            }
+            Verify("binary work revision does not stale or enter archived image workspace", workspaceSaveError is null && workspaceOmitsBinaryWork,
+                workspaceSaveError ?? "Image workspace saves only its read-only source roots.");
+            if (workspaceSaveError is null)
+            {
+                var binaryRevisionRestore = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(folder, "binary-revision-restore-options.json")));
+                try
+                {
+                    binaryRevisionRestore.Show(); pump(binaryRevisionRestore.OpenWorkspaceAsync(binaryRevisionWorkspace, discardChanges: true));
+                    var pendingPane = binaryRevisionRestore.ActivePane;
+                    var pendingProject = pendingPane.CaptureProject();
+                    pump(pendingPane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+                    var reopenedImage = pendingPane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+                    var reopenedSnapshots = reopenedImage.CaptureReport().Images;
+                    Verify("binary work revision keeps image reread on original roots", pendingProject.Mode == "Image"
+                        && Matches(reopenedSnapshots[0], leftExpectedFrames) && Matches(reopenedSnapshots[1], rightExpectedFrames)
+                        && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
+                }
+                finally { binaryRevisionRestore.Close(); }
+            }
+        }
+        finally { imageRestore.Close(); }
+        ClosePane(autoImagePane); Activate(innerPane);
+        Select(inner, "still.png"); pump(inner.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var staticImagePane = window.ActivePane;
+        var staticImage = staticImagePane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+        var staticImagePath = Path.Combine(folder, "static-archive-image-save.png");
+        SpecializedViews.SetProjectReadOnly(staticImage, false, false);
+        Verify("single-frame archived PNG remains fixed readonly at save boundary", staticImage.LeftFrameCount == 1 && staticImage.RightFrameCount == 1
+            && RefusedWithMessage(() => pump(staticImage.SaveToAsync(0, staticImagePath)), "読取り専用") && !File.Exists(staticImagePath)
+            && staticImagePane.CaptureProject().LeftReadOnly && staticImagePane.CaptureProject().RightReadOnly
+            && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
+        ClosePane(staticImagePane); Activate(innerPane);
+        inner.EntryKind.SelectedIndex = 4; Select(inner, "frames.gif"); pump(inner.OpenSelectedAsync()); Dispatcher.UIThread.RunJobs();
+        var explicitImagePane = window.ActivePane; var explicitImage = explicitImagePane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+        var explicitImageProject = explicitImagePane.CaptureProject(); var explicitSnapshots = explicitImage.CaptureReport().Images;
+        Verify("explicit Image dropdown opens full archive snapshots", inner.EntryKind.SelectedItem?.ToString() == "画像"
+            && explicitImageProject.Mode == "Image" && explicitImageProject.LeftArchiveInput?.LeafEntry == "frames.gif"
+            && Matches(explicitSnapshots[0], leftExpectedFrames) && Matches(explicitSnapshots[1], rightExpectedFrames));
+        ClosePane(explicitImagePane); Activate(innerPane); inner.EntryKind.SelectedIndex = 0;
+        var retries = 0; innerPane.ArchiveSourceRetryShown = dialog => { retries++; dialog.Cancel.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); };
+        var tabCountBeforeBadImage = window.SessionPanes.Count; Select(inner, "broken.gif");
+        Canceled(inner.OpenSelectedAsync(), "corrupt archived image"); innerPane.ArchiveSourceRetryShown = null;
+        Verify("corrupt auto image does not create a child or alter roots", retries == 1 && window.SessionPanes.Count == tabCountBeforeBadImage
+            && ReferenceEquals(window.ActivePane, innerPane) && ReferenceEquals(inner.Rows, innerRowsBeforeImage)
+            && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
         Verify("deep container keeps unsupported full extraction disabled", inner.GetVisualDescendants().OfType<Button>().Where(b => Equals(b.Content, "左をすべて展開") || Equals(b.Content, "左を再梱包")).All(b => !b.IsEnabled));
         var initialWidth = window.Width; var initialHeight = window.Height;
         Viewport("normal");
@@ -79,7 +219,8 @@ internal static class HeadlessArchiveSourceChecks
         protectedLeaf.LeftArchiveInput!.InheritedReadOnly = protectedLeaf.RightArchiveInput!.InheritedReadOnly = true;
         leaf.ApplyProject(protectedLeaf); pump(leaf.ComparePathsAsync());
         Verify("source readonly and mode cannot be changed through ApplyProject", Refused(() => leaf.ApplyProject(leaf.CaptureProject() with { LeftReadOnly = false }))
-            && Refused(() => leaf.ApplyProject(leaf.CaptureProject() with { Mode = "Image" })) && leaf.CaptureProject().LeftReadOnly && leaf.CaptureProject().Mode == "Text");
+            && Refused(() => leaf.ApplyProject(leaf.CaptureProject() with { Mode = "Image", BasePath = "forbidden-base" }))
+            && leaf.CaptureProject().LeftReadOnly && leaf.CaptureProject().Mode == "Text");
         leaf.ApplyProject(leaf.CaptureProject() with { Mode = "1" }); pump(leaf.ComparePathsAsync());
         Verify("GUI accepts the same explicit numeric source mode as CLI", leaf.CaptureProject().Mode == "Text" && leaf.LeftEditor.Text == leftText);
         var sourceRefreshStarted = false; leaf.ArchiveSourceReadStarting = () => sourceRefreshStarted = true;
@@ -135,6 +276,25 @@ internal static class HeadlessArchiveSourceChecks
             && Refused(() => pump(binary.SaveToAsync(false, roots[1]))) && Refused(() => pump(binary.SaveToAsync(false, workspace)))
             && Refused(() => pump(binary.SaveToAsync(false, mixedFile))) && File.ReadAllText(mixedFile) == "saved ordinary side\r\n");
         screenshot("archive-source-binary.png");
+        Activate(innerPane);
+        var innerTabs = window.SessionPanes.Count; var imageStop = innerPane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中止"));
+        Select(inner, "frames.gif"); innerPane.ArchiveChildReadStarting = () => imageStop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Canceled(inner.OpenSelectedAsync(), "image child stopped before decode"); innerPane.ArchiveChildReadStarting = null;
+        Verify("stopped image child is not adopted", window.SessionPanes.Count == innerTabs && ReferenceEquals(window.ActivePane, innerPane)
+            && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
+        ComparisonPane? discardedImage = null;
+        innerPane.ArchiveChildReadyForAdoption = candidate => { discardedImage = candidate; imageStop.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); };
+        Canceled(inner.OpenSelectedAsync(), "image child stopped after decode"); innerPane.ArchiveChildReadyForAdoption = null;
+        Verify("stopped completed image candidate is disposed", discardedImage?.IsDisposed == true && window.SessionPanes.Count == innerTabs
+            && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
+        innerPane.ArchiveChildReadyForAdoption = candidate => { discardedImage = candidate; pump(inner.RefreshAsync()); };
+        Canceled(inner.OpenSelectedAsync(), "image parent refresh supersedes child"); innerPane.ArchiveChildReadyForAdoption = null;
+        Verify("refresh generation rejects completed image candidate", discardedImage?.IsDisposed == true && window.SessionPanes.Count == innerTabs
+            && ReferenceEquals(window.ActivePane, innerPane) && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
+        innerPane.ArchiveChildReadyForAdoption = candidate => { discardedImage = candidate; ClosePane(innerPane); };
+        Canceled(inner.OpenSelectedAsync(), "image parent closed before adoption"); innerPane.ArchiveChildReadyForAdoption = null;
+        Verify("closed image parent cancels and disposes completed candidate", innerPane.IsDisposed && discardedImage?.IsDisposed == true
+            && window.SessionPanes.Count == innerTabs - 1 && HashFile(roots[0]) == hashes[0] && HashFile(roots[1]) == hashes[1]);
         // 同サイズ・同mtime差替えでは確定した元表示を維持し、次の読込みを拒否する。
         Activate(leaf); var timestamp = File.GetLastWriteTimeUtc(roots[0]); var rootBytes = File.ReadAllBytes(roots[0]);
         var changed = rootBytes.ToArray(); changed[^1] ^= 1; File.WriteAllBytes(roots[0], changed); File.SetLastWriteTimeUtc(roots[0], timestamp);
@@ -282,6 +442,45 @@ internal static class HeadlessArchiveSourceChecks
         void Observe(string stage) => observations.Add((stage, ReferenceEquals(panel.Rows, stableRows), panel.PreviewText == stablePreview,
             ReferenceEquals(window.ActivePane, parent), window.SessionPanes.Count));
         void Select(ArchivePanel target, string path) { target.EntryList.SelectedItem = target.Rows.Single(row => row.Path == path); Dispatcher.UIThread.RunJobs(); }
+        (int Number, int Width, int Height, string PixelSha256)[] FrameProof(ImageComparisonEngine.Snapshot image)
+        {
+            var frames = new (int Number, int Width, int Height, string PixelSha256)[image.FrameCount];
+            for (var number = 1; number <= frames.Length; number++)
+            {
+                var frame = image.Decode(number, CancellationToken.None);
+                frames[number - 1] = (number, frame.Width, frame.Height, ImageComparisonEngine.PixelHash(frame.Pixels, CancellationToken.None));
+            }
+            return frames;
+        }
+        bool Matches(ImageComparisonEngine.Snapshot image, IReadOnlyList<string> expected)
+        {
+            if (image.FrameCount != expected.Count) return false;
+            var frames = FrameProof(image);
+            return frames.All(frame => frame.Width == 3 && frame.Height == 2)
+                && frames.Select(frame => frame.PixelSha256).SequenceEqual(expected, StringComparer.OrdinalIgnoreCase);
+        }
+        void WriteImageProof(string path, ComparisonProject project, int selectedModeIndex, byte[] leftBytes, byte[] rightBytes,
+            IReadOnlyList<(int Number, int Width, int Height, string PixelSha256)> leftFrames,
+            IReadOnlyList<(int Number, int Width, int Height, string PixelSha256)> rightFrames)
+        {
+            using var file = File.Create(path); using var writer = new Utf8JsonWriter(file, new JsonWriterOptions { Indented = true });
+            writer.WriteStartObject(); writer.WriteNumber("selectedModeIndex", selectedModeIndex);
+            writer.WriteString("selectedMode", selectedModeIndex == 0 ? "Auto" : $"Index{selectedModeIndex}"); writer.WriteString("mode", project.Mode);
+            writer.WriteBoolean("leftReadOnly", project.LeftReadOnly); writer.WriteBoolean("rightReadOnly", project.RightReadOnly);
+            writer.WriteString("leftRootSha256", project.LeftArchiveInput!.RootSha256); writer.WriteString("rightRootSha256", project.RightArchiveInput!.RootSha256);
+            writer.WriteStartArray("leftEntryChain"); foreach (var entry in project.LeftArchiveInput.EntryChain) writer.WriteStringValue(entry); writer.WriteEndArray();
+            writer.WriteStartArray("rightEntryChain"); foreach (var entry in project.RightArchiveInput.EntryChain) writer.WriteStringValue(entry); writer.WriteEndArray();
+            writer.WriteString("leftLeafEntry", project.LeftArchiveInput.LeafEntry); writer.WriteString("rightLeafEntry", project.RightArchiveInput.LeafEntry);
+            writer.WriteString("leftImageSha256", Hash(leftBytes)); writer.WriteString("rightImageSha256", Hash(rightBytes));
+            WriteFrames("leftFrames", leftFrames); WriteFrames("rightFrames", rightFrames); writer.WriteEndObject(); writer.Flush();
+            void WriteFrames(string name, IReadOnlyList<(int Number, int Width, int Height, string PixelSha256)> frames)
+            {
+                writer.WriteStartArray(name);
+                foreach (var frame in frames)
+                { writer.WriteStartObject(); writer.WriteNumber("number", frame.Number); writer.WriteNumber("width", frame.Width); writer.WriteNumber("height", frame.Height); writer.WriteString("pixelSha256", frame.PixelSha256); writer.WriteEndObject(); }
+                writer.WriteEndArray();
+            }
+        }
         void Canceled(Task task, string stage) { var canceled = false; try { pump(task); } catch (OperationCanceledException) { canceled = true; } Verify("cancellation " + stage, canceled); }
         void ClosePane(ComparisonPane pane)
         {
@@ -300,6 +499,11 @@ internal static class HeadlessArchiveSourceChecks
         try { action(); return false; }
         catch (Exception exception) when (exception is InvalidOperationException or InvalidDataException or IOException or SharpCompress.Common.InvalidFormatException) { return true; }
     }
+    private static bool RefusedWithMessage(Action action, string fragment)
+    {
+        try { action(); return false; }
+        catch (InvalidOperationException exception) { return exception.Message.Contains(fragment, StringComparison.Ordinal); }
+    }
     private static byte[] Zip(params (string Name, byte[] Bytes)[] entries)
     {
         using var buffer = new MemoryStream();
@@ -310,4 +514,10 @@ internal static class HeadlessArchiveSourceChecks
     }
     private static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes));
     private static string HashFile(string path) => Hash(File.ReadAllBytes(path));
+    private static byte[] ImageFixture(string name)
+    {
+        using var resource = typeof(HeadlessArchiveSourceChecks).Assembly.GetManifestResourceStream("DiffBeacon.SelfTest.Images." + name)
+            ?? throw new InvalidOperationException("画像検証fixtureがありません: " + name);
+        using var buffer = new MemoryStream(); resource.CopyTo(buffer); return buffer.ToArray();
+    }
 }

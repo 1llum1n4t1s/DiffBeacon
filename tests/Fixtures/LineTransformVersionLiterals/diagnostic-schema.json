@@ -1,0 +1,70 @@
+{
+  "public": {
+    "schema": "diffbeacon.version-public-observations.v1",
+    "producerExecuted": true,
+    "records": "one executed actual row for each public-case-plan id;156 exact unique IDs",
+    "requiredCommonFields": [
+      "id",
+      "expressionUtf8Hex",
+      "publicExecuted",
+      "compileSucceeded",
+      "actualValueKind",
+      "actualInt64",
+      "constructorOrigin",
+      "publicTypedObserved",
+      "expectedNativeKind",
+      "expectedConstructorOrigin",
+      "expectedConstructorOriginEvidence",
+      "actualSerializedValue",
+      "serializedByteHex",
+      "nativeIndex",
+      "provenance",
+      "nativeFullParserExecuted",
+      "nativeTypedContextQualified",
+      "nativeFullAstQualified"
+    ],
+    "success": "compileSucceeded true; actualSerializedValue/serializedByteHex from actual Compile/Transform equals original Native ToStringValue bytes; actualValueKind/actualInt64/constructorOrigin remain null",
+    "failure": "compileSucceeded false; serialized fields null; errorCode compile-rejected; actual exception errorType/errorMessage required",
+    "typedScope": "No Core diagnostic API/reflection is added. publicTypedObserved false. expectedNativeKind/int64 and expectedConstructorOrigin/Version are source expectations, not public observations."
+  },
+  "probes": {
+    "schema": "diffbeacon.version-probes-observations.v1",
+    "producerExecuted": true,
+    "records": 12,
+    "fixedPlan": "probes-case-plan.json",
+    "qualification": "Compile-only, no Evaluate/Transform/Native lexer or output destination",
+    "extraRequiredFlags": {
+      "publicCompileExecuted": true,
+      "executed": false,
+      "actualNativelexerExecuted": false
+    },
+    "typedAndOutputBoundary": "actualValueKind/Int64/constructorOrigin/actualSerializedValue/serializedByteHex allnull; publicTypedObserved and Native full qualifier flags false; nativeIndex/provenance null; actual exception on rejected Compile",
+    "preservation": "headless Compile-only has no output destination; real E2E project-copy rejection receipts separately observe existingOutputShaBefore/After and input hashes; no invented headless preserved bool"
+  },
+  "engineering": {
+    "schema": "diffbeacon.version-engineering-observations.v1",
+    "producerExecuted": true,
+    "records": 34,
+    "fixedPlan": "engineering-case-plan.json",
+    "qualification": "separate engineering contracts, no Native golden/type/AST/context claim",
+    "requiredCommonFields": [
+      "id",
+      "expressionUtf8Hex",
+      "expressionUtf16Hex",
+      "publicExecuted",
+      "compileSucceeded",
+      "actualValueKind",
+      "actualInt64",
+      "constructorOrigin",
+      "publicTypedObserved",
+      "actualSerializedValue",
+      "serializedByteHex",
+      "nativeIndex",
+      "provenance",
+      "nativeFullParserExecuted",
+      "nativeTypedContextQualified",
+      "nativeFullAstQualified"
+    ],
+    "boundary": "typed/origin fields null; all qualifiers false; nativeIndex/provenance null; no expectedNativeKind/expectedConstructorOrigin/Evidence fields; unpaired surrogate has UTF8 null and exact UTF16; budget cancellation separate uncounted row"
+  }
+}

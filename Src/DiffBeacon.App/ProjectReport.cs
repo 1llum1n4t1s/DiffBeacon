@@ -18,17 +18,27 @@ public static class ProjectReport
         && !(ArchivePanel.Supports(project.LeftPath) && ArchivePanel.Supports(project.RightPath))
         && !(FolderComparisons.IsDirectory(project.LeftPath) && FolderComparisons.IsDirectory(project.RightPath));
 
-    internal static ComparisonOptions Options(ComparisonProject project) => new()
+    internal static ComparisonOptions Options(ComparisonProject project, ILineTransformLogEnvironment? logEnvironment = null) => new()
     {
         IgnoreCase = project.IgnoreCase, IgnoreWhitespace = project.IgnoreWhitespace,
         IgnoreBlankLines = project.IgnoreBlankLines, IgnoreLinePattern = project.IgnoreLinePattern,
         IgnoreNumbers = project.IgnoreNumbers, CommentSyntax = project.CommentSyntax,
-        Whitespace = project.Whitespace, SubstitutionRules = project.SubstitutionRules
+        Whitespace = project.Whitespace, InlineCharacterLevel = project.InlineCharacterLevel,
+        BreakOnSeparators = project.BreakOnSeparators,
+        WordBreakSeparators = project.WordBreakSeparators, SubstitutionRules = project.SubstitutionRules,
+        LineTransformRules = Array.AsReadOnly(WorkspaceStore.CloneLineTransformRules(project.LineTransformRules, project)),
+        LineTransformTimestampEnvironment = LineTransformTimestampEnvironments.ForRules(project.LineTransformRules),
+        LineTransformStringEnvironment = LineTransformStringEnvironments.ForRules(project.LineTransformRules),
+        LineTransformLogEnvironment = logEnvironment ?? LineTransformLogEnvironments.Trace,
+        LineTransformListEnvironment = LineTransformListEnvironments.Create(logEnvironment ?? LineTransformLogEnvironments.Trace, project),
+            TableColumnIgnoreRules = Array.AsReadOnly(WorkspaceStore.CloneTableColumnIgnoreRules(project.TableColumnIgnoreRules)),
+            TableColumnRangeRules = Array.AsReadOnly(WorkspaceStore.CloneTableColumnRangeRules(project.TableColumnRangeRules))
     };
 
     public static string Create(ComparisonProject project, string left, string? ancestor, string right,
         CancellationToken token = default, string? leftName = null, string? baseName = null, string? rightName = null,
-        IReadOnlyList<TextDocument>? snapshots = null)
+        IReadOnlyList<TextDocument>? snapshots = null, TextComparisonSourcePaths? sourcePaths = null,
+        ILineTransformLogEnvironment? logEnvironment = null)
     {
         if (!IsTextual(project)) throw new InvalidOperationException("この形式の単体HTMLレポートは未対応です。");
         static string Title(string? description, string? name, string path, string fallback) =>
@@ -39,20 +49,25 @@ public static class ProjectReport
             return ProjectInputs.Archive(project, side)?.MissingEntryChain is not null && !title.EndsWith("（存在しない）", StringComparison.Ordinal)
                 ? title + "（存在しない）" : title;
         }
+        sourcePaths ??= snapshots is { Count: 3 }
+            ? TextComparisonSources.ForProject(project, snapshots[0], snapshots[1], snapshots[2]) : new();
         if (ProjectInputs.IsIndependentText(project))
         {
             if (ancestor is null) throw new InvalidDataException("独立三者Textの中央本文がありません。");
             var independent = IndependentTextReport.Create(project,
-                [new(InputTitle(0, project.LeftDescription, leftName, "左"), left),
-                 new(InputTitle(1, project.BaseDescription, baseName, "中央"), ancestor),
-                 new(InputTitle(2, project.RightDescription, rightName, "右"), right)], token, snapshots);
+                [new(InputTitle(0, project.LeftDescription, leftName, "左"), left) { SourcePath = sourcePaths.Left, SourceEncodingName = sourcePaths.LeftEncodingName },
+                 new(InputTitle(1, project.BaseDescription, baseName, "中央"), ancestor) { SourcePath = sourcePaths.Base, SourceEncodingName = sourcePaths.BaseEncodingName },
+                 new(InputTitle(2, project.RightDescription, rightName, "右"), right) { SourcePath = sourcePaths.Right, SourceEncodingName = sourcePaths.RightEncodingName }], token, snapshots, logEnvironment);
             ValidateSize(independent);
             return independent;
         }
-        var documents = new List<ReportDocument> { new(InputTitle(0, project.LeftDescription, leftName, "左"), left) };
-        if (ancestor is not null) documents.Add(new(InputTitle(1, project.BaseDescription, baseName, "共通の祖先"), ancestor));
-        documents.Add(new(InputTitle(2, project.RightDescription, rightName, "右"), right));
-        var settings = Options(project);
+        var documents = new List<ReportDocument> { new(InputTitle(0, project.LeftDescription, leftName, "左"), left)
+            { SourcePath = sourcePaths.Left, SourceEncodingName = sourcePaths.LeftEncodingName } };
+        if (ancestor is not null) documents.Add(new(InputTitle(1, project.BaseDescription, baseName, "共通の祖先"), ancestor)
+            { SourcePath = sourcePaths.Base, SourceEncodingName = sourcePaths.BaseEncodingName });
+        documents.Add(new(InputTitle(2, project.RightDescription, rightName, "右"), right)
+            { SourcePath = sourcePaths.Right, SourceEncodingName = sourcePaths.RightEncodingName });
+        var settings = Options(project, logEnvironment);
         var html = project.Mode.ToLowerInvariant() switch
         {
             "table" or "6" => HtmlReport.CreateDelimited(documents,
@@ -78,7 +93,7 @@ public static class ProjectReport
         int? leftFrame = null, int? rightFrame = null, double? imageThreshold = null, int? middleFrame = null,
         ImageOffset? leftOffset = null, ImageOffset? middleOffset = null, ImageOffset? rightOffset = null,
         int? insertionDeletionMode = null, double? highlightAlpha = null, ImageWipeSnapshot? wipe = null,
-        ImageDisplayOptions? displayOptions = null)
+        ImageDisplayOptions? displayOptions = null, ILineTransformLogEnvironment? logEnvironment = null)
     {
         _ = WorkspaceStore.SerializeWorkspace(workspace);
         if ((uint)entryIndex >= (uint)workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entryIndex), "比較の番号が範囲外です。");
@@ -122,17 +137,32 @@ public static class ProjectReport
         var ancestor = !ProjectInputs.HasBase(project) ? null : await ProjectInputReader.ReadTextAsync(project, 1, token).ConfigureAwait(false);
         var right = await ProjectInputReader.ReadTextAsync(project, 2, token).ConfigureAwait(false);
         var snapshots = ProjectInputs.IsIndependentText(project) ? new[] { left, ancestor!, right } : null;
-        var html = await Task.Run(() => Create(project, left.Text, ancestor?.Text, right.Text, token, snapshots: snapshots), token).ConfigureAwait(false);
+        var html = await Task.Run(() => Create(project, left.Text, ancestor?.Text, right.Text, token, snapshots: snapshots,
+            sourcePaths: TextComparisonSources.ForProject(project, left, ancestor, right), logEnvironment: logEnvironment), token).ConfigureAwait(false);
         await SaveAsync(target, html, entries, sourceProject, token).ConfigureAwait(false);
     }
 
     internal static async Task SaveAsync(string output, string html, IEnumerable<ComparisonProject> protectedEntries,
-        string? sourceProject = null, CancellationToken token = default)
+        string? sourceProject = null, CancellationToken token = default, Action<string, Action>? outputPublisher = null)
     {
         ValidateSize(html);
-        var target = ValidateTarget(output, protectedEntries, sourceProject);
+        var entries = protectedEntries.ToArray();
+        var target = ValidateTarget(output, entries, sourceProject);
         token.ThrowIfCancellationRequested();
-        await TextDocument.Create().SaveAsync(target, html, token).ConfigureAwait(false);
+        await TextDocument.Create().SaveAsync(target, html, token, (temporary, destination, cancellation) =>
+        {
+            void Publish()
+            {
+                cancellation.ThrowIfCancellationRequested();
+                ValidateTarget(destination, entries, sourceProject);
+                if (File.Exists(destination) && (File.GetAttributes(destination) & FileAttributes.ReadOnly) != 0)
+                    throw new UnauthorizedAccessException("読み取り専用のファイルは保存できません。");
+                cancellation.ThrowIfCancellationRequested();
+                File.Move(temporary, destination, overwrite: true);
+            }
+            if (outputPublisher is null) Publish(); else outputPublisher(destination, Publish);
+            return Task.CompletedTask;
+        }).ConfigureAwait(false);
     }
 
     private static void ValidateSize(string html)

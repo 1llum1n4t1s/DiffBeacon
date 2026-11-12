@@ -5,8 +5,8 @@ using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
-internal sealed record TableSearchOptions(string Pattern, bool MatchCase = false, bool UseRegex = false, bool WholeWord = false);
-internal sealed record TableSearchRange(int SourceRow, int Column, int Start, int Length);
+internal sealed record TableSearchOptions(string Pattern, bool MatchCase = false, bool UseRegex = false, bool WholeWord = false, bool Raw = false);
+internal sealed record TableSearchRange(int SourceRow, int Column, int Start, int Length, bool Raw = false);
 internal sealed record TableReplacementChange(int SourceRow, int Column, int Start, int Length, int NewLength);
 internal sealed record TableReplacementPlan(string Text, int Count, IReadOnlyList<TableReplacementChange> Changes);
 
@@ -71,6 +71,62 @@ internal sealed class TableSearchEngine
         ArgumentOutOfRangeException.ThrowIfNegative(start);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
         if (start > value.Length || length > value.Length - start) throw new ArgumentOutOfRangeException(nameof(length));
+    }
+
+    internal static bool RawBoundary(string text, int at) => at >= 0 && at <= text.Length && !SplitsSurrogate(text, at) &&
+        !(at > 0 && at < text.Length && text[at - 1] == '\r' && text[at] == '\n');
+
+    public IEnumerable<Match> RawMatches(TableDocument document, int start = 0, int? length = null, CancellationToken cancellationToken = default)
+    {
+        if (document.SourceText.Length > MaxOutput) throw new InvalidOperationException("表は 67,108,864 文字までです。");
+        foreach (var match in Matches(document.SourceText, start, length, cancellationToken))
+            if (RawBoundary(document.SourceText, match.Index) && RawBoundary(document.SourceText, match.Index + match.Length)) yield return match;
+    }
+
+    public TableReplacementPlan ReplaceRaw(TableDocument document, string replacement, TableSearchRange? scope = null,
+        TableSearchRange? onlyMatch = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        ArgumentNullException.ThrowIfNull(replacement);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (regex is null) throw new InvalidOperationException("置換する検索式を入力してください。");
+        if (replacement.Length > MaxReplacement) throw new ArgumentException("置換式は 1,048,576 文字までです。", nameof(replacement));
+        var source = document.SourceText;
+        if (source.Length > MaxOutput) throw new InvalidOperationException("表は 67,108,864 文字までです。");
+        foreach (var range in new[] { scope, onlyMatch })
+        {
+            if (range is null) continue;
+            ValidateRange(source, range.Start, range.Length);
+            if (!range.Raw || !RawBoundary(source, range.Start) || !RawBoundary(source, range.Start + range.Length))
+                throw new InvalidOperationException("CSV原文の検索範囲が不正です。");
+        }
+        if (onlyMatch is not null && scope is not null && (onlyMatch.Start < scope.Start ||
+            (long)onlyMatch.Start + onlyMatch.Length > (long)scope.Start + scope.Length))
+            throw new InvalidOperationException("選択した一致が固定検索範囲に含まれていません。");
+        var template = ParseReplacement(replacement, cancellationToken);
+        var text = new StringBuilder();
+        var changes = new List<TableReplacementChange>();
+        var consumed = 0;
+        long expansionWork = 0;
+        var start = onlyMatch?.Start ?? scope?.Start ?? 0;
+        var length = onlyMatch?.Length ?? scope?.Length ?? source.Length;
+        foreach (var match in RawMatches(document, start, length, cancellationToken))
+        {
+            if (onlyMatch is not null && (match.Index != onlyMatch.Start || match.Length != onlyMatch.Length)) continue;
+            if (changes.Count >= MaxMatches) throw new InvalidOperationException("置換は 1,048,576 件までです。");
+            Append(text, source.AsSpan(consumed, match.Index - consumed), cancellationToken);
+            var before = text.Length;
+            Expand(text, source, match, replacement, template, ref expansionWork, cancellationToken);
+            changes.Add(new(0, 0, match.Index, match.Length, text.Length - before));
+            consumed = match.Index + match.Length;
+            if (onlyMatch is not null) break;
+        }
+        if (onlyMatch is not null && changes.Count == 0) throw new InvalidOperationException("選択した一致が現在の検索式で再確認できません。");
+        Append(text, source.AsSpan(consumed), cancellationToken);
+        var result = text.ToString();
+        // 構造変更も許可するが、不正なCSVは本文を公開する前に拒否する。
+        StructuredComparer.ParseTable(result, document.Syntax, cancellationToken);
+        return new(result, changes.Count, changes.AsReadOnly());
     }
 
     public TableReplacementPlan Replace(TableDocument document, string replacement, TableSearchRange? scope = null,

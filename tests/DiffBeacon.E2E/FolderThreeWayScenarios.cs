@@ -131,6 +131,10 @@ internal static class FolderThreeWayScenarios
                     var id = $"long-{alias}-two-copy-{direction}";
                     var location = LongLocation(Path.Combine(work, id));
                     var sides = await Create(location, ["left\n", "middle\n", "right\n"]);
+                    // UNC の directory 属性 cache を実際に読んだ後も、自分の temp 作成を外部変更と誤認しない。
+                    if (alias == "device-unc")
+                        foreach (var root in new[] { sides[0], sides[2] })
+                            _ = Directory.GetLastWriteTimeUtc(@"\\localhost\" + root[0] + "$" + root[2..]);
                     await Observe(id, location, 0, true,
                         ["--folder-sync", LongAlias(sides[0], alias), LongAlias(sides[2], alias), "--direction", direction, "--copy", "all", "--select", "entry.txt"], source, target);
                 }
@@ -193,6 +197,18 @@ internal static class FolderThreeWayScenarios
         {
             var before = Snapshot(location);
             var command = await run("folder-threeway-" + id, exit, json, arguments);
+            if (id.StartsWith("long-device-unc-two-copy-", StringComparison.Ordinal))
+            {
+                using var result = JsonDocument.Parse(command.Stdout);
+                check("Folder UNC ordinary snapshot qualification " + id,
+                    !result.RootElement.GetProperty("usesWindowsMetadata").GetBoolean()
+                        && result.RootElement.GetProperty("windowsMetadataQualification").GetString()
+                            == "OrdinaryAttributesOnly;AdvancedMetadataUnverified",
+                    "UNC の基本属性照合は高度 Windows metadata 保持の資格へ昇格しない。");
+                check("Folder UNC owned temporary cleanup " + id,
+                    !Directory.EnumerateFiles(location, ".diffbeacon-copy-*.tmp", SearchOption.AllDirectories).Any(),
+                    "公開後は所有 temp が残らない。");
+            }
             var after = Snapshot(location);
             records.Add(new { id, work = location, command, before, after, source, target });
         }

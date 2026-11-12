@@ -1,0 +1,34 @@
+{
+  "schema": "aggregate-public-bridge-plan-v1",
+  "fixture": ".",
+  "goldenSha256": "74e1f5b6bb58af0433cb0d198ee3360da1ebcd1f8845da9b5ce2fd0e2f549e91",
+  "casesSha256": "a8e2bd941871ab9f77e737e2888c5936dc633e147d6bd02c82d6f268138ceaf9",
+  "nativeProofSha256": "039e9b4e77d8164b4e97bb726350675a4d8c6de2d73fe8daa1a3de03cdca7d4f",
+  "sourceManifestSha256": "4836ea6b8079603782457f9d8091056746c3117c3bc155b5db9e6dfbc448c8c8",
+  "sourceFileCount": 15,
+  "scope": "static public serialized-key bridge plan; no producer execution or typed/context equivalence qualification",
+  "localParserEvidence": {
+    "path": "Src/DiffBeacon.Core/LineTransformExpression.cs",
+    "sha256": "702f005f46b20b5d12ba17d2761c63687d0920279de276f60e53eb76187c4552",
+    "historical": true,
+    "lines": {
+      "LineNumber": 59,
+      "Choose": 237,
+      "OptimizeAllChildren": 285,
+      "ToInt": 277,
+      "Serializer": 567,
+      "F6Double": 633,
+      "Prefixes": 869,
+      "FunctionArity": 972,
+      "QuotedStringNul": 1015,
+      "Int32Lexer": 1063
+    }
+  },
+  "classifications": {
+    "serialized-key/value-bridge-planned": 104,
+    "unrepresentable-not-executed": 37
+  },
+  "producerCompiled": false,
+  "executed": false,
+  "contextEquivalent": false
+}

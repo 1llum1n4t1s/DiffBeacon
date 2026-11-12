@@ -56,15 +56,18 @@ internal sealed class TextPreprocessor
             throw new ArgumentException("正規表現の入力・出力は行ごとに 1,048,576 文字までです。", nameof(text));
     }
 
-    internal (string[] Keys, bool[] CommentOnly) Process(IReadOnlyList<TextLine> lines)
+    internal (string[] Keys, bool[] CommentOnly) Process(IReadOnlyList<TextLine> lines,
+        IReadOnlyList<string>? transformed = null)
     {
+        if (transformed is not null && transformed.Count != lines.Count)
+            throw new ArgumentException("行変換と原文の行数が一致していません。", nameof(transformed));
         var keys = new string[lines.Count];
         var commentOnly = new bool[lines.Count];
         var scanner = new CommentScanner(options.CommentSyntax, token);
         for (var index = 0; index < lines.Count; index++)
         {
             token.ThrowIfCancellationRequested();
-            var filtered = scanner.Filter(lines[index].Content);
+            var filtered = scanner.Filter(transformed is null ? lines[index].Content : transformed[index]);
             commentOnly[index] = filtered.HadComment && filtered.Text.Length == 0;
             keys[index] = NormalizeFiltered(filtered.Text);
         }
@@ -76,10 +79,13 @@ internal sealed class TextPreprocessor
         // 公開ヘルパーにも文書内の改行を残す。TextDiffer は行ごとの状態を共有する。
         var scanner = new CommentScanner(options.CommentSyntax, token);
         var result = new StringBuilder(text.Length);
-        foreach (var line in TextLines.Parse(text, token))
+        var lines = TextLines.Parse(text, token);
+        var transformed = new TextFilterContext(options, token).Transform(text, lines, TablePaneMask.Left);
+        for (var index = 0; index < lines.Count; index++)
         {
             token.ThrowIfCancellationRequested();
-            result.Append(Substitute(scanner.Filter(line.Content).Text)).Append(line.Ending);
+            var line = lines[index];
+            result.Append(Substitute(scanner.Filter(transformed is null ? line.Content : transformed[index]).Text)).Append(line.Ending);
         }
         return options.NormalizeKey(result.ToString(), token);
     }

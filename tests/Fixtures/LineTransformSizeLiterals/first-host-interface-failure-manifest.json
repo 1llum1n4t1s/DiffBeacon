@@ -1,0 +1,37 @@
+{
+  "archive": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\line-transform-size-literals-20261012-404b849f\\first-host-interface-failure.zip",
+  "entries": [
+    {
+      "entry": "before/adapter.cpp",
+      "size": 6661,
+      "sha256": "9eb047cec239f4b0569758bc5409e748a681a48b5d77a1cb1126bb7d9c5d63f7"
+    },
+    {
+      "entry": "before/cases.inc",
+      "size": 11871,
+      "sha256": "9ffc0d8a0edd7abf48aeca72a96f7ab68d0127e916cd86202c11777066f85f16"
+    },
+    {
+      "entry": "before/extractions.json",
+      "size": 22494,
+      "sha256": "457774858ca0dce2917da302a6f23818cfacc9327b2735581e364bc023d61af4"
+    },
+    {
+      "entry": "failed-run1/compile.stdout.raw",
+      "size": 28309,
+      "sha256": "b7210574203e8b746b6053c62918b6d123a3e1f13363e863d844913582832090"
+    },
+    {
+      "entry": "failed-run1/compile.stderr.raw",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "entry": "failed-run1/compile-receipt.json",
+      "size": 647,
+      "sha256": "645758f037247ea4eda3061ed99f402bf10551f5a10d5020a6171de9c7b64c05"
+    }
+  ],
+  "reason": "Host API mistakes only; wrong context field names, vector passed by value, nonexistent ArrayLiteral AST-child ctor; original snippets unaffected",
+  "qualification": "failed compilation, not a Native observation"
+}

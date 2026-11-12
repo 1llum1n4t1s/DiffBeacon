@@ -1,0 +1,116 @@
+{
+  "files": {
+    "adapter.cpp": {
+      "size": 10756,
+      "sha256": "84419eb9ff3d18f2450c4d6c81d6012c5993f83ef2e645b23164fee72164df8f"
+    },
+    "reproduce.py": {
+      "size": 6337,
+      "sha256": "e47add168178f6148b71516e6a206864e110d6e68d00c6b41425dcebfce77ecb"
+    },
+    "verify.py": {
+      "size": 5082,
+      "sha256": "51ba0946f5a58c933bf73357a23b3762aa595aeb8edba5fdaa5540323517ca41"
+    },
+    "generate-cases.py": {
+      "size": 5487,
+      "sha256": "b1923893673291092055469d7b8b341507a34aa16085c18ab0ef744acf59bbc3"
+    },
+    "cases.json": {
+      "size": 82812,
+      "sha256": "3b7dd566ad21cd459dee882c571018dcb9ff38cd73c1c9d787acb3da231b96dd"
+    },
+    "golden.ndjson": {
+      "size": 18996,
+      "sha256": "d2c384a40867822b9886374cd61151ad5d756dafcb5207d9535bddb637d71fc0"
+    },
+    "capture.json": {
+      "size": 5314,
+      "sha256": "86c1efa04fb7ea79c29057f0fcae2954a683343948ddff46d2f41da3302ab528"
+    },
+    "reference.stderr": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "provenance.json": {
+      "size": 3364,
+      "sha256": "7a30364d872ca997637143b6d75b950a3ebcdb7bbdb0e3b0c7ec6540d8dea240"
+    },
+    "failure-list.txt": {
+      "size": 978,
+      "sha256": "6474a350675124419b436f6310378a1ba640bf230d7effd69e4fc5b923974a32"
+    },
+    "report.txt": {
+      "size": 4024,
+      "sha256": "182b86f6d61aa29a09dc0336d4c4386c9ddedfb9d050d8afb3b0a774f17ef31c"
+    },
+    "original/COPYING": {
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    "original/DiffTextBuffer.cpp": {
+      "size": 17297,
+      "sha256": "208c50598a61e464a39d70fd2c7b677071c09c8a80c401cfa46241b131f608b9"
+    },
+    "original/FileTransform.cpp": {
+      "size": 51547,
+      "sha256": "a37500cf3ad1e1713752474a9d3e3e400e4ed3806c23ef22d220fdbdf7f6f599"
+    },
+    "original/FilterExpression.cpp": {
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e"
+    },
+    "original/FilterExpressionNodes.cpp": {
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    "original/FilterExpressionNodes.h": {
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    "original/FilterParser.h": {
+      "size": 1472,
+      "sha256": "ac27e0af541b10bea4b78ee5f31b055896de73cef0ce826d9eec6707f493ff41"
+    },
+    "original/FilterParser.y": {
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    "original/ILineDataProvider.h": {
+      "size": 1300,
+      "sha256": "841545932977bc270fb7d2a61f421fe9930c285200502e619e9061f77f8f555b"
+    },
+    "original/unicoder.cpp": {
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7"
+    },
+    "reader-selfcheck.json": {
+      "size": 105,
+      "sha256": "142f2744f15de42d3c26e88a36e2b41e3957d563e9aa17638b48b7af22804787"
+    },
+    "recompile-proof.json": {
+      "size": 466,
+      "sha256": "c4bdd0a1a05e3106b4aa49b9810a347fd079cc3a21a6b48417295369b1886a73"
+    },
+    "recompile-capture.json": {
+      "size": 5314,
+      "sha256": "86c1efa04fb7ea79c29057f0fcae2954a683343948ddff46d2f41da3302ab528"
+    },
+    "compile.stdout": {
+      "size": 13,
+      "sha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7"
+    },
+    "compile.stderr": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    ".gitattributes": {
+      "size": 9,
+      "sha256": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992"
+    },
+    "README.md": {
+      "size": 3904,
+      "sha256": "d9edb6f1a3c9adda325d463e5b5528c69f8c8da295e9cc6e0ce7e1da89fe33be"
+    }
+  }
+}

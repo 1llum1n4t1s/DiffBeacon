@@ -1,8 +1,14 @@
 # DiffBeacon の設計
 
+置換リストのfile I/OはAppの`LineTransformListEnvironments`に注入する。相対pathは旧`UniMemFile.OpenReadOnly`への引渡しと同じprocess CWDを基準とし、環境変数展開後にリンク／reparseを拒否する。4 MiBのfile上限を各64 KiB readで検査し、読込み・分割・compile・全行全ペインの置換を共有work／生成量予算と取消へ課金する。復号は既存`TextDocument.FromSnapshot`のBOM・strict UTF-8・windows-1252 fallbackを使用する。旧`OPT_CP_DETECT`・任意codepage・lossy読込みの同等性はfixtureの実行範囲外である。
+
+依存はproject/paneに属し、ASTで列挙できるliteral・文字列連結・If／Chooseの候補と、実際に読込んだdynamic pathを出力保護へ含める。pane終了まで保持し、比較失敗・取消でも入力の保護を外さない。包装は元の式を保持するv10 `lineTransformListAssets`（logical path→相対asset path）を使う。展開後はmapのsnapshotだけを読み、workspaceの別保存ではSHA名assetを複製・既存bytesを照合する（共有64 MiB上限）。包装は有限候補すべてをsnapshot化し、行本文などから実行時に計算する未列挙pathだけを明示拒否する。通常比較ではその動的pathも使用できる。ロード済みmapへない新しいpathは評価を拒否し、別の外部fileへ暗黙にfallbackしない。
+
+フォルダー式は既存AST上の6種のOptimize override、部分fold、共有65,536作業予算とリストcacheを使う。provider不在guardと引数のruntime未評価を、guard前の子Optimizeから区別する。側別`LineAt`／`LineOffsetAt`／`Column`／`ColumnRange`／`ColumnAt`／`ColumnOffsetAt`は二者／三者の側対応とprefix指定を保持する。全条件式はProp／FullPathの有無によらず全側DIFFITEMを一度評価し、正規表現`f:`／`d:`だけを側別に評価する。存在属性はBoolで、`FileExists`／`FileMissing`／`Missing`と側prefix付き`IsFolder`を扱う。式の二重引用符は引用符の二重化とraw backslashを使い、単一引用符のescape拡張と`f:`／`d:`の旧quote規則を保つ。Prop引数は括弧付きの文字列literal一つに限定する。DateStrは既存formatterと通常のfixed-offset source contractを使う。年範囲は[-4713,9999]でyear 0を許容し、年10000を拒否する。実mtimeのpre-1970／FileTimestampのunsigned変換とnative year 0の実oracle一致は未認定である。全parser／AST、provider-presentの本文取得、40 field全体と任意PCRE互換の移植完了は主張しない。
+
 ## 目的と実装範囲
 
-WinMerge を基にした、Windows / macOS 用のファイル・フォルダー比較とマージのデスクトップアプリ。現行実装は .NET 10 / Avalonia で、Native AOT 発行を採用する。旧 WinMerge の全機能互換は未完成であり、対応状況は [Docs/MIGRATION.md](Docs/MIGRATION.md) を正本とする。旧 C++ / MFC と関連資産は移植の参照用に保持され、`DiffBeacon.slnx` のビルドには含まれない。
+WinMerge を基にした、Windows / macOS 用のファイル・フォルダー比較とマージのデスクトップアプリ。現行実装は .NET 11 / Avalonia で、Native AOT 発行を採用する。旧 WinMerge の全機能互換は未完成であり、対応状況は [Docs/MIGRATION.md](Docs/MIGRATION.md) を正本とする。旧 C++ / MFC と関連資産は移植の参照用に保持され、`DiffBeacon.slnx` のビルドには含まれない。
 
 ## コンポーネントと境界
 
@@ -35,6 +41,9 @@ GUIの「三側の入力を選択」は現在タブから設定を複製し、�
 `BinaryEditSession.EditRange` は開始位置・削除数をlongで受け取り、範囲・Hex・編集後16 MiB上限を候補確保前に検査する。末尾までの挿入、既存範囲内の上書き、後続を詰める削除を共有Commitへ渡し、固定長の `ApplyHexPage` と同じ履歴・保存点を使う。読取り専用は無変更の操作より先に拒否する。範囲ダイアログと全体コピーの確定前には、前述の確認境界に加えて保存世代・project identity・panelの寿命を照合し、入力中の保存や比較変更で古くなった結果を採用しない。短縮後は共通最大長へ表示オフセットを収め、全側のcaretを表示文字数内へ戻す。未適用の他側入力は保持する。
 
 バイナリ選択は絶対byteのanchor/caretとinclusive min/maxを保持し、4096byte表示ページから独立する。選択世代は `StateStamp` に含める。直接Hexのhigh/low nibble、文字入力、Delete／Backspaceと選択置換は `PrepareReplaceRange` の不変候補へ変換する。`PreparePaste` は選択置換をInsertとして扱い、繰返し間のskipで元suffixを跨ぐ。Insertは `(repeat-1)*skip <= suffix`、Overwriteは最後のskipを含む `repeat*(payloadLength+skip) <= suffix` をallocation前に検査し、ゼロpaddingや部分成功を作らない。候補は全側のmutation・履歴とreadonlyを再照合して一度だけ原子的に確定する。Cutは候補と共有履歴の事前検査後にclipboardへ公開し、公開／flush成功と前述の全状態一致後にのみ確定する。公開済みtransfer／HGLOBALはOS所有、読取りtransferはdispose前に所有bytesへ複製する。
+
+バイナリ置換は `BinaryByteReplacement.Transform` が不変snapshotから全byte・実置換数・最終選択／caretの候補を作る。Selectionは検索語を使用せず任意選択を置換し、Forward／Backwardは初期選択を最初に置換して旧Frhedの方向検索順を保つ。前方の空置換後の隣接byteスキップと後方の変更済みsuffixを跨ぐ一致も固定原本51件へ照合する。方向置換の空patternと復号後のpattern==replacementを拒否し、各16 MiB・256 Mi作業単位を候補作成中に検査する。部分成功は公開しない。`BinaryPanel.Replace` はsession・全側revision／readonly・StateStamp・表示page・置換世代・ownerの操作世代を再検査し、タブを離れて戻るABAも旧候補として破棄する。UI上で `PrepareReplaceRange` と共有履歴上限を検査して一括採用し、一操作を一つのUndoとする。同一bytesへの選択置換はrevision・履歴・保存点を変えない。取消・古い完了・入力／容量／作業量／履歴の拒否は本文・選択・既存Redo・保存点を保持する。保存後の通常／内包入力、workspace複製／包装は既存のBinary保存経路を使う。旧kernelの逐次Undo・失敗attempt込みの表示件数・未定義入力とは意図的に区別する。
+
 
 `BinaryBytecode` は固定Frhedのliteral、escape、b/w/lのd/h、little/bigと32bit数値prefix・幅切詰めを保つ。空白Hexを自動解釈しない。危険な型/形式不一致、整数overflow、scanf失敗、50文字以上の数値prefixを閉鎖の有無によらず拒否し、fl/doは有限IEEE値を安全に生成する。token認識は最大54byte先読みで有界にし、2passで出力量を検査して未閉鎖prefixの二次走査を作らない。Windowsの公開はCF_TEXTの終端付きASCII bytecode、CF_UNICODETEXT、所有raw形式を全て事前確保する。FastPasteはHGLOBAL形式を明示選択し、textの終端を除き、非textは全bytesを扱う。非HGLOBALのbitmap/metafileを生bytesとして読まない。macOSはAvalonia標準Unicode textとraw dataを公開し、As Textの標準文字列はUTF-16LE、bytecodeは明示ANSI1252/OEM437へ変換する。Windowsは実ACP/OEMCPを使い、Unicode文字列の表現不能文字を拒否する。OEM bytecodeは原版と同じ有界1byte CharToOemBuffAを通常literalにだけ適用し、token生成bytesとescapeは保持する。API失敗は候補確定前に拒否する。macOSは1252/437の明示互換変換として扱う。所有rawは識別headerと宣言長でHGLOBALの余分なzero領域を除き、未知の外部rawは明示選択した実format全bytesとして扱う。読み込みは各formatのpayload／終端／所有header／allocator余白を検査し、共通総量464MiB＋332byteへ集約する。総量は最大自己raw、ANSI、UnicodeとWindows合成OEM、付随metadataの有界余白を含み、列挙順で変えない。OS clipboardの実行証拠はcleanrunnerの別writer/readerに限定し、headlessの注入検証と分ける。
 
@@ -70,7 +79,7 @@ TIFFはAppの `TiffImage` が共有入力bytesと主IFDのページごとの寸�
 
 静止画像のコピー核はAppの `ImageEditSession` が原画のコピーと共有履歴を管理する。一操作の間は比較時の寸法・領域ID maskを固定してコピーし、操作ごとに領域の再比較結果も更新する。全領域コピー／三者autoをUndo一件とする。GUIの `ImagePanel` はForkしたsessionで編集・閾値変更を処理し、原画・再比較・強調と左右差分bitmapの生成、世代・取消・readonly確認後にまとめて採用する。失敗・取消・古い完了では確定済みsessionと表示を保持する。dirtyは履歴上のペインごとの変更回数と保存点から判定し、readonlyはコピー先と保存を制限するが共有Undo／Redoの許可を変えない。
 
-`ImagePngStore` は透明RGBを保持したPNG別名保存を担当し、入力画像・操作script・リンク・読取り専用出力を保護して、同一ディレクトリの一時ファイルから既存属性を保持して置換する。GUI保存は全タブの元入力・現在の入力・フィルター・workspaceも保護し、成功した側だけのsnapshot・パス・比較済みパス・保存点を更新する。`ImageCopyCommands` は全scriptのシミュレーションと上限付きJSONの生成完了後にexportを順次公開する。公開はファイル単位であり、後続の保存失敗や取消で先に保存した出力を巻き戻さない。元形式・多ページの編集保存は未対応。操作・上限・adapter境界は[画像の契約](Docs/IMAGE-VIEWER.md)へ集約する。
+`ImagePngStore` は透明RGBを保持したPNG／単ページTIFF別名保存を担当し、TIFFはclassic little-endian・非圧縮RGBA8・unassociated alphaで出力する。入力画像・操作script・リンク・読取り専用出力を保護して、同一ディレクトリの一時ファイルから既存属性を保持して置換する。GUI保存は全タブの元入力・現在の入力・フィルター・workspaceも保護し、成功した側だけのsnapshot・パス・比較済みパス・保存点を更新する。`ImageCopyCommands` は全scriptのシミュレーションと上限付きJSONの生成完了後にexportを順次公開する。公開はファイル単位であり、後続の保存失敗や取消で先に保存した出力を巻き戻さない。元形式・多ページの編集保存は未対応。操作・上限・adapter境界は[画像の契約](Docs/IMAGE-VIEWER.md)へ集約する。
 
 プロバイダーは `ComparisonRequest` を受け、`ProviderResult` の左右の比較用テキストと概要を返す。そのテキストを通常の差分処理に渡すが、元文書への書戻しには使わない。標準TARの同期検証・復号・SHA計算は背景処理で行い、UIの中止操作を受け付ける。GUIは完成したプロバイダー結果を採用する直前にも取得済みtokenを確認し、取消された結果でEditorの前回本文を置換しない。外部プロバイダーはシェルを介さず別プロセスで起動し、標準入力・出力の版付き JSON で通信する。登録は呼び出し元が明示的に行う。
 
@@ -106,7 +115,7 @@ workspaceの`containerGZipPayloadKinds`はv8／v9のtyped入力と保存版で�
 
 混在比較の通常文書側と実在／不在Textの外部SaveAsは `ComparisonPane.SaveTextCoreAsync` の共通経路を使う。文書・比較世代と、出力先決定後の本文を固定し、Coreの `TextDocument.SaveCopyAsync` で原子的に公開する。公開直前にUI dispatcherで全タブの入力・root・filter・workspace・readonly・linkを再検査し、同じ同期処理内で一時ファイルを置換する。取消／置換後の古い処理を拒否する。外部SaveAsでdescriptorを解除した後も、元rootはpaneの寿命中、全タブの出力先から保護する。再読込みと固定した本文の一致後だけ保存した側のArchiveInputを除き、実path・caption・文書・保存点を採用する。保存中の新しい編集はdirtyのまま、取消／失敗は不在証拠と本文を保持する。公開後に再読込みや採用が失敗した場合、外部ファイルには固定した本文が残るが、paneは通常文書へ切り替えない。編集中の内包Textはworkspace保存と包装を拒否し、単体HTMLは確定した編集中本文へ未保存表示を付ける。保存成功後は通常の復元・再比較・HTML・包装・パッチ経路へ接続する。
 
-内包TextのHTMLと包装patchは `ProjectInputReader` でleafを取得し、同じsnapshotから文字コード・BOM・NUL拒否と本文を共用する。包装はrootの全basenameを保持して圧縮wrapper判定を維持し、採取SHAを確定SHAへ照合した後に全chain／leafを検証する。包装は原本rootと保存済みworking本文を別entryに格納し、HTML／patchは同じ保存本文から生成する。同梱projectはroot／working asset参照を安全な相対名へ変え、chain・leaf・不在鎖・SHAを変えない。leafのpatchは包装から外部へ取得した通常文書へ適用するためのもので、アーカイブを書き換えない。Source Binary／Archiveの単体HTMLと包装report／patch、深いcontainerの再梱包／全件展開、画像／provider子比較は未対応として拒否する。不在側は実在する親rootとcontainer鎖に加えて `MissingEntryChain` を保持し、最初の格納名が親の全entry検証後も存在しないことを確認する。後続の仮想階層はproviderへ渡さず、Text／Binaryの空入力またはArchiveの空一覧として扱う。実在するfile／directoryやSHA不一致・破損・password失敗は不在へ変換せず拒否し、親rootの検証を省略する空入力にはしない。不在と実在する0byte fileは保存・caption・包装patchで区別し、空fileの新規／削除patchはGit形式のmodeとempty blob metadataを使う。
+内包TextのHTMLと包装patchは `ProjectInputReader` でleafを取得し、同じsnapshotから文字コード・BOM・NUL拒否と本文を共用する。内包Imageは同じroot SHA・chain・leaf検証の後でbytesを読み、既存の `ImageComparisonEngine` を使う読取り専用snapshotとしてGUIに表示する。workspaceはtyped入力を保持し、復元後の画像読込みには明示的な再比較を要する。画像のCLIレポートと包装は未対応として拒否する。包装はrootの全basenameを保持して圧縮wrapper判定を維持し、採取SHAを確定SHAへ照合した後に全chain／leafを検証する。包装は原本rootと保存済みworking本文を別entryに格納し、HTML／patchは同じ保存本文から生成する。同梱projectはroot／working asset参照を安全な相対名へ変え、chain・leaf・不在鎖・SHAを変えない。leafのpatchは包装から外部へ取得した通常文書へ適用するためのもので、アーカイブを書き換えない。Source Binary／Archiveの単体HTMLと包装report／patch、深いcontainerの再梱包／全件展開、provider子比較は未対応として拒否する。不在側は実在する親rootとcontainer鎖に加えて `MissingEntryChain` を保持し、最初の格納名が親の全entry検証後も存在しないことを確認する。後続の仮想階層はproviderへ渡さず、Text／Binaryの空入力またはArchiveの空一覧として扱う。実在するfile／directoryやSHA不一致・破損・password失敗は不在へ変換せず拒否し、親rootの検証を省略する空入力にはしない。不在と実在する0byte fileは保存・caption・包装patchで区別し、空fileの新規／削除patchはGit形式のmodeとempty blob metadataを使う。
 
 比較文書の包装は`ComparisonPackage`へ集約する。GUIは保存済み本文と最後に比較したパス・形式を確認し、選択と設定をawait前に確定する。所有する一時ディレクトリへ各原本のバイト列を確定し、同じ内容からレポート・パッチ・アーカイブを作ることで、生成物間の内容のずれを防ぐ。生成物も順次一時ファイルへ移し、全比較分のbyte配列をメモリへ保持しない。入力と生成物の合計は1 GiB、文書各256 MiB、生成物各32 MiB、同梱JSONは4 MiBとする。成功・例外・中止時は所有する一時ファイルと空の一時ディレクトリを削除し、最終出力の公開は`ManagedArchive`の保存経路を使う。包装CLIの`PackageCommands`も同じ経路を呼ぶ。
 
@@ -139,6 +148,40 @@ GUIレポートは現在のエディター本文・表示中の画像スナッ�
 レポート内部APIは`ImageReportDisplayCapture`で同じ採用済みframe tuple・owned表示画素・比較・settings・sampleとSnapshot所有圧縮bytesのSHAを捕捉し、UI／store／timer／Bitmapを参照しない。選択組HTMLは捕捉画素を使い時計を読まない。包装は全画像entryのcaptureとstaging各側のSHA／設定／tupleを照合し、同size／mtimeの原本差替えも拒否する。正常PNG保存後は新Snapshot identityと保存した側のpath／保存点を使う。原本stage・再復号・出力保護・未保存編集の拒否を維持し、guide・矩形・浮動貼付をHTMLへ含めず、原画PNGを変更しない。通常GUIのreleaseはワイプを解除するため、その後の保存入口は解除後の確定表示を捕捉する。一時表示状態はprojectJSONへ書かない。
 
 全ページHTMLはreport-localの直前tupleを継承し、最初の同tupleだけcaptureを再利用する。異なるtupleを経て元へ戻る場合は新しく描画し、短い入力は末ページを反復する。ワイプ境界と選択差分は直前ページで縮めた値を後続ページへ引き継ぐ。GUIのページを動かさないため、原本GUIのページ復元に伴うRefreshは行わない。全canvas複製・blend・強調・ワイプの作業量を既存の共有256M描画予算へ加算し、非整列は寸法metadata、整列は私有準備データで全ページ累積量を時計読取りとHTML構築前に検査する。準備データは比較済みraw／整列を保持し、表示画素をspoolしない。復号／変換／算法の予算と描画予算を分け、Noneかつ点滅無効の既存受理量を保つ。開発用`--image-wipe-script`と`--image-overlay-script`は製品核を別プロセスで照合し、期待値を入力に渡さず、全JSON出力を32MiBに制限して完成結果だけを公開する。通常`--image`／`--image-regions`の明示display指定も同じ完全出力境界を使う。
+
+### 一般行変換の比較境界
+
+Now／Todayはcompile時に一式につき一つのsnapshotを捕捉し、全行へ共有する。別式と再compileはfreshに捕捉し、DTOへ時計値を永続化しない。Todayは同じNowのlocal日付0時をUTCへ構成し、UTC上の固定24時間への丸めに置き換えない。Timestamp originのfoldと`@noopt`のsnapshot保持、共有予算・取消・候補公開の境界を維持する。自然Windows時計6観測は原典bodyとsource-derived predicateの照合であり、full Native original AST／Optimize互換を意味しない。
+
+`InRange`は下限・上限・値を先行評価し、下限を含み上限を含まない判定をscalar／直下arrayへ適用する。`IsWithin`は同じ経路で上限も含み、両端が等しい場合もその端を含む。整数同士の辺はexact比較、double辺だけ変換し、文字列はUTF-8順／Poco ASCII foldを使う。型不一致はnone、三引数以外は解析時に拒否する。これらの定数評価をOptimizeへ追加せず、原典の子訪問と既存共有予算・取消・原文保持の境界を保つ。Native typed timestamp／throw／不正UTF-8と全parserの未観測部分は公開互換の実測に数えない。
+
+容量literalは旧lexerの整数／小数に直結するB／KB／MB／GB／TBだけを認識し、既知unitのprefixだけを消費する。原典constructorと同じdoubleの段階的1024倍・整数切捨てと単項負号の分離を保つ。解析失敗の0と、倍率後の有限値に対する64bit cast拒否を区別し、UBの原典期待値を作らない。通常数値の後続キーワードは既存parserへ渡す。数値・unitの走査は共有workを課金し、原文を更新しない。Native95記録・公開serialized観測・engineeringの隣接／丸め・Native全parserとtyped値の未検証範囲を分ける。
+
+期間literalは22種類のASCII unitを長いprefixから認識し、容量literalの後に判定する。doubleの秒倍率とmicrosecond倍率を結合せず、ミリ秒だけ1,000倍とし、整数切捨ての後へ既存単項負号を適用する。数値解析失敗時0と有限な倍率後値の64bit範囲外拒否を分け、原典UBを実行しない。unit走査と各倍率は既存共有workへ課金し、取消と原文保持を維持する。106原典・92公開serialized候補・14未実行、別21解析probeと24engineering観測・共有規則予算を区別し、typed AST・Native全parser・cacheの同等性へ拡張しない。
+
+日時literalはd／Dに直結する二重引用符の本文を解析し、signed Int64のepoch microsecondsを保持する。原典8形式・時差検出・Windows地域形式fallbackの順序を保ち、公開NULと不正UTF-16を拒否する。日時同士の比較・差、日時と整数の加減算、範囲、配列min／maxは原画となる本文を変更せず比較キーへ適用する。配列の文字列化は一回の評価内で同じ日時objectの結果を共有し、長さ算出と出力の不一致を防ぐ。
+
+Coreは日時環境を明示注入し、Appは規則ごとに遅延したhostを比較optionsから各planへ共有する。Windowsは構築時の現在Tzdと対象日時のCRT localtime／DSTを分け、macOSは原典標準offsetと対象日のDSTを使う。hostとprofileはDTOへ永続化しない。原典のsigned乗算／加算が未定義になるraw値は保持・比較できるが、文字列化をhost呼出し前に拒否する。固定31／guarded48のconstructorとserializer原本、公開serialized bridge、source-derived engineeringを分け、Native全parser／typed ASTや別profileの実測資格へ拡張しない。
+
+日時変換の`ToDateTime`は既存constructorの形式判定と環境を使い、非文字列・空文字列・解釈失敗をnoneとして返す。`ToDateStr`はTimestampの表示serializerとは別のlocal日付formatterを通し、constructor／calendar／hostの失敗を例外として候補境界へ返す。serializerが返すエラー文字列を日付文字列へ切り出さない。直下arrayの変換は全要素で共有予算を消費し、一要素の例外でも未完成候補を公開しない。成功したStringLiteralのToDateTimeだけをTimestamp originへfoldし、失敗結果noneとToDateStrを定数化しない。原典111bodyの測定、110bodyの公開投影、source由来のarity／Optimize／取消検証を区別し、原典parser全体の同等性を主張しない。
+
+暦関数StartOfWeek／StartOfMonth／StartOfYearは同じTimestamp値・constructor・共有予算を使う。ローカル暦0時の構築は既存日時環境の任意calendar拡張へ渡し、mktimeのUTC返値ではなく更新されたtm_isdstとnaive timestampのDST照会から時差を得る。週は元の日曜0の曜日でUTC時間軸の24時間を差し引き、原典どおりLocalDateTimeを再構築する。月・年は返却UTCをlocaltimeへ再投入せず、Timestamp serializerの表示失敗と関数bodyの例外を分ける。日時originのliteralだけをfoldし、StringLiteralの関数は実行時に評価する。環境は比較開始時に捕捉しDTOへ保存しない。Windows自然ja-JP／Tokyoの固定108bodyとsource由来のengineeringを分け、未実行のmacOS／DST／原典全AST・Optimizeへ資格を広げない。
+
+Version literalはv／Vと直結する引用本文を既存quote scannerで読み、ASCII scanfの四部品を前方から部分変換する。元の引用本文・二重quote・backslash・余分なtailをNative quote原本へ照合し、無効なUTF-16を数値化前に拒否する。major0～65535のC++17 shiftに対する原MSVCのsigned変換を保持し、部品をマスクせず左結合の加算を段階ごとに検査する。負のshift部品・変換overflow・signed加算overflowにNative期待値を作らない。既存共有work／取消／原文保持と、Version・Size・Durationのconstructor originによるIntLiteral専用foldの分岐を保つ。成功する演算foldの結果は通常literalへ戻す。Native constructor／int64 serializer／quote原典と公開serialized-key観測を分け、全parser・typed context・private originを公開で実測したことにしない。
+
+行集計の`Average`・`Sum`・`Maximum`・`Minimum`は、一回の変換の各ルールに独立した評価状態を置く。値と条件のAST参照ペアがcacheキーで、最初に到達したlive providerの全行を条件→値の順に読み、成功した選択型の統計だけを公開する。後続SetLineでcacheを無効化せず、ルール・ペインの変換・再実行へ共有しない。外側arrayの直下scalarだけを処理し、最初の有効型と全scalar件数の原典の境界を保つ。外側の失敗は未完成統計を公開せず、内側の成功統計を消さない。共有作業予算・取消・選択型の文字列保持容量を検査し、有限値と整数化の64bit範囲を戻り値確定時に検査する。公開変換の失敗は私有候補全体を拒否し、元入力へ部分結果を公開しない。集計を持たない式の状態確保と作業量は従来経路を維持する。
+
+文字列needleの`Replace`は比較キーだけを変換し、scalar／直下array・三引数の先行評価・非重複一致・Pocoの`$0`展開とempty-matchの最適化分岐を固定原典に合わせる。`@ci`は固定PCRE2／Unicodeのcaseless集合を使い、既存比較／検索のASCII foldは維持する。patternとsubjectのscalar列／境界、完成出力の容量を確保前に共有予算へ予約し、KMPと出力の各走査は共有workと取消を検査する。結果の再検索・原文への書戻しは行わない。typed regexと旧全parserは別の未移植境界で、公開式として表せない原典を実行済みへ数えない。
+
+`StrCount`／`StrFind`は比較キーだけを変換し、位置はRAW行／列のUTF-8 byte offsetで扱う。ASCII fold・非重複一致・scalarと直下arrayへの適用を固定原典で照合する。検索patternとsourceの確保量は既存の共有生成予算へ先に予約し、各UTF-8走査・KMP照合も共有workを消費する。patternは各関数評価内で遅延生成して共有し、検索元がnone・空配列・全noneなら作らない。全引数を先行評価する境界、compile／evaluateの拒否、入力と前回表示の保持は共通pipelineに従う。
+
+`LineTransformPlan`は解析と各入力文書の作業行を分離し、共有予算で変換キーを生成する。`TextDiffer`は実際のpane maskを渡し、二者・三者の各pair、同期点、フォルダー内Textと4ペイン結果の呼出し元で同じ規則を使う。配列値は内部の不変オブジェクトで扱い、確保前に共有work・累積slots予算へ課金する。定数配列は再利用し、動的配列と入れ子の文字列化・比較には取消と深さの検査を保つ。原文とEOLの区間を残し、変換で一致した差はignoredとして表示する。HTMLは原文に`data-ignored`と設定表示を付ける。編集・保存は変換キーを書き戻さない。
+
+`ToLower`／`ToUpper`の環境は比較optionsへ実行時注入し、workspaceやレポート設定へ保存しない。Windowsでは旧実装と同じユーザー既定ロケールの`LCMapStringEx`、その他のOSでは捕捉した`TextInfo`で文字列を変換する。CoreはOS APIを参照しない。
+
+`NormalizeUnicode`も同じ文字列環境へ注入し、formを値より先に評価する。不正な文字列／整数formは値を評価せずnoneを返し、それ以外の型と省略時はNFCにする。文字列化したscalarと外側配列の直下要素だけを正規化し、noneを保つ。Windowsでは原典と同じ明示UTF-16長の`normaliz.dll!NormalizeString`を用い、query／変換／確保失敗時は変換前の文字列を保つ。他OSは.NETの`string.Normalize`を使い、不正UTF-16は入力を保つがUnicodeデータのWindows互換を主張しない。case directiveや定数foldには依存せず、共有作業・生成予算とAPI前後の取消をCoreで検査する。
+
+表の一般行変換はcallerでescapeしたRAW行をGNU意味比較へ渡し、行対応ledgerとrow kindを元の論理行へ投影する。静的`TableColumnRange`／列除外は一般変換後のGNU残差で行対応を補助し、セル内比較へ一般行変換を再適用しない。行の意味差分とignored判定を保ちながら元セルを表示するので、表示される原文のセル差と行の意味分類は区別する。設定DTOのoptionalな`LineTransformRules`は省略時に規則なしとし、保存済みの規則とCLI上書きを共通経路で検証する。構文・予算・group順の契約は [Core README](Src/DiffBeacon.Core/README.md#一般行変換) を参照する。
 
 ## 不変条件と採用済み判断
 

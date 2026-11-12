@@ -42,7 +42,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
     private readonly ScrollViewer _toolbar;
     private readonly ScrollViewer _statusViewport;
     public ListBox EntryList { get; } = new() { Name = "archive-entries" };
-    public ComboBox EntryKind { get; } = new() { Name = "archive-entry-kind", ItemsSource = new[] { "自動", "テキスト", "バイナリ", "アーカイブ" }, SelectedIndex = 0, Margin = new Thickness(4) };
+    public ComboBox EntryKind { get; } = new() { Name = "archive-entry-kind", ItemsSource = new[] { "自動", "テキスト", "バイナリ", "アーカイブ", "画像" }, SelectedIndex = 0, Margin = new Thickness(4) };
     public Button OpenEntryButton { get; } = new() { Name = "archive-open-entry", Content = "選択項目を比較", Margin = new Thickness(4), IsEnabled = false };
     public TextBox LeftPassword { get; } = new() { Name = "archive-left-password", PasswordChar = '●', MaxLength = 4096, PlaceholderText = "左のパスワード（任意）", Width = 200, Margin = new Thickness(4) };
     public TextBox RightPassword { get; } = new() { Name = "archive-right-password", PasswordChar = '●', MaxLength = 4096, PlaceholderText = "右のパスワード（任意）", Width = 200, Margin = new Thickness(4) };

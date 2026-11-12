@@ -1,0 +1,132 @@
+{
+  "schema": "line-transform-replace-fixed-manifest-v1",
+  "scope": "Every family file except this manifest. Native outputs and initial producer metadata/receipts are immutable; tools/readers are maintained separately from goldens.",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "adapter.cpp",
+      "size": 6678,
+      "sha256": "0eca7eaff60ce7fe1bbdf9d0c71eccac25de429ba621ea0c5b5ccf9110b8761c"
+    },
+    {
+      "path": "capture-evidence/casefold-generation.json",
+      "size": 280,
+      "sha256": "2de9a634a5c601353978e5d2c0eee9c0ab9a1e0c3818c32a4de97952f8874cef"
+    },
+    {
+      "path": "capture-evidence/native-capture-receipt.json",
+      "size": 977,
+      "sha256": "31c2673c65e20e2c21007aef1c6fbe77f22a3191fc585402239b3a2e14e228e9"
+    },
+    {
+      "path": "capture-evidence/native-recompile-receipt.json",
+      "size": 976,
+      "sha256": "ed5f2cf24ef2b1b6231af6de8b9df1237bbf1464e5e560899efd6628263cc760"
+    },
+    {
+      "path": "capture-evidence/original-capture.py",
+      "size": 9673,
+      "sha256": "d9ba3014c9e0ae740bbad26dfa3a83dd66e8073d7525e0a149db406291a62c75"
+    },
+    {
+      "path": "capture-evidence/original-README.md",
+      "size": 5575,
+      "sha256": "0d24ffd7fed0fada3f1731f1b04b42b087c10a2d9549144da4a5e8b612a0ad48"
+    },
+    {
+      "path": "capture-evidence/original-serialized-capture.py",
+      "size": 10731,
+      "sha256": "dc72b2eb4a8a79638096d94392344714ecc8b63ec2c9c8231a36cd16c12b6cd1"
+    },
+    {
+      "path": "capture-evidence/public-serialized-proof.zip",
+      "size": 13675,
+      "sha256": "d88343337c761690805fad54725828531660f0ecd91c52cb92b38c05daf1a2a0"
+    },
+    {
+      "path": "capture-evidence/serialized-capture-receipt.json",
+      "size": 986,
+      "sha256": "0d6229e1da38a16146d1d55428250425a97e92394000dc03b567440e9d9e3466"
+    },
+    {
+      "path": "capture-evidence/serialized-recompile-receipt.json",
+      "size": 986,
+      "sha256": "6e0a5a4fdfebc319e116f00d4be6120d1882df5bffb8e5a7283b1f25e35eff62"
+    },
+    {
+      "path": "capture-evidence/serialized-wrapper-patch.json",
+      "size": 1083,
+      "sha256": "febc7d386c8c774c4fbdcf843376b97eb5244fb033cd7d3f71174b73fbab9e96"
+    },
+    {
+      "path": "capture.py",
+      "size": 10756,
+      "sha256": "eb7844bfac3fc9cb4916142434848c6b5b7dac078bfcc6ccee0d898af906a84d"
+    },
+    {
+      "path": "cases.json",
+      "size": 34590,
+      "sha256": "a0fe11284dc6b012f8eead24639fde753eaf416e1fc7e878465ab0c70c32a42e"
+    },
+    {
+      "path": "Generate-CaseFold.py",
+      "size": 3146,
+      "sha256": "f51ffbdd7229c6ad16e55752d9c63d57d01191435884eef5c18d8b9777f5acef"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 17346,
+      "sha256": "d7105fe61ae209c2d53833731683933ebaf4d9efba89359947999f96e05e9c65"
+    },
+    {
+      "path": "provenance.json",
+      "size": 27080,
+      "sha256": "a90bea1be8f68d373bf05acf8dc1864bcac2a2fe889a13fffa5a0613b0df0b99"
+    },
+    {
+      "path": "public-case-plan.json",
+      "size": 176575,
+      "sha256": "7a948fdbe7e717c8ac21c9b00885f53570ba1368a6de3a3bc4ea543e06fe3cc5"
+    },
+    {
+      "path": "README.md",
+      "size": 7666,
+      "sha256": "f0bd9d2e3e64e354e4f0d1f080f72d4cc1e3e06c2d80eca9e37435302abcdfde"
+    },
+    {
+      "path": "reference-source.zip",
+      "size": 582865,
+      "sha256": "18ed25d74eba5e151bf5fd1a2e811b2490af2ce4c3e39b273a2d563abe8da4e7"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 1397,
+      "sha256": "97c0d0b0b2a965e0c2ef33f7178844607f5356217c87e3c6df7c0d9a4d8c7424"
+    },
+    {
+      "path": "serialized-adapter.cpp",
+      "size": 7070,
+      "sha256": "a4f3353d3e55221ca2a1706a168a660dc8b98c0ed6d200f9b042afb5f00be24c"
+    },
+    {
+      "path": "serialized-golden.ndjson",
+      "size": 23477,
+      "sha256": "f5558c313d3ff5ad9d02a1207384eac497a65c04973607f4d33ea43ebb6c8182"
+    },
+    {
+      "path": "source-archive-manifest.json",
+      "size": 14958,
+      "sha256": "27fd523be1ed4460f77428f8ac0455dbc83ae0d4b3269e3c26442078f691da9a"
+    },
+    {
+      "path": "verify.py",
+      "size": 10857,
+      "sha256": "a5dadd892b28e1e65c5ac6ec0d532ff23f098114e79731df27d10dfeed4030d2"
+    }
+  ]
+}

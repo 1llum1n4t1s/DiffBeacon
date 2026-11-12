@@ -1,0 +1,475 @@
+{
+  "stdoutByteIdentical": true,
+  "stdoutSha256": "8a397b6857cc5113b80f7d212f38846a97d33ca35828876fae0e9b92863ec6a0",
+  "builds": [
+    {
+      "name": "capture-a",
+      "receipt": {
+        "LCMapStringEx": {
+          "locale": null,
+          "available": true,
+          "invalidFlags": 4294967295,
+          "invalidFlagsResult": 0,
+          "invalidFlagsLastError": 1004,
+          "kernel32Path": "C:\\windows\\System32\\kernel32.dll",
+          "kernel32Sha256": "e132eba4166256e2f414b91fe7d5386590bc5ea8626aee5af9c9738383cf2ae1"
+        },
+        "optimization": "Od",
+        "extraction": {
+          "native.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                2808,
+                2821
+              ],
+              [
+                2832,
+                2860
+              ]
+            ]
+          ],
+          "get-string.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                51,
+                58
+              ]
+            ]
+          ],
+          "lifting.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                1693,
+                1704
+              ]
+            ]
+          ],
+          "stringification.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                2315,
+                2357
+              ]
+            ]
+          ],
+          "windows.inc": [
+            "unicoder.cpp",
+            [
+              [
+                1398,
+                1475
+              ]
+            ]
+          ],
+          "registration.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                3846,
+                3846
+              ],
+              [
+                3845,
+                3845
+              ],
+              [
+                3847,
+                3847
+              ],
+              [
+                3849,
+                3849
+              ],
+              [
+                3852,
+                3853
+              ]
+            ]
+          ],
+          "arity.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                4269,
+                4280
+              ]
+            ]
+          ],
+          "converter.inc": [
+            "UnicodeConverter.cpp",
+            [
+              [
+                66,
+                86
+              ]
+            ]
+          ],
+          "converter-template.inc": [
+            "UnicodeConverter.h",
+            [
+              [
+                85,
+                89
+              ]
+            ]
+          ],
+          "ucs4.inc": [
+            "unicoder.cpp",
+            [
+              [
+                50,
+                106
+              ]
+            ]
+          ],
+          "to-tstring.inc": [
+            "unicoder.cpp",
+            [
+              [
+                868,
+                880
+              ]
+            ]
+          ],
+          "to-utf8-buffer.inc": [
+            "unicoder.cpp",
+            [
+              [
+                926,
+                955
+              ]
+            ]
+          ],
+          "to-utf8.inc": [
+            "unicoder.cpp",
+            [
+              [
+                903,
+                908
+              ]
+            ]
+          ]
+        },
+        "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+        "compile": {
+          "command": [
+            "cmd.exe",
+            "/d",
+            "/c",
+            "<作業フォルダー>\\DiffBeacon\\folder-width-oracle-20261020-r1\\capture-a\\build.cmd"
+          ],
+          "pid": 25336,
+          "birthFileTime": 134369113442491230,
+          "startedUtc": "2026-10-19T19:22:24.268742+00:00",
+          "endedUtc": "2026-10-19T19:22:28.303135+00:00",
+          "exitCode": 0,
+          "stdoutEof": true,
+          "stderrEof": true,
+          "heldProcessHandleSignaled": true,
+          "stdoutSha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7",
+          "stderrSha256": "071d5f2547381d10fa8574337ff332f7e893a1da514ba521fe9ef07126058ffc"
+        },
+        "run": {
+          "command": [
+            "<作業フォルダー>\\DiffBeacon\\folder-width-oracle-20261020-r1\\capture-a\\reference.exe"
+          ],
+          "pid": 39360,
+          "birthFileTime": 134369113484665509,
+          "startedUtc": "2026-10-19T19:22:28.613557+00:00",
+          "endedUtc": "2026-10-19T19:22:28.626853+00:00",
+          "exitCode": 0,
+          "stdoutEof": true,
+          "stderrEof": true,
+          "heldProcessHandleSignaled": true,
+          "stdoutSha256": "8a397b6857cc5113b80f7d212f38846a97d33ca35828876fae0e9b92863ec6a0",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "caseCount": 309,
+        "platform": "Windows-11-10.0.26300-SP0",
+        "windowsVersion": [
+          "11",
+          "10.0.26300",
+          "SP0",
+          "Multiprocessor Free"
+        ],
+        "userDefaultLocale": "ja-JP",
+        "systemDefaultLocale": "ja-JP",
+        "threadLocale": 1033,
+        "ansiCodePage": 932,
+        "oemCodePage": 932,
+        "executableSha256": "a5f567158010a8f60f01dc44e147d9fe517fb1585ae01bf3fc7debadc6d32457",
+        "fixedInputs": {
+          "adapter.cpp": "154af47f2aadf8e873707c6f17cd0afb5fa2bcb3397d08a21278bc32cd4a9a12",
+          "cases.json": "8efa46b92917cec37a76390f716f137bc5772c922e21dc3e42c6cfa439118356",
+          "provenance.json": "f81fb61d8aa2cbfc65e3e61cc3aa9cebaf762582d33e2d176587307d2d03b629",
+          "reproduce.py": "d25f0933fa807b23dfcf6246591a1b7d1f4d0d06f4f7c1167b94817ff748dc14",
+          "poco-specs.json": "6883ba6b3bdbf35ee3d0009eac0131a44b6edfd4ad048ad7a65da6c91e4773ec"
+        },
+        "extractedSha256": {
+          "native.inc": "4d9ae4ce113c9031dca3a5272e78a5b8c8bb913e89c26eeb2885075b6c780b21",
+          "get-string.inc": "39ed0cb10fd00c379c27b39d32cb65d4b2b2e40ffd9261b0f91e5b73ace64f94",
+          "lifting.inc": "126cbbad74be7e91496113b1aa4bdad6a00918df254f7118388bb06eefa1fd71",
+          "stringification.inc": "adea9b9815235f0fd7de35efd59beffc5b0391e1966f6113aa0de8830ef0cdb9",
+          "windows.inc": "6c5bc0ffda974e801aa51d382717d3f6578707ff9ec4031d1349104576b3c03c",
+          "registration.inc": "df7766b1e3e78ce19b04d0f66ed102e6def8642ca16fad96b7d81d824f596771",
+          "arity.inc": "0c6b4bab869fe003b458486e4f6645ebd65c01ab364bafbe2e4b5594e57c27a8",
+          "converter.inc": "1505c7564898276340670433ceb50972482f2fd219cffed34c4e4ab8daf6e199",
+          "converter-template.inc": "8c7983e073acc54b20fb968a8b05da55b88e2513f70fd7bbff25363f6303f78a",
+          "ucs4.inc": "38e013b7c1f733b794ecb19a06b8af8b154a4e69069fc2ef47e6dbbcdfac59c2",
+          "to-tstring.inc": "525f8e4ee69e52a8a4795b10f4a0b2e52d9c62cffb33d83750e8c5ee7d6875cb",
+          "to-utf8-buffer.inc": "9ef06df44c8ce18a2b67c4dfc3d0aa1c64002fca817b2fa0e7957d30dd3ac456",
+          "to-utf8.inc": "a26d8c674f99b9c3050ee124a1b0093a3eaf12577f12884cf82e6c2a8da65c3c",
+          "text-class.inc": "3caaef674a88304e0b2a7d8a40dfe12f9ad34ba11f32fda0e14a804a5e31d64d",
+          "utf-ctor.inc": "67e43dae67336c176b8c83f63c423f43b21f9366896cf15fd65c4321edd58dd6",
+          "utf-dtor.inc": "123058449291ce47f580f18cd10ab4e91b830d662283f1f59a87ce0094943463",
+          "utf-query.inc": "12bca6f410e238b7d51233b7bbe1c87262c0ea39630583b458951f1124a19b8e",
+          "utf-sequence.inc": "7b21ee9d58fdcd3d8195512b8e2dfac6fd0cca51062506450f110cbaaaf1fa24",
+          "utf-legal.inc": "cd3aa22f412d275b5480caba66cc99e7c05869b82d148e9c74c84b4fd4edfda5",
+          "utf-table.inc": "093c24f389606a285eb2eb6c014d310219511ed57d25fdadcd35a044422e8ee5",
+          "text-bodies.inc": "5b3d89c562daa076b1650a4fe7fcd3472cb50472a5fe22517ab5ca61667aad4e",
+          "text-inlines.inc": "9452ea91e0527d6716bb7b1c08533e59649a09877b7edf90da72bc203b0a22a3",
+          "cases.inc": "d386bc6bdd715541b1bec917dd31cbcf70b871879a073ae86b91923d0431cdf4"
+        }
+      }
+    },
+    {
+      "name": "capture-b",
+      "receipt": {
+        "LCMapStringEx": {
+          "locale": null,
+          "available": true,
+          "invalidFlags": 4294967295,
+          "invalidFlagsResult": 0,
+          "invalidFlagsLastError": 1004,
+          "kernel32Path": "C:\\windows\\System32\\kernel32.dll",
+          "kernel32Sha256": "e132eba4166256e2f414b91fe7d5386590bc5ea8626aee5af9c9738383cf2ae1"
+        },
+        "optimization": "O2",
+        "extraction": {
+          "native.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                2808,
+                2821
+              ],
+              [
+                2832,
+                2860
+              ]
+            ]
+          ],
+          "get-string.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                51,
+                58
+              ]
+            ]
+          ],
+          "lifting.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                1693,
+                1704
+              ]
+            ]
+          ],
+          "stringification.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                2315,
+                2357
+              ]
+            ]
+          ],
+          "windows.inc": [
+            "unicoder.cpp",
+            [
+              [
+                1398,
+                1475
+              ]
+            ]
+          ],
+          "registration.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                3846,
+                3846
+              ],
+              [
+                3845,
+                3845
+              ],
+              [
+                3847,
+                3847
+              ],
+              [
+                3849,
+                3849
+              ],
+              [
+                3852,
+                3853
+              ]
+            ]
+          ],
+          "arity.inc": [
+            "FilterExpressionNodes.cpp",
+            [
+              [
+                4269,
+                4280
+              ]
+            ]
+          ],
+          "converter.inc": [
+            "UnicodeConverter.cpp",
+            [
+              [
+                66,
+                86
+              ]
+            ]
+          ],
+          "converter-template.inc": [
+            "UnicodeConverter.h",
+            [
+              [
+                85,
+                89
+              ]
+            ]
+          ],
+          "ucs4.inc": [
+            "unicoder.cpp",
+            [
+              [
+                50,
+                106
+              ]
+            ]
+          ],
+          "to-tstring.inc": [
+            "unicoder.cpp",
+            [
+              [
+                868,
+                880
+              ]
+            ]
+          ],
+          "to-utf8-buffer.inc": [
+            "unicoder.cpp",
+            [
+              [
+                926,
+                955
+              ]
+            ]
+          ],
+          "to-utf8.inc": [
+            "unicoder.cpp",
+            [
+              [
+                903,
+                908
+              ]
+            ]
+          ]
+        },
+        "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+        "compile": {
+          "command": [
+            "cmd.exe",
+            "/d",
+            "/c",
+            "<作業フォルダー>\\DiffBeacon\\folder-width-oracle-20261020-r1\\capture-b\\build.cmd"
+          ],
+          "pid": 44024,
+          "birthFileTime": 134369113540962907,
+          "startedUtc": "2026-10-19T19:22:34.111587+00:00",
+          "endedUtc": "2026-10-19T19:22:44.259256+00:00",
+          "exitCode": 0,
+          "stdoutEof": true,
+          "stderrEof": true,
+          "heldProcessHandleSignaled": true,
+          "stdoutSha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7",
+          "stderrSha256": "071d5f2547381d10fa8574337ff332f7e893a1da514ba521fe9ef07126058ffc"
+        },
+        "run": {
+          "command": [
+            "<作業フォルダー>\\DiffBeacon\\folder-width-oracle-20261020-r1\\capture-b\\reference.exe"
+          ],
+          "pid": 13820,
+          "birthFileTime": 134369113643900937,
+          "startedUtc": "2026-10-19T19:22:44.649550+00:00",
+          "endedUtc": "2026-10-19T19:22:44.670482+00:00",
+          "exitCode": 0,
+          "stdoutEof": true,
+          "stderrEof": true,
+          "heldProcessHandleSignaled": true,
+          "stdoutSha256": "8a397b6857cc5113b80f7d212f38846a97d33ca35828876fae0e9b92863ec6a0",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "caseCount": 309,
+        "platform": "Windows-11-10.0.26300-SP0",
+        "windowsVersion": [
+          "11",
+          "10.0.26300",
+          "SP0",
+          "Multiprocessor Free"
+        ],
+        "userDefaultLocale": "ja-JP",
+        "systemDefaultLocale": "ja-JP",
+        "threadLocale": 1033,
+        "ansiCodePage": 932,
+        "oemCodePage": 932,
+        "executableSha256": "4e5d1eaf43acb9b48a56e1ad38c33a901b854f7322f0c58b47958041a5364cab",
+        "fixedInputs": {
+          "adapter.cpp": "154af47f2aadf8e873707c6f17cd0afb5fa2bcb3397d08a21278bc32cd4a9a12",
+          "cases.json": "8efa46b92917cec37a76390f716f137bc5772c922e21dc3e42c6cfa439118356",
+          "provenance.json": "f81fb61d8aa2cbfc65e3e61cc3aa9cebaf762582d33e2d176587307d2d03b629",
+          "reproduce.py": "d25f0933fa807b23dfcf6246591a1b7d1f4d0d06f4f7c1167b94817ff748dc14",
+          "poco-specs.json": "6883ba6b3bdbf35ee3d0009eac0131a44b6edfd4ad048ad7a65da6c91e4773ec"
+        },
+        "extractedSha256": {
+          "native.inc": "4d9ae4ce113c9031dca3a5272e78a5b8c8bb913e89c26eeb2885075b6c780b21",
+          "get-string.inc": "39ed0cb10fd00c379c27b39d32cb65d4b2b2e40ffd9261b0f91e5b73ace64f94",
+          "lifting.inc": "126cbbad74be7e91496113b1aa4bdad6a00918df254f7118388bb06eefa1fd71",
+          "stringification.inc": "adea9b9815235f0fd7de35efd59beffc5b0391e1966f6113aa0de8830ef0cdb9",
+          "windows.inc": "6c5bc0ffda974e801aa51d382717d3f6578707ff9ec4031d1349104576b3c03c",
+          "registration.inc": "df7766b1e3e78ce19b04d0f66ed102e6def8642ca16fad96b7d81d824f596771",
+          "arity.inc": "0c6b4bab869fe003b458486e4f6645ebd65c01ab364bafbe2e4b5594e57c27a8",
+          "converter.inc": "1505c7564898276340670433ceb50972482f2fd219cffed34c4e4ab8daf6e199",
+          "converter-template.inc": "8c7983e073acc54b20fb968a8b05da55b88e2513f70fd7bbff25363f6303f78a",
+          "ucs4.inc": "38e013b7c1f733b794ecb19a06b8af8b154a4e69069fc2ef47e6dbbcdfac59c2",
+          "to-tstring.inc": "525f8e4ee69e52a8a4795b10f4a0b2e52d9c62cffb33d83750e8c5ee7d6875cb",
+          "to-utf8-buffer.inc": "9ef06df44c8ce18a2b67c4dfc3d0aa1c64002fca817b2fa0e7957d30dd3ac456",
+          "to-utf8.inc": "a26d8c674f99b9c3050ee124a1b0093a3eaf12577f12884cf82e6c2a8da65c3c",
+          "text-class.inc": "3caaef674a88304e0b2a7d8a40dfe12f9ad34ba11f32fda0e14a804a5e31d64d",
+          "utf-ctor.inc": "67e43dae67336c176b8c83f63c423f43b21f9366896cf15fd65c4321edd58dd6",
+          "utf-dtor.inc": "123058449291ce47f580f18cd10ab4e91b830d662283f1f59a87ce0094943463",
+          "utf-query.inc": "12bca6f410e238b7d51233b7bbe1c87262c0ea39630583b458951f1124a19b8e",
+          "utf-sequence.inc": "7b21ee9d58fdcd3d8195512b8e2dfac6fd0cca51062506450f110cbaaaf1fa24",
+          "utf-legal.inc": "cd3aa22f412d275b5480caba66cc99e7c05869b82d148e9c74c84b4fd4edfda5",
+          "utf-table.inc": "093c24f389606a285eb2eb6c014d310219511ed57d25fdadcd35a044422e8ee5",
+          "text-bodies.inc": "5b3d89c562daa076b1650a4fe7fcd3472cb50472a5fe22517ab5ca61667aad4e",
+          "text-inlines.inc": "9452ea91e0527d6716bb7b1c08533e59649a09877b7edf90da72bc203b0a22a3",
+          "cases.inc": "d386bc6bdd715541b1bec917dd31cbcf70b871879a073ae86b91923d0431cdf4"
+        }
+      }
+    }
+  ],
+  "projectionBoundary": "Public-projectable only marks native input/expected values for a future .flt test. No public parser/Optimize/name lookup execution is claimed. Malformed UTF8/NUL/file/regex/nonfinite doubles/injected exceptions/arity and API invalid-flag probes stay native-only."
+}

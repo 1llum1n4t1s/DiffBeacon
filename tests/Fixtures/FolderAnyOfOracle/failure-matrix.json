@@ -1,0 +1,45 @@
+{
+  "scope": "AnyOfFunc直接実行とconstructor引数数検証ブロックの別観測。constructor全体/parser/.fltは対象外",
+  "failures": [
+    {
+      "condition": "空配列",
+      "expected": "false。空配列の恒真やnoneへの誤変換を拒否"
+    },
+    {
+      "condition": "直接boolean trueが先頭/中央/末尾または複数存在",
+      "expected": "true。false/非boolean/nested arrayの併存は影響しない"
+    },
+    {
+      "condition": "直接boolean trueなし。false/none/integer/double/string/Timestampのみ",
+      "expected": "false。truthy変換を行わない"
+    },
+    {
+      "condition": "trueを含むnested arrayのみ、空nested array、深いnested array",
+      "expected": "false。再帰走査しない"
+    },
+    {
+      "condition": "scalar boolean true/false",
+      "expected": "同じbooleanを返す"
+    },
+    {
+      "condition": "scalar none/integer/double/string/Timestamp",
+      "expected": "none。booleanへ変換しない"
+    },
+    {
+      "condition": "合法引数評価",
+      "expected": "正確に一度、evaluated=[0]"
+    },
+    {
+      "condition": "引数式がthrow",
+      "expected": "例外argument-0を伝播、result=null、evaluated=[0]"
+    },
+    {
+      "condition": "登録arity 1..1、0/2/3引数（全引数throw指定）",
+      "expected": "検証ブロックで拒否、evaluated=[]。1引数は検証のみ通過し評価しない"
+    },
+    {
+      "condition": "原典・span・二回独立実行・固定証拠の破損",
+      "expected": "raw blob ID/SHA/size、span行/byte、全ZIP CRC、compile入力、exe/receipt/stdout、独立readerの不一致を拒否"
+    }
+  ]
+}

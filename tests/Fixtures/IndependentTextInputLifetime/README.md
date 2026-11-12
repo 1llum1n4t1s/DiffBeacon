@@ -5,7 +5,7 @@ Nine actual Button/Task regression cases: Compare gate + Cancel Close; Load gate
 Parent applies input324/hook-and-registration-proposal.json and uses the dedicated App selector:
 
 ```powershell
-dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-text-input-lifetime <fresh-output>
+dotnet Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll --self-test-independent-text-input-lifetime <fresh-output>
 ```
 
 Read ui-report.json fixtures path, retain actual app PID from the external runner, and run:

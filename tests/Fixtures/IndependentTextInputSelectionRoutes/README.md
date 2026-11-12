@@ -7,7 +7,7 @@ Eight actual entry/dialog/Compare/adoption cases cover three working and externa
 ```powershell
 python -B -X utf8 tests/Fixtures/IndependentTextInputSelectionRoutes/verify.py
 dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output artifacts/e2e/new-input-routes --independent-text-input-routes-only
-dotnet Src/DiffBeacon.App/bin/Release/net10.0/DiffBeacon.dll --self-test-independent-text-input-routes artifacts/verification/new-input-routes
+dotnet Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll --self-test-independent-text-input-routes artifacts/verification/new-input-routes
 python -B -X utf8 tests/Fixtures/IndependentTextInputSelectionRoutes/verify.py --gui-report artifacts/verification/new-input-routes/ui-report.json --output artifacts/verification/new-input-routes-reader.json
 ```
 

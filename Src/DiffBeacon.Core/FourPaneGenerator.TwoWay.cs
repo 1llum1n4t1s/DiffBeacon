@@ -30,6 +30,8 @@ public sealed partial class FourPaneGenerator
             Reserve((long)left.Length + right.Length);
             if (options.SubstitutionRules.Any(x => x.Enabled)) Reserve(TextPreprocessor.MaxRegexTextLength);
             var l = Parse(left); var r = Parse(right);
+            PrepareTransformed(left, l, TablePaneMask.Left);
+            PrepareTransformed(right, r, TablePaneMask.Right);
             counts = [l.Count, 0, r.Count];
             if (apparentCountAdapter != null)
                 apparent = [Count(0, new(0, l.Count)), 0, Count(2, new(0, r.Count))];

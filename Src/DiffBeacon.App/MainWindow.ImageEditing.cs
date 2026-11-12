@@ -5,6 +5,11 @@ public sealed partial class ComparisonPane
     private IEnumerable<ComparisonPane> ImageProtectionPanes() => ((_owner as MainWindow)?.SessionPanes ?? []).Append(this).Distinct();
     private IEnumerable<string> CurrentImageProtectedPaths()
     {
+        foreach (var pane in ImageProtectionPanes())
+        {
+            foreach (var path in LineTransformListEnvironments.ProtectedPaths(pane._projectMetadata)) yield return path;
+            foreach (var path in pane.FolderListDependencyPaths) yield return path;
+        }
         var window = _owner as MainWindow;
         foreach (var pane in ImageProtectionPanes())
         {

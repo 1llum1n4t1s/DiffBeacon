@@ -92,6 +92,108 @@ internal static class WordDiffScenarios
         var html = await File.ReadAllTextAsync(inlineHtml);
         check("word-diff-inline-report-spans", html.Split("<span class=\"inline-diff\">old</span>").Length == 3
             && html.Split("<span class=\"inline-diff\">new</span>").Length == 3, inlineHtml);
+        check("word-diff-inline-report-break-settings", html.Contains("<dt>BreakOnSeparators</dt><dd>true</dd>", StringComparison.Ordinal)
+            && html.Contains("<dt>InlineCharacterLevel</dt><dd>true</dd>", StringComparison.Ordinal)
+            && html.Contains("<dt>WordBreakSeparators</dt><dd>.,:;?[](){}&lt;=&gt;`&#39;!&quot;#$%&amp;^~\\|@+-*/</dd>", StringComparison.Ordinal), inlineHtml);
+
+        var granularityLeft = Write("word-diff-granularity-left", "prefixold suffix\n");
+        var granularityRight = Write("word-diff-granularity-right", "prefixnew suffix\n");
+        var characterLevel = await run("word-diff-character-level-span", 1, true,
+            ["--compare", granularityLeft, granularityRight]);
+        var wordLevel = await run("word-diff-word-level-span", 1, true,
+            ["--compare", granularityLeft, granularityRight, "--word-level"]);
+        using (var character = JsonDocument.Parse(characterLevel.Stdout))
+        using (var wordJson = JsonDocument.Parse(wordLevel.Stdout))
+        {
+            static string LeftSpans(JsonElement root) => root.GetProperty("rows")[0].GetProperty("leftSpans").GetRawText()
+                .Replace(" ", "").Replace("\r", "").Replace("\n", "");
+            check("word-diff-character-level-preserves-common-prefix", LeftSpans(character.RootElement) == "[[6,3]]", characterLevel.Stdout);
+            check("word-diff-word-level-highlights-whole-token", LeftSpans(wordJson.RootElement) == "[[0,9]]", wordLevel.Stdout);
+        }
+        var separatorCommaLeft = Write("word-diff-comparison-separators-comma-left", "alpha,old\n");
+        var separatorCommaRight = Write("word-diff-comparison-separators-comma-right", "alpha,new\n");
+        var separatorComma = await run("word-diff-comparison-punctuation-default", 1, true,
+            ["--compare", separatorCommaLeft, separatorCommaRight, "--word-level"]);
+        using (var parsed = JsonDocument.Parse(separatorComma.Stdout))
+        {
+            var row = parsed.RootElement.GetProperty("rows")[0];
+            check("word-diff-comparison-punctuation-default-span", row.GetProperty("leftSpans").GetRawText()
+                .Replace(" ", "").Replace("\r", "").Replace("\n", "") == "[[6,3]]", separatorComma.Stdout);
+        }
+        var separatorDotLeft = Write("word-diff-comparison-separators-dot-left", "alpha.old\n");
+        var separatorDotRight = Write("word-diff-comparison-separators-dot-right", "alpha.new\n");
+        var separatorDot = await run("word-diff-comparison-custom-separator", 1, true,
+            ["--compare", separatorDotLeft, separatorDotRight, "--word-level", "--separators", "."]);
+        var separatorDotDisabled = await run("word-diff-comparison-no-separators", 1, true,
+            ["--compare", separatorDotLeft, separatorDotRight, "--word-level", "--no-separators"]);
+        using (var parsed = JsonDocument.Parse(separatorDot.Stdout))
+        using (var disabled = JsonDocument.Parse(separatorDotDisabled.Stdout))
+        {
+            static string LeftSpans(JsonElement root) => root.GetProperty("rows")[0].GetProperty("leftSpans").GetRawText()
+                .Replace(" ", "").Replace("\r", "").Replace("\n", "");
+            check("word-diff-comparison-custom-separator-span", LeftSpans(parsed.RootElement) == "[[6,3]]", separatorDot.Stdout);
+            check("word-diff-comparison-no-separators-span", LeftSpans(disabled.RootElement) == "[[0,9]]", separatorDotDisabled.Stdout);
+        }
+        var projectLeft = Write("word-break-project-left", "a_b_c\n");
+        var projectRight = Write("word-break-project-right", "a_c_b\n");
+        var legacyWorkspace = WriteWorkspace("word-break-legacy-workspace", includeSettings: false, null, null);
+        var legacyCopy = Path.Combine(folder, "word-break-legacy-copy.json");
+        await run("word-break-legacy-workspace-copy", 0, true, ["--project-copy", legacyWorkspace, legacyCopy]);
+        using (var copied = JsonDocument.Parse(await File.ReadAllBytesAsync(legacyCopy)))
+        {
+            var project = copied.RootElement.GetProperty("entries")[0];
+            check("word-break-omitted-workspace-fields-use-winmerge-defaults",
+                project.GetProperty("breakOnSeparators").GetBoolean()
+                && project.GetProperty("wordBreakSeparators").GetString() == ".,:;?[](){}<=>`'!\"#$%&^~\\|@+-*/"
+                && project.GetProperty("inlineCharacterLevel").GetBoolean(), copied.RootElement.GetRawText());
+        }
+        var customWorkspace = WriteWorkspace("word-break-custom-workspace", includeSettings: true, true, "_", inlineCharacterLevel: false);
+        var customCopy = Path.Combine(folder, "word-break-custom-copy.json");
+        await run("word-break-custom-workspace-copy", 0, true, ["--project-copy", customWorkspace, customCopy]);
+        using (var copied = JsonDocument.Parse(await File.ReadAllBytesAsync(customCopy)))
+        {
+            var project = copied.RootElement.GetProperty("entries")[0];
+            check("word-break-custom-workspace-round-trips",
+                project.GetProperty("breakOnSeparators").GetBoolean()
+                && project.GetProperty("wordBreakSeparators").GetString() == "_"
+                && !project.GetProperty("inlineCharacterLevel").GetBoolean(), copied.RootElement.GetRawText());
+        }
+        var customReport = Path.Combine(folder, "word-break-custom-report.html");
+        await run("word-break-custom-workspace-report", 0, false, ["--report-project", customWorkspace, customReport]);
+        var customHtml = await File.ReadAllTextAsync(customReport);
+        check("word-break-workspace-report-applies-custom-separators",
+            customHtml.Contains("<dt>BreakOnSeparators</dt><dd>true</dd>", StringComparison.Ordinal)
+            && customHtml.Contains("<dt>InlineCharacterLevel</dt><dd>false</dd>", StringComparison.Ordinal)
+            && customHtml.Contains("<dt>WordBreakSeparators</dt><dd>_</dd>", StringComparison.Ordinal)
+            && customHtml.Contains("<span class=\"inline-diff\">_c</span>", StringComparison.Ordinal)
+            && customHtml.Contains("<span class=\"inline-diff\">c_</span>", StringComparison.Ordinal), customReport);
+        var disabledWorkspace = WriteWorkspace("word-break-disabled-workspace", includeSettings: true, false, "_");
+        var disabledReport = Path.Combine(folder, "word-break-disabled-report.html");
+        await run("word-break-disabled-workspace-report", 0, false, ["--report-project", disabledWorkspace, disabledReport]);
+        var disabledHtml = await File.ReadAllTextAsync(disabledReport);
+        check("word-break-workspace-report-applies-disabled-mode",
+            disabledHtml.Contains("<dt>BreakOnSeparators</dt><dd>false</dd>", StringComparison.Ordinal)
+            && disabledHtml.Contains("<span class=\"inline-diff\">b_c</span>", StringComparison.Ordinal)
+            && disabledHtml.Contains("<span class=\"inline-diff\">c_b</span>", StringComparison.Ordinal), disabledReport);
+        var maximumWorkspace = WriteWorkspace("word-break-maximum-workspace", includeSettings: true, true, new string('x', 256));
+        var maximumCopy = Path.Combine(folder, "word-break-maximum-copy.json");
+        await run("word-break-maximum-workspace-copy", 0, true, ["--project-copy", maximumWorkspace, maximumCopy]);
+        using (var copied = JsonDocument.Parse(await File.ReadAllBytesAsync(maximumCopy)))
+            check("word-break-maximum-length-is-accepted", copied.RootElement.GetProperty("entries")[0]
+                .GetProperty("wordBreakSeparators").GetString()?.Length == 256, copied.RootElement.GetRawText());
+        var protectedProject = Write("word-break-protected-project", "retain original bytes");
+        var protectedProjectBytes = await File.ReadAllBytesAsync(protectedProject);
+        var invalidWorkspaces = new[]
+        {
+            ("null-separators", WriteWorkspace("word-break-null-workspace", includeSettings: true, true, null)),
+            ("oversized-separators", WriteWorkspace("word-break-oversized-workspace", includeSettings: true, true, new string('x', 257)))
+        };
+        foreach (var invalid in invalidWorkspaces)
+        {
+            var rejected = await run("word-break-workspace-reject-" + invalid.Item1, 2, false,
+                ["--project-copy", invalid.Item2, protectedProject]);
+            check(rejected.Name + "-preserves-existing-output", File.ReadAllBytes(protectedProject).SequenceEqual(protectedProjectBytes), protectedProject);
+        }
         // 原本のブロック呼出を実行した追加probeの inclusive区間をUTF-16長へ変換。
         await Compare("word-diff-wrapped-primitive", "one two\nthree", "one\ntwo three", [],
             [[3, 0, 3, 4], [4, 4, 8, 0]], null);
@@ -135,6 +237,9 @@ internal static class WordDiffScenarios
             ("missing-right", ["--word-diff", left]),
             ("missing-budget", ["--word-diff", left, right, "--max-work"]),
             ("missing-separators", ["--word-diff", left, right, "--separators"]),
+            ("oversized-separators", ["--word-diff", left, right, "--separators", new string('x', 257)]),
+            ("oversized-comparison-separators", ["--compare", left, right, "--separators", new string('x', 257)]),
+            ("oversized-table-separators", ["--table", left, right, "--separators", new string('x', 257)]),
             ("negative-budget", ["--word-diff", left, right, "--max-work", "-1"]),
             ("excessive-budget", ["--word-diff", left, right, "--max-work", "8000001"]),
             ("unknown-eol", ["--word-diff", left, right, "--eol", "unknown"]),
@@ -158,6 +263,27 @@ internal static class WordDiffScenarios
         {
             var path = Path.Combine(folder, name + ".txt");
             File.WriteAllText(path, text, new UTF8Encoding(false));
+            return path;
+        }
+
+        string WriteWorkspace(string name, bool includeSettings, bool? breakOnSeparators, string? separators, bool? inlineCharacterLevel = null)
+        {
+            var project = new Dictionary<string, object?>
+            {
+                ["leftPath"] = projectLeft, ["rightPath"] = projectRight, ["mode"] = "Text"
+            };
+            if (includeSettings)
+            {
+                project["breakOnSeparators"] = breakOnSeparators;
+                project["wordBreakSeparators"] = separators;
+                if (inlineCharacterLevel.HasValue) project["inlineCharacterLevel"] = inlineCharacterLevel.Value;
+            }
+            var workspace = new Dictionary<string, object?>
+            {
+                ["formatVersion"] = 9, ["entries"] = new[] { project }, ["activeEntryIndex"] = 0
+            };
+            var path = Path.Combine(folder, name + ".json");
+            File.WriteAllText(path, JsonSerializer.Serialize(workspace), new UTF8Encoding(false));
             return path;
         }
 

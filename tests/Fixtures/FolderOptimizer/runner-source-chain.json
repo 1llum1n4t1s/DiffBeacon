@@ -1,0 +1,780 @@
+{
+  "originalProgramSha256": "a2f9d00429659169f9a5d1c156a73f8bda4d4dce0da5752e1cb5d218d1992617",
+  "candidateProgramSha256": "cfd2efb924d1e025504b8f79a40320982d48ac871c5908c2a8a1f62df927b319",
+  "programWholeBytesIdentical": false,
+  "change": "Program remains byte-identical to reader03 candidate (selector/dispatch differs from historical original Program). Main CasingValues four commands now use strict outer Array wrapping; see separate185-function chain. OS producer Program69 remains unchanged. Combined revision retains Program/main bytes from E2E04; lexer helper and optimizer helper/LIST-reader patch are separately bound. CF strict consumer/native expectations remain frozen; approved managed source authentication binds fixed Program/source-binding payload, while actual binary authentication remains external.",
+  "allLocalFunctionAndRecordTokensIdentical": true,
+  "tokenComparison": "Ordered LocalFunctionStatementSyntax and RecordDeclarationSyntax; every token RawKind/Text, trivia excluded, all bodies/records included",
+  "producerLocalFunctions": [
+    {
+      "index": 1,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ObserveStderr",
+      "tokenCount": 36,
+      "tokenSha256": "8c05948d0c37111d1f0bb953fea69b6a2df7b87eeecb4d237ab434e7c9f28a47"
+    },
+    {
+      "index": 56,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Run",
+      "tokenCount": 38,
+      "tokenSha256": "bd00d66aec60e7da3b9f56315afb7343c544d81ed46d6033b549c974403a501c"
+    },
+    {
+      "index": 57,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "RunWithInput",
+      "tokenCount": 507,
+      "tokenSha256": "5b33e2d4897699d8b7768c82b3c0b57e7a30037d2236543bc7b2d6261c0e89fb"
+    },
+    {
+      "index": 61,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "RecordCommand",
+      "tokenCount": 191,
+      "tokenSha256": "6f4a0fbad18381f9bbd04911557e4cbda856996038b1b13aa2ffbae07a6420c6"
+    }
+  ],
+  "allLocalFunctionsAndRecords": [
+    {
+      "index": 0,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Below",
+      "tokenCount": 33,
+      "tokenSha256": "8899358f6d5c7eefd149b21b7d5db0af517592d81e33716e1fafa21b1e734f55"
+    },
+    {
+      "index": 1,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ObserveStderr",
+      "tokenCount": 36,
+      "tokenSha256": "8c05948d0c37111d1f0bb953fea69b6a2df7b87eeecb4d237ab434e7c9f28a47"
+    },
+    {
+      "index": 2,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Option",
+      "tokenCount": 60,
+      "tokenSha256": "eb83ba564525e58024ac08b60f5c689120cb59ca9ef4030fcae565ce787e5c0e"
+    },
+    {
+      "index": 3,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Text",
+      "tokenCount": 58,
+      "tokenSha256": "1f1928c270936a89f84ec2c01be3897c7a61971934263256c05510a94847a938"
+    },
+    {
+      "index": 4,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Zip",
+      "tokenCount": 101,
+      "tokenSha256": "5a5ae62d0752173cd6988ca01c286ce129b14ea454e8f7f1da0c330ca41cecc9"
+    },
+    {
+      "index": 5,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Docx",
+      "tokenCount": 44,
+      "tokenSha256": "b2ea844a3aa05cadca08ad7cbe707c2c1d3d395b14c8612cbb1f9b9575d4d7db"
+    },
+    {
+      "index": 6,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Xlsx",
+      "tokenCount": 60,
+      "tokenSha256": "f94b35478bd137a90e0e0b996d1e8db395e6a2c1c13853c96ce0efec9fcae29b"
+    },
+    {
+      "index": 7,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Tar",
+      "tokenCount": 105,
+      "tokenSha256": "22e18398035ccf3b88c401c868bf5df4fa5794248c8b64db07cf3b38e98cb142"
+    },
+    {
+      "index": 8,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Check",
+      "tokenCount": 33,
+      "tokenSha256": "1a1aaff0c0ea8649214733988f7320b79b869b3eb5844971f7f132bb96a92372"
+    },
+    {
+      "index": 9,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Skip",
+      "tokenCount": 24,
+      "tokenSha256": "7dc5011b061b7b4db88218508830de4a72ebb821fc88d06a61d50ed0f517d266"
+    },
+    {
+      "index": 10,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ExpectedProjectPath",
+      "tokenCount": 112,
+      "tokenSha256": "1a74320c9baf1c55c8cd274c28ef664bcfd5b41eda577a6726d9f33dc7b87e35"
+    },
+    {
+      "index": 11,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ReportCases",
+      "tokenCount": 8788,
+      "tokenSha256": "e39b7194bdcf6368136414790c07c4ee3284b77c9713a8a014642f3f428ee066"
+    },
+    {
+      "index": 12,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Entry",
+      "tokenCount": 58,
+      "tokenSha256": "b08bcbcf21af999489e49e7e1a2a2cba62bc4416d0c70d942696125bcad8c403"
+    },
+    {
+      "index": 13,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Project",
+      "tokenCount": 51,
+      "tokenSha256": "c21d375d5b0036a78f39d3e77408079f806ba054fa5e0f08a4236fa8afb80d46"
+    },
+    {
+      "index": 14,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Tag",
+      "tokenCount": 82,
+      "tokenSha256": "b9ae9745d843e8a79cd081326ca8db667a813c990d99c51e847b91040fb395ba"
+    },
+    {
+      "index": 15,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Visible",
+      "tokenCount": 27,
+      "tokenSha256": "09ac3f41a390973a8fe4f5901493db162c6de97eed1dc52ed83d5b25d3ea4a64"
+    },
+    {
+      "index": 16,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Verify",
+      "tokenCount": 176,
+      "tokenSha256": "203b473e923fcb99eb526217b1c58759bb56967551e46f74ca96377f2d17aada"
+    },
+    {
+      "index": 17,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Render",
+      "tokenCount": 238,
+      "tokenSha256": "f64dc35b5ba64eb556a5a2c4e0d63ffd68133bfc3ee2eee14cde0d2156bdd880"
+    },
+    {
+      "index": 18,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Pack",
+      "tokenCount": 172,
+      "tokenSha256": "912ffedb351a067a9413e246ce4cdc843ade6993777fb05d31a4b68c1565a974"
+    },
+    {
+      "index": 19,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Reject",
+      "tokenCount": 94,
+      "tokenSha256": "b51afd8ec7735e2f092b29dabe4f6540448d37edacddf27d31769176ccd77611"
+    },
+    {
+      "index": 20,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "RejectPackage",
+      "tokenCount": 75,
+      "tokenSha256": "e21000e8c1cfe93928d17a4c9f52f65a335c405673ccda7aa6915d04345645d4"
+    },
+    {
+      "index": 21,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "VerifyThreeAlignment",
+      "tokenCount": 875,
+      "tokenSha256": "eec5ad3c1c3651beb811116108e8e09d5319f53b2fdf838733dba6504aeedfb2"
+    },
+    {
+      "index": 22,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Attribute",
+      "tokenCount": 48,
+      "tokenSha256": "4e859dbdaa99703d56fa9996ad28e3941a87444f0a788d4bba40629980c25b6f"
+    },
+    {
+      "index": 23,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "VerifyTableAlignment",
+      "tokenCount": 1172,
+      "tokenSha256": "318c63d0bd4d00dc2c31f20096713f0c9ece1c2aa4dde7e3498c87f0faf7ece2"
+    },
+    {
+      "index": 24,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Attribute",
+      "tokenCount": 44,
+      "tokenSha256": "ff8ccf0c27698bd20c693f5041a7f3e3707fbd2800ea5358464fcc2a535b50ca"
+    },
+    {
+      "index": 25,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Original",
+      "tokenCount": 62,
+      "tokenSha256": "40a9ca886c68119c3157e0043d0e70eca54c34102e84cf0fd5dda1f78ec19981"
+    },
+    {
+      "index": 26,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Document",
+      "tokenCount": 45,
+      "tokenSha256": "03f9eabe4dc44707d2d3a2a01a17694363078c10d292752f0398fe01a188e0f8"
+    },
+    {
+      "index": 27,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Document",
+      "tokenCount": 54,
+      "tokenSha256": "ad6376ea74859ca89aaff0676e1708b36173a73da212cce24dbdef9e542e010d"
+    },
+    {
+      "index": 28,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "SourceRow",
+      "tokenCount": 47,
+      "tokenSha256": "ae0cf806649f22d0b485e8fd4ba8a6a28ed48d4649d2166650ddb27d82000b8f"
+    },
+    {
+      "index": 29,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "PackagingCases",
+      "tokenCount": 4783,
+      "tokenSha256": "d4d37025439f8f07a7aa99c1e415f4f3832250e766192910b13d789bdd7779a9"
+    },
+    {
+      "index": 30,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Entry",
+      "tokenCount": 58,
+      "tokenSha256": "f8bbd72862469557910df8b557fa6092346805eb4777dee334e510892e3fae9b"
+    },
+    {
+      "index": 31,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Project",
+      "tokenCount": 51,
+      "tokenSha256": "0a657600f49894a7c582aa2c37313ced53203cd1e02b80d26535e53bc1cd54a6"
+    },
+    {
+      "index": 32,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ReadZip",
+      "tokenCount": 262,
+      "tokenSha256": "79c420ef35eaa91e4990a0faeb19b460545c6e2a9d2bf4cb3d6a7ea7c6ac96b3"
+    },
+    {
+      "index": 33,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Bytes",
+      "tokenCount": 56,
+      "tokenSha256": "be052a4262b82206a9a7020ce138834cfc52ef882e14452d28359cf02e491001"
+    },
+    {
+      "index": 34,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Reject",
+      "tokenCount": 101,
+      "tokenSha256": "c2379eac3b541780a1eb04ff6940431b5edd6dfdc5d53602f3abd8ab9bb9eb84"
+    },
+    {
+      "index": 35,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Entries",
+      "tokenCount": 35,
+      "tokenSha256": "0f0057a19cb2a1f7246e61af7e65e07549ca1dc5ccbc8889208140304abbe339"
+    },
+    {
+      "index": 36,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ExtractAndReopen",
+      "tokenCount": 127,
+      "tokenSha256": "2a42bf8bd84fa54ee92fb62dfe4c12c718e70bc0e4ac3a7280836496321fd3b8"
+    },
+    {
+      "index": 37,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ProjectWorkspaceCases",
+      "tokenCount": 2965,
+      "tokenSha256": "a6a04e2846dffcf4aec757d8e5c5e58b90d9af08ec71f0d4a4cd61d9c54a4b4f"
+    },
+    {
+      "index": 38,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ContainsFields",
+      "tokenCount": 182,
+      "tokenSha256": "64c289c5a3b14e33f720919638c79a39bb95fb0e207638b46a4ee89186550687"
+    },
+    {
+      "index": 39,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "VerifyJson",
+      "tokenCount": 101,
+      "tokenSha256": "65d43219d770cc8d0eef46b1d735760e63bf985a400df16108a32f359969030f"
+    },
+    {
+      "index": 40,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Reject",
+      "tokenCount": 80,
+      "tokenSha256": "bff1764b1b5564aa16d4c82bc6a73463ee1a17b5e89ca787a05cab84e0db99a6"
+    },
+    {
+      "index": 41,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "TextAdvancedCases",
+      "tokenCount": 806,
+      "tokenSha256": "0e7c67a689863377a8c9dd8e5cb2917185b3a59f954e0bc2d1ef0eb372bee371"
+    },
+    {
+      "index": 42,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Compare",
+      "tokenCount": 81,
+      "tokenSha256": "242dfe3c7ce0c36bfe93a579afd08522981c18ff2b476fb92914a0aee3a30d09"
+    },
+    {
+      "index": 43,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "MergeCliSerializationCases",
+      "tokenCount": 584,
+      "tokenSha256": "905489bf890c7686d7dfa823a1f778eeab9769550b049f5a0ca65fed84d3c0d9"
+    },
+    {
+      "index": 44,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "LegacyCommentCases",
+      "tokenCount": 348,
+      "tokenSha256": "67a9c9dcf651413a1670d6ec1999d60b44fe7638d6267b8befdc9ebdf649d6f8"
+    },
+    {
+      "index": 45,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "WorkspaceAdvancedCases",
+      "tokenCount": 358,
+      "tokenSha256": "02c8de1b24e51adc5147e36ff5008d18362a7694e217e732526086057b6dfceb"
+    },
+    {
+      "index": 46,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ProviderBoundaryCases",
+      "tokenCount": 242,
+      "tokenSha256": "3db0c60c34887754f40f8996a2a66ced80b6072337f0df7baef596e769ce60a3"
+    },
+    {
+      "index": 47,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Presentation",
+      "tokenCount": 61,
+      "tokenSha256": "7d6c874a6c9ede1fd75f52dcded6f90ac1bf9cb35a81508bae8744bf4c0bec33"
+    },
+    {
+      "index": 48,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ArchiveCases",
+      "tokenCount": 2677,
+      "tokenSha256": "1b160ae263ebf41591393727528f0314dd53a8f019e927d7944a57c438d16c3c"
+    },
+    {
+      "index": 49,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Hash",
+      "tokenCount": 24,
+      "tokenSha256": "da1292303fd2039c9fca9d9821a29f5ef548daace3d15b84771bfb1601f80ad5"
+    },
+    {
+      "index": 50,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Entries",
+      "tokenCount": 200,
+      "tokenSha256": "a028868ab587f28dbf3680ceb4352f0b3f45b6389c3a3b064913f0789ce5457f"
+    },
+    {
+      "index": 51,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "VerifyOriginal",
+      "tokenCount": 114,
+      "tokenSha256": "ed59b65a30de9159fe52f26e5f534163dfcf68cb414625d8045d2bea16ea5a09"
+    },
+    {
+      "index": 52,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ArchiveFormatCases",
+      "tokenCount": 2211,
+      "tokenSha256": "4af9d4a3700496f62dcece29af09e69dff9ee03ccd9311b8b0c4a8a126f002f8"
+    },
+    {
+      "index": 53,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "CheckExtracted",
+      "tokenCount": 119,
+      "tokenSha256": "bcd8612ccfa1cf4c8c645120d4c3628905ceee798283cb886fafe537e8eecc94"
+    },
+    {
+      "index": 54,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "VerifyBzipWithPython",
+      "tokenCount": 209,
+      "tokenSha256": "93f17df0a2b39caf38e17f8b87a37fc38f3a39a7465e45170d207a05c9d58182"
+    },
+    {
+      "index": 55,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "RunArchiveVerifier",
+      "tokenCount": 279,
+      "tokenSha256": "fa5c1fc0088cf864747d16cbdbaeca17dc622adf33319feb2c45d03f8e6a3164"
+    },
+    {
+      "index": 56,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Run",
+      "tokenCount": 38,
+      "tokenSha256": "bd00d66aec60e7da3b9f56315afb7343c544d81ed46d6033b549c974403a501c"
+    },
+    {
+      "index": 57,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "RunWithInput",
+      "tokenCount": 507,
+      "tokenSha256": "5b33e2d4897699d8b7768c82b3c0b57e7a30037d2236543bc7b2d6261c0e89fb"
+    },
+    {
+      "index": 58,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ReadObservedStderr",
+      "tokenCount": 93,
+      "tokenSha256": "afc5f305302482480fa0fdca2c425619888382f768954e0128c0869d0be7b68c"
+    },
+    {
+      "index": 59,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ExternalProviderCases",
+      "tokenCount": 138,
+      "tokenSha256": "5c96f6a03d9d1cd6befd24e3f68f9429e579ad85498aeabb460d7608f5d041fa"
+    },
+    {
+      "index": 60,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "ResolveExternalProviderPath",
+      "tokenCount": 166,
+      "tokenSha256": "d922a94c989a3300d413034e671cbbf412e3755be33e510500625392e3945a0b"
+    },
+    {
+      "index": 61,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "RecordCommand",
+      "tokenCount": 191,
+      "tokenSha256": "6f4a0fbad18381f9bbd04911557e4cbda856996038b1b13aa2ffbae07a6420c6"
+    },
+    {
+      "index": 62,
+      "kind": "LocalFunctionStatementSyntax",
+      "name": "Render",
+      "tokenCount": 101,
+      "tokenSha256": "99d9434feb844d9c060c46f1a67a56aa75a036453106881ef7ef566d43fab9fc"
+    },
+    {
+      "index": 63,
+      "kind": "RecordDeclarationSyntax",
+      "name": "Assertion",
+      "tokenCount": 14,
+      "tokenSha256": "290691963eae74d1c4810d64ed9c1f731dd029452ea9b082c9235d5fcb246885"
+    },
+    {
+      "index": 64,
+      "kind": "RecordDeclarationSyntax",
+      "name": "CommandResult",
+      "tokenCount": 55,
+      "tokenSha256": "d5e9e834293a2dccfc4a5f5b977266d25421d7494dc293301a042bdb68ea0520"
+    },
+    {
+      "index": 65,
+      "kind": "RecordDeclarationSyntax",
+      "name": "CommandLaunchEvidence",
+      "tokenCount": 96,
+      "tokenSha256": "e412ff52c7b05bbbfd8525252ff7719594cfb3d2620c6fc31b79680b9b3a3634"
+    },
+    {
+      "index": 66,
+      "kind": "RecordDeclarationSyntax",
+      "name": "SeededCase",
+      "tokenCount": 20,
+      "tokenSha256": "dfcab6da243b5d67766c4e7179ff3f9e2a33c01a937fade54b0867c644982ffc"
+    },
+    {
+      "index": 67,
+      "kind": "RecordDeclarationSyntax",
+      "name": "LinkEvidence",
+      "tokenCount": 19,
+      "tokenSha256": "011c9a67a5458c8a8ba6c5c8d0bf3af48b00ed8ac18e85ffd80fdabc6f96acd7"
+    },
+    {
+      "index": 68,
+      "kind": "RecordDeclarationSyntax",
+      "name": "ArchiveFile",
+      "tokenCount": 20,
+      "tokenSha256": "8932cdfac2ddefa48ed9b739bc2deb6d9d27e107c27196cb44d33c46da59ea5c"
+    }
+  ],
+  "zipSha256": "e5d2542770ec01406f04b394797444d28aad3bf3cd3a94dd2422543b420dff68",
+  "entries": [
+    {
+      "path": "original/Program.cs",
+      "size": 215195,
+      "sha256": "a2f9d00429659169f9a5d1c156a73f8bda4d4dce0da5752e1cb5d218d1992617"
+    },
+    {
+      "path": "candidate/Program.cs",
+      "size": 215412,
+      "sha256": "cfd2efb924d1e025504b8f79a40320982d48ac871c5908c2a8a1f62df927b319"
+    },
+    {
+      "path": "Program.cs.patch",
+      "size": 2392,
+      "sha256": "25ecac96f64fbe4dbb59b6c9d163bee6f2f967dc2f02dced0e764fb711174e04"
+    },
+    {
+      "path": "producer-tokens.json",
+      "size": 14625,
+      "sha256": "3464a21f7bf449db6fa0e800e17cc5f22c405f77efa70d3760cd90c65d0cb78c"
+    },
+    {
+      "path": "original/MacCommandLauncher.cs",
+      "size": 13009,
+      "sha256": "6ba4cca77160a2484217b04b31ed51e0685cf66a1a14f7f3b6a32acf1ef6837f"
+    },
+    {
+      "path": "original/process_startup_gate.py",
+      "size": 836,
+      "sha256": "760f968a8438f91441ace6a7f6556b64d3cc54785a3825b9d1d98112a5cd074e"
+    },
+    {
+      "path": "baseline03/FolderPropertyFilterScenarios.cs",
+      "size": 578474,
+      "sha256": "0b23976f509bf148e116bd05dd278959b82fd406b674d7e6b649cac267e3fb74"
+    },
+    {
+      "path": "candidate04/FolderPropertyFilterScenarios.cs",
+      "size": 578714,
+      "sha256": "33626f118d632d50bb346662db963711c4a34e3ad6bb01be7cafeaa05f7e7f29"
+    },
+    {
+      "path": "FolderPropertyFilterScenarios.cs.patch",
+      "size": 1671,
+      "sha256": "9264cdd882cdb06dd904961923dde8384309a29951acd9e5fc1a497c211b6dcb"
+    },
+    {
+      "path": "main-function-proof.json",
+      "size": 84692,
+      "sha256": "e7b1fec7caeedc3a9bfd51ac1cfdde29c5081c3a130fe2202e20c00a402b2ded"
+    },
+    {
+      "path": "origin03/runner-source-chain.json",
+      "size": 18549,
+      "sha256": "2b114518861aa1d7f2edf18fa2d61088f16e4fefca3fcd1c016df4cb3a93427b"
+    },
+    {
+      "path": "combined/Program.cs",
+      "size": 215412,
+      "sha256": "cfd2efb924d1e025504b8f79a40320982d48ac871c5908c2a8a1f62df927b319"
+    },
+    {
+      "path": "combined/FolderPropertyFilterScenarios.cs",
+      "size": 578714,
+      "sha256": "33626f118d632d50bb346662db963711c4a34e3ad6bb01be7cafeaa05f7e7f29"
+    },
+    {
+      "path": "combined/FolderOptimizerScenarios.cs",
+      "size": 9583,
+      "sha256": "1b7bd39ed986d0dc678f033f071275d97a1c0421d83683b12afff75c5cdc86bb"
+    },
+    {
+      "path": "combined/FolderLexerScenarios.cs",
+      "size": 5855,
+      "sha256": "ed42eb8a5fa1e1ae7633de2a3fe822181ae0997599a2282c27b7fd8adafc19f3"
+    },
+    {
+      "path": "combined/FolderSupplementaryCaseFoldScenarios.cs",
+      "size": 13049,
+      "sha256": "59967395d8d064980c4394cd5d92ca767eacd498c519338a7a82250466b80a4f"
+    },
+    {
+      "path": "combined/source-bindings.json",
+      "size": 7307,
+      "sha256": "e299df2603f05edc1c5afa3822b976c11757c9c2913d1ad23b27eb0fe46488c9"
+    },
+    {
+      "path": "combined/origin-bindings.json",
+      "size": 4559,
+      "sha256": "371ac53a7cb0af54e781ee293d623d3731816f334b157d8fb6645ba596256aaf"
+    },
+    {
+      "path": "combined/merge-proof.json",
+      "size": 21519,
+      "sha256": "c04f5a24ca989941d8d9129fbaae58c7b8082432fbd0cd695949a8210c76bd37"
+    },
+    {
+      "path": "combined/optimizer-reader-LIST.patch",
+      "size": 1067,
+      "sha256": "0f2b3478adde98636ddaf61b45c45c316ef0a7b54580b6bdd1933e460822e76b"
+    },
+    {
+      "path": "origin04/runner-source-chain.json",
+      "size": 19808,
+      "sha256": "089062edc11b7a554fbed645bbe1751613e6bc9cce6eccac366ab2e8faa7826a"
+    }
+  ],
+  "actualRunnerBinaryBound": false,
+  "actualOsProducerExecuted": false,
+  "required": "Parent fresh build must bind actual E2E runner/App DLL SHA and immutable source manifest; actual OS completion evidence is independently read for every product process.",
+  "mainFunctionChain": {
+    "Program69WhollyUnchanged": true,
+    "sha256": "e7b1fec7caeedc3a9bfd51ac1cfdde29c5081c3a130fe2202e20c00a402b2ded",
+    "changedName": "CasingValues",
+    "changed": 1,
+    "unchanged": 184,
+    "count": 185,
+    "path": "main-function-proof.json"
+  },
+  "combinedSourceBinding": {
+    "scope": "Actual combined compiler inputs, not actual runner binary qualification",
+    "sources": [
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\FolderCommands.cs",
+        "relative": "Src/DiffBeacon.App/FolderCommands.cs",
+        "project": "DiffBeacon.App",
+        "original": "Src/DiffBeacon.App/FolderCommands.cs",
+        "size": 15849,
+        "sha256": "d9869b45a21837aca03f1514b25dfef9c3a35b517daf20858ffda6cd201e8e68"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\FolderCommandSelection.cs",
+        "relative": "Src/DiffBeacon.App/FolderCommandSelection.cs",
+        "project": "DiffBeacon.App",
+        "original": "Src/DiffBeacon.App/FolderCommandSelection.cs",
+        "size": 4045,
+        "sha256": "d746dd4d27d0a68a17878bcc47f92837ef946b5fc0c76d91ef9538af39d2c04e"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\HeadlessFolderOptimizerChecks.cs",
+        "relative": "Src/DiffBeacon.App/HeadlessFolderOptimizerChecks.cs",
+        "project": "DiffBeacon.App",
+        "original": "",
+        "size": 39232,
+        "sha256": "dc153e6e4d318e409001b5fbe9027af41e54567110851183a80255dab6ae1a7d"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\HeadlessFolderPropertyChecks.cs",
+        "relative": "Src/DiffBeacon.App/HeadlessFolderPropertyChecks.cs",
+        "project": "DiffBeacon.App",
+        "original": "Src/DiffBeacon.App/HeadlessFolderPropertyChecks.cs",
+        "size": 101373,
+        "sha256": "961942b3dbd722754447d2bd967d7de465607d3624b7a3a41f1124d8fea56b18"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\MainWindow.cs",
+        "relative": "Src/DiffBeacon.App/MainWindow.cs",
+        "project": "DiffBeacon.App",
+        "original": "Src/DiffBeacon.App/MainWindow.cs",
+        "size": 72009,
+        "sha256": "b92404cad4bd125533889da75784c0d870055ea7ef14f26a98fb6f0f17d33572"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\MainWindow.Projects.cs",
+        "relative": "Src/DiffBeacon.App/MainWindow.Projects.cs",
+        "project": "DiffBeacon.App",
+        "original": "Src/DiffBeacon.App/MainWindow.Projects.cs",
+        "size": 32685,
+        "sha256": "a8404fceaad89705ed9cb069e809d46be7b84ec10a98a583e35679ee4bb83e88"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\SpecializedViews.cs",
+        "relative": "Src/DiffBeacon.App/SpecializedViews.cs",
+        "project": "DiffBeacon.App",
+        "original": "Src/DiffBeacon.App/SpecializedViews.cs",
+        "size": 10061,
+        "sha256": "8dc5653558062c1d1e525018b84c82b88a726cb4d346a9a563711b8e6989095a"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.Core\\FileFilters.cs",
+        "relative": "Src/DiffBeacon.Core/FileFilters.cs",
+        "project": "DiffBeacon.Core",
+        "original": "Src/DiffBeacon.Core/FileFilters.cs",
+        "size": 179596,
+        "sha256": "1c3d3d9186cab01db1925901c4261d0cf5f1c6426c0e0adacd50b27e5404bdd8"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.Core\\FileFilters.Optimization.cs",
+        "relative": "Src/DiffBeacon.Core/FileFilters.Optimization.cs",
+        "project": "DiffBeacon.Core",
+        "original": "",
+        "size": 22227,
+        "sha256": "1a5fcb21c91fc8af2b29fbd3ba47ca883f41f132ed28122e20550693fad3c8f4"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\tests\\DiffBeacon.E2E\\Program.cs",
+        "relative": "tests/DiffBeacon.E2E/Program.cs",
+        "project": "DiffBeacon.E2E",
+        "original": "tests/DiffBeacon.E2E/Program.cs",
+        "size": 215412,
+        "sha256": "cfd2efb924d1e025504b8f79a40320982d48ac871c5908c2a8a1f62df927b319"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\tests\\DiffBeacon.E2E\\FolderPropertyFilterScenarios.cs",
+        "relative": "tests/DiffBeacon.E2E/FolderPropertyFilterScenarios.cs",
+        "project": "DiffBeacon.E2E",
+        "original": "tests/DiffBeacon.E2E/FolderPropertyFilterScenarios.cs",
+        "size": 578714,
+        "sha256": "33626f118d632d50bb346662db963711c4a34e3ad6bb01be7cafeaa05f7e7f29"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\tests\\DiffBeacon.E2E\\FolderOptimizerScenarios.cs",
+        "relative": "tests/DiffBeacon.E2E/FolderOptimizerScenarios.cs",
+        "project": "DiffBeacon.E2E",
+        "original": "",
+        "size": 9583,
+        "sha256": "1b7bd39ed986d0dc678f033f071275d97a1c0421d83683b12afff75c5cdc86bb"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\tests\\DiffBeacon.E2E\\FolderLexerScenarios.cs",
+        "relative": "tests/DiffBeacon.E2E/FolderLexerScenarios.cs",
+        "project": "DiffBeacon.E2E",
+        "original": "",
+        "size": 5855,
+        "sha256": "ed42eb8a5fa1e1ae7633de2a3fe822181ae0997599a2282c27b7fd8adafc19f3"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\tests\\DiffBeacon.E2E\\FolderSupplementaryCaseFoldScenarios.cs",
+        "relative": "tests/DiffBeacon.E2E/FolderSupplementaryCaseFoldScenarios.cs",
+        "project": "DiffBeacon.E2E",
+        "original": "tests/DiffBeacon.E2E/FolderSupplementaryCaseFoldScenarios.cs",
+        "size": 13049,
+        "sha256": "59967395d8d064980c4394cd5d92ca767eacd498c519338a7a82250466b80a4f"
+      },
+      {
+        "path": "<作業フォルダー>\\DiffBeacon\\folder-filter-20261023-combined04\\private-source\\Src\\DiffBeacon.App\\HeadlessFolderDateStrChecks.cs",
+        "relative": "Src/DiffBeacon.App/HeadlessFolderDateStrChecks.cs",
+        "project": "DiffBeacon.App",
+        "original": "",
+        "size": 19998,
+        "sha256": "8e2418cfc1678a82d09feacad018d2e8ddea8cb809b4c7fc4bd52fb737e06d50"
+      }
+    ],
+    "ProgramSha256": "cfd2efb924d1e025504b8f79a40320982d48ac871c5908c2a8a1f62df927b319",
+    "historicalCanonicalRepoProgramSha256": "a2f9d00429659169f9a5d1c156a73f8bda4d4dce0da5752e1cb5d218d1992617",
+    "Program69UnchangedFromE2E04": true,
+    "mainSha256": "33626f118d632d50bb346662db963711c4a34e3ad6bb01be7cafeaa05f7e7f29",
+    "main185InheritedCasing1Changed184Unchanged": true,
+    "optimizerReaderSha256": "1b4ca18c7c15385da565850b3dfb8fb1dff6dd22339672500dafddcd59dc2731",
+    "CFReaderSha256": "fc35768e6ded65166cc7b76b9023f3484e8948ff33a11a0e7bfa8ecf39bc3bab",
+    "CFManagedSourceAuthentication": "Fixed ZIP Program bytes and source-binding; canonical repo Program A2F9 is a separate historical anchor only.",
+    "CFHelperApprovedSourceAuthDelta": true,
+    "CFActualRunnerBinaryAuthentication": "Future combined build/runtime outer binding owns actual runner DLL SHA. Fixed payload authenticates source bytes only.",
+    "actualRunnerBinaryBound": false,
+    "productExecuted": false
+  }
+}

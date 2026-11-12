@@ -5,7 +5,11 @@ using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
-public sealed record ReportDocument(string Name, string Text);
+public sealed record ReportDocument(string Name, string Text)
+{
+    public string? SourcePath { get; init; }
+    public string? SourceEncodingName { get; init; }
+}
 
 public static class HtmlReport
 {
@@ -47,6 +51,12 @@ public static class HtmlReport
         return CreateTextReport(normalized, options, maxCharacters, cancellationToken, "Json");
     }
 
+    private static TextComparisonSourcePaths SourcePaths(IReadOnlyList<ReportDocument> documents)
+        => new(documents[0].SourcePath, documents.Count == 3 ? documents[1].SourcePath : null, documents[^1].SourcePath,
+            documents[0].SourcePath is null ? null : documents[0].SourceEncodingName,
+            documents.Count == 3 && documents[1].SourcePath is not null ? documents[1].SourceEncodingName : null,
+            documents[^1].SourcePath is null ? null : documents[^1].SourceEncodingName);
+
     private static string CreateTextReport(IReadOnlyList<ReportDocument> documents, ComparisonOptions? options,
         int maxCharacters, CancellationToken token, string mode)
     {
@@ -60,15 +70,13 @@ public static class HtmlReport
         IEnumerable<TextReportRow> rows;
         if (documents.Count == 2)
         {
-            var result = TextDiffer.Compare(documents[0].Text, documents[1].Text, options, token);
+            var result = TextDiffer.CompareWithSourcePaths(documents[0].Text, documents[1].Text, SourcePaths(documents), options, token);
             different = result.HasDifferences;
             rows = TwoRows(result, token);
         }
         else
         {
-            var ancestorLeft = TextDiffer.Compare(documents[1].Text, documents[0].Text, options, token);
-            var ancestorRight = TextDiffer.Compare(documents[1].Text, documents[2].Text, options, token);
-            var leftRight = TextDiffer.Compare(documents[0].Text, documents[2].Text, options, token);
+            var (ancestorLeft, ancestorRight, leftRight) = TextDiffer.CompareThreeWithSourcePaths(documents[0].Text, documents[1].Text, documents[2].Text, SourcePaths(documents), options, token);
             different = ancestorLeft.HasDifferences || ancestorRight.HasDifferences || leftRight.HasDifferences;
             rows = ThreeRows(ancestorLeft, ancestorRight, options, token);
         }
@@ -90,7 +98,9 @@ public static class HtmlReport
         var (first, second) = IndependentTextReport.PairSides(pair);
         var html = new BoundedHtml(maxCharacters, token);
         var position = Begin(html, "IndependentText", true);
-        var result = TextDiffer.Compare(documents[first].Text, documents[second].Text, options, token);
+        var result = TextDiffer.CompareForPanesWithSourcePaths(documents[first].Text, documents[second].Text,
+            first == 0 ? TablePaneMask.Left : first == 1 ? TablePaneMask.Base : TablePaneMask.Right,
+            second == 0 ? TablePaneMask.Left : second == 1 ? TablePaneMask.Base : TablePaneMask.Right, SourcePaths(documents), options, token);
         html.SetDifferent(position, result.HasDifferences);
         RenderOptions(html, options);
         html.Append("<p data-text-semantics=\"Independent\" data-comparison-pair=\""); html.Escape(pair); html.Append("\">比較ペア: ");
@@ -127,8 +137,8 @@ public static class HtmlReport
         // 上限が極小の場合は解析・比較する前に拒否する。
         var differencePosition = Begin(html, "Table", true);
         options ??= new(); ValidateOptions(options);
-        var comparison = StructuredComparer.CompareTables(documents.Select(document => document.Text).ToArray(),
-            new(delimiter, quote, allowNewlinesInQuotes), options, cancellationToken);
+        var comparison = StructuredComparer.CompareTablesWithSourcePaths(documents.Select(document => document.Text).ToArray(),
+            SourcePaths(documents), new(delimiter, quote, allowNewlinesInQuotes), options, cancellationToken);
         html.SetDifferent(differencePosition, comparison.HasDifferences);
         RenderOptions(html, options);
         html.Append("<dl class=\"table-options\"><dt>Delimiter</dt><dd>"); html.Escape(delimiter.ToString());
@@ -144,9 +154,13 @@ public static class HtmlReport
             for (var side = 0; side < comparison.Documents.Count; side++)
             {
                 var sourceRow = comparison.GetSourceRow(side, row);
-                html.Append("<th class=\"row-number\" scope=\"row\" data-side=\""); html.Append(sides[side]);
+                html.Append("<th class=\"row-number");
+                if (comparison.UsesLineTransforms) { html.Append(" "); html.Append(comparison.GetRowKind(side, row).ToString()); }
+                html.Append("\" scope=\"row\" data-side=\""); html.Append(sides[side]);
                 html.Append("\" data-row=\""); if (sourceRow is int number) html.Number(number);
                 html.Append("\" data-aligned-row=\""); html.Number(row + 1);
+                html.Append("\" data-row-kind=\""); html.Append(comparison.GetRowKind(side, row).ToString());
+                html.Append("\" data-ignored=\""); html.Boolean(comparison.IsIgnored(side, row));
                 html.Append("\" data-missing=\""); html.Boolean(sourceRow is null); html.Append("\">");
                 if (sourceRow is int visible) html.Number(visible);
                 html.Append("</th>");
@@ -159,7 +173,7 @@ public static class HtmlReport
                     if (sourceRow is int source) html.Number(source);
                     html.Append("\" data-aligned-row=\""); html.Number(row + 1);
                     html.Append("\" data-column=\""); html.Number(column + 1); html.Append("\" data-missing=\""); html.Boolean(cell is null);
-                    html.Append("\" class=\""); html.Append(kind.ToString()); if (cell is null) html.Append(" missing"); html.Append("\"><pre>");
+                    html.Append("\" data-ignored=\""); html.Boolean(comparison.IsIgnored(side, row)); html.Append("\" class=\""); html.Append(kind.ToString()); if (cell is null) html.Append(" missing"); html.Append("\"><pre>");
                     if (cell is not null) html.Escape(cell.Value);
                     html.Append("</pre></td>");
                 }
@@ -207,7 +221,8 @@ public static class HtmlReport
             throw new ArgumentException("コメント構文または空白の比較方式が不正です。", nameof(options));
     }
 
-    private sealed record TextReportCell(int? Line, string? Text, DiffKind Kind, IReadOnlyList<InlineSpan> Spans);
+    private sealed record TextReportCell(int? Line, string? Text, DiffKind Kind, IReadOnlyList<InlineSpan> Spans)
+    { public bool IsIgnored { get; init; } }
     private sealed record TextReportRow(DiffKind Kind, TextReportCell[] Cells);
     private sealed record AnchoredBranch(Dictionary<int, DiffRow> Lines, Dictionary<int, List<DiffRow>> Insertions);
 
@@ -217,7 +232,8 @@ public static class HtmlReport
         {
             token.ThrowIfCancellationRequested();
             yield return new(row.Kind,
-            [new(row.LeftLineNumber, row.LeftText, row.Kind, row.LeftSpans), new(row.RightLineNumber, row.RightText, row.Kind, row.RightSpans)]);
+            [new(row.LeftLineNumber, row.LeftText, row.Kind, row.LeftSpans) { IsIgnored = row.IsIgnored },
+             new(row.RightLineNumber, row.RightText, row.Kind, row.RightSpans) { IsIgnored = row.IsIgnored }]);
         }
     }
 
@@ -256,7 +272,7 @@ public static class HtmlReport
             var rightInsertions = right.Insertions.GetValueOrDefault(anchor) ?? [];
             if (leftInsertions.Count > 0 || rightInsertions.Count > 0)
             {
-                var alignment = TextDiffer.Compare(InsertedText(leftInsertions, token), InsertedText(rightInsertions, token), options, token);
+                var alignment = TextDiffer.Compare(InsertedText(leftInsertions, token), InsertedText(rightInsertions, token), options with { LineTransformRules = [] }, token);
                 foreach (var insertion in alignment.Rows)
                 {
                     token.ThrowIfCancellationRequested();
@@ -276,9 +292,9 @@ public static class HtmlReport
             var rightLine = right.Lines[anchor + 1];
             var rowKind = CombineKinds(leftLine.Kind, rightLine.Kind);
             yield return new(rowKind,
-            [new(leftLine.RightLineNumber, leftLine.RightText, leftLine.Kind, leftLine.RightSpans),
-             new(leftLine.LeftLineNumber, leftLine.LeftText, rowKind, MergeSpans(leftLine.LeftSpans, rightLine.LeftSpans, token)),
-             new(rightLine.RightLineNumber, rightLine.RightText, rightLine.Kind, rightLine.RightSpans)]);
+            [new(leftLine.RightLineNumber, leftLine.RightText, leftLine.Kind, leftLine.RightSpans) { IsIgnored = leftLine.IsIgnored },
+             new(leftLine.LeftLineNumber, leftLine.LeftText, rowKind, MergeSpans(leftLine.LeftSpans, rightLine.LeftSpans, token)) { IsIgnored = leftLine.IsIgnored || rightLine.IsIgnored },
+             new(rightLine.RightLineNumber, rightLine.RightText, rightLine.Kind, rightLine.RightSpans) { IsIgnored = rightLine.IsIgnored }]);
         }
     }
 
@@ -333,7 +349,7 @@ public static class HtmlReport
                 if (cell.Line is int line) html.Number(line);
                 html.Append("\" data-missing=\""); html.Boolean(cell.Text is null); html.Append("\" data-ending=\"");
                 if (cell.Line is int endingLine && endingLine <= endings[index].Count) html.Append(endings[index][endingLine - 1]);
-                html.Append("\" class=\""); html.Append(cell.Kind.ToString()); if (cell.Text is null) html.Append(" missing"); html.Append("\"><span class=\"line-number\">");
+                html.Append("\" data-ignored=\""); html.Boolean(cell.IsIgnored); html.Append("\" class=\""); html.Append(cell.Kind.ToString()); if (cell.Text is null) html.Append(" missing"); html.Append("\"><span class=\"line-number\">");
                 if (cell.Line is int number) html.Number(number);
                 html.Append("</span><pre>");
                 RenderSpans(html, cell.Text ?? "", cell.Spans);
@@ -402,6 +418,8 @@ public static class HtmlReport
         Option("IgnoreCase", Flag(options.IgnoreCase)); Option("IgnoreWhitespace", Flag(options.IgnoreWhitespace));
         Option("Whitespace", options.Whitespace.ToString()); Option("IgnoreBlankLines", Flag(options.IgnoreBlankLines));
         Option("IgnoreLinePattern", options.IgnoreLinePattern ?? ""); Option("IgnoreNumbers", Flag(options.IgnoreNumbers));
+        Option("InlineCharacterLevel", Flag(options.InlineCharacterLevel));
+        Option("BreakOnSeparators", Flag(options.BreakOnSeparators)); Option("WordBreakSeparators", options.WordBreakSeparators);
         Option("CommentSyntax", options.CommentSyntax.ToString()); Option("IgnoreFinalNewLine", Flag(options.IgnoreFinalNewLine));
         Option("CompareLineEndings", Flag(options.CompareLineEndings)); Option("MaxFallbackComparisons", options.MaxFallbackComparisons.ToString(CultureInfo.InvariantCulture));
         html.Append("</dl><ol class=\"substitution-rules\">");
@@ -410,6 +428,11 @@ public static class HtmlReport
             html.Append("<li><dl>"); Option("Pattern", rule.Pattern); Option("Replacement", rule.Replacement);
             Option("MatchCase", Flag(rule.MatchCase)); Option("UseRegex", Flag(rule.UseRegex));
             Option("WholeWord", Flag(rule.WholeWord)); Option("Enabled", Flag(rule.Enabled)); html.Append("</dl></li>");
+        }
+        html.Append("</ol><ol class=\"line-transform-rules\">");
+        foreach (var rule in options.LineTransformRules)
+        {
+            html.Append("<li><dl>"); Option("Expression", rule.Expression); Option("Panes", rule.Panes.ToString()); html.Append("</dl></li>");
         }
         html.Append("</ol></details>");
     }
@@ -482,7 +505,7 @@ public static class HtmlReport
             writer.WriteStartArray("rows");
             foreach (var row in result.Rows)
             {
-                writer.WriteStartObject(); writer.WriteString("kind", row.Kind.ToString());
+                writer.WriteStartObject(); writer.WriteString("kind", row.Kind.ToString()); writer.WriteBoolean("ignored", row.IsIgnored);
                 if (row.LeftLineNumber is int left) writer.WriteNumber("leftLine", left); else writer.WriteNull("leftLine");
                 if (row.RightLineNumber is int right) writer.WriteNumber("rightLine", right); else writer.WriteNull("rightLine");
                 writer.WriteString("left", row.LeftText); writer.WriteString("right", row.RightText); writer.WriteEndObject();

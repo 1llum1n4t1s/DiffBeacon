@@ -1,0 +1,8543 @@
+[
+  {
+    "id": "find-default",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc abc"
+      },
+      {
+        "type": "string",
+        "value": "abc"
+      }
+    ]
+  },
+  {
+    "id": "find-no-match",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "xyz"
+      }
+    ]
+  },
+  {
+    "id": "find-empty-input",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "find-empty-pattern",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "find-empty-both",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "find-non-overlap",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ababa"
+      },
+      {
+        "type": "string",
+        "value": "aba"
+      }
+    ]
+  },
+  {
+    "id": "find-non-overlap-dense",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aaaaa"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      }
+    ]
+  },
+  {
+    "id": "find-greedy",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab12ab34"
+      },
+      {
+        "type": "string",
+        "value": "ab.*"
+      }
+    ]
+  },
+  {
+    "id": "find-lazy",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab12ab34"
+      },
+      {
+        "type": "string",
+        "value": "ab.*?"
+      }
+    ]
+  },
+  {
+    "id": "find-alternation",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ababa"
+      },
+      {
+        "type": "string",
+        "value": "ab|a"
+      }
+    ]
+  },
+  {
+    "id": "find-anchor-start",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\na"
+      },
+      {
+        "type": "string",
+        "value": "^a"
+      }
+    ]
+  },
+  {
+    "id": "find-anchor-end",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\na"
+      },
+      {
+        "type": "string",
+        "value": "a$"
+      }
+    ]
+  },
+  {
+    "id": "find-cr-newline-default",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\ra"
+      },
+      {
+        "type": "string",
+        "value": "^a"
+      }
+    ]
+  },
+  {
+    "id": "find-multiline",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\ra"
+      },
+      {
+        "type": "string",
+        "value": "(?m)^a"
+      }
+    ]
+  },
+  {
+    "id": "find-dot-no-newline",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\rb"
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "find-dotall",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\rb"
+      },
+      {
+        "type": "string",
+        "value": "(?s)."
+      }
+    ]
+  },
+  {
+    "id": "find-byte-offset-bmp",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é猫a猫"
+      },
+      {
+        "type": "string",
+        "value": "猫"
+      }
+    ]
+  },
+  {
+    "id": "find-byte-offset-nonbmp",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a😀"
+      },
+      {
+        "type": "string",
+        "value": "a|😀"
+      }
+    ]
+  },
+  {
+    "id": "find-unicode-word",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "猫 é 123 😀"
+      },
+      {
+        "type": "string",
+        "value": "\\w+"
+      }
+    ]
+  },
+  {
+    "id": "find-unicode-digit",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a١２3"
+      },
+      {
+        "type": "string",
+        "value": "\\d+"
+      }
+    ]
+  },
+  {
+    "id": "find-unicode-space",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a b"
+      },
+      {
+        "type": "string",
+        "value": "\\s"
+      }
+    ]
+  },
+  {
+    "id": "find-unicode-property",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a猫😀"
+      },
+      {
+        "type": "string",
+        "value": "\\p{Han}"
+      }
+    ]
+  },
+  {
+    "id": "find-zero-start",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "^"
+      }
+    ]
+  },
+  {
+    "id": "find-zero-end",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "$"
+      }
+    ]
+  },
+  {
+    "id": "find-zero-lookahead",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "(?=a)"
+      }
+    ]
+  },
+  {
+    "id": "find-zero-ascii",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "find-zero-bmp",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "find-zero-nonbmp",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "find-lookbehind",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "xabxab"
+      },
+      {
+        "type": "string",
+        "value": "(?<=x)ab"
+      }
+    ]
+  },
+  {
+    "id": "find-backreference",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aa bb cc"
+      },
+      {
+        "type": "string",
+        "value": "(\\w)\\1"
+      }
+    ]
+  },
+  {
+    "id": "find-named-group",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "猫12"
+      },
+      {
+        "type": "string",
+        "value": "(?<word>\\w+?)(?<num>\\d+)"
+      }
+    ]
+  },
+  {
+    "id": "find-nul-subject",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "find-nul-pattern",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "\u0000"
+      }
+    ]
+  },
+  {
+    "id": "find-invalid-open",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "find-invalid-close",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "("
+      }
+    ]
+  },
+  {
+    "id": "find-invalid-backref",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "\\9"
+      }
+    ]
+  },
+  {
+    "id": "find-invalid-property",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "\\p{NoSuchProperty}"
+      }
+    ]
+  },
+  {
+    "id": "find-ascii-cs",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaA"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "find-ascii-ci",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaA"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "find-kelvin-cs",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      }
+    ]
+  },
+  {
+    "id": "find-kelvin-ci",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      }
+    ]
+  },
+  {
+    "id": "find-sigma-cs",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      }
+    ]
+  },
+  {
+    "id": "find-sigma-ci",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      }
+    ]
+  },
+  {
+    "id": "find-long-s-cs",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ſsS"
+      },
+      {
+        "type": "string",
+        "value": "s"
+      }
+    ]
+  },
+  {
+    "id": "find-long-s-ci",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ſsS"
+      },
+      {
+        "type": "string",
+        "value": "s"
+      }
+    ]
+  },
+  {
+    "id": "find-sharp-s-cs",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ßẞss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      }
+    ]
+  },
+  {
+    "id": "find-sharp-s-ci",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ßẞss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      }
+    ]
+  },
+  {
+    "id": "find-turkish-cs",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Iİıi"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "id": "find-turkish-ci",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Iİıi"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "id": "find-typed-context-True-regex-True",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": true
+      }
+    ]
+  },
+  {
+    "id": "find-typed-context-True-regex-False",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": false
+      }
+    ]
+  },
+  {
+    "id": "find-typed-context-False-regex-True",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": true
+      }
+    ]
+  },
+  {
+    "id": "find-typed-context-False-regex-False",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": false
+      }
+    ]
+  },
+  {
+    "id": "find-none",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "find-integer",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "integer",
+        "value": 123
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "find-bool",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "find-double",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "find-array-empty",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "find-array-mixed",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "aba"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "integer",
+            "value": 101
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "string",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "find-array-nested",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "aba"
+              },
+              {
+                "type": "string",
+                "value": "aba"
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "value": "aba"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "find-array-invalid",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "abc"
+          },
+          {
+            "type": "string",
+            "value": "def"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "find-pattern-none",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "find-pattern-integer",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-pattern-bool",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "find-pattern-array",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "a"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "find-raw-invalid-utf8",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          255,
+          98
+        ]
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "find-raw-invalid-pattern-utf8",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255
+        ]
+      }
+    ]
+  },
+  {
+    "id": "find-null-args",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": true,
+    "args": []
+  },
+  {
+    "id": "find-arity-0",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": []
+  },
+  {
+    "id": "find-arity-1",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      }
+    ]
+  },
+  {
+    "id": "find-arity-5",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "find-eval-first-throws",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "throw",
+        "value": "first"
+      },
+      {
+        "type": "throw",
+        "value": "second"
+      }
+    ]
+  },
+  {
+    "id": "find-eval-pattern-throws",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "throw",
+        "value": "pattern"
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-literal",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-typed",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "regex",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-invalid",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-none-source",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-dynamic-source",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "Aa"
+        }
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-dynamic-pattern",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "a"
+        }
+      }
+    ]
+  },
+  {
+    "id": "count-default",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc abc"
+      },
+      {
+        "type": "string",
+        "value": "abc"
+      }
+    ]
+  },
+  {
+    "id": "count-no-match",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "xyz"
+      }
+    ]
+  },
+  {
+    "id": "count-empty-input",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "count-empty-pattern",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "count-empty-both",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "count-non-overlap",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ababa"
+      },
+      {
+        "type": "string",
+        "value": "aba"
+      }
+    ]
+  },
+  {
+    "id": "count-non-overlap-dense",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aaaaa"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      }
+    ]
+  },
+  {
+    "id": "count-greedy",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab12ab34"
+      },
+      {
+        "type": "string",
+        "value": "ab.*"
+      }
+    ]
+  },
+  {
+    "id": "count-lazy",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab12ab34"
+      },
+      {
+        "type": "string",
+        "value": "ab.*?"
+      }
+    ]
+  },
+  {
+    "id": "count-alternation",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ababa"
+      },
+      {
+        "type": "string",
+        "value": "ab|a"
+      }
+    ]
+  },
+  {
+    "id": "count-anchor-start",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\na"
+      },
+      {
+        "type": "string",
+        "value": "^a"
+      }
+    ]
+  },
+  {
+    "id": "count-anchor-end",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\na"
+      },
+      {
+        "type": "string",
+        "value": "a$"
+      }
+    ]
+  },
+  {
+    "id": "count-cr-newline-default",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\ra"
+      },
+      {
+        "type": "string",
+        "value": "^a"
+      }
+    ]
+  },
+  {
+    "id": "count-multiline",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\ra"
+      },
+      {
+        "type": "string",
+        "value": "(?m)^a"
+      }
+    ]
+  },
+  {
+    "id": "count-dot-no-newline",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\rb"
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "count-dotall",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\rb"
+      },
+      {
+        "type": "string",
+        "value": "(?s)."
+      }
+    ]
+  },
+  {
+    "id": "count-byte-offset-bmp",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é猫a猫"
+      },
+      {
+        "type": "string",
+        "value": "猫"
+      }
+    ]
+  },
+  {
+    "id": "count-byte-offset-nonbmp",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a😀"
+      },
+      {
+        "type": "string",
+        "value": "a|😀"
+      }
+    ]
+  },
+  {
+    "id": "count-unicode-word",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "猫 é 123 😀"
+      },
+      {
+        "type": "string",
+        "value": "\\w+"
+      }
+    ]
+  },
+  {
+    "id": "count-unicode-digit",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a١２3"
+      },
+      {
+        "type": "string",
+        "value": "\\d+"
+      }
+    ]
+  },
+  {
+    "id": "count-unicode-space",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a b"
+      },
+      {
+        "type": "string",
+        "value": "\\s"
+      }
+    ]
+  },
+  {
+    "id": "count-unicode-property",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a猫😀"
+      },
+      {
+        "type": "string",
+        "value": "\\p{Han}"
+      }
+    ]
+  },
+  {
+    "id": "count-zero-start",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "^"
+      }
+    ]
+  },
+  {
+    "id": "count-zero-end",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "$"
+      }
+    ]
+  },
+  {
+    "id": "count-zero-lookahead",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "(?=a)"
+      }
+    ]
+  },
+  {
+    "id": "count-zero-ascii",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "count-zero-bmp",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "count-zero-nonbmp",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "count-lookbehind",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "xabxab"
+      },
+      {
+        "type": "string",
+        "value": "(?<=x)ab"
+      }
+    ]
+  },
+  {
+    "id": "count-backreference",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aa bb cc"
+      },
+      {
+        "type": "string",
+        "value": "(\\w)\\1"
+      }
+    ]
+  },
+  {
+    "id": "count-named-group",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "猫12"
+      },
+      {
+        "type": "string",
+        "value": "(?<word>\\w+?)(?<num>\\d+)"
+      }
+    ]
+  },
+  {
+    "id": "count-nul-subject",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "count-nul-pattern",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "\u0000"
+      }
+    ]
+  },
+  {
+    "id": "count-invalid-open",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "count-invalid-close",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "("
+      }
+    ]
+  },
+  {
+    "id": "count-invalid-backref",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "\\9"
+      }
+    ]
+  },
+  {
+    "id": "count-invalid-property",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "\\p{NoSuchProperty}"
+      }
+    ]
+  },
+  {
+    "id": "count-ascii-cs",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaA"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "count-ascii-ci",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaA"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "count-kelvin-cs",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      }
+    ]
+  },
+  {
+    "id": "count-kelvin-ci",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      }
+    ]
+  },
+  {
+    "id": "count-sigma-cs",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      }
+    ]
+  },
+  {
+    "id": "count-sigma-ci",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      }
+    ]
+  },
+  {
+    "id": "count-long-s-cs",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ſsS"
+      },
+      {
+        "type": "string",
+        "value": "s"
+      }
+    ]
+  },
+  {
+    "id": "count-long-s-ci",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ſsS"
+      },
+      {
+        "type": "string",
+        "value": "s"
+      }
+    ]
+  },
+  {
+    "id": "count-sharp-s-cs",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ßẞss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      }
+    ]
+  },
+  {
+    "id": "count-sharp-s-ci",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ßẞss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      }
+    ]
+  },
+  {
+    "id": "count-turkish-cs",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Iİıi"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "id": "count-turkish-ci",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Iİıi"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "id": "count-typed-context-True-regex-True",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": true
+      }
+    ]
+  },
+  {
+    "id": "count-typed-context-True-regex-False",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": false
+      }
+    ]
+  },
+  {
+    "id": "count-typed-context-False-regex-True",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": true
+      }
+    ]
+  },
+  {
+    "id": "count-typed-context-False-regex-False",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": false
+      }
+    ]
+  },
+  {
+    "id": "count-none",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "count-integer",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "integer",
+        "value": 123
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "count-bool",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "count-double",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "count-array-empty",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "count-array-mixed",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "aba"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "integer",
+            "value": 101
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "string",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "count-array-nested",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "aba"
+              },
+              {
+                "type": "string",
+                "value": "aba"
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "value": "aba"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "count-array-invalid",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "abc"
+          },
+          {
+            "type": "string",
+            "value": "def"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "count-pattern-none",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "count-pattern-integer",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "count-pattern-bool",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "count-pattern-array",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "a"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "count-raw-invalid-utf8",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          255,
+          98
+        ]
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "count-raw-invalid-pattern-utf8",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255
+        ]
+      }
+    ]
+  },
+  {
+    "id": "count-null-args",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": true,
+    "args": []
+  },
+  {
+    "id": "count-arity-0",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": []
+  },
+  {
+    "id": "count-arity-1",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      }
+    ]
+  },
+  {
+    "id": "count-arity-3",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "count-arity-4",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "count-arity-5",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "count-eval-first-throws",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "throw",
+        "value": "first"
+      },
+      {
+        "type": "throw",
+        "value": "second"
+      }
+    ]
+  },
+  {
+    "id": "count-eval-pattern-throws",
+    "function": "regexcount",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "throw",
+        "value": "pattern"
+      }
+    ]
+  },
+  {
+    "id": "count-optimizer-literal",
+    "function": "regexcount",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "count-optimizer-typed",
+    "function": "regexcount",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "regex",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "count-optimizer-invalid",
+    "function": "regexcount",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "count-optimizer-none-source",
+    "function": "regexcount",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "count-optimizer-dynamic-source",
+    "function": "regexcount",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "Aa"
+        }
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "count-optimizer-dynamic-pattern",
+    "function": "regexcount",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "a"
+        }
+      }
+    ]
+  },
+  {
+    "id": "extract-default",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc abc"
+      },
+      {
+        "type": "string",
+        "value": "abc"
+      }
+    ]
+  },
+  {
+    "id": "extract-no-match",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "xyz"
+      }
+    ]
+  },
+  {
+    "id": "extract-empty-input",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "extract-empty-pattern",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "extract-empty-both",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "extract-non-overlap",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ababa"
+      },
+      {
+        "type": "string",
+        "value": "aba"
+      }
+    ]
+  },
+  {
+    "id": "extract-non-overlap-dense",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aaaaa"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      }
+    ]
+  },
+  {
+    "id": "extract-greedy",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab12ab34"
+      },
+      {
+        "type": "string",
+        "value": "ab.*"
+      }
+    ]
+  },
+  {
+    "id": "extract-lazy",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab12ab34"
+      },
+      {
+        "type": "string",
+        "value": "ab.*?"
+      }
+    ]
+  },
+  {
+    "id": "extract-alternation",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ababa"
+      },
+      {
+        "type": "string",
+        "value": "ab|a"
+      }
+    ]
+  },
+  {
+    "id": "extract-anchor-start",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\na"
+      },
+      {
+        "type": "string",
+        "value": "^a"
+      }
+    ]
+  },
+  {
+    "id": "extract-anchor-end",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\na"
+      },
+      {
+        "type": "string",
+        "value": "a$"
+      }
+    ]
+  },
+  {
+    "id": "extract-cr-newline-default",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\ra"
+      },
+      {
+        "type": "string",
+        "value": "^a"
+      }
+    ]
+  },
+  {
+    "id": "extract-multiline",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\ra"
+      },
+      {
+        "type": "string",
+        "value": "(?m)^a"
+      }
+    ]
+  },
+  {
+    "id": "extract-dot-no-newline",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\rb"
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "extract-dotall",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\rb"
+      },
+      {
+        "type": "string",
+        "value": "(?s)."
+      }
+    ]
+  },
+  {
+    "id": "extract-byte-offset-bmp",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é猫a猫"
+      },
+      {
+        "type": "string",
+        "value": "猫"
+      }
+    ]
+  },
+  {
+    "id": "extract-byte-offset-nonbmp",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a😀"
+      },
+      {
+        "type": "string",
+        "value": "a|😀"
+      }
+    ]
+  },
+  {
+    "id": "extract-unicode-word",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "猫 é 123 😀"
+      },
+      {
+        "type": "string",
+        "value": "\\w+"
+      }
+    ]
+  },
+  {
+    "id": "extract-unicode-digit",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a١２3"
+      },
+      {
+        "type": "string",
+        "value": "\\d+"
+      }
+    ]
+  },
+  {
+    "id": "extract-unicode-space",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a b"
+      },
+      {
+        "type": "string",
+        "value": "\\s"
+      }
+    ]
+  },
+  {
+    "id": "extract-unicode-property",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a猫😀"
+      },
+      {
+        "type": "string",
+        "value": "\\p{Han}"
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-start",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "^"
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-end",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "$"
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-lookahead",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "(?=a)"
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-ascii",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-bmp",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-nonbmp",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      }
+    ]
+  },
+  {
+    "id": "extract-lookbehind",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "xabxab"
+      },
+      {
+        "type": "string",
+        "value": "(?<=x)ab"
+      }
+    ]
+  },
+  {
+    "id": "extract-backreference",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aa bb cc"
+      },
+      {
+        "type": "string",
+        "value": "(\\w)\\1"
+      }
+    ]
+  },
+  {
+    "id": "extract-named-group",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "猫12"
+      },
+      {
+        "type": "string",
+        "value": "(?<word>\\w+?)(?<num>\\d+)"
+      }
+    ]
+  },
+  {
+    "id": "extract-nul-subject",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "extract-nul-pattern",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "\u0000"
+      }
+    ]
+  },
+  {
+    "id": "extract-invalid-open",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "extract-invalid-close",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "("
+      }
+    ]
+  },
+  {
+    "id": "extract-invalid-backref",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "\\9"
+      }
+    ]
+  },
+  {
+    "id": "extract-invalid-property",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "\\p{NoSuchProperty}"
+      }
+    ]
+  },
+  {
+    "id": "extract-ascii-cs",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaA"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "extract-ascii-ci",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaA"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "extract-kelvin-cs",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      }
+    ]
+  },
+  {
+    "id": "extract-kelvin-ci",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "KkK"
+      },
+      {
+        "type": "string",
+        "value": "k"
+      }
+    ]
+  },
+  {
+    "id": "extract-sigma-cs",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      }
+    ]
+  },
+  {
+    "id": "extract-sigma-ci",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Σσς"
+      },
+      {
+        "type": "string",
+        "value": "σ"
+      }
+    ]
+  },
+  {
+    "id": "extract-long-s-cs",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ſsS"
+      },
+      {
+        "type": "string",
+        "value": "s"
+      }
+    ]
+  },
+  {
+    "id": "extract-long-s-ci",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ſsS"
+      },
+      {
+        "type": "string",
+        "value": "s"
+      }
+    ]
+  },
+  {
+    "id": "extract-sharp-s-cs",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ßẞss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      }
+    ]
+  },
+  {
+    "id": "extract-sharp-s-ci",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ßẞss"
+      },
+      {
+        "type": "string",
+        "value": "ß"
+      }
+    ]
+  },
+  {
+    "id": "extract-turkish-cs",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Iİıi"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "id": "extract-turkish-ci",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Iİıi"
+      },
+      {
+        "type": "string",
+        "value": "i"
+      }
+    ]
+  },
+  {
+    "id": "extract-typed-context-True-regex-True",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": true
+      }
+    ]
+  },
+  {
+    "id": "extract-typed-context-True-regex-False",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": false
+      }
+    ]
+  },
+  {
+    "id": "extract-typed-context-False-regex-True",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": true
+      }
+    ]
+  },
+  {
+    "id": "extract-typed-context-False-regex-False",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaKk"
+      },
+      {
+        "type": "regex",
+        "value": "a|k",
+        "caseSensitive": false
+      }
+    ]
+  },
+  {
+    "id": "extract-none",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "extract-integer",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "integer",
+        "value": 123
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "extract-bool",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "extract-double",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "extract-array-empty",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "extract-array-mixed",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "aba"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "integer",
+            "value": 101
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "string",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "extract-array-nested",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "aba"
+              },
+              {
+                "type": "string",
+                "value": "aba"
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "value": "aba"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      }
+    ]
+  },
+  {
+    "id": "extract-array-invalid",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "abc"
+          },
+          {
+            "type": "string",
+            "value": "def"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "extract-pattern-none",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "extract-pattern-integer",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-pattern-bool",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": "extract-pattern-array",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "a"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "extract-raw-invalid-utf8",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          255,
+          98
+        ]
+      },
+      {
+        "type": "string",
+        "value": "."
+      }
+    ]
+  },
+  {
+    "id": "extract-raw-invalid-pattern-utf8",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255
+        ]
+      }
+    ]
+  },
+  {
+    "id": "extract-null-args",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": true,
+    "args": []
+  },
+  {
+    "id": "extract-arity-0",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": []
+  },
+  {
+    "id": "extract-arity-1",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      }
+    ]
+  },
+  {
+    "id": "extract-arity-5",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "extract-eval-first-throws",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "throw",
+        "value": "first"
+      },
+      {
+        "type": "throw",
+        "value": "second"
+      }
+    ]
+  },
+  {
+    "id": "extract-eval-pattern-throws",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "throw",
+        "value": "pattern"
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-literal",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-typed",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "regex",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-invalid",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "["
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-none-source",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-dynamic-source",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "Aa"
+        }
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-dynamic-pattern",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "a"
+        }
+      }
+    ]
+  },
+  {
+    "id": "find-group-one",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "xxab12"
+      },
+      {
+        "type": "string",
+        "value": "(ab)(\\d+)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-group-two",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éab12"
+      },
+      {
+        "type": "string",
+        "value": "(ab)(\\d+)"
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "find-unmatched-middle",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(a)?(b)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-unmatched-trailing",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(b)(a)?"
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "find-empty-group",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "()(b)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-group-outside",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "find-group-negative",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "find-group-max",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 9223372036854775807
+      }
+    ]
+  },
+  {
+    "id": "find-group-min",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": -9223372036854775808
+      }
+    ]
+  },
+  {
+    "id": "find-group-zero",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é😀ab"
+      },
+      {
+        "type": "string",
+        "value": "(ab)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "find-group-type-none",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "find-group-type-string",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "string",
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "id": "find-group-type-double",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      }
+    ]
+  },
+  {
+    "id": "find-group-type-bool",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ]
+  },
+  {
+    "id": "find-group-type-array",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence--9223372036854775808",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": -9223372036854775808
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence--1",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-0",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-1",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-2",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-3",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-9223372036854775807",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 9223372036854775807
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-type-none",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-type-string",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "string",
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-type-double",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-type-bool",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ]
+  },
+  {
+    "id": "find-occurrence-type-array",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "find-zero-ascii-last",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "find-zero-ascii-past-end",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "id": "find-zero-empty-first",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "find-zero-empty-past-end",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-zero-end-past-end",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "$"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-zero-bmp-second",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-zero-nonbmp-second",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-zero-lookahead-nonbmp",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?=a)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-eval-group-throws",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "throw",
+        "value": "group"
+      }
+    ]
+  },
+  {
+    "id": "find-eval-occurrence-throws",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "throw",
+        "value": "occurrence"
+      }
+    ]
+  },
+  {
+    "id": "find-bad-group-stops-occurrence",
+    "function": "regexfind",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "bad"
+      },
+      {
+        "type": "throw",
+        "value": "unreached"
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-group",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éab"
+      },
+      {
+        "type": "string",
+        "value": "(ab)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-occurrence",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éab ab"
+      },
+      {
+        "type": "string",
+        "value": "(ab)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-no-match",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-dynamic-occurrence",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "find-optimizer-negative-occurrence",
+    "function": "regexfind",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "extract-group-one",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "xxab12"
+      },
+      {
+        "type": "string",
+        "value": "(ab)(\\d+)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-group-two",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éab12"
+      },
+      {
+        "type": "string",
+        "value": "(ab)(\\d+)"
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "extract-unmatched-middle",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(a)?(b)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-unmatched-trailing",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(b)(a)?"
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "extract-empty-group",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "()(b)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-group-outside",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "extract-group-negative",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "extract-group-max",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 9223372036854775807
+      }
+    ]
+  },
+  {
+    "id": "extract-group-min",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": -9223372036854775808
+      }
+    ]
+  },
+  {
+    "id": "extract-group-zero",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é😀ab"
+      },
+      {
+        "type": "string",
+        "value": "(ab)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "extract-group-type-none",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "extract-group-type-string",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "string",
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "id": "extract-group-type-double",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      }
+    ]
+  },
+  {
+    "id": "extract-group-type-bool",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ]
+  },
+  {
+    "id": "extract-group-type-array",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence--9223372036854775808",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": -9223372036854775808
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence--1",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-0",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-1",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-2",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-3",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-9223372036854775807",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa😀a"
+      },
+      {
+        "type": "string",
+        "value": "(a)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 9223372036854775807
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-type-none",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-type-string",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "string",
+        "value": "0"
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-type-double",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-type-bool",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ]
+  },
+  {
+    "id": "extract-occurrence-type-array",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-ascii-last",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-ascii-past-end",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-empty-first",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-empty-past-end",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-end-past-end",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "$"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-bmp-second",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éa"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-nonbmp-second",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-zero-lookahead-nonbmp",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?=a)"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-eval-group-throws",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "throw",
+        "value": "group"
+      }
+    ]
+  },
+  {
+    "id": "extract-eval-occurrence-throws",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "throw",
+        "value": "occurrence"
+      }
+    ]
+  },
+  {
+    "id": "extract-bad-group-stops-occurrence",
+    "function": "regexextract",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "bad"
+      },
+      {
+        "type": "throw",
+        "value": "unreached"
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-group",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éab"
+      },
+      {
+        "type": "string",
+        "value": "(ab)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-occurrence",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "éab ab"
+      },
+      {
+        "type": "string",
+        "value": "(ab)"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-no-match",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-dynamic-occurrence",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "extract-optimizer-negative-occurrence",
+    "function": "regexextract",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      },
+      {
+        "type": "integer",
+        "value": -1
+      }
+    ]
+  },
+  {
+    "id": "replace-default",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aba aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-no-match",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-delete",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aaaa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "replace-empty-input",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-empty-pattern",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-empty-both",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-non-overlap",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ababa"
+      },
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-rematches",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "aa"
+      }
+    ]
+  },
+  {
+    "id": "replace-terminal",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "$"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-terminal-nonempty",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "b$"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-zero-before",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(?=a)"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-zero-middle",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(?=b)"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-zero-all",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-zero-delete",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "replace-zero-unicode",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-lookbehind",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(?<=a)b"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-nul-subject",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b\u0000a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-nul-pattern",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "\u0000"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-nul-replacement",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "aba"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X\u0000Y"
+      }
+    ]
+  },
+  {
+    "id": "replace-unicode",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é😀日本é"
+      },
+      {
+        "type": "string",
+        "value": "é|😀"
+      },
+      {
+        "type": "string",
+        "value": "界"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abc"
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-groups",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab12 ab34"
+      },
+      {
+        "type": "string",
+        "value": "(ab)(\\d+)"
+      },
+      {
+        "type": "string",
+        "value": "$2:$1:$0"
+      }
+    ]
+  },
+  {
+    "id": "replace-unmatched-middle",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(a)?(b)"
+      },
+      {
+        "type": "string",
+        "value": "$1"
+      }
+    ]
+  },
+  {
+    "id": "replace-unmatched-middle-zero",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(a)?(b)"
+      },
+      {
+        "type": "string",
+        "value": "$0:$2"
+      }
+    ]
+  },
+  {
+    "id": "replace-unmatched-trailing",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(b)(a)?"
+      },
+      {
+        "type": "string",
+        "value": "$2"
+      }
+    ]
+  },
+  {
+    "id": "replace-unmatched-trailing-zero",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(b)(a)?"
+      },
+      {
+        "type": "string",
+        "value": "$0:$1"
+      }
+    ]
+  },
+  {
+    "id": "replace-empty-capture",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "()(b)"
+      },
+      {
+        "type": "string",
+        "value": "$1:$2"
+      }
+    ]
+  },
+  {
+    "id": "replace-ten-captures",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "abcdefghij"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)(c)(d)(e)(f)(g)(h)(i)(j)"
+      },
+      {
+        "type": "string",
+        "value": "$0:$1:$9:$10:$99"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2430",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$0"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2431",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$1"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2432",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$2"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2433",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$3"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2434",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$4"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2435",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$5"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2436",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$6"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2437",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$7"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2438",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$8"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2439",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$9"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-243130",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$10"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-243939",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$99"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2424",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$$"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-247b317d",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "${1}"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-5c31",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "\\1"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-5c2431",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "\\$1"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-24",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-242431",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$$1"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-2478",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$x"
+      }
+    ]
+  },
+  {
+    "id": "replace-syntax-243031",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "string",
+        "value": "(a)(b)"
+      },
+      {
+        "type": "string",
+        "value": "$01"
+      }
+    ]
+  },
+  {
+    "id": "replace-source-none",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-source-none",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-source-int",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "integer",
+        "value": 101
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-source-int",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "integer",
+        "value": 101
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-source-bool",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-source-bool",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-source-double",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-source-double",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-source-array-empty",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-source-array-empty",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-source-array-mixed",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "aba"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "integer",
+            "value": 101
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-source-array-mixed",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "aba"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "integer",
+            "value": 101
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-source-array-nested",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "aba"
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "value": "aba"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a|1|true"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-source-array-nested",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "aba"
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "value": "aba"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-pattern-type-none",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-replacement-type-none",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "replace-pattern-type-integer",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-replacement-type-integer",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "replace-pattern-type-bool",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-replacement-type-bool",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ]
+  },
+  {
+    "id": "replace-pattern-type-double",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-replacement-type-double",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      }
+    ]
+  },
+  {
+    "id": "replace-pattern-type-array",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-replacement-type-array",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ]
+  },
+  {
+    "id": "replace-context-True",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaÉé"
+      },
+      {
+        "type": "string",
+        "value": "a|é"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-typed-True-True",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaÉé"
+      },
+      {
+        "type": "regex",
+        "value": "a|é",
+        "caseSensitive": true
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-typed-True-False",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaÉé"
+      },
+      {
+        "type": "regex",
+        "value": "a|é",
+        "caseSensitive": false
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-context-False",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaÉé"
+      },
+      {
+        "type": "string",
+        "value": "a|é"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-typed-False-True",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaÉé"
+      },
+      {
+        "type": "regex",
+        "value": "a|é",
+        "caseSensitive": true
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-typed-False-False",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "AaÉé"
+      },
+      {
+        "type": "regex",
+        "value": "a|é",
+        "caseSensitive": false
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-raw-invalid-utf8",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          255,
+          98
+        ]
+      },
+      {
+        "type": "string",
+        "value": "."
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-raw-invalid-pattern",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255
+        ]
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-raw-replacement",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          0,
+          254
+        ]
+      }
+    ]
+  },
+  {
+    "id": "replace-null-args",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": true,
+    "args": []
+  },
+  {
+    "id": "replace-arity-0",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": []
+  },
+  {
+    "id": "replace-arity-1",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "replace-arity-2",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ]
+  },
+  {
+    "id": "replace-arity-4",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      },
+      {
+        "type": "throw",
+        "value": "extra"
+      }
+    ]
+  },
+  {
+    "id": "replace-arity-5",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      },
+      {
+        "type": "throw",
+        "value": "extra"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "replace-eval-throw-0",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "throw",
+        "value": "argument-0"
+      },
+      {
+        "type": "throw",
+        "value": "argument-1"
+      },
+      {
+        "type": "throw",
+        "value": "argument-2"
+      }
+    ]
+  },
+  {
+    "id": "replace-eval-throw-1",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "throw",
+        "value": "argument-1"
+      },
+      {
+        "type": "throw",
+        "value": "argument-2"
+      }
+    ]
+  },
+  {
+    "id": "replace-eval-throw-2",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "throw",
+        "value": "argument-2"
+      }
+    ]
+  },
+  {
+    "id": "replace-invalid-pattern-evaluates-replacement",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "throw",
+        "value": "replacement"
+      }
+    ]
+  },
+  {
+    "id": "replace-bad-pattern-type-evaluates-replacement",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "replacement"
+      }
+    ]
+  },
+  {
+    "id": "replace-none-source-evaluates-pattern",
+    "function": "regexreplace",
+    "mode": "function-body-noopt",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "throw",
+        "value": "pattern"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-literal",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-typed",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "regex",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-invalid",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "["
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-no-match",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-unmatched-middle",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(a)?(b)"
+      },
+      {
+        "type": "string",
+        "value": "$1"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-unmatched-trailing",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "(b)(a)?"
+      },
+      {
+        "type": "string",
+        "value": "$2"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-none-source",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-dynamic-source",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "Aa"
+        }
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-dynamic-pattern",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "a"
+        }
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-dynamic-replacement",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "Aa"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "dynamic",
+        "value": {
+          "type": "string",
+          "value": "X"
+        }
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-none-replacement",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "none"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-extra-arity",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      },
+      {
+        "type": "integer",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-throw-replacement",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "throw",
+        "value": "replacement"
+      }
+    ]
+  },
+  {
+    "id": "replace-optimizer-zero-unicode",
+    "function": "regexreplace",
+    "mode": "optimizer-selected-branch",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é😀a"
+      },
+      {
+        "type": "string",
+        "value": "(?:)"
+      },
+      {
+        "type": "string",
+        "value": "X"
+      }
+    ]
+  }
+]

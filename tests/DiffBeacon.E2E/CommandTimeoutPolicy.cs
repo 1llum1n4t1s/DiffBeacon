@@ -5,7 +5,9 @@ internal static class CommandTimeoutPolicy
     {
         // macOS x64 CIの実測で120秒を超えたため、画像既定値readerに有限の300秒を使う。
         if (name is "image-defaults-reader") return OperatingSystem.IsMacOS() ? 300 : 120;
-        if (name is "folder-copy-large-stream" or "folder-copy-gui") return 180;
+        if (name is "folder-copy-large-stream") return 180;
+        // 二者フォルダーGUIは移動・ごみ箱・ストリームの全ケースを含み、実測で300秒を超えるため有限の450秒を使う。
+        if (name is "folder-copy-gui") return 450;
         // CI osx-x64の正常完走は入力選択145.6秒＋critical17.4秒。両段階に有限の余裕を持たせる。
         if (arguments.Count > 0 && arguments[0] == "--self-test-independent-text-inputs") return 240;
         return arguments.Count > 0 && arguments[0] is
