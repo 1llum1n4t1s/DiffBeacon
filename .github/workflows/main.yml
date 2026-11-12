@@ -59,13 +59,12 @@ env:
 
 jobs:
   build-and-verify:
-    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
     name: Native AOT / ${{ matrix.rid }}
     runs-on: ${{ matrix.runs-on }}
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON((github.event_name != 'push' || github.ref == 'refs/heads/master') && '[{"rid":"win-x64","runs-on":["windows-2025"]},{"rid":"win-arm64","runs-on":["windows-11-arm"]},{"rid":"osx-arm64","runs-on":["self-hosted","macOS","ARM64","m3mb14","diffbeacon-isolated"]}]' || '[{"rid":"win-x64","runs-on":["windows-2025"]}]') }}
+        include: ${{ fromJSON((github.event_name != 'push' || github.ref == 'refs/heads/master') && '[{"rid":"win-x64","runs-on":["windows-2025"]},{"rid":"win-arm64","runs-on":["windows-11-arm"]},{"rid":"osx-arm64","runs-on":["macos-15"]}]' || '[{"rid":"win-x64","runs-on":["windows-2025"]}]') }}
     defaults:
       run:
         shell: pwsh
