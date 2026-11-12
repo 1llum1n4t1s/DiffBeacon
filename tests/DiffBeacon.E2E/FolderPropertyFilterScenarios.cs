@@ -8,6 +8,19 @@ using System.Text.Json;
 
 internal static class FolderPropertyFilterScenarios
 {
+    // oracleのInt64値をフィルター式のliteralへ投影する。従来どおり `…b`（Size literal）を基本にし、
+    // Size literalは原典通りdoubleを経由するため、doubleで正確に表せない値（2^53超の一部やInt64端点）だけ通常の整数literalにする。
+    // 通常の整数literalはInt64全域（直結の -9223372036854775808 を含む）を表せる。Size literalへの意図的な依存を変えないよう、
+    // 正確に表せる値は `…b` のまま残す。
+    private static string Int64Literal(string decimalText)
+    {
+        var value = long.Parse(decimalText, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture);
+        // 単項負号はSize変換の後に適用されるため、絶対値をdouble経由で正確に表せるかで判定する（Int64最小値の絶対値2^63は不可）。
+        var magnitude = value == long.MinValue ? 9223372036854775808d : Math.Abs((double)value);
+        var exact = magnitude < 9223372036854775808d && (long)magnitude == (value < 0 ? -value : value);
+        return exact ? decimalText + "b" : decimalText;
+    }
+
     internal static async Task RunAsync(string fixtures, Func<string, int, bool, string[], Task<CommandResult>> run,
         Action<string, bool, string> check, Action<string, string> skip, string python, bool replaceListsOnly = false,
         Action<string, Action<string>?>? observeStderr = null)
@@ -586,7 +599,8 @@ internal static class FolderPropertyFilterScenarios
                 using var relPathPrunedModel = JsonDocument.Parse(relPathPruned.Stdout);
                 check("folder side RelPath directory prune " + count, relPathPrunedModel.RootElement.GetProperty("entries").EnumerateArray().Any(entry => entry.GetProperty("path").GetString() == "blocked" && entry.GetProperty("filtered").GetBoolean())
                     && !Paths(relPathPrunedModel).Any(path => path.StartsWith("blocked/", StringComparison.Ordinal)), relPathPruned.Stdout);
-                foreach (var attribute in new[] { "DateStr", "Modified", "Path", "IsDirectory", "Prop" })
+                // 側prefix付きDateStrは対応済み（Docs/MIGRATION.md フォルダー式の最適化・全側評価）なので無効一覧に含めない。
+                foreach (var attribute in new[] { "Modified", "Path", "IsDirectory", "Prop" })
                     await run("folder-side-invalid-" + count + "-" + attribute, 2, false, ["--directory", roots[0], roots[^1], "--filter", Filter("side-invalid", "fe: Left" + attribute + " == None")]);
             }
         }
@@ -668,11 +682,11 @@ internal static class FolderPropertyFilterScenarios
                 var separate = await run("folder-full-path-" + count + "-separate-rules", 1, true, separateArguments.ToArray());
                 using (var model = JsonDocument.Parse(separate.Stdout))
                 {
+                    // 条件式は全側DIFFITEMで一度だけ評価する（Docs/MIGRATION.md フォルダー式の最適化・全側評価）。
+                    // shared.binは左11・右22なので Size == 11 は [true,false] となり、原典ContainsTrueで一致として全側が同じ結果になる。
                     var shared = Entry(model, "shared.bin");
-                    var left = shared.GetProperty("left");
-                    var right = shared.GetProperty("right");
-                    check("folder FullPath does not share separate local rules " + count,
-                        !left.GetProperty("filtered").GetBoolean() && right.GetProperty("filtered").GetBoolean(), model.RootElement.ToString());
+                    check("folder FullPath and Size rules share one all-side evaluation " + count,
+                        AllPresentSidesHaveFiltered(shared, count, false), model.RootElement.ToString());
                 }
                 var blocked = Path.Combine(roots[^1], "blocked");
                 Directory.CreateDirectory(Path.Combine(blocked, "deep"));
@@ -1142,7 +1156,7 @@ internal static class FolderPropertyFilterScenarios
                     ("lower-highbit-ci", "@ci IsWithin('a','é','z')"),
                     ("upper-highbit-cs", "@cs IsWithin('a','','é')"),
                     ("upper-highbit-ci", "@ci not IsWithin('a','','é')"),
-                    ("out-of-int64", "IsWithin(9223372036854775808,0,1) == None and IsWithin(1,0,9223372036854775808) == None"),
+                    // Int64範囲外の整数literalは字句解析で拒否する契約（FolderOptimizer/semantic-expectations.json）。下の拒否検査で確認する。
                     ("metadata", "AllEqual(Array(IsWithin(Size,0,4),IfEach(Exists,true,None)))"),
                     ("side-metadata", "IsWithin(LeftSize,2,4)"),
                     ("lower-metadata", "IsWithin(3,LeftSize,4)"),
@@ -1168,6 +1182,14 @@ internal static class FolderPropertyFilterScenarios
                     if (count == 3) invalidArguments.AddRange(["--middle", roots[1]]);
                     var result = await run("folder-iswithin-invalid-" + count + "-" + id, 2, false, invalidArguments.ToArray());
                     check("folder IsWithin invalid stdout empty " + count + " " + id, result.Stdout.Length == 0, result.Stdout + result.Stderr);
+                }
+                foreach (var (id, expression) in new[] { ("out-of-int64-value", "IsWithin(9223372036854775808,0,1) == None"), ("out-of-int64-upper", "IsWithin(1,0,9223372036854775808) == None") })
+                {
+                    List<string> rangeArguments = ["--directory", roots[0], roots[^1], "--filter", Filter("iswithin-" + count + "-" + id, "fe: " + expression)];
+                    if (count == 3) rangeArguments.AddRange(["--middle", roots[1]]);
+                    var result = await run("folder-iswithin-" + count + "-" + id, 2, false, rangeArguments.ToArray());
+                    check("folder IsWithin Int64 literal rejected " + count + " " + id,
+                        result.Stdout.Length == 0 && result.Stderr.Contains("64bit", StringComparison.Ordinal), result.Stdout + result.Stderr);
                 }
                 var overBudget = "@ci IsWithin(Array(" + string.Join(",", Enumerable.Repeat("LeftFullPath", 200)) + "),LeftFullPath,'z')";
                 // basenameだけでASCII 128 bytesを保証し、短い外部runでも必ず予算を超える。
@@ -1298,7 +1320,7 @@ internal static class FolderPropertyFilterScenarios
                     ("lower-highbit-ci", "@ci InRange('a','é','z')"),
                     ("upper-highbit-cs", "@cs InRange('a','','é')"),
                     ("upper-highbit-ci", "@ci not InRange('a','','é')"),
-                    ("out-of-int64", "InRange(9223372036854775808,0,1) == None and InRange(1,0,9223372036854775808) == None"),
+                    // Int64範囲外の整数literalは字句解析で拒否する契約。下の拒否検査で確認する。
                     ("metadata", "AllEqual(Array(InRange(Size,0,4),IfEach(Exists,true,None)))"),
                     ("side-metadata", "InRange(LeftSize,2,4)"),
                     ("lower-metadata", "InRange(3,LeftSize,4)"),
@@ -1321,6 +1343,12 @@ internal static class FolderPropertyFilterScenarios
                     var id = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(expression)))[..8];
                     var result = await run("folder-inrange-invalid-" + count + "-" + id, 2, false, ["--directory", roots[0], roots[^1], "--filter", Filter("inrange-invalid-" + count + "-" + id, "fe: " + expression)]);
                     check("folder InRange invalid stdout empty " + count + " " + id, result.Stdout.Length == 0, result.Stdout + result.Stderr);
+                }
+                foreach (var (id, expression) in new[] { ("out-of-int64-value", "InRange(9223372036854775808,0,1) == None"), ("out-of-int64-upper", "InRange(1,0,9223372036854775808) == None") })
+                {
+                    var result = await run("folder-inrange-" + count + "-" + id, 2, false, ["--directory", roots[0], roots[^1], "--filter", Filter("inrange-" + count + "-" + id, "fe: " + expression)]);
+                    check("folder InRange Int64 literal rejected " + count + " " + id,
+                        result.Stdout.Length == 0 && result.Stderr.Contains("64bit", StringComparison.Ordinal), result.Stdout + result.Stderr);
                 }
                 var overBudget = "@ci InRange(Array(" + string.Join(",", Enumerable.Repeat("LeftFullPath", 200)) + "),LeftFullPath,'z')";
                 // basenameだけでASCII 128 bytesを保証し、短い外部runでも必ず予算を超える。
@@ -1390,7 +1418,7 @@ internal static class FolderPropertyFilterScenarios
                     ("standalone-double-context", "Abs(-1.5) == 1.5"),
                     ("integer", "AllEqual(Array(Abs(-9007199254740993),9007199254740993)) and Abs(0) == 0 and Abs(7) == 7"),
                     ("int64-endpoints", "AllEqual(Array(Abs(-9223372036854775808),-9223372036854775808)) and Abs(-9223372036854775807) == 9223372036854775807 and Abs(9223372036854775807) == 9223372036854775807"),
-                    ("out-of-int64", "Abs(9223372036854775808) == None and Abs(-9223372036854775809) == None"),
+                    // Int64範囲外の整数literalは字句解析で拒否する契約。下の拒否検査で確認する。
                     ("finite", "AllEqual(Array(Abs(-1.5),1.5)) and AllEqual(Array(Abs(1.5),1.5)) and AllEqual(Array(Abs(-1.7976931348623157e308),1.7976931348623157e308))"),
                     ("subnormal", "AllEqual(Array(Abs(-5e-324),5e-324))"),
                     ("zero", "AllEqual(Array(Abs(-0.0),0.0)) and AllEqual(Array(Abs(0.0),0.0)) and not AllEqual(Array(Abs(-0.0),0))"),
@@ -1416,6 +1444,12 @@ internal static class FolderPropertyFilterScenarios
                     var id = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(expression)))[..8];
                     var result = await run("folder-abs-invalid-" + count + "-" + id, 2, false, ["--directory", roots[0], roots[^1], "--filter", Filter("abs-invalid-" + count + "-" + id, "fe: " + expression)]);
                     check("folder Abs invalid stdout empty " + count + " " + id, result.Stdout.Length == 0, result.Stdout + result.Stderr);
+                }
+                foreach (var (id, expression) in new[] { ("out-of-int64-positive", "Abs(9223372036854775808) == None"), ("out-of-int64-negative", "Abs(-9223372036854775809) == None") })
+                {
+                    var result = await run("folder-abs-" + count + "-" + id, 2, false, ["--directory", roots[0], roots[^1], "--filter", Filter("abs-" + count + "-" + id, "fe: " + expression)]);
+                    check("folder Abs Int64 literal rejected " + count + " " + id,
+                        result.Stdout.Length == 0 && result.Stderr.Contains("64bit", StringComparison.Ordinal), result.Stdout + result.Stderr);
                 }
                 check("folder Abs input SHA preserved " + count, inputs.All(item => Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(item.Key))) == item.Value), JsonSerializer.Serialize(inputs));
             }
@@ -1672,7 +1706,7 @@ internal static class FolderPropertyFilterScenarios
                 {
                     case "none": return "None";
                     case "bool": return value.GetProperty("value").GetBoolean() ? "true" : "false";
-                    case "int64": return value.GetProperty("valueDecimal").GetString() + "b";
+                    case "int64": return Int64Literal(value.GetProperty("valueDecimal").GetString()!);
                     case "double":
                         var number = value.GetProperty("value").GetDouble().ToString("R", CultureInfo.InvariantCulture);
                         return number.Contains('.') || number.Contains('E') || number.Contains('e') ? number : number + ".0";
@@ -1755,9 +1789,13 @@ internal static class FolderPropertyFilterScenarios
                 await Compare("argument-once-budget", "AllEqual(Array(ToDateTime(" + once + "),None))");
                 var expensive = "ToDateTime('" + new string('A', 4000) + "')";
                 await Reject("selected-budget", "AllEqual(Array(" + expensive + ",None))", true);
-                await Compare("if-short-circuit", "If(true,true,AllEqual(Array(" + expensive + ",None)))");
-                await Compare("and-short-circuit", "false and AllEqual(Array(" + expensive + ",None))", _ => false);
-                await Compare("or-short-circuit", "true or AllEqual(Array(" + expensive + ",None))");
+                // 実行時の短絡評価を検査するため @noopt で最適化を止める。原典 FunctionNode::Optimize は到達性に関係なく
+                // ToDateTime(文字列literal) を畳み込み、managedはその作業を共有65,536予算へ計上して超過を拒否する設計である。
+                await Compare("if-short-circuit", "@noopt If(true,true,AllEqual(Array(" + expensive + ",None)))");
+                await Compare("and-short-circuit", "@noopt false and AllEqual(Array(" + expensive + ",None))", _ => false);
+                await Compare("or-short-circuit", "@noopt true or AllEqual(Array(" + expensive + ",None))");
+                // 既定（最適化あり）では、選ばれない分岐でも畳み込みが予算を超えて拒否される。
+                await Reject("default-optimized-dead-branch-budget", "If(true,true,AllEqual(Array(" + expensive + ",None)))", true);
                 var halfBudget = "ToDateTime('" + new string('A', 2100) + "')";
                 await Reject("shared-array-budget", "AllEqual(Array(" + halfBudget + "," + halfBudget + "))", true);
                 foreach (var (id, expression) in new[] { ("zero", "ToDateTime()"), ("two", "ToDateTime('a','b')"), ("bare", "ToDateTime"), ("empty", "ToDateTime(,)"), ("extra-comma", "ToDateTime('a',)"), ("missing-close", "ToDateTime('a'"), ("unselected-malformed", "If(true,true,ToDateTime())") }) await Reject(id, expression);
@@ -1840,7 +1878,7 @@ internal static class FolderPropertyFilterScenarios
                 {
                     case "none": return "None";
                     case "bool": return value.GetProperty("value").GetBoolean() ? "true" : "false";
-                    case "int64": return value.GetProperty("valueDecimal").GetString() + "b";
+                    case "int64": return Int64Literal(value.GetProperty("valueDecimal").GetString()!);
                     case "double":
                         var number = value.GetProperty("value").GetDouble().ToString("R", CultureInfo.InvariantCulture);
                         return number.Contains('.') || number.Contains('E') || number.Contains('e') ? number : number + ".0";
@@ -4209,7 +4247,7 @@ print(json.dumps(dict(passed=True,commands=len(data['observations']),nativeBodyP
             {
                 "none" => "None",
                 "bool" => value.GetProperty("value").GetBoolean() ? "true" : "false",
-                "int64" => value.GetProperty("valueDecimal").GetString() + "b",
+                "int64" => Int64Literal(value.GetProperty("valueDecimal").GetString()!),
                 "double" => value.GetProperty("value").GetDouble().ToString("R", CultureInfo.InvariantCulture) is var number
                     && (number.Contains('.') || number.Contains('E') || number.Contains('e')) ? number : number + ".0",
                 "string" => Quote(new UTF8Encoding(false, true).GetString(Convert.FromHexString(value.GetProperty("utf8Hex").GetString()!))),
@@ -4386,7 +4424,7 @@ print(json.dumps(dict(passed=True,commands=len(data['observations']),nativeBodyP
                 var kind = value.GetProperty("type").GetString();
                 if (kind == "none") return "None";
                 if (kind == "string") return Quote(expected ? Encoding.UTF8.GetString(Convert.FromHexString(value.GetProperty("hex").GetString()!)) : value.GetProperty("value").GetString()!);
-                if (kind == "int") return value.GetProperty("value").GetString() + "b";
+                if (kind == "int") return Int64Literal(value.GetProperty("value").GetString()!);
                 if (kind == "double")
                 {
                     var number = value.GetProperty("value").GetString()!;
@@ -4501,7 +4539,7 @@ print(json.dumps(dict(passed=True,commands=len(data['observations']),nativeBodyP
                 var kind = value.GetProperty("type").GetString();
                 if (kind == "none") return "None";
                 if (kind == "string") return Quote(expected ? Encoding.UTF8.GetString(Convert.FromHexString(value.GetProperty("hex").GetString()!)) : value.GetProperty("value").GetString()!);
-                if (kind == "int") return value.GetProperty("value").GetString() + "b";
+                if (kind == "int") return Int64Literal(value.GetProperty("value").GetString()!);
                 if (kind == "double")
                 {
                     var number = value.GetProperty("value").GetString()!;
@@ -4626,7 +4664,7 @@ print(json.dumps(dict(passed=True,commands=len(data['observations']),nativeBodyP
                 var kind = value.GetProperty("type").GetString();
                 if (kind == "none") return "None";
                 if (kind == "string") return Quote(expected ? Encoding.UTF8.GetString(Convert.FromHexString(value.GetProperty("hex").GetString()!)) : value.GetProperty("value").GetString()!);
-                if (kind == "int") return value.GetProperty("value").GetString() + "b";
+                if (kind == "int") return Int64Literal(value.GetProperty("value").GetString()!);
                 if (kind == "double") return value.GetProperty("value").GetString();
                 if (kind == "bool") return value.GetProperty("value").GetRawText();
                 if (kind == "bytes") return value.GetProperty("value").GetString() switch
@@ -4908,10 +4946,15 @@ print(json.dumps(dict(passed=True,commands=len(data['observations']),nativeBodyP
                 {
                     ("zero", "Len() == 0"), ("two", "Len(1, 2) == 1"), ("three", "Len(1, 2, 3) == 1"),
                     ("trailing", "Len(1,) == 1"), ("leading", "Len(,1) == 1"),
-                    ("unclosed", "Len(1"), ("bare", "Len == 1"), ("nonboolean", "Len('x')")
+                    ("unclosed", "Len(1"), ("bare", "Len == 1")
                 })
                     await run("folder-len-invalid-" + id, 2, false,
                         ["--directory", roots[0], roots[^1], "--filter", Filter("len-invalid-" + id, "fe: " + expression + "\n")]);
+                // Bool以外の結果は拒否せず一致なしとして扱う（原典 FilterExpression::Evaluate の ContainsTrue）。差分があるので終了1。
+                var nonBoolean = await run("folder-len-nonboolean-no-match", 1, true,
+                    ["--directory", roots[0], roots[^1], "--filter", Filter("len-nonboolean", "fe: Len('x')\n")]);
+                check("folder Len nonboolean is no match", nonBoolean.Stderr.Length == 0
+                    && JsonDocument.Parse(nonBoolean.Stdout).RootElement.GetProperty("entries").EnumerateArray().All(entry => !entry.GetProperty("filtered").GetBoolean()), nonBoolean.Stdout + nonBoolean.Stderr);
             }
         }
 
@@ -5012,12 +5055,20 @@ print(json.dumps(dict(passed=True,commands=len(data['observations']),nativeBodyP
                     {
                         ("zero", "Strlen() == 0"), ("two", "Strlen(1, 2) == 1"), ("three", "Strlen(1, 2, 3) == 1"),
                         ("trailing", "Strlen(1,) == 1"), ("leading", "Strlen(,1) == 1"),
-                        ("unclosed", "Strlen(1"), ("bare", "Strlen == 1"), ("nonboolean", "Strlen('x')"), ("nonboolean-array", "Strlen(Name)")
+                        ("unclosed", "Strlen(1"), ("bare", "Strlen == 1")
                     })
                     {
                         var result = await run("folder-strlen-invalid-" + id, 2, false,
                             ["--directory", roots[0], roots[^1], "--filter", Filter("strlen-invalid-" + id, "fe: " + expression + "\n")]);
                         check("folder Strlen invalid stdout empty " + id, string.IsNullOrWhiteSpace(result.Stdout), result.Stdout + result.Stderr);
+                    }
+                    // Bool以外（scalar・配列）の結果は拒否せず一致なしとして扱う（原典 ContainsTrue）。差分があるので終了1。
+                    foreach (var (id, expression) in new[] { ("nonboolean", "Strlen('x')"), ("nonboolean-array", "Strlen(Name)") })
+                    {
+                        var result = await run("folder-strlen-" + id + "-no-match", 1, true,
+                            ["--directory", roots[0], roots[^1], "--filter", Filter("strlen-" + id, "fe: " + expression + "\n")]);
+                        check("folder Strlen " + id + " is no match", result.Stderr.Length == 0
+                            && JsonDocument.Parse(result.Stdout).RootElement.GetProperty("entries").EnumerateArray().All(entry => !entry.GetProperty("filtered").GetBoolean()), result.Stdout + result.Stderr);
                     }
                 }
                 check("folder Strlen inputs retained " + count, inputHashes.All(item => File.Exists(item.Key)
@@ -5959,12 +6010,16 @@ print(json.dumps(dict(passed=True,commands=len(data['observations']),nativeBodyP
                 {
                     using var model = await Compare(id, expression, "true");
                     var files = model.RootElement.GetProperty("entries").EnumerateArray().Where(entry => entry.GetProperty("kind").GetString() == "File").ToArray();
-                    check("folder attributes bare side local " + count + " " + id, files.Length == 16 && files.All(entry =>
+                    // 無prefixの属性は全側の配列になり、条件式は全側DIFFITEMで一度だけ評価する（Docs/MIGRATION.md）。
+                    // 原典ContainsTrueにより、どこか1側でも条件を満たせば全側が同じく一致になる。
+                    check("folder attributes bare side shared " + count + " " + id, files.Length == 16 && files.All(entry =>
                     {
                         var pattern = int.Parse(Path.GetFileNameWithoutExtension(entry.GetProperty("path").GetString()!)[6..], CultureInfo.InvariantCulture);
                         var names = count == 2 ? new[] { "left", "right" } : new[] { "left", "middle", "right" };
-                        return names.Select((name, side) => entry.GetProperty(name).GetProperty("filtered").GetBoolean()
-                            == !(id == "contains" ? Flags(attributes[side, pattern]).Contains('R') : attributes[side, pattern] == attributes[0, pattern])).All(value => value);
+                        var anySide = Enumerable.Range(0, count).Any(side =>
+                            id == "contains" ? Flags(attributes[side, pattern]).Contains('R') : attributes[side, pattern] == attributes[0, pattern]);
+                        return entry.GetProperty("filtered").GetBoolean() == !anySide
+                            && names.All(name => entry.GetProperty(name).GetProperty("filtered").GetBoolean() == !anySide);
                     }), model.RootElement.GetRawText());
                 }
                 var after = before.Select(item => new { path = item.Path, ticks = File.GetLastWriteTimeUtc(item.Path).Ticks, attributes = (long)File.GetAttributes(item.Path), sha256 = Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(item.Path))) }).ToArray();

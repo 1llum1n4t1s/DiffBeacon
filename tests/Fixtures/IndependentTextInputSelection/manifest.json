@@ -964,7 +964,7 @@
   ],
   "reusedFixedScope": {
     "path": "tests/Fixtures/IndependentArchiveText",
-    "manifestSha256": "53E3EBA944D9DDCB70EF02F2A876276960DCC025F4E2F9C21C5AFDC043ADE49D",
+    "manifestSha256": "186172CBD7E021367AA86B1826099ADA8DE71720EF8B726FDA237C561640B294",
     "files": [
       {
         "path": "LICENSE",
@@ -974,7 +974,7 @@
       {
         "path": "README.md",
         "size": 4874,
-        "sha256": "84BCC673EA4E2E97AACC516CBE359B15280199551CA655A238E662F8B4D31CB6"
+        "sha256": "9AE99479928A478EC77D2645D3DB627536DE727E9D8F0F3521E5D97C46BCCB7A"
       },
       {
         "path": "copy-cases.json",
