@@ -134,7 +134,10 @@ jobs:
           $zReference = (Resolve-Path -LiteralPath (Join-Path '${{ env.DIFFBEACON_RUN_ROOT }}/z-reference' $decoderName)).Path
           dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output '${{ env.DIFFBEACON_RUN_ROOT }}/e2e' --app $manifest.executable --z-reference $zReference
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      # 実OSクリップボードの別プロセス検証はクリーンなGitHub提供runnerに限る。
+      # self-hosted（M3MB14）は利用者の実機で、検証用に利用者のクリップボードを置換しない。
       - name: Verify actual OS clipboard across application processes
+        if: runner.environment == 'github-hosted'
         run: |
           $manifest = Get-Content '${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
           & $manifest.executable --clipboard-self-test '${{ env.DIFFBEACON_RUN_ROOT }}/verification/desktop-clipboard' --write
