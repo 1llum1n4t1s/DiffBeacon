@@ -224,9 +224,11 @@ public sealed partial class MainWindow
         return item;
     }
 
-    // 本家の「開く」は比較対象の選択画面を出す。現状はペイン上部のパス欄を選択画面として使うため、左のパス欄へ移動する。
-    private void FocusPaths()
+    // 本家の「開く」は比較対象の選択画面を出す。ペイン上部の選択画面（ComparisonPane.OpenView.cs）を
+    // スクロールで見える位置へ戻し、1 番目の欄へ移動する。
+    internal void FocusPaths()
     {
+        ActivePane.OpenView?.BringIntoView();
         ActivePane.LeftPath.Focus();
         ActivePane.LeftPath.SelectAll();
     }

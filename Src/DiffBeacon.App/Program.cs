@@ -18,6 +18,8 @@ public static class Program
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-drag-only")
             return HeadlessSelfTest.Run(args[1], imageDragOnly: true);
         // 本家WinMerge風のフォルダー比較一覧（列・アイコン・行の色・文言）だけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--open-view-only")
+            return HeadlessSelfTest.Run(args[1], openViewOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-view-only")
             return HeadlessSelfTest.Run(args[1], folderViewOnly: true);
         // 本家WinMerge風の外枠（メニュー・ツールバー・差分色）だけを検証する。

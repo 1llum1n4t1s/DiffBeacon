@@ -376,6 +376,14 @@ Invoke-DevDotnet $app --self-test $runRoot/verification/frame --frame-only
 Invoke-DevDotnet $app --self-test $runRoot/verification/folder-view --folder-view-only
 ```
 
+## 本家WinMerge風の「ファイルまたはフォルダーの選択」欄
+
+比較タブ上部の選択欄（`ComparisonPane.OpenView.cs`）で、既存のパス欄・フィルター欄・比較ボタンを複製せず載せ替えていること、1 番目＝左／2 番目＝右／3 番目＝祖先・中央の並び、`Japanese.po` の見出しと交換ボタンの説明、交換ボタンが対応する二つの欄だけを入れ替えること、「参照(B)...」がファイル／フォルダーを選べることを確認します。最小ウィンドウで選択欄をスクロールで隠してから「開く」を実行し、選択欄が見える位置へ戻って 1 番目の欄へ移動することも確認します。通常（1280×850）と最小（850×550）の空のタブで比較ボタンがスクロールなしで見えること、比較後は上部の高さが本文の3割までに戻ることを、`open-view-normal.png`／`open-view-minimum.png` と `open-view-bounds.json` で残します。アプリ全体UI自己検証にも登録されています。
+
+```powershell
+Invoke-DevDotnet $app --self-test $runRoot/verification/open-view --open-view-only
+```
+
 ## 独立三側Textの入力選択GUI
 
 正本workroot配下の新しいrunを使う。次の限定E2Eは実アプリを別processで起動し、対応する独立Python readerを集計前に実行する。全体E2E／全体UIにも登録されるが、限定成功を全体実行や4RID Native AOTの資格へ読み替えない。

@@ -235,17 +235,13 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         // 本家のMDI子ウィンドウと同様に枠いっぱいへ広げ、下端をステータスバーにする。
         var root = new DockPanel();
         var top = new StackPanel { Spacing = 6, Margin = new Thickness(8, 6) };
-        var paths = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*,*"), ColumnSpacing = 8 };
-        paths.Children.Add(PathPicker(LeftPath));
-        var ancestor = PathPicker(BasePath); Grid.SetColumn(ancestor, 1); paths.Children.Add(ancestor);
-        var right = PathPicker(RightPath); Grid.SetColumn(right, 2); paths.Children.Add(right);
-        top.Children.Add(paths);
+        // 本家の「ファイルまたはフォルダーの選択」画面に合わせた入力欄（ComparisonPane.OpenView.cs）。
+        top.Children.Add(BuildOpenView());
         var actions = new WrapPanel { Orientation = Orientation.Horizontal };
         actions.Children.Add(_mode);
         _provider.ItemsSource = _providers.Providers.Select(x => x.Id).ToArray(); _provider.SelectedIndex = 0;
         actions.Children.Add(_provider);
         InitializeTextInputs(actions);
-        actions.Children.Add(CompareButton);
         AddAction(actions, "再比較", () => ObserveCriticalTextSaveTask("route-compare", RefreshEditorsAsync()));
         AddAction(actions, "← 選択差分", () => CopySelectionAsync(false));
         actions.Children.Add(CopyRightButton);
@@ -271,7 +267,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(projectActions, "HTMLレポート", ExportReportAsync);
         AddAction(projectActions, "外部ツールを追加", AddExternalProviderAsync);
         projectActions.Children.Add(_externalFormat);
-        foreach (var item in new Control[] { _recursive, _folderMode, _excludes, _fileFilter, _showFilteredDirectories }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
+        foreach (var item in new Control[] { _folderMode, _excludes, _showFilteredDirectories }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
         top.Children.Add(projectActions);
         var options = new WrapPanel { Orientation = Orientation.Horizontal };
         foreach (var control in new Control[] { _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex, _find }) { control.Margin = new Thickness(8, 4); options.Children.Add(control); }
@@ -331,27 +327,6 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     }
 
     private static TextBox Editor() => new() { Text = "", AcceptsReturn = true, AcceptsTab = true, TextWrapping = TextWrapping.NoWrap, FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 14, HorizontalContentAlignment = HorizontalAlignment.Stretch };
-    private Control PathPicker(TextBox box)
-    {
-        var row = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto,Auto") };
-        row.Children.Add(box);
-        var file = new Button { Content = "…", Padding = new Thickness(8) };
-        file.Click += async (_, _) => await GuardAsync(async () =>
-        {
-            var selected = await _owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions { AllowMultiple = false });
-            if (selected.Count > 0) box.Text = selected[0].TryGetLocalPath();
-        });
-        Grid.SetColumn(file, 1); row.Children.Add(file);
-        var folder = new Button { Content = "▣", Padding = new Thickness(8) };
-        folder.Click += async (_, _) => await GuardAsync(async () =>
-        {
-            var selected = await _owner.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions { AllowMultiple = false });
-            if (selected.Count > 0) box.Text = selected[0].TryGetLocalPath();
-        });
-        Grid.SetColumn(folder, 2); row.Children.Add(folder);
-        return row;
-    }
-
     private void AddAction(Panel panel, string label, Func<Task> action)
     {
         var button = new Button { Content = label, Margin = new Thickness(3), Padding = new Thickness(9, 6) };
@@ -669,6 +644,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         // 本家のファイル比較画面は本文が主役なので、共通の設定・操作欄は本文の3割までに抑え、残りはスクロールで参照する。
         var fraction = independentText ? .25 : folder ? .15 : _views.SelectedItem == _specialTab
             && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel or TablePanel) ? .2 : .3;
+        // 本家は比較前に選択画面だけを表示する。まだ何も比較していない間は、選択画面を比較ボタンまで見せる。
+        if (!HasComparisonContent)
+        {
+            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Max(80, Bounds.Height * .85) : double.PositiveInfinity;
+            return;
+        }
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, independentText ? 100 : folder ? 60 : 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)

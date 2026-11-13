@@ -113,6 +113,8 @@ public sealed partial class ComparisonPane
     private void OnCurrentDiffChanged()
     {
         _locationPane.SetDiff(CurrentDiff);
+        // 比較の有無で、選択画面（OpenView）に使える高さが変わる。
+        UpdateComparisonToolbarHeight();
         // 帯のパスは比較した時点の入力パスを示す。編集欄だけの比較ではパスが空なので何も出さない。
         _leftHeaderPath.Text = CurrentDiff is null ? "" : LeftPath.Text ?? "";
         _rightHeaderPath.Text = CurrentDiff is null ? "" : RightPath.Text ?? "";
