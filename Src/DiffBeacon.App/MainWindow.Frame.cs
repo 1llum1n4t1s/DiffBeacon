@@ -50,7 +50,9 @@ public sealed partial class MainWindow
             Separator(),
             Popup("保存(_E)",
                 Pane("左側のファイルを保存(_L)", null, FrameCommand.SaveLeft),
-                Pane("右側のファイルを保存(_R)", null, FrameCommand.SaveRight)),
+                Pane("右側のファイルを保存(_R)", null, FrameCommand.SaveRight),
+                // マージ結果の保存は本家に無い DiffBeacon 独自の操作。ペイン内のボタンからメニューへ移した。
+                Pane("マージ結果を保存(_M)", null, FrameCommand.SaveMergeResult)),
             Popup("名前を付けて保存(_A)",
                 Pane("名前を付けて左側のファイルを保存(_L)...", null, FrameCommand.SaveLeftAs),
                 Pane("名前を付けて右側のファイルを保存(_R)...", null, FrameCommand.SaveRightAs)),

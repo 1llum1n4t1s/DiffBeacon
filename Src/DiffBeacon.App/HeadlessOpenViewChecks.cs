@@ -40,6 +40,15 @@ internal static class HeadlessOpenViewChecks
         check("open view swap captions follow Japanese.po", new[] { "1 番目と 2 番目を交換", "2 番目と 3 番目を交換", "1 番目と 3 番目を交換" }.All(texts.Contains), string.Join("|", texts));
         check("open view include subfolders follows Japanese.po", Equals(pane.RecursiveBox.Content, "サブフォルダーを含める(_I)"), pane.RecursiveBox.Content?.ToString() ?? "");
 
+        // メニュー・ツールバーにある操作はペインのボタンから外し、メニューから実行できること。
+        string[] removed = ["前の差分", "次の差分", "パッチ出力", "結果を保存", "次の競合", "HTMLレポート", "外部ツールを追加"];
+        var paneLabels = pane.GetVisualDescendants().OfType<Button>().Select(button => button.Content as string).ToHashSet();
+        check("pane no longer repeats menu-only buttons", !removed.Any(paneLabels.Contains), string.Join("|", removed.Where(paneLabels.Contains)));
+        var menuHeaders = (window.FrameMenu?.Items.OfType<MenuItem>() ?? []).SelectMany(Flatten).Select(item => item.Header as string).ToHashSet();
+        check("menus carry the moved operations", new[] { "前の差異(_P)", "次の差異(_N)", "次のコンフリクト(_X)", "パッチの生成(_G)...", "レポートの生成(_R)...",
+            "外部ツールを追加(_L)...", "マージ結果を保存(_M)" }.All(menuHeaders.Contains), string.Join("|", menuHeaders));
+        static IEnumerable<MenuItem> Flatten(MenuItem item) => new[] { item }.Concat(item.Items.OfType<MenuItem>().SelectMany(Flatten));
+
         // 交換ボタンは対応する二つの欄だけを入れ替える。
         var swaps = view.GetVisualDescendants().OfType<Button>().Where(button => Equals(button.Content, "⇅")).ToArray();
         check("open view has three swap buttons", swaps.Length == 3, swaps.Length.ToString());

@@ -13,7 +13,7 @@ internal enum FrameCommand
     Undo, Redo, Find,
     FirstDifference, PreviousDifference, CurrentDifference, NextDifference, LastDifference,
     NextConflict, CopyToRight, CopyToLeft, CopyToRightAndAdvance, CopyToLeftAndAdvance, AutoMerge,
-    GeneratePatch, GenerateReport, GenerateArchive, AddExternalTool, Stop,
+    GeneratePatch, GenerateReport, GenerateArchive, AddExternalTool, Stop, SaveMergeResult,
 }
 
 public sealed partial class ComparisonPane
@@ -52,6 +52,7 @@ public sealed partial class ComparisonPane
         FrameCommand.GenerateArchive => ObserveCriticalTextSaveTask("archive-create", CreateArchiveAsync()),
         FrameCommand.AddExternalTool => AddExternalProviderAsync(),
         FrameCommand.Stop => Run(StopAllOperations),
+        FrameCommand.SaveMergeResult => SaveResultAsync(),
         _ => throw new ArgumentOutOfRangeException(nameof(command), command, null),
     });
 

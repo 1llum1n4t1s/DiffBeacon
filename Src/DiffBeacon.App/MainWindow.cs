@@ -237,6 +237,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var top = new StackPanel { Spacing = 6, Margin = new Thickness(8, 6) };
         // 本家の「ファイルまたはフォルダーの選択」画面に合わせた入力欄（ComparisonPane.OpenView.cs）。
         top.Children.Add(BuildOpenView());
+        // 本家と同じくメニュー・ツールバーにある操作（前／次の差分、次の競合、パッチ・レポートの生成、外部ツールの追加、
+        // マージ結果の保存）はペインから外し、外枠の FrameCommand だけで実行する。残すボタンは自己検証が名前で操作する。
         var actions = new WrapPanel { Orientation = Orientation.Horizontal };
         actions.Children.Add(_mode);
         _provider.ItemsSource = _providers.Providers.Select(x => x.Id).ToArray(); _provider.SelectedIndex = 0;
@@ -246,26 +248,19 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "← 選択差分", () => CopySelectionAsync(false));
         actions.Children.Add(CopyRightButton);
         CopyRightButton.Click += async (_, _) => await GuardAsync(() => CopySelectionAsync(true));
-        AddAction(actions, "前の差分", () => { NavigateDifference(-1); return Task.CompletedTask; });
-        AddAction(actions, "次の差分", () => { NavigateDifference(1); return Task.CompletedTask; });
         AddAction(actions, "左を保存", () => ObserveCriticalTextSaveTask("左を保存", SaveAsync(false)));
         AddAction(actions, "右を保存", () => ObserveCriticalTextSaveTask("右を保存", SaveAsync(true)));
         AddAction(actions, "左を外部保存", () => ObserveCriticalTextSaveTask("左を外部保存", SaveTextAsAsync(false)));
         AddAction(actions, "右を外部保存", () => ObserveCriticalTextSaveTask("右を外部保存", SaveTextAsAsync(true)));
-        AddAction(actions, "パッチ出力", ExportPatchAsync);
         AddAction(actions, "自動マージ", MergeThreeWayAsync);
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
         AddAction(actions, "アーカイブ作成", () => ObserveCriticalTextSaveTask("archive-create", CreateArchiveAsync()));
-        AddAction(actions, "結果を保存", SaveResultAsync);
-        AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
         AddAction(actions, "中止", () => { StopAllOperations(); return Task.CompletedTask; });
         top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", () => ObserveCriticalTextSaveTask("project-open", OpenProjectAsync()));
         AddAction(projectActions, "プロジェクトを保存", () => ObserveCriticalTextSaveTask("project-save", SaveProjectAsync()));
         AddAction(projectActions, "比較の設定…", EditProjectOptionsAsync);
-        AddAction(projectActions, "HTMLレポート", ExportReportAsync);
-        AddAction(projectActions, "外部ツールを追加", AddExternalProviderAsync);
         projectActions.Children.Add(_externalFormat);
         foreach (var item in new Control[] { _folderMode, _excludes, _showFilteredDirectories }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
         top.Children.Add(projectActions);
