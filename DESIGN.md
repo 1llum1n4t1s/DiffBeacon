@@ -22,6 +22,8 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 比較タブの見出しはFluentの既存presenterを最大110pxの縦スクロールへ入れ、多数のタブでも本文を確保する。選択変更・見出しviewportのサイズ変更・template再適用で選択中の見出しを表示範囲へ戻す。再配置後の単一postへ集約し、常時LayoutUpdatedでスクロールを繰り返さない。
 
+外枠と比較画面は本家WinMergeの構成に寄せる。`MainWindow.Frame` が本家 `IDR_MERGEDOCTYPE` の順のメニューバー、`g_toolbarFileCmp3` の並びのツールバー（埋込みの本家画像を16pxで表示）、本家アクセラレータ、ステータスバーを持ち、未移植コマンドは無効表示にする。配色は `WinMergeColors` に本家の既定値（差分・選択・フォルダー行の色）を集約し、既定は明るい配色とする。ファイル比較の「差分」タブは `LocationPane`（全行に対する差分ブロックの見取り図。クリック・ドラッグで本文を移動）、ペイン上のファイル名の帯、下段のDiffペインで構成し、本文は従来の整列一覧（`DiffList`）を使う。編集は「編集」タブで行い、左右本文の直接編集は未対応。フォルダー比較の一覧（`ComparisonPane.FolderList`）は本家 `DirView` の列・状態アイコン・行色・比較結果の文言を使い、列幅は固定で並べ替え・表示切替は未対応。これらは表示層だけで、比較モデル・保存・コピーの契約は変えない。検証は限定 `--frame-only`・`--folder-view-only` と、全体UI自己検証の `HeadlessFrameChecks`・`HeadlessFolderViewChecks` で行い、到達点と本家との差は [Docs/MIGRATION.md](Docs/MIGRATION.md) を正本とする。
+
 ## データフロー
 
 独立三者Textはproject format v6の`TextInputs`で`Independent`と三側の`Physical`／`Untitled`／実在葉の`Archive`を明示し、空pathの無題文書を不在と区別する。descriptorなしのv1–5は固定祖先の既存意味を保つ。新descriptorの`FixedAncestor`では`Untitled`を拒否し、中央の`Absent`と物理／内包祖先は既存経路へ渡す。独立三者は左0・中央1・右2を各々読み、選択したpairだけを既存GNU／WordDiffで比較する。祖先に対する競合分類を混ぜない。三側の本文・revision・保存点・readonlyを保持し、候補の読込み／再比較は共有operationの取消・役割／pair／入力／設定／全三側の状態を再検査して採用する。UIのpair変更と再比較は非同期で、設定不正・取消・古い完了では採用済み差分と本文を保持する。
