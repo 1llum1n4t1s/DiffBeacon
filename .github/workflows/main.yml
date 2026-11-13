@@ -3,6 +3,11 @@ name: .NET CI
 # 検証専用のCI。配布物はWindowsをこのPCで署名付きビルドし、macOSはM3MB14でビルドするため、
 # CIの発行物は配布に使わない。作業ブランチへのpushはwin-x64だけで素早く確認し、
 # 全構成（win-arm64・osx-arm64を含む）はmasterへのpush、PR、手動実行、週1回の定期実行で回す。
+#
+# 所要時間を抑えるため、同じ検査を二度流さない・同じコードの網羅を全構成で繰り返さない。
+# - 全体自己検証は、E2Eの限定selectorが独立readerと一緒に同じ検査を実行する単位を省く（-SkipE2ECoveredSelfTest）。
+# - 式評価などOS非依存の網羅オラクルは、全構成を回す実行のwin-x64だけで全件（--oracles full）流す。
+#   win-arm64・osx-arm64と、作業ブランチのpushは代表だけの smoke とし、省いた単位は skipped としてE2Eの結果に残る。
 on:
   workflow_dispatch:
   schedule:
@@ -65,7 +70,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON((github.event_name != 'push' || github.ref == 'refs/heads/master') && '[{"rid":"win-x64","runs-on":["windows-2025"]},{"rid":"win-arm64","runs-on":["windows-11-arm"]},{"rid":"osx-arm64","runs-on":["self-hosted","macOS","ARM64","m3mb14"]}]' || '[{"rid":"win-x64","runs-on":["windows-2025"]}]') }}
+        include: ${{ fromJSON((github.event_name != 'push' || github.ref == 'refs/heads/master') && '[{"rid":"win-x64","runs-on":["windows-2025"],"oracles":"full"},{"rid":"win-arm64","runs-on":["windows-11-arm"],"oracles":"smoke"},{"rid":"osx-arm64","runs-on":["self-hosted","macOS","ARM64","m3mb14"],"oracles":"smoke"}]' || '[{"rid":"win-x64","runs-on":["windows-2025"],"oracles":"smoke"}]') }}
     defaults:
       run:
         shell: pwsh
@@ -122,7 +127,7 @@ jobs:
           # Windowsの全体Native AOT自己検証も10分を超えるため、4構成に20分の有限枠を使う。
           $timeoutSeconds = 1200
           # 中間出力も同じrun root配下へ置く。省略するとGetTempPath()になり、macOSの /var はリンクなので拒否される。
-          ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -OutputRoot (Join-Path $env:DIFFBEACON_RUN_ROOT 'publish') -BuildArtifactsPath (Join-Path $env:DIFFBEACON_RUN_ROOT 'build') -VerificationTimeoutSeconds $timeoutSeconds
+          ./build/Publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -OutputRoot (Join-Path $env:DIFFBEACON_RUN_ROOT 'publish') -BuildArtifactsPath (Join-Path $env:DIFFBEACON_RUN_ROOT 'build') -VerificationTimeoutSeconds $timeoutSeconds -SkipE2ECoveredSelfTest
       - name: Build independent Z decoder for verification
         run: |
           pwsh -NoProfile -File build/Build-ZReference.ps1 -OutputDirectory '${{ env.DIFFBEACON_RUN_ROOT }}/z-reference'
@@ -132,7 +137,7 @@ jobs:
           $manifest = Get-Content '${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/publish-manifest.json' -Raw | ConvertFrom-Json
           $decoderName = if ($IsWindows) { 'ncompress.exe' } else { 'ncompress' }
           $zReference = (Resolve-Path -LiteralPath (Join-Path '${{ env.DIFFBEACON_RUN_ROOT }}/z-reference' $decoderName)).Path
-          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output '${{ env.DIFFBEACON_RUN_ROOT }}/e2e' --app $manifest.executable --z-reference $zReference
+          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output '${{ env.DIFFBEACON_RUN_ROOT }}/e2e' --app $manifest.executable --z-reference $zReference --oracles ${{ matrix.oracles }}
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       # 実OSクリップボードの別プロセス検証はクリーンなGitHub提供runnerに限る。
       # self-hosted（M3MB14）は利用者の実機で、検証用に利用者のクリップボードを置換しない。

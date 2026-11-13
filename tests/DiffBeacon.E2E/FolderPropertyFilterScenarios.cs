@@ -23,7 +23,7 @@ internal static class FolderPropertyFilterScenarios
 
     internal static async Task RunAsync(string fixtures, Func<string, int, bool, string[], Task<CommandResult>> run,
         Action<string, bool, string> check, Action<string, string> skip, string python, bool replaceListsOnly = false,
-        Action<string, Action<string>?>? observeStderr = null)
+        Action<string, Action<string>?>? observeStderr = null, bool smoke = false)
     {
         var work = Path.Combine(fixtures, "folder-properties"); Directory.CreateDirectory(work);
         var fixture = Path.GetFullPath("tests/Fixtures/FolderPropertyFilters");
@@ -128,23 +128,23 @@ internal static class FolderPropertyFilterScenarios
             var path = Path.Combine(work, id + ".flt"); File.WriteAllText(path, text, new UTF8Encoding(text.Contains('\0'))); return path;
         }
         if (replaceListsOnly) { await RegexReplaceListValues(); await FolderListDependencyCommands(); await FolderListDependencyCommands(literal: true); await FolderSupplementaryCaseFoldScenarios.RunAsync(fixtures, run, check, python); return; }
+        // smoke: 式評価の網羅オラクル（OS非依存の純粋な値計算。約8,000命令）は、win-x64の全件実行と同じコードを通るため、
+        // win-arm64・osx-arm64と作業ブランチのpushでは重い単位だけを省き、軽い単位（下の Len・Trim など）は全OSで実行する。
+        // 省いた単位は skipped として記録し、成功扱いにしない。
+        void Heavy(string unit) => skip("folder oracle " + unit, "smoke: 網羅オラクルはwin-x64の全件実行（--oracles full）で検証する。");
         await LoggingValues();
-        await RegexCountValues();
-        await RegexPositionValues();
-        await RegexReplaceValues();
-        await ReplaceValues();
-        await RegexReplaceListValues();
-        await FolderListDependencyCommands(); await FolderListDependencyCommands(literal: true);
-        await FolderSupplementaryCaseFoldScenarios.RunAsync(fixtures, run, check, python);
-        await FolderProviderNullScenarios.RunAsync(fixtures, run, check, skip, python);
-        await FolderSideFunctionScenarios.RunAsync(fixtures, run, check, skip, python);
-        await FolderOptimizerScenarios.RunAsync(fixtures, run, check, skip, python);
+        if (smoke) Heavy("regex count/position/replace/replace-list values"); else { await RegexCountValues(); await RegexPositionValues(); await RegexReplaceValues(); await ReplaceValues(); await RegexReplaceListValues(); }
+        if (smoke) Heavy("list dependency, supplementary case fold, provider null, side functions, optimizer");
+        else
+        {
+            await FolderListDependencyCommands(); await FolderListDependencyCommands(literal: true);
+            await FolderSupplementaryCaseFoldScenarios.RunAsync(fixtures, run, check, python);
+            await FolderProviderNullScenarios.RunAsync(fixtures, run, check, skip, python);
+            await FolderSideFunctionScenarios.RunAsync(fixtures, run, check, skip, python);
+            await FolderOptimizerScenarios.RunAsync(fixtures, run, check, skip, python);
+        }
         await ClockValues();
-        await WidthValues();
-        await ToDateTimeValues();
-        await ToDateTimeMetadataDependency();
-        await ToDateStrValues();
-        await StartOfValues();
+        if (smoke) Heavy("width and date conversion values"); else { await WidthValues(); await ToDateTimeValues(); await ToDateTimeMetadataDependency(); await ToDateStrValues(); await StartOfValues(); }
         await NormalizeValues();
         await SideAttributes();
         await FlagAttributes();
@@ -164,12 +164,8 @@ internal static class FolderPropertyFilterScenarios
         await Strlen();
         await TrimValues();
         await CasingValues();
-        await StringSearchValues();
-        await NumericConversionValues();
-        await AbsValues();
-        await InRangeValues();
-        await IsWithinValues();
-        await SubstrValues();
+        if (smoke) Heavy("string search, numeric conversion, abs, in-range, is-within, substr values");
+        else { await StringSearchValues(); await NumericConversionValues(); await AbsValues(); await InRangeValues(); await IsWithinValues(); await SubstrValues(); }
         if (OperatingSystem.IsMacOS())
         {
             var left = Path.Combine(work, "actual-fifo", "left"); var right = Path.Combine(work, "actual-fifo", "right");

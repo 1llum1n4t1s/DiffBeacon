@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 // 誤記や旧selectorを通常全体実行へ落とさず、成果物作成/アプリ起動より先に拒否する。
-var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip", "--bare-compression-fixtures" };
+var valueOptions = new HashSet<string>(StringComparer.Ordinal) { "--output", "--app", "--python", "--z-reference", "--z-sevenzip", "--bare-compression-fixtures", "--oracles" };
 var selectors = new HashSet<string>(StringComparer.Ordinal)
 {
     "--folder-properties-only", "--folder-replace-lists-only", "--folder-optimizer-only", "--folder-side-functions-only",
@@ -38,6 +38,10 @@ for (var argumentIndex = 0; argumentIndex < args.Length; argumentIndex++)
     else error = "不明なE2Eオプションです。";
     if (error is not null) { Console.Error.WriteLine(error); return 2; }
 }
+// 網羅オラクルの範囲。full（既定）は全件、smokeは同一コードの網羅を代表だけに絞る（win-arm64・osx-arm64と作業ブランチのpush用）。
+var oraclesMode = Option("--oracles") ?? "full";
+if (oraclesMode is not ("full" or "smoke")) { Console.Error.WriteLine("--oracles は full か smoke を指定してください。"); return 2; }
+var smokeOracles = oraclesMode == "smoke";
 
 var outputArgument = Option("--output") ?? Path.Combine(Path.GetTempPath(), "Codex", "DiffBeacon", "e2e-" + Guid.NewGuid().ToString("N"));
 var output = Path.GetFullPath(outputArgument);
@@ -1895,7 +1899,7 @@ try
     else if (args.Contains("--folder-replace-lists-only", StringComparer.Ordinal))
         await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", replaceListsOnly: true, observeStderr: ObserveStderr);
     else if (args.Contains("--folder-properties-only", StringComparer.Ordinal))
-        await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", observeStderr: ObserveStderr);
+        await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", observeStderr: ObserveStderr, smoke: smokeOracles);
     // 側別6関数（固定原本2,094命令＋子Optimize fold）だけを実行する。--folder-properties-only の部分集合で、
     // 約1万命令の全folder-propertiesを流さずにこの経路の変更を確認するための限定実行。
     else if (args.Contains("--folder-side-functions-only", StringComparer.Ordinal))
@@ -2258,7 +2262,7 @@ try
     await BinaryReplaceScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await ImageDefaultsScenarios.RunAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await FolderModelScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
-    await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", observeStderr: ObserveStderr);
+    await FolderPropertyFilterScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python", observeStderr: ObserveStderr, smoke: smokeOracles);
     await FolderCopyScenarios.RunAsync(fixtures, Run, Check, Skip, Option("--python") ?? "python");
     await IndependentTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
     await IndependentArchiveTextScenarios.RunAsync(fixtures, output, Option("--python") ?? "python", Run, Check);
@@ -2283,32 +2287,34 @@ try
             await TableColumnRangeScenarios.RunAsync(output, fixtures, Run, Check);
     await LineTransformScenarios.RunGuiAsync(fixtures, Run, Check, Option("--python") ?? "python");
     await LineTransformScenarios.RunAsync(output, fixtures, Run, Check);
+    // smoke: 純粋な式評価の網羅（時刻・暦・地域に依存しない単位）はwin-x64の全件実行で検証する。
+    if (smokeOracles) Skip("line transform pure expression oracles", "smoke: 網羅オラクルはwin-x64の全件実行（--oracles full）で検証する。");
     await LineTransformLoggingScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-        await LineTransformArrayScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformSearchScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformReplaceScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformRangeScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformWithinScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformAggregateScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformSizeLiteralScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformDurationLiteralScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformVersionLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformArrayScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformSearchScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformReplaceScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformRangeScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformWithinScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformAggregateScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformSizeLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformDurationLiteralScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformVersionLiteralScenarios.RunAsync(output, fixtures, Run, Check);
         await LineTransformTimestampLiteralScenarios.RunAsync(output, fixtures, Run, Check);
         await LineTransformTimestampFunctionScenarios.RunAsync(output, fixtures, Run, Check);
         await LineTransformTimestampCalendarScenarios.RunAsync(output, fixtures, Run, Check);
         await LineTransformTimestampClockScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-        await LineTransformCasingScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformUnicodeNormalizationScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformCharacterMappingScenarios.RunAsync(output, fixtures, Run, Check);
-        await LineTransformContentScenarios.RunAsync(output, fixtures, Run, Check);
-    await LineTransformRegexScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-    await LineTransformMatchesOperatorScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-        await LineTransformREContainsScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-        await LineTransformLikeScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-    await LineTransformMatchScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-    await LineTransformMatchMetricScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-        await LineTransformMatchInsideScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
-        await LineTransformReplaceListScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        if (!smokeOracles) await LineTransformCasingScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformUnicodeNormalizationScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformCharacterMappingScenarios.RunAsync(output, fixtures, Run, Check);
+        if (!smokeOracles) await LineTransformContentScenarios.RunAsync(output, fixtures, Run, Check);
+    if (!smokeOracles) await LineTransformRegexScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    if (!smokeOracles) await LineTransformMatchesOperatorScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        if (!smokeOracles) await LineTransformREContainsScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        if (!smokeOracles) await LineTransformLikeScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    if (!smokeOracles) await LineTransformMatchScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+    if (!smokeOracles) await LineTransformMatchMetricScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        if (!smokeOracles) await LineTransformMatchInsideScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
+        if (!smokeOracles) await LineTransformReplaceListScenarios.RunAsync(output, fixtures, Run, Check, Option("--python") ?? "python");
     await GnuLineScenarios.RunAsync(output, fixtures, Run, Check);
     await GnuTextScenarios.RunAsync(output, Run, Check);
     await GnuTableScenarios.RunAsync(output, fixtures, Run, Check);

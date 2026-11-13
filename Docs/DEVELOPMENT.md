@@ -48,6 +48,14 @@ python -c $verifyFixtureGitBytes 'tests/Fixtures/Archives/TarZ/manifest.json' ':
 
 commit後も第2引数を`HEAD:tests/Fixtures/Archives/TarZ/manifest.json`へ替えて照合する。CIはそのcommitの固定SHAを検査し、ローカル作業中のbytesと区別する。
 
+## CIの所要時間を抑える検証範囲
+
+`.github/workflows/main.yml` は、検証の網羅を保ったまま同じ検査を二度流さない。
+
+- `build/Publish.ps1 -SkipE2ECoveredSelfTest`（CIだけが指定）は、全体自己検証から、E2Eの限定selector（`--folder-copy-only`など）が独立readerと一緒に実行する単位を省く。省いた単位は環境変数 `DIFFBEACON_SELFTEST_SKIP_E2E_COVERED=1` で `HeadlessSelfTest` が判定し、`ui-report.json` の `skippedE2ECovered`、`publish-manifest.json` の `selfTestScope`、`self-test skips units ...` の検査に残る。ローカルの発行・自己検証は既定で全検査を実行する。
+- E2Eの `--oracles full|smoke` は、OS非依存の網羅オラクルの範囲を切り替える。全構成を回す実行のwin-x64は `full`、win-arm64・osx-arm64と作業ブランチのpushは `smoke` で、省いた単位は `assertions.json` に `skipped` として残る。単位の一覧は [E2Eの手順](../tests/DiffBeacon.E2E/README.md#網羅オラクルの範囲--oracles) を参照する。
+- 新しいE2E selectorや網羅オラクルを追加するときは、どちらの経路でも同じ検査が二重にならないことと、smokeで省く単位が時刻・地域・OSファイルシステムに依存しないことを確認する。
+
 ## 内包テキストの作業保存
 
 実在する内包Textの通常保存・相対アセット・包装・復元はE2Eの `--archive-present-only` で限定確認する。[独立検証の契約](../tests/Fixtures/ArchiveWorkingText/README.md)に従い、Python標準ライブラリで原本ZIPの全CRC・保存bytes・HTML原文と改行・workspaceのSHA・包装全entryを照合する。通常の全体E2EとUI自己検証にも含み、限定成功だけを全体成功として扱わない。

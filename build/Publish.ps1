@@ -5,6 +5,9 @@ param(
     [ValidateSet('win-x64', 'win-arm64', 'osx-x64', 'osx-arm64')]
     [string] $RuntimeIdentifier,
     [switch] $SkipVerification,
+    # CI用。E2Eの限定selectorが独立readerと一緒に実行する同じ検査を、全体自己検証から省く（時間の二重消費を避ける）。
+    # 既定では全検査を実行する。省いた事実はui-report.jsonのskippedE2ECoveredとpublish-manifest.jsonのselfTestScopeに残る。
+    [switch] $SkipE2ECoveredSelfTest,
     [switch] $CheckOutputOnly,
     [switch] $OwnerAttestsQuiescentAndNoMixedWork,
     [string] $OutputRoot,
@@ -217,6 +220,7 @@ try {
     if (-not $SkipVerification) {
         if ($hostArchitecture -eq $targetArchitecture) {
             New-Item -ItemType Directory -Path $verificationPath -Force | Out-Null
+            $env:DIFFBEACON_SELFTEST_SKIP_E2E_COVERED = if ($SkipE2ECoveredSelfTest) { '1' } else { $null }
             $startOptions = @{ FilePath = $executablePath; ArgumentList = @('--self-test', ('"' + $verificationPath + '"')); PassThru = $true }
             if ($IsWindows) { $startOptions.WindowStyle = 'Hidden' }
             Write-Host "ネイティブ自己検証: $RuntimeIdentifier（制限 $VerificationTimeoutSeconds 秒）"
@@ -244,6 +248,7 @@ try {
         sdkVersion = ($sdkVersion | Out-String).Trim()
         nativeAot = $true
         selfTest = $verificationStatus
+        selfTestScope = if ($SkipE2ECoveredSelfTest) { 'full without units covered by E2E selectors' } else { 'full' }
         verificationTimeoutSeconds = $VerificationTimeoutSeconds
         verificationSeconds = $verificationSeconds
         executable = [IO.Path]::GetRelativePath($repoRoot, $executablePath)

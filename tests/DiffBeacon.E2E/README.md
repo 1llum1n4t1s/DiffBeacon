@@ -1,4 +1,13 @@
 # 実行経路の検証
+## 網羅オラクルの範囲（`--oracles`）
+
+`--oracles full`（既定）は全件を実行します。`--oracles smoke` は、同じコードを通るOS非依存の網羅だけを省き、省いた単位を `skipped`（理由: smoke）として `assertions.json` に残します。CIは全構成を回す実行のwin-x64を `full`、win-arm64・osx-arm64と作業ブランチのpushを `smoke` にします。
+
+- 省く単位（`FolderPropertyFilterScenarios`）: RegexCount／Position／Replace／ReplaceList、値の一覧依存・補助平面のcase fold・provider null・側別関数・optimizer、幅と日時変換、文字列検索・数値変換・Abs・InRange・IsWithin・Substr。
+- 省く単位（`Program.cs`の一般行変換）: 配列・検索・置換・範囲・Within・集計・size／duration／version literal・casing・Unicode正規化・文字対応・content・正規表現・matches／REContains／Like／Match／MatchMetric／MatchInside／ReplaceList。
+- 省かない検査: `Now`／`Today`・暦・時計・タイムスタンプ（時刻・地域依存）、側別属性・フラグ・日付精度・FullPaths（ファイルシステム依存）、Windows Shell property、実FIFO、GUIと独立readerを伴う検査。
+- 限定selector（`--folder-optimizer-only`など）は、直接指定した単位をそのまま実行します（`--folder-properties-only`だけ `--oracles smoke` の影響を受けます）。
+
 ## フォルダー関数と補助平面の固定検証
 
 `--folder-replace-lists-only` は既存リスト検証と [補助平面case-fold](../Fixtures/FolderSupplementaryCaseFold/README.md) の310命令へ到達します。`--folder-properties-only` と全体E2Eはさらに [provider-null](../Fixtures/FolderProviderNull/README.md) の864命令、[側別6関数](../Fixtures/FolderSideFunctions/README.md) の2,094命令を含みます。最適化の固定検証はoptimizer 5,304件（native 5,208＋source 96）とLexer 22件、fixture Contentは67件です。CF public 310件はdirect 144＋list 144＋derived 22をstrict outer Arrayで照合し、実測出力から期待値を生成しません。

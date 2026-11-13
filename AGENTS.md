@@ -13,7 +13,7 @@
 コード変更後の検証は二段階に分ける。全体E2E・全体UI自己検証は長時間かかるため、毎回のローカル実行を求めない。
 
 1. **ローカル（変更ごと）**: Release build（警告0）、変更した経路の限定E2E selector、追加・変更・付け直した固定fixtureの独立reader（`verify.py` の静的モード）、UI変更では該当headless check。限定selectorがない経路は、近いselectorを追加してから実行する。
-2. **全体（CI）**: 全体E2E・全体UI自己検証・Native AOT は `.github/workflows/main.yml` で実行し、結果を確認する。作業ブランチへのpushではwin-x64だけ、masterへのpush・PR・手動実行・週1回の定期実行では全構成を回す。ローカルで全体を実行するのは、限定selectorで覆えない共通基盤（E2E runnerのコマンド実行・待機・結果記録の共通経路である `Run`／`RecordCommand`／`CommandResult`／`CommandTimeoutPolicy`、`HeadlessSelfTest` の実行基盤、`Directory.Build.*`、`build/*.ps1`）を変えた場合と、本人が求めた場合に限る。`Program.cs` へのselectorの登録と分岐の追加はこれに含めない。
+2. **全体（CI）**: 全体E2E・全体UI自己検証・Native AOT は `.github/workflows/main.yml` で実行し、結果を確認する。作業ブランチへのpushではwin-x64だけ、masterへのpush・PR・手動実行・週1回の定期実行では全構成を回す。所要時間を抑えるため、CIの全体自己検証はE2Eの限定selectorが独立readerと同じ検査を実行する単位を省き（`Publish.ps1 -SkipE2ECoveredSelfTest`。省いた事実は`ui-report.json`の`skippedE2ECovered`と`publish-manifest.json`の`selfTestScope`に残る。ローカルの発行は既定で全検査を実行する）、OS非依存の網羅オラクル（式評価・line-transformの純粋な値計算）は全構成を回す実行のwin-x64だけが全件（`--oracles full`）を流し、win-arm64・osx-arm64と作業ブランチのpushは代表だけの`--oracles smoke`とする。smokeで省いた単位はskippedとして残り、成功扱いにしない。時刻・暦・地域・OSファイルシステムに依存する検査はsmokeでも省かない。ローカルで全体を実行するのは、限定selectorで覆えない共通基盤（E2E runnerのコマンド実行・待機・結果記録の共通経路である `Run`／`RecordCommand`／`CommandResult`／`CommandTimeoutPolicy`、`HeadlessSelfTest` の実行基盤、`Directory.Build.*`、`build/*.ps1`）を変えた場合と、本人が求めた場合に限る。`Program.cs` へのselectorの登録と分岐の追加はこれに含めない。
 
 以下の各項目にある「全体E2E」「全体UI自己検証」「限定実行は全体E2Eの代替にしない」は、2の実行を指す。完了報告ではローカルの限定実行とCIの全体結果を区別し、CIを確認していなければ未確認と書く。全体を実行する場合はリポジトリルートで次を使う。
 
