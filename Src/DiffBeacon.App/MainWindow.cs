@@ -647,7 +647,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         // 本家は比較前に選択画面だけを表示する。まだ何も比較していない間は、選択画面を比較ボタンまで見せる。
         if (!HasComparisonContent)
         {
-            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Max(80, Bounds.Height * .85) : double.PositiveInfinity;
+            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Max(80, Bounds.Height - 40) : double.PositiveInfinity;
             return;
         }
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, independentText ? 100 : folder ? 60 : 80, 400) : 400;

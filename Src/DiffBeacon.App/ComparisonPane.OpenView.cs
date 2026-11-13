@@ -29,7 +29,7 @@ public sealed partial class ComparisonPane
     {
         // 本家の並びは 1番目＝左、2番目＝右（三者では中央）、3番目（オプション）。
         // DiffBeacon の三者比較は祖先／中央を BasePath に持つため、3番目の欄を BasePath に割り当てる。
-        var view = new StackPanel { Name = "open-view", Spacing = 4 };
+        var view = new StackPanel { Name = "open-view", Spacing = 3 };
         view.Children.Add(PathGroup("_1 番目のファイルまたはフォルダー", LeftPath, "1 番目と 2 番目を交換", LeftPath, RightPath));
         view.Children.Add(PathGroup("_2 番目のファイルまたはフォルダー", RightPath, "2 番目と 3 番目を交換", RightPath, BasePath));
         view.Children.Add(PathGroup("_3 番目のファイルまたはフォルダー (オプション)", BasePath, "1 番目と 3 番目を交換", LeftPath, BasePath));
@@ -55,8 +55,10 @@ public sealed partial class ComparisonPane
 
     private Control PathGroup(string header, TextBox box, string swapLabel, TextBox first, TextBox second)
     {
-        var body = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto"), ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto"), RowSpacing = 3 };
-        Detach(box); Grid.SetColumnSpan(box, 3); body.Children.Add(box);
+        // 最小ウィンドウ（特にmacOSの字形）でも比較ボタンまで収まるよう、本家の3行（見出し／欄／交換と参照）を
+        // 2行（見出しと交換／欄と参照）に詰める。並びと文言は本家のまま。
+        var body = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto"), ColumnSpacing = 6 };
+        Detach(box); body.Children.Add(box);
         // 本家の交換ボタンは小さな絵のボタンと説明文の組。
         var swap = new Button { Content = "⇅", Width = 22, Height = 20, Padding = new Thickness(0), FontSize = 11,
             HorizontalContentAlignment = HorizontalAlignment.Center, VerticalContentAlignment = VerticalAlignment.Center };
@@ -65,15 +67,14 @@ public sealed partial class ComparisonPane
         var swapRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
         swapRow.Children.Add(swap);
         swapRow.Children.Add(new TextBlock { Text = swapLabel, FontSize = 12, Foreground = WinMergeColors.FrameText, VerticalAlignment = VerticalAlignment.Center });
-        Grid.SetRow(swapRow, 1); body.Children.Add(swapRow);
         // 本家の「参照」は分割ボタンで、ファイルとフォルダーを選べる。
         var browse = new Button { Content = "参照(_B)...", Padding = new Thickness(9, 2), MinWidth = 90 };
         var flyout = new MenuFlyout();
         flyout.Items.Add(BrowseItem("ファイル(_F)...", box, folder: false));
         flyout.Items.Add(BrowseItem("フォルダー(_O)...", box, folder: true));
         browse.Flyout = flyout;
-        Grid.SetRow(browse, 1); Grid.SetColumn(browse, 2); body.Children.Add(browse);
-        return Group(header, body);
+        Grid.SetColumn(browse, 1); body.Children.Add(browse);
+        return Group(header, body, swapRow);
     }
 
     private MenuItem BrowseItem(string header, TextBox box, bool folder)
@@ -90,13 +91,16 @@ public sealed partial class ComparisonPane
     }
 
     // 本家の GROUPBOX に相当する、見出し付きの細い枠。
-    private static Control Group(string header, Control body)
+    private static Control Group(string header, Control body, Control? headerExtra = null)
     {
         var content = new StackPanel { Spacing = 3 };
-        var label = new Label { Content = header, Padding = new Thickness(0), FontSize = 12, Foreground = WinMergeColors.FrameText, Target = FirstFocusable(body) };
-        content.Children.Add(label);
+        var label = new Label { Content = header, Padding = new Thickness(0), FontSize = 12, Foreground = WinMergeColors.FrameText, Target = FirstFocusable(body), VerticalAlignment = VerticalAlignment.Center };
+        var headerRow = new DockPanel();
+        if (headerExtra is not null) { DockPanel.SetDock(headerExtra, Dock.Right); headerRow.Children.Add(headerExtra); }
+        headerRow.Children.Add(label);
+        content.Children.Add(headerRow);
         content.Children.Add(body);
-        return new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(1), Padding = new Thickness(6, 3, 6, 5), Child = content };
+        return new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(1), Padding = new Thickness(6, 2, 6, 4), Child = content };
     }
 
     private static IInputElement? FirstFocusable(Control body) => body switch

@@ -69,6 +69,10 @@ internal static class HeadlessIndependentTextChecks
         {
             var toolbar = pane.GetVisualDescendants().OfType<ScrollViewer>().First(scroll => scroll.Content is StackPanel);
             var save = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中央を保存"));
+            // 共通設定欄の到達記録は、上端から始めて各操作をスクロールで表示させた位置で残す。
+            // 上部の選択欄はパス欄が縦に並ぶため、最小ウィンドウでは全操作が同時には収まらない。
+            var reach = name == "minimum-toolbar";
+            if (reach) { toolbar.Offset = default; Dispatcher.UIThread.RunJobs(); }
             using var stream = File.Create(Path.Combine(folder, "layout-" + name + ".json"));
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
             writer.WriteStartObject(); writer.WriteNumber("windowWidth", window.Bounds.Width); writer.WriteNumber("windowHeight", window.Bounds.Height);
@@ -76,6 +80,7 @@ internal static class HeadlessIndependentTextChecks
             writer.WriteNumber("toolbarExtentHeight", toolbar.Extent.Height); writer.WriteNumber("toolbarViewportHeight", toolbar.Viewport.Height); writer.WriteNumber("toolbarOffsetY", toolbar.Offset.Y);
             void Bounds(string key, Control control)
             {
+                if (reach && key is "middleSave" or "leftPath" or "middlePath" or "rightPath") { control.BringIntoView(); Dispatcher.UIThread.RunJobs(); }
                 writer.WriteStartObject(key); writer.WriteNumber("width", control.Bounds.Width); writer.WriteNumber("height", control.Bounds.Height); writer.WriteBoolean("visible", control.IsVisible);
                 var position = control.TranslatePoint(new Point(0, 0), window);
                 if (position is { } point) { writer.WriteNumber("windowX", point.X); writer.WriteNumber("windowY", point.Y); }
