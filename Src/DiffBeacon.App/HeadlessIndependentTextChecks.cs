@@ -297,13 +297,17 @@ internal static class HeadlessIndependentTextChecks
         var toolbar = stale.GetVisualDescendants().OfType<ScrollViewer>().First(scroll => scroll.Content is StackPanel);
         toolbar.Offset = new Avalonia.Vector(0, toolbar.Extent.Height); Dispatcher.UIThread.RunJobs();
         var centralSave = stale.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中央を保存"));
+        // 上部に選択欄（OpenView）があるため、上端に戻した位置ではなく、スクロールで表示させた位置で到達を確かめる。
         toolbar.Offset = new Avalonia.Vector(0, 0); Dispatcher.UIThread.RunJobs();
+        centralSave.BringIntoView(); Dispatcher.UIThread.RunJobs();
         var savePoint = centralSave.TranslatePoint(new Avalonia.Point(0, 0), toolbar);
         Layout("minimum-toolbar", stale);
         Check("minimum central Save remains reachable through toolbar scroll", centralSave.IsVisible && centralSave.Bounds.Width > 0 && centralSave.Bounds.Height > 0
             && savePoint is { } point && point.Y >= 0 && point.Y + centralSave.Bounds.Height <= toolbar.Bounds.Height);
+        // 選択欄の三つのパス欄は縦に並ぶため、最小ウィンドウでは同時には収まらない。各欄をスクロールで表示させて到達を確かめる。
         Check("minimum input paths remain reachable after common settings scroll", new[] { stale.LeftPath, stale.BasePath, stale.RightPath }.All(path =>
         {
+            path.BringIntoView(); Dispatcher.UIThread.RunJobs();
             var position = path.TranslatePoint(new Point(0, 0), toolbar);
             return path.Bounds.Height > 0 && position is { } point && point.Y >= 0 && point.Y + path.Bounds.Height <= toolbar.Bounds.Height;
         }));
