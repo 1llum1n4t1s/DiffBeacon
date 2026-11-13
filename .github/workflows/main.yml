@@ -91,12 +91,19 @@ jobs:
           cache: true
           cache-dependency-path: '**/packages.lock.json'
       - uses: actions/setup-python@v7
-        # self-hosted macOS（M3MB14）では既定の /Users/runner/hostedtoolcache を作れないため、runner 自身のツールキャッシュへ展開する。
-        # GitHub ホストの runner では同じ場所を指すだけなので挙動は変わらない。
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.tool_cache }}
+        if: runner.environment == 'github-hosted'
         with:
           python-version: '3.13'
+      # self-hosted macOS（M3MB14）では、setup-python の配布物が /Users/runner/hostedtoolcache 固定で展開できず、
+      # AGENT_TOOLSDIRECTORY の変更でも回避できなかった。システムの python3 は3.9と古いため、
+      # uv で3.13の仮想環境を作って有効化し、E2E と証拠記録が使う `python` をそれに向ける。
+      - uses: astral-sh/setup-uv@v6
+        if: runner.environment != 'github-hosted'
+        with:
+          python-version: '3.13'
+          activate-environment: true
+      - name: Show verification Python
+        run: python --version
       - name: Select external run output
         run: |
           $runRoot = Join-Path $env:RUNNER_TEMP 'Codex/DiffBeacon/ci-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}'

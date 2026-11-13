@@ -14,6 +14,9 @@ public static class Program
         Arguments = args;
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-properties-only")
             return HeadlessSelfTest.Run(args[1], folderPropertiesOnly: true);
+        // 画像のドラッグ（MOVE同期・表示位置調整）だけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-drag-only")
+            return HeadlessSelfTest.Run(args[1], imageDragOnly: true);
         // 本家WinMerge風のフォルダー比較一覧（列・アイコン・行の色・文言）だけを検証する。
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-view-only")
             return HeadlessSelfTest.Run(args[1], folderViewOnly: true);

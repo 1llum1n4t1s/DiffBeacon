@@ -134,17 +134,36 @@ internal static class HeadlessImageDragChecks
         start = At(narrow, 0, 12, 90); window.MouseDown(start, MouseButton.Left); window.MouseMove(start + new Vector(-3, -5), RawInputModifiers.LeftMouseButton); window.MouseUp(start + new Vector(-3, -5), MouseButton.Left); Render();
         check("image drag axis zero remains zero", Scrolls(narrow).All(s => s.Offset.X == 0 && s.Offset.Y == 10), "horizontal range zero; vertical remains synchronized");
 
-        var mixedRanges = Open("axis-zero-peer", [Frame(187, 440), Frame(187, 440), Frame(187, 440)]); mixedRanges.SetDragMode(ImageDragMode.Move); Render();
+        // 三面の表示幅は外枠のレイアウトで1 DIP単位に変わるため、固定幅の画像に頼らず、
+        // 「中央の表示幅が左右より1 DIP広く、かつ偶数（Zoom 2の画像幅に一致）」になるウィンドウ幅を探してから画像幅を決める。
+        var originalWidth = window.Width; var mixedFrameWidth = 187; var probeLog = "";
+        var probe = Open("axis-zero-probe", [Frame(187, 440), Frame(187, 440), Frame(187, 440)]); Render();
+        for (var delta = 0; delta <= 24; delta++)
+        {
+            var found = false;
+            foreach (var candidate in new[] { originalWidth + delta, originalWidth - delta })
+            {
+                window.Width = candidate; Render();
+                var widths = Scrolls(probe).Select(s => s.Viewport.Width).ToArray(); if (delta < 3) probeLog += candidate + ":" + string.Join("/", widths) + " ";
+                // 表示範囲は「画像幅×Zoom 2＋余白」。余白は試行画像（187px）の実測から求める。
+                var margin = Scrolls(probe)[1].Extent.Width - 2 * 187;
+                if (widths[1] == widths[0] + 1 && widths[2] == widths[0] && (widths[1] - margin) % 2 == 0)
+                { mixedFrameWidth = (int)((widths[1] - margin) / 2); found = true; break; }
+            }
+            if (found) break;
+        }
+        var mixedRanges = Open("axis-zero-peer", [Frame(mixedFrameWidth, 440), Frame(mixedFrameWidth, 440), Frame(mixedFrameWidth, 440)]); mixedRanges.SetDragMode(ImageDragMode.Move); Render();
         var mixedScrolls = Scrolls(mixedRanges);
         check("image drag one-pixel mixed ranges", mixedScrolls[1].Extent.Width == mixedScrolls[1].Viewport.Width
             && mixedScrolls[0].Extent.Width - mixedScrolls[0].Viewport.Width == 1 && mixedScrolls[2].Extent.Width - mixedScrolls[2].Viewport.Width == 1,
-            "3-pane middle viewport is one pixel wider");
+            "3-pane middle viewport is one pixel wider; frame=" + mixedFrameWidth + " viewports=" + string.Join(",", mixedScrolls.Select(s => s.Viewport.Width + "/" + s.Extent.Width)) + " probe=" + probeLog);
         window.MouseWheel(mixedScrolls[0].TranslatePoint(new(60, 60), window)!.Value, new Vector(0, -1), RawInputModifiers.Shift); Render();
         start = mixedScrolls[1].TranslatePoint(new(60, 60), window)!.Value;
         window.MouseDown(start, MouseButton.Left); window.MouseMove(start + new Vector(-3, -5), RawInputModifiers.LeftMouseButton); window.MouseUp(start + new Vector(-3, -5), MouseButton.Left); Render();
         check("image drag zero source axis preserves peer position", mixedScrolls[0].Offset.X == 1 && mixedScrolls[1].Offset.X == 0 && mixedScrolls[2].Offset.X == 1
             && mixedScrolls.All(s => s.Offset.Y == 10), "no horizontal source message; vertical MOVE leaves peer horizontal clamped state");
         Observe("mixed-axis-ranges", mixedRanges);
+        window.Width = originalWidth; Render();
 
         var readonlyPanel = Open("readonly", [raw, raw], true); readonlyPanel.SetDragMode(ImageDragMode.AdjustOffset);
         start = At(readonlyPanel, 0, 16, 16); window.MouseDown(start, MouseButton.Left); window.MouseUp(start + new Vector(3, -5), MouseButton.Left); pump(readonlyPanel.CurrentDragOperation);
