@@ -36,6 +36,9 @@ def capture(base, roots):
             if (metadata.st_size, metadata.st_mtime_ns, metadata.st_ino) != (after.st_size, after.st_mtime_ns, after.st_ino) or length != metadata.st_size:
                 raise RuntimeError(f"Evidence changed during inventory: {path}")
             row.update(kind="file", bytes=length, sha256=digest.hexdigest())
+        elif stat.S_ISFIFO(metadata.st_mode):
+            # E2Eは実FIFOをfixtureとして意図的に残す（開くと読み手待ちで停止するため内容は読まない）。
+            row.update(kind="fifo")
         else:
             raise RuntimeError(f"Unsupported evidence entry: {path}")
         entries.append(row)

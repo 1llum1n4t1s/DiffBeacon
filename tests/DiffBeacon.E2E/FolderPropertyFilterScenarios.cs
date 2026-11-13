@@ -183,7 +183,7 @@ internal static class FolderPropertyFilterScenarios
             if (fifo.ExitCode == 0)
             {
                 File.WriteAllText(Path.Combine(right, "fifo"), "regular counterpart");
-                var result = await run("folder-property-exclude-actual-fifo", 1, true, ["--directory", left, right, "--exclude", "*"]);
+                var result = await run("folder-property-exclude-actual-fifo", 2, true, ["--directory", left, right, "--exclude", "*"]);
                 using var model = JsonDocument.Parse(result.Stdout); var entry = model.RootElement.GetProperty("entries").EnumerateArray().Single();
                 check("folder actual FIFO error remains visible when excluded", entry.GetProperty("path").GetString() == "fifo" && entry.GetProperty("status").GetString() == "Error"
                     && !entry.GetProperty("left").GetProperty("filtered").GetBoolean() && entry.GetProperty("right").GetProperty("filtered").GetBoolean(), result.Stdout);
