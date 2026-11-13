@@ -431,7 +431,8 @@ internal static partial class HeadlessFolderCopyChecks
                     && point.X + control.Bounds.Width <= window.Bounds.Width && point.Y + control.Bounds.Height <= window.Bounds.Height;
                 var viewport = control.GetVisualAncestors().OfType<ScrollViewer>().FirstOrDefault();
                 var viewportPoint = viewport is null ? default : control.TranslatePoint(default, viewport)!.Value;
-                if (viewport is not null) inside &= viewportPoint.Y >= -.01 && viewportPoint.Y + control.Bounds.Height <= viewport.Viewport.Height + .01;
+                // macOSの小数倍率ではBringIntoView後の位置に1画素未満の丸め誤差が残るため、0.5 DIPまで許容する。
+                if (viewport is not null) inside &= viewportPoint.Y >= -.5 && viewportPoint.Y + control.Bounds.Height <= viewport.Viewport.Height + .5;
                 var controlBounds = new Rect(point, control.Bounds.Size);
                 var listOverlap = Intersect(controlBounds, listBounds);
                 var overlapsList = listOverlap.Width > 0 && listOverlap.Height > 0;
