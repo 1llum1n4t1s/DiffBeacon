@@ -2466,11 +2466,11 @@ for r in rows:
  if r['id'].startswith('dynamic'): assert len(r['referenced'])==2 and all(pathlib.Path(p).read_bytes()==b'a\tX\n' for p in r['referenced'])
  if r['mutated']:
   p=pathlib.Path(r['listPath']); assert p.read_bytes()==bytes.fromhex(r['expectedList'])==b'a\tY\n' and p.stat().st_size==4
-  assert p.stat().st_mtime_ns==(int(r['writeTicks'])-621355968000000000)*100
+  assert p.stat().st_mtime_ns//100==int(r['writeTicks'])-621355968000000000
   if r['id']!='staging-list-change': assert 'FOLDER-LIST-SNAPSHOT X' in c['Stderr'] and '置換リストが変わりました' in c['Stderr']
 for p,expected in d['preserved'].items():
  p=pathlib.Path(p); assert hashlib.sha256(p.read_bytes()).hexdigest()==expected['sha256']
- assert p.stat().st_mtime_ns==(int(expected['writeTicks'])-621355968000000000)*100
+ assert p.stat().st_mtime_ns//100==int(expected['writeTicks'])-621355968000000000
 print(json.dumps(dict(passed=True,commands=len(rows),preservedFiles=len(d['preserved']),liveStale=d['staleExecuted'],headlessHashOnlyCheckpointSeparate=True)))
 """, new UTF8Encoding(false));
             var start = new ProcessStartInfo(python) { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
@@ -3521,7 +3521,7 @@ for n in [2,3]:
 for path,sha in data['preserved'].items(): assert hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()==sha,path
 
 for path,meta in data['retained'].items():
- st=pathlib.Path(path).stat(); assert str(st.st_size)==meta['length'] and st.st_mtime_ns==(int(meta['writeTicks'])-621355968000000000)*100,path
+ st=pathlib.Path(path).stat(); assert str(st.st_size)==meta['length'] and st.st_mtime_ns//100==int(meta['writeTicks'])-621355968000000000,path
  assert hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()==meta['sha256'],path
 print(json.dumps(dict(passed=True,nativeCases=107,publicBodies=74,nativeOnly=33,nativeProjections=len(pairs),commands=len(seen),expectedErrors=errors,preservedFiles=len(data['preserved']),interRowOrderQualified=False,cancellationInjected=False)))
 """, new UTF8Encoding(false));

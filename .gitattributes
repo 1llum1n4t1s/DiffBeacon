@@ -114,3 +114,8 @@ build/WinIMergeDllReference/** -text !eol
 tests/Fixtures/FolderSubstrOracle/** -text
 tests/Fixtures/FolderStringByteObserversOracle/** -text
 tests/Fixtures/FolderReplaceOracle/** -text
+# FolderProviderNull の独立readerは、Windows（CRLF）で採取したソース全体のSHAを照合する。
+# macOSでもCRLFで展開して同じbytesにする（Git blob自体はLFのまま変えない）。
+Src/FilterEngine/FilterExpression.cpp text eol=crlf
+Src/DirDoc.cpp text eol=crlf
+Src/FilterEngine/FunctionNodeProperty.cpp text eol=crlf

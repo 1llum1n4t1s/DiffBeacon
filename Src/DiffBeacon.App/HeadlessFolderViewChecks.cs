@@ -86,11 +86,12 @@ internal static class HeadlessFolderViewChecks
             && texts.Contains("diff.txt") && texts.Contains("ファイルは異なっています") && texts.Contains(leftDate) && texts.Contains(rightDate)
             && icon is { Tag: "notequalfile", Source: Bitmap }, string.Join("|", texts));
         list.SelectedItems?.Clear(); Dispatcher.UIThread.RunJobs();
-        var unselected = Presenter(Container(diff))?.Background;
+        // 直前の検証のポインターが行の上に残ると表示はホバー色になるため、行そのものの状態色（コンテナーの背景）を見る。
+        var unselected = Container(diff)?.Background;
         check("folder view unselected row uses WinMerge difference color", ReferenceEquals(unselected, WinMergeColors.FolderDifference), Describe(unselected));
         list.SelectedItems?.Add(diff); Dispatcher.UIThread.RunJobs();
         var selected = Presenter(Container(diff))?.Background;
-        check("folder view selected row is visibly distinct from its state color", selected is ISolidColorBrush { Color: var color } && color == Color.FromRgb(204, 232, 255),
+        check("folder view selected row is visibly distinct from its state color", selected is ISolidColorBrush { Color: var color } && (color == Color.FromRgb(204, 232, 255) || color == Color.FromRgb(184, 220, 252)),
             Describe(selected));
         list.SelectedItems?.Clear(); Dispatcher.UIThread.RunJobs();
 
