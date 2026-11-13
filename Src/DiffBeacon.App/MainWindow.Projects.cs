@@ -93,13 +93,20 @@ public sealed partial class MainWindow
         header.Children.Add(new TextBlock { Text = title, MaxWidth = 220, TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center });
         var close = new Button { Content = "×", Padding = new Thickness(5, 0) }; header.Children.Add(close);
         var item = new TabItem { Header = header, Content = pane };
-        close.Click += async (_, _) =>
-        {
-            if (pane.HasUnsavedChanges && !await Dialogs.ConfirmAsync(this, "未保存の変更", "変更を保存せずにタブを閉じますか？")) return;
-            _sessions.Remove(item); pane.Dispose(); _tabs.ItemsSource = _sessions.ToArray();
-            if (_sessions.Count == 0) { ArchiveTexts.Clear(); AddSession(); } else _tabs.SelectedItem = _sessions[^1];
-        };
+        CompactTab(item);
+        close.Click += async (_, _) => await CloseSessionAsync(item);
         _sessions.Add(item); _tabs.ItemsSource = _sessions.ToArray();
+    }
+
+    // タブの×ボタンと、本家の「ウィンドウ > 閉じる (Ctrl+W)」で共通に使う。未保存なら確認してから閉じる。
+    private async Task<bool> CloseSessionAsync(TabItem item)
+    {
+        if (!_sessions.Contains(item)) return false;
+        var pane = (ComparisonPane)item.Content!;
+        if (pane.HasUnsavedChanges && !await Dialogs.ConfirmAsync(this, "未保存の変更", "変更を保存せずにタブを閉じますか？")) return false;
+        _sessions.Remove(item); pane.Dispose(); _tabs.ItemsSource = _sessions.ToArray();
+        if (_sessions.Count == 0) { ArchiveTexts.Clear(); AddSession(); } else _tabs.SelectedItem = _sessions[^1];
+        return true;
     }
     private static string ProjectTitle(ComparisonProject project, int index) => !string.IsNullOrWhiteSpace(project.LeftDescription) ? project.LeftDescription
         : !string.IsNullOrWhiteSpace(project.RightDescription) ? project.RightDescription : $"比較 {index + 1}";

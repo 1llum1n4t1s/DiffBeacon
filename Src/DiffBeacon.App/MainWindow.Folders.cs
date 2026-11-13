@@ -130,11 +130,17 @@ public sealed partial class ComparisonPane
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
         DockPanel.SetDock(folderActionsScroll, Dock.Top); _folderView.Children.Add(folderActionsScroll);
         DockPanel.SetDock(_folderCopySummary, Dock.Bottom); _folderView.Children.Add(_folderCopySummary);
+        // 本家の DirView と同じく、一覧の直上にルートパス帯と列見出しを置く。
+        InitializeFolderListChrome();
+        DockPanel.SetDock(_folderRootBars, Dock.Top); _folderView.Children.Add(_folderRootBars);
+        DockPanel.SetDock(_folderColumnHeaderHost, Dock.Top); _folderView.Children.Add(_folderColumnHeaderHost);
         _folderView.Children.Add(_directoryList);
         void UpdateFolderActionsHeight()
         {
             if (_folderView.Bounds.Height <= 0) return;
+            // 一覧の最小高さ100 DIPは、パス帯と列見出しを除いた本体で確保する。
             var reservedHeight = _directoryList.MinHeight + _directoryList.Margin.Top + _directoryList.Margin.Bottom
+                + _folderRootBars.Bounds.Height + _folderColumnHeaderHost.Bounds.Height
                 + _folderCopySummary.Bounds.Height + _folderCopySummary.Margin.Top + _folderCopySummary.Margin.Bottom;
             var maxHeight = Math.Min(144, Math.Max(0, _folderView.Bounds.Height - reservedHeight));
             if (Math.Abs(folderActionsScroll.MaxHeight - maxHeight) > .1) folderActionsScroll.MaxHeight = maxHeight;

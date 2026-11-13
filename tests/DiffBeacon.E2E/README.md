@@ -360,6 +360,22 @@ Invoke-DevDotnet $e2eDll --app $appDll --output $runRoot/e2e/table-column-range 
 Invoke-DevDotnet $app --self-test $runRoot/verification/text-bookmarks --text-bookmarks-only
 ```
 
+## 本家WinMerge風の外枠
+
+メニューバーのトップレベル順、ツールバーの並び（本家 `g_toolbarFileCmp3` の22ボタン）と埋込み画像の切出し、未移植コマンドだけの無効化、ツールバーと本家アクセラレータ（Alt+Home／Alt+End／Alt+Down）による差分移動、本家既定の差分色（黄・灰）と選択中の差分の選択色（赤系）、明るい既定配色を確認します。ファイル比較画面では、ファイル名の帯に比較したパスが出ること、Diff ペインが選択行の左右を表示すること、ロケーションペインが全行と選択中のブロックを持ち、下端のクリックで本文が末尾付近へ移ることも確認します。通常（1280×850）と最小（850×550）のウィンドウで `frame-normal.png`／`frame-minimum.png` と `frame-bounds.json` を出力し、外枠が比較ペインを押し出さないことを確認します。アプリ全体UI自己検証にも登録されています。
+
+```powershell
+Invoke-DevDotnet $app --self-test $runRoot/verification/frame --frame-only
+```
+
+## 本家WinMerge風のフォルダー比較一覧
+
+フォルダー比較の列（二者は名前／フォルダー／比較結果／左右の更新日時／拡張子、三者は中更新日時を追加）、ルートパス帯、本家の .ico から取り出した16pxアイコン、本家 `GetColImage`・`GetColors`・`ColStatusGet` の判定順によるアイコン・行の色・比較結果の文言（`Japanese.po` の訳）を確認します。更新日時は実ファイルの時刻から同じ書式で期待値を導き、runnerのタイムゾーンに依存させません。選択行が状態色と区別できること、最小幅でも列見出しと行の列境界が揃い、横スクロールが出ないこと、通常（1280×850）と最小（850×550）で見出しが一覧の直上にあり一覧が100 DIP以上残ることを、`folder-view-normal.png`／`folder-view-minimum.png`／`folder-view-threeway.png` と `folder-view-bounds.json` で残します。アプリ全体UI自己検証にも登録されています。
+
+```powershell
+Invoke-DevDotnet $app --self-test $runRoot/verification/folder-view --folder-view-only
+```
+
 ## 独立三側Textの入力選択GUI
 
 正本workroot配下の新しいrunを使う。次の限定E2Eは実アプリを別processで起動し、対応する独立Python readerを集計前に実行する。全体E2E／全体UIにも登録されるが、限定成功を全体実行や4RID Native AOTの資格へ読み替えない。

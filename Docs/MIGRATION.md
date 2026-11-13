@@ -1,5 +1,60 @@
 # .NET 11 / Avalonia 移行の到達点
 
+## 本家WinMerge風のフォルダー比較一覧（2026-11-13、段階3・限定検証）
+
+フォルダー比較の一覧を、本家のフォルダー比較画面（`DirView`）と同じ列表示にした。
+- 列: 既定の並び（`DirViewColItems.cpp`）に合わせ、名前／フォルダー／比較結果／左更新日時／右更新日時／拡張子にした。三者比較では中更新日時を加える。名前と比較結果の列は一覧の幅に合わせて伸縮し、横スクロールは使わない（重ね表示のスクロールバーが最下行を覆わないようにするため）。
+  - フォルダーはルート直下を「.\」で表す。
+  - 拡張子はフォルダーでは空にし、側ごとに異なれば「|」で区切る。
+  - 更新日時は最も新しい側だけに「* 」を付ける。
+- ルートパス帯: 一覧の上に、比較した左／（中央／）右のフォルダーを灰色の帯で示す。
+- アイコン: 本家の .ico（`Src/res`、`Merge2.rc` の `IDI_*` と同じファイル）を埋め込み、16pxの画像を取り出して表示する。状態ごとの選び方は `GetColImage` の判定順（エラー→除外→片側のみ→三者の欠落→同一→相違）に従う。
+- 行の色: `GetColors` の優先順に従う。
+  - 除外は (250,245,215)。
+  - いずれかの側に無い行は (221,221,221)。
+  - 相違は (240,222,125)。
+  - 同一は白。
+  - 選択行は状態色の上に淡い青で示す。
+- 比較結果: `ColStatusGet` の判定順と `Japanese.po` の訳を使う。
+  - 例: 「同一」「ファイルは異なっています」「左側のみ: <フォルダー>」「スキップされたファイル」「<ルート> 内のみ存在しません」。
+  - 三者比較では「 (中央と右側は同一です)」などを付ける。
+
+本家との違い:
+- テキスト／バイナリ／画像の種別は比較モデルに無いため、文言とアイコンは汎用のもの（同一／ファイルは異なっています）を使う。
+- 本家に無い状態は DiffBeacon 独自の文言にした（種類の衝突は「種類が異なります（ファイルとフォルダー）」、未比較は「未比較」）。
+- 列幅は固定で、列の並べ替え・表示切替・幅変更とソートは未対応。一覧上部の操作ボタンも従来のまま残している。
+
+検証:
+- `--folder-view-only`: 全アイコンの16px復号、二者・三者の列、各行のアイコン・色・文言・フォルダー・拡張子、新しい側の「* 」、選択色、最小幅での見出しと行の列境界の一致と横スクロールが出ないこと、通常／最小ウィンドウでの見出しと一覧の配置を確認し、44成功／0失敗。
+
+## 本家WinMerge風のファイル比較画面（2026-11-13、段階2・限定検証）
+
+「差分」タブを、本家のファイル比較画面（`MergeEditFrm.cpp`）と同じ構成にした。
+- ロケーションペイン: 左端に置き、全行に対する差分ブロックを左右の縦バーに本家の色で描く。選択中のブロックは選択色にし、表示中の範囲を枠で示す。クリック・ドラッグで本文をその位置へ移動する。描画定数は `LocationView.cpp` の値に合わせた。
+- ファイル名の帯: 各ペインの上に灰色の帯を置き、既存の見出し（左／右と状態）の横に比較したパスを出す。
+- 本文: 左右の境界線を引き、選択中の差分ブロックを本家の選択色（239,119,116、行の無い側は 240,192,192）で塗る。一覧の青い選択色は淡い灰色に抑えた。
+- 差分の移動: ツールバー・メニュー・キーのどれで移動しても、ブロックを画面中央へ表示する。
+- Diff ペイン: 下段に置き、選択行の左右を行内差分の色付きで表示する。高さは境界線で変えられる。
+- 画面の詰め: 共通の設定・操作欄は本文の3割まで（スクロールで参照）に抑え、比較タブと表示切替タブの見出しを小さくした。
+
+本文は従来の整列一覧（`DiffList`）を引き続き使うため、編集は「編集」タブで行う。本家のように左右の本文を直接編集する形は未対応。
+- `--frame-only`: ロケーションペイン、パスの帯、Diff ペイン、選択色、ロケーションペインのクリックによる移動を加え、27成功／0失敗。
+
+## 本家WinMerge風の外枠と配色（2026-11-13、段階1・限定検証）
+
+本家のUIへ寄せる作業の第1段階として、独自のヘッダー（「+ 新しい比較」「明 / 暗」）を本家のメインフレーム構成に置き換えた。
+- メニューバー: `Merge.rc` の `IDR_MERGEDOCTYPE` の順。文言は `Translations/WinMerge/Japanese.po` の訳。
+- ツールバー: `ToolbarButtons.cpp` の `g_toolbarFileCmp3` の並びと区切り。画像は `Src/res/ToolbarEnabled32.png` を埋め込み、16px で表示する。
+- 本家アクセラレータ: Alt+矢印・Alt+Home／End／Enter、Ctrl+Alt+矢印・Ctrl+Alt+M、F5、Ctrl+O／J／W／Q。
+- 既定の配色: 明るい配色を既定にし、差分色は `OptionsDiffColors.cpp`／`OptionsDirColors.cpp` の既定値（差分 239,203,5・削除側 192,192,192・行内差分 241,226,173）を使う。表ビューも同じ色に揃えた。
+- ステータスバー: 比較ペインの状態表示を、灰色の帯に変えた。
+
+ペイン内の既存ボタンは、自己検証が表示名で操作しているため残している。左右エディター・ロケーションペイン・Diffペイン、フォルダー比較の列とアイコン、「開く」ダイアログは次の段階で寄せる。
+- 未移植のため無効表示にしたツールバーのコマンド: 行内差異の選択、前のコンフリクト、すべてを右側／左側にコピー。
+- 新しい限定selector `--frame-only`: Windows x64 Release（警告0）で20成功／0失敗。
+- 既存の最小ウィンドウ系: `--image-copy-only` は347成功／0失敗。`--folder-copy-only` は、通常／最小ウィンドウの配置を含む949件が成功した。失敗は、D: でごみ箱を使えないことによるごみ箱移動4件と、非管理者でシンボリックリンクを作れないことによる中断だけで、どちらもこのPCの環境に起因する。
+- 全体UI自己検証・全体E2E・Native AOTは未確認で、CIの結果で確認する。
+
 ## フォルダー側別関数の子Optimize fold（2026-11-12、限定検証）
 
 固定原本の `required-unimplemented.json` に残した `@opt LineAt(ColumnRange(Substr('0',0)))` は、既存ASTの子先行foldで原典 `FunctionNode::Optimize` と同じく、provider guardより前に `invalid column specification` で拒否される。固定原本は書き換えず、E2Eの別checkで二者／三者の固定式・接頭辞なし（拒否）、`@noopt`・`Substr('1',0)` 対照（受理・全行除外表示）と入力SHAの保持を確認した。新しい限定selector `--folder-side-functions-only` はWindows x64 Release（警告0）で2,102命令・10,831成功／0失敗／1 skip（266秒）、子fold checkは24件すべて成功した。固定readerの `completeFeatureVerification:false` と、provider-presentの本文取得・全parser／ASTが未移植であることは変えない。全体E2E・全体UI・Native AOTはCIの結果で確認する。
@@ -614,7 +669,7 @@ Native専用の独立照合でもTree377 checks／64 views／58 input facts／PN
 
 同OSの `native506` はwin-x64 Native AOT発行でPublisher終了0・manifest自己検証成功を確認しました。全体UIの集計は12,940成功／0失敗で、580.0682995秒と600秒枠内でした。Native自己検証processの個別terminal rawは未取得です。exe SHA-256は `BF1D482886480D7F77829F214C9A5B6FC3DFCF3C68203116B85DA85266B641E4`。保持ZIPの全4,153 entryのSHA／サイズ／CRCと独立GUI reader `native506-reader516` の対象subsetを照合済みです。後続のNative全体E2E `native-e2e521` は2,055成功／4失敗／2skip・992命令で実終了1となり、後続項目は未実行です。フォルダーコピーGUIの失敗を期待終了やskipにしません。当作業ツリーの4RID CI、通常デスクトップ・ネイティブ保存／入力選択dialog・実OS IMEは未検証です。Nativeの記録は同TaskArtifacts配下の `native506-20261008` と `native506-reader516` に保持します。
 
-先行 `488`／`500` の断続的なフォルダーコピー拒否は `native506` では再現しませんでしたが、`native-e2e521` の診断で比較root外のTemp directoryのWriteだけが変化した拒否を2件確認しました。Creation／Size／全属性／Volume／Indexは一致し、既存のroot外祖先mtime非追跡方針が観測内／path再openの厳密照合まで伝わっていませんでした。初回Capture・基本snapshot・再確認・親更新に非追跡方針を伝える4ファイル修正を適用し、root内・file・stagingの厳密照合、SD／EA・予算・取消・cleanupを維持しています。修正後のRelease buildは警告0／エラー0、通常App `metadata-phase552` の限定フォルダーGUIは343成功／0失敗・実process終了0、180秒枠内で完了しました。既存コピー／全ADSの独立readerと、新8ケースの固定DATA・前後snapshot・実creation／mtime／属性を照合済みです。8ケースは同一process・thread内の注入で、root外のWriteだけの変更は3観測位置で許可し、root内／fileのWrite・root外のCreation／属性の変更と取消は拒否・保持しました。成功probeには変更前identity／SD／EAの独立採取がなく、それら全字段の不変資格は広げません。修正後のwin-x64 Native AOT実行ファイルは生成しましたが、発行を包む検証スクリプトのprocess捕捉が失敗し、Publisherの統合検証は未合格です。同じexe（SHA-256 `1E725FD5B00F941BCDB2CA09225B7F2D96F014A93A58BEAD83298BF98DB003E3`）を別processで実行した `native568` は、11,640成功／0失敗の後、入力選択検証の途中で600.1346105秒の制限終了となりました。実終了−1・出力回収完了と最終ui-report不在を確認しており、全体UIの成功とは扱いません。完了したFolderCopyは10939→11283成功／0失敗で、コピー44件・review7件・取消4件・ADS11件と予算4件・metadata7件／98handle close、新8ケースを独立照合しました。最小850×550・45タブのPNGも確認しました。新しい局所reader自身のOS PID／birth／生streamは未採取で、実行ツールの終了0と、Nativeの実process／固定SHA／42入力成果物の照合に限定します。SD／EA転写の全16組合せ、修正後の全体UI／全体E2Eと4RID CIは未完了です。最小証拠は同TaskArtifacts配下の `native567-8b8f82ed0dfb431e8ae4ad3d0d153a4f/direct-native568`、`native-timing-reader570-5fe587fb3b1a4966822d890afbff6735/parent-acceptance572.json` と `native-folder-reader573-8d3787e8a776409c8d531513b1241e52/parent-local-acceptance574.json` に保持しています。根拠は同TaskArtifacts配下 `metadata-phase552-20261008/parent-ui-acceptance554.json` と `parent-reader-acceptance558.json` です。失敗前診断・確認エラー本文採取の判定と20秒待機も維持しました。独立Text readerの全体E2E globで44件と期待38件が衝突する問題と、全体にscope外の既知skipがあると拒否する外側集計条件を修正しました。固定38命令＋legacy2のraw／実終了を厳密に結び、未知・重複・欠落・対象skipは拒否し、scope外は原典の固定Name／理由とsuite実体・命令へ結合します。適用済み標準readerは `normal509` の完成成果物で1,240条件を照合して終了0となりました。Mac側の固定skipは静的契約であり実測資格は後続CIで確認します。HTML／包装は入力比較経路を保持しています。
+先行 `488`／`500` の断続的なフォルダーコピー拒否は `native506` では再現しませんでしたが、`native-e2e521` の診断で比較root外のTemp directoryのWriteだけが変化した拒否を2件確認しました。Creation／Size／全属性／Volume／Indexは一致し、既存のroot外祖先mtime非追跡方針が観測内／path再openの厳密照合まで伝わっていませんでした。初回Capture・基本snapshot・再確認・親更新に非追跡方針を伝える4ファイル修正を適用し、root内・file・stagingの厳密照合、SD／EA・予算・取消・cleanupを維持しています。修正後のRelease buildは警告0／エラー0、通常App `metadata-phase552` の限定フォルダーGUIは344成功／0失敗・実process終了0、180秒枠内で完了しました。既存コピー／全ADSの独立readerと、新8ケースの固定DATA・前後snapshot・実creation／mtime／属性を照合済みです。8ケースは同一process・thread内の注入で、root外のWriteだけの変更は3観測位置で許可し、root内／fileのWrite・root外のCreation／属性の変更と取消は拒否・保持しました。成功probeには変更前identity／SD／EAの独立採取がなく、それら全字段の不変資格は広げません。修正後のwin-x64 Native AOT実行ファイルは生成しましたが、発行を包む検証スクリプトのprocess捕捉が失敗し、Publisherの統合検証は未合格です。同じexe（SHA-256 `1E725FD5B00F941BCDB2CA09225B7F2D96F014A93A58BEAD83298BF98DB003E3`）を別processで実行した `native568` は、11,640成功／0失敗の後、入力選択検証の途中で600.1346105秒の制限終了となりました。実終了−1・出力回収完了と最終ui-report不在を確認しており、全体UIの成功とは扱いません。完了したFolderCopyは10939→11283成功／0失敗で、コピー44件・review7件・取消4件・ADS11件と予算4件・metadata7件／98handle close、新8ケースを独立照合しました。最小850×550・45タブのPNGも確認しました。新しい局所reader自身のOS PID／birth／生streamは未採取で、実行ツールの終了0と、Nativeの実process／固定SHA／42入力成果物の照合に限定します。SD／EA転写の全16組合せ、修正後の全体UI／全体E2Eと4RID CIは未完了です。最小証拠は同TaskArtifacts配下の `native567-8b8f82ed0dfb431e8ae4ad3d0d153a4f/direct-native568`、`native-timing-reader570-5fe587fb3b1a4966822d890afbff6735/parent-acceptance572.json` と `native-folder-reader573-8d3787e8a776409c8d531513b1241e52/parent-local-acceptance574.json` に保持しています。根拠は同TaskArtifacts配下 `metadata-phase552-20261008/parent-ui-acceptance554.json` と `parent-reader-acceptance558.json` です。失敗前診断・確認エラー本文採取の判定と20秒待機も維持しました。独立Text readerの全体E2E globで44件と期待38件が衝突する問題と、全体にscope外の既知skipがあると拒否する外側集計条件を修正しました。固定38命令＋legacy2のraw／実終了を厳密に結び、未知・重複・欠落・対象skipは拒否し、scope外は原典の固定Name／理由とsuite実体・命令へ結合します。適用済み標準readerは `normal509` の完成成果物で1,240条件を照合して終了0となりました。Mac側の固定skipは静的契約であり実測資格は後続CIで確認します。HTML／包装は入力比較経路を保持しています。
 
 先行コミット `f7891ec74accd64a4931645e3692f5cbb7fde40d` の[CI](https://github.com/1llum1n4t1s/DiffBeacon/actions/runs/37713883772)はWindows両構成とMac ARMが成功、Mac Intelは入力選択E2Eの120秒制限超過で失敗しました。正常native実測163.030秒に基づき対象selectorだけ240秒へ修正しました。Macの修正後再検証は未完了で、失敗を期待終了やskipとして扱っていません。
 
@@ -628,7 +683,7 @@ Physical／Untitledまでの基準版SHA `cb666d5b2c59af1b854cc5caef2b6a26fc1090
 
 先行Mac検証では、同size／mtimeの原本差替えfixtureを初回読込み前に固定時刻へ準備していなかったため、実体のnsと.NET時刻の精度差で独立検証が失敗しました。上記SHAでは生成runの原本を初回読込み前に固定UTCへ準備し、同じSHA・サイズと実体のmtime nsを照合しています。macOS両構成の差替え6件ずつは実体の `1704067200123456700` nsと一致し、差替え前後のサイズ一致・SHA差を確認しています。失敗原本とログは保持し、readerの期待条件を緩めていません。
 
-後続の通常GUIでは「三側の入力を選択」からPhysical／Untitled／実在Archive葉を組み合わせ、検証後に新しいタブへ開く入口を追加しています。基本32件、保存版・読取り専用・古い完了16件、アーカイブ15件、実暗号化親と異なるパスワードの兄弟1件、閉鎖寿命9件、コピー・保存・包装8件の計81ケースをWindows managedで独立受理しました。閉鎖時に一覧読込み／pickerの終了より先に完了が返る問題は修正前に再現し、修正後の元Task完了・配列消去を独立照合しました。同段階の全体E2Eは161,958成功／0失敗／5skip・7,117命令、全体UIは12,743成功／0失敗・実終了0です。根拠は `artifacts/local/folder-threeway-next/text-next73/fulle2e344-parent-accept369.json`、`fullui344-parent-accept357.json`、`accept361/HANDOFF.txt` です。これらの未コミットGUI追加は上記8fffの4RID資格に含めません。
+後続の通常GUIでは「三側の入力を選択」からPhysical／Untitled／実在Archive葉を組み合わせ、検証後に新しいタブへ開く入口を追加しています。基本32件、保存版・読取り専用・古い完了16件、アーカイブ15件、実暗号化親と異なるパスワードの兄弟1件、閉鎖寿命9件、コピー・保存・包装8件の計81ケースをWindows managedで独立受理しました。閉鎖時に一覧読込み／pickerの終了より先に完了が返る問題は修正前に再現し、修正後の元Task完了・配列消去を独立照合しました。同段階の全体E2Eは161,958成功／0失敗／5skip・7,117命令、全体UIは12,744成功／0失敗・実終了0です。根拠は `artifacts/local/folder-threeway-next/text-next73/fulle2e344-parent-accept369.json`、`fullui344-parent-accept357.json`、`accept361/HANDOFF.txt` です。これらの未コミットGUI追加は上記8fffの4RID資格に含めません。
 
 さらに保存版のflat／二重内包ZIPの2ケースでは、実ボタンによる三側作業保存・project保存／再読込み・パッチなし包装・通常アーカイブの全展開・展開project再読込みを確認しました。実アプリPID16940の終了0・GUI58検査、別readerの3,552検査と4PNGの独立復号が成功し、BOM／混在改行・全asset・全ZIP entry／CRC／SHAを照合しました。根拠は同証拠rootの `savedarchive366-receipt.json` と `savedarchive371-reader/receipt.json` です。この限定実証は後述の全体検証と区別します。限定手順と独立照合の条件は [E2E手順](../tests/DiffBeacon.E2E/README.md) と [Saved Archives fixture](../tests/Fixtures/IndependentTextInputSavedArchives/README.md) を参照してください。
 

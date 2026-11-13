@@ -52,20 +52,9 @@ public sealed partial class MainWindow : Window
         Height = 850;
         MinWidth = 850;
         MinHeight = 550;
-        Background = new SolidColorBrush(Color.Parse("#171B24"));
         var root = new DockPanel();
-        var header = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto,Auto,Auto"), Margin = new Thickness(20, 12) };
-        header.Children.Add(new TextBlock { Text = "DiffBeacon", FontSize = 23, FontWeight = FontWeight.SemiBold, VerticalAlignment = VerticalAlignment.Center });
-        var add = new Button { Content = "+ 新しい比較", Margin = new Thickness(8, 0) };
-        add.Click += async (_, _) => await AddSessionFromUiAsync();
-        Grid.SetColumn(add, 1);
-        header.Children.Add(add);
-        var theme = new Button { Content = "明 / 暗" };
-        theme.Click += (_, _) => Application.Current!.RequestedThemeVariant = Application.Current.ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark
-            ? Avalonia.Styling.ThemeVariant.Light : Avalonia.Styling.ThemeVariant.Dark;
-        Grid.SetColumn(theme, 2);
-        header.Children.Add(theme);
-        var package = PackagingButton(); Grid.SetColumn(package, 3); header.Children.Add(package);
+        // 本家WinMergeのメインフレームと同じく、メニューバーとツールバーを最上部に置く（MainWindow.Frame.cs）。
+        var header = BuildFrame();
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
         root.Children.Add(_tabs);
@@ -108,6 +97,9 @@ public sealed partial class MainWindow : Window
             if (e.Key == Key.F7) { ActivePane.NavigateDifference(e.KeyModifiers.HasFlag(KeyModifiers.Shift) ? -1 : 1); e.Handled = true; }
             if (e.KeyModifiers.HasFlag(KeyModifiers.Control) && e.Key == Key.N) { e.Handled = true; await AddSessionFromUiAsync(); }
         };
+        // 本家のアクセラレータ（Alt+矢印など）は、キーボードナビゲーションや編集欄が矢印キーを処理する前に受ける必要がある。
+        // バブル段階では Alt+Down がフォーカス移動に使われて届かないため、トンネル段階で処理する。
+        AddHandler(KeyDownEvent, async (_, e) => { if (!e.Handled) await HandleFrameShortcutAsync(e); }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
         Closing += async (_, e) =>
         {
             if (!_sessions.Any(x => ((ComparisonPane)x.Content!).HasUnsavedChanges)) return;
@@ -175,7 +167,13 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public Button CompareButton { get; } = new() { Content = "比較", MinWidth = 90 };
     public Button CopyRightButton { get; } = new() { Content = "選択差分 →" };
     public ListBox DiffList { get; } = new() { SelectionMode = SelectionMode.Single };
-    public DiffResult? CurrentDiff { get; private set; }
+    // 差分結果が変わるたびに、ロケーションペインと Diff ペインを追従させる。
+    public DiffResult? CurrentDiff
+    {
+        get => _currentDiff;
+        private set { _currentDiff = value; OnCurrentDiffChanged(); }
+    }
+    private DiffResult? _currentDiff;
     public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || MergeResultDirty || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
     private readonly CheckBox _ignoreCase = new() { Content = "大文字小文字を無視" };
     private readonly CheckBox _ignoreSpace = new() { Content = "空白を無視" };
@@ -190,9 +188,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly CheckBox _recursive = new() { Content = "サブフォルダー", IsChecked = true };
     private readonly TextBox _excludes = new() { PlaceholderText = "除外パス（;区切り）", Width = 180 };
     private readonly ComboBox _folderMode = new() { ItemsSource = new[] { "内容", "SHA-256", "日時とサイズ" }, SelectedIndex = 0, Width = 140 };
-    private readonly TextBlock _status = new() { Text = "パスを選択するか、編集タブにテキストを貼り付けて比較できます。", Margin = new Thickness(12, 8) };
-    private readonly TextBlock _leftCaption = new() { Text = "左", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold };
-    private readonly TextBlock _rightCaption = new() { Text = "右", Margin = new Thickness(16, 8), FontWeight = FontWeight.Bold };
+    private readonly TextBlock _status = new() { Text = "パスを選択するか、編集タブにテキストを貼り付けて比較できます。", Margin = new Thickness(8, 3), Foreground = WinMergeColors.FrameText, FontSize = 12 };
+    private readonly TextBlock _leftCaption = new() { Text = "左", Margin = new Thickness(6, 3), FontSize = 12, Foreground = WinMergeColors.FrameText, TextTrimming = TextTrimming.CharacterEllipsis };
+    private readonly TextBlock _rightCaption = new() { Text = "右", Margin = new Thickness(6, 3), FontSize = 12, Foreground = WinMergeColors.FrameText, TextTrimming = TextTrimming.CharacterEllipsis };
     private readonly TabControl _views = new();
     private readonly ScrollViewer _comparisonToolbar;
     private readonly TabItem _diffTab;
@@ -234,8 +232,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         _workingTexts = workingTexts;
         _owner = owner;
-        var root = new DockPanel { Margin = new Thickness(12) };
-        var top = new StackPanel { Spacing = 8 };
+        // 本家のMDI子ウィンドウと同様に枠いっぱいへ広げ、下端をステータスバーにする。
+        var root = new DockPanel();
+        var top = new StackPanel { Spacing = 6, Margin = new Thickness(8, 6) };
         var paths = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*,*"), ColumnSpacing = 8 };
         paths.Children.Add(PathPicker(LeftPath));
         var ancestor = PathPicker(BasePath); Grid.SetColumn(ancestor, 1); paths.Children.Add(ancestor);
@@ -263,7 +262,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "アーカイブ作成", () => ObserveCriticalTextSaveTask("archive-create", CreateArchiveAsync()));
         AddAction(actions, "結果を保存", SaveResultAsync);
         AddAction(actions, "次の競合", () => { NavigateConflict(); return Task.CompletedTask; });
-        AddAction(actions, "中止", () => { StopFolderCopy(); _operation?.Cancel(); _reportOperation?.Cancel(); _textSaveOperation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelOperation(); return Task.CompletedTask; });
+        AddAction(actions, "中止", () => { StopAllOperations(); return Task.CompletedTask; });
         top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", () => ObserveCriticalTextSaveTask("project-open", OpenProjectAsync()));
@@ -289,14 +288,19 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         SizeChanged += (_, _) => UpdateComparisonToolbarHeight();
         _views.SelectionChanged += (_, _) => UpdateComparisonToolbarHeight();
         DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
-        DockPanel.SetDock(_status, Dock.Bottom); root.Children.Add(_status);
+        // 本家のステータスバー（MergeStatusBar）に合わせ、灰色の帯に状態文を出す。
+        var statusBar = new Border { Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0), Child = _status };
+        DockPanel.SetDock(statusBar, Dock.Bottom); root.Children.Add(statusBar);
         DiffList.ItemTemplate = new FuncDataTemplate<DiffRow>((row, _) => BuildRow(row), false);
-        var diffRoot = new DockPanel();
-        var captions = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*") };
-        captions.Children.Add(_leftCaption);
-        Grid.SetColumn(_rightCaption, 1); captions.Children.Add(_rightCaption);
-        DockPanel.SetDock(captions, Dock.Top); diffRoot.Children.Add(captions); diffRoot.Children.Add(DiffList);
-        _diffTab = new TabItem { Header = "差分", Content = diffRoot };
+        // 本家のエディターと同じく行を詰めて並べる。Fluent の ListBoxItem は余白が大きく、行の間に隙間ができるため打ち消す。
+        DiffList.Background = Brushes.Transparent;
+        DiffList.ContainerPrepared += (_, args) =>
+        {
+            if (args.Container is not ListBoxItem item) return;
+            item.Padding = new Thickness(0); item.MinHeight = 0;
+        };
+        // 本家のファイル比較画面（ロケーションペイン・ファイル名の帯・Diff ペイン）は ComparisonPane.FileView.cs で組む。
+        _diffTab = new TabItem { Header = "差分", Content = BuildFileCompareView() };
         _ancestorEditor.IsReadOnly = true;
         LeftEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
         RightEditor.TextChanged += (_, _) => RefreshArchiveDraftCaptions();
@@ -304,6 +308,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         InitializeLineBookmarks();
         _resultTab = new TabItem { Header = "マージ結果", Content = CreateMergeResultView() };
         _views.ItemsSource = new[] { _diffTab, new TabItem { Header = "編集 / 4ペイン", Content = _editGrid }, _resultTab, _specialTab };
+        foreach (var view in _views.Items.OfType<TabItem>()) MainWindow.CompactTab(view);
         _views.SelectedItem = _diffTab;
         _views.SelectionChanged += (_, _) => (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         root.Children.Add(_views);
@@ -608,7 +613,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (CurrentDiff is not { Blocks.Count: > 0 }) return;
         _diffIndex = (_diffIndex + direction + CurrentDiff.Blocks.Count) % CurrentDiff.Blocks.Count;
         DiffList.SelectedIndex = CurrentDiff.Blocks[_diffIndex].RowStart;
-        DiffList.ScrollIntoView(DiffList.SelectedItem!);
+        RevealDifference(CurrentDiff.Blocks[_diffIndex]);
     }
 
     public void CopySelected(bool leftToRight)
@@ -661,8 +666,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         // 形式別ビューの独自操作欄と本文を残し、共通設定はスクロールで参照する。
         var folder = _views.SelectedItem == _specialTab && ReferenceEquals(_specialTab.Content, _folderView);
         var independentText = IndependentText && _views.SelectedItem != _specialTab;
+        // 本家のファイル比較画面は本文が主役なので、共通の設定・操作欄は本文の3割までに抑え、残りはスクロールで参照する。
         var fraction = independentText ? .25 : folder ? .15 : _views.SelectedItem == _specialTab
-            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel or TablePanel) ? .2 : .5;
+            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel or TablePanel) ? .2 : .3;
         _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, independentText ? 100 : folder ? 60 : 80, 400) : 400;
     }
     private async Task CopySelectionAsync(bool toRight)
@@ -891,14 +897,26 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private static Control BuildRow(DiffRow? row)
     {
         if (row is null) return new Border();
-        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("52,*,52,*"), MinHeight = 23 };
-        var background = row.Kind switch { DiffKind.Added => "#244332", DiffKind.Deleted => "#4B2933", DiffKind.Modified => "#49422A", _ => "#00000000" };
-        grid.Background = new SolidColorBrush(Color.Parse(background));
+        var grid = new Grid { ColumnDefinitions = new ColumnDefinitions("52,*,52,*"), MinHeight = 20 };
+        // 本家WinMergeと同じく、行のある側を差分色（黄）、行の無い側を削除色（灰）で塗る。等しい行は塗らない。
+        IBrush? SideBackground(bool hasLine) => row.Kind == DiffKind.Equal ? null
+            : hasLine ? WinMergeColors.Difference : WinMergeColors.DifferenceDeleted;
+        var sideBackgrounds = new[] { SideBackground(row.LeftText is not null), SideBackground(row.RightText is not null) };
         var values = new[] { row.LeftLineNumber?.ToString() ?? "", row.LeftText ?? "", row.RightLineNumber?.ToString() ?? "", row.RightText ?? "" };
         for (var i = 0; i < values.Length; i++)
         {
-            var text = new TextBlock { FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 13, Margin = new Thickness(6, 2), TextTrimming = TextTrimming.CharacterEllipsis };
+            var text = new TextBlock { FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 13, Margin = new Thickness(6, 1), TextTrimming = TextTrimming.CharacterEllipsis };
             if (i % 2 == 0) text.Foreground = Brushes.Gray;
+            else if (sideBackgrounds[i / 2] is { } sideBackground)
+            {
+                // 差分の文字色は本家の既定（OPT_CLR_DIFF_TEXT）どおり黒。ダークテーマでも黄の上で読めるようにする。
+                // Tag は選択中の差分ブロックを赤系へ塗り替えるときの目印（ComparisonPane.FileView.cs の ColorDiffRow）。
+                var cell = new Border { Background = sideBackground, Tag = new DiffCellTag(sideBackground == WinMergeColors.Difference) };
+                Grid.SetColumn(cell, i); grid.Children.Add(cell);
+                text.Foreground = WinMergeColors.DifferenceText;
+            }
+            // 本家の左右ペインの境界線。右側の行番号欄の左端に縦線を引く。
+            if (i == 2) { var divider = new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(1, 0, 0, 0) }; Grid.SetColumn(divider, 2); grid.Children.Add(divider); }
             var spans = i == 1 ? row.LeftSpans : i == 3 ? row.RightSpans : [];
             if (spans.Count == 0) text.Text = values[i];
             else
@@ -907,7 +925,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 foreach (var span in spans)
                 {
                     text.Inlines!.Add(new Run(values[i][offset..span.Start]));
-                    text.Inlines.Add(new Run(values[i].Substring(span.Start, span.Length)) { Foreground = Brushes.Gold, FontWeight = FontWeight.Bold });
+                    // 行内差分は本家と同じく背景色（OPT_CLR_WORDDIFF）で示し、文字色は行と同じにする。
+                    text.Inlines.Add(new Run(values[i].Substring(span.Start, span.Length)) { Background = WinMergeColors.WordDifference });
                     offset = span.Start + span.Length;
                 }
                 text.Inlines!.Add(new Run(values[i][offset..]));

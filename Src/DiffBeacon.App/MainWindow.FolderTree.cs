@@ -115,39 +115,9 @@ public sealed partial class ComparisonPane
 
     private Control BuildFolderTreeRow(DirectoryEntry? entry)
     {
-        if (entry is null) return new TextBlock();
-        var row = new DockPanel { Margin = new Thickness(8, 4), LastChildFill = true };
-        if (FolderTreeActive)
-        {
-            var depth = _folderTreeDepth.GetValueOrDefault(entry.RelativePath);
-            row.Margin = new Thickness(8 + depth * 16, 4, 8, 4);
-            var toggle = new Button { Name = "FolderTreeExpander", Content = _folderExpanded.Contains(entry.RelativePath) ? "−" : "+",
-                Width = 24, Height = 24, Padding = new Thickness(0), Focusable = false,
-                IsVisible = FolderCanExpand(entry), IsEnabled = FolderTreeInputAllowed };
-            toggle.Click += async (_, args) =>
-            {
-                args.Handled = true;
-                await GuardAsync(() => { ToggleFolderNode(entry); return Task.CompletedTask; });
-            };
-            toggle.AddHandler(InputElement.DoubleTappedEvent, (_, args) => args.Handled = true, RoutingStrategies.Bubble);
-            DockPanel.SetDock(toggle, Dock.Left); row.Children.Add(toggle);
-        }
-        row.Children.Add(new TextBlock
-        {
-            Text = $"{entry.Status,-14}  {FolderThreeWayCaption(entry)}{(entry.IsFiltered ? "[除外] " : "")}{entry.RelativePath}",
-            FontFamily = new FontFamily("Cascadia Mono, Menlo, monospace"), TextTrimming = TextTrimming.CharacterEllipsis,
-            VerticalAlignment = VerticalAlignment.Center
-        });
-        return row;
+        // 列・アイコン・展開ボタンは本家WinMerge風の一覧（ComparisonPane.FolderList.cs）で作る。
+        return entry is null ? new TextBlock() : BuildFolderRow(entry);
     }
-
-    private static string FolderThreeWayCaption(DirectoryEntry entry) => entry.ThreeWay?.Classification switch
-    {
-        DirectoryThreeWayClassification.OnlyLeft => "[左のみ異なる] ",
-        DirectoryThreeWayClassification.OnlyMiddle => "[中央のみ異なる] ",
-        DirectoryThreeWayClassification.OnlyRight => "[右のみ異なる] ",
-        DirectoryThreeWayClassification.AllChanged => "[三者差分] ", _ => ""
-    };
 
     private sealed record FolderDirectoryCandidate(DirectoryComparisonResult Model, FolderConfiguration Configuration,
         string? FilterStamp, FolderFilterListState ListDependencies, FolderTreeProjection Projection, string[] Selection,
@@ -275,6 +245,7 @@ public sealed partial class ComparisonPane
         _folderTreeDisplayed = FolderTreeActive;
         _folderExpanded = projection.Expanded; _folderTreeDepth = projection.Depths; _folderTreeParents = projection.Parents;
         _directoryList.SelectedItems?.Clear();
+        UpdateFolderListChrome();
         _directoryList.ItemsSource = projection.Rows;
         var selected = new HashSet<string>(selection, FolderTreeComparer);
         foreach (var entry in projection.Rows)

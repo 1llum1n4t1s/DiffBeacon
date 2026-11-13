@@ -19,6 +19,10 @@
     <PackageReference Include="TiffLibrary" Version="0.6.65" />
     <None Include="TiffLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="JpegLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- 本家WinMergeのツールバー画像（GPL v2、32px × 26枚のストリップ）。MainWindow.Frame.cs で切り出して使う。 -->
+    <EmbeddedResource Include="../res/ToolbarEnabled32.png" LogicalName="DiffBeacon.Frame.ToolbarEnabled32.png" />
+    <!-- 本家WinMergeのフォルダー一覧アイコン（GPL v2、Merge2.rc の IDI_* と同じ .ico）。ComparisonPane.FolderList.cs で16pxを取り出す。 -->
+    <EmbeddedResource Include="../res/lfile.ico;../res/mfile.ico;../res/rfile.ico;../res/lmissing.ico;../res/mmissing.ico;../res/rmissing.ico;../res/notequalfile.ico;../res/equalfile.ico;../res/fileunknown.ico;../res/lfolder.ico;../res/mfolder.ico;../res/rfolder.ico;../res/lmissingfolder.ico;../res/mmissingfolder.ico;../res/rmissingfolder.ico;../res/fileskip.ico;../res/folderskip.ico;../res/notequalfolder.ico;../res/equalfolder.ico;../res/folder.ico;../res/error.ico" LogicalName="DiffBeacon.FolderIcons.%(Filename)%(Extension)" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/Zip.deflate.WinzipAES.zip" LogicalName="DiffBeacon.SelfTest.Encrypted.zip" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/Sources/two-passwords.zip" LogicalName="DiffBeacon.SelfTest.Sources.two-passwords.zip" />
     <EmbeddedResource Include="../../tests/Fixtures/Archives/7Zip.solid.7z" LogicalName="DiffBeacon.SelfTest.Wrappers.7Zip.solid.7z" />

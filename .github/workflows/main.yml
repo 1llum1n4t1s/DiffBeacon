@@ -91,6 +91,10 @@ jobs:
           cache: true
           cache-dependency-path: '**/packages.lock.json'
       - uses: actions/setup-python@v7
+        # self-hosted macOS（M3MB14）では既定の /Users/runner/hostedtoolcache を作れないため、runner 自身のツールキャッシュへ展開する。
+        # GitHub ホストの runner では同じ場所を指すだけなので挙動は変わらない。
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.tool_cache }}
         with:
           python-version: '3.13'
       - name: Select external run output

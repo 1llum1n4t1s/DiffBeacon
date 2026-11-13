@@ -9,7 +9,7 @@ public sealed class BeaconApplication : Application
 {
     public override void Initialize()
     {
-        RequestedThemeVariant = ThemeVariant.Dark;
+        RequestedThemeVariant = ThemeVariant.Light; // 本家WinMergeと同じ明るい配色を既定にする。暗い配色は「表示」メニューで切り替える。
         Styles.Add(new FluentTheme());
     }
 

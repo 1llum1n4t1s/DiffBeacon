@@ -17,7 +17,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false, bool binarySearchOnly = false, bool imageCopyOnly = false, bool imageDefaultsOnly = false, bool bareGZipOnly = false, bool bareCompressionOnly = false, bool tableHeadersOnly = false, bool textBookmarksOnly = false, bool tableRawSearchOnly = false, bool tableColumnIgnoreOnly = false, bool tableColumnRangeOnly = false, bool binaryReplaceOnly = false, bool lineTransformOnly = false, bool lineTransformReplaceListsOnly = false, bool folderPropertiesOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false, bool binarySearchOnly = false, bool imageCopyOnly = false, bool imageDefaultsOnly = false, bool bareGZipOnly = false, bool bareCompressionOnly = false, bool tableHeadersOnly = false, bool textBookmarksOnly = false, bool tableRawSearchOnly = false, bool tableColumnIgnoreOnly = false, bool tableColumnRangeOnly = false, bool binaryReplaceOnly = false, bool lineTransformOnly = false, bool lineTransformReplaceListsOnly = false, bool folderPropertiesOnly = false, bool frameOnly = false, bool folderViewOnly = false)
     {
         try { DiffBeacon.Development.DevelopmentOutputGuard.Validate(output); }
         catch (IOException error) { Console.Error.WriteLine(error.Message); return 2; }
@@ -133,6 +133,22 @@ internal static class HeadlessSelfTest
                 Progress("HeadlessLineBookmarkChecks", "start");
                 HeadlessLineBookmarkChecks.Run(window, pane, output, Check, Screenshot);
                 Progress("HeadlessLineBookmarkChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (folderViewOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessFolderViewChecks", "start");
+                HeadlessFolderViewChecks.Run(window, pane, output, artifactOutput, Check, Screenshot, Pump);
+                Progress("HeadlessFolderViewChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (frameOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessFrameChecks", "start");
+                HeadlessFrameChecks.Run(window, pane, output, artifactOutput, Check, Screenshot, Pump);
+                Progress("HeadlessFrameChecks", "complete");
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
             if (bareCompressionOnly)
@@ -309,7 +325,7 @@ internal static class HeadlessSelfTest
             pane.CompareEditors(); Screenshot("word-diff-inline.png");
             var highlightedWords = pane.DiffList.GetVisualDescendants().OfType<TextBlock>()
                 .SelectMany(block => block.Inlines?.OfType<Avalonia.Controls.Documents.Run>() ?? [])
-                .Where(run => Equals(run.Foreground, Avalonia.Media.Brushes.Gold)).Select(run => run.Text).ToArray();
+                .Where(run => ReferenceEquals(run.Background, WinMergeColors.WordDifference)).Select(run => run.Text).ToArray();
             Check("word diff renders separate changed words and retains equal middle", highlightedWords.Count(word => word == "old") == 2
                 && highlightedWords.Count(word => word == "new") == 2 && highlightedWords.Length == 4,
                 string.Join("|", highlightedWords));
@@ -1496,6 +1512,13 @@ internal static class HeadlessSelfTest
             Progress("HeadlessLineBookmarkChecks", "start");
             HeadlessLineBookmarkChecks.Run(window, reportPane, output, Check, Screenshot);
             Progress("HeadlessLineBookmarkChecks", "complete");
+            // 外枠の検証は前の検証の状態を引き継がないよう、新しい比較タブで行う。
+            Progress("HeadlessFrameChecks", "start");
+            HeadlessFrameChecks.Run(window, window.AddSession(), output, artifactOutput, Check, Screenshot, Pump);
+            Progress("HeadlessFrameChecks", "complete");
+            Progress("HeadlessFolderViewChecks", "start");
+            HeadlessFolderViewChecks.Run(window, window.AddSession(), output, artifactOutput, Check, Screenshot, Pump);
+            Progress("HeadlessFolderViewChecks", "complete");
             RunLineTransforms();
             Progress("finalize", "start");
             RunArchiveWorkingReview();
@@ -1524,7 +1547,7 @@ internal static class HeadlessSelfTest
             writer.WriteBoolean("binarySearchOnly", binarySearchOnly);
             writer.WriteBoolean("binaryReplaceOnly", binaryReplaceOnly);
             writer.WriteBoolean("binaryClipboardOnly", binaryClipboardOnly);
-            writer.WriteString("scope", folderPropertiesOnly ? "folder-properties-only" : lineTransformReplaceListsOnly ? "line-transform-replace-lists-only" : lineTransformOnly ? "line-transform-only" : tableRawSearchOnly ? "table-raw-search-only" : tableColumnRangeOnly ? "table-column-range-only" : tableColumnIgnoreOnly ? "table-column-ignore-only" : tableHeadersOnly ? "table-headers-only" : bareCompressionOnly ? "bare-compression-only" : bareGZipOnly ? "bare-gzip-only" : imageCopyOnly ? "image-copy-only" : imageDefaultsOnly ? "image-defaults-only" : independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryReplaceOnly ? "binary-replace-only": binarySearchOnly ? "binary-search-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", folderViewOnly ? "folder-view-only" : frameOnly ? "frame-only" : folderPropertiesOnly ? "folder-properties-only" : lineTransformReplaceListsOnly ? "line-transform-replace-lists-only" : lineTransformOnly ? "line-transform-only" : tableRawSearchOnly ? "table-raw-search-only" : tableColumnRangeOnly ? "table-column-range-only" : tableColumnIgnoreOnly ? "table-column-ignore-only" : tableHeadersOnly ? "table-headers-only" : bareCompressionOnly ? "bare-compression-only" : bareGZipOnly ? "bare-gzip-only" : imageCopyOnly ? "image-copy-only" : imageDefaultsOnly ? "image-defaults-only" : independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryReplaceOnly ? "binary-replace-only": binarySearchOnly ? "binary-search-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }

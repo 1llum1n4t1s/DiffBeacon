@@ -280,7 +280,7 @@ public sealed partial class TablePanel : DockPanel
             {
                 Text = Comparison.GetSourceRow(side, alignedRow)?.ToString() ?? "—", Width = 35, Margin = new Thickness(4),
                 Name = $"table-row-header-{side}-{alignedRow}", Tag = rowKind,
-                Background = Comparison.UsesLineTransforms && rowKind != DiffKind.Equal ? new SolidColorBrush(Color.Parse("#553D2847")) : null
+                Background = Comparison.UsesLineTransforms && rowKind != DiffKind.Equal ? WinMergeColors.Difference : null
             };
             if (Comparison.IsIgnored(side, alignedRow)) ToolTip.SetTip(header, "比較キーが一致した行です。原文には違いがあります。");
             else if (Comparison.UsesLineTransforms && rowKind != DiffKind.Equal)
@@ -295,9 +295,11 @@ public sealed partial class TablePanel : DockPanel
                 var border = new Border
                 {
                     Padding = new Thickness(6), BorderThickness = new Thickness(.5), BorderBrush = Brushes.Gray,
-                    Background = cell is null ? new SolidColorBrush(Color.Parse("#303030")) : kind == DiffKind.Equal ? Brushes.Transparent : new SolidColorBrush(Color.Parse("#553D2847")),
+                    Background = cell is null ? WinMergeColors.DifferenceDeleted : kind == DiffKind.Equal ? Brushes.Transparent : WinMergeColors.Difference,
                     Child = new TextBlock { Text = CellPreview(cell?.Value), TextWrapping = TextWrapping.Wrap, MaxHeight = 64, TextTrimming = TextTrimming.CharacterEllipsis }
                 };
+                // 差分色の上は本家どおり黒文字にし、ダークテーマでも読めるようにする。等しいセルはテーマの文字色を継承する。
+                if (cell is null || kind != DiffKind.Equal) ((TextBlock)border.Child).Foreground = WinMergeColors.DifferenceText;
                 border.PointerPressed += (_, _) =>
                 {
                     try { SelectCell(selectedSide, alignedRow, selectedColumn); }
@@ -354,12 +356,12 @@ public sealed partial class TablePanel : DockPanel
                 var label = new TextBlock
                 {
                     Name = $"table-column-header-{side}-{column}", Text = CellPreview(value), TextWrapping = TextWrapping.Wrap,
-                    MaxHeight = 64, TextTrimming = TextTrimming.CharacterEllipsis, Foreground = Brushes.White
+                    MaxHeight = 64, TextTrimming = TextTrimming.CharacterEllipsis, Foreground = WinMergeColors.FrameText
                 };
                 var border = new Border
                 {
                     Padding = new Thickness(6), BorderThickness = new Thickness(.5), BorderBrush = Brushes.Gray,
-                    Background = new SolidColorBrush(Color.Parse("#304253")), Child = label
+                    Background = WinMergeColors.FrameFace, Child = label
                 };
                 Grid.SetColumn(border, visibleColumn + 1); cells.Children.Add(border);
             }
