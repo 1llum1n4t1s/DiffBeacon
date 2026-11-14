@@ -136,9 +136,10 @@ internal static class HeadlessIndependentTextChecks
         var cancelCompare = Open(); var cancelledDiff = cancelCompare.CurrentDiff; var compareGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var gateEntered = 0; var onWorker = 0;
         cancelCompare.IndependentEditorCompareGate = token =>
-        { Interlocked.Exchange(ref gateEntered, 1); Interlocked.Exchange(ref onWorker, Dispatcher.UIThread.CheckAccess() ? 0 : 1); return compareGate.Task.WaitAsync(token); };
+        { Interlocked.Exchange(ref onWorker, Dispatcher.UIThread.CheckAccess() ? 0 : 1); Interlocked.Exchange(ref gateEntered, 1); return compareGate.Task.WaitAsync(token); };
         Click(cancelCompare, "再比較"); pump(Wait(() => Volatile.Read(ref gateEntered) == 1));
-        Proof("recompare calculation gate runs off UI and remains responsive", !cancelCompare.IndependentTextUiTask.IsCompleted && Volatile.Read(ref onWorker) == 1);
+        Proof("recompare calculation gate runs off UI and remains responsive", !cancelCompare.IndependentTextUiTask.IsCompleted && Volatile.Read(ref onWorker) == 1,
+            $"entered={Volatile.Read(ref gateEntered)} onWorker={Volatile.Read(ref onWorker)} task={cancelCompare.IndependentTextUiTask.Status} status={cancelCompare.ComparisonStatus}");
         Click(cancelCompare, "中止"); pump(cancelCompare.IndependentTextUiTask); compareGate.TrySetResult(); cancelCompare.IndependentEditorCompareGate = null;
         Proof("actual recompare Cancel preserves previous diff and all texts", ReferenceEquals(cancelledDiff, cancelCompare.CurrentDiff)
             && Enumerable.Range(0, 3).All(side => cancelCompare.TextEditor(side).Text == originals[side]) && cancelCompare.ComparisonStatus?.Contains("中止", StringComparison.Ordinal) == true
