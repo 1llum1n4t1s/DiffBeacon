@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
@@ -528,6 +529,14 @@ public sealed partial class ComparisonPane
             };
             View.Options.EnableHyperlinks = false; View.Options.EnableEmailHyperlinks = false;
             View.Options.AllowScrollBelowDocument = false;
+            // 元に戻す／やり直すのキーは、アプリの他の入力欄と同じく実行環境の設定（PlatformSettings の HotkeyConfiguration）に従う。
+            // AvaloniaEdit は OS ごとに固定のキー（macOS は Command）を使うため、環境の設定と食い違う場合があり、先に受け取って処理する。
+            View.TextArea.AddHandler(InputElement.KeyDownEvent, (_, args) =>
+            {
+                if (Application.Current?.PlatformSettings?.HotkeyConfiguration is not { } hotkeys) return;
+                if (hotkeys.Undo.Any(gesture => gesture.Matches(args))) { if (View.CanUndo) View.Undo(); args.Handled = true; }
+                else if (hotkeys.Redo.Any(gesture => gesture.Matches(args))) { if (View.CanRedo) View.Redo(); args.Handled = true; }
+            }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
             Renderer = new DiffLineRenderer(this);
             View.TextArea.TextView.BackgroundRenderers.Add(Renderer);
             // 本家と同じく本物の行番号だけを出し、ゴースト行は空欄にする。
