@@ -51,7 +51,7 @@ public sealed partial class ComparisonPane
 
     // headless検証用: 現在の列見出しと最上部のルートパス帯。
     internal IReadOnlyList<string> FolderColumnTitles => _folderColumnHeader.Children.OfType<Border>()
-        .Select(cell => (cell.Child as TextBlock)?.Text ?? "").ToArray();
+        .Select(cell => (cell.Child as TextBlock ?? (cell.Child as Grid)?.Children.OfType<TextBlock>().FirstOrDefault())?.Text ?? "").ToArray();
     internal IReadOnlyList<string> FolderRootPathTexts => _folderRootPaths.Where(path => path.IsVisible).Select(path => path.Text ?? "").ToArray();
     internal Control FolderColumnHeader => _folderColumnHeaderHost;
 
@@ -116,22 +116,19 @@ public sealed partial class ComparisonPane
         var columns = FolderColumns;
         for (var i = 0; i < columns.Length; i++)
         {
-            _folderColumnHeader.ColumnDefinitions.Add(FolderColumnDefinition(columns[i].Width));
-            var cell = new Border
-            {
-                BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 0, 1, 0), Padding = new Thickness(6, 3),
-                Child = new TextBlock { Text = columns[i].Title, FontSize = 12, Foreground = WinMergeColors.FrameText, TextTrimming = TextTrimming.CharacterEllipsis },
-            };
+            _folderColumnHeader.ColumnDefinitions.Add(FolderColumnDefinitionAt(i));
+            var cell = BuildFolderHeaderCell(i, columns);
             Grid.SetColumn(cell, i); _folderColumnHeader.Children.Add(cell);
         }
+        UpdateFolderSortIndicators();
     }
 
     /// <summary>一行分のセルを作る。名前の列にはツリーの字下げ・展開ボタン・状態アイコンを置く。</summary>
     private Control BuildFolderRow(DirectoryEntry entry)
     {
         var columns = FolderColumns;
-        var row = new Grid { Height = FolderRowHeight };
-        foreach (var column in columns) row.ColumnDefinitions.Add(FolderColumnDefinition(column.Width));
+        var row = new Grid { Height = FolderRowHeight, Name = "folder-data-row" };
+        for (var i = 0; i < columns.Length; i++) row.ColumnDefinitions.Add(FolderColumnDefinitionAt(i));
         for (var i = 0; i < columns.Length; i++)
         {
             Control cell = columns[i].Column == FolderColumn.Name ? BuildFolderNameCell(entry) : FolderCellText(FolderCellValue(entry, columns[i].Column));

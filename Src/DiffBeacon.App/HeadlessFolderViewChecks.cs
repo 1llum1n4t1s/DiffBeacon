@@ -125,6 +125,61 @@ internal static class HeadlessFolderViewChecks
         }
         window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
 
+        // 見出しのクリックで並べ替え、境界のドラッグで列幅を変える。比較結果・選択は変えない。
+        {
+            string[] Top() => list.Items.OfType<DirectoryEntry>().Where(entry => !entry.RelativePath.Contains('/') && !entry.RelativePath.Contains((char)92)).Select(entry => entry.RelativePath).ToArray();
+            var before = list.Items.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).OrderBy(path => path, StringComparer.Ordinal).ToArray();
+            var diffEntry = list.Items.OfType<DirectoryEntry>().First(entry => entry.RelativePath == "diff.txt");
+            list.SelectedItems?.Clear(); list.SelectedItems?.Add(diffEntry); Dispatcher.UIThread.RunJobs();
+            var isDir = (string path) => list.Items.OfType<DirectoryEntry>().First(entry => entry.RelativePath == path).EntryKind == DirectoryEntryKind.Directory;
+
+            pane.SortFolderBy("Name"); Dispatcher.UIThread.RunJobs();
+            var asc = Top();
+            var dirsFirst = asc.SkipWhile(isDir).All(path => !isDir(path));
+            var namesAsc = asc.Where(isDir).SequenceEqual(asc.Where(isDir).OrderBy(path => path, StringComparer.CurrentCultureIgnoreCase))
+                && asc.Where(path => !isDir(path)).SequenceEqual(asc.Where(path => !isDir(path)).OrderBy(path => path, StringComparer.CurrentCultureIgnoreCase));
+            check("folder view name sort puts folders first then ascending names", dirsFirst && namesAsc && pane.FolderSortColumnName == "Name" && !pane.FolderSortDescending, string.Join("|", asc));
+            check("folder view sort marks the header with an arrow", pane.FolderColumnTitles[0] == "名前 ▲" && pane.FolderColumnTitles[1] == "フォルダー", string.Join("|", pane.FolderColumnTitles));
+            check("folder view sort keeps the selection and all entries",
+                list.SelectedItems?.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).SequenceEqual(["diff.txt"]) == true
+                && list.Items.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).OrderBy(path => path, StringComparer.Ordinal).SequenceEqual(before), string.Join("|", asc));
+
+            pane.SortFolderBy("Name"); Dispatcher.UIThread.RunJobs();
+            var desc = Top();
+            check("folder view clicking the same header again reverses within groups", pane.FolderSortDescending && pane.FolderColumnTitles[0] == "名前 ▼"
+                && desc.Where(isDir).SequenceEqual(asc.Where(isDir).Reverse()) && desc.Where(path => !isDir(path)).SequenceEqual(asc.Where(path => !isDir(path)).Reverse()), string.Join("|", desc));
+
+            pane.SortFolderBy("LeftDate"); Dispatcher.UIThread.RunJobs();
+            var byLeft = list.Items.OfType<DirectoryEntry>().Where(entry => !entry.RelativePath.Contains('/') && !entry.RelativePath.Contains((char)92)).Select(entry => entry.LeftState?.LastWriteTimeUtc ?? DateTime.MinValue).ToArray();
+            check("folder view date sort orders by real timestamps ascending, missing side first",
+                byLeft.SequenceEqual(byLeft.OrderBy(time => time)) && pane.FolderColumnTitles[0] == "名前" && pane.FolderColumnTitles[3] == "左更新日時 ▲", string.Join("|", pane.FolderColumnTitles));
+
+            // 列幅: 境界の左右2列の間で幅を移し、合計と最小幅を守る。見出しと表示中の行が同じ幅になる。
+            pane.ClearFolderSortForTest(); Dispatcher.UIThread.RunJobs();
+            window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
+            var start = pane.FolderColumnWidths.ToArray();
+            pane.ResizeFolderBoundaryForTest(1, 30); Dispatcher.UIThread.RunJobs();
+            var moved = pane.FolderColumnWidths.ToArray();
+            check("folder view dragging a boundary moves width between its two columns",
+                Math.Abs(moved[1] - start[1] - 30) < 1.5 && Math.Abs(moved[2] - start[2] + 30) < 1.5 && Math.Abs(moved.Sum() - start.Sum()) < 1.5
+                && Enumerable.Range(0, start.Length).Where(i => i != 1 && i != 2).All(i => Math.Abs(moved[i] - start[i]) < 1.5),
+                string.Join(",", start.Select(x => x.ToString("F0"))) + " -> " + string.Join(",", moved.Select(x => x.ToString("F0"))));
+            var rowAfter = list.GetVisualDescendants().OfType<Grid>().FirstOrDefault(grid => grid.Name == "folder-data-row");
+            check("folder view row columns follow the resized header", rowAfter is not null
+                && Enumerable.Range(0, moved.Length).All(i => Math.Abs(rowAfter.ColumnDefinitions[i].ActualWidth - moved[i]) < 1.5),
+                string.Join(",", rowAfter?.ColumnDefinitions.Select(c => c.ActualWidth.ToString("F0")) ?? []));
+            pane.ResizeFolderBoundaryForTest(1, 100000); Dispatcher.UIThread.RunJobs();
+            var clamped = pane.FolderColumnWidths.ToArray();
+            check("folder view column width never drops below the minimum", clamped[2] >= 39.5 && clamped.All(width => width >= 39.5) && Math.Abs(clamped.Sum() - start.Sum()) < 1.5,
+                string.Join(",", clamped.Select(x => x.ToString("F0"))));
+            window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs();
+            var viewerAfter = list.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+            check("folder view resized columns still fit without horizontal scrolling", viewerAfter is not null && viewerAfter.Extent.Width <= viewerAfter.Viewport.Width + .5,
+                $"extent={viewerAfter?.Extent.Width} viewport={viewerAfter?.Viewport.Width}");
+            window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
+            list.SelectedItems?.Clear(); Dispatcher.UIThread.RunJobs();
+        }
+
         // 三者比較: 中更新日時の列と、欠落側・同一側の文言とアイコン。
         var three = Path.Combine(output, "folder-view-3"); var l3 = Path.Combine(three, "left"); var m3 = Path.Combine(three, "middle"); var r3 = Path.Combine(three, "right");
         foreach (var root in new[] { l3, m3, r3 }) Directory.CreateDirectory(root);
