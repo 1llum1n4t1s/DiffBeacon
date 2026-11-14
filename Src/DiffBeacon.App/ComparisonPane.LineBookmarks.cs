@@ -278,6 +278,9 @@ public sealed partial class ComparisonPane
         editor.SelectionStart = start;
         editor.SelectionEnd = start;
         editor.CaretIndex = start;
+        // 本文は差分タブのエディターで表示しているので、その行へキャレットを移して見える位置へスクロールする。
+        FocusDiffEditorRealLine(side, line);
+        _activeLineBookmarkSide = side;
         RefreshLineBookmarkToolbar();
     }
 

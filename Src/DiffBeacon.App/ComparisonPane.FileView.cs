@@ -12,7 +12,7 @@ namespace DiffBeacon.App;
 /// <summary>
 /// 本家WinMergeのファイル比較画面（Src/MergeEditFrm.cpp）に合わせた「差分」タブの構成。
 /// 左端にロケーションペイン、各ペインの上にファイル名の帯、中央に左右並びの本文、下段に Diff ペインを置く。
-/// 本文は既存の <see cref="DiffList"/>（左右を同じ行に整列した一覧）をそのまま使い、自己検証の参照先を変えない。
+/// 本文は直接編集できる左右のエディター（ComparisonPane.DiffEditors.cs）。<see cref="DiffList"/> は表示せず、行の選択の基準として残す。
 /// </summary>
 public sealed partial class ComparisonPane
 {
@@ -35,14 +35,10 @@ public sealed partial class ComparisonPane
 
     private Control BuildFileCompareView()
     {
-        // 本家のファイル名の帯（CEditorFilePathBar）。灰色の帯にパスを表示する。
-        var headers = new Grid { ColumnDefinitions = new ColumnDefinitions("*,*") };
-        headers.Children.Add(HeaderBar(_leftCaption, _leftHeaderPath));
-        var rightHeader = HeaderBar(_rightCaption, _rightHeaderPath); Grid.SetColumn(rightHeader, 1); headers.Children.Add(rightHeader);
-
+        // 本家のファイル名の帯（CEditorFilePathBar）は、ペインごとにエディターの上へ置く（ComparisonPane.DiffEditors.cs）。
         var body = new DockPanel();
-        DockPanel.SetDock(headers, Dock.Top); body.Children.Add(headers);
-        body.Children.Add(DiffList);
+        // 本文は直接編集できる左右のエディター（ComparisonPane.DiffEditors.cs）。一覧（DiffList）は表示せず、選択と移動の基準として残す。
+        body.Children.Add(BuildDiffEditors());
 
         // 左端のロケーションペイン。本家と同じく本文の左に縦長で置く。
         var main = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
@@ -88,13 +84,6 @@ public sealed partial class ComparisonPane
         return root;
     }
 
-    private static Border HeaderBar(TextBlock caption, TextBlock path)
-    {
-        var bar = new DockPanel();
-        DockPanel.SetDock(caption, Dock.Left); bar.Children.Add(caption); bar.Children.Add(path);
-        return new Border { Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 0, 1, 1), Child = bar };
-    }
-
     private static TextBlock HeaderPathText(string name) => new()
     {
         Name = name, Margin = new Thickness(0, 3, 6, 3), FontSize = 12, Foreground = WinMergeColors.FrameText,
@@ -113,6 +102,7 @@ public sealed partial class ComparisonPane
     private void OnCurrentDiffChanged()
     {
         _locationPane.SetDiff(CurrentDiff);
+        RebuildDiffEditors();
         // 比較の有無で、選択画面（OpenView）に使える高さが変わる。
         UpdateComparisonToolbarHeight();
         // 帯のパスは比較した時点の入力パスを示す。編集欄だけの比較ではパスが空なので何も出さない。
@@ -133,7 +123,10 @@ public sealed partial class ComparisonPane
             _selectedBlock = selected;
             _locationPane.SetCurrentBlock(selected);
             foreach (var container in DiffList.GetRealizedContainers().OfType<ListBoxItem>()) ColorDiffRow(container);
+            InvalidateDiffEditorHighlights();
         }
+        // 一覧の選択（差分の移動・キー操作）をエディターのキャレット行へ写す。エディター側からの選択では写し返さない。
+        if (!_diffViewSyncing && index >= 0) MoveDiffEditorsToRow(index, false);
         UpdateDiffPane();
     }
 
@@ -182,6 +175,7 @@ public sealed partial class ComparisonPane
     // ロケーションペインの表示範囲枠を、一覧のスクロール位置に合わせる。
     private void UpdateLocationViewport()
     {
+        if (DiffEditorViewport() is { } editor) { _locationPane.SetViewport(editor.Top, editor.Height); return; }
         if (_diffListScroll is not { } scroll || scroll.Extent.Height <= 0) { _locationPane.SetViewport(0, 1); return; }
         _locationPane.SetViewport(scroll.Offset.Y / scroll.Extent.Height, scroll.Viewport.Height / scroll.Extent.Height);
     }
@@ -192,16 +186,17 @@ public sealed partial class ComparisonPane
     /// </summary>
     private void RevealDifference(DiffBlock block)
     {
-        DiffList.ScrollIntoView(DiffList.SelectedItem!);
-        DiffList.UpdateLayout();
+        MoveDiffEditorsToRow(block.RowStart, false);
         ScrollDiffListToRow(block.RowStart + block.RowCount / 2);
-        DiffList.UpdateLayout();
     }
 
     // ロケーションペインで指定された行が本文の中央に来るようにスクロールする（本家の既定動作）。
     private void ScrollDiffListToRow(int row)
     {
         if (CurrentDiff is not { Rows.Count: > 0 } diff) return;
+        // 本文はエディターなので、エディターを行の位置へスクロールする（左右は同期している）。
+        _leftDiffView.View.UpdateLayout();
+        if (_leftDiffView.View.TextArea.TextView.DefaultLineHeight > 0) { ScrollDiffEditorsToRow(row); UpdateLocationViewport(); return; }
         if (_diffListScroll is { Extent.Height: > 0 } scroll)
         {
             var target = (double)row / diff.Rows.Count * scroll.Extent.Height - scroll.Viewport.Height / 2;

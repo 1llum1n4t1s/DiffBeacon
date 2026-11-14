@@ -25,6 +25,9 @@ public static class Program
         // 本家WinMerge風の外枠（メニュー・ツールバー・差分色）だけを検証する。
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--frame-only")
             return HeadlessSelfTest.Run(args[1], frameOnly: true);
+        // 差分タブの本文を直接編集するエディターだけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--diff-edit-only")
+            return HeadlessSelfTest.Run(args[1], diffEditOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--line-transform-replace-lists-only")
             return HeadlessSelfTest.Run(args[1], lineTransformReplaceListsOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--bare-compression-only")

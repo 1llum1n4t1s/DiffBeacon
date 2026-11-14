@@ -37,17 +37,8 @@ internal static class HeadlessLineBookmarkChecks
 
         void FocusLine(int side, int line)
         {
-            var editor = pane.TextEditor(side);
-            editor.Focus();
-            var text = editor.Text ?? "";
-            var start = 0;
-            for (var current = 0; current < line; current++)
-            {
-                var next = text.IndexOf('\n', start);
-                if (next < 0) throw new InvalidOperationException($"Line {line} is outside side {side} input.");
-                start = next + 1;
-            }
-            editor.CaretIndex = start;
+            // 本文は差分タブのエディターで編集するので、そのエディターの行へキャレットを置く（表示が古ければ先に比較する）。
+            if (!pane.FocusDiffEditorRealLine(side, line)) throw new InvalidOperationException($"Line {line} of side {side} is not shown in the diff editors.");
             Dispatcher.UIThread.RunJobs();
         }
 
@@ -63,8 +54,9 @@ internal static class HeadlessLineBookmarkChecks
 
         try
         {
-            var editorTab = window.GetVisualDescendants().OfType<TabControl>().First(control => control.Items.Count >= 4);
-            editorTab.SelectedIndex = 1;
+            // 本文の編集は「差分」タブのエディターで行う（別の「編集」タブは無い）。
+            var editorTab = window.GetVisualDescendants().OfType<TabControl>().First(control => control.Items.OfType<TabItem>().Any(item => Equals(item.Header, "差分")));
+            editorTab.SelectedItem = editorTab.Items.OfType<TabItem>().First(item => Equals(item.Header, "差分"));
             Dispatcher.UIThread.RunJobs();
 
             var text = "one\ntwo\nthree\nfour";

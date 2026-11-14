@@ -214,16 +214,17 @@ internal static class HeadlessIndependentArchiveBoundaryChecks
                 var exactLimit = budget == "bytes" ? bytesAtStart == ArchiveWorkingStore.MaximumBytes
                     : budget == "documents" ? documentsAtStart == ArchiveWorkingStore.MaximumDocuments : documentsAtStart == 1;
                 // 64MiB超の本文は実paneの非表示editorへ設定し、拒否検証のために巨大な行を描画しない。
-                pane.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = budget == "text-file" ? 0 : 1; Dispatcher.UIThread.RunJobs();
+                // 本文は差分タブのエディターで直接編集する（別の「編集」タブは無い）。巨大本文は正本へ直接設定し、比較しないので描画しない。
+                pane.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 0; Dispatcher.UIThread.RunJobs();
                 var previous = pane.MiddleEditor.Text!;
                 if (budget == "text-file") pane.MiddleEditor.Text = new string('x', 64 * 1024 * 1024 + 1);
-                else { pane.MiddleEditor.Focus(); pane.MiddleEditor.CaretIndex = previous.Length; host.KeyTextInput("x"); Dispatcher.UIThread.RunJobs(); }
+                else { pane.FocusDiffEditorEnd(1); host.KeyTextInput("x"); Dispatcher.UIThread.RunJobs(); }
                 var edited = pane.MiddleEditor.Text; var before = Capture(host, pane);
                 var error = Attempt(() => pane.SaveWorkingTextAsync(1)); var after = Capture(host, pane); var inventoryAfter = Inventory();
                 var history = true;
                 if (budget != "text-file")
                 {
-                    pane.MiddleEditor.Focus(); host.KeyPress(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); host.KeyRelease(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
+                    pane.FocusDiffEditorEnd(1); host.KeyPress(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); host.KeyRelease(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
                     history = pane.MiddleEditor.Text == previous;
                     host.KeyPress(Key.Y, RawInputModifiers.Control, PhysicalKey.Y, null); host.KeyRelease(Key.Y, RawInputModifiers.Control, PhysicalKey.Y, null); Dispatcher.UIThread.RunJobs();
                     if (pane.MiddleEditor.Text != edited) { host.KeyPress(Key.Z, RawInputModifiers.Control | RawInputModifiers.Shift, PhysicalKey.Z, null); host.KeyRelease(Key.Z, RawInputModifiers.Control | RawInputModifiers.Shift, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs(); }

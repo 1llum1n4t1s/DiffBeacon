@@ -332,8 +332,9 @@ internal static class HeadlessIndependentTextInputSelectionChecks
             foreach (var size in new[] { (1000, 680), (850, 550) })
             {
                 host.Width = size.Item1; host.Height = size.Item2; host.SelectSession(host.SessionPanes.ToList().IndexOf(target));
-                target.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 1;
-                Capture(host, id + "-pane-" + host.SessionPanes.ToList().IndexOf(target) + "-" + size.Item1, Enumerable.Range(0, 3).Select(side => ("editor" + side, (Control)target.TextEditor(side))).ToArray());
+                // 本文は差分タブの左・中・右のエディターで表示・編集する（別の「編集」タブは無い）。
+                target.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 0;
+                Capture(host, id + "-pane-" + host.SessionPanes.ToList().IndexOf(target) + "-" + size.Item1, Enumerable.Range(0, 3).Select(side => ("editor" + side, (Control)target.DiffEditor(side))).ToArray());
                 foreach (var button in target.GetVisualDescendants().OfType<Button>().Where(b => b.Content is string s && s.Contains("保存", StringComparison.Ordinal)))
                 {
                     button.BringIntoView(); Capture(host, id + "-save-" + layouts.Count, [("save", button)]);

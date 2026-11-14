@@ -86,7 +86,7 @@ internal static class HeadlessIndependentTextChecks
                 if (position is { } point) { writer.WriteNumber("windowX", point.X); writer.WriteNumber("windowY", point.Y); }
                 writer.WriteEndObject();
             }
-            Bounds("pane", pane); Bounds("toolbar", toolbar); Bounds("leftEditor", pane.LeftEditor); Bounds("middleEditor", pane.MiddleEditor); Bounds("rightEditor", pane.RightEditor); Bounds("middleSave", save);
+            Bounds("pane", pane); Bounds("toolbar", toolbar); Bounds("leftEditor", pane.DiffEditor(0)); Bounds("middleEditor", pane.DiffEditor(1)); Bounds("rightEditor", pane.DiffEditor(2)); Bounds("middleSave", save);
             Bounds("leftPath", pane.LeftPath); Bounds("middlePath", pane.BasePath); Bounds("rightPath", pane.RightPath);
             writer.WriteEndObject();
         }
@@ -277,13 +277,14 @@ internal static class HeadlessIndependentTextChecks
         Check("published output and UI adoption refusal are distinct", Refused(() => afterPublish.SaveTextToAsync(1, afterPublishOutput)) && File.ReadAllText(afterPublishOutput) == publishedText
             && Equals(afterPublishState, afterPublish.CaptureIndependentTextState()) && afterPublish.TextDirty(1) && afterPublish.ComparisonStatus?.Contains("公開済み", StringComparison.Ordinal) == true);
         afterPublish.TextSaveReadyForAdoption = null; afterPublish.SelectIndependentText();
-        var history = Open(); var historyViews = history.GetVisualDescendants().OfType<TabControl>().Single(); historyViews.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
-        var historyOriginal = history.MiddleEditor.Text; history.MiddleEditor.Focus(); history.MiddleEditor.CaretIndex = history.MiddleEditor.Text?.Length ?? 0;
+        // 本文は差分タブのエディターで直接編集する（別の「編集」タブは無い）。中央のエディターの末尾へ実際に入力する。
+        var history = Open(); var historyViews = history.GetVisualDescendants().OfType<TabControl>().Single(); historyViews.SelectedIndex = 0; Dispatcher.UIThread.RunJobs();
+        var historyOriginal = history.MiddleEditor.Text; history.FocusDiffEditorEnd(1);
         window.KeyTextInput("typed-middle"); Dispatcher.UIThread.RunJobs(); var historyEdited = history.MiddleEditor.Text;
         var historyOutput = Path.Combine(folder, "middle-history.txt"); pump(history.SaveTextToAsync(1, historyOutput));
         // Headless は OS にかかわらず既定の Control ジェスチャーを登録する。
         var commandModifier = RawInputModifiers.Control;
-        history.MiddleEditor.Focus(); window.KeyPress(Key.Z, commandModifier, PhysicalKey.Z, null); window.KeyRelease(Key.Z, commandModifier, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
+        history.FocusDiffEditorEnd(1); window.KeyPress(Key.Z, commandModifier, PhysicalKey.Z, null); window.KeyRelease(Key.Z, commandModifier, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
         Check("real middle Undo after save preserves history and marks dirty", history.MiddleEditor.Text == historyOriginal && history.TextDirty(1) && historyEdited != historyOriginal);
         window.KeyPress(Key.Z, commandModifier | RawInputModifiers.Shift, PhysicalKey.Z, null); window.KeyRelease(Key.Z, commandModifier | RawInputModifiers.Shift, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
         if (history.MiddleEditor.Text != historyEdited)
@@ -293,13 +294,16 @@ internal static class HeadlessIndependentTextChecks
         Check("independent three-way merge keeps middle independent", stale.CurrentMergeSession is { InputCount: 3, HasAncestor: false });
         var sessions = window.GetVisualDescendants().OfType<TabControl>().Single(control => control.Items.OfType<TabItem>().Any(tab => ReferenceEquals(tab.Content, stale)));
         sessions.SelectedItem = sessions.Items.OfType<TabItem>().Single(tab => ReferenceEquals(tab.Content, stale)); Dispatcher.UIThread.RunJobs();
-        var views = stale.GetVisualDescendants().OfType<TabControl>().Single(); views.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
+        // 三側の本文は差分タブの左・中・右のエディターで並べて表示する（別の「編集」タブは無い）。
+        var views = stale.GetVisualDescendants().OfType<TabControl>().Single(); views.SelectedIndex = 0; Dispatcher.UIThread.RunJobs();
         screenshot("independent-text-three-panes.png");
         Layout("normal", stale);
-        Check("three editor panes visible", Enumerable.Range(0, 3).All(side => stale.TextEditor(side).Bounds.Width > 50 && stale.TextEditor(side).Bounds.Height > 50));
+        Check("three editor panes visible", stale.DiffEditorsShowThreePanes && Enumerable.Range(0, 3).All(side => stale.DiffEditor(side).Bounds.Width > 50 && stale.DiffEditor(side).Bounds.Height > 50),
+            string.Join(",", Enumerable.Range(0, 3).Select(side => stale.DiffEditor(side).Bounds.Size.ToString())));
         window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs(); screenshot("independent-text-minimum.png");
         Layout("minimum", stale);
-        Check("minimum window keeps all three editors reachable", Enumerable.Range(0, 3).All(side => stale.TextEditor(side).Bounds.Width > 50 && stale.TextEditor(side).Bounds.Height > 50));
+        Check("minimum window keeps all three editors reachable", Enumerable.Range(0, 3).All(side => stale.DiffEditor(side).Bounds.Width > 50 && stale.DiffEditor(side).Bounds.Height > 50),
+            string.Join(",", Enumerable.Range(0, 3).Select(side => stale.DiffEditor(side).Bounds.Size.ToString())));
         var toolbar = stale.GetVisualDescendants().OfType<ScrollViewer>().First(scroll => scroll.Content is StackPanel);
         toolbar.Offset = new Avalonia.Vector(0, toolbar.Extent.Height); Dispatcher.UIThread.RunJobs();
         var centralSave = stale.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "中央を保存"));

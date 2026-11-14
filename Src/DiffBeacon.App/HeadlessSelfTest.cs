@@ -17,7 +17,7 @@ namespace DiffBeacon.App;
 internal static class HeadlessSelfTest
 {
     // 同じ画面とイベント経路を操作し、再現入力と描画結果を成果物へ残す。
-    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false, bool binarySearchOnly = false, bool imageCopyOnly = false, bool imageDefaultsOnly = false, bool bareGZipOnly = false, bool bareCompressionOnly = false, bool tableHeadersOnly = false, bool textBookmarksOnly = false, bool tableRawSearchOnly = false, bool tableColumnIgnoreOnly = false, bool tableColumnRangeOnly = false, bool binaryReplaceOnly = false, bool lineTransformOnly = false, bool lineTransformReplaceListsOnly = false, bool folderPropertiesOnly = false, bool frameOnly = false, bool folderViewOnly = false, bool imageDragOnly = false, bool openViewOnly = false)
+    internal static int Run(string output, bool archiveSourcesOnly = false, bool archiveWorkingReviewOnly = false, bool binaryWorkingOnly = false, bool binaryThreeWayOnly = false, bool tarWrapperGuiOnly = false, bool binaryCopyAllOnly = false, bool binaryRangeEditsOnly = false, bool binaryClipboardOnly = false, bool folderCopyOnly = false, bool folderThreeWayOnly = false, bool independentTextOnly = false, bool independentArchiveTextOnly = false, bool independentTextInputsOnly = false, bool independentTextInputArchivesOnly = false, bool independentTextInputCipherOnly = false, bool independentTextInputRoutesOnly = false, bool independentTextInputLifetimeOnly = false, bool independentTextInputSavedArchivesOnly = false, bool binarySearchOnly = false, bool imageCopyOnly = false, bool imageDefaultsOnly = false, bool bareGZipOnly = false, bool bareCompressionOnly = false, bool tableHeadersOnly = false, bool textBookmarksOnly = false, bool tableRawSearchOnly = false, bool tableColumnIgnoreOnly = false, bool tableColumnRangeOnly = false, bool binaryReplaceOnly = false, bool lineTransformOnly = false, bool lineTransformReplaceListsOnly = false, bool folderPropertiesOnly = false, bool frameOnly = false, bool folderViewOnly = false, bool imageDragOnly = false, bool openViewOnly = false, bool diffEditOnly = false)
     {
         try { DiffBeacon.Development.DevelopmentOutputGuard.Validate(output); }
         catch (IOException error) { Console.Error.WriteLine(error.Message); return 2; }
@@ -159,6 +159,14 @@ internal static class HeadlessSelfTest
                 Progress("HeadlessFolderViewChecks", "start");
                 HeadlessFolderViewChecks.Run(window, pane, output, artifactOutput, Check, Screenshot, Pump);
                 Progress("HeadlessFolderViewChecks", "complete");
+                return assertions.All(item => item.Passed) ? 0 : 2;
+            }
+            if (diffEditOnly)
+            {
+                Progress("initial-ui", "complete");
+                Progress("HeadlessDiffEditChecks", "start");
+                HeadlessDiffEditChecks.Run(window, pane, output, artifactOutput, Check, Screenshot, Pump);
+                Progress("HeadlessDiffEditChecks", "complete");
                 return assertions.All(item => item.Passed) ? 0 : 2;
             }
             if (frameOnly)
@@ -344,18 +352,14 @@ internal static class HeadlessSelfTest
             Screenshot("comparison.png");
             pane.LeftEditor.Text = "alpha old omega old end\n"; pane.RightEditor.Text = "alpha new omega new end\n";
             pane.CompareEditors(); Screenshot("word-diff-inline.png");
-            var highlightedWords = pane.DiffList.GetVisualDescendants().OfType<TextBlock>()
-                .SelectMany(block => block.Inlines?.OfType<Avalonia.Controls.Documents.Run>() ?? [])
-                .Where(run => ReferenceEquals(run.Background, WinMergeColors.WordDifference)).Select(run => run.Text).ToArray();
+            var highlightedWords = pane.DiffEditorWordDifferenceTexts().ToArray();
             Check("word diff renders separate changed words and retains equal middle", highlightedWords.Count(word => word == "old") == 2
                 && highlightedWords.Count(word => word == "new") == 2 && highlightedWords.Length == 4,
                 string.Join("|", highlightedWords));
-            var inlineTextBlocks = pane.DiffList.GetVisualDescendants().OfType<TextBlock>()
-                .Where(block => block.Inlines?.OfType<Avalonia.Controls.Documents.Run>().Any() == true).ToArray();
-            Check("word diff keeps full text visible with inherited foreground", inlineTextBlocks.Length == 2
-                && inlineTextBlocks.All(block => block.Foreground is not null)
-                && inlineTextBlocks.Select(block => string.Concat(block.Inlines!.OfType<Avalonia.Controls.Documents.Run>().Select(run => run.Text)))
-                    .Order().SequenceEqual(new[] { "alpha new omega new end", "alpha old omega old end" }.Order()));
+            var editorLines = new[] { pane.DiffEditors.Left.Document.GetText(pane.DiffEditors.Left.Document.GetLineByNumber(1)),
+                pane.DiffEditors.Right.Document.GetText(pane.DiffEditors.Right.Document.GetLineByNumber(1)) };
+            Check("word diff keeps full text visible with inherited foreground", pane.DiffEditors.Left.Foreground is not null
+                && editorLines.Order().SequenceEqual(new[] { "alpha new omega new end", "alpha old omega old end" }.Order()), string.Join("|", editorLines));
             var wordReport = Path.Combine(output, "word-diff-inline.html"); Pump(pane.SaveReportAsync(wordReport));
             var wordHtml = File.ReadAllText(wordReport);
             Check("word diff GUI report shares all four inline spans", System.Text.RegularExpressions.Regex.Matches(wordHtml, "<span class=\"inline-diff\">old</span>").Count == 2
@@ -393,8 +397,12 @@ internal static class HeadlessSelfTest
             pane.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "自動マージ")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check("three-way merge exposes compact conflicting result", pane.CurrentMergeSession is { UnresolvedCount: 1 } && (pane.ResultEditor.Text ?? "").Contains("Merge Conflict", StringComparison.Ordinal));
             var views = pane.GetVisualDescendants().OfType<TabControl>().Single();
-            views.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
-            Check("four-pane editing view renders ancestor and result", pane.GetVisualDescendants().OfType<TextBox>().Count(x => x.AcceptsReturn) == 4);
+            // 本家と同じく差分タブで直接編集するため、別の「編集 / 4ペイン」タブは無い。マージ結果は「マージ結果」タブで見る。
+            var tabHeaders = views.Items.OfType<TabItem>().Select(tab => tab.Header as string ?? "").ToArray();
+            views.SelectedItem = views.Items.OfType<TabItem>().First(tab => Equals(tab.Header, "マージ結果")); Dispatcher.UIThread.RunJobs();
+            Check("merge result tab renders the result editor without a separate edit tab", !tabHeaders.Any(header => header.StartsWith("編集", StringComparison.Ordinal))
+                && pane.GetVisualDescendants().Contains(pane.ResultEditor) && (pane.ResultEditor.Text ?? "").Contains("Merge Conflict", StringComparison.Ordinal),
+                string.Join("|", tabHeaders));
             Screenshot("four-panes.png");
             pane.GetVisualDescendants().OfType<Button>().Single(x => Equals(x.Content, "右を採用")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             Check("choosing right resolves only the selected conflict", pane.CurrentMergeSession is { UnresolvedCount: 0 } && pane.ResultEditor.Text == pane.RightEditor.Text);
@@ -422,21 +430,22 @@ internal static class HeadlessSelfTest
                 "before=" + mergeBeforeManualDiagnostic + "; afterEdit=" + mergeAfterManualDiagnostic + "; afterUndo=" + pane.CaptureMergeDiagnostic());
             pane.RedoMerge();
             Check("redo manual edit retains untouched provenance", pane.CurrentMergeSession!.LineProvenance.Any(line => line.Source == "m") && pane.CurrentMergeSession.LineProvenance.First().Source == "2");
-            views.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
+            // 「編集 / 4ペイン」タブは外したので、結果の編集は「マージ結果」タブの結果エディターで行う（4番目の結果ペインは内部の配置にだけ残る）。
+            views.SelectedItem = views.Items.OfType<TabItem>().First(tab => Equals(tab.Header, "マージ結果")); Dispatcher.UIThread.RunJobs();
             AvaloniaHeadlessPlatform.ForceRenderTimerTick(); Dispatcher.UIThread.RunJobs();
-            Check("fourth result editor is present in visual editing tab after source save", pane.GetVisualDescendants().OfType<TransactionalResultEditor>().Any(editor => !ReferenceEquals(editor, pane.ResultEditor)), pane.CaptureResultPaneLayoutDiagnostic());
-            var sharedResultEditor = pane.GetVisualDescendants().OfType<TransactionalResultEditor>().Single(editor => !ReferenceEquals(editor, pane.ResultEditor));
-            Check("fourth result editor has reachable editable bounds after source save", sharedResultEditor.Bounds.Width > 0 && sharedResultEditor.Bounds.Height > 0 && !sharedResultEditor.IsReadOnly, pane.CaptureResultPaneLayoutDiagnostic());
+            var sharedResultEditor = pane.ResultEditor;
+            Check("result tab editor is present and editable after source save", pane.GetVisualDescendants().Contains(sharedResultEditor)
+                && sharedResultEditor.Bounds.Width > 0 && sharedResultEditor.Bounds.Height > 0 && !sharedResultEditor.IsReadOnly && pane.HasSharedResultEditorInLayout, pane.CaptureResultPaneLayoutDiagnostic());
             EditResultIn(sharedResultEditor, sharedResultEditor.Text!.Replace("manual value", "preview value", StringComparison.Ordinal));
-            Check("fourth pane exact edit shares result model and dirty", pane.ResultEditor.Text == sharedResultEditor.Text && pane.ResultEditor.Text!.Contains("preview value", StringComparison.Ordinal) && pane.HasUnsavedChanges);
+            Check("result tab exact edit updates result model and dirty", pane.ResultEditor.Text!.Contains("preview value", StringComparison.Ordinal) && pane.HasUnsavedChanges);
             sharedResultEditor.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Z, KeyModifiers = KeyModifiers.Control });
-            Check("fourth pane undo updates both result editors", pane.ResultEditor.Text == sharedResultEditor.Text && pane.ResultEditor.Text!.Contains("manual value", StringComparison.Ordinal));
+            Check("result tab undo restores the previous result", pane.ResultEditor.Text!.Contains("manual value", StringComparison.Ordinal));
             sharedResultEditor.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Y, KeyModifiers = KeyModifiers.Control });
-            Check("fourth pane redo updates both result editors and shared dirty", pane.ResultEditor.Text == sharedResultEditor.Text && pane.ResultEditor.Text!.Contains("preview value", StringComparison.Ordinal) && pane.HasUnsavedChanges);
+            Check("result tab redo reapplies the edit and keeps dirty", pane.ResultEditor.Text!.Contains("preview value", StringComparison.Ordinal) && pane.HasUnsavedChanges);
             Screenshot("chosen-merge.png");
             var mergeWindowWidth = window.Width; var mergeWindowHeight = window.Height; window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs();
             EditResultIn(sharedResultEditor, sharedResultEditor.Text!.Replace("preview value", "minimum value", StringComparison.Ordinal));
-            Check("minimum four-pane result accepts exact edit in shared model", pane.ResultEditor.Text == sharedResultEditor.Text && pane.HasUnsavedChanges);
+            Check("minimum window result tab accepts exact edit", pane.ResultEditor.Text!.Contains("minimum value", StringComparison.Ordinal) && pane.HasUnsavedChanges);
             Screenshot("four-pane-minimum-edit.png"); window.Width = mergeWindowWidth; window.Height = mergeWindowHeight; Dispatcher.UIThread.RunJobs();
             views.SelectedIndex = 0; Dispatcher.UIThread.RunJobs();
             pane.BasePath.Text = ""; pane.DiscardChanges();
@@ -1013,10 +1022,10 @@ internal static class HeadlessSelfTest
                 proofWriter.WriteString("previousProviderText", previousProviderText); proofWriter.WriteString("finalLeftText", pane.LeftEditor.Text);
                 proofWriter.WriteString("finalRightText", pane.RightEditor.Text); proofWriter.WriteEndObject();
             }
-            // Editorの実本文を描画し、取消後の古い差分一覧だけを保存しない。
-            var providerViews = pane.GetVisualDescendants().OfType<TabControl>().Single(view => view.Items.OfType<TabItem>().Any(item => Equals(item.Header, "編集 / 4ペイン")));
+            // 本文を描画する（「編集」タブは外し、差分タブの本文エディターが正本の本文を表示する）。
+            var providerViews = pane.GetVisualDescendants().OfType<TabControl>().Single(view => view.Items.OfType<TabItem>().Any(item => Equals(item.Header, "差分")));
             var providerPreviousView = providerViews.SelectedItem;
-            providerViews.SelectedItem = providerViews.Items.OfType<TabItem>().Single(item => Equals(item.Header, "編集 / 4ペイン"));
+            providerViews.SelectedItem = providerViews.Items.OfType<TabItem>().Single(item => Equals(item.Header, "差分"));
             Screenshot("archives-tar-z-provider-late-cancel.png"); providerViews.SelectedItem = providerPreviousView;
             Check("GUI late TAR.Z cancel receives completed real provider rows", lateCancelInvoked && lateComparisonPending && latePriorRowsAtCancel
                 && completedProviderResult?.LeftText == expectedCompletedText && completedProviderResult.RightText == expectedCompletedText);
@@ -1294,7 +1303,8 @@ internal static class HeadlessSelfTest
                 && reportVisibleText.Contains("ancestor only") && reportVisibleText.Contains("edited report content") && reportText.Contains("左&lt;script&gt;")
                 && !reportText.Contains("<script>") && !File.ReadAllText(right).Contains("edited report content"));
             var reportViews = reportPane.GetVisualDescendants().OfType<TabControl>().First();
-            reportViews.SelectedIndex = 1; Dispatcher.UIThread.RunJobs(); Screenshot("report-three-pane.png");
+            // 三側の本文は差分タブの左・中・右のエディターで並べて表示する。
+            reportViews.SelectedIndex = 0; Dispatcher.UIThread.RunJobs(); Screenshot("report-three-pane.png");
             reportViews.SelectedIndex = 0;
             var oldReport = File.ReadAllBytes(reportPath); reportPane.RightPath.Text = left;
             rejected = false; try { Pump(reportPane.SaveReportAsync(reportPath)); } catch (InvalidOperationException) { rejected = true; }
@@ -1536,6 +1546,7 @@ internal static class HeadlessSelfTest
             // 外枠の検証は前の検証の状態を引き継がないよう、新しい比較タブで行う。
             Progress("HeadlessFrameChecks", "start");
             HeadlessFrameChecks.Run(window, window.AddSession(), output, artifactOutput, Check, Screenshot, Pump);
+            HeadlessDiffEditChecks.Run(window, window.AddSession(), output, artifactOutput, Check, Screenshot, Pump);
             Progress("HeadlessFrameChecks", "complete");
             Progress("HeadlessFolderViewChecks", "start");
             HeadlessFolderViewChecks.Run(window, window.AddSession(), output, artifactOutput, Check, Screenshot, Pump);
@@ -1572,7 +1583,7 @@ internal static class HeadlessSelfTest
             writer.WriteBoolean("binaryReplaceOnly", binaryReplaceOnly);
             writer.WriteBoolean("skippedE2ECovered", skipCovered);
             writer.WriteBoolean("binaryClipboardOnly", binaryClipboardOnly);
-            writer.WriteString("scope", openViewOnly ? "open-view-only" : imageDragOnly ? "image-drag-only" : folderViewOnly ? "folder-view-only" : frameOnly ? "frame-only" : folderPropertiesOnly ? "folder-properties-only" : lineTransformReplaceListsOnly ? "line-transform-replace-lists-only" : lineTransformOnly ? "line-transform-only" : tableRawSearchOnly ? "table-raw-search-only" : tableColumnRangeOnly ? "table-column-range-only" : tableColumnIgnoreOnly ? "table-column-ignore-only" : tableHeadersOnly ? "table-headers-only" : bareCompressionOnly ? "bare-compression-only" : bareGZipOnly ? "bare-gzip-only" : imageCopyOnly ? "image-copy-only" : imageDefaultsOnly ? "image-defaults-only" : independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryReplaceOnly ? "binary-replace-only": binarySearchOnly ? "binary-search-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
+            writer.WriteString("scope", diffEditOnly ? "diff-edit-only" : openViewOnly ? "open-view-only" : imageDragOnly ? "image-drag-only" : folderViewOnly ? "folder-view-only" : frameOnly ? "frame-only" : folderPropertiesOnly ? "folder-properties-only" : lineTransformReplaceListsOnly ? "line-transform-replace-lists-only" : lineTransformOnly ? "line-transform-only" : tableRawSearchOnly ? "table-raw-search-only" : tableColumnRangeOnly ? "table-column-range-only" : tableColumnIgnoreOnly ? "table-column-ignore-only" : tableHeadersOnly ? "table-headers-only" : bareCompressionOnly ? "bare-compression-only" : bareGZipOnly ? "bare-gzip-only" : imageCopyOnly ? "image-copy-only" : imageDefaultsOnly ? "image-defaults-only" : independentTextInputSavedArchivesOnly ? "independent-text-input-saved-archives-only" : independentTextInputRoutesOnly ? "independent-text-input-routes-only" : independentTextInputLifetimeOnly ? "independent-text-input-lifetime-only" : independentTextInputCipherOnly ? "independent-text-input-cipher-only" : independentTextInputArchivesOnly ? "independent-text-input-archives-only" : independentTextInputsOnly ? "independent-text-inputs-only" : independentArchiveTextOnly ? "independent-archive-text-only" : independentTextOnly ? "independent-text-only" : folderThreeWayOnly ? "folder-threeway-only" : folderCopyOnly ? "folder-copy-only" : binaryReplaceOnly ? "binary-replace-only": binarySearchOnly ? "binary-search-only" : binaryClipboardOnly ? "binary-clipboard-only" : binaryRangeEditsOnly ? "binary-range-edits-only" : binaryCopyAllOnly ? "binary-copy-all-only" : tarWrapperGuiOnly ? "tar-wrapper-gui-only" : binaryThreeWayOnly ? "binary-threeway-only" : binaryWorkingOnly ? "binary-working-only" : archiveWorkingReviewOnly ? "archive-working-review-only" : archiveSourcesOnly ? "archive-sources-only" : "all");
             writer.WriteString("framework", System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription);
             writer.WriteStartArray("assertions");
             foreach (var assertion in assertions) { writer.WriteStartObject(); writer.WriteString("name", assertion.Name); writer.WriteBoolean("passed", assertion.Passed); writer.WriteString("detail", assertion.Detail); writer.WriteEndObject(); }
@@ -1723,13 +1734,15 @@ internal static class HeadlessSelfTest
                     && new[] { leftPath, middlePath, rightPath }.Select(File.ReadAllBytes).Zip(originals).All(pair => pair.First.SequenceEqual(pair.Second)) && !mergePane.HasUnsavedChanges);
                 mergePane.UndoMerge(); Check("independent result undo away from saved identity is dirty", mergePane.HasUnsavedChanges);
                 mergePane.RedoMerge(); Check("independent result redo to saved identity clears dirty", !mergePane.HasUnsavedChanges);
-                var tabs = mergePane.GetVisualDescendants().OfType<TabControl>().Single(); tabs.SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
-                var fourth = mergePane.GetVisualDescendants().OfType<TransactionalResultEditor>().Single(editor => !ReferenceEquals(editor, mergePane.ResultEditor));
+                // 「編集 / 4ペイン」タブは外したので、結果の編集は「マージ結果」タブの結果エディターで行う。
+                var tabs = mergePane.GetVisualDescendants().OfType<TabControl>().Single();
+                tabs.SelectedItem = tabs.Items.OfType<TabItem>().First(tab => Equals(tab.Header, "マージ結果")); Dispatcher.UIThread.RunJobs();
+                var fourth = mergePane.ResultEditor;
                 EditResultIn(fourth, sources[1].Replace("middle", "edited", StringComparison.Ordinal));
-                Check("independent fourth pane shares exact edits and dirty with result tab", mergePane.ResultEditor.Text == fourth.Text && mergePane.HasUnsavedChanges);
+                Check("independent result tab accepts exact edits and dirty", mergePane.ResultEditor.Text!.Contains("edited", StringComparison.Ordinal) && mergePane.HasUnsavedChanges);
                 Screenshot("independent-four-pane-merge.png"); text.Width = 850; text.Height = 550; Dispatcher.UIThread.RunJobs();
                 EditResultIn(fourth, fourth.Text!.Replace("edited", "minimum", StringComparison.Ordinal));
-                Check("independent minimum fourth pane remains editable", mergePane.ResultEditor.Text == fourth.Text && mergePane.HasUnsavedChanges && fourth.Bounds.Height > 0);
+                Check("independent minimum result tab remains editable", mergePane.ResultEditor.Text!.Contains("minimum", StringComparison.Ordinal) && mergePane.HasUnsavedChanges && fourth.Bounds.Height > 0);
                 Screenshot("independent-four-pane-minimum-merge.png");
                 mergePane.StartMergeSession(autoResolve: true); mergePane.ChooseMergeSources(DiffBeacon.Core.MergeSource.Base);
                 var independentMiddleMemory = mergePane.MiddleEditor.Text;

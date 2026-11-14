@@ -298,7 +298,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         UpdateEditorLayout(false);
         InitializeLineBookmarks();
         _resultTab = new TabItem { Header = "マージ結果", Content = CreateMergeResultView() };
-        _views.ItemsSource = new[] { _diffTab, new TabItem { Header = "編集 / 4ペイン", Content = _editGrid }, _resultTab, _specialTab };
+        // 本家と同じく「差分」タブの本文で直接編集するため、別の「編集」タブは置かない。
+        // 各側の正本（TextBox）と _editGrid は保存・マージ・既存の契約のため内部に残す（画面には出さない）。
+        _views.ItemsSource = new[] { _diffTab, _resultTab, _specialTab };
         foreach (var view in _views.Items.OfType<TabItem>()) MainWindow.CompactTab(view);
         _views.SelectedItem = _diffTab;
         _views.SelectionChanged += (_, _) => (_owner as MainWindow)?.UpdateImageDisplayVisibility();

@@ -150,16 +150,17 @@ internal static class HeadlessIndependentArchiveTextChecks
         var history = Open();
         // 本文tabを表示して実入力から履歴を作る。Text property代入は利用者入力のUndo履歴とは別の操作。
         window.SelectSession(window.SessionPanes.ToList().IndexOf(history));
-        history.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 1; Dispatcher.UIThread.RunJobs();
+        // 本文は差分タブのエディターで直接編集する（別の「編集」タブは無い）。
+        history.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 0; Dispatcher.UIThread.RunJobs();
         var previous = history.MiddleEditor.Text!;
-        Verify("middle history editor accepts actual focus", history.MiddleEditor.Focus());
-        history.MiddleEditor.CaretIndex = previous.Length;
+        Verify("middle history editor accepts actual focus", history.FocusDiffEditorEnd(1));
         window.KeyTextInput("typed-middle"); Dispatcher.UIThread.RunJobs();
         var historyEdited = history.MiddleEditor.Text;
-        Verify("actual middle text input creates edited body", historyEdited == previous + "typed-middle" && history.TextDirty(1));
+        Verify("actual middle text input creates edited body", historyEdited == previous + "typed-middle" && history.TextDirty(1),
+            $"previous={previous.Replace("\n", "\\n")}; edited={historyEdited?.Replace("\n", "\\n")}; readonly={history.DiffEditor(1).IsReadOnly}; three={history.DiffEditorsShowThreePanes}; focused={history.DiffEditor(1).TextArea.IsFocused}");
         pump(history.SaveWorkingTextAsync(1));
         Verify("middle working save records actual input savepoint", history.MiddleEditor.Text == historyEdited && !history.TextDirty(1));
-        history.MiddleEditor.Focus(); window.KeyPress(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); window.KeyRelease(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
+        history.FocusDiffEditorEnd(1); window.KeyPress(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); window.KeyRelease(Key.Z, RawInputModifiers.Control, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs();
         Verify("real Control Undo after middle working save retains history", history.MiddleEditor.Text == previous && history.TextDirty(1), $"previous={previous}; current={history.MiddleEditor.Text}; dirty={history.TextDirty(1)}; focused={history.MiddleEditor.IsFocused}");
         window.KeyPress(Key.Y, RawInputModifiers.Control, PhysicalKey.Y, null); window.KeyRelease(Key.Y, RawInputModifiers.Control, PhysicalKey.Y, null); Dispatcher.UIThread.RunJobs();
         if (history.MiddleEditor.Text != historyEdited) { window.KeyPress(Key.Z, RawInputModifiers.Control | RawInputModifiers.Shift, PhysicalKey.Z, null); window.KeyRelease(Key.Z, RawInputModifiers.Control | RawInputModifiers.Shift, PhysicalKey.Z, null); Dispatcher.UIThread.RunJobs(); }
@@ -388,9 +389,10 @@ internal static class HeadlessIndependentArchiveTextChecks
         {
             // session選択だけでは差分一覧tabのままなので、三者本文をvisual treeへ接続してから測る。
             window.SelectSession(window.SessionPanes.ToList().IndexOf(pane));
-            pane.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 1;
+            // 三側の本文は差分タブの左・中・右のエディターで並べて表示する（別の「編集」タブは無い）。
+            pane.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 0;
             Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick(); Dispatcher.UIThread.RunJobs();
-            Verify(name + " three editor visuals attached to window", Enumerable.Range(0, 3).All(side => pane.TextEditor(side).TranslatePoint(new Point(0, 0), window) is not null));
+            Verify(name + " three editor visuals attached to window", pane.DiffEditorsShowThreePanes && Enumerable.Range(0, 3).All(side => pane.DiffEditor(side).TranslatePoint(new Point(0, 0), window) is not null));
             var save = MiddleSave(pane);
             var toolbar = save.GetVisualAncestors().OfType<ScrollViewer>().First();
             Verify(name + " save is contained in measured toolbar", toolbar.GetVisualDescendants().Contains(save));
@@ -402,7 +404,7 @@ internal static class HeadlessIndependentArchiveTextChecks
                 writer.WriteStartObject(); writer.WriteNumber("windowWidth", window.Bounds.Width); writer.WriteNumber("windowHeight", window.Bounds.Height);
                 writer.WriteNumber("tabCount", window.SessionPanes.Count());
                 writer.WriteNumber("toolbarViewportWidth", toolbar.Viewport.Width); writer.WriteNumber("toolbarViewportHeight", toolbar.Viewport.Height);
-                Bounds("leftEditor", pane.LeftEditor); Bounds("middleEditor", pane.MiddleEditor); Bounds("rightEditor", pane.RightEditor); Bounds("middleSave", save); Bounds("toolbar", toolbar);
+                Bounds("leftEditor", pane.DiffEditor(0)); Bounds("middleEditor", pane.DiffEditor(1)); Bounds("rightEditor", pane.DiffEditor(2)); Bounds("middleSave", save); Bounds("toolbar", toolbar);
                 writer.WriteEndObject();
                 void Bounds(string key, Control control)
                 {
@@ -413,7 +415,7 @@ internal static class HeadlessIndependentArchiveTextChecks
                     writer.WriteEndObject();
                 }
             }
-            Verify(name + " three editor viewports reachable", Enumerable.Range(0, 3).All(side => pane.TextEditor(side).Bounds.Height >= 100 && pane.TextEditor(side).Bounds.Width > 0));
+            Verify(name + " three editor viewports reachable", Enumerable.Range(0, 3).All(side => pane.DiffEditor(side).Bounds.Height >= 100 && pane.DiffEditor(side).Bounds.Width > 0));
             var position = save.TranslatePoint(new Point(0, 0), window);
             var clippedPosition = save.TranslatePoint(new Point(0, 0), toolbar);
             Verify(name + " middle save reachable inside actual toolbar clip after scrolling to target", position is { } at && at.X >= 0 && at.Y >= 0

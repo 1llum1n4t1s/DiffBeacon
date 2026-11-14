@@ -132,8 +132,8 @@ internal static class HeadlessFrameChecks
         Avalonia.Media.Color[] RowColors()
         {
             Dispatcher.UIThread.RunJobs();
-            return pane.DiffList.GetVisualDescendants().OfType<Border>().Select(border => border.Background)
-                .OfType<Avalonia.Media.ISolidColorBrush>().Select(brush => brush.Color).Distinct().ToArray();
+            // 本文は直接編集できるエディターなので、エディターの各行に塗る色を調べる。
+            return pane.DiffEditorLineColors().ToArray();
         }
         static string Describe(IEnumerable<Avalonia.Media.Color> colors) => string.Join(",", colors.Select(color => color.ToString()));
         static string DiffPaneText(TextBlock block) => block.Inlines is { Count: > 0 } inlines
