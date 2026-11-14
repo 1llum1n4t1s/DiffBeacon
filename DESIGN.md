@@ -22,7 +22,7 @@ WinMerge を基にした、Windows / macOS 用のファイル・フォルダー�
 
 比較タブの見出しはFluentの既存presenterを最大110pxの縦スクロールへ入れ、多数のタブでも本文を確保する。選択変更・見出しviewportのサイズ変更・template再適用で選択中の見出しを表示範囲へ戻す。再配置後の単一postへ集約し、常時LayoutUpdatedでスクロールを繰り返さない。
 
-外枠と比較画面は本家WinMergeの構成に寄せる。`MainWindow.Frame` が本家 `IDR_MERGEDOCTYPE` の順のメニューバー、`g_toolbarFileCmp3` の並びのツールバー（埋込みの本家画像を16pxで表示）、本家アクセラレータ、ステータスバーを持ち、未移植コマンドは無効表示にする。配色は `WinMergeColors` に本家の既定値（差分・選択・フォルダー行の色）を集約し、既定は明るい配色とする。ファイル比較の「差分」タブは `LocationPane`（全行に対する差分ブロックの見取り図。クリック・ドラッグで本文を移動）、ペイン上のファイル名の帯、下段のDiffペインで構成し、本文は従来の整列一覧（`DiffList`）を使う。編集は「編集」タブで行い、左右本文の直接編集は未対応。フォルダー比較の一覧（`ComparisonPane.FolderList`）は本家 `DirView` の列・状態アイコン・行色・比較結果の文言を使い、列幅は固定で並べ替え・表示切替は未対応。これらは表示層だけで、比較モデル・保存・コピーの契約は変えない。検証は限定 `--frame-only`・`--folder-view-only` と、全体UI自己検証の `HeadlessFrameChecks`・`HeadlessFolderViewChecks` で行い、到達点と本家との差は [Docs/MIGRATION.md](Docs/MIGRATION.md) を正本とする。
+外枠と比較画面は本家WinMergeの構成に寄せる。`MainWindow.Frame` が本家 `IDR_MERGEDOCTYPE` の順のメニューバー、`g_toolbarFileCmp3` の並びのツールバー（埋込みの本家画像を16pxで表示）、本家アクセラレータ、ステータスバーを持ち、未移植コマンドは無効表示にする。配色は `WinMergeColors` に本家の既定値（差分・選択・フォルダー行の色）を集約し、既定は明るい配色とする。ファイル比較の「差分」タブは `LocationPane`（全行に対する差分ブロックの見取り図。クリック・ドラッグで本文を移動）、ペイン上のファイル名の帯、下段のDiffペインで構成し、本文は従来の整列一覧（`DiffList`）を使う。編集は「編集」タブで行い、左右本文の直接編集は未対応。フォルダー比較の一覧（`ComparisonPane.FolderList`）は本家 `DirView` の列・状態アイコン・行色・比較結果の文言を使う。見出しのクリックによる並べ替え（`ComparisonPane.FolderSort`。名前はフォルダー先頭、更新日時は実時刻、同順位は安定、ツリーは同じ親の兄弟どうし）と境界ドラッグによる隣接2列間の列幅移動（最小40 DIP・合計一定）は表示順・幅だけを変え、比較結果・選択・展開・コピー計画は変えない。列の表示切替と並べ替え・幅の保存は未対応。これらは表示層だけで、比較モデル・保存・コピーの契約は変えない。検証は限定 `--frame-only`・`--folder-view-only` と、全体UI自己検証の `HeadlessFrameChecks`・`HeadlessFolderViewChecks` で行い、到達点と本家との差は [Docs/MIGRATION.md](Docs/MIGRATION.md) を正本とする。
 
 ## データフロー
 
