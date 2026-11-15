@@ -453,7 +453,7 @@ public sealed partial class ComparisonPane
                 if (!_disposed && ReferenceEquals(operation, _operation)) _status.Text = "コピー中に状態が変わりました。前の差分と三側本文を保持しました。";
                 return;
             }
-            EnsureTextSideWritable(destination); TextEditor(destination).Text = copied;
+            EnsureTextSideWritable(destination); WriteRecordedText(destination, copied);
             await StartIndependentEditorComparisonAsync();
         }
         catch (OperationCanceledException)
@@ -482,7 +482,7 @@ public sealed partial class ComparisonPane
         { _status.Text = "現在の差分行を選択してください。"; return; }
         var block = CurrentDiff.Blocks.FirstOrDefault(value => DiffList.SelectedIndex >= value.RowStart && DiffList.SelectedIndex < value.RowStart + value.RowCount);
         if (block is null) return;
-        TextEditor(destination).Text = forward ? TextMerger.CopyLeftToRight(CurrentDiff, block) : TextMerger.CopyRightToLeft(CurrentDiff, block);
+        WriteRecordedText(destination, forward ? TextMerger.CopyLeftToRight(CurrentDiff, block) : TextMerger.CopyRightToLeft(CurrentDiff, block));
         CompareIndependentEditors();
     }
     private string TextSideCaption(int side)

@@ -598,8 +598,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var block = CurrentDiff!.Blocks.FirstOrDefault(x => DiffList.SelectedIndex >= x.RowStart && DiffList.SelectedIndex < x.RowStart + x.RowCount)
             ?? (_diffIndex >= 0 && _diffIndex < CurrentDiff.Blocks.Count ? CurrentDiff.Blocks[_diffIndex] : null);
         if (block is null) { _status.Text = "差分の行を選択してください。"; return; }
-        if (leftToRight) RightEditor.Text = TextMerger.CopyLeftToRight(CurrentDiff, block);
-        else LeftEditor.Text = TextMerger.CopyRightToLeft(CurrentDiff, block);
+        // コピーは全ペイン共有の履歴へ一つの変更として残す（元に戻せる）。
+        if (leftToRight) WriteRecordedText(2, TextMerger.CopyLeftToRight(CurrentDiff, block));
+        else WriteRecordedText(0, TextMerger.CopyRightToLeft(CurrentDiff, block));
         CompareEditors();
     }
 

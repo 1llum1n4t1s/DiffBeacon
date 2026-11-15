@@ -94,7 +94,7 @@ internal static class HeadlessFolderOptionsChecks
                 peer.GetVisualDescendants().OfType<TabControl>().Single().SelectedIndex = 0; Jobs();
                 peer.FocusDiffEditorEnd(0); window.KeyTextInput("edited peer"); Jobs();
                 State("peer-created-dirty", pane);
-                Report("real dirty peer with actual Undo history " + policy, peer.TextDirty(0) && peer.DiffEditor(0).CanUndo && peer.LeftEditor.Text == "saved peer\nedited peer");
+                Report("real dirty peer with actual Undo history " + policy, peer.TextDirty(0) && peer.CanUndoText && peer.LeftEditor.Text == "saved peer\nedited peer");
                 PeerHistory("peer-history-created"); window.SelectSession(0); Jobs();
                 foreach (var failure in new[] { "cancel", "stale", "busy-control" })
                 {
@@ -215,10 +215,10 @@ internal static class HeadlessFolderOptionsChecks
                 void PeerHistory(string name)
                 {
                     if (peer is null) throw new InvalidOperationException("Dirty text peer missing.");
-                    State(name + "/before-undo", pane); peer.DiffEditor(0).Undo(); Jobs(); State(name + "/after-undo", pane);
-                    Report(name + " actual Undo reaches literal saved point " + policy, peer.LeftEditor.Text == "saved peer\n" && !peer.TextDirty(0) && peer.DiffEditor(0).CanRedo);
-                    peer.DiffEditor(0).Redo(); Jobs(); State(name + "/after-redo", pane);
-                    Report(name + " actual Undo/Redo restores literal peer and dirty " + policy, peer.LeftEditor.Text == "saved peer\nedited peer" && peer.TextDirty(0) && peer.DiffEditor(0).CanUndo && !peer.DiffEditor(0).CanRedo);
+                    State(name + "/before-undo", pane); peer.UndoText(); Jobs(); State(name + "/after-undo", pane);
+                    Report(name + " actual Undo reaches literal saved point " + policy, peer.LeftEditor.Text == "saved peer\n" && !peer.TextDirty(0) && peer.CanRedoText);
+                    peer.RedoText(); Jobs(); State(name + "/after-redo", pane);
+                    Report(name + " actual Undo/Redo restores literal peer and dirty " + policy, peer.LeftEditor.Text == "saved peer\nedited peer" && peer.TextDirty(0) && peer.CanUndoText && !peer.CanRedoText);
                 }
                 void Preserved(string name, object? source, byte[] originalSettings)
                 {

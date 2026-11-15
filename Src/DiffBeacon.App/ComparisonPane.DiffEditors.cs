@@ -24,8 +24,8 @@ namespace DiffBeacon.App;
 ///   ゴースト行は文書の中では空行だが、正本へ戻すときには取り除く。利用者がゴースト行へ文字を入力すると、その行は本物の行になる。
 /// - 2ペインの行は比較結果（<see cref="DiffResult.Rows"/>）の1行＝表示の1行。3ペインの行は Core の三者整列
 ///   （<see cref="FourPaneMaterialization"/>）の行で、差分の移動・選択は二者の比較結果の行と行番号で対応させる。
-/// - 編集は正本へ書き戻し、少し待ってから再比較して表示をそろえ直す。そろえ直しは文書を差し替えず、ゴースト行の出し入れだけを
-///   直前の編集と同じ「元に戻す」単位へまとめる。これで再比較の後も Ctrl+Z／Ctrl+Y が利用者の編集単位で働く。
+/// - 編集は正本へ書き戻し、少し待ってから再比較して表示をそろえ直す。そろえ直しは文書を差し替えず、ゴースト行の出し入れだけで行う。
+/// - 元に戻す／やり直すは全ペインで一つの履歴（ComparisonPane.TextHistory.cs）を使い、エディター自身の履歴は使わない。
 /// - 行の対応が比較結果から再現できない場合（想定外の行番号の並び）は、ゴースト行を入れずに本文をそのまま表示して編集を許す。
 /// - 一覧（<see cref="DiffList"/>）は表示しないが、行の選択・差分ブロックの移動・Diff ペイン・既存の自己検証の参照先として残す。
 /// </summary>
@@ -76,7 +76,16 @@ public sealed partial class ComparisonPane
             // 行ブックマークは、フォーカスのあるエディターの側を対象にする（本家と同じ）。
             side.View.GotFocus += (_, _) => { _activeLineBookmarkSide = side.SourceSide; SyncBookmarkCaret(side); RefreshLineBookmarkToolbar(); };
             side.View.Document.TextChanged += (_, _) => OnDiffEditorTextChanged(side);
+            // 元に戻す／やり直すのキーは、アプリの他の入力欄と同じく実行環境の設定（PlatformSettings の HotkeyConfiguration）に従い、
+            // どのペインで押しても全ペイン共有の履歴を操作する（本家と同じ）。AvaloniaEdit の固定のキーより先に受け取る。
+            side.View.TextArea.AddHandler(InputElement.KeyDownEvent, (_, args) =>
+            {
+                if (Application.Current?.PlatformSettings?.HotkeyConfiguration is not { } hotkeys) return;
+                if (hotkeys.Undo.Any(gesture => gesture.Matches(args))) { UndoText(); args.Handled = true; }
+                else if (hotkeys.Redo.Any(gesture => gesture.Matches(args))) { RedoText(); args.Handled = true; }
+            }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
         }
+        AttachTextHistory();
         LayoutDiffEditors(false);
         // 正本の読取り専用や本文が他の操作で変わったら、エディターの編集可否を合わせる。
         foreach (var source in new[] { LeftEditor, MiddleEditor, RightEditor })
@@ -185,7 +194,7 @@ public sealed partial class ComparisonPane
         if (editor.IsReadOnly || !TextSideWritable(side.SourceSide)) return;
         var text = side.RealText();
         side.SourceText = text;
-        if (editor.Text != text) editor.Text = text;
+        WriteTypedText(side.SourceSide, text);
         ScheduleDiffEditRecompare();
     }
 
@@ -213,7 +222,7 @@ public sealed partial class ComparisonPane
     /// 指定した側の本物の行（0始まり）へ、その側のエディターのキャレットを移してフォーカスする。
     /// 表示が正本から外れていれば、先に正本どうしを比較して表示をそろえる。その側を表示していなければ false。
     /// </summary>
-    internal bool FocusDiffEditorRealLine(int side, int realLine)
+    internal bool FocusDiffEditorRealLine(int side, int realLine, int column = 1)
     {
         var view = _diffViews[side];
         if (view.SourceText != TextEditor(side).Text || _diffDisplay.RowCount == 0) CompareEditors();
@@ -221,7 +230,7 @@ public sealed partial class ComparisonPane
         var display = view.DisplayLineOfReal(realLine);
         if (display < 1) return false;
         view.View.Focus();
-        view.View.TextArea.Caret.Line = display; view.View.TextArea.Caret.Column = 1;
+        view.View.TextArea.Caret.Line = display; view.View.TextArea.Caret.Column = column;
         _activeLineBookmarkSide = side;
         SyncBookmarkCaret(view);
         RefreshLineBookmarkToolbar();
@@ -276,6 +285,8 @@ public sealed partial class ComparisonPane
     {
         if (_disposed) return;
         if (!CompareButton.IsEnabled) { ScheduleDiffEditRecompare(); return; }
+        // 再比較までの続けての入力を、一つの「元に戻す」単位として確定する。
+        CloseTypingGroup();
         if (IndependentText) { await StartIndependentEditorComparisonAsync(); return; }
         _diffEditCompare?.Cancel(); _diffEditCompare?.Dispose();
         var cancellation = _diffEditCompare = new CancellationTokenSource(); var token = cancellation.Token;
@@ -529,14 +540,8 @@ public sealed partial class ComparisonPane
             };
             View.Options.EnableHyperlinks = false; View.Options.EnableEmailHyperlinks = false;
             View.Options.AllowScrollBelowDocument = false;
-            // 元に戻す／やり直すのキーは、アプリの他の入力欄と同じく実行環境の設定（PlatformSettings の HotkeyConfiguration）に従う。
-            // AvaloniaEdit は OS ごとに固定のキー（macOS は Command）を使うため、環境の設定と食い違う場合があり、先に受け取って処理する。
-            View.TextArea.AddHandler(InputElement.KeyDownEvent, (_, args) =>
-            {
-                if (Application.Current?.PlatformSettings?.HotkeyConfiguration is not { } hotkeys) return;
-                if (hotkeys.Undo.Any(gesture => gesture.Matches(args))) { if (View.CanUndo) View.Undo(); args.Handled = true; }
-                else if (hotkeys.Redo.Any(gesture => gesture.Matches(args))) { if (View.CanRedo) View.Redo(); args.Handled = true; }
-            }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+            // エディター自身の履歴は使わない（全ペイン共有の履歴を ComparisonPane が持つ）。組込みのキー・コマンドで戻らないよう容量を0にする。
+            View.Document.UndoStack.SizeLimit = 0;
             Renderer = new DiffLineRenderer(this);
             View.TextArea.TextView.BackgroundRenderers.Add(Renderer);
             // 本家と同じく本物の行番号だけを出し、ゴースト行は空欄にする。
@@ -562,8 +567,8 @@ public sealed partial class ComparisonPane
         internal int? LineNumberOfDisplay(int number) => GhostLineNumbers().Contains(number) ? null : RealLineOfDisplay(number) + 1;
 
         /// <summary>
-        /// 表示を作り直す。正本の本文が表示の本物の行と同じなら、文書を差し替えずゴースト行の出し入れだけでそろえ、
-        /// その変更を直前の利用者の編集と同じ「元に戻す」単位へまとめる。本文が違う（読込み・他の操作による変更）ときは差し替える。
+        /// 表示を作り直す。正本の本文が表示の本物の行と同じなら、文書を差し替えずゴースト行の出し入れだけでそろえる
+        /// （入力中のキャレットや選択を保つため）。本文が違う（読込み・元に戻す・他の操作による変更）ときは差し替える。
         /// </summary>
         internal void Rebuild(string text, int?[] lineNumbers)
         {
@@ -621,8 +626,7 @@ public sealed partial class ComparisonPane
         }
 
         /// <summary>
-        /// 本物の行はそのままに、ゴースト行の出し入れだけで新しい並びにそろえる。全部を一つの「元に戻す」単位にし、
-        /// 直前の利用者の編集があればそれと同じ単位へまとめる（元に戻すと、編集と整列が一緒に戻る）。
+        /// 本物の行はそのままに、ゴースト行の出し入れだけで新しい並びにそろえる。ゴースト行は表示の状態なので履歴には残さない。
         /// </summary>
         private bool Realign(bool[] rows)
         {
@@ -631,16 +635,9 @@ public sealed partial class ComparisonPane
             if (plan is null) return false;
             // 何も変わらなければ文書には触れない（元に戻す履歴も変えない）。
             if (plan.Count == 0) return true;
-            var hasUserEdits = document.UndoStack.CanUndo;
-            if (hasUserEdits) document.UndoStack.StartContinuedUndoGroup(null); else document.UndoStack.StartUndoGroup();
-            try
-            {
-                document.BeginUpdate();
-                try { ApplyPlan(plan); }
-                finally { document.EndUpdate(); }
-            }
-            finally { document.UndoStack.EndUndoGroup(); }
-            if (!hasUserEdits) document.UndoStack.ClearAll();
+            document.BeginUpdate();
+            try { ApplyPlan(plan); }
+            finally { document.EndUpdate(); }
             return true;
         }
 

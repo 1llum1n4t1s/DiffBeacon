@@ -33,8 +33,8 @@ public sealed partial class ComparisonPane
         FrameCommand.SaveRightAs => ObserveCriticalTextSaveTask("右を外部保存", SaveTextAsAsync(true)),
         FrameCommand.OpenProject => ObserveCriticalTextSaveTask("project-open", OpenProjectAsync()),
         FrameCommand.SaveProject => ObserveCriticalTextSaveTask("project-save", SaveProjectAsync()),
-        FrameCommand.Undo => Run(() => FocusedEditor()?.Undo()),
-        FrameCommand.Redo => Run(() => FocusedEditor()?.Redo()),
+        FrameCommand.Undo => Run(() => { if (FocusedEditor() is { } editor) editor.Undo(); else if (DiffTabActive()) UndoText(); }),
+        FrameCommand.Redo => Run(() => { if (FocusedEditor() is { } editor) editor.Redo(); else if (DiffTabActive()) RedoText(); }),
         FrameCommand.Find => Run(Find),
         FrameCommand.FirstDifference => Run(() => NavigateToDifference(first: true)),
         FrameCommand.PreviousDifference => Run(() => NavigateDifference(-1)),
@@ -58,7 +58,10 @@ public sealed partial class ComparisonPane
 
     private static Task Run(Action action) { action(); return Task.CompletedTask; }
 
-    // 本家の「元に戻す」「やり直し」は直前に操作したペインに作用する。ここでは入力フォーカスのある編集欄を対象にする。
+    // 差分タブの本文は全ペイン共有の履歴（本家と同じ）。ツールバーのボタンへフォーカスが移っていても、差分タブを表示していれば対象にする。
+    private bool DiffTabActive() => ReferenceEquals(_views.SelectedItem, _diffTab);
+
+    // 差分タブ以外の編集欄（マージ結果など）は、その欄自身の履歴を使う。入力フォーカスのある編集欄を対象にする。
     private TextBox? FocusedEditor()
     {
         var focused = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement();

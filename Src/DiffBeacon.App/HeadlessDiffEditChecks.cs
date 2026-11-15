@@ -121,6 +121,94 @@ internal static class HeadlessDiffEditChecks
             undoPane.DiscardChanges();
         }
 
+        // 全ペイン共有の元に戻す／やり直す（本家と同じ）。どのペインで押しても、全ペインを通して最後の変更から順に戻る。
+        // 左は CRLF・末尾改行なし、右は CR だけの改行。元に戻した本文は、元の本文と改行の種類まで完全に一致する。
+        {
+            var shared = window.AddSession();
+            var sl = Path.Combine(work, "shared-left.txt"); var sr = Path.Combine(work, "shared-right.txt");
+            const string leftOriginal2 = "a\r\nb\r\nc"; const string rightOriginal2 = "a\rc\r";
+            File.WriteAllText(sl, leftOriginal2, new UTF8Encoding(false)); File.WriteAllText(sr, rightOriginal2, new UTF8Encoding(false));
+            shared.LeftPath.Text = sl; shared.BasePath.Text = ""; shared.RightPath.Text = sr;
+            pump(shared.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            var (lv, rv) = shared.DiffEditors;
+            Type(lv, 1, "L");
+            pump(shared.FlushDiffEditRecompareAsync()); Dispatcher.UIThread.RunJobs();
+            var leftEdited = shared.LeftEditor.Text;
+            // 右は行を増やす入力。再比較を待たずに（まとめている途中で）元に戻す。
+            Type(rv, 1, "\nR");
+            var rightEdited = shared.RightEditor.Text;
+            check("shared undo edits change the expected sides", leftEdited == "aL\r\nb\r\nc" && rightEdited != rightOriginal2
+                && DiffEditorSideLines(rightEdited) == 3 && rightEdited!.Contains('R') && shared.DiffEditRecomparePending,
+                $"{Escape(leftEdited)} / {Escape(rightEdited)}");
+            Key(lv, Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control);
+            check("shared undo in the left pane first undoes the latest right edit", shared.RightEditor.Text == rightOriginal2 && shared.LeftEditor.Text == leftEdited
+                && !shared.DiffEditRecomparePending && shared.CurrentDiff?.RightText == rightOriginal2,
+                $"{Escape(shared.LeftEditor.Text)} / {Escape(shared.RightEditor.Text)} pending={shared.DiffEditRecomparePending}");
+            Key(lv, Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control);
+            check("shared undo then undoes the left edit to the exact original bytes", shared.LeftEditor.Text == leftOriginal2 && shared.RightEditor.Text == rightOriginal2
+                && !shared.TextDirty(0) && !shared.TextDirty(2) && !shared.CanUndoText && shared.TextHistoryRedoCount == 2,
+                $"{Escape(shared.LeftEditor.Text)} / {Escape(shared.RightEditor.Text)} redo={shared.TextHistoryRedoCount}");
+            Key(rv, Avalonia.Input.Key.Y, Avalonia.Input.KeyModifiers.Control);
+            var afterFirstRedo = (shared.LeftEditor.Text, shared.RightEditor.Text);
+            Key(rv, Avalonia.Input.Key.Y, Avalonia.Input.KeyModifiers.Control);
+            check("shared redo replays the left then the right edit exactly", afterFirstRedo == (leftEdited, rightOriginal2)
+                && shared.LeftEditor.Text == leftEdited && shared.RightEditor.Text == rightEdited && !shared.CanRedoText
+                && shared.CurrentDiff?.LeftText == leftEdited && shared.CurrentDiff?.RightText == rightEdited,
+                $"{Escape(afterFirstRedo.Item1)}|{Escape(afterFirstRedo.Item2)} -> {Escape(shared.LeftEditor.Text)}|{Escape(shared.RightEditor.Text)}");
+
+            // 差分のコピーも共有の履歴に入る。保存した時点（右 = rightEdited）へ戻すと未保存の印が消え、さらに戻すと付く。
+            pump(shared.SaveAsync(false)); pump(shared.SaveAsync(true)); Dispatcher.UIThread.RunJobs();
+            shared.NavigateDifference(1); Dispatcher.UIThread.RunJobs();
+            shared.CopySelected(true); Dispatcher.UIThread.RunJobs();
+            var copied = shared.RightEditor.Text;
+            check("shared undo records a difference copy", copied != rightEdited && shared.TextDirty(2) && shared.CanUndoText, Escape(copied));
+            Key(rv, Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control);
+            check("shared undo of the copy returns to the saved point and clears dirty", shared.RightEditor.Text == rightEdited && !shared.TextDirty(2), Escape(shared.RightEditor.Text));
+            Key(rv, Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control);
+            check("shared undo past the saved point marks the side dirty", shared.RightEditor.Text == rightOriginal2 && shared.TextDirty(2), Escape(shared.RightEditor.Text));
+            // メニュー・ツールバーの「やり直し」（外枠のコマンド）も同じ履歴を使う。
+            pump(shared.ExecuteFrameCommandAsync(FrameCommand.Redo)); Dispatcher.UIThread.RunJobs();
+            check("shared redo from the frame command uses the shared history", shared.RightEditor.Text == rightEdited && !shared.TextDirty(2) && shared.CanRedoText,
+                Escape(shared.RightEditor.Text));
+            // 新しい入力を始めると、やり直しは消える。
+            Type(lv, 1, "Z");
+            check("shared history drops redo on a new edit", !shared.CanRedoText && shared.CanUndoText, $"redo={shared.TextHistoryRedoCount}");
+            pump(shared.FlushDiffEditRecompareAsync()); Dispatcher.UIThread.RunJobs();
+
+            // 読取り専用になった側の変更は戻さない。本文と履歴はそのまま残し、書き込めるようになれば戻せる。
+            Type(rv, 1, "Q");
+            pump(shared.FlushDiffEditRecompareAsync()); Dispatcher.UIThread.RunJobs();
+            var rightWithQ = shared.RightEditor.Text; var undoCount = shared.TextHistoryUndoCount;
+            shared.RightEditor.IsReadOnly = true; Dispatcher.UIThread.RunJobs();
+            Key(lv, Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control);
+            check("shared undo refuses a read-only side and keeps text and history", shared.RightEditor.Text == rightWithQ && shared.TextHistoryUndoCount == undoCount,
+                $"{Escape(shared.RightEditor.Text)} count={shared.TextHistoryUndoCount}/{undoCount}");
+            shared.RightEditor.IsReadOnly = false; Dispatcher.UIThread.RunJobs();
+            Key(lv, Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control);
+            check("shared undo works again once the side is writable", shared.RightEditor.Text == rightEdited && shared.TextHistoryUndoCount == undoCount - 1, Escape(shared.RightEditor.Text));
+
+            // 記録していない経路（読込みなど）で正本が変わったら、履歴の前提が崩れるので消す。
+            shared.LeftEditor.Text = "external\n"; Dispatcher.UIThread.RunJobs();
+            check("shared history is cleared by an unrecorded source change", !shared.CanUndoText && !shared.CanRedoText && shared.TextHistoryUndoCount == 0,
+                $"undo={shared.TextHistoryUndoCount} redo={shared.TextHistoryRedoCount}");
+            shared.DiscardChanges();
+        }
+
+        // 履歴の記録と上限（数・文字数）。上限を超えたら古い記録から捨て、直前の1件はそれだけで上限を超えても残す。
+        {
+            var edit = ComparisonPane.TextEdit.Between(0, "a\r\nb\r\nc", "a\r\nXY\r\nc")!;
+            check("shared history records only the replaced range", edit.Start == 3 && edit.Removed == "b" && edit.Inserted == "XY"
+                && edit.Apply("a\r\nXY\r\nc", undo: true) == "a\r\nb\r\nc" && edit.Apply("a\r\nb\r\nc", undo: false) == "a\r\nXY\r\nc"
+                && edit.Matches("a\r\nXY\r\nc", applied: true) && !edit.Matches("a\r\nZZ\r\nc", applied: true),
+                $"{edit.Start} {Escape(edit.Removed)} {Escape(edit.Inserted)}");
+            var history = new ComparisonPane.TextEditHistory(maxEntries: 3, maxCharacters: 10);
+            for (var index = 0; index < 5; index++) history.Push(new ComparisonPane.TextEdit(0, index, "a", "b"));
+            var byCount = (history.UndoCount, history.PeekUndo()?.Start);
+            history.Push(new ComparisonPane.TextEdit(0, 9, new string('x', 50), ""));
+            check("shared history trims the oldest entries by count and size", byCount == (3, 4) && history.UndoCount == 1 && history.PeekUndo()?.Start == 9,
+                $"count={byCount} after={history.UndoCount}/{history.PeekUndo()?.Start}");
+        }
+
         // 祖先のある三者比較は、本家と同じく左・中（祖先、読取り専用）・右の3ペインで、行をそろえて表示する。
         {
             var threePane = window.AddSession();
@@ -141,7 +229,8 @@ internal static class HeadlessDiffEditChecks
             screenshot("diff-edit-three-way.png");
             var middleBefore = threePane.MiddleEditor.Text;
             Type(views[1], 1, "!");
-            check("diff edit refuses typing into the fixed ancestor", threePane.MiddleEditor.Text == middleBefore, Escape(threePane.MiddleEditor.Text));
+            check("diff edit refuses typing into the fixed ancestor", threePane.MiddleEditor.Text == middleBefore && !threePane.CanUndoText && threePane.TextHistoryUndoCount == 0,
+                Escape(threePane.MiddleEditor.Text));
             threePane.DiscardChanges();
         }
 
@@ -161,6 +250,23 @@ internal static class HeadlessDiffEditChecks
             Type(independent.DiffEditor(1), 1, "M");
             check("diff edit independent typing changes only the middle source", independent.MiddleEditor.Text == "sameM\n" && independent.RightEditor.Text == "same\n" && independent.LeftEditor.Text == "one\n",
                 $"{Escape(independent.LeftEditor.Text)}|{Escape(independent.MiddleEditor.Text)}|{Escape(independent.RightEditor.Text)}");
+            // 中央 → 右 → 左の順に入力し、中央のペインで元に戻すと、左 → 右 → 中央の順に一つずつ戻る（三側で一つの履歴）。
+            pump(independent.FlushDiffEditRecompareAsync()); pump(independent.IndependentTextUiTask ?? Task.CompletedTask); Dispatcher.UIThread.RunJobs();
+            Type(independent.DiffEditor(2), 1, "R");
+            pump(independent.FlushDiffEditRecompareAsync()); pump(independent.IndependentTextUiTask ?? Task.CompletedTask); Dispatcher.UIThread.RunJobs();
+            Type(independent.DiffEditor(0), 1, "L");
+            pump(independent.FlushDiffEditRecompareAsync()); pump(independent.IndependentTextUiTask ?? Task.CompletedTask); Dispatcher.UIThread.RunJobs();
+            string Texts() => $"{Escape(independent.LeftEditor.Text)}|{Escape(independent.MiddleEditor.Text)}|{Escape(independent.RightEditor.Text)}";
+            var steps = new List<string> { Texts() };
+            for (var step = 0; step < 3; step++)
+            {
+                Key(independent.DiffEditor(1), Avalonia.Input.Key.Z, Avalonia.Input.KeyModifiers.Control);
+                pump(independent.IndependentTextUiTask ?? Task.CompletedTask); Dispatcher.UIThread.RunJobs();
+                steps.Add(Texts());
+            }
+            check("diff edit independent three-way shares one history across the three sides", steps.SequenceEqual([
+                "oneL\\n|sameM\\n|sameR\\n", "one\\n|sameM\\n|sameR\\n", "one\\n|sameM\\n|same\\n", "one\\n|same\\n|same\\n"]) && !independent.CanUndoText,
+                string.Join(" -> ", steps));
             independent.DiscardChanges();
         }
 
@@ -222,6 +328,9 @@ internal static class HeadlessDiffEditChecks
     private static string[] LineTexts(AvaloniaEdit.TextEditor view, int count)
         => Enumerable.Range(1, Math.Min(count, view.Document.LineCount))
             .Select(number => view.Document.GetText(view.Document.GetLineByNumber(number)).Replace("\u200B", "").Replace("\u200C", "")).ToArray();
+
+    // 改行（CRLF・LF・CR）で区切った行の数。
+    private static int DiffEditorSideLines(string? text) => ComparisonPane.DiffEditorSide.SplitLines(text ?? "").Count;
 
     private static string Escape(string? text) => (text ?? "<null>").Replace("\r", "\\r").Replace("\n", "\\n");
 
