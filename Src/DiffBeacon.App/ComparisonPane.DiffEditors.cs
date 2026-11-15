@@ -542,6 +542,8 @@ public sealed partial class ComparisonPane
             View.Options.AllowScrollBelowDocument = false;
             // エディター自身の履歴は使わない（全ペイン共有の履歴を ComparisonPane が持つ）。組込みのキー・コマンドで戻らないよう容量を0にする。
             View.Document.UndoStack.SizeLimit = 0;
+            // 検索は本家と同じ検索・置換ダイアログ（ComparisonPane.FindReplace.cs）で行う。エディター組込みの検索欄は外す。
+            View.SearchPanel?.Uninstall();
             Renderer = new DiffLineRenderer(this);
             View.TextArea.TextView.BackgroundRenderers.Add(Renderer);
             // 本家と同じく本物の行番号だけを出し、ゴースト行は空欄にする。

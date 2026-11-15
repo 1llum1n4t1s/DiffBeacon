@@ -67,6 +67,9 @@ public sealed partial class MainWindow
             Pane("行内差異を選択(_D)", "F4", FrameCommand.SelectLineDifference),
             Separator(),
             Pane("検索(_I)...", "Ctrl+F", FrameCommand.Find),
+            Pane("置換(_C)...", "Ctrl+H", FrameCommand.Replace),
+            Separator(),
+            Pane("移動(_G)...", "Ctrl+G", FrameCommand.GoTo),
             Separator(),
             Pane("設定(_O)...", "Ctrl+,", FrameCommand.Options)));
         var darkTheme = new MenuItem { Header = "ダーク テーマ(_D)", ToggleType = MenuItemToggleType.CheckBox };
@@ -254,15 +257,26 @@ public sealed partial class MainWindow
 
     /// <summary>
     /// 本家のアクセラレータ（Merge.rc の IDR_MERGEDOCTYPE / IDR_MAINFRAME）のうち、編集欄の標準操作と衝突しないものを処理する。
-    /// Ctrl+Z / Ctrl+Y / Ctrl+F は編集欄やバイナリ検索が自前で扱うため、ここでは処理しない。
+    /// Ctrl+Z / Ctrl+Y は編集欄が自前で扱うため、ここでは処理しない。
+    /// 検索・置換・移動（Ctrl+F／Ctrl+H／Ctrl+G／F3）は、差分タブを表示していてフォーカスが通常の入力欄に無いときだけ受ける
+    /// （<see cref="ComparisonPane.AcceptsTextSearchKeys"/>）。バイナリの比較など形式別ビューの Ctrl+F／F3 はそのビュー自身が扱う。
+    /// エディター（AvaloniaEdit）の組込みの検索欄より先にトンネル段階で受けるので、二つの検索が競合しない。
     /// </summary>
     private async Task<bool> HandleFrameShortcutAsync(KeyEventArgs e)
     {
         var alt = e.KeyModifiers.HasFlag(KeyModifiers.Alt);
         var control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
         var shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
+        var textSearch = ActivePane.AcceptsTextSearchKeys(FocusManager?.GetFocusedElement());
         FrameCommand? command = (e.Key, alt, control, shift) switch
         {
+            (Key.F, false, true, false) when textSearch => FrameCommand.Find,
+            (Key.H, false, true, false) when textSearch => FrameCommand.Replace,
+            (Key.G, false, true, false) when textSearch => FrameCommand.GoTo,
+            (Key.F3, false, false, false) when textSearch => FrameCommand.FindNext,
+            (Key.F3, false, false, true) when textSearch => FrameCommand.FindPrevious,
+            (Key.F3, false, true, false) when textSearch => FrameCommand.FindSelectedNext,
+            (Key.F3, false, true, true) when textSearch => FrameCommand.FindSelectedPrevious,
             (Key.Down, true, false, false) => FrameCommand.NextDifference,
             (Key.Up, true, false, false) => FrameCommand.PreviousDifference,
             (Key.Down, true, false, true) => FrameCommand.NextConflict,

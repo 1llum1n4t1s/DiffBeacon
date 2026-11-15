@@ -377,6 +377,14 @@ Invoke-DevDotnet $app --self-test $runRoot/verification/text-bookmarks --text-bo
 Invoke-DevDotnet $app --self-test $runRoot/verification/frame --frame-only
 ```
 
+## 本家WinMerge風の検索・置換・移動
+
+「編集」メニューの検索（Ctrl+F）・置換（Ctrl+H）・移動（Ctrl+G）のダイアログと、F3／Shift+F3／Ctrl+F3 の続けての検索を、差分タブのエディターで確認します。期待する本文・選択・行は文字列と数で書いた値と照合します。ゴースト行を飛ばすこと、ゴースト行へ入力した直後（再比較の前）の行でも目印の文字を含まずに選ぶこと、折り返し・折り返さない・前を検索・単語単位・大文字小文字・正規表現（誤った式・長さ0の一致）・閉じない設定を確かめます。置換は「置換して次に」の一回目が一致を選ぶだけで二回目に置き換えること、「すべて置換」が二重に置き換えず（here→there）、正規表現の \1・\U、長さ0の一致（^）、CR の改行と末尾改行、文字どおりの $・\ を保つこと、選択範囲だけの置換、一回の元に戻す／やり直すで本文が完全に戻ることを確かめます。読取り専用の側と祖先は置き換えません。移動は範囲「(1-N)」の表示、範囲外での「移動」の無効化、行と差異への移動を確かめます。`find-dialog.png`／`replace-dialog.png`／`goto-dialog.png` を出力します。アプリ全体UI自己検証にも登録されています。
+
+```powershell
+Invoke-DevDotnet $app --self-test $runRoot/verification/find --find-replace-only
+```
+
 ## 本家WinMerge風のフォルダー比較一覧
 
 フォルダー比較の列（二者は名前／フォルダー／比較結果／左右の更新日時／拡張子、三者は中更新日時を追加）、ルートパス帯、本家の .ico から取り出した16pxアイコン、本家 `GetColImage`・`GetColors`・`ColStatusGet` の判定順によるアイコン・行の色・比較結果の文言（`Japanese.po` の訳）を確認します。更新日時は実ファイルの時刻から同じ書式で期待値を導き、runnerのタイムゾーンに依存させません。選択行が状態色と区別できること、最小幅でも列見出しと行の列境界が揃い、横スクロールが出ないこと、通常（1280×850）と最小（850×550）で見出しが一覧の直上にあり一覧が100 DIP以上残ることを、`folder-view-normal.png`／`folder-view-minimum.png`／`folder-view-threeway.png` と `folder-view-bounds.json` で残します。アプリ全体UI自己検証にも登録されています。

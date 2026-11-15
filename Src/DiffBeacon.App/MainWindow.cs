@@ -195,7 +195,6 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly CheckBox _ignoreSpace = new() { Content = "空白を無視" };
     private readonly CheckBox _ignoreBlank = new() { Content = "空行を無視" };
     private readonly TextBox _ignoreRegex = new() { PlaceholderText = "除外行の正規表現", Width = 210 };
-    private readonly TextBox _find = new() { PlaceholderText = "検索", Width = 180 };
     private readonly ComboBox _mode = new() { ItemsSource = new[] { "自動", "テキスト", "フォルダー", "バイナリ", "画像", "JSON", "CSV / TSV", "アーカイブ", "拡張形式" }, SelectedIndex = 0, Width = 130 };
     private readonly ComparisonProviderRegistry _providers = BuiltinComparisonProviders.CreateDefault();
     private readonly ComboBox _provider = new() { Width = 130, Margin = new Thickness(4) };
@@ -281,8 +280,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         foreach (var item in new Control[] { _folderMode, _excludes, _showFilteredDirectories }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
         top.Children.Add(projectActions);
         var options = new WrapPanel { Orientation = Orientation.Horizontal };
-        foreach (var control in new Control[] { _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex, _find }) { control.Margin = new Thickness(8, 4); options.Children.Add(control); }
-        AddAction(options, "検索", () => { Find(); return Task.CompletedTask; });
+        // 本文の検索は本家と同じく「編集」メニューの検索・置換ダイアログ（ComparisonPane.FindReplace.cs）で行う。
+        foreach (var control in new Control[] { _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex }) { control.Margin = new Thickness(8, 4); options.Children.Add(control); }
         top.Children.Add(options);
         top.Children.Add(CreateAdvancedFilters());
         top.Children.Add(CreateLineBookmarkToolbar());
@@ -662,6 +661,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public void Dispose()
     {
         if (_disposed) return; _disposed = true;
+        CloseTextSearchDialog();
         InvalidateMergeSave(); ResultEditor.CancelComposition("pane-disposed"); _resultPreview.CancelComposition("pane-disposed"); ResultEditor.DetachHost(); _resultPreview.DetachHost();
         IndependentTextInputParentDisposed?.Invoke(); IndependentTextInputParentDisposed = null;
         InvalidateFolderCopy();
@@ -806,19 +806,6 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         }
         finally { _reportOperation = null; }
     }
-    private void Find()
-    {
-        if (CurrentDiff is null || string.IsNullOrEmpty(_find.Text)) return;
-        var rows = CurrentDiff.Rows;
-        for (var n = 1; n <= rows.Count; n++)
-        {
-            var i = (Math.Max(-1, DiffList.SelectedIndex) + n) % rows.Count;
-            if ((rows[i].LeftText?.Contains(_find.Text, StringComparison.OrdinalIgnoreCase) ?? false) || (rows[i].RightText?.Contains(_find.Text, StringComparison.OrdinalIgnoreCase) ?? false))
-            { DiffList.SelectedIndex = i; DiffList.ScrollIntoView(DiffList.SelectedItem!); return; }
-        }
-        _status.Text = "検索語が見つかりませんでした。";
-    }
-
     public Task SaveAsync(bool right) => _specialTab.Content is SpecializedViews.BinaryPanel binary ? binary.SaveAsync(right) : SaveTextCoreAsync(right, null, CancellationToken.None);
     private async Task<string?> SavePathAsync(string title, string suggested) => (await _owner.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions { Title = title, SuggestedFileName = suggested, ShowOverwritePrompt = true }))?.TryGetLocalPath();
     private async Task ExportPatchAsync()
