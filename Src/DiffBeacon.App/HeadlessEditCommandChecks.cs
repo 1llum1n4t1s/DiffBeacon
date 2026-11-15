@@ -1,0 +1,169 @@
+using System.Text;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Threading;
+
+namespace DiffBeacon.App;
+
+/// <summary>
+/// 本家WinMerge風の「編集」メニューの切り取り・コピー・貼り付け・すべて選択、ブックマークの小メニューと行番号の欄の印、
+/// 本文の右クリックメニュー（ComparisonPane.EditCommands.cs）の自己検証。
+/// クリップボードは検証用の差し替え（<see cref="ComparisonPane.DiffClipboardBridge"/>）を使い、利用者のクリップボードを置き換えない。
+/// 期待する本文・クリップボードの文字列は、実装の関数を使わずに文字列で書いた値と照合する。
+/// </summary>
+internal static class HeadlessEditCommandChecks
+{
+    private sealed class MemoryClipboard : IEditorClipboard
+    {
+        internal string? Text { get; set; }
+        internal TaskCompletionSource<string?>? PendingRead { get; set; }
+        public Task<string?> ReadTextAsync() => PendingRead?.Task ?? Task.FromResult(Text);
+        public Task WriteTextAsync(string text) { Text = text; return Task.CompletedTask; }
+    }
+
+    internal static void Run(MainWindow window, ComparisonPane pane, string output, string artifactOutput,
+        Action<string, bool, string> check, Action<string> screenshot, Action<Task> pump)
+    {
+        window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
+        var work = Path.Combine(output, "edit-commands"); Directory.CreateDirectory(work);
+        var menu = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "編集(_E)");
+        var headers = menu.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
+        check("edit menu lists the WinMerge edit commands", headers.SequenceEqual(["元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "行内差異を選択(_D)",
+            "すべて選択(_A)", "検索(_I)...", "置換(_C)...", "ブックマーク(_B)", "移動(_G)...", "設定(_O)..."]), string.Join("|", headers));
+        var bookmarkMenu = menu.Items.OfType<MenuItem>().First(item => item.Header as string == "ブックマーク(_B)");
+        var bookmarkHeaders = bookmarkMenu.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
+        check("edit bookmark submenu matches WinMerge", bookmarkHeaders.SequenceEqual(["ブックマークの作成・削除(_T)", "次のブックマークへ移動(_N)", "前のブックマークへ移動(_P)", "すべてのブックマークをクリア(_C)"]),
+            string.Join("|", bookmarkHeaders));
+
+        // 左は CRLF・末尾改行なし、右は LF・末尾改行あり。右にだけ extra の行があるので、左の2行目はゴースト行。
+        var leftOriginal = "one\r\ntwo\r\nthree";
+        var rightOriginal = "one\nextra\ntwo\nthree\n";
+        Compare(pane, work, leftOriginal, rightOriginal, pump);
+        var left = pane.DiffEditor(0); var right = pane.DiffEditor(2);
+        var clipboard = new MemoryClipboard();
+        pane.DiffClipboardBridge = clipboard;
+        try
+        {
+            check("edit fixture has a ghost line on the left", pane.DiffEditorGhostLineCount(0) == 1, pane.DiffEditorGhostLineCount(0).ToString());
+
+            // コピー: ゴースト行をまたいで選んでも、本物の本文だけを渡す（本家 GetTextWithoutEmptys）。
+            Select(pane, 0, 0, left.Document.GetLineByNumber(3).EndOffset);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.Copy));
+            var menuCopy = clipboard.Text;
+            clipboard.Text = null;
+            Select(pane, 0, 0, left.Document.GetLineByNumber(3).EndOffset);
+            EditorKey(left, Key.C, KeyModifiers.Control);
+            check("edit copy across a ghost line copies only the real text", menuCopy == "one\r\ntwo" && clipboard.Text == "one\r\ntwo" && pane.LeftEditor.Text == leftOriginal,
+                $"menu={Escape(menuCopy)} key={Escape(clipboard.Text)}");
+
+            // 切り取り: 右の extra の行を切り取り、一回の元に戻すで戻る。
+            var extra = right.Document.GetLineByNumber(2);
+            Select(pane, 2, extra.Offset, extra.TotalLength);
+            EditorKey(right, Key.X, KeyModifiers.Control);
+            var afterCut = pane.RightEditor.Text;
+            pane.UndoText(); Dispatcher.UIThread.RunJobs();
+            check("edit cut removes the selection and one undo restores it", clipboard.Text == "extra\n" && afterCut == "one\ntwo\nthree\n" && pane.RightEditor.Text == rightOriginal,
+                $"clip={Escape(clipboard.Text)} cut={Escape(afterCut)} undo={Escape(pane.RightEditor.Text)}");
+
+            // 貼り付け: 左（CRLF）の one の行末へ LF の文字列を貼ると、改行はその行の CRLF にそろう。目印の文字は入れない。
+            clipboard.Text = "A\nB\u200B";
+            Select(pane, 0, left.Document.GetLineByNumber(1).EndOffset, 0);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.Paste));
+            var afterPaste = pane.LeftEditor.Text;
+            pane.UndoText(); Dispatcher.UIThread.RunJobs();
+            check("edit paste converts line breaks to the line's ending and strips marks", afterPaste == "oneA\r\nB\r\ntwo\r\nthree" && pane.LeftEditor.Text == leftOriginal,
+                $"{Escape(afterPaste)} undo={Escape(pane.LeftEditor.Text)}");
+
+            // クリップボードを待つ間に本文が変わったら、貼り付けない。
+            var pending = new TaskCompletionSource<string?>();
+            clipboard.PendingRead = pending;
+            Select(pane, 0, 0, 0);
+            var paste = pane.PasteDiffTextAsync();
+            pane.LeftEditor.Text = "changed"; Dispatcher.UIThread.RunJobs();
+            pending.SetResult("X"); pump(paste); clipboard.PendingRead = null;
+            check("edit paste is dropped when the text changed while reading the clipboard", pane.LeftEditor.Text == "changed"
+                && pane.ComparisonStatus == "本文または選択が変わったため貼り付けませんでした。", $"{Escape(pane.LeftEditor.Text)} {pane.ComparisonStatus}");
+            pane.LeftEditor.Text = leftOriginal; pane.CompareEditors(); Dispatcher.UIThread.RunJobs();
+
+            // 読取り専用の側は切り取り・貼り付けを断り、コピーはできる。
+            pane.RightEditor.IsReadOnly = true; Dispatcher.UIThread.RunJobs();
+            extra = right.Document.GetLineByNumber(2);
+            Select(pane, 2, extra.Offset, extra.Length);
+            clipboard.Text = null;
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.Cut));
+            var cutStatus = pane.ComparisonStatus;
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.Copy));
+            check("edit read-only side refuses cut but allows copy", cutStatus == "右は読取り専用のため切り取れません。" && clipboard.Text == "extra" && pane.RightEditor.Text == rightOriginal,
+                $"{cutStatus} clip={Escape(clipboard.Text)}");
+            pane.RightEditor.IsReadOnly = false; Dispatcher.UIThread.RunJobs();
+
+            // すべて選択。
+            Select(pane, 2, 0, 0);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.SelectAll));
+            check("edit select all selects the whole pane", right.SelectionStart == 0 && right.SelectionLength == right.Document.TextLength, $"{right.SelectionStart}+{right.SelectionLength}/{right.Document.TextLength}");
+
+            // 右クリックメニュー: 本家 IDR_POPUP_MERGEVIEW の対応する項目。コピーは開いたペインの選択を写す。
+            var context = pane.DiffEditorContextMenu(2);
+            var contextHeaders = context?.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray() ?? [];
+            Select(pane, 2, right.Document.GetLineByNumber(4).Offset, 5);
+            clipboard.Text = null;
+            var copyItem = context?.Items.OfType<MenuItem>().FirstOrDefault(item => item.Header as string == "コピー(_C)");
+            copyItem?.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent)); Dispatcher.UIThread.RunJobs();
+            check("edit context menu lists WinMerge items and copies", contextHeaders.SequenceEqual(["行内差異を選択(_D)", "元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "移動(_G)..."])
+                && clipboard.Text == "three", $"{string.Join("|", contextHeaders)} clip={Escape(clipboard.Text)}");
+
+            // ブックマーク: Ctrl+F2 で作成・削除、F2／Shift+F2 で次・前（端で回り込む）、すべてクリア。印は行番号の欄に出る。
+            pane.FocusDiffEditorRealLine(0, 1); Press(window, left, Key.F2, KeyModifiers.Control);
+            pane.FocusDiffEditorRealLine(0, 2); Press(window, left, Key.F2, KeyModifiers.Control);
+            var marks = string.Join(",", pane.LineBookmarkMarks(0).Keys.Order());
+            pane.FocusDiffEditorRealLine(0, 0);
+            Press(window, left, Key.F2, KeyModifiers.None); var next1 = left.TextArea.Caret.Line;
+            Press(window, left, Key.F2, KeyModifiers.None); var next2 = left.TextArea.Caret.Line;
+            Press(window, left, Key.F2, KeyModifiers.None); var wrapped = left.TextArea.Caret.Line;
+            Press(window, left, Key.F2, KeyModifiers.Shift); var previous = left.TextArea.Caret.Line;
+            // 表示の行: 1=one、2=ゴースト行、3=two、4=three。
+            check("edit bookmarks toggle, move next and previous with wrap", marks == "1,2" && next1 == 3 && next2 == 4 && wrapped == 3 && previous == 4,
+                $"marks={marks} next={next1},{next2} wrap={wrapped} prev={previous}");
+            screenshot("edit-bookmark-margin.png");
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.ClearAllBookmarks));
+            check("edit clear all bookmarks removes the marks", pane.LineBookmarkMarks(0).Count == 0, pane.LineBookmarkMarks(0).Count.ToString());
+        }
+        finally { pane.DiffClipboardBridge = null; }
+        pane.DiscardChanges();
+    }
+
+    private static void Compare(ComparisonPane pane, string work, string left, string right, Action<Task> pump)
+    {
+        var leftPath = Path.Combine(work, "left.txt"); var rightPath = Path.Combine(work, "right.txt");
+        File.WriteAllText(leftPath, left, new UTF8Encoding(false)); File.WriteAllText(rightPath, right, new UTF8Encoding(false));
+        pane.LeftPath.Text = leftPath; pane.BasePath.Text = ""; pane.RightPath.Text = rightPath;
+        pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+    }
+
+    // その側を操作の対象にして、画面の文書の位置で選ぶ。
+    private static void Select(ComparisonPane pane, int side, int start, int length)
+    {
+        var view = pane.DiffEditor(side);
+        pane.FocusDiffEditorRealLine(side, 0);
+        view.TextArea.Focus();
+        view.Select(start, length);
+        Dispatcher.UIThread.RunJobs();
+    }
+
+    // エディターの入力欄へキーを送る（実行環境のコピー・切り取りのキーと同じ経路）。
+    private static void EditorKey(AvaloniaEdit.TextEditor view, Key key, KeyModifiers modifiers)
+    {
+        view.TextArea.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = key, KeyModifiers = modifiers });
+        Dispatcher.UIThread.RunJobs();
+    }
+
+    // 外枠のキー（トンネル段階）を送る。
+    private static void Press(MainWindow window, AvaloniaEdit.TextEditor view, Key key, KeyModifiers modifiers)
+    {
+        if (!view.TextArea.IsFocused) view.TextArea.Focus();
+        window.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = key, KeyModifiers = modifiers });
+        Dispatcher.UIThread.RunJobs();
+    }
+
+    private static string Escape(string? text) => (text ?? "<null>").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\u200B", "<ZW>").Replace("\u200C", "<ZWN>");
+}

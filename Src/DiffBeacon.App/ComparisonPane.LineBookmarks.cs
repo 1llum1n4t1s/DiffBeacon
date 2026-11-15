@@ -310,6 +310,8 @@ public sealed partial class ComparisonPane
         if (plain.Length != 0) positions.Add("行 " + string.Join(", ", plain));
         if (numbered.Length != 0) positions.Add("番号 " + string.Join(", ", numbered));
         _lineBookmarkSummary.Text = $"{side switch { 0 => "左", 1 => "中央", _ => "右" }}: {(positions.Count == 0 ? "位置なし" : string.Join(" / ", positions))}";
+        // 差分タブの行番号の欄にある印を描き直す。
+        foreach (var view in _diffViews) view.Margin.InvalidateVisual();
 
         var any = plain.Length != 0 || numbered.Length != 0;
         if (_lineBookmarkNext is not null) _lineBookmarkNext.IsEnabled = any;

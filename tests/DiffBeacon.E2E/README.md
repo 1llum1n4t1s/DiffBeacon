@@ -385,6 +385,14 @@ Invoke-DevDotnet $app --self-test $runRoot/verification/frame --frame-only
 Invoke-DevDotnet $app --self-test $runRoot/verification/find --find-replace-only
 ```
 
+## 本家WinMerge風の切り取り・コピー・貼り付けとブックマーク
+
+「編集」メニューの切り取り・コピー・貼り付け・すべて選択、ブックマークの小メニュー（Ctrl+F2／F2／Shift+F2／すべてクリア）、本文の右クリックメニューを確認します。クリップボードは検証用の差し替え（`DiffClipboardBridge`）を使い、利用者のクリップボードを置き換えません。ゴースト行をまたぐコピーが本物の本文だけを渡すこと（メニューとエディターのキーの両方）、切り取り・貼り付けが一回の元に戻すで戻ること、貼り付けた改行がその行の改行にそろい目印の文字が入らないこと、クリップボードを待つ間に本文が変わったら貼り付けないこと、読取り専用の側の切り取りの拒否、ブックマークの作成・移動・回り込み・すべてクリアを、文字列で書いた期待値と照合します。行番号の欄の印は `edit-bookmark-margin.png` で確認します。アプリ全体UI自己検証にも登録されています。
+
+```powershell
+Invoke-DevDotnet $app --self-test $runRoot/verification/edit --edit-commands-only
+```
+
 ## 本家WinMerge風のフォルダー比較一覧
 
 フォルダー比較の列（二者は名前／フォルダー／比較結果／左右の更新日時／拡張子、三者は中更新日時を追加）、ルートパス帯、本家の .ico から取り出した16pxアイコン、本家 `GetColImage`・`GetColors`・`ColStatusGet` の判定順によるアイコン・行の色・比較結果の文言（`Japanese.po` の訳）を確認します。更新日時は実ファイルの時刻から同じ書式で期待値を導き、runnerのタイムゾーンに依存させません。選択行が状態色と区別できること、最小幅でも列見出しと行の列境界が揃い、横スクロールが出ないこと、通常（1280×850）と最小（850×550）で見出しが一覧の直上にあり一覧が100 DIP以上残ることを、`folder-view-normal.png`／`folder-view-minimum.png`／`folder-view-threeway.png` と `folder-view-bounds.json` で残します。アプリ全体UI自己検証にも登録されています。

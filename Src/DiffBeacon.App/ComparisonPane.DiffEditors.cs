@@ -83,7 +83,10 @@ public sealed partial class ComparisonPane
                 if (Application.Current?.PlatformSettings?.HotkeyConfiguration is not { } hotkeys) return;
                 if (hotkeys.Undo.Any(gesture => gesture.Matches(args))) { UndoText(); args.Handled = true; }
                 else if (hotkeys.Redo.Any(gesture => gesture.Matches(args))) { RedoText(); args.Handled = true; }
+                // コピー・切り取り・貼り付けも、目印の文字を写さないよう組込みの処理より先に受ける（ComparisonPane.EditCommands.cs）。
+                else if (HandleDiffClipboardKey(side, args)) args.Handled = true;
             }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+            AttachDiffEditorContextMenu(side);
         }
         AttachTextHistory();
         LayoutDiffEditors(false);
@@ -879,8 +882,12 @@ public sealed partial class ComparisonPane
         protected override Size MeasureOverride(Size availableSize)
         {
             var digits = Math.Max(3, (side.View.Document?.LineCount ?? 1).ToString().Length);
-            return new Size(digits * 8 + 10, 0);
+            // 左端にブックマークの印（本家の選択余白のブックマーク）を描く幅を足す。
+            return new Size(BookmarkWidth + digits * 8 + 10, 0);
         }
+
+        private const double BookmarkWidth = 14;
+        private static readonly IBrush BookmarkBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204));
 
         public override void Render(DrawingContext context)
         {
@@ -897,6 +904,7 @@ public sealed partial class ComparisonPane
             var phantom = document.LineCount > 1 && document.GetLineByNumber(document.LineCount).Length == 0 ? document.LineCount : -1;
             for (var number = 1; number <= lastVisible; number++)
                 if (!ghosts.Contains(number) && number != phantom) realNumbers[number] = ++real;
+            var marks = Owner?.LineBookmarkMarks(side.SourceSide) ?? new Dictionary<int, int?>();
             foreach (var visual in view.VisualLines)
             {
                 var number = visual.FirstDocumentLine.LineNumber;
@@ -904,6 +912,17 @@ public sealed partial class ComparisonPane
                 var text = new FormattedText(shown.ToString(), System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, Face, 12, Brushes.Gray);
                 var top = visual.VisualTop - view.ScrollOffset.Y + (visual.Height - text.Height) / 2;
                 context.DrawText(text, new Point(Bounds.Width - text.Width - 4, top));
+                // 行ブックマークの印。番号付きのブックマークは番号を白で重ねる（本家は番号付きのアイコンを出す）。
+                if (!marks.TryGetValue(shown - 1, out var bookmark)) continue;
+                var size = Math.Min(10, visual.Height - 2);
+                var box = new Rect(2, visual.VisualTop - view.ScrollOffset.Y + (visual.Height - size) / 2, size, size);
+                context.FillRectangle(BookmarkBrush, box, 2);
+                if (bookmark is { } digit)
+                {
+                    var label = new FormattedText(digit.ToString(System.Globalization.CultureInfo.InvariantCulture), System.Globalization.CultureInfo.InvariantCulture,
+                        FlowDirection.LeftToRight, Face, 9, Brushes.White);
+                    context.DrawText(label, new Point(box.X + (box.Width - label.Width) / 2, box.Y + (box.Height - label.Height) / 2));
+                }
             }
         }
 

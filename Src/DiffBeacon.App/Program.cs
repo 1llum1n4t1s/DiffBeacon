@@ -26,6 +26,9 @@ public static class Program
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--frame-only")
             return HeadlessSelfTest.Run(args[1], frameOnly: true);
         // 差分タブの本文を直接編集するエディターだけを検証する。
+        // 編集メニューの切り取り・コピー・貼り付け・すべて選択・ブックマークだけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--edit-commands-only")
+            return HeadlessSelfTest.Run(args[1], editCommandsOnly: true);
         // 検索・置換・移動のダイアログだけを検証する。
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--find-replace-only")
             return HeadlessSelfTest.Run(args[1], findReplaceOnly: true);

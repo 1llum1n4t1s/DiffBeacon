@@ -77,13 +77,7 @@ public sealed partial class ComparisonPane
     }
 
     /// <summary>置換できる側か（読取り専用の側・祖先・他の操作の実行中は置き換えない。<see cref="StepTextHistory"/> と同じ確かめ方）。</summary>
-    private bool CanReplaceText(int side, DiffEditorSide view)
-    {
-        if (!CompareButton.IsEnabled) { _status.Text = "他の操作の実行中は置換できません。"; return false; }
-        if (view.View.IsReadOnly || TextEditor(side).IsReadOnly || !TextSideWritable(side))
-        { _status.Text = $"{TextSideName(side)}は読取り専用のため置換できません。"; return false; }
-        return true;
-    }
+    private bool CanReplaceText(int side, DiffEditorSide view) => CanEditText(side, view, "置換できません");
 
     // 正本の文字位置と画面の文書の位置の変換。目印を含む本文はゴースト行なしで表示している（位置はそのまま対応する）。
     private static int RealOffsetOfDisplay(DiffEditorSide view, string real, List<(int Start, int Length)> lines, int offset)
