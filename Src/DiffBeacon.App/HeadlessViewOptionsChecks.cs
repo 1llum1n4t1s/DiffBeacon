@@ -11,7 +11,7 @@ namespace DiffBeacon.App;
 /// ComparisonPane.ViewOptions.cs）の自己検証。期待値は実装の関数を使わずに書いた値（文字の大きさ、印の文字列）と照合する。
 /// 設定はアプリ全体で共有されるので、最後に既定へ戻して後続の検証へ影響を残さない。
 /// </summary>
-internal static class HeadlessViewOptionsChecks
+internal static partial class HeadlessViewOptionsChecks
 {
     internal static void Run(MainWindow window, ComparisonPane pane, string output, string artifactOutput,
         Action<string, bool, string> check, Action<string> screenshot, Action<Task> pump)
@@ -22,6 +22,7 @@ internal static class HeadlessViewOptionsChecks
         try
         {
             RunChecks(window, pane, work, options, check, screenshot, pump);
+            CheckPersistence(work, check);
         }
         finally
         {

@@ -48,8 +48,22 @@ public sealed partial class MainWindow : Window
 
     internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions, FolderApplicationOptionsStore folderOptions,
         TableApplicationOptionsStore tableOptions, FolderColumnOptionsStore folderColumnOptions)
+        : this(arguments, imageOptions, folderOptions, tableOptions, folderColumnOptions, new TextViewOptionsStore()) { }
+
+    internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions, FolderApplicationOptionsStore folderOptions,
+        TableApplicationOptionsStore tableOptions, FolderColumnOptionsStore folderColumnOptions, TextViewOptionsStore textViewOptionsStore)
     {
         ImageOptions = imageOptions; FolderOptions = folderOptions; TableOptions = tableOptions; FolderColumnOptions = folderColumnOptions;
+        // 表示メニューの設定は、最初のタブとメニューのチェックを作る前（BuildFrame・AddSession より前）に採用する。
+        // 保存の購読は採用の後にして、読み込んだだけで書き戻さない。
+        TextViewOptionsStorage = textViewOptionsStore;
+        TextViewOptions.Load(textViewOptionsStore.Current);
+        _showToolbar = textViewOptionsStore.Current.ShowToolbar;
+        TextViewOptions.Changed += SaveViewMenuOptions;
+        Closed += (_, _) => TextViewOptions.Changed -= SaveViewMenuOptions;
+        Action<string> textViewGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
+        textViewOptionsStore.AddOutputGuard(textViewGuard);
+        Closed += (_, _) => textViewOptionsStore.RemoveOutputGuard(textViewGuard);
         Action<string> folderGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
         Action<string> tableGuard = path => { foreach (var pane in SessionPanes) pane.EnsureTableOptionsOutputWritable(path); };
         FolderOptions.AddOutputGuard(folderGuard);
@@ -99,6 +113,7 @@ public sealed partial class MainWindow : Window
         if (ImageOptions.Diagnostic is { } imageDiagnostic) optionDiagnostics.Add("画像操作設定: " + imageDiagnostic);
         if (FolderOptions.Diagnostic is { } folderDiagnostic) optionDiagnostics.Add("フォルダー表示設定: " + folderDiagnostic);
         if (FolderColumnOptions.Diagnostic is { } columnDiagnostic) optionDiagnostics.Add(columnDiagnostic);
+        if (textViewOptionsStore.Diagnostic is { } viewDiagnostic) optionDiagnostics.Add(viewDiagnostic);
         // 二種類の読込失敗でもOpenedから一つのdialogだけを開く。
         if (optionDiagnostics.Count > 0)
             Opened += async (_, _) => await Dialogs.MessageAsync(this, "表示・操作設定", string.Join("\n\n", optionDiagnostics));

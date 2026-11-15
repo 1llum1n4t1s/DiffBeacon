@@ -35,6 +35,8 @@ public sealed partial class MainWindow
         FrameMenu = BuildMenu();
         frame.Children.Add(FrameMenu);
         frame.Children.Add(new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 1), Child = FrameToolbar = BuildToolbar() });
+        // 保存したツールバーの表示は、帯（Border）を作った後に採用する（メニューを作る時点では帯がまだ無い）。
+        SetToolbarVisible(_showToolbar, save: false);
         return frame;
     }
 
@@ -89,8 +91,8 @@ public sealed partial class MainWindow
             Application.Current.RequestedThemeVariant = dark ? Avalonia.Styling.ThemeVariant.Dark : Avalonia.Styling.ThemeVariant.Light;
             darkTheme.IsChecked = dark;
         };
-        var toolbarVisible = new MenuItem { Header = "ツールバー(_T)", ToggleType = MenuItemToggleType.CheckBox, IsChecked = true };
-        toolbarVisible.Click += (_, _) => { if (FrameToolbar?.Parent is Control host) host.IsVisible = toolbarVisible.IsChecked = !host.IsVisible; };
+        var toolbarVisible = _toolbarMenuItem = new MenuItem { Name = "frame-menu-view-toolbar", Header = "ツールバー(_T)", ToggleType = MenuItemToggleType.CheckBox, IsChecked = _showToolbar };
+        toolbarVisible.Click += (_, _) => SetToolbarVisible(!_showToolbar, save: true);
         // 本家 IDR_MERGEDOCTYPE の「表示」のうち、本文の見た目の設定（DiffTextViewOptions）。全タブ共通で、チェックは設定から付ける。
         var options = TextViewOptions;
         menu.Items.Add(Popup("表示(_V)",
@@ -266,6 +268,31 @@ public sealed partial class MainWindow
 
     /// <summary>本家の「表示」の本文の設定（DiffTextViewOptions）。全タブで一つなので、どのタブから切り替えてもチェックを設定に合わせる。</summary>
     internal DiffTextViewOptions TextViewOptions { get; } = new();
+
+    /// <summary>表示メニューの設定の保存先（view-options.json）。省略したウィンドウはメモリだけ（headless検証が利用者のAppDataへ書かないため）。</summary>
+    internal TextViewOptionsStore TextViewOptionsStorage { get; private set; } = new();
+
+    // ツールバーの表示（本家 Settings/ShowToolbar）。本文の設定ではないので DiffTextViewOptions に入れず、ペインを描き直さない。
+    private bool _showToolbar = true;
+    private MenuItem? _toolbarMenuItem;
+
+    /// <summary>自己検証用: ツールバーの帯が表示されているか。</summary>
+    internal bool FrameToolbarVisible => FrameToolbar?.Parent is Control { IsVisible: true };
+
+    private void SetToolbarVisible(bool visible, bool save)
+    {
+        _showToolbar = visible;
+        if (FrameToolbar?.Parent is Control host) host.IsVisible = visible;
+        if (_toolbarMenuItem is not null) _toolbarMenuItem.IsChecked = visible;
+        if (save) SaveViewMenuOptions();
+    }
+
+    // 本家と同じく、表示メニューの設定は変えるたびに保存する。失敗しても表示はそのまま使い、理由を状態欄へ出す。
+    private void SaveViewMenuOptions()
+    {
+        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar))) return;
+        if (_sessions.Count > 0) ActivePane.ShowViewOptionsStatus(TextViewOptionsStorage.Diagnostic + " 表示はこの起動の間だけ変えています。");
+    }
 
     private MenuItem ViewOption(string header, string name, Func<bool> get, Action<bool> set)
     {

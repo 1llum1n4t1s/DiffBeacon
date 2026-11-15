@@ -6,7 +6,8 @@ namespace DiffBeacon.App;
 /// 設計の要点:
 /// - 本家と同じくアプリ全体で一つの設定で、すべての比較タブ（後から開くタブを含む）の全ペインへ同時に反映する。
 ///   <see cref="MainWindow"/> が一つ持ち、各 <see cref="ComparisonPane"/> は <see cref="Changed"/> を購読して見た目をそろえる。
-/// - 本家はレジストリへ保存するが、ここではアプリを閉じるまでの間だけ覚える（利用者の設定ファイルを検証で書き換えないため）。
+/// - 本家のレジストリと同じく、起動時に <see cref="TextViewOptionsStore"/>（view-options.json）から読み、変えるたびに保存する。
+///   保存は外枠が <see cref="Changed"/> を受けて行う。headless検証はメモリだけの保存先を使い、利用者の設定ファイルを書き換えない。
 /// - 拡大／縮小は本家 CMergeEditView::ZoomText と同じく 1 ポイントずつ変え、2 ポイント未満と本家 OPT_VIEW_ZOOM の上限（800%）を超えない。
 ///   基準は差分エディターの既定の文字の大きさ（13 DIP）で、「標準に戻す」はこの大きさへ戻す。
 /// - 既定値は本家と同じく空白・改行は表示しない、行内差異は表示する。行番号とマージン（ブックマークの印の欄）は、
@@ -53,6 +54,24 @@ internal sealed class DiffTextViewOptions
         var next = amount == 0 ? 0 : Math.Clamp(_zoomSteps + amount, MinimumZoomSteps, MaximumZoomSteps);
         Set(ref _zoomSteps, next);
     }
+
+    /// <summary>保存した設定をまとめて採用する（変わったときだけ <see cref="Changed"/> を一度だけ出す）。値は保存先で確かめ済みのもの。</summary>
+    internal void Load(TextViewSettings settings)
+    {
+        var changed = _zoomSteps != settings.ZoomSteps || _whitespace != settings.ViewWhitespace || _endOfLine != settings.ViewEndOfLine
+            || _lineDifferences != settings.ViewLineDifferences || _lineNumbers != settings.ViewLineNumbers || _margins != settings.ViewMargins;
+        _zoomSteps = Math.Clamp(settings.ZoomSteps, MinimumZoomSteps, MaximumZoomSteps);
+        _whitespace = settings.ViewWhitespace; _endOfLine = settings.ViewEndOfLine; _lineDifferences = settings.ViewLineDifferences;
+        _lineNumbers = settings.ViewLineNumbers; _margins = settings.ViewMargins;
+        if (changed) Changed?.Invoke();
+    }
+
+    /// <summary>保存する形へ写す。ツールバーの表示は本文の設定ではないので外枠から受け取る。</summary>
+    internal TextViewSettings ToSettings(bool showToolbar) => new()
+    {
+        ZoomSteps = _zoomSteps, ViewWhitespace = _whitespace, ViewEndOfLine = _endOfLine, ViewLineDifferences = _lineDifferences,
+        ViewLineNumbers = _lineNumbers, ViewMargins = _margins, ShowToolbar = showToolbar,
+    };
 
     private void Set<T>(ref T field, T value)
     {

@@ -39,6 +39,9 @@ public sealed partial class ComparisonPane
     /// <summary>自己検証用: その側のペインの一番上に見えている表示の行（1始まり）。</summary>
     internal int DiffEditorTopDisplayLine(int side) => TopDisplayLine(_diffViews[side]);
 
+    /// <summary>表示メニューの設定を保存できなかった理由などを状態欄へ出す（外枠から呼ぶ）。</summary>
+    internal void ShowViewOptionsStatus(string text) => _status.Text = text;
+
     private void AttachTextViewOptions(DiffTextViewOptions options)
     {
         _textViewOptions = options;
