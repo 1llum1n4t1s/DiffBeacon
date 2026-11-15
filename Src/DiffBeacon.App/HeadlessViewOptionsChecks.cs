@@ -43,11 +43,15 @@ internal static class HeadlessViewOptionsChecks
             "マージンを表示(_M)", "ツールバー(_T)", "ダーク テーマ(_D)", "最新の情報に更新"]), string.Join("|", headers));
         var zoomMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "拡大/縮小(_Z)");
         var zoomItems = zoomMenu.Items.OfType<MenuItem>().ToArray();
-        var zoomText = string.Join("|", zoomItems.Select(item => $"{item.Header}={item.InputGesture}"));
+        // メニューに出るキーの文字は、テーマのメニュー項目が使う変換（PlatformKeyGestureConverter）を通した文字列で確かめる。
+        var converter = new Avalonia.Controls.Converters.PlatformKeyGestureConverter();
+        var shown = zoomItems.Select(item => converter.Convert(item.InputGesture, typeof(string), null, System.Globalization.CultureInfo.InvariantCulture) as string ?? "").ToArray();
+        var zoomText = string.Join("|", zoomItems.Select((item, index) => $"{item.Header}={item.InputGesture}/{shown[index]}"));
         check("view zoom submenu matches WinMerge", zoomItems.Select(item => item.Header as string).SequenceEqual(["拡大(_I)", "縮小(_O)", "標準に戻す(_N)"])
             && zoomItems[0].InputGesture is { Key: Key.OemPlus, KeyModifiers: KeyModifiers.Control }
             && zoomItems[1].InputGesture is { Key: Key.OemMinus, KeyModifiers: KeyModifiers.Control }
-            && zoomItems[2].InputGesture is { Key: Key.Multiply, KeyModifiers: KeyModifiers.Control }, zoomText);
+            && zoomItems[2].InputGesture is { Key: Key.Multiply, KeyModifiers: KeyModifiers.Control }
+            && shown.SequenceEqual(ExpectedZoomGestureTexts), zoomText);
         MenuItem Option(string name) => view.Items.OfType<MenuItem>().First(item => item.Name == "frame-menu-" + name);
         var checks = new[] { "view-whitespace", "view-eol", "view-line-differences", "view-line-numbers", "view-margins" }.Select(name => Option(name).IsChecked).ToArray();
         check("view options start with WinMerge defaults except line numbers and margins", checks.SequenceEqual([false, false, true, true, true])
@@ -98,7 +102,7 @@ internal static class HeadlessViewOptionsChecks
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
         var zoomedMargin = pane.DiffEditorMarginWidth(0);
         var heights = (left.TextArea.TextView.DefaultLineHeight, right.TextArea.TextView.DefaultLineHeight);
-        var alignedText = left.Text == pane.DiffEditor(0).Document.Text && pane.LeftEditor.Text == leftOriginal && pane.RightEditor.Text == rightOriginal;
+        var alignedText = pane.LeftEditor.Text == leftOriginal && pane.RightEditor.Text == rightOriginal;
         check("view zoom keeps panes aligned and scales the line number margin", Near(heights.Item1, heights.Item2) && heights.Item1 > 0 && zoomedMargin > baseMargin * 1.3 && alignedText,
             $"heights={heights.Item1},{heights.Item2} margin={baseMargin}->{zoomedMargin}");
         screenshot("view-zoomed.png");
@@ -126,6 +130,7 @@ internal static class HeadlessViewOptionsChecks
         var plain = Highlighted(pane.DiffPaneTexts.Left) + Highlighted(pane.DiffPaneTexts.Right);
         check("view line differences toggles the word highlight", highlighted > 0 && plain == 0 && !options.ViewLineDifferences && pane.CurrentDiff?.Blocks.Count > 0,
             $"on={highlighted} off={plain} text={Escape(pane.DiffPaneTexts.Left.Text)}");
+        screenshot("view-no-line-differences.png");
         Click(Option("view-line-differences"));
 
         // 行番号を表示・マージンを表示: 外すとその欄の幅を除き、両方外すと欄と縦線を隠す。
@@ -137,6 +142,25 @@ internal static class HeadlessViewOptionsChecks
         Click(Option("view-margins")); window.UpdateLayout();
         check("view line numbers and margins hide their columns", Near(marginOnly, 14) && none == 0 && !separator && Near(numbersOnly, both - 14)
             && pane.DiffEditorMarginSeparatorVisible(0), $"both={both} margin={marginOnly} none={none} numbers={numbersOnly} separator={separator}");
+
+        // スクロールした位置で拡大／縮小しても、本家と同じく一番上に見えていた行を保ち、全ペインがその行にそろう。
+        // 左にだけ無い行を混ぜてゴースト行を作り、表示の200行目付近を一番上にしてから1段ずつ拡大・縮小する。
+        var longLeft = new StringBuilder(); var longRight = new StringBuilder();
+        for (var i = 1; i <= 300; i++) { if (i % 7 != 0) longLeft.Append("line ").Append(i).Append('\n'); longRight.Append("line ").Append(i).Append('\n'); }
+        Compare(pane, work, "long", longLeft.ToString(), longRight.ToString(), pump);
+        window.UpdateLayout();
+        var scroller = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(left).OfType<ScrollViewer>().First();
+        scroller.Offset = new Vector(0, left.TextArea.TextView.GetVisualTopByDocumentLine(200));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var before = (pane.DiffEditorTopDisplayLine(0), pane.DiffEditorTopDisplayLine(2));
+        options.Zoom(1); window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var zoomedTop = (pane.DiffEditorTopDisplayLine(0), pane.DiffEditorTopDisplayLine(2));
+        options.Zoom(-3); window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var shrunkTop = (pane.DiffEditorTopDisplayLine(0), pane.DiffEditorTopDisplayLine(2));
+        screenshot("view-zoomed-scrolled.png");
+        options.Zoom(0); window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view zoom keeps the top visible line while scrolled", before.Item1 == 200 && before.Item2 == 200 && zoomedTop == before && shrunkTop == before
+            && pane.DiffEditorTopDisplayLine(0) == 200, $"before={before} zoomed={zoomedTop} shrunk={shrunkTop} reset={pane.DiffEditorTopDisplayLine(0)}");
 
         // 改行が混在する側は、本家と同じく CR・LF・CR+LF を描き分ける。
         Compare(pane, work, "mixed", "a\r\nb\r\nc\r\n", "a\nb\r\nc\r", pump);
@@ -152,6 +176,9 @@ internal static class HeadlessViewOptionsChecks
         check("view options do not change the text", pane.LeftEditor.Text == "a\r\nb\r\nc\r\n" && pane.RightEditor.Text == "a\nb\r\nc\r",
             $"{Escape(pane.LeftEditor.Text)} {Escape(pane.RightEditor.Text)}");
     }
+
+    // 本家のメニューの表示（Ctrl++／Ctrl+-／Ctrl+*）。
+    private static readonly string[] ExpectedZoomGestureTexts = ["Ctrl++", "Ctrl+-", "Ctrl+*"];
 
     private static void Compare(ComparisonPane pane, string work, string name, string left, string right, Action<Task> pump)
     {

@@ -35,7 +35,9 @@ public sealed partial class ComparisonPane
     // 自己検証用: 表示の行の改行の印、行番号の欄の幅（配置後）、欄と本文の間の縦線の表示。
     internal string? DiffEditorEndOfLineGlyph(int side, int displayLine) => _diffViews[side].EndOfLine.GlyphFor(displayLine);
     internal double DiffEditorMarginWidth(int side) => _diffViews[side].Margin.Bounds.Width;
-    internal bool DiffEditorMarginSeparatorVisible(int side) => _diffViews[side].MarginSeparator.IsVisible;
+    internal bool DiffEditorMarginSeparatorVisible(int side) => _diffViews[side].MarginSeparator.Opacity > 0;
+    /// <summary>自己検証用: その側のペインの一番上に見えている表示の行（1始まり）。</summary>
+    internal int DiffEditorTopDisplayLine(int side) => TopDisplayLine(_diffViews[side]);
 
     private void AttachTextViewOptions(DiffTextViewOptions options)
     {
@@ -65,10 +67,15 @@ public sealed partial class ComparisonPane
         _textViewOptionsAttached = false;
     }
 
-    /// <summary>設定を全ペインへ反映する。文字の大きさを変えた後は、左のペインの位置へほかのペインをそろえ直す。</summary>
+    /// <summary>
+    /// 設定を全ペインへ反映する。文字の大きさを変えるとスクロールの画素位置はそのままでも見える行が変わるので、
+    /// 本家と同じく一番上に見えていた行を保ち、ほかのペインをその位置へそろえ直す。
+    /// </summary>
     private void ApplyTextViewOptions()
     {
         var options = _textViewOptions;
+        var fontChanged = Math.Abs(_leftDiffView.View.FontSize - options.FontSize) > .001;
+        var topLine = fontChanged ? TopDisplayLine(_leftDiffView) : 0;
         _diffViewSyncing = true;
         try
         {
@@ -78,13 +85,33 @@ public sealed partial class ComparisonPane
                 if (Math.Abs(view.FontSize - options.FontSize) > .001) view.FontSize = options.FontSize;
                 view.Options.ShowSpaces = options.ViewWhitespace;
                 view.Options.ShowTabs = options.ViewWhitespace;
-                side.MarginSeparator.IsVisible = options.ViewLineNumbers || options.ViewMargins;
+                // 両方の欄を隠したときも縦線の幅と余白は残し、本文がペインの境界に接しないようにする（本家も数画素あける）。
+                side.MarginSeparator.Opacity = options.ViewLineNumbers || options.ViewMargins ? 1 : 0;
                 side.Redraw();
             }
         }
         finally { _diffViewSyncing = false; }
+        if (topLine > 1) RestoreTopDisplayLine(_leftDiffView, topLine);
         SyncDiffEditorScroll(_leftDiffView);
         UpdateDiffPane();
+    }
+
+    // ペインの一番上に見えている表示の行（1始まり）。スクロールしていなければ 1。
+    private static int TopDisplayLine(DiffEditorSide side)
+    {
+        var view = side.View.TextArea.TextView;
+        if (view.ScrollOffset.Y <= 0) return 1;
+        // スクロール位置は画素へ丸められて行の上端より 1 画素未満上になることがあるので、その分を許して行を求める。
+        return view.GetDocumentLineByVisualTop(view.ScrollOffset.Y + 1)?.LineNumber ?? 1;
+    }
+
+    // 新しい文字の大きさで配置し直してから、その行が一番上に来るようにスクロールする（ほかのペインは同期でそろう）。
+    private static void RestoreTopDisplayLine(DiffEditorSide side, int line)
+    {
+        if (side.Scroller() is not { } scroller || line > side.View.Document.LineCount) return;
+        side.View.UpdateLayout();
+        var top = side.View.TextArea.TextView.GetVisualTopByDocumentLine(line);
+        scroller.Offset = new Vector(scroller.Offset.X, top);
     }
 
     /// <summary>
