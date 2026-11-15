@@ -84,6 +84,7 @@ internal static class FolderColumnCatalog
     /// 本家の短縮サイズ（DirViewColItems.cpp の MakeShortSize）。1024 未満は "%d B"、それ以上は Windows シェルの StrFormatByteSize64 と同じく
     /// KB・MB…の単位で有効数字3桁に切り捨てて表す（例: 1024 → "1.00 KB"、12000 → "11.7 KB"、200000 → "195 KB"）。
     /// StrFormatByteSize64 は Windows の API なので、macOS でも同じ結果になるよう管理コードで書き直している。
+    /// 期待値は Windows 11 の shlwapi の実際の出力で確かめた（自己検証の表）。1024 未満は本家が自前で "%d B" にするので API の「バイト」は使わない。
     /// </summary>
     internal static string ShortSize(long size)
     {
@@ -91,7 +92,8 @@ internal static class FolderColumnCatalog
         string[] units = ["KB", "MB", "GB", "TB", "PB", "EB"];
         // 2進の浮動小数点では 1.17×100 が 116.999… になり切り捨てで桁が落ちるため、10進の decimal で計算する。
         var value = size / 1024m; var unit = 0;
-        while (value >= 1024 && unit < units.Length - 1) { value /= 1024; unit++; }
+        // StrFormatByteSize64 は4桁の数を出さず、1000 以上になったら次の単位へ上げる（実測: 1023 KB → "0.99 MB"、1023999 バイト → "999 KB"）。
+        while (value >= 1000 && unit < units.Length - 1) { value /= 1024; unit++; }
         // 有効数字3桁（整数部が3桁以上なら小数なし、2桁なら1桁、1桁なら2桁）。四捨五入せず切り捨てる。
         var decimals = value >= 100 ? 0 : value >= 10 ? 1 : 2;
         var scale = decimals == 0 ? 1m : decimals == 1 ? 10m : 100m;

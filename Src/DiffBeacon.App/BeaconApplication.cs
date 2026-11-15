@@ -28,7 +28,7 @@ public sealed class BeaconApplication : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new MainWindow(Program.Arguments, ImageApplicationOptionsStore.ForDesktop(), FolderApplicationOptionsStore.ForDesktop(),
-                TableApplicationOptionsStore.ForDesktop()) { FolderColumnOptions = FolderColumnOptionsStore.ForDesktop() };
+                TableApplicationOptionsStore.ForDesktop(), FolderColumnOptionsStore.ForDesktop());
         base.OnFrameworkInitializationCompleted();
     }
 }

@@ -24,21 +24,11 @@ public sealed partial class MainWindow : Window
     internal TableApplicationOptionsStore TableOptions { get; }
 
     /// <summary>
-    /// フォルダー一覧の列の配置（folder-columns.json）。既定はメモリだけの設定（headless検証が利用者のAppDataへ書かないため）で、
-    /// desktop の起動時に ForDesktop の保存先へ差し替える。差し替えたときは出力保護（比較入力・workspaceの上書き防止）も付け替える。
+    /// フォルダー一覧の列の配置（folder-columns.json）。他の設定と同じくコンストラクターで受け取る。
+    /// 最初のタブはコンストラクターの中で作られ、その一覧が作られるときに配置を読むので、後から差し替えると保存した配置が届かない。
+    /// 省略したときはメモリだけの設定（headless検証が利用者のAppDataへ書かないため）。
     /// </summary>
-    internal FolderColumnOptionsStore FolderColumnOptions
-    {
-        get => _folderColumnOptions;
-        init
-        {
-            _folderColumnOptions.RemoveOutputGuard(_folderColumnGuard);
-            _folderColumnOptions = value;
-            _folderColumnOptions.AddOutputGuard(_folderColumnGuard);
-        }
-    }
-    private readonly FolderColumnOptionsStore _folderColumnOptions = new();
-    private readonly Action<string> _folderColumnGuard;
+    internal FolderColumnOptionsStore FolderColumnOptions { get; }
     internal long SessionSelectionGeneration { get; private set; }
     internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
@@ -54,15 +44,20 @@ public sealed partial class MainWindow : Window
 
     internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions, FolderApplicationOptionsStore folderOptions,
         TableApplicationOptionsStore tableOptions)
+        : this(arguments, imageOptions, folderOptions, tableOptions, new FolderColumnOptionsStore()) { }
+
+    internal MainWindow(string[]? arguments, ImageApplicationOptionsStore imageOptions, FolderApplicationOptionsStore folderOptions,
+        TableApplicationOptionsStore tableOptions, FolderColumnOptionsStore folderColumnOptions)
     {
-        ImageOptions = imageOptions; FolderOptions = folderOptions; TableOptions = tableOptions;
+        ImageOptions = imageOptions; FolderOptions = folderOptions; TableOptions = tableOptions; FolderColumnOptions = folderColumnOptions;
         Action<string> folderGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
         Action<string> tableGuard = path => { foreach (var pane in SessionPanes) pane.EnsureTableOptionsOutputWritable(path); };
         FolderOptions.AddOutputGuard(folderGuard);
         TableOptions.AddOutputGuard(tableGuard);
-        _folderColumnGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
-        _folderColumnOptions.AddOutputGuard(_folderColumnGuard);
-        Closed += (_, _) => _folderColumnOptions.RemoveOutputGuard(_folderColumnGuard);
+        // 列の配置の保存先も、比較入力・workspaceを上書きしないよう同じ出力保護をかける。
+        Action<string> folderColumnGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
+        FolderColumnOptions.AddOutputGuard(folderColumnGuard);
+        Closed += (_, _) => FolderColumnOptions.RemoveOutputGuard(folderColumnGuard);
         TableOptions.Changed += OnTableApplicationOptionsChanged;
         Closed += (_, _) => { FolderOptions.RemoveOutputGuard(folderGuard); TableOptions.RemoveOutputGuard(tableGuard); };
         Closed += (_, _) => TableOptions.Changed -= OnTableApplicationOptionsChanged;
@@ -103,6 +98,7 @@ public sealed partial class MainWindow : Window
         var optionDiagnostics = new List<string>();
         if (ImageOptions.Diagnostic is { } imageDiagnostic) optionDiagnostics.Add("画像操作設定: " + imageDiagnostic);
         if (FolderOptions.Diagnostic is { } folderDiagnostic) optionDiagnostics.Add("フォルダー表示設定: " + folderDiagnostic);
+        if (FolderColumnOptions.Diagnostic is { } columnDiagnostic) optionDiagnostics.Add(columnDiagnostic);
         // 二種類の読込失敗でもOpenedから一つのdialogだけを開く。
         if (optionDiagnostics.Count > 0)
             Opened += async (_, _) => await Dialogs.MessageAsync(this, "表示・操作設定", string.Join("\n\n", optionDiagnostics));

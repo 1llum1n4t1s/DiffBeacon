@@ -89,6 +89,8 @@ internal sealed class FolderColumnsDialog : Window
         box.IsCheckedChanged += (_, _) => UpdateState();
         // 行のどこを押してもその列を選ぶ（本家の一覧と同じく、チェックの付け外しとは別に選択がある）。
         host.AddHandler(PointerPressedEvent, (_, _) => Select(_order.IndexOf(info.Column)), handledEventsToo: true);
+        // キーボード（Tab）でチェックボックスへ移ったときも、その行を選ぶ（上へ／下へをキーボードだけで使えるように）。
+        box.GotFocus += (_, _) => Select(_order.IndexOf(info.Column));
         return row;
     }
 

@@ -272,6 +272,10 @@ internal static class HeadlessFolderViewChecks
                 (0, "0 B"), (1023, "1023 B"), (1024, 1.00m.ToString("F2", culture) + " KB"), (1205, 1.17m.ToString("F2", culture) + " KB"),
                 (12000, 11.7m.ToString("F1", culture) + " KB"), (200000, "195 KB"), (1048576, 1.00m.ToString("F2", culture) + " MB"),
                 (1572864, 1.50m.ToString("F2", culture) + " MB"), (5L * 1024 * 1024 * 1024 * 1024, 5.00m.ToString("F2", culture) + " TB"),
+                // 以下は Windows 11 の StrFormatByteSizeW の実測値（切り捨てと、1000 以上での次の単位への繰り上がり）。
+                (1535, 1.49m.ToString("F2", culture) + " KB"), (1023999, "999 KB"), (1047552, 0.99m.ToString("F2", culture) + " MB"),
+                (1048575, 0.99m.ToString("F2", culture) + " MB"), (10485759, 9.99m.ToString("F2", culture) + " MB"),
+                (104857599, 99.9m.ToString("F1", culture) + " MB"), (1073741823, 0.99m.ToString("F2", culture) + " GB"),
             };
             var shortActual = shortCases.Select(item => FolderColumnCatalog.ShortSize(item.Size)).ToArray();
             check("folder columns short size truncates like StrFormatByteSize64", shortCases.Select(item => item.Expected).SequenceEqual(shortActual), string.Join("|", shortActual));
@@ -295,11 +299,13 @@ internal static class HeadlessFolderViewChecks
             // ダイアログの初期状態とキャンセル（ツールメニューと同じ外枠のコマンドから開く）。
             var defaultsTwoWay = FolderColumnCatalog.DefaultTwoWay.Select(column => column.ToString()).ToArray();
             (FolderColumn Column, bool Checked)[] initial = [];
-            string description = ""; bool upAtTop = true, downAtTop = false;
+            string description = ""; bool upAtTop = true, downAtTop = false, focusSelected = false;
             FolderColumnsDialog.Shown = dialog =>
             {
                 initial = dialog.Items.ToArray(); description = dialog.DescriptionText;
                 upAtTop = dialog.UpButton.IsEnabled; downAtTop = dialog.DownButton.IsEnabled;
+                dialog.ItemBox(FolderColumn.Folder).Focus(); Dispatcher.UIThread.RunJobs();
+                focusSelected = dialog.SelectedColumn == FolderColumn.Folder && dialog.UpButton.IsEnabled;
                 Click(dialog.CancelButton);
             };
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.CustomizeColumns)); Dispatcher.UIThread.RunJobs();
@@ -309,6 +315,7 @@ internal static class HeadlessFolderViewChecks
                 string.Join("|", initial.Select(item => item.Column + (item.Checked ? "+" : "-"))));
             check("folder columns dialog selects the first column with its description and disables up",
                 description == "ファイル名またはフォルダー名です。" && !upAtTop && downAtTop, description + " up=" + upAtTop + " down=" + downAtTop);
+            check("folder columns dialog selects the row whose checkbox gets keyboard focus", focusSelected, "");
             check("folder columns cancel keeps the columns", pane.FolderVisibleColumnNames.SequenceEqual(defaultsTwoWay), string.Join("|", pane.FolderVisibleColumnNames));
 
             // チェックの変更・上へ・説明の追従・OK の無効化を、実際のチェックボックスとボタンで行って OK する。
@@ -397,6 +404,7 @@ internal static class HeadlessFolderViewChecks
                 && !File.Exists(Path.Combine(work, "blocked-columns.json")) && blocked.Layout(false) is null, blocked.Diagnostic ?? "");
 
             CheckColumnStoreFile(work, check);
+            CheckStartupWindowLoadsSavedColumns(work, check, pump);
         }
         finally
         {
@@ -441,6 +449,40 @@ internal static class HeadlessFolderViewChecks
         check("folder columns store rejects invalid layouts before writing",
             !store.SetLayout(false, new FolderColumnLayoutOptions { Columns = ["Name", "MiddleSize"] }) && store.Layout(false)!.Columns.SequenceEqual(two.Columns)
             && new FolderColumnOptionsStore(path).Layout(false)!.Columns.SequenceEqual(two.Columns), store.Diagnostic ?? "");
+    }
+
+    /// <summary>
+    /// 起動の経路: 保存した配置のファイルを持つ store でウィンドウを作ると、コンストラクターの中で作られる最初のタブが
+    /// その配置（列・相対幅・並べ替え）で一覧を出し、並べ替えをしても保存した列を既定の列で上書きしないこと。
+    /// </summary>
+    private static void CheckStartupWindowLoadsSavedColumns(string work, Action<string, bool, string> check, Action<Task> pump)
+    {
+        var path = Path.Combine(work, "startup-columns.json");
+        string[] columns = ["Name", "RightSize", "Newer", "Result"];
+        var seeded = new FolderColumnOptionsStore(path).SetLayout(false,
+            new FolderColumnLayoutOptions { Columns = columns, Widths = [200, 80, 60, 220], SortColumn = "RightSize", SortDescending = true });
+        var startup = new MainWindow(null, new ImageApplicationOptionsStore(), new FolderApplicationOptionsStore(), new TableApplicationOptionsStore(),
+            new FolderColumnOptionsStore(path)) { Width = 1280, Height = 850 };
+        startup.Show(); Dispatcher.UIThread.RunJobs();
+        try
+        {
+            var first = startup.SessionPanes[0];
+            first.LeftPath.Text = Path.Combine(work, "left"); first.BasePath.Text = ""; first.RightPath.Text = Path.Combine(work, "right");
+            pump(first.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+            check("folder columns first tab of a new window uses the saved layout", seeded && first.FolderVisibleColumnNames.SequenceEqual(columns)
+                && first.FolderColumnsUseWeights && first.FolderSortColumnName == "RightSize" && first.FolderSortDescending
+                && first.FolderColumnTitles.SequenceEqual(["名前", "右サイズ ▼", "日時比較", "比較結果"]), string.Join("|", first.FolderColumnTitles));
+            first.SortFolderBy("Name"); Dispatcher.UIThread.RunJobs();
+            var reread = new FolderColumnOptionsStore(path).Layout(false);
+            check("folder columns sorting in the first tab keeps the saved columns", reread is not null && reread.Columns.SequenceEqual(columns)
+                && reread.SortColumn == "Name" && !reread.SortDescending && reread.Widths is { Length: 4 },
+                reread is null ? "null" : string.Join("|", reread.Columns) + " sort=" + reread.SortColumn);
+        }
+        finally
+        {
+            foreach (var session in startup.SessionPanes) session.DiscardChanges();
+            startup.Close(); Dispatcher.UIThread.RunJobs();
+        }
     }
 
     /// <summary>三者比較の列（中サイズ・中属性・三者の日時比較・簡易の比較結果）と、二者とは別の配置。</summary>
