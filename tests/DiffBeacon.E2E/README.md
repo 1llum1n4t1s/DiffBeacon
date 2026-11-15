@@ -393,6 +393,14 @@ Invoke-DevDotnet $app --self-test $runRoot/verification/find --find-replace-only
 Invoke-DevDotnet $app --self-test $runRoot/verification/edit --edit-commands-only
 ```
 
+## 本家WinMerge風の表示メニューの本文の設定
+
+「表示」メニューの拡大/縮小（Ctrl++／テンキーの+、Ctrl+-、Ctrl+*／Ctrl+0、Ctrl+ホイール）と、空白・改行・行内差異・行番号・マージンの表示切替を確認します。期待値は文字の大きさ（1回で1ポイント＝4/3 DIP、下限2ポイント・上限800%）と本家の印の文字列（· » ◄┘ ← ↓）で書きます。パスの欄にフォーカスがあるときに拡大しないこと、拡大中も全ペインの行の高さがそろい行番号の欄が広がること、改行の印がゴースト行と表示のために足した改行に付かず、改行が混在する側だけ CR・LF・CR+LF を描き分けること、行内差異を外すと本文と Diff ペインの色が消えること、行番号・マージンを外すとその幅が除かれること、後から開いたタブにも同じ設定が使われ本文が変わらないことを確かめます。設定はアプリ全体で共有されるため、最後に既定へ戻します。`view-zoomed.png`／`view-whitespace-eol.png`／`view-no-margins.png` を出力します。アプリ全体UI自己検証にも登録されています。
+
+```powershell
+Invoke-DevDotnet $app --self-test $runRoot/verification/view --view-options-only
+```
+
 ## 本家WinMerge風のフォルダー比較一覧
 
 フォルダー比較の列（二者は名前／フォルダー／比較結果／左右の更新日時／拡張子、三者は中更新日時を追加）、ルートパス帯、本家の .ico から取り出した16pxアイコン、本家 `GetColImage`・`GetColors`・`ColStatusGet` の判定順によるアイコン・行の色・比較結果の文言（`Japanese.po` の訳）を確認します。更新日時は実ファイルの時刻から同じ書式で期待値を導き、runnerのタイムゾーンに依存させません。選択行が状態色と区別できること、最小幅でも列見出しと行の列境界が揃い、横スクロールが出ないこと、通常（1280×850）と最小（850×550）で見出しが一覧の直上にあり一覧が100 DIP以上残ることを、`folder-view-normal.png`／`folder-view-minimum.png`／`folder-view-threeway.png` と `folder-view-bounds.json` で残します。アプリ全体UI自己検証にも登録されています。

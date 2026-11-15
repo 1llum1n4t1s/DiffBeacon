@@ -91,7 +91,21 @@ public sealed partial class MainWindow
         };
         var toolbarVisible = new MenuItem { Header = "ツールバー(_T)", ToggleType = MenuItemToggleType.CheckBox, IsChecked = true };
         toolbarVisible.Click += (_, _) => { if (FrameToolbar?.Parent is Control host) host.IsVisible = toolbarVisible.IsChecked = !host.IsVisible; };
+        // 本家 IDR_MERGEDOCTYPE の「表示」のうち、本文の見た目の設定（DiffTextViewOptions）。全タブ共通で、チェックは設定から付ける。
+        var options = TextViewOptions;
         menu.Items.Add(Popup("表示(_V)",
+            Popup("拡大/縮小(_Z)",
+                GestureItem("拡大(_I)", new KeyGesture(Key.OemPlus, KeyModifiers.Control), () => Zoom(1)),
+                GestureItem("縮小(_O)", new KeyGesture(Key.OemMinus, KeyModifiers.Control), () => Zoom(-1)),
+                Separator(),
+                GestureItem("標準に戻す(_N)", new KeyGesture(Key.Multiply, KeyModifiers.Control), () => Zoom(0))),
+            Separator(),
+            ViewOption("空白を表示(_V)", "view-whitespace", () => options.ViewWhitespace, value => options.ViewWhitespace = value),
+            ViewOption("改行を表示(_O)", "view-eol", () => options.ViewEndOfLine, value => options.ViewEndOfLine = value),
+            ViewOption("行内差異を表示(_W)", "view-line-differences", () => options.ViewLineDifferences, value => options.ViewLineDifferences = value),
+            ViewOption("行番号を表示(_N)", "view-line-numbers", () => options.ViewLineNumbers, value => options.ViewLineNumbers = value),
+            ViewOption("マージンを表示(_M)", "view-margins", () => options.ViewMargins, value => options.ViewMargins = value),
+            Separator(),
             toolbarVisible,
             darkTheme,
             Separator(),
@@ -239,13 +253,30 @@ public sealed partial class MainWindow
 
     private MenuItem Pane(string header, string? gesture, FrameCommand command) => Item(header, gesture, PaneAction(command));
 
-    private static MenuItem Item(string header, string? gesture, Func<Task> action)
+    private static MenuItem Item(string header, string? gesture, Func<Task> action) =>
+        GestureItem(header, gesture is null ? null : KeyGesture.Parse(gesture), action);
+
+    private static MenuItem GestureItem(string header, KeyGesture? gesture, Func<Task> action)
     {
         // InputGesture は表示用。実際のキー処理は HandleFrameShortcut で行い、編集欄の標準キーと二重に動かさない。
-        var item = new MenuItem { Header = header, InputGesture = gesture is null ? null : KeyGesture.Parse(gesture) };
+        var item = new MenuItem { Header = header, InputGesture = gesture };
         item.Click += async (_, _) => await action();
         return item;
     }
+
+    /// <summary>本家の「表示」の本文の設定（DiffTextViewOptions）。全タブで一つなので、どのタブから切り替えてもチェックを設定に合わせる。</summary>
+    internal DiffTextViewOptions TextViewOptions { get; } = new();
+
+    private MenuItem ViewOption(string header, string name, Func<bool> get, Action<bool> set)
+    {
+        var item = new MenuItem { Header = header, Name = "frame-menu-" + name, ToggleType = MenuItemToggleType.CheckBox, IsChecked = get() };
+        item.Click += (_, _) => set(!get());
+        TextViewOptions.Changed += () => item.IsChecked = get();
+        return item;
+    }
+
+    // ID_VIEW_ZOOMIN／ID_VIEW_ZOOMOUT／ID_VIEW_ZOOMNORMAL。本家と同じく全ペインの本文の文字の大きさを変える。
+    private Task Zoom(int amount) { TextViewOptions.Zoom(amount); return Task.CompletedTask; }
 
     // 本家の「開く」は比較対象の選択画面を出す。ペイン上部の選択画面（ComparisonPane.OpenView.cs）を
     // スクロールで見える位置へ戻し、1 番目の欄へ移動する。
@@ -278,6 +309,16 @@ public sealed partial class MainWindow
         var control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
         var shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
         var textSearch = ActivePane.AcceptsTextSearchKeys(FocusManager?.GetFocusedElement());
+        // 拡大／縮小（Ctrl++／Ctrl+-／Ctrl+*・Ctrl+0、本家 IDR_MERGEDOCTYPE のアクセラレータ）はペインではなく全タブ共通の設定を変える。
+        // 検索と同じく差分タブを表示していて通常の入力欄にフォーカスが無いときだけ受ける（画像・バイナリなどの形式別ビューのキーを奪わない）。
+        int? zoom = (e.Key, alt, control, shift) switch
+        {
+            (Key.OemPlus or Key.Add, false, true, false) => 1,
+            (Key.OemMinus or Key.Subtract, false, true, false) => -1,
+            (Key.Multiply or Key.D0, false, true, false) => 0,
+            _ => null,
+        };
+        if (zoom is { } amount && textSearch) { e.Handled = true; TextViewOptions.Zoom(amount); return true; }
         FrameCommand? command = (e.Key, alt, control, shift) switch
         {
             (Key.F, false, true, false) when textSearch => FrameCommand.Find,

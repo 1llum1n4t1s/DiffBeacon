@@ -70,7 +70,7 @@ public sealed partial class ComparisonPane
             var pane = new DockPanel();
             DockPanel.SetDock(header, Dock.Top); pane.Children.Add(header); pane.Children.Add(side.View);
             _diffEditorHosts[index] = new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(index == 0 ? 0 : 1, 0, 0, 0), Child = pane };
-            side.Renderer.Owner = this; side.Margin.Owner = this;
+            side.Renderer.Owner = this; side.Margin.Owner = this; side.EndOfLine.Owner = this;
             side.View.TextArea.TextView.ScrollOffsetChanged += (_, _) => SyncDiffEditorScroll(side);
             side.View.TextArea.Caret.PositionChanged += (_, _) => { SyncBookmarkCaret(side); OnDiffEditorCaretMoved(side); };
             // 行ブックマークは、フォーカスのあるエディターの側を対象にする（本家と同じ）。
@@ -549,15 +549,22 @@ public sealed partial class ComparisonPane
             View.SearchPanel?.Uninstall();
             Renderer = new DiffLineRenderer(this);
             View.TextArea.TextView.BackgroundRenderers.Add(Renderer);
+            // 「改行を表示」の印は本物の行の改行にだけ描く（ゴースト行・足した改行には描かない。ComparisonPane.ViewOptions.cs）。
+            EndOfLine = new EndOfLineRenderer(this);
+            View.TextArea.TextView.BackgroundRenderers.Add(EndOfLine);
             // 本家と同じく本物の行番号だけを出し、ゴースト行は空欄にする。
             Margin = new RealLineNumberMargin(this);
             View.TextArea.LeftMargins.Insert(0, Margin);
-            View.TextArea.LeftMargins.Insert(1, new Border { Width = 1, Background = WinMergeColors.FrameBorder, Margin = new Thickness(0, 0, 4, 0) });
+            MarginSeparator = new Border { Width = 1, Background = WinMergeColors.FrameBorder, Margin = new Thickness(0, 0, 4, 0) };
+            View.TextArea.LeftMargins.Insert(1, MarginSeparator);
         }
 
         internal TextEditor View { get; }
         internal DiffLineRenderer Renderer { get; }
         internal RealLineNumberMargin Margin { get; }
+        internal EndOfLineRenderer EndOfLine { get; }
+        /// <summary>行番号の欄と本文の間の縦線。行番号もマージンも表示しないときは隠す。</summary>
+        internal Border MarginSeparator { get; }
         /// <summary>この表示が対応する側（0=左、1=中央、2=右）。</summary>
         internal int SourceSide { get; }
         /// <summary>この表示を作った（または最後に書き戻した）正本の本文。正本がこれと異なるなら表示は古い。</summary>
@@ -601,8 +608,12 @@ public sealed partial class ComparisonPane
         private void InvalidateAll()
         {
             View.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+            View.TextArea.TextView.InvalidateLayer(KnownLayer.Selection);
             Margin.InvalidateMeasure(); Margin.InvalidateVisual();
         }
+
+        /// <summary>表示を描き直す（表示の設定が変わったとき）。</summary>
+        internal void Redraw() => InvalidateAll();
 
         /// <summary>表示の行ごとに「本物の行か」だけを並べた配列。行番号の並びが比較結果と合わない・目印を含む本文なら null。</summary>
         private static bool[]? BuildLayout(string text, int?[] numbers)
@@ -859,8 +870,8 @@ public sealed partial class ComparisonPane
                 if (owner.BrushForLine(side, number, ghosts, selected) is not { } brush) continue;
                 var top = visual.VisualTop - textView.ScrollOffset.Y;
                 drawingContext.FillRectangle(brush, new Rect(0, top, textView.Bounds.Width, visual.Height));
-                // 行内差分は本家の行内差分色で文字の範囲を塗る。
-                if (ghosts.Contains(number)) continue;
+                // 行内差分は本家の行内差分色で文字の範囲を塗る。「行内差異を表示」を外すと塗らない（本家 OPT_WORDDIFF_HIGHLIGHT）。
+                if (ghosts.Contains(number) || !owner.TextViewOptions.ViewLineDifferences) continue;
                 var line = visual.FirstDocumentLine;
                 foreach (var span in owner.SpansForLine(side, number))
                 {
@@ -881,19 +892,39 @@ public sealed partial class ComparisonPane
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            var digits = Math.Max(3, (side.View.Document?.LineCount ?? 1).ToString().Length);
-            // 左端にブックマークの印（本家の選択余白のブックマーク）を描く幅を足す。
-            return new Size(BookmarkWidth + digits * 8 + 10, 0);
+            var (bookmark, numbers) = Widths();
+            return new Size(bookmark + numbers, 0);
         }
 
         private const double BookmarkWidth = 14;
         private static readonly IBrush BookmarkBrush = new SolidColorBrush(Color.FromRgb(0, 102, 204));
 
+        // 本文の拡大／縮小に合わせて、行番号の文字と印の大きさも同じ倍率で変える（本家は行番号にも本文のフォントを使う）。
+        private double Scale => Owner?.TextViewOptions.Scale ?? 1;
+        private double NumberFontSize => 12 * Scale;
+
+        /// <summary>
+        /// 左端のブックマークの印の欄（本家の「マージンを表示」＝選択余白）と、行番号の欄（「行番号を表示」）の幅。
+        /// どちらも表示しない設定では 0 にする。
+        /// </summary>
+        private (double Bookmark, double Numbers) Widths()
+        {
+            var options = Owner?.TextViewOptions;
+            var bookmark = options?.ViewMargins == false ? 0 : BookmarkWidth * Scale;
+            if (options?.ViewLineNumbers == false) return (bookmark, 0);
+            var digits = Math.Max(3, (side.View.Document?.LineCount ?? 1).ToString().Length);
+            var digit = new FormattedText("0", System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, Face, NumberFontSize, Brushes.Gray).Width;
+            return (bookmark, digits * Math.Max(digit, 8 * Scale) + 10 * Scale);
+        }
+
         public override void Render(DrawingContext context)
         {
             var view = TextView;
-            if (view is null || !view.VisualLinesValid) return;
+            if (view is null || !view.VisualLinesValid || Bounds.Width <= 0) return;
             context.FillRectangle(WinMergeColors.FrameFace, new Rect(Bounds.Size));
+            var options = Owner?.TextViewOptions;
+            var showNumbers = options?.ViewLineNumbers != false;
+            var showMarks = options?.ViewMargins != false;
             var ghosts = side.GhostLineNumbers();
             // 表示の行番号から本物の行番号を求める。ゴースト行を数えずに数え直す。
             var realNumbers = new Dictionary<int, int>();
@@ -904,23 +935,26 @@ public sealed partial class ComparisonPane
             var phantom = document.LineCount > 1 && document.GetLineByNumber(document.LineCount).Length == 0 ? document.LineCount : -1;
             for (var number = 1; number <= lastVisible; number++)
                 if (!ghosts.Contains(number) && number != phantom) realNumbers[number] = ++real;
-            var marks = Owner?.LineBookmarkMarks(side.SourceSide) ?? new Dictionary<int, int?>();
+            var marks = showMarks ? Owner?.LineBookmarkMarks(side.SourceSide) ?? new Dictionary<int, int?>() : new Dictionary<int, int?>();
             foreach (var visual in view.VisualLines)
             {
                 var number = visual.FirstDocumentLine.LineNumber;
                 if (!realNumbers.TryGetValue(number, out var shown)) continue;
-                var text = new FormattedText(shown.ToString(), System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, Face, 12, Brushes.Gray);
-                var top = visual.VisualTop - view.ScrollOffset.Y + (visual.Height - text.Height) / 2;
-                context.DrawText(text, new Point(Bounds.Width - text.Width - 4, top));
+                if (showNumbers)
+                {
+                    var text = new FormattedText(shown.ToString(), System.Globalization.CultureInfo.InvariantCulture, FlowDirection.LeftToRight, Face, NumberFontSize, Brushes.Gray);
+                    var top = visual.VisualTop - view.ScrollOffset.Y + (visual.Height - text.Height) / 2;
+                    context.DrawText(text, new Point(Bounds.Width - text.Width - 4 * Scale, top));
+                }
                 // 行ブックマークの印。番号付きのブックマークは番号を白で重ねる（本家は番号付きのアイコンを出す）。
                 if (!marks.TryGetValue(shown - 1, out var bookmark)) continue;
-                var size = Math.Min(10, visual.Height - 2);
-                var box = new Rect(2, visual.VisualTop - view.ScrollOffset.Y + (visual.Height - size) / 2, size, size);
-                context.FillRectangle(BookmarkBrush, box, 2);
+                var size = Math.Min(10 * Scale, visual.Height - 2);
+                var box = new Rect(2 * Scale, visual.VisualTop - view.ScrollOffset.Y + (visual.Height - size) / 2, size, size);
+                context.FillRectangle(BookmarkBrush, box, (float)(2 * Scale));
                 if (bookmark is { } digit)
                 {
                     var label = new FormattedText(digit.ToString(System.Globalization.CultureInfo.InvariantCulture), System.Globalization.CultureInfo.InvariantCulture,
-                        FlowDirection.LeftToRight, Face, 9, Brushes.White);
+                        FlowDirection.LeftToRight, Face, 9 * Scale, Brushes.White);
                     context.DrawText(label, new Point(box.X + (box.Width - label.Width) / 2, box.Y + (box.Height - label.Height) / 2));
                 }
             }

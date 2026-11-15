@@ -150,8 +150,10 @@ public sealed partial class ComparisonPane
     private void UpdateDiffPane()
     {
         var row = DiffList.SelectedItem as DiffRow;
-        SetDiffPaneText(_diffPaneLeft, row?.LeftText, row?.LeftSpans ?? []);
-        SetDiffPaneText(_diffPaneRight, row?.RightText, row?.RightSpans ?? []);
+        // 本家の Diff ペインも本文と同じ「行内差異を表示」の設定に従う。
+        var spans = TextViewOptions.ViewLineDifferences;
+        SetDiffPaneText(_diffPaneLeft, row?.LeftText, spans ? row?.LeftSpans ?? [] : []);
+        SetDiffPaneText(_diffPaneRight, row?.RightText, spans ? row?.RightSpans ?? [] : []);
     }
 
     private static void SetDiffPaneText(TextBlock block, string? text, IReadOnlyList<InlineSpan> spans)

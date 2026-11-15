@@ -25,13 +25,16 @@ public static class Program
         // 本家WinMerge風の外枠（メニュー・ツールバー・差分色）だけを検証する。
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--frame-only")
             return HeadlessSelfTest.Run(args[1], frameOnly: true);
-        // 差分タブの本文を直接編集するエディターだけを検証する。
+        // 表示メニューの本文の設定（拡大／縮小・空白・改行・行内差異・行番号・マージン）だけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--view-options-only")
+            return HeadlessSelfTest.Run(args[1], viewOptionsOnly: true);
         // 編集メニューの切り取り・コピー・貼り付け・すべて選択・ブックマークだけを検証する。
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--edit-commands-only")
             return HeadlessSelfTest.Run(args[1], editCommandsOnly: true);
         // 検索・置換・移動のダイアログだけを検証する。
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--find-replace-only")
             return HeadlessSelfTest.Run(args[1], findReplaceOnly: true);
+        // 差分タブの本文を直接編集するエディターだけを検証する。
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--diff-edit-only")
             return HeadlessSelfTest.Run(args[1], diffEditOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--line-transform-replace-lists-only")

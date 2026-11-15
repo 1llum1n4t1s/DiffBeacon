@@ -336,6 +336,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         });
         _ownerClosedHandler = (_, _) => Dispose();
         _owner.Closed += _ownerClosedHandler;
+        // 本家の「表示」メニューの設定（拡大／縮小・空白・改行など）はアプリ全体で一つ。外枠の設定に合わせて見た目をそろえる。
+        AttachTextViewOptions((owner as MainWindow)?.TextViewOptions ?? new DiffTextViewOptions());
     }
 
     private static TextBox Editor() => new() { Text = "", AcceptsReturn = true, AcceptsTab = true, TextWrapping = TextWrapping.NoWrap, FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 14, HorizontalContentAlignment = HorizontalAlignment.Stretch };
@@ -662,6 +664,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     {
         if (_disposed) return; _disposed = true;
         CloseTextSearchDialog();
+        DetachTextViewOptions();
         InvalidateMergeSave(); ResultEditor.CancelComposition("pane-disposed"); _resultPreview.CancelComposition("pane-disposed"); ResultEditor.DetachHost(); _resultPreview.DetachHost();
         IndependentTextInputParentDisposed?.Invoke(); IndependentTextInputParentDisposed = null;
         InvalidateFolderCopy();
