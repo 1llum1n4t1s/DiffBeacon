@@ -604,6 +604,43 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         CompareEditors();
     }
 
+    /// <summary>
+    /// 本家の ID_ALL_RIGHT / ID_ALL_LEFT。すべての差分ブロックを一度にコピーし、全ペイン共有の履歴へ一つの変更として残す。
+    /// 確認は呼び出し元（<see cref="CopyAllAsync"/>）で行う。
+    /// </summary>
+    public void CopyAll(bool leftToRight)
+    {
+        if (IndependentText) { CopyIndependentSelected(leftToRight, all: true); return; }
+        EnsureSideWritable(leftToRight);
+        if (CurrentDiff is null) return;
+        // 編集後の古い差分座標で上書きしない。
+        if (CurrentDiff.LeftText != LeftEditor.Text || CurrentDiff.RightText != RightEditor.Text) CompareEditors();
+        if (CurrentDiff!.Blocks.Count == 0) { _status.Text = "コピーする差異はありません。"; return; }
+        if (leftToRight) WriteRecordedText(2, TextMerger.CopyAllLeftToRight(CurrentDiff));
+        else WriteRecordedText(0, TextMerger.CopyAllRightToLeft(CurrentDiff));
+        CompareEditors();
+    }
+
+    /// <summary>headless検証用: 「すべてコピー」の確認の代わりに呼ぶ。null なら確認のダイアログを出す。</summary>
+    internal Func<string, Task<bool>>? CopyAllConfirmation { get; set; }
+
+    // 本家と同じく、コピー先が書き込めることを確かめてから確認し、承諾したときだけコピーする。
+    private async Task CopyAllAsync(bool toRight)
+    {
+        if (_views.SelectedItem == _specialTab && _specialTab.Content is not null)
+        { _status.Text = "すべてのコピーはテキストの比較で使えます。"; return; }
+        if (CurrentDiff is not { Blocks.Count: > 0 }) { _status.Text = "コピーする差異はありません。"; return; }
+        if (IndependentText) { EnsureIndependentTextSource(); var pair = TextPair(); EnsureTextSideWritable(toRight ? pair.Right : pair.Left); }
+        else EnsureSideWritable(toRight);
+        const string message = "本当にすべての差異を他のファイルにコピーしますか?";
+        if (!await (CopyAllConfirmation is { } confirm ? confirm(message) : Dialogs.ConfirmAsync(_owner, "すべてコピー", message))) return;
+        if (IndependentText)
+        {
+            var task = CopyIndependentSelectedAsync(toRight, all: true); IndependentTextUiTask = task; await task; return;
+        }
+        CopyAll(toRight);
+    }
+
     public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; DiscardMergeChanges(); SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
     public void SelectMode(int mode) => _mode.SelectedIndex = mode;
     public void Dispose()
@@ -801,11 +838,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             Grid.SetColumn(splitter, index * 2 + 1); _editGrid.Children.Add(splitter);
         }
     }
-    private void NavigateConflict()
+    // ID_NEXTCONFLICT / ID_PREVCONFLICT: direction は 1 で次、-1 で前。端まで行ったら反対の端へ回る（差異の移動と同じ）。
+    private void NavigateConflict(int direction)
     {
         if (_specialTab.Content is SpecializedViews.ImagePanel image)
         {
-            _ = image.NavigateRegionAsync(1, conflictsOnly: true); return;
+            _ = image.NavigateRegionAsync(direction, conflictsOnly: true); return;
         }
         if (CurrentMergeSession is { } session)
         {
@@ -813,16 +851,29 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (pending.Length == 0) { _status.Text = "未解決の差分はありません。"; return; }
             var currentId = (_mergeSections.SelectedItem as SectionChoice)?.Id;
             var current = Array.FindIndex(pending, range => range.Section.Id == currentId);
-            var range = pending[(current + 1) % pending.Length];
+            var range = pending[direction >= 0 ? (current + 1) % pending.Length
+                : current < 0 ? pending.Length - 1 : (current - 1 + pending.Length) % pending.Length];
             _mergeSections.SelectedItem = _mergeSections.Items.OfType<SectionChoice>().Single(item => item.Id == range.Section.Id);
             _views.SelectedItem = _resultTab; SelectMergeRange(range); ResultEditor.Focus(); return;
         }
         var text = ResultEditor.Text ?? "";
-        var position = text.IndexOf("<<<<<<<", Math.Min(text.Length, ResultEditor.SelectionEnd + 1), StringComparison.Ordinal);
-        if (position < 0) position = text.IndexOf("<<<<<<<", StringComparison.Ordinal);
+        const string marker = "<<<<<<<";
+        int position;
+        if (direction >= 0)
+        {
+            position = text.IndexOf(marker, Math.Min(text.Length, ResultEditor.SelectionEnd + 1), StringComparison.Ordinal);
+            if (position < 0) position = text.IndexOf(marker, StringComparison.Ordinal);
+        }
+        else
+        {
+            // 選択の先頭より前から始まる目印を探す（LastIndexOf の開始位置は目印の末尾の文字の位置）。無ければ末尾から回る。
+            var before = Math.Min(ResultEditor.SelectionStart, ResultEditor.SelectionEnd);
+            position = text.Length == 0 || before <= 0 ? -1 : text.LastIndexOf(marker, Math.Min(text.Length - 1, before - 1 + marker.Length - 1), StringComparison.Ordinal);
+            if (position < 0) position = text.LastIndexOf(marker, StringComparison.Ordinal);
+        }
         if (position < 0) { _status.Text = "競合マーカーはありません。"; return; }
         _views.SelectedItem = _resultTab;
-        ResultEditor.SelectionStart = position; ResultEditor.SelectionEnd = position + 7; ResultEditor.CaretIndex = position;
+        ResultEditor.SelectionStart = position; ResultEditor.SelectionEnd = position + marker.Length; ResultEditor.CaretIndex = position;
         ResultEditor.Focus();
     }
     private async Task SaveResultAsync()

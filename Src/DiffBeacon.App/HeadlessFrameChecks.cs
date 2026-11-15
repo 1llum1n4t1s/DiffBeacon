@@ -37,8 +37,8 @@ internal static class HeadlessFrameChecks
             && icons.Select(icon => icon!.SourceRect.X).Distinct().Count() == icons.Length,
             string.Join(",", icons.Select(icon => icon?.SourceRect.X)));
         var disabled = buttons.Where(button => !button.IsEnabled).Select(button => button.Name).Order().ToArray();
-        check("frame toolbar disables only unported commands", disabled.SequenceEqual(new[]
-            { "frame-toolbar-AllLeft", "frame-toolbar-AllRight", "frame-toolbar-PrevConflict", "frame-toolbar-SelectLineDiff" }), string.Join("|", disabled));
+        // 段階8で行内差異の選択・前のコンフリクト・すべてコピーを移植し、本家の3ペイン用ツールバーのボタンはすべて使える。
+        check("frame toolbar enables every WinMerge command", disabled.Length == 0, string.Join("|", disabled));
         check("frame toolbar keeps packaging entry by name", toolbar.Children.OfType<Button>().Count(button => button.Name == "package-comparisons") == 1, "");
 
         // ツールバーで差分を移動する。差分ブロックが複数ある専用の入力を使う。
@@ -127,6 +127,59 @@ internal static class HeadlessFrameChecks
             json.WriteNumber("menuHeight", item.Menu); json.WriteNumber("toolbarHeight", item.Toolbar); json.WriteNumber("paneHeight", item.Pane); json.WriteEndObject();
         }
         json.WriteEndArray();
+
+        // 行内差異を選択（F4 / Shift+F4）。左のペインの先頭から b → c → 左だけの行 と進み、Shift+F4 で一つ戻る。
+        pane.FocusDiffEditorRealLine(0, 0); Dispatcher.UIThread.RunJobs();
+        Click(Button("SelectLineDiff")); var selected1 = pane.DiffEditorSelectedText(0);
+        Key(Avalonia.Input.Key.F4, KeyModifiers.None); var selected2 = pane.DiffEditorSelectedText(0);
+        Key(Avalonia.Input.Key.F4, KeyModifiers.None); var selected3 = pane.DiffEditorSelectedText(0);
+        Key(Avalonia.Input.Key.F4, KeyModifiers.Shift); var selectedBack = pane.DiffEditorSelectedText(0);
+        check("frame select line difference walks inline differences in the focused pane", selected1 == "b" && selected2 == "c" && selected3 == "removed-only-left",
+            selected1 + "|" + selected2 + "|" + selected3);
+        check("frame Shift+F4 selects the previous line difference", selectedBack == "c", selectedBack);
+        pane.FocusDiffEditorRealLine(2, 0); Dispatcher.UIThread.RunJobs();
+        Key(Avalonia.Input.Key.F4, KeyModifiers.None);
+        check("frame select line difference uses the pane with focus", pane.DiffEditorSelectedText(2) == "B", pane.DiffEditorSelectedText(2));
+
+        // すべてを右側／左側にコピー。確認で断ると変えず、承諾すると全ブロックを一度にコピーし、一回の元に戻すで戻る。
+        var leftBefore = pane.LeftEditor.Text; var rightBefore = pane.RightEditor.Text; var asked = 0; var answer = false;
+        pane.CopyAllConfirmation = _ => { asked++; return Task.FromResult(answer); };
+        Click(Button("AllRight"));
+        check("frame copy all asks first and keeps both texts when declined", asked == 1 && pane.RightEditor.Text == rightBefore && pane.LeftEditor.Text == leftBefore, asked.ToString());
+        answer = true;
+        Click(Button("AllRight"));
+        check("frame copy all to right copies every difference block", asked == 2 && pane.RightEditor.Text == leftBefore && pane.LeftEditor.Text == leftBefore
+            && pane.CurrentDiff is { Blocks.Count: 0 }, pane.CurrentDiff?.Blocks.Count.ToString() ?? "null");
+        pane.UndoText(); Dispatcher.UIThread.RunJobs();
+        check("frame copy all to right is one shared undo step", pane.RightEditor.Text == rightBefore && pane.LeftEditor.Text == leftBefore && !pane.CanUndoText
+            && pane.CurrentDiff is { Blocks.Count: > 1 }, pane.TextHistoryUndoCount.ToString());
+        pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopyAllToLeft));
+        check("frame copy all to left copies every difference block", asked == 3 && pane.LeftEditor.Text == rightBefore && pane.RightEditor.Text == rightBefore
+            && pane.CurrentDiff is { Blocks.Count: 0 }, pane.CurrentDiff?.Blocks.Count.ToString() ?? "null");
+        pane.UndoText(); Dispatcher.UIThread.RunJobs();
+        check("frame copy all to left undo restores the left text", pane.LeftEditor.Text == leftBefore && pane.RightEditor.Text == rightBefore && !pane.HasUnsavedChanges, "");
+        pane.CopyAllConfirmation = null;
+
+        // 前のコンフリクト（Alt+Shift+Up とツールバー）。未解決の三つのコンフリクトを、次のコンフリクトと逆の順に回る。
+        var mergeBase = Path.Combine(output, "frame-conflict-base.txt"); var mergeLeft = Path.Combine(output, "frame-conflict-left.txt"); var mergeRight = Path.Combine(output, "frame-conflict-right.txt");
+        File.WriteAllText(mergeBase, "a\nx\nb\ny\nc\nz\nd\n", new UTF8Encoding(false));
+        File.WriteAllText(mergeLeft, "a\nL1\nb\nL2\nc\nL3\nd\n", new UTF8Encoding(false));
+        File.WriteAllText(mergeRight, "a\nR1\nb\nR2\nc\nR3\nd\n", new UTF8Encoding(false));
+        pane.LeftPath.Text = mergeLeft; pane.RightPath.Text = mergeRight; pane.BasePath.Text = mergeBase;
+        pump(pane.ComparePathsAsync());
+        pump(pane.ExecuteFrameCommandAsync(FrameCommand.AutoMerge));
+        var pending = pane.CurrentMergeSession?.Sections.Where(range => range.Section.IsPending).Select(range => range.Section.Id).ToArray() ?? [];
+        check("frame conflict fixture has three unresolved conflicts", pending.Length == 3, pending.Length.ToString());
+        if (pending.Length == 3)
+        {
+            Key(Avalonia.Input.Key.Down, KeyModifiers.Alt | KeyModifiers.Shift);
+            var start = Array.IndexOf(pending, pane.SelectedMergeSectionId ?? -1);
+            Key(Avalonia.Input.Key.Up, KeyModifiers.Alt | KeyModifiers.Shift); var previous1 = pane.SelectedMergeSectionId;
+            Key(Avalonia.Input.Key.Up, KeyModifiers.Alt | KeyModifiers.Shift); var previous2 = pane.SelectedMergeSectionId;
+            Click(Button("PrevConflict")); var previous3 = pane.SelectedMergeSectionId;
+            check("frame previous conflict walks unresolved conflicts backward and wraps", start >= 0 && previous1 == pending[(start + 2) % 3]
+                && previous2 == pending[(start + 1) % 3] && previous3 == pending[start], $"start={start} {previous1},{previous2},{previous3} of {string.Join(",", pending)}");
+        }
 
         Button Button(string image) => buttons.Single(button => button.Name == "frame-toolbar-" + image);
         Avalonia.Media.Color[] RowColors()

@@ -21,6 +21,35 @@ public static class TextMerger
         target.InsertRange(targetStart, source.GetRange(sourceStart, sourceCount));
         return TextLines.JoinSeparated(target, TextLines.NewLine(targetText));
     }
+
+    /// <summary>
+    /// 本家の「すべてを右側／左側にコピー」（CMergeDoc::CopyAllList）。比較結果のすべての差分ブロックを一度にコピーする。
+    /// 比較の設定で無視した違い（空白など）は差分ブロックに含まれないため、コピー先にそのまま残る。
+    /// </summary>
+    public static string CopyAllLeftToRight(DiffResult result) => CopyAll(result, true);
+    public static string CopyAllRightToLeft(DiffResult result) => CopyAll(result, false);
+
+    private static string CopyAll(DiffResult result, bool leftToRight)
+    {
+        ArgumentNullException.ThrowIfNull(result);
+        var source = TextLines.Parse(leftToRight ? result.LeftText : result.RightText);
+        var targetText = leftToRight ? result.RightText : result.LeftText;
+        var target = TextLines.Parse(targetText);
+        // 後ろのブロックから差し替え、前のブロックのコピー先の行位置をずらさない。
+        // 同じ位置のブロックは、元の順序の後ろのものを先に入れて、最終的な並びを元の順序に保つ。
+        foreach (var block in result.Blocks
+            .OrderByDescending(value => leftToRight ? value.RightStart : value.LeftStart)
+            .ThenByDescending(value => leftToRight ? value.LeftStart : value.RightStart))
+        {
+            var sourceStart = leftToRight ? block.LeftStart : block.RightStart;
+            var sourceCount = leftToRight ? block.LeftCount : block.RightCount;
+            var targetStart = leftToRight ? block.RightStart : block.LeftStart;
+            var targetCount = leftToRight ? block.RightCount : block.LeftCount;
+            target.RemoveRange(targetStart, targetCount);
+            target.InsertRange(targetStart, source.GetRange(sourceStart, sourceCount));
+        }
+        return TextLines.JoinSeparated(target, TextLines.NewLine(targetText));
+    }
 }
 
 public sealed record MergeConflict(int BaseStartLine, int BaseLineCount, string BaseText, string LeftText, string RightText);

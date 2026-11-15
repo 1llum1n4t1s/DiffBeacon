@@ -418,7 +418,8 @@ public sealed partial class ComparisonPane
     {
         var task = CopyIndependentSelectedAsync(forward); IndependentTextUiTask = task; return task;
     }
-    private async Task CopyIndependentSelectedAsync(bool forward)
+    // all が true なら、選択中の差分ではなく、すべての差分ブロックをコピーする（すべてを右側／左側にコピー）。
+    private async Task CopyIndependentSelectedAsync(bool forward, bool all = false)
     {
         EnsureIndependentTextSource(); var pair = TextPair(); var destination = forward ? pair.Right : pair.Left;
         EnsureTextSideWritable(destination);
@@ -429,10 +430,18 @@ public sealed partial class ComparisonPane
             return;
         }
         var comparison = CurrentDiff; var row = DiffList.SelectedItem as DiffRow;
-        if (row is null || !comparison.Rows.Any(current => ReferenceEquals(current, row)))
-        { _status.Text = "現在の差分行を選択してください。"; return; }
-        var block = comparison.Blocks.FirstOrDefault(value => DiffList.SelectedIndex >= value.RowStart && DiffList.SelectedIndex < value.RowStart + value.RowCount);
-        if (block is null) return;
+        DiffBlock? block = null;
+        if (all)
+        {
+            if (comparison.Blocks.Count == 0) { _status.Text = "コピーする差異はありません。"; return; }
+        }
+        else
+        {
+            if (row is null || !comparison.Rows.Any(current => ReferenceEquals(current, row)))
+            { _status.Text = "現在の差分行を選択してください。"; return; }
+            block = comparison.Blocks.FirstOrDefault(value => DiffList.SelectedIndex >= value.RowStart && DiffList.SelectedIndex < value.RowStart + value.RowCount);
+            if (block is null) return;
+        }
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
         var operation = _operation; var token = operation.Token; var stamp = TextAdoptionStamp();
         CompareButton.IsEnabled = false;
@@ -442,13 +451,14 @@ public sealed partial class ComparisonPane
             var copied = await Task.Run(() =>
             {
                 token.ThrowIfCancellationRequested();
-                var text = forward ? TextMerger.CopyLeftToRight(comparison, block) : TextMerger.CopyRightToLeft(comparison, block);
+                var text = all ? forward ? TextMerger.CopyAllLeftToRight(comparison) : TextMerger.CopyAllRightToLeft(comparison)
+                    : forward ? TextMerger.CopyLeftToRight(comparison, block!) : TextMerger.CopyRightToLeft(comparison, block!);
                 token.ThrowIfCancellationRequested(); return text;
             }, token);
             IndependentEditorCopyReadyForAdoption?.Invoke();
             token.ThrowIfCancellationRequested();
             if (_disposed || !ReferenceEquals(operation, _operation) || !Equals(stamp, TextAdoptionStamp())
-                || !ReferenceEquals(comparison, CurrentDiff) || !ReferenceEquals(row, DiffList.SelectedItem))
+                || !ReferenceEquals(comparison, CurrentDiff) || !all && !ReferenceEquals(row, DiffList.SelectedItem))
             {
                 if (!_disposed && ReferenceEquals(operation, _operation)) _status.Text = "コピー中に状態が変わりました。前の差分と三側本文を保持しました。";
                 return;
@@ -467,7 +477,7 @@ public sealed partial class ComparisonPane
         if (!IndependentText) { if (side == 1) throw new InvalidOperationException("祖先は読取り専用です。"); EnsureSideWritable(side == 2); return; }
         if (_workingDocumentStale || TextReadOnly(side) || TextEditor(side).IsReadOnly) throw new InvalidOperationException($"{TextSideCaption(side)}は読取り専用です。");
     }
-    private void CopyIndependentSelected(bool forward)
+    private void CopyIndependentSelected(bool forward, bool all = false)
     {
         if (_textRole.SelectedIndex != 1 || _mode.SelectedIndex != 1 || !Equals(_independentInputIdentity, TextSourceIdentity()))
             throw new InvalidOperationException("入力が変更されています。独立Textを比較し直してからコピーしてください。");
@@ -477,6 +487,12 @@ public sealed partial class ComparisonPane
         if (_comparedTextPair != _textPair.SelectedIndex || _comparedTextConfiguration != TextInputIdentity()
             || CurrentDiff.LeftText != TextEditor(pair.Left).Text || CurrentDiff.RightText != TextEditor(pair.Right).Text)
         { CompareIndependentEditors(); _status.Text = "本文が変更されています。新しい差分行を選択してからコピーしてください。"; return; }
+        if (all)
+        {
+            if (CurrentDiff.Blocks.Count == 0) { _status.Text = "コピーする差異はありません。"; return; }
+            WriteRecordedText(destination, forward ? TextMerger.CopyAllLeftToRight(CurrentDiff) : TextMerger.CopyAllRightToLeft(CurrentDiff));
+            CompareIndependentEditors(); return;
+        }
         var row = DiffList.SelectedItem as DiffRow;
         if (row is null || !CurrentDiff.Rows.Any(current => ReferenceEquals(current, row)))
         { _status.Text = "現在の差分行を選択してください。"; return; }
