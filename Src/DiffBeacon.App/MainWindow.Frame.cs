@@ -102,6 +102,8 @@ public sealed partial class MainWindow
             Separator(),
             Pane("自動マージ(_U)", "Ctrl+Alt+M", FrameCommand.AutoMerge)));
         menu.Items.Add(Popup("ツール(_T)",
+            // 本家はフォルダー比較の「ツール」メニューの先頭に置く（IDR_DIRDOCTYPE）。ファイル比較の画面では状態欄へ使えない理由を出す。
+            Pane("列の設定(_C)...", null, FrameCommand.CustomizeColumns),
             Pane("パッチの生成(_G)...", null, FrameCommand.GeneratePatch),
             Pane("レポートの生成(_R)...", null, FrameCommand.GenerateReport),
             Pane("アーカイブの生成(_A)...", null, FrameCommand.GenerateArchive)));

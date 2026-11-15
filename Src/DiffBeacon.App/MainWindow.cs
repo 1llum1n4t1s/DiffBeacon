@@ -22,6 +22,23 @@ public sealed partial class MainWindow : Window
     internal ImageApplicationOptionsStore ImageOptions { get; }
     internal FolderApplicationOptionsStore FolderOptions { get; }
     internal TableApplicationOptionsStore TableOptions { get; }
+
+    /// <summary>
+    /// フォルダー一覧の列の配置（folder-columns.json）。既定はメモリだけの設定（headless検証が利用者のAppDataへ書かないため）で、
+    /// desktop の起動時に ForDesktop の保存先へ差し替える。差し替えたときは出力保護（比較入力・workspaceの上書き防止）も付け替える。
+    /// </summary>
+    internal FolderColumnOptionsStore FolderColumnOptions
+    {
+        get => _folderColumnOptions;
+        init
+        {
+            _folderColumnOptions.RemoveOutputGuard(_folderColumnGuard);
+            _folderColumnOptions = value;
+            _folderColumnOptions.AddOutputGuard(_folderColumnGuard);
+        }
+    }
+    private readonly FolderColumnOptionsStore _folderColumnOptions = new();
+    private readonly Action<string> _folderColumnGuard;
     internal long SessionSelectionGeneration { get; private set; }
     internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
@@ -43,6 +60,9 @@ public sealed partial class MainWindow : Window
         Action<string> tableGuard = path => { foreach (var pane in SessionPanes) pane.EnsureTableOptionsOutputWritable(path); };
         FolderOptions.AddOutputGuard(folderGuard);
         TableOptions.AddOutputGuard(tableGuard);
+        _folderColumnGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
+        _folderColumnOptions.AddOutputGuard(_folderColumnGuard);
+        Closed += (_, _) => _folderColumnOptions.RemoveOutputGuard(_folderColumnGuard);
         TableOptions.Changed += OnTableApplicationOptionsChanged;
         Closed += (_, _) => { FolderOptions.RemoveOutputGuard(folderGuard); TableOptions.RemoveOutputGuard(tableGuard); };
         Closed += (_, _) => TableOptions.Changed -= OnTableApplicationOptionsChanged;

@@ -19,20 +19,9 @@ namespace DiffBeacon.App;
 public sealed partial class ComparisonPane
 {
     // 列幅は見出しと全行で同じ表を使う。仮想化された行ごとに測ると列がずれるため、表の定義で揃える。
-    // 名前と比較結果は一覧の幅に合わせて伸縮させ（負の値は * の比率）、他の列は固定幅にする。
+    // 既定の配置では名前と比較結果を一覧の幅に合わせて伸縮させ（負の値は * の比率）、他の列は固定幅にする。
     // 横スクロールにすると重ね表示のスクロールバーが最下行を覆い、行をクリックできなくなるため使わない。
-    private enum FolderColumn { Name, Folder, Result, LeftDate, MiddleDate, RightDate, Extension }
-    private static readonly (FolderColumn Column, string Title, double Width)[] FolderColumnsTwoWay =
-    [
-        (FolderColumn.Name, "名前", -1), (FolderColumn.Folder, "フォルダー", 90), (FolderColumn.Result, "比較結果", -1.3),
-        (FolderColumn.LeftDate, "左更新日時", 140), (FolderColumn.RightDate, "右更新日時", 140), (FolderColumn.Extension, "拡張子", 56),
-    ];
-    private static readonly (FolderColumn Column, string Title, double Width)[] FolderColumnsThreeWay =
-    [
-        (FolderColumn.Name, "名前", -1), (FolderColumn.Folder, "フォルダー", 90), (FolderColumn.Result, "比較結果", -1.3),
-        (FolderColumn.LeftDate, "左更新日時", 140), (FolderColumn.MiddleDate, "中更新日時", 140), (FolderColumn.RightDate, "右更新日時", 140),
-        (FolderColumn.Extension, "拡張子", 56),
-    ];
+    // 選べる列と既定の並びは FolderColumnCatalog.cs、表示する列の状態と保存は ComparisonPane.FolderColumns.cs。
     private const double FolderRowHeight = 20;
     private const double FolderTreeIndent = 16;
 
@@ -47,16 +36,14 @@ public sealed partial class ComparisonPane
     [
         new() { Name = "folder-root-left" }, new() { Name = "folder-root-middle" }, new() { Name = "folder-root-right" },
     ];
-    private bool? _folderHeaderThreeWay;
+    // 見出しを作ったときの種類と列の並び。変わったときだけ見出しを作り直す。
+    private string? _folderHeaderSignature;
 
     // headless検証用: 現在の列見出しと最上部のルートパス帯。
     internal IReadOnlyList<string> FolderColumnTitles => _folderColumnHeader.Children.OfType<Border>()
         .Select(cell => (cell.Child as TextBlock ?? (cell.Child as Grid)?.Children.OfType<TextBlock>().FirstOrDefault())?.Text ?? "").ToArray();
     internal IReadOnlyList<string> FolderRootPathTexts => _folderRootPaths.Where(path => path.IsVisible).Select(path => path.Text ?? "").ToArray();
     internal Control FolderColumnHeader => _folderColumnHeaderHost;
-
-    private (FolderColumn Column, string Title, double Width)[] FolderColumns
-        => _directoryComparison?.IsThreeWay == true ? FolderColumnsThreeWay : FolderColumnsTwoWay;
 
     /// <summary>一覧の上に置くルートパス帯と列見出しを用意し、一覧の横スクロールに見出しを追従させる。</summary>
     private void InitializeFolderListChrome()
@@ -82,6 +69,7 @@ public sealed partial class ComparisonPane
         _directoryList.Resources["SystemControlHighlightListAccentHighBrush"] = new SolidColorBrush(Color.FromRgb(164, 208, 250));
         _directoryList.Resources["SystemControlHighlightListLowBrush"] = new SolidColorBrush(Color.FromRgb(229, 243, 255));
         _directoryList.Resources["SystemControlHighlightListMediumBrush"] = new SolidColorBrush(Color.FromRgb(204, 232, 255));
+        InitializeFolderColumnMenu();
         UpdateFolderListChrome();
     }
 
@@ -94,8 +82,11 @@ public sealed partial class ComparisonPane
         _folderRootPaths[1].Text = model?.MiddlePath ?? "";
         _folderRootPaths[2].Text = model?.RightPath ?? "";
         _folderRootPaths[1].IsVisible = threeWay;
-        if (_folderHeaderThreeWay == threeWay) return;
-        _folderHeaderThreeWay = threeWay;
+        var signature = (threeWay ? "3:" : "2:") + string.Join(",", FolderState.Columns);
+        if (_folderHeaderSignature == signature) return;
+        var modeChanged = _folderHeaderSignature is null || _folderHeaderSignature[0] != signature[0];
+        _folderHeaderSignature = signature;
+        if (!modeChanged) { RebuildFolderColumnHeader(); return; }
 
         // パス表示のTextBlockは使い回すため、古い帯から外してから並べ直す。
         foreach (var old in _folderRootBars.Children.OfType<Border>()) old.Child = null;
@@ -111,7 +102,12 @@ public sealed partial class ComparisonPane
             };
             Grid.SetColumn(bar, i); _folderRootBars.Children.Add(bar);
         }
+        RebuildFolderColumnHeader();
+    }
 
+    /// <summary>現在の種類の表示する列で、列見出しを作り直す。</summary>
+    private void RebuildFolderColumnHeader()
+    {
         _folderColumnHeader.Children.Clear(); _folderColumnHeader.ColumnDefinitions.Clear();
         var columns = FolderColumns;
         for (var i = 0; i < columns.Length; i++)
@@ -132,6 +128,11 @@ public sealed partial class ComparisonPane
         for (var i = 0; i < columns.Length; i++)
         {
             Control cell = columns[i].Column == FolderColumn.Name ? BuildFolderNameCell(entry) : FolderCellText(FolderCellValue(entry, columns[i].Column));
+            // サイズの列は本家と同じく右寄せ（DirColInfo::ALIGN_RIGHT）。
+            if (columns[i].AlignRight && cell is TextBlock number) { number.HorizontalAlignment = HorizontalAlignment.Right; number.Margin = new Thickness(4, 0, 6, 0); }
+            // 日時比較の "<-"・"->"・"==" は、フォントの合字で矢印（←）や記号に変わらないよう、本家と同じ文字のまま描く。
+            if (columns[i].Column == FolderColumn.Newer && cell is TextBlock arrows)
+                arrows.FontFeatures = new FontFeatureCollection { FontFeature.Parse("-liga"), FontFeature.Parse("-calt") };
             if (columns[i].Column == FolderColumn.Result && entry.Error is { } error) ToolTip.SetTip(cell, error);
             Grid.SetColumn(cell, i); row.Children.Add(cell);
         }
@@ -202,6 +203,81 @@ public sealed partial class ComparisonPane
             FolderColumn.MiddleDate => FolderDateText(entry, entry.MiddleState),
             FolderColumn.RightDate => FolderDateText(entry, entry.RightState),
             FolderColumn.Extension => FolderExtensionText(entry),
+            // 本家 ColSizeGet（地域の桁区切り）／ColSizeShortGet。フォルダーと無い側は空（本家はサイズ -1）。
+            FolderColumn.LeftSize => FolderSizeText(entry.LeftState, false),
+            FolderColumn.MiddleSize => FolderSizeText(entry.MiddleState, false),
+            FolderColumn.RightSize => FolderSizeText(entry.RightState, false),
+            FolderColumn.LeftSizeShort => FolderSizeText(entry.LeftState, true),
+            FolderColumn.MiddleSizeShort => FolderSizeText(entry.MiddleState, true),
+            FolderColumn.RightSizeShort => FolderSizeText(entry.RightState, true),
+            FolderColumn.Newer => FolderNewerText(entry),
+            FolderColumn.ResultAbbr => FolderResultAbbrText(entry),
+            FolderColumn.LeftAttributes => entry.LeftState is { } left ? FolderColumnCatalog.Attributes(left.Attributes) : "",
+            FolderColumn.MiddleAttributes => entry.MiddleState is { } middle ? FolderColumnCatalog.Attributes(middle.Attributes) : "",
+            FolderColumn.RightAttributes => entry.RightState is { } right ? FolderColumnCatalog.Attributes(right.Attributes) : "",
+            _ => "",
+        };
+    }
+
+    /// <summary>ファイルのバイト数。フォルダーと無い側は null（本家の DIFFITEM はフォルダーのサイズを -1 として空欄にする）。</summary>
+    private static long? FolderFileSize(DirectorySideSnapshot? side)
+        => side is { Kind: not DirectoryEntryKind.Directory } ? side.Size : null;
+
+    private static string FolderSizeText(DirectorySideSnapshot? side, bool shortForm)
+        => FolderFileSize(side) is not { } size ? ""
+            : shortForm ? FolderColumnCatalog.ShortSize(size) : size.ToString("N0", System.Globalization.CultureInfo.CurrentCulture);
+
+    /// <summary>
+    /// 本家 ColNewerGet。二者は片側だけなら "&lt;--"／"--&gt;"、両側の時刻を比べて "&lt;-"（左が新しい）／"-&gt;"／"=="、時刻が無ければ "***"。
+    /// 三者は新しい順に L・M・R を並べ、同じ時刻は "=="、違えば "&lt;-" でつなぐ（本家と同じ選択の並べ替え）。無い側の時刻は 0 とみなす。
+    /// </summary>
+    private string FolderNewerText(DirectoryEntry entry)
+    {
+        if (_directoryComparison?.IsThreeWay != true)
+        {
+            if (entry.LeftState is not null && entry.RightState is null) return "<--";
+            if (entry.LeftState is null && entry.RightState is not null) return "-->";
+            if (entry.LeftState is { } left && entry.RightState is { } right)
+            {
+                if (left.LastWriteTimeUtc > right.LastWriteTimeUtc) return "<-";
+                if (left.LastWriteTimeUtc < right.LastWriteTimeUtc) return "->";
+                return "==";
+            }
+            return "***";
+        }
+        int[] order = [0, 1, 2];
+        long[] times = [Ticks(entry.LeftState), Ticks(entry.MiddleState), Ticks(entry.RightState)];
+        for (var i = 0; i < 3; i++)
+            for (var j = i; j < 3; j++)
+                if (times[i] < times[j]) { (times[i], times[j]) = (times[j], times[i]); (order[i], order[j]) = (order[j], order[i]); }
+        const string sides = "LMR";
+        return $"{sides[order[0]]}{(times[0] == times[1] ? "==" : "<-")}{sides[order[1]]}{(times[1] == times[2] ? "==" : "<-")}{sides[order[2]]}";
+        static long Ticks(DirectorySideSnapshot? side) => side?.LastWriteTimeUtc.ToUniversalTime().Ticks ?? 0;
+    }
+
+    /// <summary>
+    /// 本家 ColStatusAbbrGet の判定順（エラー→除外→片側のみ→三者の欠落→同一→相違）と Japanese.po の訳。
+    /// 本家に無い状態は、種類の衝突を「種類が異なります」、未比較を「未比較」にする（長い比較結果の独自の文言に合わせる）。
+    /// </summary>
+    private string FolderResultAbbrText(DirectoryEntry entry)
+    {
+        var threeWay = _directoryComparison?.IsThreeWay == true;
+        var (left, middle, right) = FolderPresence(entry);
+        var count = (left ? 1 : 0) + (middle ? 1 : 0) + (right ? 1 : 0);
+        if (entry.Status == DirectoryDifferenceKind.Error) return "エラー";
+        if (entry.IsFiltered) return FolderIsDirectory(entry) ? "スキップされたフォルダー" : "スキップされたファイル";
+        if (count == 1 && left) return "左側のみ";
+        if (count == 1 && middle) return "中央のみ";
+        if (count == 1 && right) return "右側のみ";
+        if (threeWay && !left) return "左側にない";
+        if (threeWay && !middle) return "中央にない";
+        if (threeWay && !right) return "右側にない";
+        return entry.Status switch
+        {
+            DirectoryDifferenceKind.Equal => "同一",
+            DirectoryDifferenceKind.Modified => "差異あり",
+            DirectoryDifferenceKind.TypeConflict => "種類が異なります",
+            DirectoryDifferenceKind.Uncompared => "未比較",
             _ => "",
         };
     }

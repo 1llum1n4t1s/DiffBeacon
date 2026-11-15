@@ -210,7 +210,7 @@ public sealed partial class ComparisonPane
     private FolderTreeProjection PrepareFolderTree(DirectoryComparisonResult model, HashSet<string> expanded,
         bool tree, CancellationToken token = default)
     {
-        if (!model.Options.Recursive) return new(SortFolderEntries(model.Entries), new(FolderTreeComparer), new(FolderTreeComparer), new(FolderTreeComparer));
+        if (!model.Options.Recursive) return new(SortFolderEntries(model.Entries, model.IsThreeWay), new(FolderTreeComparer), new(FolderTreeComparer), new(FolderTreeComparer));
         var visible = new HashSet<string>(model.Entries.Select(entry => entry.RelativePath), FolderTreeComparer);
         var rows = new List<DirectoryEntry>();
         var depths = new Dictionary<string, int>(FolderTreeComparer);
@@ -218,7 +218,7 @@ public sealed partial class ComparisonPane
         var present = new HashSet<string>(FolderTreeComparer);
         var seen = new HashSet<string>(FolderTreeComparer);
         var pending = new Stack<(DirectoryEntry Entry, int Depth, string? Parent, bool Reachable)>();
-        var sortedRoots = SortFolderEntries(model.RootNodes);
+        var sortedRoots = SortFolderEntries(model.RootNodes, model.IsThreeWay);
         for (var i = sortedRoots.Count - 1; i >= 0; i--) pending.Push((sortedRoots[i], 0, null, true));
         while (pending.TryPop(out var node))
         {
@@ -233,13 +233,13 @@ public sealed partial class ComparisonPane
                 if (node.Parent is not null) parents.Add(node.Entry.RelativePath, node.Parent);
             }
             var reachable = node.Reachable && (!show || expanded.Contains(node.Entry.RelativePath));
-            var sortedChildren = SortFolderEntries(node.Entry.Children);
+            var sortedChildren = SortFolderEntries(node.Entry.Children, model.IsThreeWay);
             for (var i = sortedChildren.Count - 1; i >= 0; i--)
                 pending.Push((sortedChildren[i], node.Depth + 1, show ? node.Entry.RelativePath : node.Parent, reachable));
         }
         token.ThrowIfCancellationRequested();
         expanded.IntersectWith(present);
-        return new(tree ? rows.ToArray() : SortFolderEntries(model.Entries), depths, parents, expanded);
+        return new(tree ? rows.ToArray() : SortFolderEntries(model.Entries, model.IsThreeWay), depths, parents, expanded);
     }
 
     private void AdoptFolderTreeProjection(FolderTreeProjection projection, string[] selection)

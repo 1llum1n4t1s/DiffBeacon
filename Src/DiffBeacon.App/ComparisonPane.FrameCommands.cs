@@ -14,7 +14,7 @@ internal enum FrameCommand
     FirstDifference, PreviousDifference, CurrentDifference, NextDifference, LastDifference,
     NextConflict, PreviousConflict, SelectLineDifference, SelectPreviousLineDifference,
     CopyToRight, CopyToLeft, CopyToRightAndAdvance, CopyToLeftAndAdvance, CopyAllToRight, CopyAllToLeft, AutoMerge,
-    GeneratePatch, GenerateReport, GenerateArchive, AddExternalTool, Stop, SaveMergeResult,
+    GeneratePatch, GenerateReport, GenerateArchive, AddExternalTool, Stop, SaveMergeResult, CustomizeColumns,
 }
 
 public sealed partial class ComparisonPane
@@ -59,6 +59,7 @@ public sealed partial class ComparisonPane
         FrameCommand.AddExternalTool => AddExternalProviderAsync(),
         FrameCommand.Stop => Run(StopAllOperations),
         FrameCommand.SaveMergeResult => SaveResultAsync(),
+        FrameCommand.CustomizeColumns => CustomizeFolderColumnsAsync(),
         _ => throw new ArgumentOutOfRangeException(nameof(command), command, null),
     });
 

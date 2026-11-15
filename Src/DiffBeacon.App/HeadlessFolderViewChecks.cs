@@ -42,6 +42,10 @@ internal static class HeadlessFolderViewChecks
         // 新しい側にだけ "* " が付くことを確かめるため、diff.txt は左を新しくする。
         File.SetLastWriteTimeUtc(Path.Combine(left, "diff.txt"), new DateTime(2026, 11, 13, 3, 4, 5, DateTimeKind.Utc));
         File.SetLastWriteTimeUtc(Path.Combine(right, "diff.txt"), new DateTime(2026, 11, 12, 3, 4, 5, DateTimeKind.Utc));
+        // 日時比較の列の "==" を確かめるため、same.txt は左右を同じ時刻にする。サイズの桁区切りと短縮形は 1234 バイトの左だけのファイルで見る。
+        File.SetLastWriteTimeUtc(Path.Combine(left, "same.txt"), new DateTime(2026, 11, 10, 1, 2, 3, DateTimeKind.Utc));
+        File.SetLastWriteTimeUtc(Path.Combine(right, "same.txt"), new DateTime(2026, 11, 10, 1, 2, 3, DateTimeKind.Utc));
+        Write(left, "big.dat", new string('x', 1234));
 
         pane.LeftPath.Text = left; pane.BasePath.Text = ""; pane.RightPath.Text = right;
         pump(pane.ComparePathsAsync());
@@ -180,17 +184,26 @@ internal static class HeadlessFolderViewChecks
             list.SelectedItems?.Clear(); Dispatcher.UIThread.RunJobs();
         }
 
+        CheckColumnCustomization(window, pane, work, list, check, screenshot, pump, entries);
+
         // 三者比較: 中更新日時の列と、欠落側・同一側の文言とアイコン。
         var three = Path.Combine(output, "folder-view-3"); var l3 = Path.Combine(three, "left"); var m3 = Path.Combine(three, "middle"); var r3 = Path.Combine(three, "right");
         foreach (var root in new[] { l3, m3, r3 }) Directory.CreateDirectory(root);
         Write(l3, "a.txt", "left changed\n"); Write(m3, "a.txt", "base\n"); Write(r3, "a.txt", "base\n");
         Write(l3, "b.txt", "b\n"); Write(r3, "b.txt", "b\n");
+        // 三者の日時比較（新しい順に L・M・R を並べる）を確かめるため、時刻を固定する。
+        File.SetLastWriteTimeUtc(Path.Combine(l3, "a.txt"), new DateTime(2026, 11, 3, 0, 0, 0, DateTimeKind.Utc));
+        File.SetLastWriteTimeUtc(Path.Combine(m3, "a.txt"), new DateTime(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc));
+        File.SetLastWriteTimeUtc(Path.Combine(r3, "a.txt"), new DateTime(2026, 11, 2, 0, 0, 0, DateTimeKind.Utc));
+        File.SetLastWriteTimeUtc(Path.Combine(l3, "b.txt"), new DateTime(2026, 11, 5, 0, 0, 0, DateTimeKind.Utc));
+        File.SetLastWriteTimeUtc(Path.Combine(r3, "b.txt"), new DateTime(2026, 11, 5, 0, 0, 0, DateTimeKind.Utc));
         pane.LeftPath.Text = l3; pane.BasePath.Text = m3; pane.RightPath.Text = r3;
         pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
         entries = list.Items.OfType<DirectoryEntry>().ToArray();
         titles = pane.FolderColumnTitles;
         check("folder view three-way adds middle date column", titles.SequenceEqual(["名前", "フォルダー", "比較結果", "左更新日時", "中更新日時", "右更新日時", "拡張子"]),
             string.Join("|", titles));
+        CheckThreeWayColumns(pane, list, check);
         roots = pane.FolderRootPathTexts;
         check("folder view three-way root bars show three folders", roots.Count == 3 && SamePath(roots[1], m3), string.Join("|", roots));
         var a = Entry("a.txt"); var b = Entry("b.txt");
@@ -229,6 +242,234 @@ internal static class HeadlessFolderViewChecks
                 $"{actual.Icon} {Describe(actual.Brush)} {actual.Result} [{actual.Folder}] [{actual.Extension}]");
         }
     }
+
+    /// <summary>
+    /// 段階9: 追加の列（サイズ・短縮サイズ・日時比較・簡易の比較結果・属性）、「列の表示」ダイアログ（ツールメニューと見出しの右クリック）、
+    /// 表示する列・幅・並べ替えの保存と読み直し、最小ウィンドウで全列を出しても横スクロールが出ないこと、設定ファイルの往復と不正な設定の拒否。
+    /// 終わったら二者・三者とも既定の列へ戻し、後に続く検証へ影響させない。
+    /// </summary>
+    private static void CheckColumnCustomization(MainWindow window, ComparisonPane pane, string work, ListBox list,
+        Action<string, bool, string> check, Action<string> screenshot, Action<Task> pump, DirectoryEntry[] entries)
+    {
+        DirectoryEntry? Entry(string path) => list.Items.OfType<DirectoryEntry>().FirstOrDefault(entry => entry.RelativePath.Replace('\\', '/') == path)
+            ?? entries.FirstOrDefault(entry => entry.RelativePath.Replace('\\', '/') == path);
+        var culture = System.Globalization.CultureInfo.CurrentCulture;
+        try
+        {
+            // 追加の列の値（本家 ColSizeGet・ColSizeShortGet・ColNewerGet・ColStatusAbbrGet・ColAttrGet）。
+            var diff = Entry("diff.txt")!; var same = Entry("same.txt")!; var leftOnly = Entry("left-only.txt")!;
+            var rightOnly = Entry("right-only.bin")!; var sub = Entry("sub")!; var big = Entry("big.dat");
+            string V(DirectoryEntry entry, string column) => pane.FolderCellValue(entry, column);
+            check("folder columns size shows bytes with grouping and leaves folders and missing sides empty",
+                big is not null && V(diff, "LeftSize") == "5" && V(diff, "RightSize") == "11" && V(big, "LeftSize") == 1234.ToString("N0", culture)
+                && V(sub, "LeftSize") == "" && V(leftOnly, "RightSize") == "" && V(rightOnly, "LeftSize") == "",
+                big is null ? "big.dat missing" : $"{V(diff, "LeftSize")}|{V(diff, "RightSize")}|{V(big, "LeftSize")}|{V(sub, "LeftSize")}");
+            check("folder columns short size uses B below 1024 and three significant digits above",
+                V(diff, "LeftSizeShort") == "5 B" && big is not null && V(big, "LeftSizeShort") == 1.20m.ToString("F2", culture) + " KB" && V(sub, "LeftSizeShort") == "",
+                V(diff, "LeftSizeShort") + "|" + (big is null ? "" : V(big, "LeftSizeShort")));
+            var shortCases = new (long Size, string Expected)[]
+            {
+                (0, "0 B"), (1023, "1023 B"), (1024, 1.00m.ToString("F2", culture) + " KB"), (1205, 1.17m.ToString("F2", culture) + " KB"),
+                (12000, 11.7m.ToString("F1", culture) + " KB"), (200000, "195 KB"), (1048576, 1.00m.ToString("F2", culture) + " MB"),
+                (1572864, 1.50m.ToString("F2", culture) + " MB"), (5L * 1024 * 1024 * 1024 * 1024, 5.00m.ToString("F2", culture) + " TB"),
+            };
+            var shortActual = shortCases.Select(item => FolderColumnCatalog.ShortSize(item.Size)).ToArray();
+            check("folder columns short size truncates like StrFormatByteSize64", shortCases.Select(item => item.Expected).SequenceEqual(shortActual), string.Join("|", shortActual));
+            check("folder columns newer file follows ColNewerGet arrows",
+                V(diff, "Newer") == "<-" && V(same, "Newer") == "==" && V(leftOnly, "Newer") == "<--" && V(rightOnly, "Newer") == "-->",
+                $"{V(diff, "Newer")}|{V(same, "Newer")}|{V(leftOnly, "Newer")}|{V(rightOnly, "Newer")}");
+            check("folder columns short result uses WinMerge short wording",
+                V(same, "ResultAbbr") == "同一" && V(diff, "ResultAbbr") == "差異あり" && V(leftOnly, "ResultAbbr") == "左側のみ" && V(rightOnly, "ResultAbbr") == "右側のみ",
+                $"{V(same, "ResultAbbr")}|{V(diff, "ResultAbbr")}|{V(leftOnly, "ResultAbbr")}|{V(rightOnly, "ResultAbbr")}");
+            var attributePattern = new System.Text.RegularExpressions.Regex("^R?H?S?A?$");
+            check("folder columns attributes use R/H/S/A order and stay empty on the missing side",
+                attributePattern.IsMatch(V(diff, "LeftAttributes")) && attributePattern.IsMatch(V(diff, "RightAttributes")) && V(leftOnly, "RightAttributes") == ""
+                && FolderColumnCatalog.Attributes(FileAttributes.Archive | FileAttributes.ReadOnly | FileAttributes.System | FileAttributes.Hidden) == "RHSA"
+                && FolderColumnCatalog.Attributes(FileAttributes.Normal) == "",
+                V(diff, "LeftAttributes") + "|" + V(diff, "RightAttributes"));
+
+            // 列見出しの右クリックメニュー（本家 _HDR_POPUP_ の「列の設定(&C)...」）。
+            var headerMenu = pane.FolderColumnHeader.ContextMenu?.ItemsSource?.OfType<MenuItem>().Select(item => item.Header as string).ToArray() ?? [];
+            check("folder columns header context menu offers customize columns", headerMenu.SequenceEqual(["列の設定(_C)..."]), string.Join("|", headerMenu));
+
+            // ダイアログの初期状態とキャンセル（ツールメニューと同じ外枠のコマンドから開く）。
+            var defaultsTwoWay = FolderColumnCatalog.DefaultTwoWay.Select(column => column.ToString()).ToArray();
+            (FolderColumn Column, bool Checked)[] initial = [];
+            string description = ""; bool upAtTop = true, downAtTop = false;
+            FolderColumnsDialog.Shown = dialog =>
+            {
+                initial = dialog.Items.ToArray(); description = dialog.DescriptionText;
+                upAtTop = dialog.UpButton.IsEnabled; downAtTop = dialog.DownButton.IsEnabled;
+                Click(dialog.CancelButton);
+            };
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CustomizeColumns)); Dispatcher.UIThread.RunJobs();
+            var expectedInitial = FolderColumnCatalog.DefaultTwoWay.Select(column => (column, true))
+                .Concat(FolderColumnCatalog.TwoWay.Select(info => info.Column).Where(column => !FolderColumnCatalog.DefaultTwoWay.Contains(column)).Select(column => (column, false))).ToArray();
+            check("folder columns dialog lists shown columns first then hidden ones in WinMerge order", initial.SequenceEqual(expectedInitial),
+                string.Join("|", initial.Select(item => item.Column + (item.Checked ? "+" : "-"))));
+            check("folder columns dialog selects the first column with its description and disables up",
+                description == "ファイル名またはフォルダー名です。" && !upAtTop && downAtTop, description + " up=" + upAtTop + " down=" + downAtTop);
+            check("folder columns cancel keeps the columns", pane.FolderVisibleColumnNames.SequenceEqual(defaultsTwoWay), string.Join("|", pane.FolderVisibleColumnNames));
+
+            // チェックの変更・上へ・説明の追従・OK の無効化を、実際のチェックボックスとボタンで行って OK する。
+            string extensionDescription = ""; bool okWithoutChecks = true, downAtBottom = true;
+            FolderColumnsDialog.Shown = dialog =>
+            {
+                dialog.Select(FolderColumn.Extension); extensionDescription = dialog.DescriptionText;
+                foreach (var (column, _) in dialog.Items) dialog.ItemBox(column).IsChecked = false;
+                okWithoutChecks = dialog.OkButton.IsEnabled;
+                foreach (var column in new[] { FolderColumn.Name, FolderColumn.Result, FolderColumn.LeftDate, FolderColumn.LeftSize, FolderColumn.RightSize, FolderColumn.ResultAbbr })
+                    dialog.ItemBox(column).IsChecked = true;
+                dialog.Select(FolderColumn.LeftSize); Click(dialog.UpButton); Click(dialog.UpButton);
+                dialog.Select(dialog.Items[^1].Column); downAtBottom = dialog.DownButton.IsEnabled;
+                Click(dialog.OkButton);
+            };
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CustomizeColumns)); Dispatcher.UIThread.RunJobs();
+            string[] chosen = ["Name", "Result", "LeftDate", "LeftSize", "RightSize", "ResultAbbr"];
+            check("folder columns dialog description follows the selection", extensionDescription == "ファイルの拡張子です。", extensionDescription);
+            check("folder columns dialog disables OK without checked columns and down at the end", !okWithoutChecks && !downAtBottom, "ok=" + okWithoutChecks + " down=" + downAtBottom);
+            check("folder columns OK shows the checked columns in the dialog order", pane.FolderVisibleColumnNames.SequenceEqual(chosen)
+                && pane.FolderColumnTitles.SequenceEqual(["名前", "比較結果", "左更新日時", "左サイズ", "右サイズ", "比較結果(簡易)"]),
+                string.Join("|", pane.FolderColumnTitles));
+            var saved = window.FolderColumnOptions.Layout(false);
+            check("folder columns OK saves the layout with relative widths", saved is not null && saved.Columns.SequenceEqual(chosen)
+                && saved.Widths is { Length: 6 } && pane.FolderColumnsUseWeights, saved is null ? "null" : string.Join("|", saved.Columns) + " widths=" + saved.Widths?.Length);
+            list.ScrollIntoView(diff); Dispatcher.UIThread.RunJobs();
+            var rowTexts = (list.ContainerFromItem(diff) as ListBoxItem)?.GetVisualDescendants().OfType<TextBlock>().Select(block => block.Text).ToArray() ?? [];
+            var headerCount = ((pane.FolderColumnHeader as Border)?.Child as Grid)?.ColumnDefinitions.Count ?? 0;
+            var rowGrid = (list.ContainerFromItem(diff) as ListBoxItem)?.GetVisualDescendants().OfType<Grid>().FirstOrDefault(grid => grid.Name == "folder-data-row");
+            check("folder columns realized rows are rebuilt with the new columns", rowGrid?.ColumnDefinitions.Count == 6 && headerCount == 6
+                && rowTexts.Contains("5") && rowTexts.Contains("11") && rowTexts.Contains("差異あり") && !rowTexts.Contains("txt"), string.Join("|", rowTexts));
+
+            // 新しく開いたペイン（保存した設定を読み直す）でも同じ列になる。
+            pane.ReloadFolderColumnsForTest(); Dispatcher.UIThread.RunJobs();
+            check("folder columns saved layout is read back", pane.FolderVisibleColumnNames.SequenceEqual(chosen) && pane.FolderColumnsUseWeights,
+                string.Join("|", pane.FolderVisibleColumnNames));
+
+            // サイズで並べ替え（バイト数の順、無い側が先頭）、その列を表示しなくすると並べ替えを解除する（本家 OnEditColumns）。
+            pane.SortFolderBy("LeftSize"); Dispatcher.UIThread.RunJobs();
+            var sizes = list.Items.OfType<DirectoryEntry>().Where(entry => !entry.RelativePath.Contains('/') && !entry.RelativePath.Contains((char)92))
+                .Select(entry => entry.LeftState is { Kind: not DirectoryEntryKind.Directory } state ? state.Size : long.MinValue).ToArray();
+            check("folder columns size sort orders by bytes with missing sides first", sizes.SequenceEqual(sizes.OrderBy(size => size))
+                && pane.FolderSortColumnName == "LeftSize" && window.FolderColumnOptions.Layout(false)?.SortColumn == "LeftSize", string.Join(",", sizes));
+            FolderColumnsDialog.Shown = dialog => { dialog.ItemBox(FolderColumn.LeftSize).IsChecked = false; Click(dialog.OkButton); };
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CustomizeColumns)); Dispatcher.UIThread.RunJobs();
+            check("folder columns hiding the sorted column clears the sort", pane.FolderSortColumnName is null && !pane.FolderVisibleColumnNames.Contains("LeftSize")
+                && window.FolderColumnOptions.Layout(false)?.SortColumn is null, pane.FolderSortColumnName ?? "none");
+
+            // 全列を表示しても、最小ウィンドウで見出しと行がそろい、横スクロールが出ない。
+            FolderColumnsDialog.Shown = dialog => { foreach (var (column, _) in dialog.Items) dialog.ItemBox(column).IsChecked = true; Click(dialog.OkButton); };
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CustomizeColumns)); Dispatcher.UIThread.RunJobs();
+            window.Width = 850; window.Height = 550; Dispatcher.UIThread.RunJobs();
+            list.ScrollIntoView(diff); Dispatcher.UIThread.RunJobs();
+            var headerGrid = (pane.FolderColumnHeader as Border)?.Child as Grid;
+            var headerCells = headerGrid?.Children.OfType<Control>().Select(cell => cell.TranslatePoint(new Point(0, 0), window)?.X ?? -1).ToArray() ?? [];
+            var allRow = (list.ContainerFromItem(diff) as ListBoxItem)?.GetVisualDescendants().OfType<Grid>().FirstOrDefault(grid => grid.Name == "folder-data-row");
+            var rowCells = allRow is null ? [] : Enumerable.Range(0, allRow.ColumnDefinitions.Count)
+                .Select(index => allRow.Children.OfType<Control>().First(child => Grid.GetColumn(child) == index))
+                .Select(cell => (cell.TranslatePoint(new Point(0, 0), window)?.X ?? -1) - cell.Margin.Left).ToArray();
+            var viewer = list.GetVisualDescendants().OfType<ScrollViewer>().FirstOrDefault();
+            check("folder columns all columns fit the minimum window without horizontal scrolling",
+                pane.FolderVisibleColumnNames.Count == FolderColumnCatalog.TwoWay.Length && headerCells.Length == FolderColumnCatalog.TwoWay.Length
+                && viewer is not null && viewer.Extent.Width <= viewer.Viewport.Width + .5 && pane.FolderColumnWidths.All(width => width >= 39.5),
+                $"columns={headerCells.Length} extent={viewer?.Extent.Width} viewport={viewer?.Viewport.Width} widths={string.Join(",", pane.FolderColumnWidths.Select(x => x.ToString("F0")))}");
+            // 右寄せの列（サイズ）はセルの左端がずれるため、左端の位置ではなく列の境界（列の定義の幅）で照合する。
+            var headerWidths = headerGrid?.ColumnDefinitions.Select(column => column.ActualWidth).ToArray() ?? [];
+            var rowWidths = allRow?.ColumnDefinitions.Select(column => column.ActualWidth).ToArray() ?? [];
+            check("folder columns all columns keep header and row boundaries aligned", rowCells.Length == headerCells.Length
+                && headerWidths.Length == rowWidths.Length && headerWidths.Zip(rowWidths).All(pair => Math.Abs(pair.First - pair.Second) < 1.5),
+                string.Join(",", headerWidths.Select(x => x.ToString("F0"))) + " / " + string.Join(",", rowWidths.Select(x => x.ToString("F0"))));
+            screenshot("folder-view-all-columns-minimum.png");
+            window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
+
+            // デフォルトで既定の列と既定の幅へ戻し、保存も既定（何も書かない）へ戻す。
+            FolderColumnsDialog.Shown = dialog => { Click(dialog.DefaultsButton); Click(dialog.OkButton); };
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CustomizeColumns)); Dispatcher.UIThread.RunJobs();
+            check("folder columns defaults restore the default columns and widths", pane.FolderVisibleColumnNames.SequenceEqual(defaultsTwoWay)
+                && !pane.FolderColumnsUseWeights && window.FolderColumnOptions.Layout(false) is null
+                && pane.FolderColumnTitles.SequenceEqual(["名前", "フォルダー", "比較結果", "左更新日時", "右更新日時", "拡張子"]), string.Join("|", pane.FolderColumnTitles));
+
+            // 出力保護に当たる保存先へは書かず、記憶している値も変えない。
+            var blocked = new FolderColumnOptionsStore(Path.Combine(work, "blocked-columns.json"));
+            blocked.AddOutputGuard(_ => throw new InvalidOperationException("protected"));
+            check("folder columns store refuses a protected output without writing",
+                !blocked.SetLayout(false, new FolderColumnLayoutOptions { Columns = ["Name"] }) && blocked.Diagnostic is not null
+                && !File.Exists(Path.Combine(work, "blocked-columns.json")) && blocked.Layout(false) is null, blocked.Diagnostic ?? "");
+
+            CheckColumnStoreFile(work, check);
+        }
+        finally
+        {
+            FolderColumnsDialog.Shown = null;
+            pane.ResetFolderColumnsForTest();
+            window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
+        }
+    }
+
+    /// <summary>folder-columns.json の往復（二者・三者を別に保存）と、不正な設定の拒否（既定の列で表示し、ファイルは変えない）。</summary>
+    private static void CheckColumnStoreFile(string work, Action<string, bool, string> check)
+    {
+        var path = Path.Combine(work, "folder-columns.json");
+        var store = new FolderColumnOptionsStore(path);
+        var two = new FolderColumnLayoutOptions { Columns = ["Name", "LeftSize", "Newer"], Widths = [210, 90.5, 70], SortColumn = "LeftSize", SortDescending = true };
+        var three = new FolderColumnLayoutOptions { Columns = ["Name", "MiddleSize", "MiddleAttributes"] };
+        var saved = store.SetLayout(false, two) && store.SetLayout(true, three);
+        var reopened = new FolderColumnOptionsStore(path);
+        var a = reopened.Layout(false); var b = reopened.Layout(true);
+        check("folder columns settings file round-trips two-way and three-way layouts", saved && reopened.Diagnostic is null
+            && a is not null && a.Columns.SequenceEqual(two.Columns) && a.Widths!.SequenceEqual(two.Widths!) && a.SortColumn == "LeftSize" && a.SortDescending
+            && b is not null && b.Columns.SequenceEqual(three.Columns) && b.Widths is null && b.SortColumn is null,
+            File.Exists(path) ? File.ReadAllText(path) : "missing");
+        var invalid = new[]
+        {
+            "null", "{\"twoWay\":{\"columns\":[]}}", "{\"twoWay\":{\"columns\":[\"Unknown\"]}}", "{\"twoWay\":{\"columns\":[\"MiddleDate\"]}}",
+            "{\"twoWay\":{\"columns\":[\"0\"]}}", "{\"twoWay\":{\"columns\":[\"Name\",\"Name\"]}}", "{\"twoWay\":{\"columns\":[\"Name\"],\"widths\":[1,2]}}",
+            "{\"twoWay\":{\"columns\":[\"Name\"],\"widths\":[-1]}}", "{\"twoWay\":{\"columns\":[\"Name\"],\"sortColumn\":\"Folder\"}}",
+            "{\"threeWay\":{\"columns\":[\"Name\"]},\"other\":1}", new string(' ', FolderColumnOptionsStore.MaximumBytes + 1),
+        };
+        var index = 0;
+        foreach (var text in invalid)
+        {
+            var bad = Path.Combine(work, $"folder-columns-invalid-{index++}.json");
+            File.WriteAllText(bad, text, new UTF8Encoding(false));
+            var before = File.ReadAllBytes(bad);
+            var badStore = new FolderColumnOptionsStore(bad);
+            check($"folder columns invalid settings {index} fall back to defaults and keep the file",
+                badStore.Diagnostic is not null && badStore.Layout(false) is null && badStore.Layout(true) is null && before.SequenceEqual(File.ReadAllBytes(bad)),
+                (text.Length > 80 ? text[..80] : text) + " => " + badStore.Diagnostic);
+        }
+        check("folder columns store rejects invalid layouts before writing",
+            !store.SetLayout(false, new FolderColumnLayoutOptions { Columns = ["Name", "MiddleSize"] }) && store.Layout(false)!.Columns.SequenceEqual(two.Columns)
+            && new FolderColumnOptionsStore(path).Layout(false)!.Columns.SequenceEqual(two.Columns), store.Diagnostic ?? "");
+    }
+
+    /// <summary>三者比較の列（中サイズ・中属性・三者の日時比較・簡易の比較結果）と、二者とは別の配置。</summary>
+    private static void CheckThreeWayColumns(ComparisonPane pane, ListBox list, Action<string, bool, string> check)
+    {
+        DirectoryEntry? Entry(string path) => list.Items.OfType<DirectoryEntry>().FirstOrDefault(entry => entry.RelativePath.Replace('\\', '/') == path);
+        var a = Entry("a.txt"); var b = Entry("b.txt");
+        if (a is null || b is null) { check("folder columns three-way entries", false, "missing"); return; }
+        check("folder columns three-way newer file orders sides like ColNewerGet",
+            pane.FolderCellValue(a, "Newer") == "L<-R<-M" && pane.FolderCellValue(b, "Newer") == "L==R<-M",
+            pane.FolderCellValue(a, "Newer") + "|" + pane.FolderCellValue(b, "Newer"));
+        check("folder columns three-way short result and middle size",
+            pane.FolderCellValue(a, "ResultAbbr") == "差異あり" && pane.FolderCellValue(b, "ResultAbbr") == "中央にない"
+            && pane.FolderCellValue(a, "MiddleSize") == "5" && pane.FolderCellValue(b, "MiddleSize") == "" && pane.FolderCellValue(b, "MiddleAttributes") == "",
+            pane.FolderCellValue(a, "ResultAbbr") + "|" + pane.FolderCellValue(b, "ResultAbbr") + "|" + pane.FolderCellValue(a, "MiddleSize"));
+        try
+        {
+            var applied = pane.ApplyFolderColumnChoice(true, [FolderColumn.Name, FolderColumn.Newer, FolderColumn.MiddleSize, FolderColumn.ResultAbbr], reset: false);
+            Dispatcher.UIThread.RunJobs();
+            check("folder columns three-way layout is separate from two-way", applied
+                && pane.FolderColumnTitles.SequenceEqual(["名前", "日時比較", "中サイズ", "比較結果(簡易)"])
+                && pane.FolderColumnLayoutForTest(false).SequenceEqual(FolderColumnCatalog.DefaultTwoWay.Select(column => column.ToString())),
+                string.Join("|", pane.FolderColumnTitles));
+            check("folder columns three-way refuses two-way-only checks", !pane.ApplyFolderColumnChoice(false, [FolderColumn.MiddleSize], reset: false), "");
+        }
+        finally { pane.ResetFolderColumnsForTest(); Dispatcher.UIThread.RunJobs(); }
+    }
+
+    private static void Click(Button button) => button.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
 
     private static Rect Within(Control control, Visual root)
         => new(control.TranslatePoint(new Point(0, 0), root) ?? default, control.Bounds.Size);
