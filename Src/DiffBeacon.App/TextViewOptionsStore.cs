@@ -4,8 +4,8 @@ using System.Text.Json.Serialization;
 namespace DiffBeacon.App;
 
 /// <summary>
-/// 「表示」メニューの設定の保存形式。本家WinMergeの Settings/ViewWhitespace・ViewEOL・ViewLineDifferences・ViewLineNumbers・
-/// ViewSelectionMargin・ViewZoom・ShowToolbar に当たる（本家はレジストリ、ここは view-options.json）。
+/// 「表示」メニューの設定の保存形式。本家WinMergeの OptionsDef.h の Settings/ViewZoom・ViewWhitespace・ViewEOL・HiliteWordDiff・
+/// ViewLineNumbers・ViewFileMargin・ShowToolbar に当たる（本家はレジストリ、ここは view-options.json。本家の ViewZoom は千分率、ここは1ポイント単位の段数）。
 /// 省略した項目は既定値（本家と同じく空白・改行は表示しない、行内差異は表示する。行番号・マージン・ツールバーは DiffBeacon の従来どおり表示する）。
 /// 位置引数ではなく初期値付きのプロパティにしているのは、{} や項目の欠けた設定でも既定値が true の項目を false にしないため。
 /// </summary>

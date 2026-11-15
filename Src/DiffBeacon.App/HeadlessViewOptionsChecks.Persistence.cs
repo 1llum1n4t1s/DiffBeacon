@@ -1,7 +1,11 @@
 using System.Text;
 using System.Text.Json;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
+using Avalonia.Input;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 
 namespace DiffBeacon.App;
 
@@ -119,15 +123,33 @@ internal static partial class HeadlessViewOptionsChecks
         // 壊れた設定でウィンドウを開くと既定の表示で始まり、開いただけではファイルを上書きしない。
         var broken = Seed(folder, "broken-window.json", "{\"zoomSteps\":999,\"viewWhitespace\":true}");
         var brokenBytes = File.ReadAllBytes(broken);
-        var window = OpenWindow(new TextViewOptionsStore(broken));
+        var brokenStore = new TextViewOptionsStore(broken);
+        MainWindow? window = null;
         try
         {
+            window = OpenWindow(brokenStore);
             var pane = window.SessionPanes[0];
             check("view settings broken file opens a window with defaults without rewriting", Near(pane.DiffEditor(0).FontSize, 13) && !pane.DiffEditor(0).Options.ShowSpaces
                 && window.FrameToolbarVisible && window.TextViewOptionsStorage.SaveAttemptCount == 0 && brokenBytes.SequenceEqual(File.ReadAllBytes(broken)),
                 $"font={pane.DiffEditor(0).FontSize} saves={window.TextViewOptionsStorage.SaveAttemptCount}");
+            // 起動時に他の設定と同じ「表示・操作設定」の知らせへ理由を出し、閉じるボタンで閉じられる（後続の検証へ開いたまま残さない）。
+            for (var i = 0; i < 5; i++) Dispatcher.UIThread.RunJobs();
+            var dialogs = window.OwnedWindows.Where(item => item.IsVisible).ToArray();
+            var notice = dialogs.SingleOrDefault(item => item.Title == "表示・操作設定");
+            var message = notice is null ? "" : string.Join("\n", notice.GetVisualDescendants().OfType<TextBlock>().Select(item => item.Text));
+            var closed = false;
+            if (notice?.GetVisualDescendants().OfType<Button>().SingleOrDefault(item => Equals(item.Content, "閉じる")) is { } ok
+                && ok.TranslatePoint(new Point(ok.Bounds.Width / 2, ok.Bounds.Height / 2), notice) is { } point)
+            {
+                notice.MouseDown(point, MouseButton.Left); notice.MouseUp(point, MouseButton.Left);
+                for (var i = 0; i < 5; i++) Dispatcher.UIThread.RunJobs();
+                closed = !notice.IsVisible && window.OwnedWindows.Count(item => item.IsVisible) == 0;
+            }
+            check("view settings broken file shows the reason at startup", dialogs.Length == 1 && brokenStore.Diagnostic is { } diagnostic
+                && message.Contains(diagnostic, StringComparison.Ordinal) && closed && brokenBytes.SequenceEqual(File.ReadAllBytes(broken)),
+                $"dialogs={dialogs.Length} closed={closed} message={message}");
         }
-        finally { Close(window); }
+        finally { if (window is not null) Close(window); }
     }
 
     /// <summary>
@@ -137,10 +159,11 @@ internal static partial class HeadlessViewOptionsChecks
     {
         var path = Seed(folder, "readonly.json", "{\"zoomSteps\":1}");
         var before = File.ReadAllBytes(path);
-        File.SetAttributes(path, File.GetAttributes(path) | FileAttributes.ReadOnly);
-        var window = OpenWindow(new TextViewOptionsStore(path));
+        MainWindow? window = null;
         try
         {
+            File.SetAttributes(path, File.GetAttributes(path) | FileAttributes.ReadOnly);
+            window = OpenWindow(new TextViewOptionsStore(path));
             var pane = window.SessionPanes[0];
             Click(MenuOption(window, "view-whitespace"));
             check("view settings read-only file reports the failure and keeps the shown change", window.TextViewOptionsStorage.LastSaveResult == false
@@ -150,7 +173,7 @@ internal static partial class HeadlessViewOptionsChecks
         }
         finally
         {
-            Close(window);
+            if (window is not null) Close(window);
             // 自作 fixture の読取り専用は、片付けの前に原状へ戻す。
             File.SetAttributes(path, File.GetAttributes(path) & ~FileAttributes.ReadOnly);
         }
