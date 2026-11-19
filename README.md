@@ -1,6 +1,6 @@
 # DiffBeacon
 
-WinMerge を基にした、ファイル・フォルダー比較アプリです。C# / .NET 11 / Avalonia UI への移植を進めています。**WinMerge の全機能との互換性はまだ完成していません。** 対応状況は [移行一覧](Docs/MIGRATION.md) を参照してください。
+WinMerge を基にした、ファイル・フォルダー比較アプリです。C# / .NET 11（SDK 11.0.100）/ Avalonia 12.1.6 への移植を進めています。**WinMerge の全機能との互換性はまだ完成していません。** 対応状況は [移行一覧](Docs/MIGRATION.md) を参照してください。
 
 ## 使い方
 

@@ -8,7 +8,7 @@
 
 ## 必須の検証
 
-.NET 11 SDK（`global.json`）と PowerShell 7 を使う。E2E のアーカイブ独立検証には Python 3 と、固定した公式Z decoderをビルドする既存MSVC（Windows）／clang（macOS）も必要。C／compilerは製品や通常.NET buildの依存ではない。実行ファイルの指定方法は [E2E の手順](tests/DiffBeacon.E2E/README.md) を参照する。
+.NET 11 SDK 11.0.100（runtime 11.0.0、`global.json`）と PowerShell 7 を使う。UI は Avalonia 12.1.6。E2E のアーカイブ独立検証には Python 3 と、固定した公式Z decoderをビルドする既存MSVC（Windows）／clang（macOS）も必要。C／compilerは製品や通常.NET buildの依存ではない。実行ファイルの指定方法は [E2E の手順](tests/DiffBeacon.E2E/README.md) を参照する。
 
 コード変更後の検証は二段階に分ける。全体E2E・全体UI自己検証は長時間かかるため、毎回のローカル実行を求めない。
 

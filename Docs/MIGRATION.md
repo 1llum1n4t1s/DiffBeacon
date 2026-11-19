@@ -1,5 +1,7 @@
 # .NET 11 / Avalonia 移行の到達点
 
+現行のビルド対象は TFM `net11.0`、.NET SDK 11.0.100、runtime 11.0.0、Avalonia 12.1.6 です。本文中の SDK 10.0.x や .NET 10.0.x は、その日付の検証で実際に使った版の記録であり、今の対象ではありません。
+
 ## 本家WinMerge風の表示メニューの設定の保存（2026-11-15、段階13・限定検証）
 
 段階12の「表示」メニューの本文の設定（拡大/縮小・空白・改行・行内差異・行番号・マージン）と「ツールバー」の表示を、本家がレジストリ（OptionsDef.h の Settings/ViewZoom・ViewWhitespace・ViewEOL・HiliteWordDiff・ViewLineNumbers・ViewFileMargin・ShowToolbar）へ保存するのと同じく、変えるたびに利用者のローカルアプリデータの `Kagayoi/DiffBeacon/view-options.json` へ保存し、次の起動で復元する（`TextViewOptionsStore`）。
