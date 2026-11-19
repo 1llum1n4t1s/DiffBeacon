@@ -98,6 +98,14 @@ public sealed partial class MainWindow
         _sessions.Add(item); _tabs.ItemsSource = _sessions.ToArray();
     }
 
+    /// <summary>セッションタブの×を押す。見出しは作成したパネルから取る。</summary>
+    internal void ClickSessionClose(ComparisonPane pane)
+    {
+        var item = _sessions.First(tab => ReferenceEquals(tab.Content, pane));
+        var button = ((Panel)item.Header!).Children.OfType<Button>().First();
+        button.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+    }
+
     // タブの×ボタンと、本家の「ウィンドウ > 閉じる (Ctrl+W)」で共通に使う。未保存なら確認してから閉じる。
     private async Task<bool> CloseSessionAsync(TabItem item)
     {

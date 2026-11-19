@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
 using DiffBeacon.Core;
 
@@ -82,8 +83,7 @@ internal static class HeadlessBinaryRangeEditChecks
                     if (change == "save") pump(panel.SaveToAsync(1, Path.Combine(folder, "stale-save.bin")));
                     if (change == "disposed")
                     {
-                        var tab = window.GetVisualDescendants().OfType<TabControl>().SelectMany(control => control.Items.OfType<TabItem>()).Single(item => ReferenceEquals(item.Content, pane));
-                        ((StackPanel)tab.Header!).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        window.ClickSessionClose(pane);
                     }
                     Accept(dialog);
                 };
@@ -181,7 +181,7 @@ internal static class HeadlessBinaryRangeEditChecks
             foreach (var item in snapshots) { writer.WriteStartObject(); writer.WriteString("name", item.Name); writer.WriteStartArray("hex"); foreach (var hex in item.Hex) writer.WriteStringValue(hex); writer.WriteEndArray(); writer.WriteEndObject(); } writer.WriteEndArray(); writer.WriteEndObject();
         }
         finally { BinaryRangeDialog.Shown = null; foreach (var pane in window.SessionPanes) pane.DiscardChanges(); }
-        ComparisonPane Add(bool three) { var pane = window.AddSession(); pane.ApplyProject(new() { Mode = "Binary", LeftPath = files[0], BasePath = three ? files[1] : "", RightPath = files[2] }); pump(pane.ComparePathsAsync()); return pane; }
+        ComparisonPane Add(bool three) { var pane = window.AddSession(); pane.ApplyProject(new() { Mode = "Binary", LeftPath = files[0], BasePath = three ? files[1] : "", RightPath = files[2] }); pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs(); return pane; }
         ArchiveProjectInput Input(int side) => new() { RootPath = roots[side], RootSha256 = hashes[side], EntryChain = [], LeafEntry = "leaf.bin", InheritedReadOnly = false };
         void Respond(long start, string hex, long count) => BinaryRangeDialog.Shown = dialog => { dialog.Offset.Text = start.ToString(System.Globalization.CultureInfo.InvariantCulture); dialog.Count.Text = count.ToString(System.Globalization.CultureInfo.InvariantCulture); dialog.Hex.Text = hex; Accept(dialog); };
         void Report(string name, bool pass) { try { check("Binary Range " + name, pass, "real controls and full bytes"); } catch (InvalidOperationException) { } }
@@ -189,7 +189,9 @@ internal static class HeadlessBinaryRangeEditChecks
     private static void Edit(SpecializedViews.BinaryPanel panel, int side, BinaryRangeKind kind, long start, string hex, long count = 0) => panel.EditRange(side, new(kind, start, count, hex));
     private static byte[][] Bytes(SpecializedViews.BinaryPanel panel) => panel.ProjectSides.Select(side => panel.CaptureApplied(side).CopyBytes()).ToArray();
     private static bool Equal(SpecializedViews.BinaryPanel panel, byte[][] expected) => Bytes(panel).Zip(expected).All(pair => pair.First.SequenceEqual(pair.Second));
-    private static SpecializedViews.BinaryPanel Binary(ComparisonPane pane) => pane.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().Single();
+    private static SpecializedViews.BinaryPanel Binary(ComparisonPane pane)
+        => pane.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().FirstOrDefault()
+            ?? pane.GetLogicalDescendants().OfType<SpecializedViews.BinaryPanel>().Single();
     private static void Click(SpecializedViews.BinaryPanel panel, int side, BinaryRangeKind kind) { panel.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, (side switch { 0 => "左", 1 => "中央", _ => "右" }) + " " + BinaryRangeDialog.Label(kind))).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs(); }
     private static void Accept(BinaryRangeDialog dialog) => dialog.Accept.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
     private static bool Refused(Action action) { try { action(); return false; } catch (Exception error) when (error is InvalidOperationException or InvalidDataException or ArgumentException or FormatException or OperationCanceledException or ObjectDisposedException) { return true; } }

@@ -5,6 +5,7 @@ using Avalonia.Headless;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
 using DiffBeacon.Core;
 
@@ -295,8 +296,7 @@ internal static class HeadlessBinaryThreeWayChecks
                     if (kind == "operation") pane.ApplyProject(pane.CaptureProject());
                     if (kind == "disposed")
                     {
-                        var tab = window.GetVisualDescendants().OfType<TabControl>().SelectMany(control => control.Items.OfType<TabItem>()).Single(item => ReferenceEquals(item.Content, pane));
-                        ((StackPanel)tab.Header!).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        window.ClickSessionClose(pane);
                     }
                 };
                 _ = Refused(() => pump(pane.ComparePathsAsync())); pane.ImageReadyForAdoption = null;
@@ -314,7 +314,9 @@ internal static class HeadlessBinaryThreeWayChecks
     }
     private static void SetFirst(SpecializedViews.BinaryPanel panel, int side, byte value) { var bytes = panel.Capture(side).CopyBytes(); bytes[0] = value; panel.Editor(side).Text = Convert.ToHexString(bytes); panel.Apply(side); }
     private static bool AllBytes(SpecializedViews.BinaryPanel panel, byte[][] expected) => Enumerable.Range(0, 3).All(side => panel.Capture(side).CopyBytes().SequenceEqual(expected[side]));
-    private static SpecializedViews.BinaryPanel Binary(ComparisonPane value) => value.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().Single();
+    private static SpecializedViews.BinaryPanel Binary(ComparisonPane value)
+        => value.GetVisualDescendants().OfType<SpecializedViews.BinaryPanel>().FirstOrDefault()
+            ?? value.GetLogicalDescendants().OfType<SpecializedViews.BinaryPanel>().Single();
     private static void Click(SpecializedViews.BinaryPanel panel, string title) { panel.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, title)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs(); }
     private static async Task Wait(Func<bool> ready) { for (var index = 0; index < 2000; index++) { if (ready()) return; await Task.Delay(5); } throw new TimeoutException("central save button did not complete"); }
     private static string Hash(string path) => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));

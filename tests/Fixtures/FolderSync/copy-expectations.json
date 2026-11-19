@@ -2863,8 +2863,8 @@
           "branch/same.bin": "55",
           "right-only.bin": "b0",
           "filtered-dir/deep/leaf.bin": "4567",
-          "conflict/c.bin": "cb",
-          "reverse-conflict": "db",
+          "conflict": "ca",
+          "reverse-conflict/c.bin": "da",
           "size-side.bin": "020304"
         },
         "leftDirs": [
@@ -2883,16 +2883,18 @@
           "unique-R",
           "filtered-dir",
           "filtered-dir/deep",
-          "conflict"
+          "reverse-conflict"
         ],
         "readonly": [
           "left/same.bin"
         ]
       },
-      "exit": 2,
+      "exit": 0,
       "json": false,
       "operations": [],
-      "changedDirectories": [],
+      "changedDirectories": [
+        "reverse-conflict"
+      ],
       "emptyDirectoryMtimes": []
     },
     {
