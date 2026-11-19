@@ -17,7 +17,7 @@
 
 以下の各項目にある「全体E2E」「全体UI自己検証」「限定実行は全体E2Eの代替にしない」は、2の実行を指す。完了報告ではローカルの限定実行とCIの全体結果を区別し、CIを確認していなければ未確認と書く。全体を実行する場合はリポジトリルートで次を使う。
 
-開発出力の作業rootは各ツールの既定の一時フォルダー配下の `Codex/DiffBeacon` を基準にする。このPCでは Git 管理外の `Directory.Build.local.props` の `DiffBeaconWorkRoot` を正本とし、設定が無いcheckoutでは暗黙のfallbackをせずエラーにする。WindowsのTEMPはStorage Senseが実行中の成果物を削除し得るため、正本はTEMP外（`D:\tmp\Codex\DiffBeacon`）に置く。ビルド・E2E・自己検証・発行は [開発出力の起動経路](Docs/DEVELOPMENT.md#開発出力の起動経路) の `build/Dev.ps1` を使い、bin/obj/AOT・fixture・結果・log・TEMP/TMPを明示runへ集約する。CI等へこのPCの設定を強要しない。
+開発出力の作業rootは各ツールの既定の一時フォルダー配下の `Codex/DiffBeacon` を基準にする。このPCでは Git 管理外の `Directory.Build.local.props` の `DiffBeaconWorkRoot` を正本とし、設定が無いcheckoutでは暗黙のfallbackをせずエラーにする。このPCの値は `%TEMP%\Codex\DiffBeacon`（一時物は%TEMP%に統一する方針。Storage Senseが整理し得るため成果物はrun単位で作り直せる前提にする）。ビルド・E2E・自己検証・発行は [開発出力の起動経路](Docs/DEVELOPMENT.md#開発出力の起動経路) の `build/Dev.ps1` を使い、bin/obj/AOT・fixture・結果・log・TEMP/TMPを明示runへ集約する。CI等へこのPCの設定を強要しない。
 
 ```powershell
 . ./build/DevelopmentOutput.ps1
