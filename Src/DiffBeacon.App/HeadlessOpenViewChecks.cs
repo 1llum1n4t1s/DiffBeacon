@@ -62,6 +62,13 @@ internal static class HeadlessOpenViewChecks
                 check($"open view swap {index} exchanges only its pair", actual == expected, actual);
             }
         }
+        pane.LeftPath.Text = "L"; pane.RightPath.Text = "R"; pane.BasePath.Text = "B";
+        var swapMenu = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "表示(_V)")
+            .Items.OfType<MenuItem>().First(item => item.Header as string == "ペインの交換(_W)");
+        swapMenu.Items.OfType<MenuItem>().First().RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        Dispatcher.UIThread.RunJobs();
+        check("view menu swaps the first and second paths", pane.LeftPath.Text == "R" && pane.RightPath.Text == "L" && pane.BasePath.Text == "B",
+            $"{pane.LeftPath.Text}|{pane.RightPath.Text}|{pane.BasePath.Text}");
         pane.LeftPath.Text = ""; pane.RightPath.Text = ""; pane.BasePath.Text = "";
 
         // 参照ボタンは本家の分割ボタンと同じく、ファイルとフォルダーを選べる。

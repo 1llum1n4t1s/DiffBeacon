@@ -41,7 +41,7 @@ internal static partial class HeadlessViewOptionsChecks
         var view = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "表示(_V)");
         var headers = view.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("view menu lists the WinMerge text view options", headers.SequenceEqual(["拡大/縮小(_Z)", "空白を表示(_V)", "改行を表示(_O)", "行内差異を表示(_W)", "行番号を表示(_N)",
-            "マージンを表示(_M)", "ツールバー(_T)", "ステータス バー(&S)", "Diff ペイン(&P)", "ロケーション ペイン(&C)", "ダーク テーマ(_D)", "最新の情報に更新"]), string.Join("|", headers));
+            "マージンを表示(_M)", "ツールバー(_T)", "ステータス バー(&S)", "Diff ペイン(&P)", "ロケーション ペイン(&C)", "ペインの交換(_W)", "ダーク テーマ(_D)", "最新の情報に更新"]), string.Join("|", headers));
         var zoomMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "拡大/縮小(_Z)");
         var zoomItems = zoomMenu.Items.OfType<MenuItem>().ToArray();
         // メニューに出るキーの文字は、テーマのメニュー項目が使う変換（PlatformKeyGestureConverter）を通した文字列で確かめる。

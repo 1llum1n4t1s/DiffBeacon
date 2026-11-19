@@ -115,6 +115,10 @@ public sealed partial class MainWindow
             statusVisible,
             diffPaneVisible,
             locationVisible,
+            Popup("ペインの交換(_W)",
+                Item("1 番目と 2 番目を交換", null, () => ActivePane.SwapInputsAsync(ActivePane.LeftPath, ActivePane.RightPath)),
+                Item("2 番目と 3 番目を交換", null, () => ActivePane.SwapInputsAsync(ActivePane.RightPath, ActivePane.BasePath)),
+                Item("1 番目と 3 番目を交換", null, () => ActivePane.SwapInputsAsync(ActivePane.LeftPath, ActivePane.BasePath))),
             darkTheme,
             Separator(),
             Pane("最新の情報に更新", "F5", FrameCommand.Refresh)));

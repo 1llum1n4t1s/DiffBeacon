@@ -63,7 +63,7 @@ public sealed partial class ComparisonPane
         var swap = new Button { Content = "⇅", Width = 22, Height = 20, Padding = new Thickness(0), FontSize = 11,
             HorizontalContentAlignment = HorizontalAlignment.Center, VerticalContentAlignment = VerticalAlignment.Center };
         ToolTip.SetTip(swap, swapLabel);
-        swap.Click += (_, _) => (first.Text, second.Text) = (second.Text, first.Text);
+        swap.Click += async (_, _) => await SwapInputsAsync(first, second);
         var swapRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
         swapRow.Children.Add(swap);
         swapRow.Children.Add(new TextBlock { Text = swapLabel, FontSize = 12, Foreground = WinMergeColors.FrameText, VerticalAlignment = VerticalAlignment.Center });
@@ -76,6 +76,16 @@ public sealed partial class ComparisonPane
         Grid.SetColumn(browse, 1); body.Children.Add(browse);
         return Group(header, body, swapRow);
     }
+
+    /// <summary>二つの入力欄を入れ替える。両方のパスが実在するときだけ、いまの比較をやり直す。</summary>
+    internal async Task SwapInputsAsync(TextBox first, TextBox second)
+    {
+        (first.Text, second.Text) = (second.Text, first.Text);
+        if (Exists(first.Text) && Exists(second.Text)) await ComparePathsAsync();
+    }
+
+    /// <summary>空でない実在パスか。</summary>
+    private static bool Exists(string? path) => !string.IsNullOrWhiteSpace(path) && (File.Exists(path) || Directory.Exists(path));
 
     private MenuItem BrowseItem(string header, TextBox box, bool folder)
     {
