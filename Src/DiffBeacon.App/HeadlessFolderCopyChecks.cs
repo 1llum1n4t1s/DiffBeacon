@@ -34,6 +34,7 @@ internal static partial class HeadlessFolderCopyChecks
         var closedTabs = 0;
         try
         {
+            RunKindReplacement(output, check);
             foreach (var toRight in new[] { true, false }) foreach (var all in new[] { true, false })
                 Case($"normal-{(toRight ? "L" : "R")}-{(all ? "all" : "diff")}", toRight, all, ["a.bin", "same.bin", "empty"],
                     all ? ["a.bin", "same.bin"] : ["a.bin"]);

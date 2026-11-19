@@ -52,7 +52,7 @@ public static partial class FolderOperations
         foreach (var entry in plan.Entries)
         {
             destinationState[entry.DestinationPath] = entry.Destination;
-            expectedKinds[entry.DestinationPath] = entry.Kind;
+            expectedKinds[entry.DestinationPath] = entry.ReplacesDifferentKind ? entry.Destination!.Kind : entry.Kind;
             destinationOwners[entry.DestinationPath] = entry;
             for (var parent = Path.GetDirectoryName(entry.DestinationPath); parent is not null; parent = Path.GetDirectoryName(parent))
             {
@@ -86,7 +86,7 @@ public static partial class FolderOperations
                     throw new IOException($"確認後にコピー先の状態が変わっています: {target.Key}");
                 ValidateDestinationKind(target.Key, target.Value, expectedKinds[target.Key],
                     SameOrInside(target.Key, plan.DestinationRoot) || target.Value is null);
-                if (preflightEntry is { Kind: DirectoryEntryKind.File } owner && PathComparer.Equals(target.Key, owner.DestinationPath))
+                if (preflightEntry is { Kind: DirectoryEntryKind.File, ReplacesDifferentKind: false } owner && PathComparer.Equals(target.Key, owner.DestinationPath))
                 {
                     await RequireDestinationStreamsAsync(owner, budget, token).ConfigureAwait(false);
                     RequireDestinationCapability(owner, token);
@@ -127,6 +127,7 @@ public static partial class FolderOperations
                 Guard(token, validateContext);
                 RequireSourcePathMetadata(entry, sourceState, token, validateContext);
                 windows?.RequireSourceChain(entry.SourcePath, token, validateContext);
+                ReplaceDifferentKind(entry, destinationState, expectedKinds, item, plan, token, validateDestination, validateContext, Publish, windows);
                 ValidateDestinationChain(entry.DestinationPath, plan.DestinationRoot, destinationState, token, validateDestination, validateContext, windows);
                 if (entry.Kind == DirectoryEntryKind.Directory)
                 {
@@ -228,6 +229,75 @@ public static partial class FolderOperations
         }
         return new(results, null, false, mutation.Mutated, budget.ReadBytes, budget.WriteBytes,
                 budget.MetadataRetainedBytes, budget.MetadataQueryBytes, budget.MetadataNativeOperations);
+    }
+
+    /// <summary>コピー先が逆の種別なら、公開前にその項目だけを削除して「無い」状態へ戻す。</summary>
+    private static void ReplaceDifferentKind(FolderCopyEntry entry, Dictionary<string, FolderCopySnapshot?> state,
+        Dictionary<string, DirectoryEntryKind> expectedKinds, CopyMutation item, FolderCopyPlan plan,
+        CancellationToken token, Action<string>? validateDestination, Action? validateContext,
+        Action<string, Action> publish, WindowsExecutionState? windows)
+    {
+        if (!entry.ReplacesDifferentKind) return;
+        Guard(token, validateContext);
+        RequireSnapshot(entry.DestinationPath, entry.Destination);
+        publish(entry.DestinationPath, () =>
+        {
+            DeleteReplacedDestination(entry.DestinationPath, entry.Destination!.Kind, plan.Limits.MaximumEntries);
+            item.Mutated = true;
+        });
+        state[entry.DestinationPath] = null;
+        expectedKinds[entry.DestinationPath] = entry.Kind;
+        windows?.ForgetReplaced(entry.DestinationPath);
+        var parent = Path.GetDirectoryName(entry.DestinationPath);
+        if (parent is null) return;
+        if (windows is null) RefreshDestinationState(parent, state);
+        else windows.RefreshKnownParentMtime(parent, token, validateContext);
+    }
+
+    /// <summary>ファイル、または上限以内のディレクトリ木を消す。リンクは辿らず、消す前に件数を数える。</summary>
+    internal static void DeleteReplacedDestination(string path, DirectoryEntryKind kind, int maximumEntries)
+    {
+        RejectLinks(path);
+        if (kind == DirectoryEntryKind.File)
+        {
+            ClearReadOnly(path);
+            File.Delete(path);
+            return;
+        }
+        var files = new List<string>();
+        var directories = new List<string>();
+        var pending = new Queue<string>();
+        pending.Enqueue(path);
+        while (pending.TryDequeue(out var current))
+        {
+            RejectLinks(current);
+            directories.Add(current);
+            foreach (var child in Directory.EnumerateFileSystemEntries(current))
+            {
+                if (files.Count + directories.Count >= maximumEntries)
+                    throw new IOException($"置き換えるディレクトリの項目数が上限を超えています: {path}");
+                RejectLinks(child);
+                if ((File.GetAttributes(child) & FileAttributes.Directory) != 0) pending.Enqueue(child);
+                else files.Add(child);
+            }
+        }
+        foreach (var file in files)
+        {
+            ClearReadOnly(file);
+            File.Delete(file);
+        }
+        foreach (var directory in directories.OrderByDescending(item => item.Length))
+        {
+            ClearReadOnly(directory);
+            Directory.Delete(directory, recursive: false);
+        }
+    }
+
+    /// <summary>読み取り専用のままでは削除できない項目の属性を外す。</summary>
+    private static void ClearReadOnly(string path)
+    {
+        var attributes = File.GetAttributes(path);
+        if ((attributes & FileAttributes.ReadOnly) != 0) File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
     }
 
     private static void Guard(CancellationToken token, Action? validateContext)

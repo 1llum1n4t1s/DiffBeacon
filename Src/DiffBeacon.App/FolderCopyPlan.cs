@@ -44,7 +44,8 @@ public sealed class FolderCopyEntry
     internal FolderCopyEntry(string relativePath, string sourcePath, string destinationPath,
         FolderCopySnapshot source, FolderCopySnapshot? destination, FolderCopyStreamSet? sourceStreams,
         FolderCopyStreamSet? destinationStreams, bool destinationSupportsNamedStreams, IEnumerable<string> children,
-        FolderCopyWindowsMetadata? sourceWindowsMetadata = null, FolderCopyWindowsMetadata? destinationWindowsMetadata = null)
+        FolderCopyWindowsMetadata? sourceWindowsMetadata = null, FolderCopyWindowsMetadata? destinationWindowsMetadata = null,
+        bool replacesDifferentKind = false)
     {
         RelativePath = relativePath;
         SourcePath = sourcePath;
@@ -57,6 +58,7 @@ public sealed class FolderCopyEntry
         Children = Array.AsReadOnly(children.ToArray());
         SourceWindowsMetadata = sourceWindowsMetadata;
         DestinationWindowsMetadata = destinationWindowsMetadata;
+        ReplacesDifferentKind = replacesDifferentKind;
     }
 
     public string RelativePath { get; }
@@ -76,6 +78,8 @@ public sealed class FolderCopyEntry
     public IReadOnlyList<string> Children { get; }
     internal FolderCopyWindowsMetadata? SourceWindowsMetadata { get; }
     internal FolderCopyWindowsMetadata? DestinationWindowsMetadata { get; }
+    /// <summary>コピー先が逆の種別（ファイルとディレクトリ）のとき、公開前にその項目を削除する。</summary>
+    public bool ReplacesDifferentKind { get; }
 }
 
 public sealed class FolderCopyPlan

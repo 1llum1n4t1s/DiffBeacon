@@ -113,6 +113,8 @@ public static partial class FolderOperations
 
     private static async Task RequireDestinationStreamsAsync(FolderCopyEntry entry, CopyBudget budget, CancellationToken token)
     {
+        // 種別の違う項目は削除済みで、ファイルのストリームとしては照合しない。
+        if (entry.ReplacesDifferentKind) return;
         RequireSnapshot(entry.DestinationPath, entry.Destination);
         if (entry.Destination is { } destination)
             await RequireFileStreamsAsync(entry.DestinationPath, destination, entry.DestinationStreams!,

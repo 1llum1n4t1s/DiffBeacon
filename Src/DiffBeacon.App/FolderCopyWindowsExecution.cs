@@ -110,6 +110,9 @@ public static partial class FolderOperations
             basicState[path] = basic;
         }
 
+        /// <summary>ファイルとディレクトリを置き換えたあと、消した項目の metadata を期待値から外す。</summary>
+        internal void ForgetReplaced(string path) => _destination.Remove(path);
+
         internal void AdoptPublishedFile(string path, FolderCopyWindowsMetadata metadata, Dictionary<string, FolderCopySnapshot?> basicState)
         {
             _budget.ReserveRetainedBytes(128); // 新規publication state/basic DTO。metadata配列はlease参照を共有。

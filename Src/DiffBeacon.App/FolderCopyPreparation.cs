@@ -73,7 +73,11 @@ public static partial class FolderOperations
                     throw new IOException("コピー元とコピー先の対象が重なっています。");
                 var snapshot = ReadSourceSnapshot(source) ?? throw new FileNotFoundException("コピー元がありません。", source);
                 var target = ReadSnapshot(destination);
-                ValidateDestinationKind(destination, target, snapshot.Kind);
+                var replacesDifferentKind = target is not null && target.Kind != snapshot.Kind;
+                // 種別が違う項目は、その項目の書き込み可否だけを見て、実行時に削除してからコピーする。
+                ValidateDestinationKind(destination, target, replacesDifferentKind ? target!.Kind : snapshot.Kind);
+                if (replacesDifferentKind && OperatingSystem.IsWindows() && (target!.Attributes & FileAttributes.Encrypted) != 0)
+                    throw new NotSupportedException("EFS コピー先の暗号化を保持する置換経路は未実装です。");
                 CaptureDestinationParents(destinationRoot, destination, parents);
                 if (usesWindowsMetadata)
                 {
@@ -101,14 +105,15 @@ public static partial class FolderOperations
                     if (OperatingSystem.IsWindows() && target is not null && (target.Attributes & FileAttributes.Encrypted) != 0)
                         throw new NotSupportedException("EFS コピー先の暗号化を保持する置換経路は未実装です。");
                     var sourceLayout = ReadPlannedStreamLayout(source, snapshot.Size, budget, token);
-                    var destinationLayout = target is null ? null : ReadPlannedStreamLayout(destination, target.Size, budget, token);
+                    // ディレクトリをファイルで置き換えるときは、ディレクトリの中をストリームとして読まない。
+                    var destinationLayout = target is null || replacesDifferentKind ? null : ReadPlannedStreamLayout(destination, target.Size, budget, token);
                     destinationSupportsNamedStreams = ReadDestinationCapability(destination, token);
                     if (sourceLayout.Streams.Count > 1 && !destinationSupportsNamedStreams)
                         throw new NotSupportedException("コピー先は名前付きストリームに対応していません。");
                     // 全streamの予定量を予約してから内容を読む。0byte ADSもdescriptor/nameへ計上する。
                     budget.ReserveFile(StreamLayoutBytes(sourceLayout), destinationLayout is null ? 0 : StreamLayoutBytes(destinationLayout));
                     sourceStreams = await CaptureFileStreamsAsync(source, snapshot, sourceLayout, budget, token).ConfigureAwait(false);
-                    if (target is not null)
+                    if (target is not null && !replacesDifferentKind)
                         destinationStreams = await CaptureFileStreamsAsync(destination, target, destinationLayout!, budget, token).ConfigureAwait(false);
                     RequireSnapshot(destination, target);
                 }
@@ -122,7 +127,8 @@ public static partial class FolderOperations
                 entries.Add(new(current, source, destination, snapshot, target, sourceStreams, destinationStreams,
                     destinationSupportsNamedStreams, children,
                     usesWindowsMetadata ? sourceWindowsMetadata[source] : null,
-                    usesWindowsMetadata && target is not null ? destinationWindowsMetadata[destination] : null));
+                    usesWindowsMetadata && target is not null && !replacesDifferentKind ? destinationWindowsMetadata[destination] : null,
+                    replacesDifferentKind));
             }
         }
         // 重複した子選択が先に来ても、親を先に実行する順序に固定する。
