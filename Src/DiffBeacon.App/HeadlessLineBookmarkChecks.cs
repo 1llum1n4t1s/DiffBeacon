@@ -160,6 +160,14 @@ internal static class HeadlessLineBookmarkChecks
             Click("line-bookmark-next");
             Verify("CR-only bookmark navigation lands on the second line", CaretLine(pane.LeftEditor) == 1, $"line={CaretLine(pane.LeftEditor)}; summary={SummaryText()}");
             Click("line-bookmark-clear-all");
+            pane.LeftEditor.Text = "one\r\ntwo\r\nthree";
+            FocusLine(0, 2);
+            Click("line-bookmark-toggle");
+            Verify("CRLF text bookmarks the third line", SummaryText().Contains("左: 行 3", StringComparison.Ordinal), SummaryText());
+            FocusLine(0, 0);
+            Click("line-bookmark-next");
+            Verify("CRLF bookmark navigation lands on the third line", CaretLine(pane.LeftEditor) == 2, $"line={CaretLine(pane.LeftEditor)}; summary={SummaryText()}");
+            Click("line-bookmark-clear-all");
         }
         finally
         {
