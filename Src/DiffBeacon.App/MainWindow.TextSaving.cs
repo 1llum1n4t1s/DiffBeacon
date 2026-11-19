@@ -83,7 +83,7 @@ public sealed partial class ComparisonPane
             if (snapshot.IsBinary)
             {
                 _workingDocumentStale = true;
-                _status.Text = "別tabでBinary作業版が保存されています。Text本文と未保存の編集は保持しています。形式を選んで開き直してください。";
+                _status.Text = UiText.Say("別tabでBinary作業版が保存されています。Text本文と未保存の編集は保持しています。形式を選んで開き直してください。");
                 continue;
             }
             if (IndependentText ? TextDirty(side) : side != 1 && HasArchiveDraft(right)) continue;
@@ -260,7 +260,7 @@ public sealed partial class ComparisonPane
             else _lastPackageComparison = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
             RefreshTextReadOnly(); _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
             UpdateEditorLayout(ProjectInputs.HasBase(_projectMetadata));
-            _status.Text = $"保存しました: {target}";
+            _status.Text = UiText.Say($"保存しました: {target}");
         }
         finally { if (ReferenceEquals(_textSaveOperation, operation)) _textSaveOperation = null; }
     }

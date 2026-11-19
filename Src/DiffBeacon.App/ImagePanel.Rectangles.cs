@@ -393,7 +393,7 @@ public static partial class SpecializedViews
                 if (_disposed || _generation != generation || _rectangleEpoch != epoch || _readOnly[pane]) throw new OperationCanceledException(token);
                 _floatingPayload = owned; _floatingPane = pane; _floatingX = _floatingY = 0; _floatingBitmap = bitmap; bitmap = null!;
                 _editPane.SelectedIndex = pane; _rectangleGrids[pane].Focus(); UpdateRectangleVisuals(); UpdateEditControls();
-                _status.Text = "貼り付け画像をドラッグで移動できます。Enterで確定、Escapeで取消します。";
+                _status.Text = UiText.Say("貼り付け画像をドラッグで移動できます。Enterで確定、Escapeで取消します。");
             }
             finally { bitmap?.Dispose(); }
         }

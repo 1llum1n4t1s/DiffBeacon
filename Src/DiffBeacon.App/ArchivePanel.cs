@@ -223,7 +223,7 @@ public sealed class ArchivePanel : UserControl, IDisposable
             _leftManifest = left.Manifest; _rightManifest = right.Manifest;
             Rows = candidate; EntryList.ItemsSource = Rows; _preview.Text = "";
             RefreshWorkingRows();
-            _status.Text = $"{left.Manifest.Format} / {right.Manifest.Format}: {Rows.Count} 項目、差分 {Rows.Count(row => row.Status != "Equal")} 件。格納名・型・サイズ・SHA-256で比較します。暗号化アーカイブはパスワードを入力して再比較してください。再梱包の出力は暗号化されません。全件展開は選択した親フォルダー内の新しいフォルダーへ保存します。";
+            _status.Text = UiText.Say($"{left.Manifest.Format} / {right.Manifest.Format}: {Rows.Count} 項目、差分 {Rows.Count(row => row.Status != "Equal")} 件。格納名・型・サイズ・SHA-256で比較します。暗号化アーカイブはパスワードを入力して再比較してください。再梱包の出力は暗号化されません。全件展開は選択した親フォルダー内の新しいフォルダーへ保存します。");
         }
         catch (Exception exception) when (exception is not OutOfMemoryException && version != _refreshVersion) { }
         finally { if (leftPasswords is not null) Array.Clear(leftPasswords); if (rightPasswords is not null) Array.Clear(rightPasswords); if (ReferenceEquals(_operation, operation)) _operation = null; }

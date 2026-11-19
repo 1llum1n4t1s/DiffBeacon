@@ -144,7 +144,12 @@ public sealed partial class FileFilter
         if (RequiresFolderComparisonContext) throw new InvalidOperationException("FullPath 式にはフォルダー比較側の context が必要です。");
         var utcModified = modified.Kind == DateTimeKind.Local ? modified.ToUniversalTime() : DateTime.SpecifyKind(modified, DateTimeKind.Utc);
         if (UsesProperties && properties is null) throw new InvalidOperationException("プロパティ式には比較側の property context が必要です。");
-        var context = new Context(relativePath.Replace('\\', '/').TrimStart('/'), isDirectory, size, utcModified, properties) { StringEnvironment = stringEnvironment, TimestampEnvironment = timestampEnvironment, LogEnvironment = logEnvironment, ListEnvironment = listEnvironment, CancellationToken = cancellationToken };
+        var normalized = relativePath.Replace('\\', '/').TrimStart('/');
+        var context = new Context(normalized, isDirectory, size, utcModified, properties)
+        {
+            StringEnvironment = stringEnvironment, TimestampEnvironment = timestampEnvironment, LogEnvironment = logEnvironment, ListEnvironment = listEnvironment, CancellationToken = cancellationToken,
+            FullPath = Path.IsPathRooted(relativePath) ? Path.GetFullPath(relativePath) : null,
+        };
         if (expression is not null) return EvaluateExpression(expression, context).ContainsTrue;
         var matched = rules.Any(rule => rule.Directory == isDirectory && !rule.Exception && rule.Matches(context));
         if (matched && rules.Any(rule => rule.Directory == isDirectory && rule.Exception && rule.Matches(context))) matched = false;
@@ -157,8 +162,9 @@ public sealed partial class FileFilter
         if (relativePath.Length > 32_768) throw new ArgumentException("フィルターパスが長すぎます。", nameof(relativePath));
         if (UsesProperties && propertyReader is null) throw new InvalidOperationException("プロパティ式には比較側の property context が必要です。");
         var paths = sideRelativePaths.Select(path => path.Replace('\\', '/').TrimStart('/')).ToArray();
+        var budget = new FilterReadBudget();
         var contexts = sides.Select((side, index) => side is null ? null : new Context(paths[index], (side.Attributes & FileAttributes.Directory) != 0,
-            side.Size, side.LastWriteTimeUtc, null) { PropertyReader = propertyReader, Attributes = side.Attributes, FullPath = side.Path, StringEnvironment = stringEnvironment, TimestampEnvironment = timestampEnvironment, LogEnvironment = logEnvironment, ListEnvironment = listEnvironment, CancellationToken = cancellationToken }).ToArray();
+            side.Size, side.LastWriteTimeUtc, null) { PropertyReader = propertyReader, Attributes = side.Attributes, FullPath = side.Path, ReadBudget = budget, StringEnvironment = stringEnvironment, TimestampEnvironment = timestampEnvironment, LogEnvironment = logEnvironment, ListEnvironment = listEnvironment, CancellationToken = cancellationToken }).ToArray();
         for (var index = 0; index < contexts.Length; index++)
             if (contexts[index] is { } context) contexts[index] = context with { ComparisonSides = contexts, ComparisonPaths = paths };
         var global = contexts.First(context => context is not null)! with
@@ -187,6 +193,7 @@ public sealed partial class FileFilter
     private static Regex MakeRegex(string pattern, bool caseSensitive, bool whole = false)
     {
         if (pattern.Length > 4096) throw new FormatException("正規表現は 4096 文字以下にしてください。");
+        PcrePattern.RejectUnsupported(pattern);
         var rewritten = PcrePattern.RewritePossessive(pattern);
         return new(whole ? "\\A(?:" + rewritten + ")\\z" : rewritten,
             RegexOptions.CultureInvariant | (caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase), RegexTimeout);
@@ -243,6 +250,10 @@ public sealed partial class FileFilter
         public FileAttributes Attributes { get; init; }
         public string? FullPath { get; init; }
         public Func<int, string, FileFilterPropertyValue>? PropertyReader { get; init; }
+        /// <summary>内容・再帰合計の遅延読取りを、一回の評価で共有する上限。</summary>
+        public FilterReadBudget ReadBudget { get; init; } = new();
+        /// <summary>同じ項目の内容と再帰合計を一度だけ読む。</summary>
+        public FilterFileCache Cache { get; init; } = new();
         public string Name => Path[(Path.LastIndexOf('/') + 1)..];
         public string Extension => System.IO.Path.GetExtension(Name).TrimStart('.');
         public string Folder => Path.Contains('/') ? Path[..Path.LastIndexOf('/')] : "";
@@ -791,6 +802,7 @@ public sealed partial class FileFilter
             return Scalar(context);
         }
         private static string FolderOf(string path) => path.Contains('/') ? path[..path.LastIndexOf('/')] : "";
+        private static FilterFactSource Facts(Context context) => new(context.FullPath, context.Directory, context.Size, context.Modified, context.ReadBudget, context.Cache);
         private Value Scalar(Context context) => Name switch
         {
             "path" or "relpath" => Value.Str(context.Path),
@@ -811,6 +823,18 @@ public sealed partial class FileFilter
             "different" or "filedifferent" => Value.Bool(false),
             "identical" or "fileidentical" => Value.Bool(true),
             "diffcode" => new(ValueKind.Number, Number: 0),
+            "content" => Value.Str(FilterFileFacts.Content(Facts(context))),
+            "encoding" => Value.Str(FilterFileFacts.EncodingName(Facts(context))),
+            "codepage" => new(ValueKind.Number, Number: FilterFileFacts.CodePage(Facts(context))),
+            "hasbom" => Value.Bool(FilterFileFacts.HasBom(Facts(context))),
+            "eol" or "eolstr" => Value.Str(FilterFileFacts.Eol(Facts(context))),
+            "creationtime" => new(ValueKind.Timestamp, Number: FileTimestamp(FilterFileFacts.CreationTime(Facts(context)))),
+            "files" => new(ValueKind.Number, Number: FilterFileFacts.Immediate(Facts(context), filesOnly: true)),
+            "items" => new(ValueKind.Number, Number: FilterFileFacts.Immediate(Facts(context), filesOnly: false)),
+            "totalsize" => new(ValueKind.Number, Number: context.Directory ? FilterFileFacts.ImmediateBytes(Facts(context)) : context.Size),
+            "recursivefiles" => new(ValueKind.Number, Number: FilterFileFacts.Tree(Facts(context)).Files),
+            "recursiveitems" => new(ValueKind.Number, Number: FilterFileFacts.Tree(Facts(context)).Items),
+            "recursivetotalsize" => new(ValueKind.Number, Number: FilterFileFacts.Tree(Facts(context)).Bytes),
             _ => KnownField(Name) ? new(ValueKind.Null) : throw new InvalidOperationException("未対応の属性です。")
         };
     }

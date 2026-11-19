@@ -19,6 +19,7 @@ internal static class UiText
 
     private static IReadOnlyDictionary<string, PoCatalog> _catalogs = new Dictionary<string, PoCatalog>();
     private static PoCatalog? _active;
+    private static Dictionary<string, string>? _japaneseToEnglish;
 
     /// <summary>いまの言語名。Japanese、English、カタログ名、または os。</summary>
     internal static string Language { get; private set; } = "Japanese";
@@ -42,6 +43,19 @@ internal static class UiText
         var tab = text.IndexOf('\t');
         if (tab >= 0) text = text[..tab];
         return AccessKey(text);
+    }
+
+    /// <summary>
+    /// コードに書いてある日本語を、選んだ言語のカタログへ引き直す。
+    /// 日本語ではそのまま。English では Japanese.po の訳と一致する文を msgid（英語）へ戻す。一致が無ければそのまま。
+    /// </summary>
+    internal static string Say(string text)
+    {
+        EnsureLoaded();
+        if (Language.Equals("Japanese", StringComparison.OrdinalIgnoreCase)) return text;
+        if (_active is not null && _active.Language.Equals("Japanese", StringComparison.OrdinalIgnoreCase)) return text;
+        EnsureReverse();
+        return _japaneseToEnglish!.TryGetValue(text, out var english) ? english : text;
     }
 
     /// <summary>ダイアログやステータスバーの文。アクセスキーは残さない。</summary>
@@ -85,4 +99,20 @@ internal static class UiText
     }
 
     private static string StripAccess(string text) => AccessKey(text).Replace("_", "", StringComparison.Ordinal);
+
+    private static void EnsureReverse()
+    {
+        if (_japaneseToEnglish is not null) return;
+        _japaneseToEnglish = new Dictionary<string, string>(StringComparer.Ordinal);
+        if (!_catalogs.TryGetValue("Japanese", out var japanese)) return;
+        foreach (var (id, translated) in japanese.Messages)
+        {
+            var tab = translated.IndexOf('\t');
+            var body = tab >= 0 ? translated[..tab] : translated;
+            var englishTab = id.IndexOf('\t');
+            var english = englishTab >= 0 ? id[..englishTab] : id;
+            _japaneseToEnglish.TryAdd(body, english);
+            _japaneseToEnglish.TryAdd(StripAccess(body), StripAccess(english));
+        }
+    }
 }

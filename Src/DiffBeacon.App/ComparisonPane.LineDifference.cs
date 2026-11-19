@@ -55,7 +55,7 @@ public sealed partial class ComparisonPane
         var line = side.View.Document.GetLineByOffset(start).LineNumber;
         ScrollDiffEditorsToDisplayRow(line - 1);
         _lineDifferenceSelection = (sideIndex, start, length, diff);
-        _status.Text = $"行内差異 {index + 1} / {targets.Count}";
+        _status.Text = UiText.Say($"行内差異 {index + 1} / {targets.Count}");
         return true;
     }
 

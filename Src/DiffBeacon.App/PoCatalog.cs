@@ -18,6 +18,8 @@ internal sealed class PoCatalog
     internal string Language { get; }
     /// <summary>訳の件数。</summary>
     internal int Count => _messages.Count;
+    /// <summary>msgid と訳。言語の逆引きに使う。</summary>
+    internal IEnumerable<(string Id, string Text)> Messages => _messages.Select(pair => (pair.Key, pair.Value));
 
     /// <summary>msgid の訳。無ければ msgid を返す。</summary>
     internal string Get(string id) => _messages.TryGetValue(id, out var text) && text.Length > 0 ? text : id;

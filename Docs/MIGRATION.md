@@ -17,10 +17,10 @@
 ## 上マージン、言語、OCR、Finder サービス、フィルタのフィールド（2026-11-19）
 
 - 上マージン: 本家の列ルーラー。10桁ごとに数字、5桁ごとに長い目盛り。横スクロールに追従する。既定は隠す。
-- 言語: メニュー、フォントダイアログの OK / キャンセル、比較中の状態文は `PoCatalog` から引く。保存の既定は日本語。`os` を選ぶと OS の UI 言語（対応するカタログが無いときは日本語）になる。画面の組み立て文の多くは、対応する msgid が無いので日本語のまま。
+- 言語: メニュー、本文の右クリック、ダイアログの題と本文とボタン、状態欄の代入は `PoCatalog` を通す。日本語では書いた文のまま。English では Japanese.po の訳と一致する文を英語の msgid へ戻す。一致しない DiffBeacon 独自の文は日本語のまま残る。保存の既定は日本語。`os` を選ぶと OS の UI 言語（対応するカタログが無いときは日本語）になる。
 - OCR: Windows の発行は `net11.0-windows10.0.19041.0` で `Windows.Media.Ocr` をプロセス内から呼ぶ。macOS は `native/macos/DiffBeaconMac.m` を clang で `libdiffbeacon-mac.dylib` にし、`VNRecognizeTextRequest` を呼ぶ。どちらも使えないときだけ外部コマンドの JSON に戻る。
 - Finder サービス: 同じシムが `diffBeaconCompare:userData:error:` を `NSApp` のサービス提供者として登録する。Info.plist の `NSMessage` は `diffBeaconCompare`。NSApp がまだ無い、または dylib が横に無い開発実行では登録しない。Finder のサービス一覧への反映は、アプリを一度起動したあとのシステムのサービス更新に依存する。
-- `.flt`: `matches` の所有量指定（`*+` `++` `?+` `{m,n}+`）を原子グループへ書き換える。WinMerge のフィールド名は解析し、比較モデルに値があるもの以外は Null。ファイル本文・エンコーディング・再帰合計・PCRE の再帰と callout は、この比較の走査では採取しない。
+- `.flt`: `matches` の所有量指定（`*+` `++` `?+` `{m,n}+`）を原子グループへ書き換える。`content` / `encoding` / `codepage` / `hasbom` / `eol` は、その項目のフルパスがあるときだけ、1ファイル 256 KiB・評価全体 1 MiB まで読む。`files` / `items` / `totalsize` / `recursivefiles` / `recursiveitems` / `recursivetotalsize` は、リンクを辿らず、評価全体で 20,000 項目まで数える。上限を超えた分は読まない。PCRE の再帰 `(?R)` / `(?0)`、callout `(?C)`、制御動詞 `(*...)` は .NET の正規表現に無く、RID ごとの PCRE2 ネイティブライブラリは同梱していないため、黙って別の意味にはせず `FormatException` で拒否する。
 
 ## シェル、プラグイン、OCR、翻訳カタログ（2026-11-19）
 

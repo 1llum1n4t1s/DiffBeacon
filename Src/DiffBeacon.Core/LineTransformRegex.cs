@@ -478,6 +478,7 @@ internal sealed partial class LineTransformExpression
 
     private static string TranslateRegex(string source, RegexWorkContext c, bool carriageReturnNewline = false)
     {
+        PcrePattern.RejectUnsupported(source);
         var result = new StringBuilder();
         var flags = new RegexFlags(false, false, !c.CaseSensitive, false);
         var stack = new Stack<RegexFlags>();

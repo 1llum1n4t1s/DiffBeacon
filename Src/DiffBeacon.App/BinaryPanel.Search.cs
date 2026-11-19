@@ -212,7 +212,7 @@ public static partial class SpecializedViews
                 {
                     SelectBytes(side, checked(found + pattern.Length - 1), found);
                     // Renderの確定表示を採用した後に結果statusを置く。
-                    _status.Text = $"検索結果: 0x{found:X8} · {pattern.Length:N0} bytes";
+                    _status.Text = UiText.Say($"検索結果: 0x{found:X8} · {pattern.Length:N0} bytes");
                 }
                 else _status.Text = "一致するバイトがありません。先頭／末尾で折り返しません。";
                 return true;

@@ -179,9 +179,9 @@ public sealed partial class ComparisonPane
     /// <summary>本家の本文の右クリックメニュー（IDR_POPUP_MERGEVIEW のうち対応する操作）。開いたペインを操作の対象にする。</summary>
     private void AttachDiffEditorContextMenu(DiffEditorSide side)
     {
-        MenuItem Item(string header, string? gesture, Func<Task> action)
+        MenuItem Item(string msgid, string? gesture, Func<Task> action)
         {
-            var item = new MenuItem { Header = header, InputGesture = gesture is null ? null : KeyGesture.Parse(gesture) };
+            var item = new MenuItem { Header = UiText.Menu(msgid), Tag = msgid, InputGesture = gesture is null ? null : KeyGesture.Parse(gesture) };
             item.Click += async (_, _) => { _activeLineBookmarkSide = side.SourceSide; await GuardAsync(action); };
             return item;
         }
@@ -190,16 +190,16 @@ public sealed partial class ComparisonPane
         {
             Items =
             {
-                Command("行内差異を選択(_D)", "F4", FrameCommand.SelectLineDifference),
+                Command("Select Line &Difference\tF4", "F4", FrameCommand.SelectLineDifference),
                 new Separator(),
-                Command("元に戻す(_U)", null, FrameCommand.Undo),
-                Command("やり直し(_R)", null, FrameCommand.Redo),
+                Command("&Undo\tCtrl+Z", null, FrameCommand.Undo),
+                Command("&Redo\tCtrl+Y", null, FrameCommand.Redo),
                 new Separator(),
-                Item("切り取り(_T)", null, () => CopyDiffSelectionAsync(cut: true)),
-                Item("コピー(_C)", null, () => CopyDiffSelectionAsync(cut: false)),
-                Item("貼り付け(_P)", null, PasteDiffTextAsync),
+                Item("Cu&t\tCtrl+X", null, () => CopyDiffSelectionAsync(cut: true)),
+                Item("&Copy\tCtrl+C", null, () => CopyDiffSelectionAsync(cut: false)),
+                Item("&Paste\tCtrl+V", null, PasteDiffTextAsync),
                 new Separator(),
-                Command("移動(_G)...", "Ctrl+G", FrameCommand.GoTo),
+                Command("&Go to...\tCtrl+G", "Ctrl+G", FrameCommand.GoTo),
             },
         };
         // 右クリックしたペインを対象にする（本家は右クリックしたビューのメニューを出す）。

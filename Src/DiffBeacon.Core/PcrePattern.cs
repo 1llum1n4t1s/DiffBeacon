@@ -9,6 +9,39 @@ namespace DiffBeacon.Core;
 public static class PcrePattern
 {
     /// <summary>所有量指定を (?>atom量指定) にする。所有量指定が無ければ元の文字列を返す。</summary>
+    /// <summary>
+    /// .NET の正規表現に無い PCRE の再帰と呼出しと制御動詞を、黙って別の意味にせず拒否する。
+    /// PCRE2 本体は RID ごとのネイティブライブラリになるため、この AOT ビルドには同梱していない。
+    /// </summary>
+    public static void RejectUnsupported(string source)
+    {
+        var depth = 0;
+        for (var index = 0; index < source.Length; index++)
+        {
+            if (source[index] == '\\') { index++; continue; }
+            if (source[index] == '[')
+            {
+                var escaped = false;
+                for (index++; index < source.Length; index++)
+                {
+                    if (!escaped && source[index] == ']') break;
+                    escaped = !escaped && source[index] == '\\';
+                }
+                continue;
+            }
+            if (source[index] == '(') depth++;
+            if (source[index] == '(' && index + 2 < source.Length && source[index + 1] == '?')
+            {
+                var mark = source[index + 2];
+                if (mark is 'R' or '0' || (mark == 'C' && (index + 3 >= source.Length || source[index + 3] is ')' or '0' or '1' or '2' or '3' or '4' or '5' or '6' or '7' or '8' or '9')))
+                    throw new FormatException("PCRE の再帰 (?R)/(?0) と呼出し (?C) は、.NET の正規表現に無く、このビルドは PCRE2 を同梱していないため使えません。");
+            }
+            if (source[index] == '(' && index + 1 < source.Length && source[index + 1] == '*')
+                throw new FormatException("PCRE の制御動詞 (*ACCEPT) などは、.NET の正規表現に無く、このビルドは PCRE2 を同梱していないため使えません。");
+        }
+        if (depth < 0) return;
+    }
+
     public static string RewritePossessive(string source)
     {
         ArgumentNullException.ThrowIfNull(source);

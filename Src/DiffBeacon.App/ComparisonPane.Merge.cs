@@ -134,7 +134,7 @@ public sealed partial class ComparisonPane
                 + string.Join(" ", provenance.Take(120).Select(line => $"{line.Line}:{line.Source}")) + (provenance.Count > 120 ? " …" : "");
             if (_middleMergeChoice is not null) { _middleMergeChoice.IsVisible = _mergeMaterialization.InputCount == 3; _middleMergeChoice.Content = _mergeMaterialization.HasAncestor ? "祖先を採用" : "中央を採用"; }
             if (_mergeToolbar is not null) _mergeToolbar.IsVisible = true;
-            _status.Text = $"マージ結果: 未解決 {session.UnresolvedCount} 個、競合 {session.ConflictCount} 個。";
+            _status.Text = UiText.Say($"マージ結果: 未解決 {session.UnresolvedCount} 個、競合 {session.ConflictCount} 個。");
         }
         finally { _updatingMerge = false; }
     }

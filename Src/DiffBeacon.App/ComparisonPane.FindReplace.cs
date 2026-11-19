@@ -307,7 +307,7 @@ public sealed partial class ComparisonPane
             SelectRealRange(side, view, text, start, newEnd - start);
         }
         _lastFound = null;
-        _status.Text = $"{count} 個の文字列を置換しました。";
+        _status.Text = UiText.Say($"{count} 個の文字列を置換しました。");
         return true;
     }
 

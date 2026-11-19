@@ -273,7 +273,7 @@ public sealed partial class ComparisonPane
                 || inheritedIndependentStamp is not null && !Equals(inheritedIndependentStamp, TextAdoptionStamp()))
             {
                 if (!_disposed && ReferenceEquals(_operation, operation))
-                    _status.Text = "比較中に入力・役割または三側の状態が変更されました。前の比較と本文を保持しました。";
+                    _status.Text = UiText.Say("比較中に入力・役割または三側の状態が変更されました。前の比較と本文を保持しました。");
                 return false;
             }
             AdoptLegacyTextRole();

@@ -124,7 +124,7 @@ public static partial class SpecializedViews
                     {
                         if (!_disposed && revision == _wipeRevision)
                         {
-                            _status.Text = _displayError = "画像の表示を更新できません: " + error.Message;
+                            _status.Text = UiText.Say(_displayError = "画像の表示を更新できません: " + error.Message);
                             _requestedOpacity = _adoptedOpacity; _requestedOpacityExplicit = _adoptedOpacityExplicit;
                             RestoreOverlayControls();
                             if (_displayCompletionRevision == revision) _displayStateCompletion?.TrySetException(error);

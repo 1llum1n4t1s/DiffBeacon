@@ -115,7 +115,7 @@ public sealed partial class ComparisonPane
                 if (change.Property != TextBox.TextProperty) return;
                 _textRevisions[capturedSide]++;
                 if (ClearTextSyncPointsForSide(capturedSide))
-                    _status.Text = "本文を編集したため、この側を含む同期点を消去しました。再比較してください。";
+                    _status.Text = UiText.Say("本文を編集したため、この側を含む同期点を消去しました。再比較してください。");
                 RefreshArchiveDraftCaptions();
             };
         }
@@ -210,7 +210,7 @@ public sealed partial class ComparisonPane
             if (_disposed || !ReferenceEquals(_operation, operation) || !Equals(stamp, TextAdoptionStamp()) || oldBinary?.StateStamp != oldBinaryStamp)
             {
                 IndependentTextAdoptionDiagnostic = $"before: {diagnosticBefore}; after: {DescribeTextAdoptionState()}; disposed={_disposed}; sameOperation={ReferenceEquals(_operation, operation)}; sameBinaryStamp={oldBinary?.StateStamp == oldBinaryStamp}";
-                _status.Text = "読込み中に入力または編集状態が変わりました。三側の表示を保持しました。"; return false;
+                _status.Text = UiText.Say("読込み中に入力または編集状態が変わりました。三側の表示を保持しました。"); return false;
             }
             ResetMergeSession(); _lastPackageComparison = null; SetSpecialView(null);
             _projectMetadata = WorkspaceStore.CloneProject(project);

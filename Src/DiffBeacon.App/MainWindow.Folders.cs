@@ -252,7 +252,7 @@ public sealed partial class ComparisonPane
         // 同じ比較での中止完了は表示する。比較・選択・設定変更の世代更新は別途維持する。
         _folderCopyOperation?.Cancel(); _folderRefreshOperation?.Cancel();
         if (running && FolderOwnerCurrent() && ReferenceEquals(_specialTab.Content, _folderView))
-            _status.Text = "フォルダーコピーを中止しています…";
+            _status.Text = UiText.Say("フォルダーコピーを中止しています…");
     }
 
     internal void EnsureFolderOptionsOutputWritable(string path)
@@ -279,7 +279,7 @@ public sealed partial class ComparisonPane
         _folderModelStale = false; _folderCopySummary.Text = "Ctrl / Shiftで複数の項目を選択できます。";
         SetSpecialView(_folderView); _views.SelectedItem = _specialTab;
         UpdateFolderTreeControls();
-        _status.Text = $"フォルダー比較: {result.Entries.Count} 件";
+        _status.Text = UiText.Say($"フォルダー比較: {result.Entries.Count} 件");
         // 投影・表示の採用が完了するまで、前モデルの依存保護を保持する。
         _folderFilterListState = candidate.ListDependencies;
     }
@@ -300,7 +300,7 @@ public sealed partial class ComparisonPane
             if (CanReport())
             {
                 var detail = FolderOperations.DescribeFailure(error);
-                _status.Text = "フォルダーコピーを中止しました。" + (detail == error.Message ? "" : " · " + detail);
+                _status.Text = UiText.Say("フォルダーコピーを中止しました。" + (detail == error.Message ? "" : " · " + detail));
             }
         }
         catch (Exception error)
@@ -308,7 +308,7 @@ public sealed partial class ComparisonPane
             if (CanReport())
             {
                 var detail = FolderOperations.DescribeFailure(error);
-                _status.Text = detail;
+                _status.Text = UiText.Say(detail);
                 await Dialogs.MessageAsync(_owner, "コピーを完了できませんでした", detail);
             }
         }
@@ -327,7 +327,7 @@ public sealed partial class ComparisonPane
             if (CanReport())
             {
                 var detail = FolderOperations.DescribeFailure(error);
-                _status.Text = "フォルダー移動を中止しました。" + (detail == error.Message ? "" : " · " + detail);
+                _status.Text = UiText.Say("フォルダー移動を中止しました。" + (detail == error.Message ? "" : " · " + detail));
             }
         }
         catch (Exception error)
@@ -335,7 +335,7 @@ public sealed partial class ComparisonPane
             if (CanReport())
             {
                 var detail = FolderOperations.DescribeFailure(error);
-                _status.Text = detail;
+                _status.Text = UiText.Say(detail);
                 await Dialogs.MessageAsync(_owner, "移動を完了できませんでした", detail);
             }
         }
@@ -354,7 +354,7 @@ public sealed partial class ComparisonPane
             if (CanReport())
             {
                 var detail = FolderOperations.DescribeFailure(error);
-                _status.Text = "ごみ箱への移動を中止しました。" + (detail == error.Message ? "" : " · " + detail);
+                _status.Text = UiText.Say("ごみ箱への移動を中止しました。" + (detail == error.Message ? "" : " · " + detail));
             }
         }
         catch (Exception error)
@@ -362,7 +362,7 @@ public sealed partial class ComparisonPane
             if (CanReport())
             {
                 var detail = FolderOperations.DescribeFailure(error);
-                _status.Text = detail;
+                _status.Text = UiText.Say(detail);
                 await Dialogs.MessageAsync(_owner, "ごみ箱へ移せませんでした", detail);
             }
         }
@@ -391,7 +391,7 @@ public sealed partial class ComparisonPane
         try
         {
             ValidateFilter();
-            _status.Text = "移動対象の通常ファイルを確認しています…";
+            _status.Text = UiText.Say("移動対象の通常ファイルを確認しています…");
             var plan = await FolderOperations.PrepareMoveAsync(selection, FolderCopyVerificationLimits, operation.Token);
             ValidateFilter(); FolderMovePlanReady?.Invoke(plan); ValidateFilter();
             foreach (var entry in plan.CopyPlan.Entries)
@@ -407,7 +407,7 @@ public sealed partial class ComparisonPane
                 $"{names}{(selected.Length > 8 ? "\n…" : "")}\n\n{plan.CopyPlan.Entries.Count}件・{plan.CopyPlan.LogicalBytes:N0} bytesを{FolderSideName(destinationSide)}へ移動します。\n通常ファイルのみ・同一ボリューム限定です。既存ファイルは上書きしません。"))
             { ValidateFilter(); _status.Text = "移動を取り消しました。"; return; }
             ValidateFilter(); FolderMoveExecutionStarting?.Invoke(plan); ValidateFilter();
-            _status.Text = "フォルダーを移動しています…";
+            _status.Text = UiText.Say("フォルダーを移動しています…");
             var result = await FolderOperations.ExecuteMoveAsync(plan, path => OnUi(() =>
             {
                 ValidateFilter(); FolderMoveSourceChecking?.Invoke(path); ValidateFilter();
@@ -499,7 +499,7 @@ public sealed partial class ComparisonPane
         try
         {
             ValidateFilter();
-            _status.Text = "差分ファイルの内容を確認しています…";
+            _status.Text = UiText.Say("差分ファイルの内容を確認しています…");
             var plan = await FolderOperations.PrepareTrashAsync(selection, FolderCopyVerificationLimits, operation.Token);
             ValidateFilter(); FolderTrashPlanReady?.Invoke(plan); ValidateFilter();
             foreach (var entry in plan.Entries.Where(entry => entry.IsSupported))
@@ -520,7 +520,7 @@ public sealed partial class ComparisonPane
                 $"{names}{(selected.Length > 8 ? "\n…" : "")}\n\n{plan.SupportedCount}件・{plan.LogicalBytes:N0} bytesを{FolderSideName(sourceSide)}側からOSのごみ箱へ移します。\n通常ファイルだけが対象です。ディレクトリとリンクは対象外です。\nごみ箱へ移せない場合、完全削除へ切り替えずに中止します。"))
             { ValidateFilter(); _status.Text = "ごみ箱への移動を取り消しました。"; return; }
             ValidateFilter(); FolderTrashExecutionStarting?.Invoke(plan); ValidateFilter();
-            _status.Text = "差分ファイルをごみ箱へ移しています…";
+            _status.Text = UiText.Say("差分ファイルをごみ箱へ移しています…");
             var result = await FolderOperations.ExecuteTrashAsync(plan, path => OnUi(() =>
             {
                 ValidateFilter(); FolderTrashSourceChecking?.Invoke(path); ValidateFilter();
@@ -608,7 +608,7 @@ public sealed partial class ComparisonPane
         try
         {
             ValidateFilter();
-            _status.Text = "コピー対象を確認しています…";
+            _status.Text = UiText.Say("コピー対象を確認しています…");
             var plan = await FolderOperations.PrepareAsync(selection, FolderCopyVerificationLimits, operation.Token);
             ValidateFilter(); FolderPlanReady?.Invoke(plan); ValidateFilter();
             if (model.IsThreeWay)
@@ -631,7 +631,7 @@ public sealed partial class ComparisonPane
                 $"{names}{(selected.Length > 8 ? "\n…" : "")}\n\n{plan.Entries.Count}項目・{plan.LogicalBytes:N0} bytesを{FolderSideName(destinationSide)}へコピーします。\n既存ファイルは上書きされます。"))
             { ValidateFilter(); _status.Text = "コピーを取り消しました。"; return; }
             ValidateFilter(); FolderExecutionStarting?.Invoke(plan); ValidateFilter();
-            _status.Text = "フォルダーをコピーしています…";
+            _status.Text = UiText.Say("フォルダーをコピーしています…");
             var result = await FolderOperations.ExecuteAsync(plan, path => OnUi(() =>
             {
                 ValidateFilter(); FolderOutputChecking?.Invoke(path); ValidateFilter();

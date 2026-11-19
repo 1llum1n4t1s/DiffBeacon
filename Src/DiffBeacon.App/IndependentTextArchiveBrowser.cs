@@ -143,7 +143,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
         Array.Clear(_confirmedPasswords); _confirmedPasswords = [];
         _updating = true; Entries.SelectedItem = null; RebuildPasswords([]); _updating = false;
         // 前一覧は残すが、新rootを検証するまでは選択を確定できない。
-        _status.Text = "入力が変更されました。アーカイブは一覧を検証してください。"; Refresh();
+        _status.Text = UiText.Say("入力が変更されました。アーカイブは一覧を検証してください。"); Refresh();
     }
 
     private void OptionsChanged()
@@ -183,7 +183,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
         if (_updating || _disposed || args.Property != TextBox.TextProperty
             || sender is not TextBox box || !_passwordBoxes.Contains(box)) return;
         Mutation(); _verified = false; _leaf = null;
-        _status.Text = "パスワードを変更しました。一覧を再検証してください。"; Refresh();
+        _status.Text = UiText.Say("パスワードを変更しました。一覧を再検証してください。"); Refresh();
     }
     private string?[] PasswordCopy()
     {
@@ -245,7 +245,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
             passwords = PasswordCopy(); PendingReadStateObserved?.Invoke(passwords); Mutation(); _verified = false; _leaf = null;
             generation = _generation;
             read = CancellationTokenSource.CreateLinkedTokenSource(_lifetime); _readCts = read; _reading = true;
-            _status.Text = "アーカイブと格納項目を検証しています。"; Refresh();
+            _status.Text = UiText.Say("アーカイブと格納項目を検証しています。"); Refresh();
             if (ManifestReadGate is { } gate) await gate(_side, request, read.Token);
             var result = await Task.Run(() => new ManagedArchive(ReadLimits).ResolveManifest(request, passwords, read.Token), read.Token);
             read.Token.ThrowIfCancellationRequested();
@@ -268,7 +268,7 @@ internal sealed class IndependentTextArchiveBrowser : UserControl, IDisposable
         {
             // 下層例外は成功へ変換しない。passwordが例外に混ざらない固定文だけを表示する。
             if (!_disposed && generation == _generation && (read is null || ReferenceEquals(_readCts, read)))
-                _status.Text = "一覧を検証できませんでした。入力、全階層のパスワード、破損、形式、上限を確認してください。";
+                _status.Text = UiText.Say("一覧を検証できませんでした。入力、全階層のパスワード、破損、形式、上限を確認してください。");
         }
         finally
         {

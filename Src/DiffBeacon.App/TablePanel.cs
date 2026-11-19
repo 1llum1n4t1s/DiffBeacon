@@ -522,7 +522,7 @@ public sealed partial class TablePanel : DockPanel
         _side.SelectedIndex = side; _row.Text = Comparison.GetSourceRow(side, alignedRow)?.ToString() ?? ""; _column.Text = (column + 1).ToString();
         CellEditor.Text = cell?.Value ?? ""; CellEditor.SelectionStart = 0; CellEditor.SelectionEnd = 0; CellEditor.IsReadOnly = cell is null || _readOnly(side);
         _rows.SelectedIndex = alignedRow; _rows.ScrollIntoView(alignedRow);
-        _status.Text = cell is null ? "実セルのない行・列は編集できません。" : _readOnly(side) ? "このペインは読取り専用です。検索・選択はできます。" : "セルを変更してから「セルを変更」を押してください。";
+        _status.Text = UiText.Say(cell is null ? "実セルのない行・列は編集できません。" : _readOnly(side) ? "このペインは読取り専用です。検索・選択はできます。" : "セルを変更してから「セルを変更」を押してください。");
         return cell is not null;
     }
 

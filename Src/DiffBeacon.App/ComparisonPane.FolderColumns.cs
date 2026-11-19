@@ -124,7 +124,7 @@ public sealed partial class ComparisonPane
     {
         if (_directoryComparison is not { } model || !ReferenceEquals(_specialTab.Content, _folderView) || !FolderTreeInputAllowed)
         {
-            _status.Text = "列の設定は、フォルダー比較の一覧を表示しているときに使えます。";
+            _status.Text = UiText.Say("列の設定は、フォルダー比較の一覧を表示しているときに使えます。");
             return;
         }
         var threeWay = model.IsThreeWay;
@@ -135,7 +135,7 @@ public sealed partial class ComparisonPane
         // ダイアログの間に比較し直された・別の種類になったときは、古い選択を当てはめない。
         if (!ReferenceEquals(model, _directoryComparison) || !FolderTreeInputAllowed)
         {
-            _status.Text = "列の設定の間に比較の状態が変わったため、列は変更していません。";
+            _status.Text = UiText.Say("列の設定の間に比較の状態が変わったため、列は変更していません。");
             return;
         }
         ApplyFolderColumnChoice(threeWay, choice.Columns, choice.Reset);
@@ -146,7 +146,7 @@ public sealed partial class ComparisonPane
     {
         if (columns.Length == 0 || columns.Distinct().Count() != columns.Length || columns.Any(column => !FolderColumnCatalog.Supports(column, threeWay)))
         {
-            _status.Text = "その比較の種類では表示できない列が含まれています。列は変更していません。";
+            _status.Text = UiText.Say("その比較の種類では表示できない列が含まれています。列は変更していません。");
             return false;
         }
         var state = FolderStateFor(threeWay);
@@ -175,7 +175,7 @@ public sealed partial class ComparisonPane
         };
         if (!FolderColumnOptions.SetLayout(threeWay, FolderLayoutOptions(candidate)))
         {
-            _status.Text = FolderColumnOptions.Diagnostic + " 列は変更していません。";
+            _status.Text = UiText.Say(FolderColumnOptions.Diagnostic + " 列は変更していません。");
             return false;
         }
         state.Columns = candidate.Columns; state.Weights = candidate.Weights;
@@ -187,7 +187,7 @@ public sealed partial class ComparisonPane
             UpdateFolderListChrome();
             RebuildFolderRows();
         }
-        _status.Text = "表示する列を変更しました。";
+        _status.Text = UiText.Say("表示する列を変更しました。");
         return true;
     }
 

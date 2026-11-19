@@ -43,10 +43,10 @@ public sealed partial class ComparisonPane
         if (_disposed) throw new OperationCanceledException("アーカイブ作成の比較タブは閉じています。");
         EnsureProjectOutputWritable(path);
         _operation?.Cancel(); _operation?.Dispose(); _operation = new CancellationTokenSource();
-        _status.Text = "アーカイブを作成しています…";
+        _status.Text = UiText.Say("アーカイブを作成しています…");
         await ArchiveActions.CreateAsync(source, path, _operation.Token, writeOptions);
         if (_disposed) return;
-        _status.Text = $"非暗号化アーカイブを保存しました: {path}";
+        _status.Text = UiText.Say($"非暗号化アーカイブを保存しました: {path}");
     }
 }
 

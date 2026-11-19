@@ -195,7 +195,7 @@ public static partial class SpecializedViews
                 _snapshots![pane] = saved; _paths[pane] = target;
                 _savedPath?.Invoke(pane, target);
                 session.MarkSaved(pane);
-                _status.Text = IsTiffOutput(target) ? "原画を単ページTIFFで保存しました。" : "原画をPNGで保存しました。";
+                _status.Text = UiText.Say(IsTiffOutput(target) ? "原画を単ページTIFFで保存しました。" : "原画をPNGで保存しました。");
             }
             finally { _saving = false; _saveCancellation = null; if (!_disposed) UpdateNavigation(); }
         }

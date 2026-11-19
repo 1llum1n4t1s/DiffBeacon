@@ -36,7 +36,25 @@ internal static class HeadlessPortGapChecks
         var greedy = DiffBeacon.Core.FileFilter.ParseExpression("name matches 'a+a'");
         Check("possessive quantifier does not backtrack", !possessive.Matches("aaa", false, 0, DateTime.UnixEpoch) && greedy.Matches("aaa", false, 0, DateTime.UnixEpoch), "");
         var content = DiffBeacon.Core.FileFilter.ParseExpression("content = 'x'");
-        Check("content field parses and is empty without a content scan", !content.Matches("a.txt", false, 1, DateTime.UnixEpoch), "");
+        Check("content field parses and is empty without a path", !content.Matches("a.txt", false, 1, DateTime.UnixEpoch), "");
+        var facts = Path.Combine(output, "facts");
+        Directory.CreateDirectory(facts);
+        var file = Path.Combine(facts, "hello.txt");
+        File.WriteAllText(file, "hello\n");
+        var nested = Path.Combine(facts, "tree");
+        Directory.CreateDirectory(nested);
+        File.WriteAllText(Path.Combine(nested, "a.txt"), "a");
+        File.WriteAllText(Path.Combine(nested, "b.txt"), "b");
+        var read = DiffBeacon.Core.FileFilter.ParseExpression("content contains 'hello'");
+        var tree = DiffBeacon.Core.FileFilter.ParseExpression("recursivefiles = 2");
+        var encoding = DiffBeacon.Core.FileFilter.ParseExpression("encoding = 'UTF-8'");
+        Check("filter reads file content lazily from the full path", read.Matches(file, false, new FileInfo(file).Length, File.GetLastWriteTimeUtc(file)), file);
+        Check("filter counts files under a directory within the scan limit", tree.Matches(nested, true, 0, DateTime.UtcNow), nested);
+        Check("filter reports UTF-8 when the file has no BOM", encoding.Matches(file, false, new FileInfo(file).Length, File.GetLastWriteTimeUtc(file)), "");
+        var recursionRejected = false;
+        try { DiffBeacon.Core.FileFilter.ParseExpression("name matches '(?R)'").Matches("a", false, 0, DateTime.UnixEpoch); }
+        catch (FormatException error) { recursionRejected = error.Message.Contains("再帰", StringComparison.Ordinal); }
+        Check("pcre recursion is rejected instead of being treated as a .NET group", recursionRejected, "");
         var vision = MacIntegration.TryRecognize("/tmp/diffbeacon-no-such-image", out _, out var visionError);
         Check("vision shim stays quiet when it is not published beside the app", !vision, visionError);
         var rejected = false;

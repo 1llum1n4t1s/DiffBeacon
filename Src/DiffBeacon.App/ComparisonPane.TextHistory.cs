@@ -99,7 +99,7 @@ public sealed partial class ComparisonPane
         {
             // 記録と正本が食い違う（想定外の経路の変更）。誤った位置を書き換えないよう、何も変えずに履歴を消す。
             ClearTextHistory();
-            _status.Text = $"本文が履歴と一致しないため{verb}。履歴を消去しました。";
+            _status.Text = UiText.Say($"本文が履歴と一致しないため{verb}。履歴を消去しました。");
             return false;
         }
         var text = edit.Apply(current, undo);

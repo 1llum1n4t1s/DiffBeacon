@@ -198,7 +198,7 @@ public sealed partial class TablePanel
         SelectCellCore(result.Side, aligned, result.Column - 1); CellEditor.Focus();
         CellEditor.SelectionStart = result.Start; CellEditor.SelectionEnd = result.Start + result.Length;
         _lastHit = result;
-        _status.Text = $"元行 {result.SourceRow} / 列 {result.Column} · 文字 {result.Start + 1} · {result.Length}文字の一致";
+        _status.Text = UiText.Say($"元行 {result.SourceRow} / 列 {result.Column} · 文字 {result.Start + 1} · {result.Length}文字の一致");
     }
 
     // CSV原文の境界と復号済みセルの境界を対応させる。二重引用符は一文字として扱う。
@@ -292,7 +292,7 @@ public sealed partial class TablePanel
         }
         CellEditor.Focus(); CellEditor.SelectionStart = hit.CellStart; CellEditor.SelectionEnd = hit.CellStart + hit.CellLength;
         _rawLastHit = hit;
-        _status.Text = $"CSV原文 offset {hit.Start} · {hit.Length}文字の一致 · 元行 {hit.SourceRow} / 列 {hit.Column}";
+        _status.Text = UiText.Say($"CSV原文 offset {hit.Start} · {hit.Length}文字の一致 · 元行 {hit.SourceRow} / 列 {hit.Column}");
     }
 
     private async Task FindRawAsync(int direction)
@@ -387,7 +387,7 @@ public sealed partial class TablePanel
                 _undo.Push(new(side, document.SourceText, plan.Text, beforeScope, afterScope)); _redo.Clear(); TrimHistory(); RestoreScope(afterScope);
             }
             _lastQuery = options; _rawLastHit = null; _rawResumeBoundary = null;
-            _status.Text = $"CSV原文の選択ペインで {plan.Count:N0} 件を置換しました。";
+            _status.Text = UiText.Say($"CSV原文の選択ペインで {plan.Count:N0} 件を置換しました。");
             if (!all && plan.Changes.Count != 0)
             {
                 var change = plan.Changes[0]; var source = Comparison.Documents[side].SourceText;
@@ -407,7 +407,7 @@ public sealed partial class TablePanel
             {
                 var selected = MapRawHit(Comparison.Documents[side], side, Math.Min(scope?.Start ?? 0, plan.Text.Length), 0, CancellationToken.None);
                 NavigateRawHit(selected); _rawLastHit = null;
-                _status.Text = $"CSV原文の選択ペインで {plan.Count:N0} 件を置換しました。";
+                _status.Text = UiText.Say($"CSV原文の選択ペインで {plan.Count:N0} 件を置換しました。");
             }
         }
         finally { _applyingOperation = false; }
@@ -452,7 +452,7 @@ public sealed partial class TablePanel
                 _undo.Push(new(side, document.SourceText, plan.Text, beforeScope, afterScope)); _redo.Clear(); TrimHistory(); RestoreScope(afterScope);
             }
             _lastQuery = options; _lastHit = null; _resumeBoundary = null;
-            _status.Text = $"選択ペインで {plan.Count:N0} 件を置換しました。";
+            _status.Text = UiText.Say($"選択ペインで {plan.Count:N0} 件を置換しました。");
             if (!all && plan.Changes.Count != 0)
             {
                 var change = plan.Changes[0];

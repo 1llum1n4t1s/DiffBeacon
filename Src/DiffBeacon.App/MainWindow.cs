@@ -428,7 +428,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 && (inheritedIndependentStamp is null || Equals(inheritedIndependentStamp, TextAdoptionStamp()))
                 && comparisonForPackaging == (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
             if (!valid && !_disposed && ReferenceEquals(_operation, operation))
-                _status.Text = token.IsCancellationRequested ? "比較を中止しました。" : "比較中に入力が変更されたため、前の比較を保持しました。";
+                _status.Text = UiText.Say(token.IsCancellationRequested ? "比較を中止しました。" : "比較中に入力が変更されたため、前の比較を保持しました。");
             return valid;
         }
         void PrepareAdoption()
@@ -446,7 +446,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (CanAdopt() && editorLeft == LeftEditor.Text && editorRight == RightEditor.Text) { AdoptLegacyTextRole(); ResetMergeSession(); _lastPackageComparison = null; ApplyDiff(editorDiff); }
             return;
         }
-        _status.Text = UiText.Phrase("Comparing...");
+        _status.Text = UiText.Say(UiText.Phrase("Comparing..."));
         CompareButton.IsEnabled = false;
         try
         {
@@ -464,7 +464,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                 LeftEditor.Text = _savedLeft = result.LeftText; RightEditor.Text = _savedRight = result.RightText;
                 LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
                 SetSpecialView(null); ApplyDiff(providerDiff);
-                _status.Text = result.Summary + " · 変換後の内容です。元のファイルへのテキスト保存はできません。";
+                _status.Text = UiText.Say(result.Summary + " · 変換後の内容です。元のファイルへのテキスト保存はできません。");
                 _lastPackageComparison = comparisonForPackaging;
                 return;
             }
@@ -615,7 +615,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         CurrentDiff = diff;
         DiffList.ItemsSource = CurrentDiff.Rows;
         _diffIndex = -1;
-        _status.Text = $"{CurrentDiff.Blocks.Count} 個の差分  ·  左 {_leftDocument?.EncodingName ?? "UTF-8"}  /  右 {_rightDocument?.EncodingName ?? "UTF-8"}";
+        _status.Text = UiText.Say($"{CurrentDiff.Blocks.Count} 個の差分  ·  左 {_leftDocument?.EncodingName ?? "UTF-8"}  /  右 {_rightDocument?.EncodingName ?? "UTF-8"}");
         if (diff.InlineFallbackCount > 0) _status.Text += $"  ·  詳細比較を省略した {diff.InlineFallbackCount} 行は行全体を強調";
         if (diff.LineFallback) _status.Text += "  ·  行対応の処理上限に達したため、未確定区間をまとめて表示";
         _views.SelectedItem = _diffTab;
@@ -747,7 +747,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (path is null) return;
         if (_owner is MainWindow window) await window.SaveWorkspaceAsync(path);
         else { EnsureArchiveDraftSaved(); await WorkspaceStore.SaveAsync(path, CaptureProject()); }
-        _status.Text = "すべての比較タブをプロジェクトへ保存しました。編集本文は元ファイルへ別途保存してください。";
+        _status.Text = UiText.Say("すべての比較タブをプロジェクトへ保存しました。編集本文は元ファイルへ別途保存してください。");
     }
     private async Task OpenProjectAsync()
     {
@@ -776,7 +776,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _providers.Register(new ExecutableComparisonProvider(id, executable, [format]));
         _provider.ItemsSource = _providers.Providers.Select(x => x.Id).ToArray(); _provider.SelectedItem = id;
         _mode.SelectedIndex = 8;
-        _status.Text = $"{Path.GetFileName(executable)} を選択しました。比較操作で実行します。";
+        _status.Text = UiText.Say($"{Path.GetFileName(executable)} を選択しました。比較操作で実行します。");
     }
     private async Task ExportReportAsync()
     {
@@ -813,7 +813,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         }
         using var operation = CancellationTokenSource.CreateLinkedTokenSource(token);
         _reportOperation = operation;
-        _status.Text = "HTMLレポートを生成しています…（中止できます）";
+        _status.Text = UiText.Say("HTMLレポートを生成しています…（中止できます）");
         try
         {
             var cancellation = operation.Token;
@@ -830,7 +830,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             var currentSource = new ComparisonProject { LeftPath = workspaceWindow?.WorkspaceSourcePath ?? "" };
             await ProjectReport.SaveAsync(path, html, protectedEntries.Concat(currentPanes.Select(pane => pane.CaptureProject())).Append(currentSource),
                 sourceProject, cancellation, outputPublisher);
-            _status.Text = "HTMLレポートを保存しました。";
+            _status.Text = UiText.Say("HTMLレポートを保存しました。");
         }
         finally { _reportOperation = null; }
     }
@@ -843,7 +843,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (path is null) return;
         EnsureProjectOutputWritable(path);
         await File.WriteAllTextAsync(path, UnifiedPatch.Create(LeftEditor.Text ?? "", RightEditor.Text ?? "", LeftPath.Text ?? "left", RightPath.Text ?? "right"));
-        _status.Text = "パッチを保存しました。";
+        _status.Text = UiText.Say("パッチを保存しました。");
     }
     private Task MergeThreeWayAsync() => RestartMergeAsync(true);
     private void UpdateEditorLayout(bool fourPanes)
@@ -1062,12 +1062,12 @@ internal static class Dialogs
     public static Task<bool> ConfirmAsync(Window owner, string title, string message) => ShowAsync(owner, title, message, true);
     private static Task<bool> ShowAsync(Window owner, string title, string message, bool confirm)
     {
-        var dialog = new Window { Title = title, Width = 470, SizeToContent = SizeToContent.Height, CanResize = false, WindowStartupLocation = WindowStartupLocation.CenterOwner };
+        var dialog = new Window { Title = UiText.Say(title), Width = 470, SizeToContent = SizeToContent.Height, CanResize = false, WindowStartupLocation = WindowStartupLocation.CenterOwner };
         var panel = new StackPanel { Margin = new Thickness(24), Spacing = 20 };
-        panel.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });
+        panel.Children.Add(new TextBlock { Text = UiText.Say(message), TextWrapping = TextWrapping.Wrap });
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Spacing = 8 };
-        if (confirm) { var cancel = new Button { Content = "キャンセル" }; cancel.Click += (_, _) => dialog.Close(false); buttons.Children.Add(cancel); }
-        var ok = new Button { Content = confirm ? "続行" : "閉じる" }; ok.Click += (_, _) => dialog.Close(true); buttons.Children.Add(ok);
+        if (confirm) { var cancel = new Button { Content = UiText.Phrase("Cancel") }; cancel.Click += (_, _) => dialog.Close(false); buttons.Children.Add(cancel); }
+        var ok = new Button { Content = confirm ? UiText.Say("続行") : UiText.Phrase("&Close") }; ok.Click += (_, _) => dialog.Close(true); buttons.Children.Add(ok);
         panel.Children.Add(buttons); dialog.Content = panel;
         var result = dialog.ShowDialog<bool>(owner);
         if (confirm) ConfirmationShown?.Invoke(dialog);
