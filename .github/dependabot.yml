@@ -18,7 +18,7 @@ updates:
       - patch
   commit-message:
     prefix: deps
-- package-ecosystem: gitsubmodule
+- package-ecosystem: nuget
   directory: /
   schedule:
     interval: weekly
