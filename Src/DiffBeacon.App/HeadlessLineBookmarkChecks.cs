@@ -48,7 +48,11 @@ internal static class HeadlessLineBookmarkChecks
             var caret = Math.Clamp(editor.CaretIndex, 0, text.Length);
             var line = 0;
             for (var index = 0; index < caret; index++)
-                if (text[index] == '\n') line++;
+            {
+                if (text[index] != '\r' && text[index] != '\n') continue;
+                line++;
+                if (text[index] == '\r' && index + 1 < caret && text[index + 1] == '\n') index++;
+            }
             return line;
         }
 
@@ -145,6 +149,17 @@ internal static class HeadlessLineBookmarkChecks
             Verify("navigation uses the focused side", CaretLine(pane.RightEditor) == 1, $"line={CaretLine(pane.RightEditor)}; summary={SummaryText()}");
 
             Verify("right editor text is unchanged by bookmark actions", pane.RightEditor.Text == "right one\nright two", pane.RightEditor.Text ?? "");
+
+            FocusLine(0, 0);
+            Click("line-bookmark-clear-all");
+            pane.LeftEditor.Text = "one\rtwo\rthree";
+            FocusLine(0, 1);
+            Click("line-bookmark-toggle");
+            Verify("CR-only text bookmarks the second line", SummaryText().Contains("左: 行 2", StringComparison.Ordinal) && !SummaryText().Contains("行 1,", StringComparison.Ordinal), SummaryText());
+            FocusLine(0, 0);
+            Click("line-bookmark-next");
+            Verify("CR-only bookmark navigation lands on the second line", CaretLine(pane.LeftEditor) == 1, $"line={CaretLine(pane.LeftEditor)}; summary={SummaryText()}");
+            Click("line-bookmark-clear-all");
         }
         finally
         {

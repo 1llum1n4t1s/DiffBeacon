@@ -212,8 +212,8 @@
       },
       "SharpCompress": {
         "type": "Transitive",
-        "resolved": "0.50.4",
-        "contentHash": "/hxjUR7DEX6mky8/LQXyrnrKioOL6D6veAID1EZpro+q4s02x5dHEYBV3qjEN6lDYYilDoQQ76BcmQj+lRx51w=="
+        "resolved": "0.50.10",
+        "contentHash": "A+qqCaZZKaZajmQG0stkwWKi/VaMrQICf2HitEFJDFtkYnHlIzzrrZ4aRvoY9aqjLN6Abx5xEn43q56I8pHTBQ=="
       },
       "SkiaSharp": {
         "type": "Transitive",
@@ -255,7 +255,7 @@
       "diffbeacon.providers": {
         "type": "Project",
         "dependencies": {
-          "SharpCompress": "[0.50.4, )"
+          "SharpCompress": "[0.50.10, )"
         }
       }
     },

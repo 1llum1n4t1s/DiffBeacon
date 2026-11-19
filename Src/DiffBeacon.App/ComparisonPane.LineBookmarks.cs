@@ -130,8 +130,7 @@ public sealed partial class ComparisonPane
         if (removedBreaks == 0 && addedBreaks == 0) return;
 
         var startLine = CountLineBreaks(previous, 0, prefix);
-        var previousBreak = prefix == 0 ? -1 : previous.LastIndexOf('\n', prefix - 1);
-        var startColumn = prefix - previousBreak - 1;
+        var startColumn = prefix - PreviousLineStart(previous, prefix);
         var endLine = startLine + removedBreaks;
         var delta = addedBreaks - removedBreaks;
         // 行頭から一行を削除すると、次の行がそのまま開始行へ移る。共通する先頭文字があっても
@@ -152,12 +151,38 @@ public sealed partial class ComparisonPane
                 _numberedLineBookmarks[side][number] = MapBookmarkLine(line, startLine, startColumn, endLine, removedBreaks, delta);
     }
 
+    /// <summary>prefix がある行の先頭。CRLF・LF・CR の直後を行頭にする。</summary>
+    private static int PreviousLineStart(string text, int prefix)
+    {
+        for (var index = prefix - 1; index >= 0; index--)
+            if (text[index] == '\n' || text[index] == '\r') return index + 1;
+        return 0;
+    }
+
+    /// <summary>CRLF・LF・CR をそれぞれ1つの改行として数える（LFだけを数えると CR だけの本文で行がずれる）。</summary>
     private static int CountLineBreaks(string text, int start, int end)
     {
         var count = 0;
         for (var index = start; index < end; index++)
-            if (text[index] == '\n') count++;
+        {
+            if (text[index] != '\r' && text[index] != '\n') continue;
+            count++;
+            if (text[index] == '\r' && index + 1 < end && text[index + 1] == '\n') index++;
+        }
         return count;
+    }
+
+    /// <summary>start 以降の次の改行位置と、その改行が占める文字数（CRLF は 2）。無いときは -1。</summary>
+    private static int NextLineBreak(string text, int start, out int length)
+    {
+        length = 0;
+        for (var index = start; index < text.Length; index++)
+        {
+            if (text[index] != '\r' && text[index] != '\n') continue;
+            length = text[index] == '\r' && index + 1 < text.Length && text[index + 1] == '\n' ? 2 : 1;
+            return index;
+        }
+        return -1;
     }
 
     private static bool SameLineContent(string left, int leftLine, string right, int rightLine)
@@ -175,13 +200,12 @@ public sealed partial class ComparisonPane
         var start = 0;
         for (var current = 0; current < line; current++)
         {
-            var lineBreak = text.IndexOf('\n', start);
+            var lineBreak = NextLineBreak(text, start, out var length);
             if (lineBreak < 0) return null;
-            start = lineBreak + 1;
+            start = lineBreak + length;
         }
-        var end = text.IndexOf('\n', start);
+        var end = NextLineBreak(text, start, out _);
         if (end < 0) end = text.Length;
-        if (end > start && text[end - 1] == '\r') end--;
         return (start, end);
     }
 
@@ -269,9 +293,9 @@ public sealed partial class ComparisonPane
         var start = 0;
         for (var currentLine = 0; currentLine < line; currentLine++)
         {
-            var nextBreak = text.IndexOf('\n', start);
+            var nextBreak = NextLineBreak(text, start, out var length);
             if (nextBreak < 0) return;
-            start = nextBreak + 1;
+            start = nextBreak + length;
         }
         _activeLineBookmarkSide = side;
         editor.Focus();

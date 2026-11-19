@@ -1,10 +1,10 @@
 name: CodeQL Analysis
 
-# 解析は既定ブランチとPRで行い、作業ブランチの各pushでは回さない。定期実行は週1回にする。
+# 製品は codex/avalonia-net10-native-port にある。既定ブランチ master は旧C++なので、製品ブランチの push でも C# を解析する。
 on:
   workflow_dispatch:
   push:
-    branches: [master]
+    branches: [master, codex/avalonia-net10-native-port]
     paths:
       - 'Src/DiffBeacon.*/**'
       - 'tests/DiffBeacon.*/**'
@@ -34,6 +34,9 @@ permissions:
 jobs:
   analyze:
     runs-on: windows-2025
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v6
         with:

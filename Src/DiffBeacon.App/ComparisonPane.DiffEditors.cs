@@ -214,9 +214,9 @@ public sealed partial class ComparisonPane
         var start = 0;
         for (var line = 0; line < realLine; line++)
         {
-            var next = text.IndexOf('\n', start);
+            var next = NextLineBreak(text, start, out var length);
             if (next < 0) return;
-            start = next + 1;
+            start = next + length;
         }
         if (editor.CaretIndex != start) { editor.SelectionStart = start; editor.SelectionEnd = start; editor.CaretIndex = start; }
     }
