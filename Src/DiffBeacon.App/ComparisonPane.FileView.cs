@@ -17,6 +17,9 @@ namespace DiffBeacon.App;
 public sealed partial class ComparisonPane
 {
     private readonly LocationPane _locationPane = new() { Name = "location-pane" };
+    private Border? _locationHost;
+    private Border? _diffPaneHost;
+    private GridSplitter? _diffPaneSplitter;
     private readonly TextBlock _diffPaneLeft = DiffPaneText("diff-pane-left");
     private readonly TextBlock _diffPaneRight = DiffPaneText("diff-pane-right");
     // ファイル名の帯に出すパス。見出し（左／右・読取り専用などの状態）は既存の文言のまま残し、その右にパスを並べる。
@@ -26,6 +29,21 @@ public sealed partial class ComparisonPane
     private int _selectedBlock = -1;
 
     internal LocationPane Location => _locationPane;
+    /// <summary>ステータスバーが見えているか。</summary>
+    internal bool StatusBarVisible => _statusBarHost?.IsVisible != false;
+    /// <summary>ロケーションペインが見えているか。</summary>
+    internal bool LocationPaneVisible => _locationHost?.IsVisible != false;
+    /// <summary>Diff ペインと境界が見えているか。</summary>
+    internal bool DiffPaneVisible => _diffPaneHost?.IsVisible != false;
+
+    /// <summary>本家の表示メニューに合わせ、ステータスバー・ロケーションペイン・Diff ペインを出し入れする。本文は変えない。</summary>
+    internal void ApplyViewChrome(bool statusBar, bool locationPane, bool diffPane)
+    {
+        if (_statusBarHost is not null) _statusBarHost.IsVisible = statusBar;
+        if (_locationHost is not null) _locationHost.IsVisible = locationPane;
+        if (_diffPaneHost is not null) _diffPaneHost.IsVisible = diffPane;
+        if (_diffPaneSplitter is not null) _diffPaneSplitter.IsVisible = diffPane;
+    }
     internal (TextBlock Left, TextBlock Right) DiffPaneTexts => (_diffPaneLeft, _diffPaneRight);
     internal int SelectedDifferenceBlock => _selectedBlock;
     internal (string? Left, string? Right) FileHeaderPaths => (_leftHeaderPath.Text, _rightHeaderPath.Text);
@@ -42,7 +60,7 @@ public sealed partial class ComparisonPane
 
         // 左端のロケーションペイン。本家と同じく本文の左に縦長で置く。
         var main = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
-        var location = new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 0, 1, 0), Child = _locationPane };
+        var location = _locationHost = new Border { Name = "location-pane-host", BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 0, 1, 0), Child = _locationPane };
         main.Children.Add(location);
         Grid.SetColumn(body, 1); main.Children.Add(body);
 
@@ -50,7 +68,7 @@ public sealed partial class ComparisonPane
         var diffPane = new Grid { RowDefinitions = new RowDefinitions("Auto,Auto"), Margin = new Thickness(0, 2) };
         diffPane.Children.Add(DiffPaneRow(_diffPaneLeft));
         var rightRow = DiffPaneRow(_diffPaneRight); Grid.SetRow(rightRow, 1); diffPane.Children.Add(rightRow);
-        var diffPaneHost = new Border
+        var diffPaneHost = _diffPaneHost = new Border
         {
             Name = "diff-pane", BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0),
             Child = new ScrollViewer { Content = diffPane, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
@@ -60,7 +78,7 @@ public sealed partial class ComparisonPane
 
         var root = new Grid { RowDefinitions = new RowDefinitions("*,Auto,Auto") };
         root.Children.Add(main);
-        var splitter = new GridSplitter { Height = 4, Background = WinMergeColors.FrameFace, ResizeDirection = GridResizeDirection.Rows };
+        var splitter = _diffPaneSplitter = new GridSplitter { Name = "diff-pane-splitter", Height = 4, Background = WinMergeColors.FrameFace, ResizeDirection = GridResizeDirection.Rows };
         Grid.SetRow(splitter, 1); root.Children.Add(splitter);
         Grid.SetRow(diffPaneHost, 2); root.Children.Add(diffPaneHost);
 

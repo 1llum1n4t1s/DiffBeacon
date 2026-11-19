@@ -67,10 +67,11 @@ internal sealed class DiffTextViewOptions
     }
 
     /// <summary>保存する形へ写す。ツールバーの表示は本文の設定ではないので外枠から受け取る。</summary>
-    internal TextViewSettings ToSettings(bool showToolbar) => new()
+    internal TextViewSettings ToSettings(bool showToolbar, bool showStatusBar, bool showLocationPane, bool showDiffPane) => new()
     {
         ZoomSteps = _zoomSteps, ViewWhitespace = _whitespace, ViewEndOfLine = _endOfLine, ViewLineDifferences = _lineDifferences,
         ViewLineNumbers = _lineNumbers, ViewMargins = _margins, ShowToolbar = showToolbar,
+        ShowStatusBar = showStatusBar, ShowLocationPane = showLocationPane, ShowDiffPane = showDiffPane,
     };
 
     private void Set<T>(ref T field, T value)

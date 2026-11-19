@@ -18,6 +18,12 @@ internal sealed record TextViewSettings
     public bool ViewLineNumbers { get; init; } = true;
     public bool ViewMargins { get; init; } = true;
     public bool ShowToolbar { get; init; } = true;
+    /// <summary>本家 Settings/ShowStatusbar。既定は表示する。</summary>
+    public bool ShowStatusBar { get; init; } = true;
+    /// <summary>本家のロケーションペイン。既定は表示する。</summary>
+    public bool ShowLocationPane { get; init; } = true;
+    /// <summary>本家の Diff ペイン。既定は表示する。</summary>
+    public bool ShowDiffPane { get; init; } = true;
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true,

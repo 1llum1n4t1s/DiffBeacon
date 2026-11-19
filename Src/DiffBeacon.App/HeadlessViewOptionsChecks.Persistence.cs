@@ -15,7 +15,7 @@ namespace DiffBeacon.App;
 /// </summary>
 internal static partial class HeadlessViewOptionsChecks
 {
-    private static readonly string[] ViewOptionNames = ["view-whitespace", "view-eol", "view-line-differences", "view-line-numbers", "view-margins", "view-toolbar"];
+    private static readonly string[] ViewOptionNames = ["view-whitespace", "view-eol", "view-line-differences", "view-line-numbers", "view-margins", "view-toolbar", "view-status", "view-diff-pane", "view-location"];
 
     private static void CheckPersistence(string work, Action<string, bool, string> check)
     {
@@ -42,7 +42,7 @@ internal static partial class HeadlessViewOptionsChecks
                 $"exists={File.Exists(path)} zoom={options.ZoomSteps} toolbar={first.FrameToolbarVisible} saves={first.TextViewOptionsStorage.SaveAttemptCount}");
             options.Zoom(1); options.Zoom(1); options.Zoom(1);
             foreach (var name in ViewOptionNames) Click(MenuOption(first, name));
-            check("view settings are saved on every change", first.TextViewOptionsStorage.SaveAttemptCount == 9 && first.TextViewOptionsStorage.LastSaveResult == true
+            check("view settings are saved on every change", first.TextViewOptionsStorage.SaveAttemptCount == 12 && first.TextViewOptionsStorage.LastSaveResult == true
                 && !first.FrameToolbarVisible && File.Exists(path), $"saves={first.TextViewOptionsStorage.SaveAttemptCount} diagnostic={first.TextViewOptionsStorage.Diagnostic}");
         }
         finally { Close(first); }
@@ -55,7 +55,9 @@ internal static partial class HeadlessViewOptionsChecks
             check("view settings file holds the WinMerge view options", root.GetProperty("zoomSteps").GetInt32() == 3
                 && root.GetProperty("viewWhitespace").GetBoolean() && root.GetProperty("viewEndOfLine").GetBoolean()
                 && !root.GetProperty("viewLineDifferences").GetBoolean() && !root.GetProperty("viewLineNumbers").GetBoolean()
-                && !root.GetProperty("viewMargins").GetBoolean() && !root.GetProperty("showToolbar").GetBoolean() && root.EnumerateObject().Count() == 7, text);
+                && !root.GetProperty("viewMargins").GetBoolean() && !root.GetProperty("showToolbar").GetBoolean()
+                && !root.GetProperty("showStatusBar").GetBoolean() && !root.GetProperty("showLocationPane").GetBoolean()
+                && !root.GetProperty("showDiffPane").GetBoolean() && root.EnumerateObject().Count() == 10, text);
         }
 
         var bytes = File.ReadAllBytes(path);
@@ -67,7 +69,8 @@ internal static partial class HeadlessViewOptionsChecks
             var checks = ViewOptionNames.Select(name => MenuOption(second, name).IsChecked).ToArray();
             check("view settings restore in the first tab, menu and toolbar of a new window", Near(pane.DiffEditor(0).FontSize, 13 + 4)
                 && Near(pane.DiffEditor(2).FontSize, 13 + 4) && pane.DiffEditor(0).Options.ShowSpaces && pane.DiffEditor(2).Options.ShowTabs
-                && !pane.DiffEditorMarginSeparatorVisible(0) && checks.SequenceEqual([true, true, false, false, false, false]) && !second.FrameToolbarVisible,
+                && !pane.DiffEditorMarginSeparatorVisible(0) && checks.SequenceEqual([true, true, false, false, false, false, false, false, false]) && !second.FrameToolbarVisible
+                && !pane.StatusBarVisible && !pane.LocationPaneVisible && !pane.DiffPaneVisible,
                 $"font={pane.DiffEditor(0).FontSize} spaces={pane.DiffEditor(0).Options.ShowSpaces} checks={string.Join(",", checks)} toolbar={second.FrameToolbarVisible}");
             check("view settings loading does not write the file", store.SaveAttemptCount == 0 && bytes.SequenceEqual(File.ReadAllBytes(path)), $"saves={store.SaveAttemptCount}");
             // 復元した後も、メニューから戻すとその値で保存し直す。

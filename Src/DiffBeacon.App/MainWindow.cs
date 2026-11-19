@@ -59,6 +59,9 @@ public sealed partial class MainWindow : Window
         TextViewOptionsStorage = textViewOptionsStore;
         TextViewOptions.Load(textViewOptionsStore.Current);
         _showToolbar = textViewOptionsStore.Current.ShowToolbar;
+        _showStatusBar = textViewOptionsStore.Current.ShowStatusBar;
+        _showLocationPane = textViewOptionsStore.Current.ShowLocationPane;
+        _showDiffPane = textViewOptionsStore.Current.ShowDiffPane;
         TextViewOptions.Changed += SaveViewMenuOptions;
         Closed += (_, _) => TextViewOptions.Changed -= SaveViewMenuOptions;
         Action<string> textViewGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
@@ -164,6 +167,7 @@ public sealed partial class MainWindow : Window
     {
         if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
         var pane = new ComparisonPane(this);
+        pane.ApplyViewChrome(_showStatusBar, _showLocationPane, _showDiffPane);
         AttachProjectSession(pane); _tabs.SelectedItem = _sessions[^1];
         if (arguments is { Length: >= 2 })
         {
@@ -219,6 +223,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly TextBox _excludes = new() { PlaceholderText = "除外パス（;区切り）", Width = 180 };
     private readonly ComboBox _folderMode = new() { ItemsSource = new[] { "内容", "SHA-256", "日時とサイズ" }, SelectedIndex = 0, Width = 140 };
     private readonly TextBlock _status = new() { Text = "パスを選択するか、編集タブにテキストを貼り付けて比較できます。", Margin = new Thickness(8, 3), Foreground = WinMergeColors.FrameText, FontSize = 12 };
+    private Border? _statusBarHost;
     private readonly TextBlock _leftCaption = new() { Text = "左", Margin = new Thickness(6, 3), FontSize = 12, Foreground = WinMergeColors.FrameText, TextTrimming = TextTrimming.CharacterEllipsis };
     private readonly TextBlock _rightCaption = new() { Text = "右", Margin = new Thickness(6, 3), FontSize = 12, Foreground = WinMergeColors.FrameText, TextTrimming = TextTrimming.CharacterEllipsis };
     private readonly TabControl _views = new();
@@ -310,7 +315,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _views.SelectionChanged += (_, _) => UpdateComparisonToolbarHeight();
         DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
         // 本家のステータスバー（MergeStatusBar）に合わせ、灰色の帯に状態文を出す。
-        var statusBar = new Border { Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0), Child = _status };
+        var statusBar = _statusBarHost = new Border { Name = "comparison-status-bar", Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0), Child = _status };
         DockPanel.SetDock(statusBar, Dock.Bottom); root.Children.Add(statusBar);
         DiffList.ItemTemplate = new FuncDataTemplate<DiffRow>((row, _) => BuildRow(row), false);
         // 本家のエディターと同じく行を詰めて並べる。Fluent の ListBoxItem は余白が大きく、行の間に隙間ができるため打ち消す。

@@ -93,6 +93,9 @@ public sealed partial class MainWindow
         };
         var toolbarVisible = _toolbarMenuItem = new MenuItem { Name = "frame-menu-view-toolbar", Header = "ツールバー(_T)", ToggleType = MenuItemToggleType.CheckBox, IsChecked = _showToolbar };
         toolbarVisible.Click += (_, _) => SetToolbarVisible(!_showToolbar, save: true);
+        var statusVisible = ChromeItem("ステータス バー(&S)", "view-status", () => _showStatusBar, value => { _showStatusBar = value; ApplyChrome(); });
+        var diffPaneVisible = ChromeItem("Diff ペイン(&P)", "view-diff-pane", () => _showDiffPane, value => { _showDiffPane = value; ApplyChrome(); });
+        var locationVisible = ChromeItem("ロケーション ペイン(&C)", "view-location", () => _showLocationPane, value => { _showLocationPane = value; ApplyChrome(); });
         // 本家 IDR_MERGEDOCTYPE の「表示」のうち、本文の見た目の設定（DiffTextViewOptions）。全タブ共通で、チェックは設定から付ける。
         var options = TextViewOptions;
         menu.Items.Add(Popup("表示(_V)",
@@ -109,6 +112,9 @@ public sealed partial class MainWindow
             ViewOption("マージンを表示(_M)", "view-margins", () => options.ViewMargins, value => options.ViewMargins = value),
             Separator(),
             toolbarVisible,
+            statusVisible,
+            diffPaneVisible,
+            locationVisible,
             darkTheme,
             Separator(),
             Pane("最新の情報に更新", "F5", FrameCommand.Refresh)));
@@ -274,6 +280,9 @@ public sealed partial class MainWindow
 
     // ツールバーの表示（本家 Settings/ShowToolbar）。本文の設定ではないので DiffTextViewOptions に入れず、ペインを描き直さない。
     private bool _showToolbar = true;
+    private bool _showStatusBar = true;
+    private bool _showLocationPane = true;
+    private bool _showDiffPane = true;
     private MenuItem? _toolbarMenuItem;
 
     /// <summary>自己検証用: ツールバーの帯が表示されているか。</summary>
@@ -290,8 +299,23 @@ public sealed partial class MainWindow
     // 本家と同じく、表示メニューの設定は変えるたびに保存する。失敗しても表示はそのまま使い、理由を状態欄へ出す。
     private void SaveViewMenuOptions()
     {
-        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar))) return;
+        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane))) return;
         if (_sessions.Count > 0) ActivePane.ShowViewOptionsStatus(TextViewOptionsStorage.Diagnostic + " 表示はこの起動の間だけ変えています。");
+    }
+
+    /// <summary>開いている比較タブ全部へ、枠の表示切替を渡す。</summary>
+    private void ApplyChrome()
+    {
+        foreach (var pane in SessionPanes) pane.ApplyViewChrome(_showStatusBar, _showLocationPane, _showDiffPane);
+        SaveViewMenuOptions();
+    }
+
+    /// <summary>枠の表示切替。本文の設定とは別に、変えたら保存する。</summary>
+    private MenuItem ChromeItem(string header, string name, Func<bool> get, Action<bool> set)
+    {
+        var item = new MenuItem { Header = header, Name = "frame-menu-" + name, ToggleType = MenuItemToggleType.CheckBox, IsChecked = get() };
+        item.Click += (_, _) => set(!get());
+        return item;
     }
 
     private MenuItem ViewOption(string header, string name, Func<bool> get, Action<bool> set)
