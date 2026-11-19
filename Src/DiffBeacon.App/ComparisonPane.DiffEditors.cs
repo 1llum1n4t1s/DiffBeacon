@@ -48,6 +48,8 @@ public sealed partial class ComparisonPane
     internal TextEditor DiffEditor(int side) => _diffViews[side].View;
     /// <summary>3ペイン（左・中・右）で表示しているか。</summary>
     internal bool DiffEditorsShowThreePanes => _diffDisplay.ThreeWay;
+    /// <summary>自己検証用: その側のペインを置いている行。垂直分割では 0、上下では上から 0,1,2。</summary>
+    internal int DiffEditorGridRow(int side) => Grid.GetRow(_diffEditorHosts[side]);
     internal int DiffEditorGhostLineCount(bool right) => (right ? _rightDiffView : _leftDiffView).GhostLineNumbers().Count;
     internal int DiffEditorGhostLineCount(int side) => _diffViews[side].GhostLineNumbers().Count;
     internal bool DiffEditRecomparePending => _diffEditTimer?.IsEnabled == true;
@@ -105,14 +107,27 @@ public sealed partial class ComparisonPane
     /// <summary>2ペインと3ペインを切り替える。中央のペインは三つ目の側があるときだけ置く。</summary>
     private void LayoutDiffEditors(bool threeWay)
     {
+        var vertical = _textViewOptions.VerticalSplit;
+        _diffEditorGrid.Tag = vertical;
         _diffEditorGrid.Children.Clear();
-        _diffEditorGrid.ColumnDefinitions = new ColumnDefinitions(threeWay ? "*,*,*" : "*,*");
         var shown = threeWay ? new[] { 0, 1, 2 } : new[] { 0, 2 };
-        for (var column = 0; column < shown.Length; column++)
+        if (vertical)
         {
-            var host = _diffEditorHosts[shown[column]];
-            host.BorderThickness = new Thickness(column == 0 ? 0 : 1, 0, 0, 0);
-            Grid.SetColumn(host, column); _diffEditorGrid.Children.Add(host);
+            _diffEditorGrid.RowDefinitions = new RowDefinitions("*");
+            _diffEditorGrid.ColumnDefinitions = new ColumnDefinitions(threeWay ? "*,*,*" : "*,*");
+        }
+        else
+        {
+            _diffEditorGrid.ColumnDefinitions = new ColumnDefinitions("*");
+            _diffEditorGrid.RowDefinitions = new RowDefinitions(threeWay ? "*,*,*" : "*,*");
+        }
+        for (var index = 0; index < shown.Length; index++)
+        {
+            var host = _diffEditorHosts[shown[index]];
+            host.BorderThickness = vertical ? new Thickness(index == 0 ? 0 : 1, 0, 0, 0) : new Thickness(0, index == 0 ? 0 : 1, 0, 0);
+            Grid.SetRow(host, vertical ? 0 : index);
+            Grid.SetColumn(host, vertical ? index : 0);
+            _diffEditorGrid.Children.Add(host);
         }
     }
 
@@ -139,6 +154,7 @@ public sealed partial class ComparisonPane
         }
         finally { _diffViewSyncing = false; }
         UpdateDiffEditorReadOnly();
+        ApplyDiffContext();
         SyncDiffEditorScroll(_leftDiffView);
     }
 
@@ -308,6 +324,9 @@ public sealed partial class ComparisonPane
     private void SyncDiffEditorScroll(DiffEditorSide source)
     {
         if (_diffViewSyncing) return;
+        // 折り返すと側ごとに見た目の高さが変わる。画素でそろえると行がずれるので、一番上の表示行でそろえる。
+        var wrap = _textViewOptions.WordWrap;
+        var top = wrap ? TopDisplayLine(source) : 0;
         var offset = source.View.TextArea.TextView.ScrollOffset;
         _diffViewSyncing = true;
         try
@@ -315,7 +334,15 @@ public sealed partial class ComparisonPane
             foreach (var other in _diffViews)
             {
                 if (ReferenceEquals(other, source) || other.Scroller() is not { } scroller) continue;
-                if (Math.Abs(scroller.Offset.Y - offset.Y) > .5 || Math.Abs(scroller.Offset.X - offset.X) > .5) scroller.Offset = new Vector(offset.X, offset.Y);
+                if (_textViewOptions.LockedSide == source.SourceSide || _textViewOptions.LockedSide == other.SourceSide) continue;
+                if (wrap)
+                {
+                    if (top > other.View.Document.LineCount) continue;
+                    var y = other.View.TextArea.TextView.GetVisualTopByDocumentLine(top);
+                    if (Math.Abs(scroller.Offset.Y - y) > .5) scroller.Offset = new Vector(scroller.Offset.X, y);
+                }
+                else if (Math.Abs(scroller.Offset.Y - offset.Y) > .5 || Math.Abs(scroller.Offset.X - offset.X) > .5)
+                    scroller.Offset = new Vector(offset.X, offset.Y);
             }
         }
         finally { _diffViewSyncing = false; }
@@ -536,7 +563,7 @@ public sealed partial class ComparisonPane
             SourceSide = sourceSide;
             View = new TextEditor
             {
-                Name = name, FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 13,
+                Name = name, FontFamily = new FontFamily(DiffTextViewOptions.DefaultFontFamilyName), FontSize = 13,
                 ShowLineNumbers = false, WordWrap = false, Background = Brushes.White, Foreground = Brushes.Black,
                 HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
                 VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,

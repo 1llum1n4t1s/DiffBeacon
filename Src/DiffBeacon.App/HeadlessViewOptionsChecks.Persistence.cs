@@ -57,7 +57,11 @@ internal static partial class HeadlessViewOptionsChecks
                 && !root.GetProperty("viewLineDifferences").GetBoolean() && !root.GetProperty("viewLineNumbers").GetBoolean()
                 && !root.GetProperty("viewMargins").GetBoolean() && !root.GetProperty("showToolbar").GetBoolean()
                 && !root.GetProperty("showStatusBar").GetBoolean() && !root.GetProperty("showLocationPane").GetBoolean()
-                && !root.GetProperty("showDiffPane").GetBoolean() && root.EnumerateObject().Count() == 10, text);
+                && !root.GetProperty("showDiffPane").GetBoolean() && root.GetProperty("wordWrap").GetBoolean() == false
+                && root.GetProperty("fontFamily").GetString() == "" && root.GetProperty("syntaxHighlight").GetBoolean() == false
+                && root.GetProperty("diffContextLines").GetInt32() == -1 && root.GetProperty("verticalSplit").GetBoolean()
+                && root.GetProperty("showTabBar").GetBoolean() && root.GetProperty("showMenuBar").GetBoolean()
+                && root.GetProperty("lockedSide").GetInt32() == -1 && root.EnumerateObject().Count() == 20, text);
         }
 
         var bytes = File.ReadAllBytes(path);

@@ -227,6 +227,9 @@ public sealed partial class ComparisonPane
         return null;
     }
 
+    /// <summary>フォーカスのある差分ペインの側（0=左、1=中央、2=右）。ペインロックの対象に使う。</summary>
+    internal int ActiveDiffSide => ActiveLineBookmarkSide;
+
     private int ActiveLineBookmarkSide => Math.Clamp(_activeLineBookmarkSide, 0, 2);
 
     private void TogglePlainBookmark()

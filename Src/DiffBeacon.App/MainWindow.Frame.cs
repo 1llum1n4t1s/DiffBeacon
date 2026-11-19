@@ -37,6 +37,7 @@ public sealed partial class MainWindow
         frame.Children.Add(new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 1), Child = FrameToolbar = BuildToolbar() });
         // 保存したツールバーの表示は、帯（Border）を作った後に採用する（メニューを作る時点では帯がまだ無い）。
         SetToolbarVisible(_showToolbar, save: false);
+        SetMenuBarVisible(_showMenuBar, save: false);
         return frame;
     }
 
@@ -96,6 +97,8 @@ public sealed partial class MainWindow
         var statusVisible = ChromeItem("ステータス バー(&S)", "view-status", () => _showStatusBar, value => { _showStatusBar = value; ApplyChrome(); });
         var diffPaneVisible = ChromeItem("Diff ペイン(&P)", "view-diff-pane", () => _showDiffPane, value => { _showDiffPane = value; ApplyChrome(); });
         var locationVisible = ChromeItem("ロケーション ペイン(&C)", "view-location", () => _showLocationPane, value => { _showLocationPane = value; ApplyChrome(); });
+        var tabBarVisible = ChromeItem("タブ バーを表示(&V)", "view-tab-bar", () => _showTabBar, value => SetTabBarVisible(value, save: true));
+        var menuBarVisible = ChromeItem("メニューバー(&U)", "view-menu-bar", () => _showMenuBar, value => SetMenuBarVisible(value, save: true));
         // 本家 IDR_MERGEDOCTYPE の「表示」のうち、本文の見た目の設定（DiffTextViewOptions）。全タブ共通で、チェックは設定から付ける。
         var options = TextViewOptions;
         menu.Items.Add(Popup("表示(_V)",
@@ -110,6 +113,16 @@ public sealed partial class MainWindow
             ViewOption("行内差異を表示(_W)", "view-line-differences", () => options.ViewLineDifferences, value => options.ViewLineDifferences = value),
             ViewOption("行番号を表示(_N)", "view-line-numbers", () => options.ViewLineNumbers, value => options.ViewLineNumbers = value),
             ViewOption("マージンを表示(_M)", "view-margins", () => options.ViewMargins, value => options.ViewMargins = value),
+            ViewOption("行を右端で折返す(&R)", "view-wrap", () => options.WordWrap, value => options.WordWrap = value),
+            Popup("フォント(_F)",
+                Item("フォントの選択(&F)...", null, ChooseFontAsync),
+                Item("デフォルト フォントを使用", null, () => { options.FontFamily = ""; return Task.CompletedTask; })),
+            ViewOption("シンタックス ハイライト", "view-syntax", () => options.SyntaxHighlight, value => options.SyntaxHighlight = value),
+            BuildDiffContextMenu(options),
+            LockPanesItem(options),
+            ViewOption("垂直分割(&E)", "view-split", () => options.VerticalSplit, value => options.VerticalSplit = value),
+            tabBarVisible,
+            menuBarVisible,
             Separator(),
             toolbarVisible,
             statusVisible,
@@ -287,7 +300,14 @@ public sealed partial class MainWindow
     private bool _showStatusBar = true;
     private bool _showLocationPane = true;
     private bool _showDiffPane = true;
+    private bool _showTabBar = true;
+    private bool _showMenuBar = true;
     private MenuItem? _toolbarMenuItem;
+
+    /// <summary>自己検証用: メニューバーが表示されているか。</summary>
+    internal bool FrameMenuVisible => FrameMenu?.IsVisible != false;
+    /// <summary>自己検証用: 比較タブの見出しが表示されているか。テンプレート適用前は保存した値。</summary>
+    internal bool FrameTabBarVisible => SessionHeaders is { } headers ? headers.IsVisible : _showTabBar;
 
     /// <summary>自己検証用: ツールバーの帯が表示されているか。</summary>
     internal bool FrameToolbarVisible => FrameToolbar?.Parent is Control { IsVisible: true };
@@ -300,10 +320,86 @@ public sealed partial class MainWindow
         if (save) SaveViewMenuOptions();
     }
 
+    /// <summary>比較タブの見出しを出し入れする。テンプレート適用前は値だけ覚え、適用時に帯へ写す。</summary>
+    private void SetTabBarVisible(bool visible, bool save)
+    {
+        _showTabBar = visible;
+        if (SessionHeaders is not null) SessionHeaders.IsVisible = visible;
+        if (save) SaveViewMenuOptions();
+    }
+
+    /// <summary>メニューバーを出し入れする。隠したあとは Alt または F10 で戻す。</summary>
+    private void SetMenuBarVisible(bool visible, bool save)
+    {
+        _showMenuBar = visible;
+        if (FrameMenu is not null) FrameMenu.IsVisible = visible;
+        if (save) SaveViewMenuOptions();
+    }
+
+    /// <summary>本家の Diff コンテキスト。全行、0/1/3/5/7/9 行、Ctrl+D の切替、反転。</summary>
+    private MenuItem BuildDiffContextMenu(DiffTextViewOptions options)
+    {
+        var all = ContextItem("全行(&A)", "view-context-all", options, () => options.DiffContextLines < 0, () => options.SetDiffContext(-1));
+        var numbers = DiffTextViewOptions.DiffContextChoices.Select(lines =>
+            ContextItem(lines == 1 ? "&1 行" : $"&{lines} 行", "view-context-" + lines, options, () => options.DiffContextLines == lines, () => options.SetDiffContext(lines))).ToArray();
+        var toggle = GestureItem("全行/0 ～ 9 行切替(&T)", new KeyGesture(Key.D, KeyModifiers.Control), () => { options.ToggleDiffContext(); return Task.CompletedTask; });
+        toggle.Name = "frame-menu-view-context-toggle";
+        var invert = ViewOption("反転 (差異行を非表示にする)(&I)", "view-context-invert", () => options.DiffContextInvert, value => options.DiffContextInvert = value);
+        return Popup("Diff コンテキスト(&D)", [all, .. numbers, toggle, invert]);
+    }
+
+    /// <summary>コンテキストの行数。選ばれている項目だけチェックを付ける。</summary>
+    private MenuItem ContextItem(string header, string name, DiffTextViewOptions options, Func<bool> selected, Action choose)
+    {
+        var item = new MenuItem { Header = header, Name = "frame-menu-" + name, ToggleType = MenuItemToggleType.CheckBox, IsChecked = selected() };
+        item.Click += (_, _) => choose();
+        options.Changed += () => item.IsChecked = selected();
+        return item;
+    }
+
+    /// <summary>フォーカスのある側のスクロールを、他のペインと同期しない。</summary>
+    private MenuItem LockPanesItem(DiffTextViewOptions options)
+    {
+        var item = new MenuItem { Header = "ペインをロック(&L)", Name = "frame-menu-view-lock", ToggleType = MenuItemToggleType.CheckBox, IsChecked = options.LockedSide >= 0 };
+        item.Click += (_, _) =>
+        {
+            var side = ActivePane.ActiveDiffSide;
+            options.LockedSide = options.LockedSide == side ? -1 : side;
+        };
+        options.Changed += () => item.IsChecked = options.LockedSide >= 0;
+        return item;
+    }
+
+    /// <summary>インストール済みフォントから本文フォントを選ぶ。空のまま確定すると既定の等幅に戻る。</summary>
+    private async Task ChooseFontAsync()
+    {
+        var box = new TextBox { Text = TextViewOptions.FontFamily, PlaceholderText = DiffTextViewOptions.DefaultFontFamilyName };
+        var list = new ListBox { MaxHeight = 280 };
+        foreach (var font in FontManager.Current.SystemFonts.Select(font => font.Name).Distinct(StringComparer.CurrentCultureIgnoreCase).OrderBy(name => name, StringComparer.CurrentCultureIgnoreCase))
+            list.Items.Add(font);
+        list.SelectionChanged += (_, _) => { if (list.SelectedItem is string name) box.Text = name; };
+        string? chosen = null;
+        var ok = new Button { Content = "OK", IsDefault = true, MinWidth = 80 };
+        var cancel = new Button { Content = "キャンセル", IsCancel = true, MinWidth = 80 };
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Spacing = 8, Margin = new Thickness(0, 8, 0, 0) };
+        buttons.Children.Add(ok); buttons.Children.Add(cancel);
+        var panel = new DockPanel { Margin = new Thickness(12) };
+        DockPanel.SetDock(buttons, Dock.Bottom); panel.Children.Add(buttons);
+        panel.Children.Add(new StackPanel { Spacing = 8, Children = { box, list } });
+        var dialog = new Window
+        {
+            Title = "フォントの選択", Width = 420, Height = 480, WindowStartupLocation = WindowStartupLocation.CenterOwner, Content = panel,
+        };
+        ok.Click += (_, _) => { chosen = box.Text; dialog.Close(); };
+        cancel.Click += (_, _) => dialog.Close();
+        await dialog.ShowDialog(this);
+        if (chosen is not null) TextViewOptions.FontFamily = chosen;
+    }
+
     // 本家と同じく、表示メニューの設定は変えるたびに保存する。失敗しても表示はそのまま使い、理由を状態欄へ出す。
     private void SaveViewMenuOptions()
     {
-        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane))) return;
+        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane, _showTabBar, _showMenuBar))) return;
         if (_sessions.Count > 0) ActivePane.ShowViewOptionsStatus(TextViewOptionsStorage.Diagnostic + " 表示はこの起動の間だけ変えています。");
     }
 
@@ -364,6 +460,19 @@ public sealed partial class MainWindow
         var control = e.KeyModifiers.HasFlag(KeyModifiers.Control);
         var shift = e.KeyModifiers.HasFlag(KeyModifiers.Shift);
         var textSearch = ActivePane.AcceptsTextSearchKeys(FocusManager?.GetFocusedElement());
+        // メニューバーを隠したあとは、Alt または F10 だけで戻す。Alt+矢印などの操作はそのまま使う。
+        if (!_showMenuBar && e.Key is Key.LeftAlt or Key.RightAlt or Key.F10 && !control && !shift)
+        {
+            e.Handled = true;
+            SetMenuBarVisible(true, save: true);
+            return true;
+        }
+        if (e.Key == Key.D && control && !alt && !shift && textSearch)
+        {
+            e.Handled = true;
+            TextViewOptions.ToggleDiffContext();
+            return true;
+        }
         // 拡大／縮小（Ctrl++／Ctrl+-／Ctrl+*・Ctrl+0、本家 IDR_MERGEDOCTYPE のアクセラレータ）はペインではなく全タブ共通の設定を変える。
         // 検索と同じく差分タブを表示していて通常の入力欄にフォーカスが無いときだけ受ける（画像・バイナリなどの形式別ビューのキーを奪わない）。
         int? zoom = (e.Key, alt, control, shift) switch

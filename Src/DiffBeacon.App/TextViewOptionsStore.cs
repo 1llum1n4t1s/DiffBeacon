@@ -24,6 +24,26 @@ internal sealed record TextViewSettings
     public bool ShowLocationPane { get; init; } = true;
     /// <summary>本家の Diff ペイン。既定は表示する。</summary>
     public bool ShowDiffPane { get; init; } = true;
+    /// <summary>本家の行の折り返し。既定は折り返さない。</summary>
+    public bool WordWrap { get; init; }
+    /// <summary>本文フォント。空は既定の等幅。</summary>
+    public string FontFamily { get; init; } = "";
+    /// <summary>シンタックスハイライト。既定はオフ。</summary>
+    public bool SyntaxHighlight { get; init; }
+    /// <summary>Diff コンテキストの行数。-1 は全行。</summary>
+    public int DiffContextLines { get; init; } = -1;
+    /// <summary>全行から Ctrl+D で戻す行数。</summary>
+    public int DiffContextLastLines { get; init; }
+    /// <summary>差異行側を隠す反転。</summary>
+    public bool DiffContextInvert { get; init; }
+    /// <summary>垂直分割（左右）。偽のときは上下。</summary>
+    public bool VerticalSplit { get; init; } = true;
+    /// <summary>ロックした側。-1 はなし。</summary>
+    public int LockedSide { get; init; } = -1;
+    /// <summary>比較タブの見出し。既定は表示する。</summary>
+    public bool ShowTabBar { get; init; } = true;
+    /// <summary>メニューバー。既定は表示する。隠したあとは Alt か F10 で戻す。</summary>
+    public bool ShowMenuBar { get; init; } = true;
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true,
@@ -81,6 +101,14 @@ internal sealed class TextViewOptionsStore
     {
         if (settings.ZoomSteps < DiffTextViewOptions.MinimumZoomSteps || settings.ZoomSteps > DiffTextViewOptions.MaximumZoomSteps)
             throw new InvalidDataException($"表示メニューの設定の拡大（zoomSteps）は {DiffTextViewOptions.MinimumZoomSteps}～{DiffTextViewOptions.MaximumZoomSteps} にしてください: {settings.ZoomSteps}");
+        if (!DiffTextViewOptions.IsFontFamilyName(settings.FontFamily))
+            throw new InvalidDataException("表示メニューの設定のフォント名は200文字以下の1行にしてください。");
+        if (settings.DiffContextLines != -1 && !DiffTextViewOptions.DiffContextChoices.Contains(settings.DiffContextLines))
+            throw new InvalidDataException($"表示メニューの設定の Diff コンテキストは -1, 0, 1, 3, 5, 7, 9 のいずれかです: {settings.DiffContextLines}");
+        if (!DiffTextViewOptions.DiffContextChoices.Contains(settings.DiffContextLastLines))
+            throw new InvalidDataException($"表示メニューの設定の Diff コンテキストの切替先は 0, 1, 3, 5, 7, 9 のいずれかです: {settings.DiffContextLastLines}");
+        if (settings.LockedSide is < -1 or > 2)
+            throw new InvalidDataException($"表示メニューの設定のペインロックは -1～2 です: {settings.LockedSide}");
     }
 
     internal bool Reload()

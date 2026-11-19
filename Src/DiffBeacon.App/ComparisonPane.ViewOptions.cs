@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
+using AvaloniaEdit.Folding;
+using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Rendering;
 
 namespace DiffBeacon.App;
@@ -28,6 +30,7 @@ public sealed partial class ComparisonPane
 
     private DiffTextViewOptions _textViewOptions = new();
     private bool _textViewOptionsAttached;
+    private readonly FoldingManager?[] _contextFolds = new FoldingManager?[3];
 
     /// <summary>この比較が使っている表示の設定（アプリ全体で共有）。</summary>
     internal DiffTextViewOptions TextViewOptions => _textViewOptions;
@@ -38,6 +41,10 @@ public sealed partial class ComparisonPane
     internal bool DiffEditorMarginSeparatorVisible(int side) => _diffViews[side].MarginSeparator.Opacity > 0;
     /// <summary>自己検証用: その側のペインの一番上に見えている表示の行（1始まり）。</summary>
     internal int DiffEditorTopDisplayLine(int side) => TopDisplayLine(_diffViews[side]);
+    /// <summary>自己検証用: Diff コンテキストで折りたたんでいる区間の数。</summary>
+    internal int DiffEditorFoldCount(int side) => _contextFolds[side]?.AllFoldings.Count(section => section.IsFolded) ?? 0;
+    /// <summary>自己検証用: 垂直分割（左右）で並べているか。</summary>
+    internal bool DiffEditorsSplitVertically => _textViewOptions.VerticalSplit;
 
     /// <summary>表示メニューの設定を保存できなかった理由などを状態欄へ出す（外枠から呼ぶ）。</summary>
     internal void ShowViewOptionsStatus(string text) => _status.Text = text;
@@ -77,8 +84,11 @@ public sealed partial class ComparisonPane
     private void ApplyTextViewOptions()
     {
         var options = _textViewOptions;
-        var fontChanged = Math.Abs(_leftDiffView.View.FontSize - options.FontSize) > .001;
+        var family = ResolvedFontFamily(options.FontFamily);
+        var fontChanged = Math.Abs(_leftDiffView.View.FontSize - options.FontSize) > .001
+            || _leftDiffView.View.FontFamily.Name != family.Name;
         var topLine = fontChanged ? TopDisplayLine(_leftDiffView) : 0;
+        var splitChanged = _diffEditorGrid.Tag is not bool laidOut || laidOut != options.VerticalSplit;
         _diffViewSyncing = true;
         try
         {
@@ -86,17 +96,111 @@ public sealed partial class ComparisonPane
             {
                 var view = side.View;
                 if (Math.Abs(view.FontSize - options.FontSize) > .001) view.FontSize = options.FontSize;
+                if (view.FontFamily.Name != family.Name) view.FontFamily = family;
+                if (view.WordWrap != options.WordWrap) view.WordWrap = options.WordWrap;
                 view.Options.ShowSpaces = options.ViewWhitespace;
                 view.Options.ShowTabs = options.ViewWhitespace;
+                ApplySyntaxHighlight(side, options.SyntaxHighlight);
                 // 両方の欄を隠したときも縦線の幅と余白は残し、本文がペインの境界に接しないようにする（本家も数画素あける）。
                 side.MarginSeparator.Opacity = options.ViewLineNumbers || options.ViewMargins ? 1 : 0;
                 side.Redraw();
             }
+            if (splitChanged) LayoutDiffEditors(_diffDisplay.ThreeWay);
         }
         finally { _diffViewSyncing = false; }
+        ApplyDiffContext();
         if (topLine > 1) RestoreTopDisplayLine(_leftDiffView, topLine);
         SyncDiffEditorScroll(_leftDiffView);
         UpdateDiffPane();
+    }
+
+    /// <summary>空のフォント名は既定の等幅。指定した名前はそのまま Avalonia のフォント解決へ渡す。</summary>
+    private static FontFamily ResolvedFontFamily(string name) =>
+        new(string.IsNullOrEmpty(name) ? DiffTextViewOptions.DefaultFontFamilyName : name);
+
+    /// <summary>拡張子に合う定義があるときだけ色を付ける。定義が無い拡張子は色を消す。</summary>
+    private void ApplySyntaxHighlight(DiffEditorSide side, bool enabled)
+    {
+        IHighlightingDefinition? definition = null;
+        if (enabled)
+        {
+            var extension = Path.GetExtension(PathForSide(side.SourceSide));
+            if (!string.IsNullOrEmpty(extension)) definition = HighlightingManager.Instance.GetDefinitionByExtension(extension);
+        }
+        if (side.View.SyntaxHighlighting?.Name != definition?.Name) side.View.SyntaxHighlighting = definition;
+    }
+
+    /// <summary>側に対応するパス欄。ハイライトの拡張子だけに使う。</summary>
+    private string PathForSide(int side) => side switch { 0 => LeftPath.Text ?? "", 1 => BasePath.Text ?? "", _ => RightPath.Text ?? "" };
+
+    /// <summary>
+    /// 差異の前後だけを残し、それ以外の連続した表示行を折りたたむ。全ペインで同じ行番号を折るので、行の対応は崩れない。
+    /// 反転中は、残す側と隠す側を入れ替える。全行かつ反転なしのときは折りたたみを外す。
+    /// </summary>
+    private void ApplyDiffContext()
+    {
+        var options = _textViewOptions;
+        var model = _diffDisplay;
+        for (var index = 0; index < _diffViews.Length; index++)
+        {
+            var side = _diffViews[index];
+            var showAll = options.DiffContextLines < 0 && !options.DiffContextInvert;
+            var documentLines = side.View.Document.LineCount;
+            // 末尾改行があると AvaloniaEdit は空の最終行を1行足す。差分の行数か、その1行多いときだけ折る。
+            var aligned = model.RowCount > 0 && documentLines >= model.RowCount && documentLines <= model.RowCount + 1;
+            if (showAll || !aligned)
+            {
+                if (_contextFolds[index] is { } installed)
+                {
+                    FoldingManager.Uninstall(installed);
+                    _contextFolds[index] = null;
+                }
+                continue;
+            }
+            var manager = _contextFolds[index] ??= FoldingManager.Install(side.View.TextArea);
+            var visible = ContextVisibility(model, options);
+            var folds = new List<NewFolding>();
+            var line = 1;
+            var last = model.RowCount;
+            while (line <= last)
+            {
+                if (visible[line - 1]) { line++; continue; }
+                var start = line;
+                while (line <= last && !visible[line - 1]) line++;
+                var startOffset = side.View.Document.GetLineByNumber(start).Offset;
+                // 次の表示行の先頭までを隠す。空行でも改行ごと折りたためる。
+                var endOffset = line <= documentLines ? side.View.Document.GetLineByNumber(line).Offset : side.View.Document.TextLength;
+                if (endOffset > startOffset)
+                    folds.Add(new NewFolding(startOffset, endOffset) { DefaultClosed = true, Name = "…" });
+            }
+            manager.UpdateFoldings(folds, -1);
+            foreach (var section in manager.AllFoldings) section.IsFolded = true;
+        }
+    }
+
+    /// <summary>表示の各行を出すか。0～9 は差異行から前後 N 行。全行の反転は差異行だけを隠す。</summary>
+    private static bool[] ContextVisibility(DiffDisplayModel model, DiffTextViewOptions options)
+    {
+        var count = model.RowCount;
+        var window = options.DiffContextLines;
+        var visible = new bool[count];
+        for (var row = 0; row < count; row++)
+        {
+            var inside = window < 0
+                ? !options.DiffContextInvert || model.Difference[row]
+                : NearDifference(model, row, window);
+            visible[row] = options.DiffContextInvert ? !inside : inside;
+        }
+        return visible;
+    }
+
+    /// <summary>表示行が差異行から radius 行以内か。</summary>
+    private static bool NearDifference(DiffDisplayModel model, int row, int radius)
+    {
+        var start = Math.Max(0, row - radius);
+        var end = Math.Min(model.RowCount - 1, row + radius);
+        for (var index = start; index <= end; index++) if (model.Difference[index]) return true;
+        return false;
     }
 
     // ペインの一番上に見えている表示の行（1始まり）。スクロールしていなければ 1。

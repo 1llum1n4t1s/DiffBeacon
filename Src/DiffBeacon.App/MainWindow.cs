@@ -62,6 +62,8 @@ public sealed partial class MainWindow : Window
         _showStatusBar = textViewOptionsStore.Current.ShowStatusBar;
         _showLocationPane = textViewOptionsStore.Current.ShowLocationPane;
         _showDiffPane = textViewOptionsStore.Current.ShowDiffPane;
+        _showTabBar = textViewOptionsStore.Current.ShowTabBar;
+        _showMenuBar = textViewOptionsStore.Current.ShowMenuBar;
         TextViewOptions.Changed += SaveViewMenuOptions;
         Closed += (_, _) => TextViewOptions.Changed -= SaveViewMenuOptions;
         Action<string> textViewGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
@@ -99,6 +101,7 @@ public sealed partial class MainWindow : Window
                 HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
                 VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
             DockPanel.SetDock(SessionHeaders, Dock.Top); dock.Children.Insert(0, SessionHeaders);
+            SessionHeaders.IsVisible = _showTabBar;
             SessionHeaders.SizeChanged += (_, _) => QueueSelectedHeader();
             QueueSelectedHeader();
         };

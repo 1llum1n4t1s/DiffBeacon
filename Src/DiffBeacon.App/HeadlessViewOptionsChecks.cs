@@ -29,6 +29,10 @@ internal static partial class HeadlessViewOptionsChecks
             options.Zoom(0);
             options.ViewWhitespace = false; options.ViewEndOfLine = false; options.ViewLineDifferences = true;
             options.ViewLineNumbers = true; options.ViewMargins = true;
+            options.WordWrap = false; options.FontFamily = ""; options.SyntaxHighlight = false;
+            options.SetDiffContext(-1); options.DiffContextInvert = false; options.VerticalSplit = true; options.LockedSide = -1;
+            if (!window.FrameMenuVisible) Click(MenuOption(window, "view-menu-bar"));
+            if (!window.FrameTabBarVisible) Click(MenuOption(window, "view-tab-bar"));
             Dispatcher.UIThread.RunJobs();
             pane.DiscardChanges();
         }
@@ -41,7 +45,8 @@ internal static partial class HeadlessViewOptionsChecks
         var view = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "表示(_V)");
         var headers = view.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("view menu lists the WinMerge text view options", headers.SequenceEqual(["拡大/縮小(_Z)", "空白を表示(_V)", "改行を表示(_O)", "行内差異を表示(_W)", "行番号を表示(_N)",
-            "マージンを表示(_M)", "ツールバー(_T)", "ステータス バー(&S)", "Diff ペイン(&P)", "ロケーション ペイン(&C)", "ペインの交換(_W)", "ダーク テーマ(_D)", "最新の情報に更新"]), string.Join("|", headers));
+            "マージンを表示(_M)", "行を右端で折返す(&R)", "フォント(_F)", "シンタックス ハイライト", "Diff コンテキスト(&D)", "ペインをロック(&L)", "垂直分割(&E)",
+            "タブ バーを表示(&V)", "メニューバー(&U)", "ツールバー(_T)", "ステータス バー(&S)", "Diff ペイン(&P)", "ロケーション ペイン(&C)", "ペインの交換(_W)", "ダーク テーマ(_D)", "最新の情報に更新"]), string.Join("|", headers));
         var zoomMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "拡大/縮小(_Z)");
         var zoomItems = zoomMenu.Items.OfType<MenuItem>().ToArray();
         // メニューに出るキーの文字は、テーマのメニュー項目が使う変換（PlatformKeyGestureConverter）を通した文字列で確かめる。
@@ -176,6 +181,92 @@ internal static partial class HeadlessViewOptionsChecks
                 $"font={other.DiffEditor(2).FontSize} spaces={other.DiffEditor(0).Options.ShowSpaces}");
         check("view options do not change the text", pane.LeftEditor.Text == "a\r\nb\r\nc\r\n" && pane.RightEditor.Text == "a\nb\r\nc\r",
             $"{Escape(pane.LeftEditor.Text)} {Escape(pane.RightEditor.Text)}");
+
+        // 折り返し・フォント・ハイライト・コンテキスト・ロック・分割・タブとメニュー。本文は変えない。
+        var manyLeft = new StringBuilder(); var manyRight = new StringBuilder();
+        for (var i = 1; i <= 40; i++)
+        {
+            manyLeft.Append("line ").Append(i).Append('\n');
+            manyRight.Append(i == 8 ? "changed\n" : "line " + i + "\n");
+        }
+        Compare(pane, work, "context", manyLeft.ToString(), manyRight.ToString(), pump);
+        var beforeText = pane.LeftEditor.Text;
+        Click(Option("view-wrap"));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var wrapScroller = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(left).OfType<ScrollViewer>().First();
+        wrapScroller.Offset = new Vector(0, left.TextArea.TextView.GetVisualTopByDocumentLine(20));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view word wrap keeps the same document line at the top of every pane", options.WordWrap && left.WordWrap && right.WordWrap
+            && pane.DiffEditorTopDisplayLine(0) == 20 && pane.DiffEditorTopDisplayLine(2) == 20, $"top={pane.DiffEditorTopDisplayLine(0)},{pane.DiffEditorTopDisplayLine(2)}");
+        Click(Option("view-wrap"));
+
+        options.FontFamily = "Menlo";
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view font family applies to every pane", options.FontFamily == "Menlo" && left.FontFamily.Name.Contains("Menlo", StringComparison.Ordinal) && right.FontFamily.Name.Contains("Menlo", StringComparison.Ordinal),
+            left.FontFamily.Name);
+        var fontMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "フォント(_F)");
+        Click(fontMenu.Items.OfType<MenuItem>().First(item => item.Header as string == "デフォルト フォントを使用"));
+        check("view default font clears the selected family", options.FontFamily.Length == 0 && left.FontFamily.Name.Contains("Cascadia", StringComparison.Ordinal), left.FontFamily.Name);
+
+        var csLeft = Path.Combine(work, "sample-left.cs"); var csRight = Path.Combine(work, "sample-right.cs");
+        File.WriteAllText(csLeft, "class A { int x = 1; }\n"); File.WriteAllText(csRight, "class A { int x = 2; }\n");
+        pane.LeftPath.Text = csLeft; pane.RightPath.Text = csRight; pane.BasePath.Text = "";
+        pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
+        Click(Option("view-syntax"));
+        check("view syntax highlight uses the AvaloniaEdit definition for the extension", options.SyntaxHighlight
+            && left.SyntaxHighlighting is not null && right.SyntaxHighlighting is not null && (left.SyntaxHighlighting.Name.Contains('#') || left.SyntaxHighlighting.Name.Contains("C#", StringComparison.Ordinal)),
+            left.SyntaxHighlighting?.Name ?? "null");
+        Click(Option("view-syntax"));
+
+        Compare(pane, work, "context", manyLeft.ToString(), manyRight.ToString(), pump);
+        var contextItem = Context(view, "view-context-0");
+        Click(contextItem);
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var afterClick = options.DiffContextLines;
+        var folded = pane.DiffEditorFoldCount(0);
+        Click(Context(view, "view-context-all"));
+        var opened = pane.DiffEditorFoldCount(0);
+        Press(window, left, Key.D, KeyModifiers.Control);
+        var toggled = options.DiffContextLines;
+        check("view diff context folds lines outside the window and ctrl+d restores the last count", folded > 0 && opened == 0 && toggled == 0,
+            $"after={afterClick} checked={contextItem.IsChecked} folded={folded} opened={opened} lines={toggled} doc={left.Document.LineCount}");
+        Click(Context(view, "view-context-invert"));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view diff context invert folds the difference lines", options.DiffContextInvert && pane.DiffEditorFoldCount(0) > 0, pane.DiffEditorFoldCount(0).ToString());
+        options.SetDiffContext(-1); options.DiffContextInvert = false;
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+
+        pane.FocusDiffEditorRealLine(0, 0);
+        var lockTop = pane.DiffEditorTopDisplayLine(0);
+        Click(Option("view-lock"));
+        var rightScroller = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(right).OfType<ScrollViewer>().First();
+        rightScroller.Offset = new Vector(0, right.TextArea.TextView.GetVisualTopByDocumentLine(15));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view pane lock stops scroll sync for the focused side", options.LockedSide == 0 && pane.DiffEditorTopDisplayLine(0) == lockTop
+            && pane.DiffEditorTopDisplayLine(2) == 15, $"lock={options.LockedSide} left={pane.DiffEditorTopDisplayLine(0)} right={pane.DiffEditorTopDisplayLine(2)}");
+        Click(Option("view-lock"));
+
+        Click(Option("view-split"));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view horizontal split stacks the panes", !options.VerticalSplit && !pane.DiffEditorsSplitVertically && pane.DiffEditorGridRow(2) == 1,
+            $"vertical={pane.DiffEditorsSplitVertically} row={pane.DiffEditorGridRow(2)}");
+        Click(Option("view-split"));
+
+        Click(Option("view-menu-bar"));
+        check("view menu bar can hide", !window.FrameMenuVisible, window.FrameMenuVisible.ToString());
+        Press(window, left, Key.F10, KeyModifiers.None);
+        check("view menu bar returns on F10", window.FrameMenuVisible, window.FrameMenuVisible.ToString());
+        Click(Option("view-tab-bar"));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view tab bar can hide and the text stays", !window.FrameTabBarVisible && pane.LeftEditor.Text == beforeText, $"tab={window.FrameTabBarVisible} text-length={pane.LeftEditor.Text?.Length}");
+        Click(Option("view-tab-bar"));
+    }
+
+    /// <summary>表示メニュー直下の項目。コンテキストの行数は小メニューの中。</summary>
+    private static MenuItem Context(MenuItem view, string name)
+    {
+        var menu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "Diff コンテキスト(&D)");
+        return menu.Items.OfType<MenuItem>().First(item => item.Name == "frame-menu-" + name);
     }
 
     // 本家のメニューの表示（Ctrl++／Ctrl+-／Ctrl+*）。
