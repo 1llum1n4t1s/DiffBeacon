@@ -86,7 +86,8 @@ jobs:
       # ja-JP／LCID1041まで要求する暦関数スイートは、locale不一致のため従来どおり理由付きでskipされる。
       - name: Use the captured Tokyo time zone
         if: runner.os == 'Windows'
-        run: tzutil /s "Tokyo Standard Time" && tzutil /g
+        # Git bash は /s をパスへ変換するため、変換を止めてから tzutil を呼ぶ。
+        run: MSYS2_ARG_CONV_EXCL='*' tzutil /s "Tokyo Standard Time" && MSYS2_ARG_CONV_EXCL='*' tzutil /g
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 11.0.x
