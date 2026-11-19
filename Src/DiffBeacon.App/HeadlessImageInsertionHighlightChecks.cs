@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Avalonia.Controls;
+using Avalonia.LogicalTree;
 using Avalonia.Media.Imaging;
 using Avalonia.VisualTree;
 
@@ -125,7 +126,7 @@ internal static class HeadlessImageInsertionHighlightChecks
                             var oracle = wanted[p]; var expectedBgra = Convert.FromHexString(oracle.GetProperty("bgraHex").GetString()!);
                             Fixture(name + " state " + index + " literal BGRA SHA " + p, Hash(expectedBgra) == oracle.GetProperty("bgraSha256").GetString()
                                 && Hash(Convert.FromBase64String(oracle.GetProperty("pngBase64").GetString()!)) == oracle.GetProperty("pngSha256").GetString(), "original highlighted PNG and decoded literal SHA");
-                            var bitmap = panel.GetVisualDescendants().OfType<Image>().Single(image => image.Name == "ImagePane" + sideNames[p]).Source as WriteableBitmap
+                            var bitmap = PaneImage(panel, "ImagePane" + sideNames[p]).Source as WriteableBitmap
                                 ?? throw new InvalidOperationException("強調比較の実Bitmapがありません。");
                             var pixels = ReadPixels(bitmap); var width = oracle.GetProperty("canvasWidth").GetInt32(); var height = oracle.GetProperty("canvasHeight").GetInt32();
                             check(prefix + " actual Bitmap all BGRA " + p, bitmap.PixelSize.Width == width && bitmap.PixelSize.Height == height && pixels.AsSpan().SequenceEqual(expectedBgra),
@@ -169,6 +170,10 @@ internal static class HeadlessImageInsertionHighlightChecks
         pane.DiscardChanges();
 
         SpecializedViews.ImagePanel Panel() => pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
+        static Image PaneImage(SpecializedViews.ImagePanel panel, string name)
+            => panel.GetVisualDescendants().OfType<Image>().FirstOrDefault(image => image.Name == name)
+                ?? panel.GetLogicalDescendants().OfType<Image>().FirstOrDefault(image => image.Name == name)
+                ?? throw new InvalidOperationException("強調比較の画像がありません: " + name);
         void Fixture(string label, bool success, string details)
         {
             check("image insertion highlight GUI original " + label, success, details);
