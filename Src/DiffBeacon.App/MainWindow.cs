@@ -122,7 +122,11 @@ public sealed partial class MainWindow : Window
         if (FolderColumnOptions.Diagnostic is { } columnDiagnostic) optionDiagnostics.Add(columnDiagnostic);
         if (textViewOptionsStore.Diagnostic is { } viewDiagnostic) optionDiagnostics.Add(viewDiagnostic);
         // 二種類の読込失敗でもOpenedから一つのdialogだけを開く。
-        Opened += (_, _) => MacIntegration.TryInstallServices();
+        Opened += (_, _) =>
+        {
+            try { MacIntegration.TryInstallServices(); }
+            catch (Exception) { }
+        };
         if (optionDiagnostics.Count > 0)
             Opened += async (_, _) => await Dialogs.MessageAsync(this, "表示・操作設定", string.Join("\n\n", optionDiagnostics));
         if (arguments is { Length: 1 } && Path.GetExtension(arguments[0]).ToLowerInvariant() is ".json" or ".winmerge" or ".diffbeacon")

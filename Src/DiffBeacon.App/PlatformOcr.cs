@@ -58,25 +58,28 @@ internal static class MacIntegration
     /// <summary>サービスが渡したパス。ウィンドウが次の比較に使う。</summary>
     internal static string? PendingPaths { get; private set; }
 
-    [DllImport(Library, EntryPoint = "db_install_services")]
-    private static extern void InstallServices(PathsCallback callback);
-
     [DllImport(Library, EntryPoint = "db_ocr_file")]
     private static extern int RecognizeFile(IntPtr path, IntPtr output, int outputLength, IntPtr error, int errorLength);
 
-    /// <summary>Finder サービスを受け取る。ライブラリまたは NSApp が無ければ戻る。</summary>
+    /// <summary>Finder サービスを受け取る。ライブラリが無い、NSApp が無い、登録に失敗したときはアプリを止めない。</summary>
     internal static bool TryInstallServices()
     {
         if (!OperatingSystem.IsMacOS()) return false;
         try
         {
+            var library = Path.Combine(AppContext.BaseDirectory, "libdiffbeacon-mac.dylib");
+            if (!File.Exists(library) || !NativeLibrary.TryLoad(library, out var handle)) return false;
+            var export = NativeLibrary.GetExport(handle, "db_install_services");
+            var install = Marshal.GetDelegateForFunctionPointer<PathsCallbackInstaller>(export);
             _serviceCallback ??= OnServicePaths;
-            InstallServices(_serviceCallback);
+            install(_serviceCallback);
             return true;
         }
-        catch (DllNotFoundException) { return false; }
-        catch (EntryPointNotFoundException) { return false; }
+        catch (Exception) { return false; }
     }
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void PathsCallbackInstaller(PathsCallback callback);
 
     /// <summary>Vision で読む。シムが無ければ false。</summary>
     internal static bool TryRecognize(string imagePath, out string text, out string error)

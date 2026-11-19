@@ -1606,7 +1606,12 @@ internal static class HeadlessSelfTest
             Progress("HeadlessIndependentTextInputSavedArchiveChecks", "start"); if (!skipCovered) HeadlessIndependentTextInputSavedArchiveChecks.Run(window, output, Pump, Check, Screenshot); Progress("HeadlessIndependentTextInputSavedArchiveChecks", "complete");
             return assertions.All(x => x.Passed) ? 0 : 2;
         }
-        catch (Exception ex) { assertions.Add(("unexpected failure", false, ex.ToString())); return 2; }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex);
+            assertions.Add(("unexpected failure", false, ex.ToString()));
+            return 2;
+        }
         finally
         {
             using var stream = File.Create(Path.Combine(artifactOutput, "ui-report.json"));

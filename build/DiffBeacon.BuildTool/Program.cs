@@ -114,6 +114,8 @@ internal static class Program
         Directory.CreateDirectory(Path.Combine(bundle, "Contents", "Resources"));
         foreach (var file in Directory.EnumerateFiles(output))
             File.Copy(file, Path.Combine(macOs, Path.GetFileName(file)), overwrite: true);
+        // .app の実行ファイルは Contents/MacOS にあり、発行物の直下にある Translations は見えない。
+        CopyTree(Path.Combine(output, "Translations"), Path.Combine(macOs, "Translations"));
         var version = Run("dotnet", ["msbuild", project, "-getProperty:Version", "-nologo", "-noAutoResponse"], repo).Trim();
         var plist = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\"><dict>\n  <key>CFBundleName</key><string>DiffBeacon</string>\n  <key>CFBundleDisplayName</key><string>DiffBeacon</string>\n  <key>CFBundleIdentifier</key><string>com.kagayoi.diffbeacon</string>\n  <key>CFBundleExecutable</key><string>DiffBeacon</string>\n  <key>CFBundlePackageType</key><string>APPL</string>\n  <key>CFBundleVersion</key><string>" + System.Security.SecurityElement.Escape(version) + "</string>\n  <key>CFBundleShortVersionString</key><string>" + System.Security.SecurityElement.Escape(version) + "</string>\n  <key>LSMinimumSystemVersion</key><string>14.0</string>\n  <key>NSHighResolutionCapable</key><true/>\n  <key>NSServices</key><array><dict>\n    <key>NSMenuItem</key><dict><key>default</key><string>DiffBeacon で比較</string></dict>\n    <key>NSMessage</key><string>diffBeaconCompare</string>\n    <key>NSSendTypes</key><array><string>NSFilenamesPboardType</string></array>\n    <key>NSPortName</key><string>DiffBeacon</string>\n  </dict></array>\n</dict></plist>\n";
         File.WriteAllText(Path.Combine(bundle, "Contents", "Info.plist"), plist);
@@ -122,6 +124,17 @@ internal static class Program
         Run("plutil", ["-lint", Path.Combine(bundle, "Contents", "Info.plist")], output);
         Run("tar", ["-czf", Path.Combine(output, "DiffBeacon.app.tar.gz"), "-C", output, "DiffBeacon.app"], output);
         return bundled;
+    }
+
+    /// <summary>ディレクトリを再帰的にコピーする。無いときは何もしない。</summary>
+    private static void CopyTree(string source, string destination)
+    {
+        if (!Directory.Exists(source)) return;
+        Directory.CreateDirectory(destination);
+        foreach (var file in Directory.EnumerateFiles(source))
+            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), overwrite: true);
+        foreach (var directory in Directory.EnumerateDirectories(source))
+            CopyTree(directory, Path.Combine(destination, Path.GetFileName(directory)));
     }
 
     /// <summary>公式 ncompress の参照デコーダをコンパイルする。</summary>

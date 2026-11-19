@@ -72,26 +72,37 @@ internal sealed class PoCatalog
         if (!Directory.Exists(directory)) return catalogs;
         foreach (var path in Directory.EnumerateFiles(directory, "*.po"))
         {
-            var catalog = Load(path);
-            catalogs[catalog.Language] = catalog;
+            try
+            {
+                var catalog = Load(path);
+                catalogs[catalog.Language] = catalog;
+            }
+            catch (Exception error) when (error is IOException or InvalidDataException or ArgumentException)
+            {
+                // 一つの壊れたカタログで起動全体を止めない。
+            }
         }
         return catalogs;
     }
 
-    /// <summary>実行ファイルの横、または開発時のリポジトリにある Translations/WinMerge。</summary>
+    /// <summary>実行ファイルの横の Translations、または開発時のリポジトリにある Translations/WinMerge。</summary>
     internal static string? FindDirectory()
     {
-        var beside = Path.Combine(AppContext.BaseDirectory, "Translations");
-        if (Directory.Exists(beside)) return beside;
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            var candidate = Path.Combine(current.FullName, "Translations", "WinMerge");
-            if (Directory.Exists(candidate)) return candidate;
+            var flat = Path.Combine(current.FullName, "Translations");
+            if (ContainsCatalogs(flat)) return flat;
+            var nested = Path.Combine(flat, "WinMerge");
+            if (ContainsCatalogs(nested)) return nested;
             current = current.Parent;
         }
         return null;
     }
+
+    /// <summary>ディレクトリ直下に .po があるときだけカタログ置き場にする。</summary>
+    private static bool ContainsCatalogs(string directory)
+        => Directory.Exists(directory) && Directory.EnumerateFiles(directory, "*.po").Any();
 
     private static void Commit(Dictionary<string, string> messages, string? id, System.Text.StringBuilder text, bool inText)
     {
