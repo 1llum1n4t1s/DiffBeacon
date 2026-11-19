@@ -88,6 +88,7 @@ public sealed partial class MainWindow : Window
         MinHeight = 550;
         var root = new DockPanel();
         // 本家WinMergeのメインフレームと同じく、メニューバーとツールバーを最上部に置く（MainWindow.Frame.cs）。
+        UiText.Use(textViewOptionsStore.Current.UiLanguage);
         var header = BuildFrame();
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
@@ -121,6 +122,7 @@ public sealed partial class MainWindow : Window
         if (FolderColumnOptions.Diagnostic is { } columnDiagnostic) optionDiagnostics.Add(columnDiagnostic);
         if (textViewOptionsStore.Diagnostic is { } viewDiagnostic) optionDiagnostics.Add(viewDiagnostic);
         // 二種類の読込失敗でもOpenedから一つのdialogだけを開く。
+        Opened += (_, _) => MacIntegration.TryInstallServices();
         if (optionDiagnostics.Count > 0)
             Opened += async (_, _) => await Dialogs.MessageAsync(this, "表示・操作設定", string.Join("\n\n", optionDiagnostics));
         if (arguments is { Length: 1 } && Path.GetExtension(arguments[0]).ToLowerInvariant() is ".json" or ".winmerge" or ".diffbeacon")
@@ -444,7 +446,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             if (CanAdopt() && editorLeft == LeftEditor.Text && editorRight == RightEditor.Text) { AdoptLegacyTextRole(); ResetMergeSession(); _lastPackageComparison = null; ApplyDiff(editorDiff); }
             return;
         }
-        _status.Text = "比較しています…";
+        _status.Text = UiText.Phrase("Comparing...");
         CompareButton.IsEnabled = false;
         try
         {

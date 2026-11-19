@@ -32,6 +32,13 @@ internal static class HeadlessPortGapChecks
             Check("Japanese catalog keeps a missing id", japanese.Get("not-a-winmerge-id") == "not-a-winmerge-id", japanese.Count.ToString());
         }
         Check("ocr response reads text", ExternalOcr.ReadResponse("{\"text\":\"hello\"}") == "hello", ExternalOcr.Availability);
+        var possessive = DiffBeacon.Core.FileFilter.ParseExpression("name matches 'a++a'");
+        var greedy = DiffBeacon.Core.FileFilter.ParseExpression("name matches 'a+a'");
+        Check("possessive quantifier does not backtrack", !possessive.Matches("aaa", false, 0, DateTime.UnixEpoch) && greedy.Matches("aaa", false, 0, DateTime.UnixEpoch), "");
+        var content = DiffBeacon.Core.FileFilter.ParseExpression("content = 'x'");
+        Check("content field parses and is empty without a content scan", !content.Matches("a.txt", false, 1, DateTime.UnixEpoch), "");
+        var vision = MacIntegration.TryRecognize("/tmp/diffbeacon-no-such-image", out _, out var visionError);
+        Check("vision shim stays quiet when it is not published beside the app", !vision, visionError);
         var rejected = false;
         try { ExternalOcr.ReadResponse("{\"text\":1}"); }
         catch (InvalidDataException) { rejected = true; }

@@ -187,7 +187,8 @@ public sealed partial class FileFilter
     private static Regex MakeRegex(string pattern, bool caseSensitive, bool whole = false)
     {
         if (pattern.Length > 4096) throw new FormatException("正規表現は 4096 文字以下にしてください。");
-        return new(whole ? "\\A(?:" + pattern + ")\\z" : pattern,
+        var rewritten = PcrePattern.RewritePossessive(pattern);
+        return new(whole ? "\\A(?:" + rewritten + ")\\z" : rewritten,
             RegexOptions.CultureInvariant | (caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase), RegexTimeout);
     }
 
@@ -807,9 +808,31 @@ public sealed partial class FileFilter
             "isdirectory" or "isfolder" => Value.Bool(context.Directory),
             "exists" or "fileexists" => Value.Bool(true),
             "missing" or "filemissing" => Value.Bool(false),
-            _ => throw new InvalidOperationException("未対応の属性です。")
+            "different" or "filedifferent" => Value.Bool(false),
+            "identical" or "fileidentical" => Value.Bool(true),
+            "diffcode" => new(ValueKind.Number, Number: 0),
+            _ => KnownField(Name) ? new(ValueKind.Null) : throw new InvalidOperationException("未対応の属性です。")
         };
     }
+
+    /// <summary>WinMerge のフィールド名。値が比較モデルに無いものは Null。PCRE 全体やファイル内容の採取は別。</summary>
+    private static bool KnownField(string name) => FieldType(name) is not null;
+
+    private static ValueKind? FieldType(string name) => name switch
+    {
+        "attributes" or "codepage" or "columncount" or "diffcode" or "differences" or "ignoreddiffs" or "items" or "line"
+            or "linelength" or "linenumber" or "recursivefiles" or "recursiveitems" or "recursivetotalsize" or "size"
+            or "totalsize" or "viewlinenumber" or "files" => ValueKind.Number,
+        "attrstr" or "basename" or "content" or "datestr" or "encoding" or "eol" or "eolstr" or "extension" or "folder"
+            or "fullpath" or "name" or "prediffer" or "relpath" or "unpacker" or "version" => ValueKind.String,
+        "binary" or "bookmarked" or "different" or "differentleftmiddle" or "differentleftright" or "differentmiddleright"
+            or "exists" or "filedifferent" or "filedifferentleftmiddle" or "filedifferentleftright" or "filedifferentmiddleright"
+            or "fileexists" or "fileidentical" or "filemissing" or "filemoved" or "hasbom" or "identical" or "isfolder"
+            or "missing" or "moved" or "skipped" or "trivial" => ValueKind.Boolean,
+        "creationtime" or "date" => ValueKind.Date,
+        _ => null
+    };
+
     private static string CoreDateStr(Context context)
     {
         // fake Matchesも符号付きUTC epochを保ち、Date属性のFILETIME変換とは分離する。
@@ -2682,26 +2705,15 @@ public sealed partial class FileFilter
             if (prefixLength != 0)
             {
                 var attribute = word[prefixLength..];
-                var type = attribute switch
-                {
-                    "exists" or "fileexists" or "missing" or "filemissing" or "isfolder" => ValueKind.Boolean,
-                    "name" or "basename" or "extension" or "folder" or "fullpath" or "relpath" or "attrstr" or "datestr" => ValueKind.String,
-                    "size" or "attributes" => ValueKind.Number,
-                    "date" => ValueKind.Date,
-                    _ => throw Error($"未対応の属性 '{token.Text}' です。")
-                };
+                var type = FieldType(attribute) ?? throw Error($"未対応の属性 '{token.Text}' です。");
                 return new Property(attribute, type, side);
             }
-            return word switch
-            {
-                "true" => new Literal(Value.Bool(true)), "false" => new Literal(Value.Bool(false)),
-                "null" or "none" or "undefined" => new Literal(new(ValueKind.Null)),
-                "path" or "relpath" or "name" or "basename" or "extension" or "folder" or "fullpath" or "datestr" or "attrstr" => new Property(word, ValueKind.String),
-                "size" or "attributes" => new Property(word, ValueKind.Number),
-                "date" or "modified" => new Property(word, ValueKind.Date),
-                "isdirectory" or "isfolder" or "exists" or "fileexists" or "missing" or "filemissing" => new Property(word, ValueKind.Boolean),
-                _ => throw Error($"未対応の属性 '{token.Text}' です。")
-            };
+            if (word is "true") return new Literal(Value.Bool(true));
+            if (word is "false") return new Literal(Value.Bool(false));
+            if (word is "null" or "none" or "undefined") return new Literal(new(ValueKind.Null));
+            if (word is "modified") return new Property(word, ValueKind.Date);
+            if (word is "path" or "isdirectory") return new Property(word, word == "path" ? ValueKind.String : ValueKind.Boolean);
+            return FieldType(word) is { } fieldType ? new Property(word, fieldType) : throw Error($"未対応の属性 '{token.Text}' です。");
         }
         private static long? NativeSizeBytes(string text, int suffix)
         {

@@ -6,6 +6,12 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <RuntimeIdentifiers>win-x64;win-arm64;osx-x64;osx-arm64;linux-x64</RuntimeIdentifiers>
     <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+    <!-- Windows の発行だけ WinRT（Windows.Media.Ocr）をプロセス内で使う。ロックファイルは net11.0 のままなので、この TFM の復元はロックしない。 -->
+    <TargetFramework Condition="$([MSBuild]::IsOSPlatform('Windows'))">net11.0-windows10.0.19041.0</TargetFramework>
+    <RestoreLockedMode Condition="$([MSBuild]::IsOSPlatform('Windows'))">false</RestoreLockedMode>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::IsOSPlatform('Windows'))">10.0.19041.0</SupportedOSPlatformVersion>
+    <BuiltInComInteropSupport Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</BuiltInComInteropSupport>
+    <DefineConstants Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(DefineConstants);DIFFBEACON_WINDOWS_OCR</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>

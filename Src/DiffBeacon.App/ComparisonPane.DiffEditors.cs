@@ -70,10 +70,12 @@ public sealed partial class ComparisonPane
             DockPanel.SetDock(_diffPaneCaptions[index], Dock.Left); bar.Children.Add(_diffPaneCaptions[index]); bar.Children.Add(paths[index]);
             var header = new Border { Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 0, 0, 1), Child = bar };
             var pane = new DockPanel();
-            DockPanel.SetDock(header, Dock.Top); pane.Children.Add(header); pane.Children.Add(side.View);
+            DockPanel.SetDock(header, Dock.Top); pane.Children.Add(header);
+            DockPanel.SetDock(side.Ruler, Dock.Top); pane.Children.Add(side.Ruler);
+            pane.Children.Add(side.View);
             _diffEditorHosts[index] = new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(index == 0 ? 0 : 1, 0, 0, 0), Child = pane };
             side.Renderer.Owner = this; side.Margin.Owner = this; side.EndOfLine.Owner = this;
-            side.View.TextArea.TextView.ScrollOffsetChanged += (_, _) => SyncDiffEditorScroll(side);
+            side.View.TextArea.TextView.ScrollOffsetChanged += (_, _) => { side.Ruler.InvalidateVisual(); SyncDiffEditorScroll(side); };
             side.View.TextArea.Caret.PositionChanged += (_, _) => { SyncBookmarkCaret(side); OnDiffEditorCaretMoved(side); };
             // 行ブックマークは、フォーカスのあるエディターの側を対象にする（本家と同じ）。
             side.View.GotFocus += (_, _) => { _activeLineBookmarkSide = side.SourceSide; SyncBookmarkCaret(side); RefreshLineBookmarkToolbar(); };
@@ -584,7 +586,11 @@ public sealed partial class ComparisonPane
             View.TextArea.LeftMargins.Insert(0, Margin);
             MarginSeparator = new Border { Width = 1, Background = WinMergeColors.FrameBorder, Margin = new Thickness(0, 0, 4, 0) };
             View.TextArea.LeftMargins.Insert(1, MarginSeparator);
+            Ruler = new ColumnRuler(View);
         }
+
+        /// <summary>本家の上マージン（列のルーラー）。既定では隠す。</summary>
+        internal ColumnRuler Ruler { get; }
 
         internal TextEditor View { get; }
         internal DiffLineRenderer Renderer { get; }

@@ -29,7 +29,8 @@ internal static partial class HeadlessViewOptionsChecks
             options.Zoom(0);
             options.ViewWhitespace = false; options.ViewEndOfLine = false; options.ViewLineDifferences = true;
             options.ViewLineNumbers = true; options.ViewMargins = true;
-            options.WordWrap = false; options.FontFamily = ""; options.SyntaxHighlight = false;
+            options.WordWrap = false; options.FontFamily = ""; options.SyntaxHighlight = false; options.ViewTopMargin = false;
+            window.ApplyUiLanguage("Japanese");
             options.SetDiffContext(-1); options.DiffContextInvert = false; options.VerticalSplit = true; options.LockedSide = -1;
             if (!window.FrameMenuVisible) Click(MenuOption(window, "view-menu-bar"));
             if (!window.FrameTabBarVisible) Click(MenuOption(window, "view-tab-bar"));
@@ -45,8 +46,8 @@ internal static partial class HeadlessViewOptionsChecks
         var view = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "表示(_V)");
         var headers = view.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("view menu lists the WinMerge text view options", headers.SequenceEqual(["拡大/縮小(_Z)", "空白を表示(_V)", "改行を表示(_O)", "行内差異を表示(_W)", "行番号を表示(_N)",
-            "マージンを表示(_M)", "行を右端で折返す(&R)", "フォント(_F)", "シンタックス ハイライト", "Diff コンテキスト(&D)", "ペインをロック(&L)", "垂直分割(&E)",
-            "タブ バーを表示(&V)", "メニューバー(&U)", "ツールバー(_T)", "ステータス バー(&S)", "Diff ペイン(&P)", "ロケーション ペイン(&C)", "ペインの交換(_W)", "ダーク テーマ(_D)", "最新の情報に更新"]), string.Join("|", headers));
+            "マージンを表示(_M)", "上マージンを表示(_P)", "行を右端で折返す(_R)", "フォント", "シンタックス ハイライト", "Diff コンテキスト(_D)", "ペインをロック(_L)", "垂直分割(_E)",
+            "タブ バーを表示(_V)", "メニューバー(_U)", "ツールバー(_T)", "ステータス バー(_S)", "Diff ペイン(_P)", "ロケーション ペイン(_C)", "ペインの交換(_A)", "ダーク テーマ(_D)", "言語(_L)", "最新の情報に更新"]), string.Join("|", headers));
         var zoomMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "拡大/縮小(_Z)");
         var zoomItems = zoomMenu.Items.OfType<MenuItem>().ToArray();
         // メニューに出るキーの文字は、テーマのメニュー項目が使う変換（PlatformKeyGestureConverter）を通した文字列で確かめる。
@@ -148,6 +149,11 @@ internal static partial class HeadlessViewOptionsChecks
         Click(Option("view-margins")); window.UpdateLayout();
         check("view line numbers and margins hide their columns", Near(marginOnly, 14) && none == 0 && !separator && Near(numbersOnly, both - 14)
             && pane.DiffEditorMarginSeparatorVisible(0), $"both={both} margin={marginOnly} none={none} numbers={numbersOnly} separator={separator}");
+        Click(Option("view-top-margin"));
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        check("view top margin shows a column ruler", options.ViewTopMargin && left.Parent is DockPanel dock && dock.Children.OfType<ColumnRuler>().Any(ruler => ruler.IsVisible && ruler.Height > 10),
+            $"visible={options.ViewTopMargin}");
+        Click(Option("view-top-margin"));
 
         // スクロールした位置で拡大／縮小しても、本家と同じく一番上に見えていた行を保ち、全ペインがその行にそろう。
         // 左にだけ無い行を混ぜてゴースト行を作り、表示の200行目付近を一番上にしてから1段ずつ拡大・縮小する。
@@ -204,7 +210,7 @@ internal static partial class HeadlessViewOptionsChecks
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
         check("view font family applies to every pane", options.FontFamily == "Menlo" && left.FontFamily.Name.Contains("Menlo", StringComparison.Ordinal) && right.FontFamily.Name.Contains("Menlo", StringComparison.Ordinal),
             left.FontFamily.Name);
-        var fontMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "フォント(_F)");
+        var fontMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "フォント");
         Click(fontMenu.Items.OfType<MenuItem>().First(item => item.Header as string == "デフォルト フォントを使用"));
         check("view default font clears the selected family", options.FontFamily.Length == 0 && left.FontFamily.Name.Contains("Cascadia", StringComparison.Ordinal), left.FontFamily.Name);
 
@@ -260,12 +266,21 @@ internal static partial class HeadlessViewOptionsChecks
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
         check("view tab bar can hide and the text stays", !window.FrameTabBarVisible && pane.LeftEditor.Text == beforeText, $"tab={window.FrameTabBarVisible} text-length={pane.LeftEditor.Text?.Length}");
         Click(Option("view-tab-bar"));
+        window.ApplyUiLanguage("English");
+        var file = window.FrameMenu!.Items.OfType<MenuItem>().First().Header as string;
+        window.ApplyUiLanguage("Japanese");
+        var restored = window.FrameMenu.Items.OfType<MenuItem>().First().Header as string;
+        check("view language follows the catalog and Japanese stays the default", file == "_File" && restored == "ファイル(_F)", $"{file} / {restored}");
+        view.Open();
+        Dispatcher.UIThread.RunJobs();
+        screenshot("view-menu-open.png");
+        view.Close();
     }
 
     /// <summary>表示メニュー直下の項目。コンテキストの行数は小メニューの中。</summary>
     private static MenuItem Context(MenuItem view, string name)
     {
-        var menu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "Diff コンテキスト(&D)");
+        var menu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "Diff コンテキスト(_D)");
         return menu.Items.OfType<MenuItem>().First(item => item.Name == "frame-menu-" + name);
     }
 

@@ -44,47 +44,47 @@ public sealed partial class MainWindow
     private Menu BuildMenu()
     {
         var menu = new Menu { Name = "frame-menu", Background = WinMergeColors.FrameFace, Foreground = WinMergeColors.FrameText };
-        menu.Items.Add(Popup("ファイル(_F)",
-            Item("新規(_N)", "Ctrl+N", () => AddSessionFromUiAsync()),
-            Item("開く(_O)...", "Ctrl+O", () => { FocusPaths(); return Task.CompletedTask; }),
+        menu.Items.Add(MenuPopup("&File",
+            Labeled("&New", "Ctrl+N", () => AddSessionFromUiAsync()),
+            Labeled("&Open...\tCtrl+O", "Ctrl+O", () => { FocusPaths(); return Task.CompletedTask; }),
             Separator(),
-            Pane("プロジェクトを開く(_J)...", "Ctrl+J", FrameCommand.OpenProject),
-            Pane("プロジェクトを保存(_V)...", null, FrameCommand.SaveProject),
+            Labeled("Open Pro&ject...\tCtrl+J", "Ctrl+J", PaneAction(FrameCommand.OpenProject)),
+            Labeled("Sa&ve Project...", null, PaneAction(FrameCommand.SaveProject)),
             Separator(),
-            Popup("保存(_E)",
-                Pane("左側のファイルを保存(_L)", null, FrameCommand.SaveLeft),
-                Pane("右側のファイルを保存(_R)", null, FrameCommand.SaveRight),
+            MenuPopup("Sav&e",
+                Labeled("Save &Left", null, PaneAction(FrameCommand.SaveLeft)),
+                Labeled("Save &Right", null, PaneAction(FrameCommand.SaveRight)),
                 // マージ結果の保存は本家に無い DiffBeacon 独自の操作。ペイン内のボタンからメニューへ移した。
                 Pane("マージ結果を保存(_M)", null, FrameCommand.SaveMergeResult)),
-            Popup("名前を付けて保存(_A)",
-                Pane("名前を付けて左側のファイルを保存(_L)...", null, FrameCommand.SaveLeftAs),
-                Pane("名前を付けて右側のファイルを保存(_R)...", null, FrameCommand.SaveRightAs)),
+            MenuPopup("Save &As",
+                Labeled("Save &Left As...", null, PaneAction(FrameCommand.SaveLeftAs)),
+                Labeled("Save &Right As...", null, PaneAction(FrameCommand.SaveRightAs))),
             Separator(),
             Item("比較を包装(_K)...", null, ShowPackagingDialogAsync),
             Separator(),
-            Item("終了(_X)", "Ctrl+Q", () => { Close(); return Task.CompletedTask; })));
-        menu.Items.Add(Popup("編集(_E)",
-            Pane("元に戻す(_U)", "Ctrl+Z", FrameCommand.Undo),
-            Pane("やり直し(_R)", "Ctrl+Y", FrameCommand.Redo),
+            Labeled("E&xit\tCtrl+Q", "Ctrl+Q", () => { Close(); return Task.CompletedTask; })));
+        menu.Items.Add(MenuPopup("&Edit",
+            Labeled("&Undo\tCtrl+Z", "Ctrl+Z", PaneAction(FrameCommand.Undo)),
+            Labeled("&Redo\tCtrl+Y", "Ctrl+Y", PaneAction(FrameCommand.Redo)),
             Separator(),
-            Pane("切り取り(_T)", "Ctrl+X", FrameCommand.Cut),
-            Pane("コピー(_C)", "Ctrl+C", FrameCommand.Copy),
-            Pane("貼り付け(_P)", "Ctrl+V", FrameCommand.Paste),
+            Labeled("Cu&t\tCtrl+X", "Ctrl+X", PaneAction(FrameCommand.Cut)),
+            Labeled("&Copy\tCtrl+C", "Ctrl+C", PaneAction(FrameCommand.Copy)),
+            Labeled("&Paste\tCtrl+V", "Ctrl+V", PaneAction(FrameCommand.Paste)),
             Separator(),
-            Pane("行内差異を選択(_D)", "F4", FrameCommand.SelectLineDifference),
-            Pane("すべて選択(_A)", "Ctrl+A", FrameCommand.SelectAll),
+            Labeled("Select Line &Difference\tF4", "F4", PaneAction(FrameCommand.SelectLineDifference)),
+            Labeled("Select &All\tCtrl+A", "Ctrl+A", PaneAction(FrameCommand.SelectAll)),
             Separator(),
-            Pane("検索(_I)...", "Ctrl+F", FrameCommand.Find),
-            Pane("置換(_C)...", "Ctrl+H", FrameCommand.Replace),
+            Labeled("F&ind...\tCtrl+F", "Ctrl+F", PaneAction(FrameCommand.Find)),
+            Labeled("Repla&ce...\tCtrl+H", "Ctrl+H", PaneAction(FrameCommand.Replace)),
             Separator(),
-            Popup("ブックマーク(_B)",
-                Pane("ブックマークの作成・削除(_T)", "Ctrl+F2", FrameCommand.ToggleBookmark),
-                Pane("次のブックマークへ移動(_N)", "F2", FrameCommand.NextBookmark),
-                Pane("前のブックマークへ移動(_P)", "Shift+F2", FrameCommand.PreviousBookmark),
-                Pane("すべてのブックマークをクリア(_C)", null, FrameCommand.ClearAllBookmarks)),
-            Pane("移動(_G)...", "Ctrl+G", FrameCommand.GoTo),
+            MenuPopup("&Bookmarks",
+                Labeled("&Toggle Bookmark\tCtrl+F2", "Ctrl+F2", PaneAction(FrameCommand.ToggleBookmark)),
+                Labeled("&Next Bookmark\tF2", "F2", PaneAction(FrameCommand.NextBookmark)),
+                Labeled("&Previous Bookmark\tShift+F2", "Shift+F2", PaneAction(FrameCommand.PreviousBookmark)),
+                Labeled("&Clear All Bookmarks", null, PaneAction(FrameCommand.ClearAllBookmarks))),
+            Labeled("&Go to...\tCtrl+G", "Ctrl+G", PaneAction(FrameCommand.GoTo)),
             Separator(),
-            Pane("設定(_O)...", "Ctrl+,", FrameCommand.Options)));
+            Labeled("&Options...\tCtrl+,", "Ctrl+,", PaneAction(FrameCommand.Options))));
         var darkTheme = new MenuItem { Header = "ダーク テーマ(_D)", ToggleType = MenuItemToggleType.CheckBox };
         darkTheme.Click += (_, _) =>
         {
@@ -92,35 +92,36 @@ public sealed partial class MainWindow
             Application.Current.RequestedThemeVariant = dark ? Avalonia.Styling.ThemeVariant.Dark : Avalonia.Styling.ThemeVariant.Light;
             darkTheme.IsChecked = dark;
         };
-        var toolbarVisible = _toolbarMenuItem = new MenuItem { Name = "frame-menu-view-toolbar", Header = "ツールバー(_T)", ToggleType = MenuItemToggleType.CheckBox, IsChecked = _showToolbar };
+        var toolbarVisible = _toolbarMenuItem = new MenuItem { Name = "frame-menu-view-toolbar", Header = UiText.Menu("&Toolbar"), Tag = "&Toolbar", ToggleType = MenuItemToggleType.CheckBox, IsChecked = _showToolbar };
         toolbarVisible.Click += (_, _) => SetToolbarVisible(!_showToolbar, save: true);
-        var statusVisible = ChromeItem("ステータス バー(&S)", "view-status", () => _showStatusBar, value => { _showStatusBar = value; ApplyChrome(); });
-        var diffPaneVisible = ChromeItem("Diff ペイン(&P)", "view-diff-pane", () => _showDiffPane, value => { _showDiffPane = value; ApplyChrome(); });
-        var locationVisible = ChromeItem("ロケーション ペイン(&C)", "view-location", () => _showLocationPane, value => { _showLocationPane = value; ApplyChrome(); });
-        var tabBarVisible = ChromeItem("タブ バーを表示(&V)", "view-tab-bar", () => _showTabBar, value => SetTabBarVisible(value, save: true));
-        var menuBarVisible = ChromeItem("メニューバー(&U)", "view-menu-bar", () => _showMenuBar, value => SetMenuBarVisible(value, save: true));
+        var statusVisible = ChromeItem("&Status Bar", "view-status", () => _showStatusBar, value => { _showStatusBar = value; ApplyChrome(); });
+        var diffPaneVisible = ChromeItem("Diff &Pane", "view-diff-pane", () => _showDiffPane, value => { _showDiffPane = value; ApplyChrome(); });
+        var locationVisible = ChromeItem("Lo&cation Pane", "view-location", () => _showLocationPane, value => { _showLocationPane = value; ApplyChrome(); });
+        var tabBarVisible = ChromeItem("&View Tab Bar", "view-tab-bar", () => _showTabBar, value => SetTabBarVisible(value, save: true));
+        var menuBarVisible = ChromeItem("Men&u Bar", "view-menu-bar", () => _showMenuBar, value => SetMenuBarVisible(value, save: true));
         // 本家 IDR_MERGEDOCTYPE の「表示」のうち、本文の見た目の設定（DiffTextViewOptions）。全タブ共通で、チェックは設定から付ける。
         var options = TextViewOptions;
-        menu.Items.Add(Popup("表示(_V)",
-            Popup("拡大/縮小(_Z)",
-                GestureItem("拡大(_I)", new KeyGesture(Key.OemPlus, KeyModifiers.Control), () => Zoom(1)),
-                GestureItem("縮小(_O)", new KeyGesture(Key.OemMinus, KeyModifiers.Control), () => Zoom(-1)),
+        menu.Items.Add(MenuPopup("&View",
+            MenuPopup("&Zoom",
+                Labeled("Zoom &In\tCtrl++", null, () => Zoom(1), new KeyGesture(Key.OemPlus, KeyModifiers.Control)),
+                Labeled("Zoom &Out\tCtrl+-", null, () => Zoom(-1), new KeyGesture(Key.OemMinus, KeyModifiers.Control)),
                 Separator(),
-                GestureItem("標準に戻す(_N)", new KeyGesture(Key.Multiply, KeyModifiers.Control), () => Zoom(0))),
+                Labeled("&Normal\tCtrl+*", null, () => Zoom(0), new KeyGesture(Key.Multiply, KeyModifiers.Control))),
             Separator(),
-            ViewOption("空白を表示(_V)", "view-whitespace", () => options.ViewWhitespace, value => options.ViewWhitespace = value),
-            ViewOption("改行を表示(_O)", "view-eol", () => options.ViewEndOfLine, value => options.ViewEndOfLine = value),
-            ViewOption("行内差異を表示(_W)", "view-line-differences", () => options.ViewLineDifferences, value => options.ViewLineDifferences = value),
-            ViewOption("行番号を表示(_N)", "view-line-numbers", () => options.ViewLineNumbers, value => options.ViewLineNumbers = value),
-            ViewOption("マージンを表示(_M)", "view-margins", () => options.ViewMargins, value => options.ViewMargins = value),
-            ViewOption("行を右端で折返す(&R)", "view-wrap", () => options.WordWrap, value => options.WordWrap = value),
-            Popup("フォント(_F)",
-                Item("フォントの選択(&F)...", null, ChooseFontAsync),
-                Item("デフォルト フォントを使用", null, () => { options.FontFamily = ""; return Task.CompletedTask; })),
-            ViewOption("シンタックス ハイライト", "view-syntax", () => options.SyntaxHighlight, value => options.SyntaxHighlight = value),
+            ViewOption("&View Whitespace", "view-whitespace", () => options.ViewWhitespace, value => options.ViewWhitespace = value),
+            ViewOption("View E&OL", "view-eol", () => options.ViewEndOfLine, value => options.ViewEndOfLine = value),
+            ViewOption("Vie&w Line Differences", "view-line-differences", () => options.ViewLineDifferences, value => options.ViewLineDifferences = value),
+            ViewOption("View Line &Numbers", "view-line-numbers", () => options.ViewLineNumbers, value => options.ViewLineNumbers = value),
+            ViewOption("View &Margins", "view-margins", () => options.ViewMargins, value => options.ViewMargins = value),
+            ViewOption("View To&p Margins", "view-top-margin", () => options.ViewTopMargin, value => options.ViewTopMargin = value),
+            ViewOption("W&rap Lines", "view-wrap", () => options.WordWrap, value => options.WordWrap = value),
+            MenuPopup("Font",
+                Labeled("Select &Font...", null, ChooseFontAsync),
+                Labeled("Use Default Font", null, () => { options.FontFamily = ""; return Task.CompletedTask; })),
+            ViewOption("Syntax Highlight", "view-syntax", () => options.SyntaxHighlight, value => options.SyntaxHighlight = value),
             BuildDiffContextMenu(options),
             LockPanesItem(options),
-            ViewOption("垂直分割(&E)", "view-split", () => options.VerticalSplit, value => options.VerticalSplit = value),
+            ViewOption("Split V&ertically", "view-split", () => options.VerticalSplit, value => options.VerticalSplit = value),
             tabBarVisible,
             menuBarVisible,
             Separator(),
@@ -128,43 +129,44 @@ public sealed partial class MainWindow
             statusVisible,
             diffPaneVisible,
             locationVisible,
-            Popup("ペインの交換(_W)",
-                Item("1 番目と 2 番目を交換", null, () => ActivePane.SwapInputsAsync(ActivePane.LeftPath, ActivePane.RightPath)),
-                Item("2 番目と 3 番目を交換", null, () => ActivePane.SwapInputsAsync(ActivePane.RightPath, ActivePane.BasePath)),
-                Item("1 番目と 3 番目を交換", null, () => ActivePane.SwapInputsAsync(ActivePane.LeftPath, ActivePane.BasePath))),
+            MenuPopup("Sw&ap Panes",
+                Labeled("Swap &1st | 2nd", null, () => ActivePane.SwapInputsAsync(ActivePane.LeftPath, ActivePane.RightPath)),
+                Labeled("Swap &2nd | 3rd", null, () => ActivePane.SwapInputsAsync(ActivePane.RightPath, ActivePane.BasePath)),
+                Labeled("Swap 1st | &3rd", null, () => ActivePane.SwapInputsAsync(ActivePane.LeftPath, ActivePane.BasePath))),
             darkTheme,
+            LanguageMenu(),
             Separator(),
-            Pane("最新の情報に更新", "F5", FrameCommand.Refresh)));
-        menu.Items.Add(Popup("マージ(_M)",
-            Pane("次の差異(_N)", "Alt+Down", FrameCommand.NextDifference),
-            Pane("前の差異(_P)", "Alt+Up", FrameCommand.PreviousDifference),
-            Pane("次のコンフリクト(_X)", "Alt+Shift+Down", FrameCommand.NextConflict),
-            Pane("前のコンフリクト(_V)", "Alt+Shift+Up", FrameCommand.PreviousConflict),
-            Pane("最初の差異(_F)", "Alt+Home", FrameCommand.FirstDifference),
-            Pane("現在の差異(_C)", "Alt+Enter", FrameCommand.CurrentDifference),
-            Pane("最後の差異(_L)", "Alt+End", FrameCommand.LastDifference),
+            Labeled("Refresh\tF5", "F5", PaneAction(FrameCommand.Refresh))));
+        menu.Items.Add(MenuPopup("&Merge",
+            Labeled("&Next Difference\tAlt+Down", "Alt+Down", PaneAction(FrameCommand.NextDifference)),
+            Labeled("&Previous Difference\tAlt+Up", "Alt+Up", PaneAction(FrameCommand.PreviousDifference)),
+            Labeled("Ne&xt Conflict\tAlt+Shift+Down", "Alt+Shift+Down", PaneAction(FrameCommand.NextConflict)),
+            Labeled("Pre&vious Conflict\tAlt+Shift+Up", "Alt+Shift+Up", PaneAction(FrameCommand.PreviousConflict)),
+            Labeled("&First Difference\tAlt+Home", "Alt+Home", PaneAction(FrameCommand.FirstDifference)),
+            Labeled("&Current Difference\tAlt+Enter", "Alt+Enter", PaneAction(FrameCommand.CurrentDifference)),
+            Labeled("&Last Difference\tAlt+End", "Alt+End", PaneAction(FrameCommand.LastDifference)),
             Separator(),
-            Pane("右側にコピー(_R)", "Alt+Right", FrameCommand.CopyToRight),
-            Pane("左側にコピー(_E)", "Alt+Left", FrameCommand.CopyToLeft),
-            Pane("右側にコピーして次に進む(_O)", "Ctrl+Alt+Right", FrameCommand.CopyToRightAndAdvance),
-            Pane("左側にコピーして次に進む(_T)", "Ctrl+Alt+Left", FrameCommand.CopyToLeftAndAdvance),
+            Labeled("Copy to &Right\tAlt+Right", "Alt+Right", PaneAction(FrameCommand.CopyToRight)),
+            Labeled("Copy to L&eft\tAlt+Left", "Alt+Left", PaneAction(FrameCommand.CopyToLeft)),
+            Labeled("C&opy to Right and Advance\tCtrl+Alt+Right", "Ctrl+Alt+Right", PaneAction(FrameCommand.CopyToRightAndAdvance)),
+            Labeled("Copy &to Left and Advance\tCtrl+Alt+Left", "Ctrl+Alt+Left", PaneAction(FrameCommand.CopyToLeftAndAdvance)),
             Separator(),
-            Pane("すべてを右側にコピー(_A)", null, FrameCommand.CopyAllToRight),
-            Pane("すべてを左側にコピー(_Y)", null, FrameCommand.CopyAllToLeft),
+            Labeled("Copy &All to Right", null, PaneAction(FrameCommand.CopyAllToRight)),
+            Labeled("Cop&y All to Left", null, PaneAction(FrameCommand.CopyAllToLeft)),
             Separator(),
-            Pane("自動マージ(_U)", "Ctrl+Alt+M", FrameCommand.AutoMerge)));
-        menu.Items.Add(Popup("ツール(_T)",
+            Labeled("A&uto Merge\tCtrl+Alt+M", "Ctrl+Alt+M", PaneAction(FrameCommand.AutoMerge))));
+        menu.Items.Add(MenuPopup("&Tools",
             // 本家はフォルダー比較の「ツール」メニューの先頭に置く（IDR_DIRDOCTYPE）。ファイル比較の画面では状態欄へ使えない理由を出す。
-            Pane("列の設定(_C)...", null, FrameCommand.CustomizeColumns),
-            Pane("パッチの生成(_G)...", null, FrameCommand.GeneratePatch),
-            Pane("レポートの生成(_R)...", null, FrameCommand.GenerateReport),
-            Pane("アーカイブの生成(_A)...", null, FrameCommand.GenerateArchive)));
-        menu.Items.Add(Popup("プラグイン(_P)",
+            Labeled("&Customize Columns...", null, PaneAction(FrameCommand.CustomizeColumns)),
+            Labeled("&Generate Patch...", null, PaneAction(FrameCommand.GeneratePatch)),
+            Labeled("Generate &Report...", null, PaneAction(FrameCommand.GenerateReport)),
+            Labeled("Generate &Archive...", null, PaneAction(FrameCommand.GenerateArchive))));
+        menu.Items.Add(MenuPopup("&Plugins",
             Pane("外部ツールを追加(_L)...", null, FrameCommand.AddExternalTool)));
-        menu.Items.Add(Popup("ウィンドウ(_W)",
-            Item("閉じる(_O)", "Ctrl+W", CloseActiveSessionAsync),
+        menu.Items.Add(MenuPopup("&Window",
+            Labeled("&Close", "Ctrl+W", CloseActiveSessionAsync),
             Item("すべて閉じる(_S)", null, CloseAllSessionsAsync)));
-        menu.Items.Add(Popup("ヘルプ(_H)",
+        menu.Items.Add(MenuPopup("&Help",
             Item("DiffBeacon について(_A)...", null, () => Dialogs.MessageAsync(this, "DiffBeacon について",
                 "DiffBeacon\n\nWinMerge をもとにした .NET / Avalonia 版の比較・マージツールです。\nGNU General Public License v2 で配布しています。"))));
         return menu;
@@ -274,12 +276,59 @@ public sealed partial class MainWindow
         return menu;
     }
 
+    /// <summary>msgid を見出しにし、言語を変えたときに引き直す。</summary>
+    private static MenuItem MenuPopup(string msgid, params Control[] items)
+    {
+        var menu = Popup(UiText.Menu(msgid), items);
+        menu.Tag = msgid;
+        return menu;
+    }
+
     private static Separator Separator() => new();
 
     private MenuItem Pane(string header, string? gesture, FrameCommand command) => Item(header, gesture, PaneAction(command));
 
     private static MenuItem Item(string header, string? gesture, Func<Task> action) =>
         GestureItem(header, gesture is null ? null : KeyGesture.Parse(gesture), action);
+
+    /// <summary>カタログの msgid から見出しを作り、言語の切替で引き直せるようにする。</summary>
+    private MenuItem Labeled(string msgid, string? gesture, Func<Task> action, KeyGesture? key = null)
+    {
+        var item = GestureItem(UiText.Menu(msgid), key ?? (gesture is null ? null : KeyGesture.Parse(gesture)), action);
+        item.Tag = msgid;
+        return item;
+    }
+
+    /// <summary>日本語が既定。OS の言語は利用者が選んだときだけ使う。</summary>
+    private MenuItem LanguageMenu()
+    {
+        MenuItem Choice(string header, string language)
+        {
+            var item = new MenuItem { Header = header, ToggleType = MenuItemToggleType.Radio, IsChecked = UiText.Language == language, Tag = "lang:" + language };
+            item.Click += (_, _) => ApplyUiLanguage(language);
+            return item;
+        }
+        return Popup("言語(_L)", Choice("日本語", "Japanese"), Choice("English", "English"), Choice("OS の言語", "os"));
+    }
+
+    /// <summary>開いているメニューの見出しを、選んだカタログで引き直す。</summary>
+    internal void ApplyUiLanguage(string language)
+    {
+        UiText.Use(language);
+        if (FrameMenu is not null) Retitle(FrameMenu.Items);
+        SaveViewMenuOptions();
+    }
+
+    private static void Retitle(ItemCollection items)
+    {
+        foreach (var item in items.OfType<MenuItem>())
+        {
+            if (item.Tag is string msgid && !msgid.StartsWith("lang:", StringComparison.Ordinal)) item.Header = UiText.Menu(msgid);
+            if (item.Tag is string lang && lang.StartsWith("lang:", StringComparison.Ordinal))
+                item.IsChecked = UiText.Language == lang["lang:".Length..];
+            Retitle(item.Items);
+        }
+    }
 
     private static MenuItem GestureItem(string header, KeyGesture? gesture, Func<Task> action)
     {
@@ -339,19 +388,19 @@ public sealed partial class MainWindow
     /// <summary>本家の Diff コンテキスト。全行、0/1/3/5/7/9 行、Ctrl+D の切替、反転。</summary>
     private MenuItem BuildDiffContextMenu(DiffTextViewOptions options)
     {
-        var all = ContextItem("全行(&A)", "view-context-all", options, () => options.DiffContextLines < 0, () => options.SetDiffContext(-1));
+        var all = ContextItem("&All Lines", "view-context-all", options, () => options.DiffContextLines < 0, () => options.SetDiffContext(-1));
         var numbers = DiffTextViewOptions.DiffContextChoices.Select(lines =>
-            ContextItem(lines == 1 ? "&1 行" : $"&{lines} 行", "view-context-" + lines, options, () => options.DiffContextLines == lines, () => options.SetDiffContext(lines))).ToArray();
-        var toggle = GestureItem("全行/0 ～ 9 行切替(&T)", new KeyGesture(Key.D, KeyModifiers.Control), () => { options.ToggleDiffContext(); return Task.CompletedTask; });
+            ContextItem(lines == 1 ? "&1 Line" : $"&{lines} Lines", "view-context-" + lines, options, () => options.DiffContextLines == lines, () => options.SetDiffContext(lines))).ToArray();
+        var toggle = Labeled("&Toggle All and 0-9 Lines\tCtrl+D", null, () => { options.ToggleDiffContext(); return Task.CompletedTask; }, new KeyGesture(Key.D, KeyModifiers.Control));
         toggle.Name = "frame-menu-view-context-toggle";
-        var invert = ViewOption("反転 (差異行を非表示にする)(&I)", "view-context-invert", () => options.DiffContextInvert, value => options.DiffContextInvert = value);
-        return Popup("Diff コンテキスト(&D)", [all, .. numbers, toggle, invert]);
+        var invert = ViewOption("&Invert (Hide Different Lines)", "view-context-invert", () => options.DiffContextInvert, value => options.DiffContextInvert = value);
+        return MenuPopup("&Diff Context", [all, .. numbers, toggle, invert]);
     }
 
     /// <summary>コンテキストの行数。選ばれている項目だけチェックを付ける。</summary>
     private MenuItem ContextItem(string header, string name, DiffTextViewOptions options, Func<bool> selected, Action choose)
     {
-        var item = new MenuItem { Header = header, Name = "frame-menu-" + name, ToggleType = MenuItemToggleType.CheckBox, IsChecked = selected() };
+        var item = new MenuItem { Header = UiText.Menu(header), Name = "frame-menu-" + name, Tag = header, ToggleType = MenuItemToggleType.CheckBox, IsChecked = selected() };
         item.Click += (_, _) => choose();
         options.Changed += () => item.IsChecked = selected();
         return item;
@@ -360,7 +409,7 @@ public sealed partial class MainWindow
     /// <summary>フォーカスのある側のスクロールを、他のペインと同期しない。</summary>
     private MenuItem LockPanesItem(DiffTextViewOptions options)
     {
-        var item = new MenuItem { Header = "ペインをロック(&L)", Name = "frame-menu-view-lock", ToggleType = MenuItemToggleType.CheckBox, IsChecked = options.LockedSide >= 0 };
+        var item = new MenuItem { Header = UiText.Menu("&Lock Panes"), Name = "frame-menu-view-lock", Tag = "&Lock Panes", ToggleType = MenuItemToggleType.CheckBox, IsChecked = options.LockedSide >= 0 };
         item.Click += (_, _) =>
         {
             var side = ActivePane.ActiveDiffSide;
@@ -379,8 +428,8 @@ public sealed partial class MainWindow
             list.Items.Add(font);
         list.SelectionChanged += (_, _) => { if (list.SelectedItem is string name) box.Text = name; };
         string? chosen = null;
-        var ok = new Button { Content = "OK", IsDefault = true, MinWidth = 80 };
-        var cancel = new Button { Content = "キャンセル", IsCancel = true, MinWidth = 80 };
+        var ok = new Button { Content = UiText.Phrase("OK"), IsDefault = true, MinWidth = 80 };
+        var cancel = new Button { Content = UiText.Phrase("Cancel"), IsCancel = true, MinWidth = 80 };
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Spacing = 8, Margin = new Thickness(0, 8, 0, 0) };
         buttons.Children.Add(ok); buttons.Children.Add(cancel);
         var panel = new DockPanel { Margin = new Thickness(12) };
@@ -388,7 +437,7 @@ public sealed partial class MainWindow
         panel.Children.Add(new StackPanel { Spacing = 8, Children = { box, list } });
         var dialog = new Window
         {
-            Title = "フォントの選択", Width = 420, Height = 480, WindowStartupLocation = WindowStartupLocation.CenterOwner, Content = panel,
+            Title = UiText.Phrase("Select &Font..."), Width = 420, Height = 480, WindowStartupLocation = WindowStartupLocation.CenterOwner, Content = panel,
         };
         ok.Click += (_, _) => { chosen = box.Text; dialog.Close(); };
         cancel.Click += (_, _) => dialog.Close();
@@ -413,14 +462,14 @@ public sealed partial class MainWindow
     /// <summary>枠の表示切替。本文の設定とは別に、変えたら保存する。</summary>
     private MenuItem ChromeItem(string header, string name, Func<bool> get, Action<bool> set)
     {
-        var item = new MenuItem { Header = header, Name = "frame-menu-" + name, ToggleType = MenuItemToggleType.CheckBox, IsChecked = get() };
+        var item = new MenuItem { Header = UiText.Menu(header), Name = "frame-menu-" + name, Tag = header, ToggleType = MenuItemToggleType.CheckBox, IsChecked = get() };
         item.Click += (_, _) => set(!get());
         return item;
     }
 
     private MenuItem ViewOption(string header, string name, Func<bool> get, Action<bool> set)
     {
-        var item = new MenuItem { Header = header, Name = "frame-menu-" + name, ToggleType = MenuItemToggleType.CheckBox, IsChecked = get() };
+        var item = new MenuItem { Header = UiText.Menu(header), Name = "frame-menu-" + name, Tag = header, ToggleType = MenuItemToggleType.CheckBox, IsChecked = get() };
         item.Click += (_, _) => set(!get());
         TextViewOptions.Changed += () => item.IsChecked = get();
         return item;

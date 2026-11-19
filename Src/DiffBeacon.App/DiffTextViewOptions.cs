@@ -34,6 +34,7 @@ internal sealed class DiffTextViewOptions
     private bool _lineDifferences = true;
     private bool _lineNumbers = true;
     private bool _margins = true;
+    private bool _topMargin;
     private bool _wordWrap;
     private string _fontFamily = "";
     private bool _syntaxHighlight;
@@ -57,6 +58,8 @@ internal sealed class DiffTextViewOptions
     internal bool ViewLineDifferences { get => _lineDifferences; set => Set(ref _lineDifferences, value); }
     internal bool ViewLineNumbers { get => _lineNumbers; set => Set(ref _lineNumbers, value); }
     internal bool ViewMargins { get => _margins; set => Set(ref _margins, value); }
+    /// <summary>本文の上の列ルーラー（本家の上マージン）。既定は隠す。</summary>
+    internal bool ViewTopMargin { get => _topMargin; set => Set(ref _topMargin, value); }
     /// <summary>行を右端で折り返す。折り返し中のスクロール同期は画素ではなく表示の行番号でそろえる。</summary>
     internal bool WordWrap { get => _wordWrap; set => Set(ref _wordWrap, value); }
     /// <summary>本文のフォント名。空なら <see cref="DefaultFontFamilyName"/>。</summary>
@@ -123,12 +126,13 @@ internal sealed class DiffTextViewOptions
     {
         var changed = _zoomSteps != settings.ZoomSteps || _whitespace != settings.ViewWhitespace || _endOfLine != settings.ViewEndOfLine
             || _lineDifferences != settings.ViewLineDifferences || _lineNumbers != settings.ViewLineNumbers || _margins != settings.ViewMargins
+            || _topMargin != settings.ViewTopMargin
             || _wordWrap != settings.WordWrap || _fontFamily != settings.FontFamily || _syntaxHighlight != settings.SyntaxHighlight
             || _diffContextLines != settings.DiffContextLines || _diffContextLast != settings.DiffContextLastLines
             || _diffContextInvert != settings.DiffContextInvert || _verticalSplit != settings.VerticalSplit || _lockedSide != settings.LockedSide;
         _zoomSteps = Math.Clamp(settings.ZoomSteps, MinimumZoomSteps, MaximumZoomSteps);
         _whitespace = settings.ViewWhitespace; _endOfLine = settings.ViewEndOfLine; _lineDifferences = settings.ViewLineDifferences;
-        _lineNumbers = settings.ViewLineNumbers; _margins = settings.ViewMargins;
+        _lineNumbers = settings.ViewLineNumbers; _margins = settings.ViewMargins; _topMargin = settings.ViewTopMargin;
         _wordWrap = settings.WordWrap; _fontFamily = settings.FontFamily; _syntaxHighlight = settings.SyntaxHighlight;
         _diffContextLines = settings.DiffContextLines; _diffContextLast = settings.DiffContextLastLines;
         _diffContextInvert = settings.DiffContextInvert; _verticalSplit = settings.VerticalSplit; _lockedSide = settings.LockedSide;
@@ -139,11 +143,12 @@ internal sealed class DiffTextViewOptions
     internal TextViewSettings ToSettings(bool showToolbar, bool showStatusBar, bool showLocationPane, bool showDiffPane, bool showTabBar, bool showMenuBar) => new()
     {
         ZoomSteps = _zoomSteps, ViewWhitespace = _whitespace, ViewEndOfLine = _endOfLine, ViewLineDifferences = _lineDifferences,
-        ViewLineNumbers = _lineNumbers, ViewMargins = _margins, ShowToolbar = showToolbar,
+        ViewLineNumbers = _lineNumbers, ViewMargins = _margins, ViewTopMargin = _topMargin, ShowToolbar = showToolbar,
         ShowStatusBar = showStatusBar, ShowLocationPane = showLocationPane, ShowDiffPane = showDiffPane,
         WordWrap = _wordWrap, FontFamily = _fontFamily, SyntaxHighlight = _syntaxHighlight,
         DiffContextLines = _diffContextLines, DiffContextLastLines = _diffContextLast, DiffContextInvert = _diffContextInvert,
         VerticalSplit = _verticalSplit, LockedSide = _lockedSide, ShowTabBar = showTabBar, ShowMenuBar = showMenuBar,
+        UiLanguage = UiText.Language,
     };
 
     private void Set<T>(ref T field, T value)

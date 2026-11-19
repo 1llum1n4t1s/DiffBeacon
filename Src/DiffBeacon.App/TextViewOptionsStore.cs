@@ -17,6 +17,10 @@ internal sealed record TextViewSettings
     public bool ViewLineDifferences { get; init; } = true;
     public bool ViewLineNumbers { get; init; } = true;
     public bool ViewMargins { get; init; } = true;
+    /// <summary>本家の上マージン（列ルーラー）。既定は隠す。</summary>
+    public bool ViewTopMargin { get; init; }
+    /// <summary>画面の言語。Japanese が既定。os は OS の言語。</summary>
+    public string UiLanguage { get; init; } = "Japanese";
     public bool ShowToolbar { get; init; } = true;
     /// <summary>本家 Settings/ShowStatusbar。既定は表示する。</summary>
     public bool ShowStatusBar { get; init; } = true;
@@ -109,6 +113,8 @@ internal sealed class TextViewOptionsStore
             throw new InvalidDataException($"表示メニューの設定の Diff コンテキストの切替先は 0, 1, 3, 5, 7, 9 のいずれかです: {settings.DiffContextLastLines}");
         if (settings.LockedSide is < -1 or > 2)
             throw new InvalidDataException($"表示メニューの設定のペインロックは -1～2 です: {settings.LockedSide}");
+        if (settings.UiLanguage.Length is < 2 or > 40 || settings.UiLanguage.Any(character => !char.IsAsciiLetter(character)))
+            throw new InvalidDataException("表示メニューの設定の言語名が不正です。");
     }
 
     internal bool Reload()

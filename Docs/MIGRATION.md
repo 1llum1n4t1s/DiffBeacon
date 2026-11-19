@@ -14,11 +14,19 @@
 
 検証: `--view-options-only` は 53 成功 / 0 失敗（保存の検査を含む）。
 
+## 上マージン、言語、OCR、Finder サービス、フィルタのフィールド（2026-11-19）
+
+- 上マージン: 本家の列ルーラー。10桁ごとに数字、5桁ごとに長い目盛り。横スクロールに追従する。既定は隠す。
+- 言語: メニュー、フォントダイアログの OK / キャンセル、比較中の状態文は `PoCatalog` から引く。保存の既定は日本語。`os` を選ぶと OS の UI 言語（対応するカタログが無いときは日本語）になる。画面の組み立て文の多くは、対応する msgid が無いので日本語のまま。
+- OCR: Windows の発行は `net11.0-windows10.0.19041.0` で `Windows.Media.Ocr` をプロセス内から呼ぶ。macOS は `native/macos/DiffBeaconMac.m` を clang で `libdiffbeacon-mac.dylib` にし、`VNRecognizeTextRequest` を呼ぶ。どちらも使えないときだけ外部コマンドの JSON に戻る。
+- Finder サービス: 同じシムが `diffBeaconCompare:userData:error:` を `NSApp` のサービス提供者として登録する。Info.plist の `NSMessage` は `diffBeaconCompare`。NSApp がまだ無い、または dylib が横に無い開発実行では登録しない。Finder のサービス一覧への反映は、アプリを一度起動したあとのシステムのサービス更新に依存する。
+- `.flt`: `matches` の所有量指定（`*+` `++` `?+` `{m,n}+`）を原子グループへ書き換える。WinMerge のフィールド名は解析し、比較モデルに値があるもの以外は Null。ファイル本文・エンコーディング・再帰合計・PCRE の再帰と callout は、この比較の走査では採取しない。
+
 ## シェル、プラグイン、OCR、翻訳カタログ（2026-11-19）
 
 - シェル: `--register-shell`（省略時はこの実行ファイル）が、Windows では HKCU のファイルとディレクトリの右クリックへ比較コマンドを書く。COM のシェル拡張 DLL は載せていない。macOS はアプリバンドルの Info.plist に NSServices を宣言する。Avalonia のホストがそのサービス要求を受け取らないため、実働はパスを引数にした起動である。Linux のシェルメニューは未対応で、登録コマンドは拒否する。
 - プラグイン: `Docs/PLUGIN-ABI.md`。別プロセスと JSON（protocolVersion 1）。COM / ActiveX / DLL プラグインは Native AOT と macOS では動かない。
-- OCR: プロセス内の Windows.Media.Ocr と Apple Vision は、この単一 net11.0 バイナリからリンクできない。外部コマンドの 1 行 JSON（`text`）を読む。認識結果を偽らない。
+- OCR: 下の節のとおり、Windows と macOS はプロセス内、それ以外は外部コマンド。
 - 翻訳: `Translations/WinMerge/*.po` を出力へ同梱し、`PoCatalog` で msgid から訳を引く。画面の固定文言は従来どおり日本語（Japanese.po の訳）である。
 
 ## フォルダー同期のファイルとディレクトリの置換（2026-11-19）

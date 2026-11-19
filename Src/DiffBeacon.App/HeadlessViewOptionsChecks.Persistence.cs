@@ -61,7 +61,8 @@ internal static partial class HeadlessViewOptionsChecks
                 && root.GetProperty("fontFamily").GetString() == "" && root.GetProperty("syntaxHighlight").GetBoolean() == false
                 && root.GetProperty("diffContextLines").GetInt32() == -1 && root.GetProperty("verticalSplit").GetBoolean()
                 && root.GetProperty("showTabBar").GetBoolean() && root.GetProperty("showMenuBar").GetBoolean()
-                && root.GetProperty("lockedSide").GetInt32() == -1 && root.EnumerateObject().Count() == 20, text);
+                && root.GetProperty("lockedSide").GetInt32() == -1 && root.GetProperty("viewTopMargin").GetBoolean() == false
+                && root.GetProperty("uiLanguage").GetString() == "Japanese" && root.EnumerateObject().Count() == 22, text);
         }
 
         var bytes = File.ReadAllBytes(path);

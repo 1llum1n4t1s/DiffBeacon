@@ -103,6 +103,7 @@ public sealed partial class ComparisonPane
                 ApplySyntaxHighlight(side, options.SyntaxHighlight);
                 // 両方の欄を隠したときも縦線の幅と余白は残し、本文がペインの境界に接しないようにする（本家も数画素あける）。
                 side.MarginSeparator.Opacity = options.ViewLineNumbers || options.ViewMargins ? 1 : 0;
+                side.Ruler.SetShown(options.ViewTopMargin);
                 side.Redraw();
             }
             if (splitChanged) LayoutDiffEditors(_diffDisplay.ThreeWay);

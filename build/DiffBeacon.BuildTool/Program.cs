@@ -65,7 +65,11 @@ internal static class Program
         var executableName = OperatingSystem.IsWindows() ? "DiffBeacon.exe" : "DiffBeacon";
         var executable = Path.Combine(output, executableName);
         if (!File.Exists(executable)) throw new InvalidOperationException("ネイティブ実行ファイルが見つかりません: " + executable);
-        if (rid.StartsWith("osx-", StringComparison.Ordinal)) executable = BundleMacApp(output, executable, project, repo);
+        if (rid.StartsWith("osx-", StringComparison.Ordinal))
+        {
+            CompileMacShim(repo, output);
+            executable = BundleMacApp(output, executable, project, repo);
+        }
         var status = "skipped by request";
         double? seconds = null;
         if (!skipVerification)
@@ -93,6 +97,14 @@ internal static class Program
         return 0;
     }
 
+    /// <summary>Vision と Finder サービス用の Objective-C シムを、発行物の横へ置く。</summary>
+    private static void CompileMacShim(string repo, string output)
+    {
+        var source = Path.Combine(repo, "native", "macos", "DiffBeaconMac.m");
+        var library = Path.Combine(output, "libdiffbeacon-mac.dylib");
+        Run("clang", ["-fobjc-arc", "-dynamiclib", "-framework", "Foundation", "-framework", "AppKit", "-framework", "Vision", "-o", library, source], repo);
+    }
+
     /// <summary>macOS では .app を組み、実行ファイルのパスを返す。</summary>
     private static string BundleMacApp(string output, string executable, string project, string repo)
     {
@@ -103,7 +115,7 @@ internal static class Program
         foreach (var file in Directory.EnumerateFiles(output))
             File.Copy(file, Path.Combine(macOs, Path.GetFileName(file)), overwrite: true);
         var version = Run("dotnet", ["msbuild", project, "-getProperty:Version", "-nologo", "-noAutoResponse"], repo).Trim();
-        var plist = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\"><dict>\n  <key>CFBundleName</key><string>DiffBeacon</string>\n  <key>CFBundleDisplayName</key><string>DiffBeacon</string>\n  <key>CFBundleIdentifier</key><string>com.kagayoi.diffbeacon</string>\n  <key>CFBundleExecutable</key><string>DiffBeacon</string>\n  <key>CFBundlePackageType</key><string>APPL</string>\n  <key>CFBundleVersion</key><string>" + System.Security.SecurityElement.Escape(version) + "</string>\n  <key>CFBundleShortVersionString</key><string>" + System.Security.SecurityElement.Escape(version) + "</string>\n  <key>LSMinimumSystemVersion</key><string>14.0</string>\n  <key>NSHighResolutionCapable</key><true/>\n  <key>NSServices</key><array><dict>\n    <key>NSMenuItem</key><dict><key>default</key><string>DiffBeacon で比較</string></dict>\n    <key>NSMessage</key><string>openFile</string>\n    <key>NSSendTypes</key><array><string>NSStringPboardType</string></array>\n  </dict></array>\n</dict></plist>\n";
+        var plist = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\"><dict>\n  <key>CFBundleName</key><string>DiffBeacon</string>\n  <key>CFBundleDisplayName</key><string>DiffBeacon</string>\n  <key>CFBundleIdentifier</key><string>com.kagayoi.diffbeacon</string>\n  <key>CFBundleExecutable</key><string>DiffBeacon</string>\n  <key>CFBundlePackageType</key><string>APPL</string>\n  <key>CFBundleVersion</key><string>" + System.Security.SecurityElement.Escape(version) + "</string>\n  <key>CFBundleShortVersionString</key><string>" + System.Security.SecurityElement.Escape(version) + "</string>\n  <key>LSMinimumSystemVersion</key><string>14.0</string>\n  <key>NSHighResolutionCapable</key><true/>\n  <key>NSServices</key><array><dict>\n    <key>NSMenuItem</key><dict><key>default</key><string>DiffBeacon で比較</string></dict>\n    <key>NSMessage</key><string>diffBeaconCompare</string>\n    <key>NSSendTypes</key><array><string>NSFilenamesPboardType</string></array>\n    <key>NSPortName</key><string>DiffBeacon</string>\n  </dict></array>\n</dict></plist>\n";
         File.WriteAllText(Path.Combine(bundle, "Contents", "Info.plist"), plist);
         var bundled = Path.Combine(macOs, "DiffBeacon");
         Run("chmod", ["+x", bundled], output);
