@@ -34,7 +34,8 @@ public static partial class FolderOperations
     private static long StreamLayoutBytes(FolderCopyStreamLayout layout)
         => layout.Streams.Aggregate(0L, (total, stream) => checked(total + stream.Size));
 
-    private static bool ReadDestinationCapability(string destination, CancellationToken token)
+    private static bool ReadDestinationCapability(string destination, CancellationToken token,
+        HashSet<string>? replacedWithDirectory = null)
     {
         if (!OperatingSystem.IsWindows()) return false;
         for (var parent = Path.GetDirectoryName(destination); parent is not null; parent = Path.GetDirectoryName(parent))
@@ -42,8 +43,12 @@ public static partial class FolderOperations
             token.ThrowIfCancellationRequested();
             var snapshot = ReadSnapshot(parent);
             if (snapshot is null) continue;
+            // ファイルをディレクトリへ置き換える計画の途中では、そのファイルの下の子を同じボリュームの能力で読む。
             if (snapshot.Kind != DiffBeacon.Core.DirectoryEntryKind.Directory)
+            {
+                if (replacedWithDirectory?.Contains(parent) == true) continue;
                 throw new IOException("コピー先の祖先がディレクトリではありません。");
+            }
             bool supported;
             try { supported = FolderCopyWindowsStreams.SupportsNamedStreams(parent, token); }
             catch (Exception exception) when (NativeCloseFailure(exception) is not null)
@@ -54,9 +59,10 @@ public static partial class FolderOperations
         throw new DirectoryNotFoundException("コピー先の既存親を確認できません。");
     }
 
-    private static void RequireDestinationCapability(FolderCopyEntry entry, CancellationToken token)
+    private static void RequireDestinationCapability(FolderCopyEntry entry, CancellationToken token,
+        HashSet<string>? replacedWithDirectory = null)
     {
-        if (ReadDestinationCapability(entry.DestinationPath, token) != entry.DestinationSupportsNamedStreams
+        if (ReadDestinationCapability(entry.DestinationPath, token, replacedWithDirectory) != entry.DestinationSupportsNamedStreams
             || (entry.SourceStreams!.HasNamedStreams && !entry.DestinationSupportsNamedStreams))
             throw new IOException("確認後にコピー先のストリーム対応状態が変わりました。");
     }

@@ -65,6 +65,10 @@ public static partial class FolderOperations
         {
             Guard(token, validateContext);
             ValidateLimits(plan.Limits);
+            var replacedWithDirectory = plan.Entries
+                .Where(entry => entry.ReplacesDifferentKind && entry.Kind == DirectoryEntryKind.Directory)
+                .Select(entry => entry.DestinationPath)
+                .ToHashSet(PathComparer);
             if (plan.UsesWindowsMetadata) windows = new(plan, budget);
             if (plan.PlannedIoBytes > plan.Limits.MaximumIoBytes || plan.PreparationReadBytes != checked(plan.LogicalBytes + plan.DestinationBytes))
                 throw new IOException("コピー計画の共有予算が一致しません。");
@@ -89,7 +93,7 @@ public static partial class FolderOperations
                 if (preflightEntry is { Kind: DirectoryEntryKind.File, ReplacesDifferentKind: false } owner && PathComparer.Equals(target.Key, owner.DestinationPath))
                 {
                     await RequireDestinationStreamsAsync(owner, budget, token).ConfigureAwait(false);
-                    RequireDestinationCapability(owner, token);
+                    RequireDestinationCapability(owner, token, replacedWithDirectory);
                 }
             }
             windows?.RequireAll(token, validateContext);

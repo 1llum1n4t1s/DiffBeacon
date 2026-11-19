@@ -42,6 +42,8 @@ public static partial class FolderOperations
         if (normalizedSelected.Count == 0) throw new ArgumentException("選択項目がありません。", nameof(selected));
         var entries = new List<FolderCopyEntry>();
         var parents = new Dictionary<string, FolderCopySnapshot?>(PathComparer);
+        // ファイルをディレクトリで置き換えるとき、子の準備中もそのパスはまだファイルである。
+        var replacedWithDirectory = new HashSet<string>(PathComparer);
         var seen = new HashSet<string>(PathComparer);
         var budget = new CopyBudget(limits);
         var usesWindowsMetadata = UsesLocalNtfsMetadata(sourceRoot, destinationRoot);
@@ -74,11 +76,12 @@ public static partial class FolderOperations
                 var snapshot = ReadSourceSnapshot(source) ?? throw new FileNotFoundException("コピー元がありません。", source);
                 var target = ReadSnapshot(destination);
                 var replacesDifferentKind = target is not null && target.Kind != snapshot.Kind;
+                if (replacesDifferentKind && snapshot.Kind == DirectoryEntryKind.Directory) replacedWithDirectory.Add(destination);
                 // 種別が違う項目は、その項目の書き込み可否だけを見て、実行時に削除してからコピーする。
                 ValidateDestinationKind(destination, target, replacesDifferentKind ? target!.Kind : snapshot.Kind);
                 if (replacesDifferentKind && OperatingSystem.IsWindows() && (target!.Attributes & FileAttributes.Encrypted) != 0)
                     throw new NotSupportedException("EFS コピー先の暗号化を保持する置換経路は未実装です。");
-                CaptureDestinationParents(destinationRoot, destination, parents);
+                CaptureDestinationParents(destinationRoot, destination, parents, replacedWithDirectory);
                 if (usesWindowsMetadata)
                 {
                     CaptureWindowsMetadataChain(source, sourceRoot, sourceWindowsMetadata, budget, token);
@@ -107,7 +110,7 @@ public static partial class FolderOperations
                     var sourceLayout = ReadPlannedStreamLayout(source, snapshot.Size, budget, token);
                     // ディレクトリをファイルで置き換えるときは、ディレクトリの中をストリームとして読まない。
                     var destinationLayout = target is null || replacesDifferentKind ? null : ReadPlannedStreamLayout(destination, target.Size, budget, token);
-                    destinationSupportsNamedStreams = ReadDestinationCapability(destination, token);
+                    destinationSupportsNamedStreams = ReadDestinationCapability(destination, token, replacedWithDirectory);
                     if (sourceLayout.Streams.Count > 1 && !destinationSupportsNamedStreams)
                         throw new NotSupportedException("コピー先は名前付きストリームに対応していません。");
                     // 全streamの予定量を予約してから内容を読む。0byte ADSもdescriptor/nameへ計上する。
@@ -303,12 +306,14 @@ public static partial class FolderOperations
     }
 
     private static void CaptureDestinationParents(string root, string destination,
-        Dictionary<string, FolderCopySnapshot?> parents)
+        Dictionary<string, FolderCopySnapshot?> parents, HashSet<string> replacedWithDirectory)
     {
         for (var current = Path.GetDirectoryName(destination); current is not null && SameOrInside(current, root);
             current = Path.GetDirectoryName(current))
         {
             if (parents.ContainsKey(current)) continue;
+            // これからディレクトリになるファイルは、子を書く前に削除される。今はディレクトリでなくてよい。
+            if (replacedWithDirectory.Contains(current)) continue;
             var state = ReadSnapshot(current);
             ValidateDestinationKind(current, state, DirectoryEntryKind.Directory);
             parents.Add(current, state);
