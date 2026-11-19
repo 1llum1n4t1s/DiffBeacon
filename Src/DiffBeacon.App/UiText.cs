@@ -98,7 +98,26 @@ internal static class UiText
         return result.ToString();
     }
 
-    private static string StripAccess(string text) => AccessKey(text).Replace("_", "", StringComparison.Ordinal);
+    /// <summary>メニューの &amp; と、訳に付く (&amp;C) を除いた本文。</summary>
+    private static string StripAccess(string text)
+    {
+        var result = new StringBuilder(text.Length);
+        for (var index = 0; index < text.Length; index++)
+        {
+            if (text[index] == '(' && index + 3 < text.Length && text[index + 1] == '&' && text[index + 3] == ')')
+            {
+                index += 3;
+                continue;
+            }
+            if (text[index] == '&' && index + 1 < text.Length)
+            {
+                if (text[index + 1] == '&') { result.Append('&'); index++; }
+                continue;
+            }
+            result.Append(text[index]);
+        }
+        return result.ToString();
+    }
 
     private static void EnsureReverse()
     {
