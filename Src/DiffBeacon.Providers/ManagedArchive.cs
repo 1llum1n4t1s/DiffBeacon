@@ -164,8 +164,12 @@ public sealed partial class ManagedArchive
             if (tarFormat is not null)
                 return ReadTar(input, tarFormat, token, capture, consume, captureLimit, prefixOnly,
                     budget, ownedCapture, inputAlreadyDecoded);
-            // 辞書・窓の上限は OpenArchive / MoveToNextEntry の内側で使われる。アプリのエントリ上限より大きい確保をここで拒否する。
-            TightenDictionaryLimits(Math.Min(_limits.MaximumEntryBytes, _limits.MaximumDecodedBytes));
+            // 辞書・窓の上限は OpenArchive / MoveToNextEntry の内側で使われる。この読み取りの間だけ狭め、終了後は元へ戻す。
+            var dictionaryCap = Math.Min(_limits.MaximumEntryBytes, _limits.MaximumDecodedBytes);
+            var savedDictionaries = (DictionarySizeLimits.Rar4, DictionarySizeLimits.Rar5, DictionarySizeLimits.Lzma, DictionarySizeLimits.Lzma2, DictionarySizeLimits.Ppmd, DictionarySizeLimits.ZStandard);
+            TightenDictionaryLimits(dictionaryCap);
+            try
+            {
             // Stream API で隣接ボリュームの暗黙の探索・読み取りを防ぐ。
             using var archive = ArchiveFactory.OpenArchive(input, ReaderOptions.ForExternalStream.WithPassword(password));
             if (archive.Type is not (ArchiveType.SevenZip or ArchiveType.Rar or ArchiveType.Zip))
@@ -256,6 +260,16 @@ public sealed partial class ManagedArchive
                   transferred = ownedCapture?.Take(metadata, content) == true;
                 }
                 finally { if (!transferred) content?.Dispose(); }
+            }
+            }
+            finally
+            {
+                DictionarySizeLimits.Rar4 = savedDictionaries.Item1;
+                DictionarySizeLimits.Rar5 = savedDictionaries.Item2;
+                DictionarySizeLimits.Lzma = savedDictionaries.Item3;
+                DictionarySizeLimits.Lzma2 = savedDictionaries.Item4;
+                DictionarySizeLimits.Ppmd = savedDictionaries.Item5;
+                DictionarySizeLimits.ZStandard = savedDictionaries.Item6;
             }
     }
 

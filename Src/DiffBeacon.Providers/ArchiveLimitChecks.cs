@@ -24,10 +24,11 @@ public static class ArchiveLimitChecks
         var path = WriteZip(Path.Combine(directory, "small.zip"), "a.txt", "hi");
         var limits = new ManagedArchiveLimits(MaximumEntryBytes: 4096, MaximumDecodedBytes: 4096, MaximumInputBytes: 4096);
         var manifest = new ManagedArchive(limits).ReadManifest(path);
+        var before = SharpCompress.Common.DictionarySizeLimits.Lzma;
         if (manifest.Entries.Count != 1 || manifest.Entries[0].Size != 2)
             throw new InvalidOperationException("小さい ZIP の読取り結果が違います。");
-        if (DictionarySizeLimitsAtMost(4096) is false)
-            throw new InvalidOperationException("辞書上限がエントリ上限まで狭まっていません。");
+        if (SharpCompress.Common.DictionarySizeLimits.Lzma != before)
+            throw new InvalidOperationException("辞書上限が読み取りの後も狭いままです。");
     }
 
     /// <summary>中央ディレクトリの展開サイズだけを大きくした ZIP は、展開せず上限で拒否する。</summary>
@@ -93,13 +94,6 @@ public static class ArchiveLimitChecks
         if (watch.Elapsed > TimeSpan.FromSeconds(5))
             throw new InvalidOperationException("壊れた ZIP の拒否に5秒を超えました。");
     }
-
-    /// <summary>ライブラリの辞書上限が cap 以下か。</summary>
-    private static bool DictionarySizeLimitsAtMost(long cap) =>
-        SharpCompress.Common.DictionarySizeLimits.Lzma <= cap
-        && SharpCompress.Common.DictionarySizeLimits.Lzma2 <= cap
-        && SharpCompress.Common.DictionarySizeLimits.Rar5 <= cap
-        && SharpCompress.Common.DictionarySizeLimits.Ppmd <= cap;
 
     /// <summary>無圧縮の ZIP を1エントリで書く。</summary>
     private static string WriteZip(string path, string name, string content)
