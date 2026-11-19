@@ -82,6 +82,7 @@
     <EmbeddedResource Include="../../tests/Fixtures/Archives/BareGZip/extra-expected.json" LogicalName="DiffBeacon.SelfTest.BareGZip.extra.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="../../Translations/WinMerge/*.po" Link="Translations\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="../../tests/Fixtures/FolderOptimizer/.gitattributes" Link="tests\Fixtures\FolderOptimizer\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../tests/Fixtures/FolderOptimizer/failure-matrix.json" Link="tests\Fixtures\FolderOptimizer\failure-matrix.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../tests/Fixtures/FolderOptimizer/finite-schema.py" Link="tests\Fixtures\FolderOptimizer\finite-schema.py" CopyToOutputDirectory="PreserveNewest" />

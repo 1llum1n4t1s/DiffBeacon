@@ -85,6 +85,15 @@ if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-column-i
         if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-copy-only")
             return HeadlessSelfTest.Run(args[1], folderCopyOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-kind-only")
+            return HeadlessFolderCopyChecks.RunKindReplacementOnly(args[1]);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--port-gaps-only")
+            return HeadlessPortGapChecks.Run(args[1]);
+        if (args.Length is 1 or 2 && args[0] == "--register-shell")
+        {
+            ShellIntegration.RegisterCurrentUser(args.Length == 2 ? args[1] : Environment.ProcessPath ?? throw new InvalidOperationException("実行ファイルのパスを取得できません。"));
+            return 0;
+        }
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-threeway-only")
             return HeadlessSelfTest.Run(args[1], folderThreeWayOnly: true);
         if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-range-edits-only")
