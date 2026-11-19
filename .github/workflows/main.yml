@@ -139,7 +139,7 @@ jobs:
           "$app" --clipboard-self-test "${DIFFBEACON_RUN_ROOT}/verification/desktop-binary-clipboard" --binary-read
       - name: Record evidence directories and file hashes before upload
         if: always()
-        run: python -B build/Capture-EvidenceInventory.py --base-directory "${DIFFBEACON_RUN_ROOT}" --root e2e --root verification --root "publish/verification/${{ matrix.rid }}" --root z-reference --root folder-reference --root "publish/${{ matrix.rid }}/publish-manifest.json" --output "${DIFFBEACON_RUN_ROOT}/evidence.json"
+        run: python -B build/Capture-EvidenceInventory.py --base-directory "${DIFFBEACON_RUN_ROOT}" --root e2e --root verification --root "publish/verification/${{ matrix.rid }}" --root z-reference --root folder-reference --root "publish/${{ matrix.rid }}/publish-manifest.json" --output evidence.json
       - name: Upload verification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
