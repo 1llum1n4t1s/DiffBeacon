@@ -144,8 +144,11 @@ internal static class Program
             arguments = common;
         }
         var code = RunAllowFail(compiler, arguments, output, TimeSpan.FromMinutes(5), environment);
-        File.WriteAllText(Path.Combine(output, "build-proof.json"), "{\"compilerExitCode\":" + code + ",\"decoder\":\"" + decoder.Replace("\\", "\\\\") + "\"}\n");
         if (code != 0) throw new InvalidOperationException("reference buildが失敗しました: " + output);
+        var architecture = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant();
+        var proof = new ZBuildProof(source, Hash(source), Hash(Path.Combine(sourceRoot, "patchlevel.h")), compiler, Hash(compiler),
+            architecture, arguments.ToArray(), 0, decoder, "none; original ncompress 5.1 has upstream MSVC/binary stdio support", Hash(decoder));
+        File.WriteAllText(Path.Combine(output, "build-proof.json"), JsonSerializer.Serialize(proof, BuildJsonContext.Default.ZBuildProof));
         Console.WriteLine(decoder);
         return 0;
     }
@@ -345,4 +348,9 @@ internal sealed record PublishManifest(string RuntimeIdentifier, string SdkVersi
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true)]
 [JsonSerializable(typeof(PublishManifest))]
+[JsonSerializable(typeof(ZBuildProof))]
 internal partial class BuildJsonContext : JsonSerializerContext;
+
+/// <summary>ncompress 参照ビルドの証明。検証スクリプトがパスと SHA をこの形で読む。</summary>
+internal sealed record ZBuildProof(string Source, string SourceSha256, string PatchlevelSha256, string Compiler, string CompilerSha256,
+    string HostArchitecture, string[] Arguments, int CompilerExitCode, string Decoder, string Adapter, string DecoderSha256);
