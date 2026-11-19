@@ -164,6 +164,8 @@ public sealed partial class ManagedArchive
             if (tarFormat is not null)
                 return ReadTar(input, tarFormat, token, capture, consume, captureLimit, prefixOnly,
                     budget, ownedCapture, inputAlreadyDecoded);
+            // 辞書・窓の上限は OpenArchive / MoveToNextEntry の内側で使われる。アプリのエントリ上限より大きい確保をここで拒否する。
+            TightenDictionaryLimits(Math.Min(_limits.MaximumEntryBytes, _limits.MaximumDecodedBytes));
             // Stream API で隣接ボリュームの暗黙の探索・読み取りを防ぐ。
             using var archive = ArchiveFactory.OpenArchive(input, ReaderOptions.ForExternalStream.WithPassword(password));
             if (archive.Type is not (ArchiveType.SevenZip or ArchiveType.Rar or ArchiveType.Zip))
@@ -199,6 +201,8 @@ public sealed partial class ManagedArchive
             void Process(IEntry entry, Action<Stream> decode)
             {
                 token.ThrowIfCancellationRequested();
+                if (result.Count >= _limits.MaximumEntries)
+                    throw new InvalidDataException("エントリ数の上限を超えました。");
                 budget?.CheckPath(entry.Key);
                 var name = ValidateEntryPath(entry.Key);
                 names.Add(name, entry.IsDirectory);
@@ -253,6 +257,21 @@ public sealed partial class ManagedArchive
                 }
                 finally { if (!transferred) content?.Dispose(); }
             }
+    }
+
+    /// <summary>
+    /// SharpCompress の辞書上限はプロセス全体で、開く処理の中で参照される。
+    /// いまの読み取り上限より緩いときだけ狭める。既定より広い値へは広げない。
+    /// </summary>
+    private static void TightenDictionaryLimits(long cap)
+    {
+        if (cap <= 0) throw new ArgumentOutOfRangeException(nameof(cap));
+        if (cap < DictionarySizeLimits.Rar4) DictionarySizeLimits.Rar4 = cap;
+        if (cap < DictionarySizeLimits.Rar5) DictionarySizeLimits.Rar5 = cap;
+        if (cap < DictionarySizeLimits.Lzma) DictionarySizeLimits.Lzma = cap;
+        if (cap < DictionarySizeLimits.Lzma2) DictionarySizeLimits.Lzma2 = cap;
+        if (cap < DictionarySizeLimits.Ppmd) DictionarySizeLimits.Ppmd = cap;
+        if (cap < DictionarySizeLimits.ZStandard) DictionarySizeLimits.ZStandard = cap;
     }
 
     private static void ValidateOutput(string path)

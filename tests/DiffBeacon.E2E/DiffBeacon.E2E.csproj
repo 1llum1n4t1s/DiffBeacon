@@ -4,6 +4,9 @@
     <IsAotCompatible>false</IsAotCompatible>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../Src/DiffBeacon.Providers/DiffBeacon.Providers.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="..\Fixtures\FolderOptimizer\.gitattributes" Link="tests\Fixtures\FolderOptimizer\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Fixtures\FolderOptimizer\README.md" Link="tests\Fixtures\FolderOptimizer\README.md" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\Fixtures\FolderOptimizer\failure-matrix.json" Link="tests\Fixtures\FolderOptimizer\failure-matrix.json" CopyToOutputDirectory="PreserveNewest" />

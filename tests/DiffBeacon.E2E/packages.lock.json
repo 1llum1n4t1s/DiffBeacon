@@ -1,6 +1,18 @@
 {
   "version": 1,
   "dependencies": {
-    "net11.0": {}
+    "net11.0": {
+      "SharpCompress": {
+        "type": "Transitive",
+        "resolved": "0.50.10",
+        "contentHash": "A+qqCaZZKaZajmQG0stkwWKi/VaMrQICf2HitEFJDFtkYnHlIzzrrZ4aRvoY9aqjLN6Abx5xEn43q56I8pHTBQ=="
+      },
+      "diffbeacon.providers": {
+        "type": "Project",
+        "dependencies": {
+          "SharpCompress": "[0.50.10, )"
+        }
+      }
+    }
   }
 }

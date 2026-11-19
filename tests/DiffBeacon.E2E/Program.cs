@@ -20,7 +20,7 @@ var selectors = new HashSet<string>(StringComparer.Ordinal)
     "--tiff-only", "--apng-only", "--image-copy-only", "--image-highlight-only", "--image-regions-only",
     "--image-reports-only", "--image-only", "--gnu-table-only", "--gnu-text-only", "--gnu-line-only",
     "--line-alignment-only", "--word-diff-only", "--table-raw-search-only", "--table-column-ignore-only", "--table-column-range-only", "--line-transform-only", "--line-transform-logging-only", "--line-transform-timestamp-only", "--line-transform-date-functions-only", "--line-transform-calendar-functions-only", "--line-transform-clock-functions-only", "--line-transform-casing-only", "--line-transform-unicode-normalization-only", "--line-transform-character-mapping-only", "--line-transform-content-only", "--line-transform-regex-only", "--line-transform-matches-operator-only", "--line-transform-recontains-only", "--line-transform-like-only", "--line-transform-match-only", "--line-transform-match-metrics-only", "--line-transform-matchinside-only", "--line-transform-replace-lists-only", "--reports-only", "--packaging-only", "--projects-only",
-    "--archives-only", "--legacy-comments-only", "--text-advanced-only", "--provider-boundaries-only", "--external-provider-only"
+    "--archives-only", "--archive-limits-only", "--legacy-comments-only", "--text-advanced-only", "--provider-boundaries-only", "--external-provider-only"
 };
 var seenOptions = new HashSet<string>(StringComparer.Ordinal);
 var selectorCount = 0;
@@ -91,6 +91,12 @@ for (var ancestor = new DirectoryInfo(output); ancestor is not null; ancestor = 
 Directory.CreateDirectory(output);
 var fixtures = Path.Combine(output, "fixtures", DateTime.UtcNow.ToString("yyyyMMddTHHmmssfff") + "-" + Guid.NewGuid().ToString("N")[..8]);
 Directory.CreateDirectory(fixtures);
+if (args.Contains("--archive-limits-only", StringComparer.Ordinal))
+{
+    DiffBeacon.Providers.ArchiveLimitChecks.Verify(fixtures);
+    Console.WriteLine("archive-limits passed");
+    return 0;
+}
 var defaultApp = Environment.GetEnvironmentVariable("DIFFBEACON_WORK_DIRECTORY") is { Length: > 0 } developmentWork
     ? Path.Combine(developmentWork, "build", "bin", "DiffBeacon.App", "release", "DiffBeacon.dll")
     : "Src/DiffBeacon.App/bin/Release/net11.0/DiffBeacon.dll";
