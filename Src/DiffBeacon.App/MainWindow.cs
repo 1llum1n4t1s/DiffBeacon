@@ -547,7 +547,9 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
                     imageView = null;
                     _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; DiscardMergeChanges();
                     LeftEditor.IsReadOnly = RightEditor.IsReadOnly = true;
-                    _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; _pendingRestoredImageSettings = false; return;
+                    _views.SelectedItem = _specialTab; _status.Text = "画像を比較しました。"; _lastPackageComparison = comparisonForPackaging; _pendingRestoredImageSettings = false;
+                    UpdateLayout();
+                    return;
                 }
                 finally { SpecializedViews.Release(imageView); }
             }

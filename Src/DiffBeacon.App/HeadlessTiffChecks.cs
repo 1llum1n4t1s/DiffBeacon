@@ -29,6 +29,7 @@ internal static class HeadlessTiffChecks
             if (!asset.Value.GetProperty("valid").GetBoolean()) continue;
             pane.DiscardChanges(); pane.BasePath.Text = ""; pane.LeftPath.Text = path; pane.RightPath.Text = path; pane.SelectMode(0);
             pump(pane.ComparePathsAsync());
+            pane.UpdateLayout();
             var panel = pane.GetVisualDescendants().OfType<SpecializedViews.ImagePanel>().Single();
             panel.GetVisualDescendants().OfType<CheckBox>().Single(control => control.Name == "ImageShowDifferences").IsChecked = false;
             pump(panel.CurrentFrameOperation); var frames = asset.Value.GetProperty("frames");
