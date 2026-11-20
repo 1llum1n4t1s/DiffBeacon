@@ -5,6 +5,7 @@ using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 
@@ -270,7 +271,9 @@ internal static class HeadlessImageInsertionChecks
     }
     private static IReadOnlyList<ImageComparisonEngine.DecodedFrame> InputsRaw(JsonElement item) => item.GetProperty("inputs").EnumerateArray()
         .Select(value => new ImageComparisonEngine.DecodedFrame(1, value.GetProperty("width").GetInt32(), value.GetProperty("height").GetInt32(), Convert.FromHexString(value.GetProperty("bgraHex").GetString()!))).ToArray();
-    private static Button Button(SpecializedViews.ImagePanel panel, string name) => panel.GetVisualDescendants().OfType<Button>().Single(button => button.Name == name);
+    private static Button Button(SpecializedViews.ImagePanel panel, string name)
+        => panel.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => button.Name == name)
+            ?? panel.GetLogicalDescendants().OfType<Button>().Single(button => button.Name == name);
     private static bool MatchesRaw(ImageComparisonEngine.DecodedFrame frame, JsonElement expected) => frame.Width == expected.GetProperty("width").GetInt32()
         && frame.Height == expected.GetProperty("height").GetInt32() && frame.Pixels.AsSpan().SequenceEqual(Convert.FromHexString(expected.GetProperty("bgraHex").GetString()!));
     private static bool Same(ImageComparisonEngine.DecodedFrame a, ImageComparisonEngine.DecodedFrame b) => a.Width == b.Width && a.Height == b.Height && a.Pixels.AsSpan().SequenceEqual(b.Pixels);
