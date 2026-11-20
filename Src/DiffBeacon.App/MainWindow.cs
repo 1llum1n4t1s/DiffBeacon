@@ -402,6 +402,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
 
     public async Task ComparePathsAsync()
     {
+        try { await ComparePathsAsyncCore(); }
+        finally { _selectFilesPinned = false; UpdateComparisonToolbarHeight(); }
+    }
+
+    private async Task ComparePathsAsyncCore()
+    {
         ObjectDisposedException.ThrowIf(_disposed, this);
         if (_textRole.SelectedIndex == 1)
         { await CompareIndependentTextAsync(); return; }
