@@ -363,7 +363,11 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         root.Children.Add(_views);
         Content = root;
         InitializeFolderView();
-        CompareButton.Click += async (_, _) => await GuardAsync(() => ObserveCriticalTextSaveTask("path-compare", ComparePathsAsync()));
+        CompareButton.Click += async (_, _) => await GuardAsync(async () =>
+        {
+            try { await ObserveCriticalTextSaveTask("path-compare", ComparePathsAsync()); }
+            finally { _selectFilesPinned = false; UpdateComparisonToolbarHeight(); }
+        });
         _directoryList.DoubleTapped += async (_, _) => await GuardAsync(async () =>
         {
             if (_directoryList.SelectedItem is not DirectoryEntry entry || _directoryLeft is null || _directoryRight is null) return;
