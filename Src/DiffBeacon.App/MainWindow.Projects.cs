@@ -2,7 +2,9 @@ using System.Text.RegularExpressions;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using DiffBeacon.Core;
 using DiffBeacon.Providers;
 
@@ -99,7 +101,10 @@ public sealed partial class MainWindow
     internal void ClickSessionClose(ComparisonPane pane)
     {
         var item = _sessions.First(tab => ReferenceEquals(tab.Content, pane));
-        var button = ((Panel)item.Header!).Children.OfType<Button>().First();
+        var button = item.Header is Panel panel
+            ? panel.GetLogicalDescendants().OfType<Button>().FirstOrDefault(candidate => Equals(candidate.Content, "×"))
+            : null;
+        button ??= item.GetVisualDescendants().OfType<Button>().First(candidate => Equals(candidate.Content, "×"));
         button.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
     }
 

@@ -62,8 +62,7 @@ internal static class HeadlessBinaryCopyAllChecks
                     if (kind == "recompare") pump(pane.ComparePathsAsync());
                     if (kind == "disposed")
                     {
-                        var tab = window.GetVisualDescendants().OfType<TabControl>().SelectMany(control => control.Items.OfType<TabItem>()).Single(item => ReferenceEquals(item.Content, pane));
-                        ((StackPanel)tab.Header!).Children.OfType<Button>().Single().RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                        window.ClickSessionClose(pane);
                     }
                     if (kind == "owner") { pane.ApplyProject(new() { Mode = "Binary", LeftPath = files[0], RightPath = files[2] }); pump(pane.ComparePathsAsync()); }
                     Answer(dialog, true);

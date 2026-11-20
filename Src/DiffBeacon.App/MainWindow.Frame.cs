@@ -254,12 +254,9 @@ public sealed partial class MainWindow
     /// </summary>
     internal static void CompactTab(TabItem item)
     {
-        item.FontFamily = TabFont;
-        item.FontSize = 12;
-        item.Padding = new Thickness(8, 4);
-        item.MinHeight = 28;
-        item.VerticalContentAlignment = VerticalAlignment.Center;
-        ApplySessionTabChrome(item);
+        item.FontSize = 13;
+        item.MinHeight = 0;
+        item.Padding = new Thickness(10, 3);
     }
 
     /// <summary>
