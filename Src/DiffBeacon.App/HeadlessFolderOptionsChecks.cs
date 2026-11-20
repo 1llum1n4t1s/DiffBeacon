@@ -264,6 +264,7 @@ internal static class HeadlessFolderOptionsChecks
                 void Hit(Control control, bool allowDisabled = false)
                 {
                     var serialBefore = store.SetOptionsAttemptCount; var rawName = "click-" + (++operationSequence) + "-" + (control.Name ?? "unnamed-control"); State(rawName + "/before", window.ActivePane);
+                    RevealSelect(control); Jobs();
                     control.BringIntoView(); Jobs(); if (!allowDisabled && !control.IsEnabled) throw new InvalidOperationException("Disabled actual control: " + control.Name);
                     var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), window)!.Value;
                     window.MouseDown(point, MouseButton.Left); window.MouseUp(point, MouseButton.Left); Jobs(); State(rawName + "/after", window.ActivePane, serialBefore);
@@ -612,6 +613,7 @@ internal static class HeadlessFolderOptionsChecks
         }
         void OwnedHit(MainWindow window, Control control, Stopwatch clock)
         {
+            RevealSelect(control); OwnedJobs(clock);
             control.BringIntoView(); OwnedJobs(clock); if (!control.IsEnabled) throw new InvalidOperationException("Disabled owned actual control: " + control.Name);
             var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), window)!.Value;
             window.MouseDown(point, MouseButton.Left); window.MouseUp(point, MouseButton.Left); OwnedJobs(clock);
@@ -635,6 +637,12 @@ internal static class HeadlessFolderOptionsChecks
         }
         void CheckDeadline(Stopwatch clock)
         { if (clock.Elapsed.TotalSeconds > 30) throw new TimeoutException("Folder options owned helper 30-second cap exceeded."); }
+        static void RevealSelect(Control control)
+        {
+            var pane = control.FindAncestorOfType<ComparisonPane>();
+            if (pane is not null && (ReferenceEquals(control, pane.CompareButton) || pane.ComparisonToolbar.GetVisualDescendants().Contains(control)))
+                pane.ShowSelectFiles();
+        }
         void OwnedJobs(Stopwatch clock)
         { CheckDeadline(clock); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick(); CheckDeadline(clock); }
         void EndOwnedCase(string directory, MainWindow window, List<Task> tasks, Stopwatch clock, Exception? caseFailure, int expected, Func<int>? disposedCount = null, Action? finalReport = null)
