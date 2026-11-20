@@ -73,11 +73,11 @@ internal static partial class HeadlessFolderCopyChecks
                 {
                     window.Width = minimum ? 850 : 1280; window.Height = minimum ? 550 : 850;
                     Dispatcher.UIThread.RunJobs();
-                    var direction = layout.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection");
-                    var copy = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "選択をすべてコピー"));
-                    var leftTrash = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "左側の差分ファイルをゴミ箱へ"));
-                    var rightTrash = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "右側の差分ファイルをゴミ箱へ"));
-                    var threeWayTrash = layout.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, "選択側の差分ファイルをゴミ箱へ"));
+                    var direction = layout.FolderActionRoot.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection");
+                    var copy = layout.FolderCommandButton("選択をすべてコピー");
+                    var leftTrash = layout.FolderCommandButton("左側の差分ファイルをゴミ箱へ");
+                    var rightTrash = layout.FolderCommandButton("右側の差分ファイルをゴミ箱へ");
+                    var threeWayTrash = layout.FolderCommandButton("選択側の差分ファイルをゴミ箱へ");
                     check("Folder Three Way controls visible " + minimum,
                         direction.IsEffectivelyVisible && copy.IsEffectivelyVisible && direction.Bounds.Width > 0 && List(layout).Bounds.Height >= 100,
                         $"direction={direction.Bounds};copy={copy.Bounds};list={List(layout).Bounds}");
@@ -140,7 +140,7 @@ internal static partial class HeadlessFolderCopyChecks
             readOnlyPane.ApplyProject(new() { Mode = "Folder", LeftPath = raw, LeftReadOnly = true });
             var captured = readOnlyPane.CaptureProject();
             activate(pane); Select(pane, ["entry.txt"]);
-            pane.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection").SelectedIndex = (int)DirectoryCopyDirection.LeftToRight;
+            pane.FolderActionRoot.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection").SelectedIndex = (int)DirectoryCopyDirection.LeftToRight;
             var confirms = 0;
             Dialogs.ConfirmationShown = dialog => { confirms++; Answer(dialog, true); };
             Click(pane, "選択をすべてコピー");
@@ -187,7 +187,7 @@ internal static partial class HeadlessFolderCopyChecks
             pane.ApplyProject(new() { Mode = "Folder", LeftPath = left, BasePath = middleInput, RightPath = right });
             wait(pane.ComparePathsAsync()); activate(pane); Select(pane, ["third/entry.txt"]);
             check("Folder Three Way protection middle path " + name, pane.CaptureProject().BasePath == middleInput, "actual input alias retained");
-            pane.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection").SelectedIndex = (int)DirectoryCopyDirection.LeftToRight;
+            pane.FolderActionRoot.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection").SelectedIndex = (int)DirectoryCopyDirection.LeftToRight;
             var confirms = 0;
             Dialogs.ConfirmationShown = dialog => { confirms++; Answer(dialog, true); };
             Click(pane, "選択をすべてコピー");
@@ -221,7 +221,7 @@ internal static partial class HeadlessFolderCopyChecks
                 && entry.ThreeWay.Classification == DirectoryThreeWayClassification.AllChanged && entry.MiddlePath == Path.Combine(roots[1], "entry.txt"), "three physical sides, original Full classification");
             var captured = pane.CaptureProject();
             check("Folder Three Way project middle " + name, captured.BasePath == roots[1] && captured.BaseReadOnly == middleReadOnly, "existing project fields retain middle and readonly");
-            pane.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
+            pane.FolderActionRoot.GetVisualDescendants().OfType<ComboBox>().Single(c => c.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
             var didConfirm = false;
             Dialogs.ConfirmationShown = dialog =>
             {

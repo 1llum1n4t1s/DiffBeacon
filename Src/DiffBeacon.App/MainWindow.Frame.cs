@@ -2,11 +2,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
+using Avalonia.Interactivity;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
+using Avalonia.VisualTree;
 
 namespace DiffBeacon.App;
 
@@ -38,6 +40,8 @@ public sealed partial class MainWindow
         FrameMenu = BuildMenu();
         frame.Children.Add(FrameMenu);
         frame.Children.Add(new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 1), Child = FrameToolbar = BuildToolbar() });
+        FolderActionHost = new ContentControl { IsVisible = false, MaxHeight = 76, Margin = new Thickness(2, 0, 2, 2) };
+        frame.Children.Add(FolderActionHost);
         // 保存したツールバーの表示は、帯（Border）を作った後に採用する（メニューを作る時点では帯がまだ無い）。
         SetToolbarVisible(_showToolbar, save: false);
         SetMenuBarVisible(_showMenuBar, save: false);
@@ -245,6 +249,17 @@ public sealed partial class MainWindow
         return button;
     }
 
+    /// <summary>本家のタブ幅の自動調整。オンのときは題名を短く切る。</summary>
+    private bool _tabAutoMaxWidth = true;
+    internal ContentControl FolderActionHost { get; private set; } = new();
+
+    /// <summary>フォルダー比較の操作を、一覧の上ではなくツールバーの下へ出す。ファイル比較では隠す。</summary>
+    internal void UseFolderActions(Control? actions)
+    {
+        FolderActionHost.Content = actions;
+        FolderActionHost.IsVisible = actions is not null;
+    }
+
     /// <summary>タブの文字。Windows は Yu Gothic UI、Mac はヒラギノ。無い環境は Noto Sans CJK JP に落ちる。</summary>
     internal static readonly FontFamily TabFont = new("Yu Gothic UI, Yu Gothic, Meiryo, Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans CJK JP, WenQuanYi Micro Hei, sans-serif");
 
@@ -290,7 +305,54 @@ public sealed partial class MainWindow
         };
         close.Click += async (_, _) => await CloseSessionAsync(item);
         ApplySessionTabChrome(item);
+        AttachSessionTabGestures(item, close);
         return item;
+    }
+
+    /// <summary>本家 CMyTabCtrl。中ボタンで閉じ、ドラッグで並べ、右クリックは閉じる／左右／他／幅の自動調整。</summary>
+    private void AttachSessionTabGestures(TabItem item, Button close)
+    {
+        var menu = new ContextMenu();
+        MenuItem Command(string msgid, Func<Task> action)
+        {
+            var entry = new MenuItem { Header = UiText.Menu(msgid), Tag = msgid };
+            entry.Click += async (_, _) => await action();
+            return entry;
+        }
+        var autoWidth = new MenuItem { Header = UiText.Menu("Enable &Auto Max Width"), ToggleType = MenuItemToggleType.CheckBox, IsChecked = _tabAutoMaxWidth, Tag = "Enable &Auto Max Width" };
+        autoWidth.Click += (_, _) => { _tabAutoMaxWidth = autoWidth.IsChecked == true; ApplyTabAutoWidth(); };
+        menu.Items.Add(Command("&Close", () => CloseSessionAsync(item)));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(Command("Close &Other Tabs", () => CloseOtherSessionsAsync(item, SessionCloseScope.Others)));
+        menu.Items.Add(Command("Close R&ight Tabs", () => CloseOtherSessionsAsync(item, SessionCloseScope.Right)));
+        menu.Items.Add(Command("Close &Left Tabs", () => CloseOtherSessionsAsync(item, SessionCloseScope.Left)));
+        menu.Items.Add(new Separator());
+        menu.Items.Add(autoWidth);
+        item.ContextMenu = menu;
+        var origin = default(Point);
+        var armed = false;
+        item.AddHandler(InputElement.PointerPressedEvent, (_, args) =>
+        {
+            var point = args.GetCurrentPoint(item);
+            if (point.Properties.IsMiddleButtonPressed)
+            {
+                args.Handled = true;
+                _ = CloseSessionAsync(item);
+                return;
+            }
+            if (!point.Properties.IsLeftButtonPressed || args.Source is Button) return;
+            origin = point.Position;
+            armed = true;
+        }, RoutingStrategies.Tunnel);
+        item.AddHandler(InputElement.PointerMovedEvent, (_, args) =>
+        {
+            if (!armed || !args.GetCurrentPoint(item).Properties.IsLeftButtonPressed) return;
+            var now = args.GetPosition(item);
+            if (Math.Abs(now.X - origin.X) + Math.Abs(now.Y - origin.Y) < 8) return;
+            var over = _tabs.GetVisualDescendants().OfType<TabItem>().FirstOrDefault(other => other != item && other.Bounds.Contains(args.GetPosition(other)));
+            if (over is not null) MoveSession(item, over);
+        }, RoutingStrategies.Tunnel);
+        item.AddHandler(InputElement.PointerReleasedEvent, (_, _) => armed = false, RoutingStrategies.Tunnel);
     }
 
     /// <summary>
@@ -316,7 +378,7 @@ public sealed partial class MainWindow
             new Setter(TabItem.BackgroundProperty, Brushes.Transparent),
             new Setter(TabItem.BorderThicknessProperty, new Thickness(0)),
             new Setter(TabItem.PaddingProperty, new Thickness(0)),
-            new Setter(TabItem.MinHeightProperty, 28d),
+            new Setter(TabItem.MinHeightProperty, 26d),
             new Setter(TabItem.VerticalContentAlignmentProperty, VerticalAlignment.Center),
             new Setter(TabItem.FocusAdornerProperty, null),
             new Setter(TabItem.TemplateProperty, new FuncControlTemplate<TabItem>((tab, _) =>
@@ -333,9 +395,9 @@ public sealed partial class MainWindow
                 {
                     Name = "PART_LayoutRoot",
                     CornerRadius = new CornerRadius(3),
-                    Margin = new Thickness(3, 3, 3, 1),
-                    Padding = new Thickness(8, 5, 6, 5),
-                    MinHeight = 28,
+                Margin = new Thickness(2, 1, 2, 0),
+                Padding = new Thickness(4, 2, 3, 2),
+                MinHeight = 26,
                     BorderThickness = new Thickness(1),
                     VerticalAlignment = VerticalAlignment.Center,
                     Child = presenter,
@@ -363,7 +425,7 @@ public sealed partial class MainWindow
     {
         var icon = new Border
         {
-            Width = 14, Height = 12, Margin = new Thickness(1, 0, 1, 0),
+            Width = 16, Height = 16, Margin = new Thickness(0, 0, 2, 0),
             VerticalAlignment = VerticalAlignment.Center,
             BorderBrush = new SolidColorBrush(Color.FromRgb(80, 80, 80)),
             BorderThickness = new Thickness(1),

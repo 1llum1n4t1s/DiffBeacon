@@ -279,6 +279,11 @@ internal static partial class HeadlessViewOptionsChecks
         options.ViewTopMargin = true;
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
         screenshot("file-compare.png");
+        var sessionTab = window.GetVisualDescendants().OfType<TabItem>().First(item => ReferenceEquals(item.Content, pane));
+        sessionTab.ContextMenu?.Open(sessionTab);
+        Dispatcher.UIThread.RunJobs();
+        screenshot("tab-menu.png");
+        sessionTab.ContextMenu?.Close();
         var extraPane = window.AddSession();
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
         var extraTab = window.GetVisualDescendants().OfType<TabItem>().Single(item => ReferenceEquals(item.Content, extraPane));

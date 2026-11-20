@@ -776,5 +776,5 @@ internal static class HeadlessFolderOptionsChecks
     private static CheckBox Mode(ComparisonPane pane) => pane.FolderOptionsRawMode;
     private static ComboBox Policy(ComparisonPane pane) => pane.FolderOptionsRawPolicy;
     private static ListBox Rows(ComparisonPane pane) => pane.FolderOptionsRawRows;
-    private static Button Button(ComparisonPane pane, string title) => pane.GetVisualDescendants().OfType<Button>().Single(control => Equals(control.Content, title));
+    private static Button Button(ComparisonPane pane, string title) => pane.FolderCommandButton(title);
 }

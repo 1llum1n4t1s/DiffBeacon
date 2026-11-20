@@ -101,7 +101,7 @@ public sealed partial class ComparisonPane
             _folderRootBars.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
             var chip = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(120, 180, 227)),
+                Background = new SolidColorBrush(Color.FromRgb(196, 210, 224)),
                 CornerRadius = new CornerRadius(3), Margin = new Thickness(3, 2), Padding = new Thickness(4, 0),
                 Child = visible[i],
             };

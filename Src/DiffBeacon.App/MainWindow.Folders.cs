@@ -6,6 +6,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using DiffBeacon.Core;
 using DiffBeacon.Providers;
 
@@ -14,6 +15,7 @@ namespace DiffBeacon.App;
 public sealed partial class ComparisonPane
 {
     private readonly DockPanel _folderView = new();
+    private ScrollViewer? _folderActionBar;
     private readonly CheckBox _showFilteredDirectories = new() { Content = "除外項目を表示" };
     private readonly TextBlock _folderCopySummary = new() { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(8) };
     private readonly List<Button> _folderCopyButtons = [];
@@ -45,6 +47,21 @@ public sealed partial class ComparisonPane
     internal FolderMoveResult? LastFolderMoveResult { get; private set; }
     internal FolderTrashResult? LastFolderTrashResult { get; private set; }
     internal string FolderCopySummaryText => _folderCopySummary.Text ?? "";
+
+    /// <summary>フォルダー操作のボタン。一覧からツールバー下へ移したあとも、同じインスタンスを返す。</summary>
+    internal Button FolderCommandButton(string title) =>
+        _folderActionBar?.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => Equals(button.Content, title))
+        ?? this.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => Equals(button.Content, title))
+        ?? throw new InvalidOperationException("フォルダー操作が見つかりません: " + title);
+
+    internal Control FolderActionRoot => _folderActionBar ?? throw new InvalidOperationException("フォルダー操作がありません。");
+
+    /// <summary>フォルダー比較を表示しているときだけ、操作列を枠のツールバーの下に出す。</summary>
+    internal void PublishFolderActions()
+    {
+        var show = ReferenceEquals(_views.SelectedItem, _specialTab) && ReferenceEquals(_specialTab.Content, _folderView);
+        if (_owner is MainWindow window) window.UseFolderActions(show ? _folderActionBar : null);
+    }
     internal string FolderCopyStatusText => _status.Text ?? "";
     internal Action<FolderCopyPlan>? FolderPlanReady { get; set; }
     internal Action<FolderCopyPlan>? FolderExecutionStarting { get; set; }
@@ -125,28 +142,16 @@ public sealed partial class ComparisonPane
         AddThreeWayTrash("選択側の差分ファイルをゴミ箱へ");
         _folderDirection.SelectionChanged += (_, _) => InvalidateFolderCopy(false);
         InitializeFolderTree(actions);
-        var folderActionsScroll = new ScrollViewer { Content = actions, MaxHeight = 144,
+        _folderActionBar = new ScrollViewer { Content = actions, MaxHeight = 72,
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
-        DockPanel.SetDock(folderActionsScroll, Dock.Top); _folderView.Children.Add(folderActionsScroll);
         DockPanel.SetDock(_folderCopySummary, Dock.Bottom); _folderView.Children.Add(_folderCopySummary);
         // 本家の DirView と同じく、一覧の直上にルートパス帯と列見出しを置く。
         InitializeFolderListChrome();
         DockPanel.SetDock(_folderRootBars, Dock.Top); _folderView.Children.Add(_folderRootBars);
         DockPanel.SetDock(_folderColumnHeaderHost, Dock.Top); _folderView.Children.Add(_folderColumnHeaderHost);
         _folderView.Children.Add(_directoryList);
-        void UpdateFolderActionsHeight()
-        {
-            if (_folderView.Bounds.Height <= 0) return;
-            // 一覧の最小高さ100 DIPは、パス帯と列見出しを除いた本体で確保する。
-            var reservedHeight = _directoryList.MinHeight + _directoryList.Margin.Top + _directoryList.Margin.Bottom
-                + _folderRootBars.Bounds.Height + _folderColumnHeaderHost.Bounds.Height
-                + _folderCopySummary.Bounds.Height + _folderCopySummary.Margin.Top + _folderCopySummary.Margin.Bottom;
-            var maxHeight = Math.Min(144, Math.Max(0, _folderView.Bounds.Height - reservedHeight));
-            if (Math.Abs(folderActionsScroll.MaxHeight - maxHeight) > .1) folderActionsScroll.MaxHeight = maxHeight;
-        }
-        _folderView.SizeChanged += (_, _) => UpdateFolderActionsHeight();
-        _folderCopySummary.SizeChanged += (_, _) => UpdateFolderActionsHeight();
+        _folderView.SizeChanged += (_, _) => PublishFolderActions();
         foreach (var control in new Control[] { LeftPath, BasePath, RightPath, _mode, _provider, _recursive, _folderMode,
             _excludes, _fileFilter, _showFilteredDirectories, _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex,
             _ignoreNumbers, _comments, _whitespace })
@@ -280,6 +285,7 @@ public sealed partial class ComparisonPane
         SetSpecialView(_folderView); _views.SelectedItem = _specialTab;
         UpdateFolderTreeControls();
         _status.Text = UiText.Say($"フォルダー比較: {result.Entries.Count} 件");
+        PublishFolderActions();
         // 投影・表示の採用が完了するまで、前モデルの依存保護を保持する。
         _folderFilterListState = candidate.ListDependencies;
     }

@@ -603,8 +603,7 @@ internal static partial class HeadlessFolderCopyChecks
                 Report(name + " cancellation completion status", name == "cancel-button"
                     ? cancellationStatus == "フォルダーコピーを中止しました。"
                     : cancellationStatus?.StartsWith("コピー結果: 公開 " + (name == "cancel-preflight" ? "0" : "1") + " 件", StringComparison.Ordinal) == true);
-                Report(name + " buttons restored", pane.GetVisualDescendants().OfType<Button>()
-                    .Single(b => Equals(b.Content, "選択をすべてコピー →")).IsEnabled && List(pane).IsEnabled);
+                Report(name + " buttons restored", pane.FolderCommandButton("選択をすべてコピー →").IsEnabled && List(pane).IsEnabled);
                 screenshot(cancellationPng);
             }
             foreach (var path in copied)
@@ -717,7 +716,7 @@ internal static partial class HeadlessFolderCopyChecks
             };
             Dialogs.ConfirmationShown = dialog => { confirmations++; confirmed = true; Answer(dialog, true); };
             Select(pane, selected);
-            if (threeWay) pane.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
+            if (threeWay) pane.FolderActionRoot.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
             var moveButton = threeWay ? "選択ファイルを移動" : direction == DirectoryCopyDirection.RightToLeft ? "← 選択ファイルを移動" : "選択ファイルを移動 →";
             Click(pane, moveButton);
             if (pane.PendingFolderMove is { } pending) Wait(pending); else CloseMessages();
@@ -732,7 +731,7 @@ internal static partial class HeadlessFolderCopyChecks
             if (name == "success" || name == "right-to-left")
             {
                 var expectedStatus = destinationSide == DirectorySide.Right ? DirectoryDifferenceKind.RightOnly : DirectoryDifferenceKind.LeftOnly;
-                var buttonEnabled = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, moveButton)).IsEnabled;
+                var buttonEnabled = pane.FolderCommandButton(moveButton).IsEnabled;
                 Report("Folder move successful actual button and recompare " + name, movedOne
                     && pane.FolderCopyStatusText.StartsWith("移動結果: 移動 1 件", StringComparison.Ordinal)
                     && List(pane).Items.OfType<DirectoryEntry>().Single(entry => entry.RelativePath == "a.bin").Status == expectedStatus);
@@ -865,7 +864,7 @@ internal static partial class HeadlessFolderCopyChecks
             Dialogs.ConfirmationShown = dialog => { confirmations++; confirmed = true; Answer(dialog, true); };
             Select(pane, selected);
             if (threeWay)
-                pane.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
+                pane.FolderActionRoot.GetVisualDescendants().OfType<ComboBox>().Single(combo => combo.Name == "FolderCopyDirection").SelectedIndex = (int)direction;
             var button = threeWay ? "選択側の差分ファイルをゴミ箱へ"
                 : sourceSide == DirectorySide.Left ? "左側の差分ファイルをゴミ箱へ" : "右側の差分ファイルをゴミ箱へ";
             Click(pane, button);
@@ -1092,12 +1091,12 @@ internal static partial class HeadlessFolderCopyChecks
             foreach (var title in new[] { "← 選択をすべてコピー", "選択をすべてコピー →", "← 選択の差分をコピー", "選択の差分をコピー →",
                 "左側の差分ファイルをゴミ箱へ", "右側の差分ファイルをゴミ箱へ" })
             {
-                var button = pane.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, title));
+                var button = pane.FolderCommandButton(title);
                 button.BringIntoView(); Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick();
                 var point = button.TranslatePoint(default, window)!.Value;
                 Report(name + " reachable " + title, button.IsEffectivelyVisible && button.Bounds.Width > 0 && point.X>=0 && point.X+button.Bounds.Width<=window.Bounds.Width && point.Y >= 0 && point.Y + button.Bounds.Height <= window.Bounds.Height);
             }
-            var threeWayTrash = pane.GetVisualDescendants().OfType<Button>().Single(button => Equals(button.Content, "選択側の差分ファイルをゴミ箱へ"));
+            var threeWayTrash = pane.FolderCommandButton("選択側の差分ファイルをゴミ箱へ");
             Report(name + " three-way trash button hidden in two-way model", !threeWayTrash.IsVisible);
             var toolbar = pane.GetVisualDescendants().OfType<ScrollViewer>().Single(scroll =>
                 scroll.Content is Control content && content.GetVisualDescendants().Contains(pane.CompareButton));
@@ -1125,7 +1124,7 @@ internal static partial class HeadlessFolderCopyChecks
     }
     private static ListBox List(ComparisonPane pane) => pane.GetVisualDescendants().OfType<ListBox>().Single(l => l.ItemsSource is IEnumerable<DirectoryEntry>);
     private static void Select(ComparisonPane pane, string[] paths) { var list = List(pane); list.SelectedItems!.Clear(); foreach (var path in paths) list.SelectedItems.Add(list.Items.OfType<DirectoryEntry>().Single(e => e.RelativePath == path)); Dispatcher.UIThread.RunJobs(); }
-    private static void Click(ComparisonPane pane, string title) { pane.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, title)).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs(); }
+    private static void Click(ComparisonPane pane, string title) { pane.FolderCommandButton(title).RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Dispatcher.UIThread.RunJobs(); }
     private static void Answer(Window dialog, bool confirm) => dialog.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, confirm ? "続行" : "キャンセル")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
     private sealed record Entry(string Path, bool Directory, long Size, string? Sha256, long Mtime, int Attributes, int? Mode);
     private static string Hash(string path) {using var file=File.OpenRead(path);return Convert.ToHexString(SHA256.HashData(file));}

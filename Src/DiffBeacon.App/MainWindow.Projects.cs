@@ -140,6 +140,43 @@ public sealed partial class MainWindow
             return names.Length == 1 ? names[0] : $"{names[0]} x {names.Length}";
         return string.Join(" - ", names);
     }
+    internal enum SessionCloseScope { Others, Right, Left }
+
+    /// <summary>右クリックで、対象以外・右側・左側のタブを本家の順（右から）に閉じる。</summary>
+    private async Task CloseOtherSessionsAsync(TabItem keep, SessionCloseScope scope)
+    {
+        var index = _sessions.IndexOf(keep);
+        if (index < 0) return;
+        _tabs.SelectedItem = keep;
+        for (var i = _sessions.Count - 1; i >= 0; i--)
+        {
+            if (scope == SessionCloseScope.Others && i == index) continue;
+            if (scope == SessionCloseScope.Right && i <= index) continue;
+            if (scope == SessionCloseScope.Left && i >= index) continue;
+            if (!await CloseSessionAsync(_sessions[i])) return;
+        }
+    }
+
+    /// <summary>ドラッグ先のタブと位置を入れ替える。</summary>
+    private void MoveSession(TabItem item, TabItem over)
+    {
+        var from = _sessions.IndexOf(item);
+        var to = _sessions.IndexOf(over);
+        if (from < 0 || to < 0 || from == to) return;
+        _sessions.RemoveAt(from);
+        _sessions.Insert(to, item);
+        _tabs.ItemsSource = _sessions.ToArray();
+        _tabs.SelectedItem = item;
+    }
+
+    private void ApplyTabAutoWidth()
+    {
+        var width = _tabAutoMaxWidth ? 280 : double.PositiveInfinity;
+        foreach (var tab in _sessions)
+            if (tab.Header is StackPanel panel && panel.Children.OfType<TextBlock>().FirstOrDefault() is { } text)
+                text.MaxWidth = width;
+    }
+
     internal void RefreshSessionHeaders()
     {
         for (var index = 0; index < _sessions.Count; index++)

@@ -113,6 +113,7 @@ public sealed partial class MainWindow : Window
         _tabs.SelectionChanged += (_, args) =>
         {
             if (ReferenceEquals(args.Source, _tabs)) SessionSelectionGeneration++;
+            ActivePane.PublishFolderActions();
             UpdateImageDisplayVisibility();
             foreach (var pane in SessionPanes) pane.CancelInactiveFolderCopy(ReferenceEquals(pane, ActivePane));
             QueueSelectedHeader();
@@ -236,6 +237,11 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private readonly TextBox _excludes = new() { PlaceholderText = "除外パス（;区切り）", Width = 180 };
     private readonly ComboBox _folderMode = new() { ItemsSource = new[] { "内容", "SHA-256", "日時とサイズ" }, SelectedIndex = 0, Width = 140 };
     private readonly TextBlock _status = new() { Text = "パスを選択するか、編集タブにテキストを貼り付けて比較できます。", Margin = new Thickness(8, 3), Foreground = WinMergeColors.FrameText, FontSize = 12 };
+    private readonly TextBlock[] _paneInfo = [StatusCell("status-info"), StatusCell("status-info"), StatusCell("status-info")];
+    private readonly TextBlock[] _paneEncoding = [StatusCell("status-encoding"), StatusCell("status-encoding"), StatusCell("status-encoding")];
+    private readonly TextBlock[] _paneEol = [StatusCell("status-eol"), StatusCell("status-eol"), StatusCell("status-eol")];
+    private readonly TextBlock[] _paneReadOnly = [StatusCell("status-ro"), StatusCell("status-ro"), StatusCell("status-ro")];
+    private static TextBlock StatusCell(string name) => new() { Name = name, FontSize = 12, Foreground = WinMergeColors.FrameText, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(4, 2) };
     private Border? _statusBarHost;
     private readonly TextBlock _leftCaption = new() { Text = "左", Margin = new Thickness(6, 3), FontSize = 12, Foreground = WinMergeColors.FrameText, TextTrimming = TextTrimming.CharacterEllipsis };
     private readonly TextBlock _rightCaption = new() { Text = "右", Margin = new Thickness(6, 3), FontSize = 12, Foreground = WinMergeColors.FrameText, TextTrimming = TextTrimming.CharacterEllipsis };
@@ -338,7 +344,19 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _views.SelectionChanged += (_, _) => UpdateComparisonToolbarHeight();
         DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
         // 本家のステータスバー（MergeStatusBar）に合わせ、灰色の帯に状態文を出す。
-        var statusBar = _statusBarHost = new Border { Name = "comparison-status-bar", Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0), Child = _status };
+        var statusRow = new Grid();
+        statusRow.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(1, GridUnitType.Star)));
+        statusRow.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
+        statusRow.Children.Add(_status);
+        var details = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Margin = new Thickness(4, 0) };
+        for (var side = 0; side < 3; side++)
+        {
+            var group = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, Name = "status-pane-" + side };
+            group.Children.Add(_paneInfo[side]); group.Children.Add(_paneEncoding[side]); group.Children.Add(_paneEol[side]); group.Children.Add(_paneReadOnly[side]);
+            details.Children.Add(group);
+        }
+        Grid.SetColumn(details, 1); statusRow.Children.Add(details);
+        var statusBar = _statusBarHost = new Border { Name = "comparison-status-bar", Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0), Child = statusRow };
         DockPanel.SetDock(statusBar, Dock.Bottom); root.Children.Add(statusBar);
         DiffList.ItemTemplate = new FuncDataTemplate<DiffRow>((row, _) => BuildRow(row), false);
         // 本家のエディターと同じく行を詰めて並べる。Fluent の ListBoxItem は余白が大きく、行の間に隙間ができるため打ち消す。
@@ -653,6 +671,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (diff.InlineFallbackCount > 0) _status.Text += $"  ·  詳細比較を省略した {diff.InlineFallbackCount} 行は行全体を強調";
         if (diff.LineFallback) _status.Text += "  ·  行対応の処理上限に達したため、未確定区間をまとめて表示";
         _views.SelectedItem = _diffTab;
+        RefreshStatusPanes();
+        PublishFolderActions();
     }
 
     public void NavigateDifference(int direction)

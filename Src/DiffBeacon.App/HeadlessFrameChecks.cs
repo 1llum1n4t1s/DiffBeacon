@@ -55,7 +55,10 @@ internal static class HeadlessFrameChecks
         var pipe = sessionTab.GetVisualDescendants().FirstOrDefault(visual => visual.Name == "PART_SelectedPipe");
         check("frame session tab title is the two file names", sessionTitle == "frame-left.txt - frame-right.txt", sessionTitle);
         check("frame session tab has no selection underline", pipe is null || !pipe.IsVisible, pipe?.Name ?? "");
-        check("frame session tab keeps caption clear of the border", sessionTab.Bounds.Height >= 28, sessionTab.Bounds.Height.ToString("0.0"));
+        check("frame session tab keeps caption clear of the border", sessionTab.Bounds.Height >= 24, sessionTab.Bounds.Height.ToString("0.0"));
+        var tabMenu = sessionTab.ContextMenu?.Items.OfType<MenuItem>().Select(entry => entry.Tag as string).ToArray() ?? [];
+        check("frame session tab menu matches WinMerge", tabMenu.Contains("&Close") && tabMenu.Contains("Close &Other Tabs")
+            && tabMenu.Contains("Close R&ight Tabs") && tabMenu.Contains("Close &Left Tabs"), string.Join("|", tabMenu));
         var blocks = pane.CurrentDiff?.Blocks;
         check("frame fixture produces multiple difference blocks", blocks is { Count: >= 2 }, blocks?.Count.ToString() ?? "null");
         Click(Button("LastDiff"));

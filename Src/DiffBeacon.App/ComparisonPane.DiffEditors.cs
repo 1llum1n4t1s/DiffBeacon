@@ -35,6 +35,10 @@ public sealed partial class ComparisonPane
     private readonly DiffEditorSide[] _diffViews = [new("diff-editor-left", 0), new("diff-editor-middle", 1), new("diff-editor-right", 2)];
     private readonly TextBlock[] _diffPaneCaptions = [PaneCaptionText(), PaneCaptionText(), PaneCaptionText()];
     private readonly TextBlock _middleHeaderPath = HeaderPathText("file-header-middle");
+    private readonly Border?[] _headerChips = new Border?[3];
+    private int _focusedHeader;
+    private static readonly IBrush HeaderActive = new SolidColorBrush(Color.FromRgb(120, 180, 227));
+    private static readonly IBrush HeaderInactive = new SolidColorBrush(Color.FromRgb(196, 210, 224));
     private readonly Grid _diffEditorGrid = new() { Name = "diff-editor-grid" };
     private readonly Border[] _diffEditorHosts = new Border[3];
     private DiffDisplayModel _diffDisplay = DiffDisplayModel.Empty;
@@ -71,14 +75,14 @@ public sealed partial class ComparisonPane
             // 本家 CEditorFilePathBar。地は COLOR_3DFACE、パスは COLOR_ACTIVECAPTION と地の中間色の角丸。
             var chip = new Border
             {
-                Background = new SolidColorBrush(Color.FromRgb(120, 180, 227)),
+                Background = index == 0 ? HeaderActive : HeaderInactive,
                 CornerRadius = new CornerRadius(3),
                 Margin = new Thickness(4, 3),
                 Padding = new Thickness(6, 1),
                 MinHeight = 18,
-                BoxShadow = BoxShadows.Parse("1 1 0 0 #A0A0A0"),
                 Child = bar,
             };
+            _headerChips[index] = chip;
             var header = new Border { Background = WinMergeColors.FrameFace, Child = chip };
             var pane = new DockPanel();
             DockPanel.SetDock(header, Dock.Top); pane.Children.Add(header);
@@ -87,9 +91,13 @@ public sealed partial class ComparisonPane
             _diffEditorHosts[index] = new Border { BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(index == 0 ? 0 : 1, 0, 0, 0), Child = pane };
             side.Renderer.Owner = this; side.Margin.Owner = this; side.EndOfLine.Owner = this;
             side.View.TextArea.TextView.ScrollOffsetChanged += (_, _) => { side.Ruler.InvalidateVisual(); SyncDiffEditorScroll(side); };
-            side.View.TextArea.Caret.PositionChanged += (_, _) => { SyncBookmarkCaret(side); OnDiffEditorCaretMoved(side); };
+            side.View.TextArea.Caret.PositionChanged += (_, _) => { SyncBookmarkCaret(side); OnDiffEditorCaretMoved(side); RefreshStatusPanes(); };
             // 行ブックマークは、フォーカスのあるエディターの側を対象にする（本家と同じ）。
-            side.View.GotFocus += (_, _) => { _activeLineBookmarkSide = side.SourceSide; SyncBookmarkCaret(side); RefreshLineBookmarkToolbar(); };
+            side.View.GotFocus += (_, _) =>
+            {
+                _activeLineBookmarkSide = side.SourceSide; _focusedHeader = index; UpdateHeaderFocus();
+                SyncBookmarkCaret(side); RefreshLineBookmarkToolbar(); RefreshStatusPanes();
+            };
             side.View.Document.TextChanged += (_, _) => OnDiffEditorTextChanged(side);
             // 元に戻す／やり直すのキーは、アプリの他の入力欄と同じく実行環境の設定（PlatformSettings の HotkeyConfiguration）に従い、
             // どのペインで押しても全ペイン共有の履歴を操作する（本家と同じ）。AvaloniaEdit の固定のキーより先に受け取る。
@@ -360,6 +368,45 @@ public sealed partial class ComparisonPane
         }
         finally { _diffViewSyncing = false; }
         UpdateLocationViewport();
+    }
+
+    /// <summary>本家のステータスバー。各ペインの行・列・文字、エンコーディング、改行、読取り専用。</summary>
+    internal void RefreshStatusPanes()
+    {
+        var three = _diffViews[1].View.IsVisible;
+        for (var index = 0; index < 3; index++)
+        {
+            var editor = _diffViews[index].View;
+            var show = index != 1 || three;
+            _paneInfo[index].IsVisible = show; _paneEncoding[index].IsVisible = show; _paneEol[index].IsVisible = show; _paneReadOnly[index].IsVisible = show && editor.IsReadOnly;
+            if (!show || editor.Document is not { } document || document.LineCount == 0)
+            {
+                _paneInfo[index].Text = ""; _paneEncoding[index].Text = ""; _paneEol[index].Text = ""; _paneReadOnly[index].Text = "";
+                continue;
+            }
+            var lineNo = Math.Clamp(editor.TextArea.Caret.Line, 1, document.LineCount);
+            var line = document.GetLineByNumber(lineNo);
+            var column = editor.TextArea.Caret.Column;
+            var doc = index == 0 ? _leftDocument : index == 1 ? _baseDocument : _rightDocument;
+            var eol = doc?.NewLine switch { "\r\n" => "CRLF", "\n" => "LF", "\r" => "CR", _ => "" };
+            _paneInfo[index].Text = $"行: {lineNo}  列: {column}/{Math.Max(1, line.Length)}  文字: {column}/{line.Length}";
+            _paneEncoding[index].Text = doc is null ? "" : doc.HasBom ? doc.EncodingName + " BOM" : doc.EncodingName;
+            _paneEol[index].Text = eol;
+            _paneReadOnly[index].Text = editor.IsReadOnly ? UiText.Phrase("RO") : "";
+            var encoding = _paneEncoding[index].Text ?? "";
+            var ending = _paneEol[index].Text ?? "";
+            var differ = index > 0 && show && (encoding.Length > 0 && encoding != (_paneEncoding[0].Text ?? "")
+                || ending.Length > 0 && ending != (_paneEol[0].Text ?? ""));
+            var mark = differ ? WinMergeColors.WordDifference : Brushes.Transparent;
+            _paneEncoding[index].Background = mark; _paneEol[index].Background = mark;
+        }
+    }
+
+    /// <summary>本家のパスバー。フォーカスのあるペインだけ COLOR_ACTIVECAPTION との中間色にする。</summary>
+    private void UpdateHeaderFocus()
+    {
+        for (var index = 0; index < _headerChips.Length; index++)
+            if (_headerChips[index] is { } chip) chip.Background = index == _focusedHeader ? HeaderActive : HeaderInactive;
     }
 
     private void OnDiffEditorCaretMoved(DiffEditorSide side)

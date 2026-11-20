@@ -464,6 +464,6 @@ internal static partial class HeadlessFolderCopyChecks
         }
     }
     private static readonly string[] Titles = ["すべて展開", "異なるフォルダーを展開", "同じフォルダーを展開", "すべて折り畳み"];
-    private static CheckBox TreeMode(ComparisonPane pane) => pane.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FolderTreeMode");
-    private static Button TreeButton(ComparisonPane pane, string title) => pane.GetVisualDescendants().OfType<Button>().Single(b => Equals(b.Content, title));
+    private static CheckBox TreeMode(ComparisonPane pane) => pane.FolderActionRoot.GetVisualDescendants().OfType<CheckBox>().Single(c => c.Name == "FolderTreeMode");
+    private static Button TreeButton(ComparisonPane pane, string title) => pane.FolderCommandButton(title);
 }
