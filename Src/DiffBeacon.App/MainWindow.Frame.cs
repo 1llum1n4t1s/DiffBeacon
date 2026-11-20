@@ -408,7 +408,8 @@ public sealed partial class MainWindow
                     border.Background = selected ? Brushes.White : Brushes.Transparent;
                     border.BorderBrush = selected ? new SolidColorBrush(Color.FromRgb(176, 176, 176)) : Brushes.Transparent;
                     var close = (tab.Header as Panel)?.Children.OfType<Button>().FirstOrDefault();
-                    if (close is not null) close.IsVisible = selected || tab.IsPointerOver;
+                    // 本家はポインタが乗っているタブだけ閉じる印を描く。選択中でも乗っていなければ出さない。
+                    if (close is not null) close.IsVisible = tab.IsPointerOver;
                 }
                 tab.PropertyChanged += (_, args) =>
                 {
@@ -420,27 +421,19 @@ public sealed partial class MainWindow
         },
     };
 
-    /// <summary>文書タブの小さなアイコン。フォルダー比較は黄色、それ以外は白い紙。</summary>
+    /// <summary>文書タブの印。Windows はシェル、macOS は NSWorkspace。</summary>
     private static Control SessionKindIcon(ComparisonProject project)
     {
-        var icon = new Border
+        var icon = new Image
         {
             Width = 16, Height = 16, Margin = new Thickness(0, 0, 2, 0),
             VerticalAlignment = VerticalAlignment.Center,
-            BorderBrush = new SolidColorBrush(Color.FromRgb(80, 80, 80)),
-            BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(1),
         };
         ApplySessionIcon(icon, project);
         return icon;
     }
 
-    private static void ApplySessionIcon(Border icon, ComparisonProject project)
-    {
-        var folder = string.Equals(project.Mode, "Folder", StringComparison.OrdinalIgnoreCase)
-            || Directory.Exists(project.LeftPath) || Directory.Exists(project.RightPath);
-        icon.Background = folder ? new SolidColorBrush(Color.FromRgb(255, 205, 66)) : Brushes.White;
-    }
+    private static void ApplySessionIcon(Image icon, ComparisonProject project) => icon.Source = ShellFileIcon.ForProject(project);
 
     private static Control ToolbarSeparator() =>
         new Border { Width = 1, Height = 18, Margin = new Thickness(4, 3), Background = WinMergeColors.FrameBorder, VerticalAlignment = VerticalAlignment.Center };
@@ -611,6 +604,14 @@ public sealed partial class MainWindow
     /// <summary>インストール済みフォントから本文フォントを選ぶ。空のまま確定すると既定の等幅に戻る。</summary>
     private async Task ChooseFontAsync()
     {
+        if (NativeFontChoice.TryChoose(this, TextViewOptions.FontFamily, TextViewOptions.FontSize, out var family, out var size))
+        {
+            TextViewOptions.FontFamily = family;
+            var steps = (int)Math.Round((size - DiffTextViewOptions.BaseFontSize) / (96.0 / 72.0));
+            while (TextViewOptions.ZoomSteps < steps) TextViewOptions.Zoom(1);
+            while (TextViewOptions.ZoomSteps > steps) TextViewOptions.Zoom(-1);
+            return;
+        }
         var box = new TextBox { Text = TextViewOptions.FontFamily, PlaceholderText = DiffTextViewOptions.DefaultFontFamilyName };
         var list = new ListBox { MaxHeight = 280 };
         foreach (var font in FontManager.Current.SystemFonts.Select(font => font.Name).Distinct(StringComparer.CurrentCultureIgnoreCase).OrderBy(name => name, StringComparer.CurrentCultureIgnoreCase))

@@ -184,7 +184,7 @@ public sealed partial class MainWindow
             {
                 var project = ((ComparisonPane)_sessions[index].Content!).CaptureProject();
                 panel.Children.OfType<TextBlock>().Single().Text = ProjectTitle(project);
-                if (panel.Children.OfType<Border>().FirstOrDefault() is { } icon) ApplySessionIcon(icon, project);
+                if (panel.Children.OfType<Image>().FirstOrDefault() is { } icon) ApplySessionIcon(icon, project);
             }
     }
 }

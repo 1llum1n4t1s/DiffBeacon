@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -82,10 +83,12 @@ internal static class HeadlessOpenViewChecks
         toolbar.Offset = new Vector(0, Math.Max(0, toolbar.Extent.Height - toolbar.Viewport.Height)); Dispatcher.UIThread.RunJobs();
         var scrolled = toolbar.Offset.Y;
         window.FocusPaths(); Dispatcher.UIThread.RunJobs();
-        var leftTop = pane.LeftPath.TranslatePoint(default, toolbar)?.Y ?? -1;
-        check("open command keeps the 1st path in view", leftTop >= 0 && leftTop + pane.LeftPath.Bounds.Height <= toolbar.Viewport.Height + 1,
-            $"scrolled={scrolled} offset={toolbar.Offset.Y} leftTop={leftTop} viewport={toolbar.Viewport.Height}");
+        var dialogScroll = window.OwnedWindows.First(owned => owned.Title == "ファイルまたはフォルダーの選択").GetVisualDescendants().OfType<ScrollViewer>().First(scroll => scroll.Name == "select-dialog-scroll");
+        var leftTop = pane.LeftPath.TranslatePoint(default, dialogScroll)?.Y ?? -1;
+        check("open command keeps the 1st path in view", leftTop >= 0 && leftTop + pane.LeftPath.Bounds.Height <= dialogScroll.Viewport.Height + 1,
+            $"scrolled={scrolled} offset={dialogScroll.Offset.Y} leftTop={leftTop} viewport={dialogScroll.Viewport.Height}");
         check("open command focuses the 1st path", pane.LeftPath.IsFocused || pane.LeftPath.IsKeyboardFocusWithin, $"focused={pane.LeftPath.IsFocused}");
+        pane.HideSelectFiles(); Dispatcher.UIThread.RunJobs();
 
         // 通常・最小ウィンドウで、パス欄が十分な幅を持ち、比較ボタンまで横に収まる。
         var bounds = new List<(string Layout, double Width, double Height, Rect Left, Rect Compare)>();
@@ -114,8 +117,15 @@ internal static class HeadlessOpenViewChecks
         check("open view hides after comparing so the editors fill the window", pane.CurrentDiff is not null && toolbar.MaxHeight <= 1 && toolbar.Opacity == 0,
             $"opacity={toolbar.Opacity} max={toolbar.MaxHeight} pane={pane.Bounds.Height}");
         window.FocusPaths(); Dispatcher.UIThread.RunJobs();
-        check("open command brings the select view back over a comparison", toolbar.Opacity == 1 && toolbar.MaxHeight > 0 && (pane.LeftPath.IsFocused || pane.LeftPath.IsKeyboardFocusWithin),
-            $"opacity={toolbar.Opacity} max={toolbar.MaxHeight} focused={pane.LeftPath.IsFocused}");
+        var dialog = window.OwnedWindows.FirstOrDefault(owned => owned.IsVisible && owned.Title == "ファイルまたはフォルダーの選択");
+        check("open command opens the select dialog over a comparison", dialog is not null && pane.OpenView?.GetVisualAncestors().Contains(dialog) == true
+            && (pane.LeftPath.IsFocused || pane.LeftPath.IsKeyboardFocusWithin),
+            $"dialog={dialog is not null} focused={pane.LeftPath.IsFocused}");
+        if (dialog?.CaptureRenderedFrame() is { } dialogFrame)
+        {
+            using (dialogFrame) dialogFrame.Save(Path.Combine(artifactOutput, "select-dialog.png"), new Avalonia.Media.Imaging.PngBitmapEncoderOptions());
+        }
+        pane.HideSelectFiles(); Dispatcher.UIThread.RunJobs();
         window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
 
         using var file = File.Create(Path.Combine(artifactOutput, "open-view-bounds.json"));

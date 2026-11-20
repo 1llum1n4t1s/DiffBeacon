@@ -17,6 +17,8 @@ namespace DiffBeacon.App;
 
 public sealed partial class MainWindow : Window
 {
+    /// <summary>起動時に選択ダイアログを出す。自己検証は先に偽にして、入力欄を比較タブに残す。</summary>
+    internal static bool PreferSelectDialog { get; set; } = true;
     private readonly TabControl _tabs = new();
     private readonly List<TabItem> _sessions = [];
     private bool _headerBringQueued;
@@ -133,6 +135,7 @@ public sealed partial class MainWindow : Window
         {
             try { MacIntegration.TryInstallServices(); }
             catch (Exception) { }
+            if (PreferSelectDialog && arguments is not { Length: >= 2 } && !ActivePane.ShowsComparison) ActivePane.ShowSelectFiles();
         };
         if (optionDiagnostics.Count > 0)
             Opened += async (_, _) => await Dialogs.MessageAsync(this, "表示・操作設定", string.Join("\n\n", optionDiagnostics));
@@ -292,6 +295,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         var root = new DockPanel();
         var top = new StackPanel { Spacing = 6, Margin = new Thickness(8, 6) };
         // 本家の「ファイルまたはフォルダーの選択」画面に合わせた入力欄（ComparisonPane.OpenView.cs）。
+        _openViewHost = top;
         top.Children.Add(BuildOpenView());
         // 本家と同じくメニュー・ツールバーにある操作（前／次の差分、次の競合、パッチ・レポートの生成、外部ツールの追加、
         // マージ結果の保存）はペインから外し、外枠の FrameCommand だけで実行する。残すボタンは自己検証が名前で操作する。
@@ -431,7 +435,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public async Task ComparePathsAsync()
     {
         try { await ComparePathsAsyncCore(); }
-        finally { _selectFilesPinned = false; UpdateComparisonToolbarHeight(); (_owner as MainWindow)?.RefreshSessionHeaders(); }
+        finally { _selectFilesPinned = false; HideSelectFiles(); UpdateComparisonToolbarHeight(); (_owner as MainWindow)?.RefreshSessionHeaders(); }
     }
 
     private async Task ComparePathsAsyncCore()
@@ -775,13 +779,36 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     private bool _selectFilesPinned;
     private bool _sawComparisonContent;
 
-    /// <summary>本家の「開く」と同じく、ファイルまたはフォルダーの選択画面を出して 1 番目の欄へ移る。</summary>
+    private StackPanel? _openViewHost;
+    private Window? _selectDialog;
+
+    /// <summary>本家の「開く」と同じく、選択画面を別ダイアログで出して 1 番目の欄へ移る。</summary>
     internal void ShowSelectFiles()
     {
-        _selectFilesPinned = true;
-        UpdateComparisonToolbarHeight();
+        if (OpenView is null || _openViewHost is null) return;
+        _selectDialog ??= new Window
+        {
+            Title = "ファイルまたはフォルダーの選択",
+            Width = 780, Height = 560, WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            Content = new ScrollViewer { Name = "select-dialog-scroll" },
+        };
+        if (OpenView.Parent is Panel parent) parent.Children.Remove(OpenView);
+        ((ScrollViewer)_selectDialog.Content!).Content = OpenView;
+        if (!_selectDialog.IsVisible) _selectDialog.Show(_owner);
         LeftPath.Focus();
         LeftPath.SelectAll();
+    }
+
+    /// <summary>選択ダイアログを閉じ、入力欄を比較タブへ戻す。比較が始まったあとは帯を畳む。</summary>
+    internal void HideSelectFiles()
+    {
+        if (OpenView is not null && _openViewHost is not null && !ReferenceEquals(OpenView.Parent, _openViewHost))
+        {
+            if (_selectDialog?.Content is ScrollViewer scroll && ReferenceEquals(scroll.Content, OpenView)) scroll.Content = null;
+            if (OpenView.Parent is Panel parent) parent.Children.Remove(OpenView);
+            _openViewHost.Children.Insert(0, OpenView);
+        }
+        if (_selectDialog?.IsVisible == true) _selectDialog.Hide();
     }
 
     private void UpdateComparisonToolbarHeight()

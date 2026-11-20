@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
+using System.Globalization;
 using Avalonia.Media;
 using Avalonia.Threading;
 using AvaloniaEdit;
@@ -176,7 +177,60 @@ public sealed partial class ComparisonPane
         finally { _diffViewSyncing = false; }
         UpdateDiffEditorReadOnly();
         ApplyDiffContext();
+        AlignWrappedLines();
         SyncDiffEditorScroll(_leftDiffView);
+    }
+
+    /// <summary>
+    /// 折り返しで片側だけ行が高くなるとき、本家と同じく反対側へ空の表示行を足して次の行の高さをそろえる。
+    /// 足す行はゴースト行なので、正本の本文には戻さない。
+    /// </summary>
+    private void AlignWrappedLines()
+    {
+        if (_aligningWrap || !_textViewOptions.WordWrap) return;
+        _aligningWrap = true;
+        _diffViewSyncing = true;
+        try
+        {
+            var sides = _diffViews.Where(side => side.View.IsVisible && side.View.Bounds.Width > 40).ToArray();
+            if (sides.Length < 2) return;
+            var count = sides.Min(side => side.View.Document.LineCount);
+            for (var line = count; line >= 1; line--)
+            {
+                var wraps = sides.Select(side => WrapCount(side, line)).ToArray();
+                var max = wraps.Max();
+                if (max <= 1) continue;
+                for (var index = 0; index < sides.Length; index++)
+                {
+                    var extra = max - wraps[index];
+                    if (extra <= 0) continue;
+                    var document = sides[index].View.Document;
+                    var target = document.GetLineByNumber(line);
+                    document.BeginUpdate();
+                    try
+                    {
+                        for (var n = 0; n < extra; n++)
+                            document.Insert(target.EndOffset, (target.DelimiterLength == 0 ? "\n" : document.GetText(target.EndOffset, target.DelimiterLength)) + DiffEditorSide.GhostMark);
+                    }
+                    finally { document.EndUpdate(); }
+                }
+            }
+        }
+        finally { _diffViewSyncing = false; _aligningWrap = false; }
+    }
+
+    private bool _aligningWrap;
+
+    private static int WrapCount(DiffEditorSide side, int line)
+    {
+        var document = side.View.Document;
+        var row = document.GetLineByNumber(line);
+        if (row.Length == 0 || row.Length <= 1 && document.GetCharAt(row.Offset) is DiffEditorSide.GhostMark or DiffEditorSide.GhostMarkAfterBreak) return 1;
+        var text = document.GetText(row.Offset, row.Length);
+        var width = Math.Max(40, side.View.Bounds.Width - 48);
+        var formatted = new FormattedText(text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+            new Typeface(side.View.FontFamily), side.View.FontSize, Brushes.Black);
+        return Math.Max(1, (int)Math.Ceiling(formatted.Width / width));
     }
 
     /// <summary>

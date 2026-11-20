@@ -69,12 +69,14 @@ internal static class HeadlessSelfTest
         try
         {
             Progress("initial-ui", "start");
+            MainWindow.PreferSelectDialog = false;
             AppBuilder.Configure<BeaconApplication>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).WithInterFont().SetupWithoutStarting();
             var left = Path.Combine(output, "left.txt"); var right = Path.Combine(output, "right.txt");
             File.WriteAllText(left, "title\r\nleft value\r\ntail\r\n", new UTF8Encoding(false));
             File.WriteAllText(right, "title\r\nright value\r\ntail\r\n", new UTF8Encoding(false));
             window = new MainWindow(null, new ImageApplicationOptionsStore(Path.Combine(output, "image-application-options.json"))) { Width = 1280, Height = 850 };
             window.Show();
+            window.ActivePane.HideSelectFiles();
             var pane = window.ActivePane;
             if (lineTransformReplaceListsOnly)
             {

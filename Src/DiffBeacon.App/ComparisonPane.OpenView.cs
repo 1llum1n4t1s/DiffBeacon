@@ -19,6 +19,7 @@ public sealed partial class ComparisonPane
     internal Control? OpenView { get; private set; }
     // 比較結果（差分・形式別ビュー・独立テキスト）をまだ持たない空のセッションか。
     // 本家は比較前に選択画面だけを出すため、この間は選択画面の高さ制限を緩める。
+    internal bool ShowsComparison => HasComparisonContent;
     private bool HasComparisonContent => CurrentDiff is not null || _specialTab.Content is not null || IndependentText;
     // 自己検証で、選択画面がスクロールで隠れた状態から「開く」で戻ることを確かめる。
     internal ScrollViewer ComparisonToolbar => _comparisonToolbar;

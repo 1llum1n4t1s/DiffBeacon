@@ -84,6 +84,7 @@ public sealed partial class ComparisonPane
     private void ApplyTextViewOptions()
     {
         var options = _textViewOptions;
+        var wrapChangedOff = _leftDiffView.View.WordWrap && !options.WordWrap;
         var family = ResolvedFontFamily(options.FontFamily);
         var fontChanged = Math.Abs(_leftDiffView.View.FontSize - options.FontSize) > .001
             || _leftDiffView.View.FontFamily.Name != family.Name;
@@ -111,6 +112,8 @@ public sealed partial class ComparisonPane
         finally { _diffViewSyncing = false; }
         ApplyDiffContext();
         if (topLine > 1) RestoreTopDisplayLine(_leftDiffView, topLine);
+        if (wrapChangedOff) RebuildDiffEditors();
+        else if (options.WordWrap) AlignWrappedLines();
         SyncDiffEditorScroll(_leftDiffView);
         UpdateDiffPane();
     }

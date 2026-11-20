@@ -266,8 +266,9 @@ internal static class HeadlessFolderOptionsChecks
                     var serialBefore = store.SetOptionsAttemptCount; var rawName = "click-" + (++operationSequence) + "-" + (control.Name ?? "unnamed-control"); State(rawName + "/before", window.ActivePane);
                     RevealSelect(control); Jobs();
                     control.BringIntoView(); Jobs(); if (!allowDisabled && !control.IsEnabled) throw new InvalidOperationException("Disabled actual control: " + control.Name);
-                    var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), window)!.Value;
-                    window.MouseDown(point, MouseButton.Left); window.MouseUp(point, MouseButton.Left); Jobs(); State(rawName + "/after", window.ActivePane, serialBefore);
+                    var top = TopLevel.GetTopLevel(control) as Window ?? window;
+                    var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), top)!.Value;
+                    top.MouseDown(point, MouseButton.Left); top.MouseUp(point, MouseButton.Left); Jobs(); State(rawName + "/after", window.ActivePane, serialBefore);
                 }
                 void Jobs()
                 { OwnedJobs(clock); }
@@ -615,8 +616,9 @@ internal static class HeadlessFolderOptionsChecks
         {
             RevealSelect(control); OwnedJobs(clock);
             control.BringIntoView(); OwnedJobs(clock); if (!control.IsEnabled) throw new InvalidOperationException("Disabled owned actual control: " + control.Name);
-            var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), window)!.Value;
-            window.MouseDown(point, MouseButton.Left); window.MouseUp(point, MouseButton.Left); OwnedJobs(clock);
+            var top = TopLevel.GetTopLevel(control) as Window ?? window;
+            var point = control.TranslatePoint(new Point(control.Bounds.Width / 2, control.Bounds.Height / 2), top)!.Value;
+            top.MouseDown(point, MouseButton.Left); top.MouseUp(point, MouseButton.Left); OwnedJobs(clock);
         }
         void OwnedStroke(MainWindow window, Key key, PhysicalKey physical, Stopwatch clock)
         { window.KeyPress(key, RawInputModifiers.None, physical, null); window.KeyRelease(key, RawInputModifiers.None, physical, null); OwnedJobs(clock); }
