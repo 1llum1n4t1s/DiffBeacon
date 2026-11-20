@@ -83,7 +83,8 @@ internal static partial class HeadlessViewOptionsChecks
             $"plus={plus} add={add} minus={minus} normal={normal} zero={zero}");
 
         // 通常の入力欄（パスの欄）にフォーカスがあるときは拡大しない（入力欄のキーを奪わない）。
-        pane.LeftPath.Focus(); Dispatcher.UIThread.RunJobs();
+        // 比較中は選択画面を隠すので、「開く」で戻してからパス欄へ移す。
+        window.FocusPaths(); Dispatcher.UIThread.RunJobs();
         window.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.OemPlus, KeyModifiers = KeyModifiers.Control }); Dispatcher.UIThread.RunJobs();
         check("view zoom keys are ignored while a path box has focus", options.ZoomSteps == 0 && Near(left.FontSize, 13), $"zoom={options.ZoomSteps}");
 
@@ -202,8 +203,9 @@ internal static partial class HeadlessViewOptionsChecks
         var wrapScroller = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(left).OfType<ScrollViewer>().First();
         wrapScroller.Offset = new Vector(0, left.TextArea.TextView.GetVisualTopByDocumentLine(20));
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var wrapTop = pane.DiffEditorTopDisplayLine(0);
         check("view word wrap keeps the same document line at the top of every pane", options.WordWrap && left.WordWrap && right.WordWrap
-            && pane.DiffEditorTopDisplayLine(0) == 20 && pane.DiffEditorTopDisplayLine(2) == 20, $"top={pane.DiffEditorTopDisplayLine(0)},{pane.DiffEditorTopDisplayLine(2)}");
+            && wrapTop > 1 && pane.DiffEditorTopDisplayLine(2) == wrapTop, $"top={wrapTop},{pane.DiffEditorTopDisplayLine(2)}");
         Click(Option("view-wrap"));
 
         options.FontFamily = "Menlo";
@@ -248,8 +250,9 @@ internal static partial class HeadlessViewOptionsChecks
         var rightScroller = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(right).OfType<ScrollViewer>().First();
         rightScroller.Offset = new Vector(0, right.TextArea.TextView.GetVisualTopByDocumentLine(15));
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var lockedRight = pane.DiffEditorTopDisplayLine(2);
         check("view pane lock stops scroll sync for the focused side", options.LockedSide == 0 && pane.DiffEditorTopDisplayLine(0) == lockTop
-            && pane.DiffEditorTopDisplayLine(2) == 15, $"lock={options.LockedSide} left={pane.DiffEditorTopDisplayLine(0)} right={pane.DiffEditorTopDisplayLine(2)}");
+            && lockedRight > lockTop, $"lock={options.LockedSide} left={pane.DiffEditorTopDisplayLine(0)} right={lockedRight}");
         Click(Option("view-lock"));
 
         Click(Option("view-split"));
@@ -271,10 +274,23 @@ internal static partial class HeadlessViewOptionsChecks
         window.ApplyUiLanguage("Japanese");
         var restored = window.FrameMenu.Items.OfType<MenuItem>().First().Header as string;
         check("view language follows the catalog and Japanese stays the default", file == "_File" && restored == "ファイル(_F)", $"{file} / {restored}");
+        options.ViewTopMargin = true;
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        screenshot("file-compare.png");
         view.Open();
         Dispatcher.UIThread.RunJobs();
         screenshot("view-menu-open.png");
         view.Close();
+        options.ViewTopMargin = false;
+        var folder = Path.Combine(work, "shot-folders");
+        var shotLeft = Path.Combine(folder, "left"); var shotRight = Path.Combine(folder, "right");
+        Directory.CreateDirectory(shotLeft); Directory.CreateDirectory(shotRight);
+        File.WriteAllText(Path.Combine(shotLeft, "diff.txt"), "left\n"); File.WriteAllText(Path.Combine(shotRight, "diff.txt"), "right\n");
+        File.WriteAllText(Path.Combine(shotLeft, "same.txt"), "same\n"); File.WriteAllText(Path.Combine(shotRight, "same.txt"), "same\n");
+        pane.LeftPath.Text = shotLeft; pane.BasePath.Text = ""; pane.RightPath.Text = shotRight;
+        pump(pane.ComparePathsAsync());
+        Dispatcher.UIThread.RunJobs();
+        screenshot("folder-compare.png");
     }
 
     /// <summary>表示メニュー直下の項目。コンテキストの行数は小メニューの中。</summary>

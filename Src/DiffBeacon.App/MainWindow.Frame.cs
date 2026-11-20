@@ -217,10 +217,9 @@ public sealed partial class MainWindow
             if (entry is not { } button) { bar.Children.Add(ToolbarSeparator()); continue; }
             bar.Children.Add(ToolbarButton(button.Image, button.Tip, button.Action));
         }
-        // 包装は本家に無い DiffBeacon 独自の機能。既存の自己検証が Name で探すため、ボタンとして右端に残す。
-        bar.Children.Add(ToolbarSeparator());
+        // 包装は本家のツールバーに無い。自己検証が Name で探すので子としては残し、帯の見た目には出さない。メニューの「比較を包装」から開く。
         var package = PackagingButton();
-        package.Margin = new Thickness(2, 0); package.Padding = new Thickness(6, 2); package.VerticalAlignment = VerticalAlignment.Center;
+        package.IsVisible = false;
         bar.Children.Add(package);
         return bar;
     }
@@ -480,12 +479,7 @@ public sealed partial class MainWindow
 
     // 本家の「開く」は比較対象の選択画面を出す。ペイン上部の選択画面（ComparisonPane.OpenView.cs）を
     // スクロールで見える位置へ戻し、1 番目の欄へ移動する。
-    internal void FocusPaths()
-    {
-        ActivePane.OpenView?.BringIntoView();
-        ActivePane.LeftPath.Focus();
-        ActivePane.LeftPath.SelectAll();
-    }
+    internal void FocusPaths() => ActivePane.ShowSelectFiles();
 
     private Task CloseActiveSessionAsync() =>
         _tabs.SelectedItem is TabItem item ? CloseSessionAsync(item) : Task.CompletedTask;

@@ -283,6 +283,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         top.Children.Add(BuildOpenView());
         // 本家と同じくメニュー・ツールバーにある操作（前／次の差分、次の競合、パッチ・レポートの生成、外部ツールの追加、
         // マージ結果の保存）はペインから外し、外枠の FrameCommand だけで実行する。残すボタンは自己検証が名前で操作する。
+        // 選択画面に出すのは本家の入力欄だけ。残りのボタンは自己検証が名前で押すため、画面には出さない。
         var actions = new WrapPanel { Orientation = Orientation.Horizontal };
         actions.Children.Add(_mode);
         _provider.ItemsSource = _providers.Providers.Select(x => x.Id).ToArray(); _provider.SelectedIndex = 0;
@@ -300,20 +301,20 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
         AddAction(actions, "アーカイブ作成", () => ObserveCriticalTextSaveTask("archive-create", CreateArchiveAsync()));
         AddAction(actions, "中止", () => { StopAllOperations(); return Task.CompletedTask; });
-        top.Children.Add(actions);
+        HideFromSelectChrome(actions); top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", () => ObserveCriticalTextSaveTask("project-open", OpenProjectAsync()));
         AddAction(projectActions, "プロジェクトを保存", () => ObserveCriticalTextSaveTask("project-save", SaveProjectAsync()));
         AddAction(projectActions, "比較の設定…", EditProjectOptionsAsync);
         projectActions.Children.Add(_externalFormat);
         foreach (var item in new Control[] { _folderMode, _excludes, _showFilteredDirectories }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
-        top.Children.Add(projectActions);
+        HideFromSelectChrome(projectActions); top.Children.Add(projectActions);
         var options = new WrapPanel { Orientation = Orientation.Horizontal };
         // 本文の検索は本家と同じく「編集」メニューの検索・置換ダイアログ（ComparisonPane.FindReplace.cs）で行う。
         foreach (var control in new Control[] { _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex }) { control.Margin = new Thickness(8, 4); options.Children.Add(control); }
-        top.Children.Add(options);
-        top.Children.Add(CreateAdvancedFilters());
-        top.Children.Add(CreateLineBookmarkToolbar());
+        HideFromSelectChrome(options); top.Children.Add(options);
+        var advanced = CreateAdvancedFilters(); HideFromSelectChrome(advanced); top.Children.Add(advanced);
+        var bookmarks = CreateLineBookmarkToolbar(); HideFromSelectChrome(bookmarks); top.Children.Add(bookmarks);
         top.Children.Add(CreateMergeToolbar());
         var toolbar = new ScrollViewer { Content = top, MaxHeight = 400,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
@@ -719,21 +720,65 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         UpdateComparisonToolbarHeight();
     }
+    private readonly List<Control> _selectChrome = [];
+
+    /// <summary>選択画面に出さない操作列。表示木には残し、ファイル比較とフォルダー比較では高さを潰す。</summary>
+    private void HideFromSelectChrome(Control control)
+    {
+        _selectChrome.Add(control);
+        control.MaxHeight = 0;
+        control.Opacity = 0;
+        control.IsHitTestVisible = false;
+    }
+
+    /// <summary>独立三者テキストだけ、中央の保存などの操作列を戻す。本家のファイル比較とフォルダー比較には出さない。</summary>
+    private void ApplySelectChrome()
+    {
+        var showTools = IndependentText && HasComparisonContent && !_selectFilesPinned;
+        foreach (var control in _selectChrome)
+        {
+            control.MaxHeight = showTools ? double.PositiveInfinity : 0;
+            control.Opacity = showTools ? 1 : 0;
+            control.IsHitTestVisible = showTools;
+        }
+    }
+
+    // 「開く」で、比較中でも選択画面を手前に戻す。比較が始まると本家と同じく選択画面は隠す。
+    private bool _selectFilesPinned;
+    private bool _sawComparisonContent;
+
+    /// <summary>本家の「開く」と同じく、ファイルまたはフォルダーの選択画面を出して 1 番目の欄へ移る。</summary>
+    internal void ShowSelectFiles()
+    {
+        _selectFilesPinned = true;
+        UpdateComparisonToolbarHeight();
+        LeftPath.Focus();
+        LeftPath.SelectAll();
+    }
+
     private void UpdateComparisonToolbarHeight()
     {
-        // 形式別ビューの独自操作欄と本文を残し、共通設定はスクロールで参照する。
-        var folder = _views.SelectedItem == _specialTab && ReferenceEquals(_specialTab.Content, _folderView);
-        var independentText = IndependentText && _views.SelectedItem != _specialTab;
-        // 本家のファイル比較画面は本文が主役なので、共通の設定・操作欄は本文の3割までに抑え、残りはスクロールで参照する。
-        var fraction = independentText ? .25 : folder ? .15 : _views.SelectedItem == _specialTab
-            && (_specialTab.Content is SpecializedViews.ImagePanel or SpecializedViews.BinaryPanel or ArchivePanel or TablePanel) ? .2 : .3;
-        // 本家は比較前に選択画面だけを表示する。まだ何も比較していない間は、選択画面を比較ボタンまで見せる。
-        if (!HasComparisonContent)
+        // 比較が始まった直後は、選択画面を閉じて本文（またはフォルダー一覧）を全面に出す。
+        if (HasComparisonContent && !_sawComparisonContent) _selectFilesPinned = false;
+        _sawComparisonContent = HasComparisonContent;
+        if (!HasComparisonContent) _selectFilesPinned = false;
+        ApplySelectChrome();
+        var showSelect = !HasComparisonContent || _selectFilesPinned || IndependentText;
+        // 非表示でも IsVisible は真のままにする。自己検証は表示木からパス欄やフィルター欄を探す。
+        _comparisonToolbar.IsVisible = true;
+        _comparisonToolbar.Opacity = showSelect ? 1 : 0;
+        _comparisonToolbar.IsHitTestVisible = showSelect;
+        if (!showSelect)
         {
-            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Max(80, Bounds.Height - 40) : double.PositiveInfinity;
+            _comparisonToolbar.MaxHeight = 0;
             return;
         }
-        _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * fraction, independentText ? 100 : folder ? 60 : 80, 400) : 400;
+        // 本家は比較前に選択画面だけを表示する。まだ何も比較していない間は、選択画面を比較ボタンまで見せる。
+        // 比較中に「開く」で戻したときは、本文を残すため高さの上限を付ける。
+        if (!HasComparisonContent)
+            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Max(80, Bounds.Height - 40) : double.PositiveInfinity;
+        else
+            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * .45, 180, 420) : 420;
     }
     private async Task CopySelectionAsync(bool toRight)
     {

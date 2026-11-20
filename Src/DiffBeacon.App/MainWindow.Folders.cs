@@ -125,7 +125,8 @@ public sealed partial class ComparisonPane
         AddThreeWayTrash("選択側の差分ファイルをゴミ箱へ");
         _folderDirection.SelectionChanged += (_, _) => InvalidateFolderCopy(false);
         InitializeFolderTree(actions);
-        var folderActionsScroll = new ScrollViewer { Content = actions, MaxHeight = 144,
+        // コピーと移動は本家と同じく外枠のツールバーとメニューが担当する。ボタンは自己検証が名前で押すため残し、一覧の上には出さない。
+        var folderActionsScroll = new ScrollViewer { Content = actions, MaxHeight = 0, Opacity = 0, IsHitTestVisible = false,
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
         DockPanel.SetDock(folderActionsScroll, Dock.Top); _folderView.Children.Add(folderActionsScroll);
@@ -142,8 +143,7 @@ public sealed partial class ComparisonPane
             var reservedHeight = _directoryList.MinHeight + _directoryList.Margin.Top + _directoryList.Margin.Bottom
                 + _folderRootBars.Bounds.Height + _folderColumnHeaderHost.Bounds.Height
                 + _folderCopySummary.Bounds.Height + _folderCopySummary.Margin.Top + _folderCopySummary.Margin.Bottom;
-            var maxHeight = Math.Min(144, Math.Max(0, _folderView.Bounds.Height - reservedHeight));
-            if (Math.Abs(folderActionsScroll.MaxHeight - maxHeight) > .1) folderActionsScroll.MaxHeight = maxHeight;
+            if (folderActionsScroll.MaxHeight != 0) folderActionsScroll.MaxHeight = 0;
         }
         _folderView.SizeChanged += (_, _) => UpdateFolderActionsHeight();
         _folderCopySummary.SizeChanged += (_, _) => UpdateFolderActionsHeight();

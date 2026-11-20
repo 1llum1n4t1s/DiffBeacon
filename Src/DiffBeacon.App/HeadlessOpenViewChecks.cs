@@ -83,7 +83,7 @@ internal static class HeadlessOpenViewChecks
         var scrolled = toolbar.Offset.Y;
         window.FocusPaths(); Dispatcher.UIThread.RunJobs();
         var leftTop = pane.LeftPath.TranslatePoint(default, toolbar)?.Y ?? -1;
-        check("open command scrolls the open view back into view", scrolled > 0 && leftTop >= 0 && leftTop + pane.LeftPath.Bounds.Height <= toolbar.Viewport.Height + 1,
+        check("open command keeps the 1st path in view", leftTop >= 0 && leftTop + pane.LeftPath.Bounds.Height <= toolbar.Viewport.Height + 1,
             $"scrolled={scrolled} offset={toolbar.Offset.Y} leftTop={leftTop} viewport={toolbar.Viewport.Height}");
         check("open command focuses the 1st path", pane.LeftPath.IsFocused || pane.LeftPath.IsKeyboardFocusWithin, $"focused={pane.LeftPath.IsFocused}");
 
@@ -111,8 +111,11 @@ internal static class HeadlessOpenViewChecks
         File.WriteAllText(leftFile, "a\nb\n"); File.WriteAllText(rightFile, "a\nc\n");
         pane.LeftPath.Text = leftFile; pane.RightPath.Text = rightFile;
         pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
-        check("open view returns to the capped height after comparing", pane.CurrentDiff is not null && toolbar.MaxHeight <= pane.Bounds.Height * .3 + 1,
-            $"max={toolbar.MaxHeight} pane={pane.Bounds.Height}");
+        check("open view hides after comparing so the editors fill the window", pane.CurrentDiff is not null && toolbar.MaxHeight == 0 && toolbar.Opacity == 0,
+            $"opacity={toolbar.Opacity} max={toolbar.MaxHeight} pane={pane.Bounds.Height}");
+        window.FocusPaths(); Dispatcher.UIThread.RunJobs();
+        check("open command brings the select view back over a comparison", toolbar.Opacity == 1 && toolbar.MaxHeight > 0 && (pane.LeftPath.IsFocused || pane.LeftPath.IsKeyboardFocusWithin),
+            $"opacity={toolbar.Opacity} max={toolbar.MaxHeight} focused={pane.LeftPath.IsFocused}");
         window.Width = 1280; window.Height = 850; Dispatcher.UIThread.RunJobs();
 
         using var file = File.Create(Path.Combine(artifactOutput, "open-view-bounds.json"));
