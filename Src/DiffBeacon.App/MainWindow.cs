@@ -777,6 +777,8 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             var openHeight = OpenView?.Bounds.Height > 40 ? OpenView.Bounds.Height + 16 : 420;
             _comparisonToolbar.MaxHeight = openHeight;
         }
+        else if (IndependentText)
+            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * .25, 100, 400) : 400;
         else
             _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * .45, 180, 420) : 420;
     }
