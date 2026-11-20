@@ -408,8 +408,13 @@ public sealed partial class MainWindow
                     border.Background = selected ? Brushes.White : Brushes.Transparent;
                     border.BorderBrush = selected ? new SolidColorBrush(Color.FromRgb(176, 176, 176)) : Brushes.Transparent;
                     var close = (tab.Header as Panel)?.Children.OfType<Button>().FirstOrDefault();
-                    // 本家はポインタが乗っているタブだけ閉じる印を描く。選択中でも乗っていなければ出さない。
-                    if (close is not null) close.IsVisible = tab.IsPointerOver;
+                    // 本家はポインタが乗っているタブだけ閉じる印を描く。領域は残し、乗っていないときは描かない。
+                    if (close is not null)
+                    {
+                        close.IsVisible = true;
+                        close.Opacity = tab.IsPointerOver ? 1 : 0;
+                        close.IsHitTestVisible = tab.IsPointerOver;
+                    }
                 }
                 tab.PropertyChanged += (_, args) =>
                 {

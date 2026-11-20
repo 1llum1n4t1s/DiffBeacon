@@ -96,16 +96,13 @@ internal static partial class ShellFileIcon
             if (image == 0) return null;
             var data = Mac.Send(image, Mac.Sel("TIFFRepresentation"));
             if (data == 0) return null;
-            var rep = Mac.Send(Mac.Class("NSBitmapImageRep"), Mac.Sel("imageRepWithData:"), data);
-            if (rep == 0) return null;
-            var png = Mac.Send(rep, Mac.Sel("representationUsingType:properties:"), 4, 0);
-            if (png == 0) return null;
-            var length = (int)Mac.Send(png, Mac.Sel("length"));
-            var bytes = Mac.Send(png, Mac.Sel("bytes"));
+            var length = (int)Mac.Send(data, Mac.Sel("length"));
+            var bytes = Mac.Send(data, Mac.Sel("bytes"));
             if (length <= 0 || bytes == 0) return null;
             var managed = new byte[length];
             Marshal.Copy(bytes, managed, 0, length);
-            return new Bitmap(new MemoryStream(managed));
+            try { return new Bitmap(new MemoryStream(managed)); }
+            catch (Exception) { return null; }
         }
         catch (DllNotFoundException) { return null; }
         finally { if (pool != 0) Mac.Send(pool, Mac.Sel("drain")); }
