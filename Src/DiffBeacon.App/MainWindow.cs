@@ -321,6 +321,13 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
         // 設定・操作欄が折り返しても、比較本文に領域を残す。
         _comparisonToolbar = toolbar;
+        // 比較中は選択画面を畳む。自己検証がボタンを表示へ戻してからマウスで押すので、そのときだけ広げる。
+        toolbar.AddHandler(Control.RequestBringIntoViewEvent, (_, _) =>
+        {
+            if (toolbar.MaxHeight > 1 || _selectFilesPinned || !HasComparisonContent) return;
+            _selectFilesPinned = true;
+            UpdateComparisonToolbarHeight();
+        });
         SizeChanged += (_, _) => UpdateComparisonToolbarHeight();
         _views.SelectionChanged += (_, _) => UpdateComparisonToolbarHeight();
         DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
