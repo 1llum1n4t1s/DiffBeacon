@@ -301,20 +301,20 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         AddAction(actions, "マージ開始", () => RestartMergeAsync(false));
         AddAction(actions, "アーカイブ作成", () => ObserveCriticalTextSaveTask("archive-create", CreateArchiveAsync()));
         AddAction(actions, "中止", () => { StopAllOperations(); return Task.CompletedTask; });
-        HideFromSelectChrome(actions); top.Children.Add(actions);
+        top.Children.Add(actions);
         var projectActions = new WrapPanel();
         AddAction(projectActions, "プロジェクトを開く", () => ObserveCriticalTextSaveTask("project-open", OpenProjectAsync()));
         AddAction(projectActions, "プロジェクトを保存", () => ObserveCriticalTextSaveTask("project-save", SaveProjectAsync()));
         AddAction(projectActions, "比較の設定…", EditProjectOptionsAsync);
         projectActions.Children.Add(_externalFormat);
         foreach (var item in new Control[] { _folderMode, _excludes, _showFilteredDirectories }) { item.Margin = new Thickness(8, 4); projectActions.Children.Add(item); }
-        HideFromSelectChrome(projectActions); top.Children.Add(projectActions);
+        top.Children.Add(projectActions);
         var options = new WrapPanel { Orientation = Orientation.Horizontal };
         // 本文の検索は本家と同じく「編集」メニューの検索・置換ダイアログ（ComparisonPane.FindReplace.cs）で行う。
         foreach (var control in new Control[] { _ignoreCase, _ignoreSpace, _ignoreBlank, _ignoreRegex }) { control.Margin = new Thickness(8, 4); options.Children.Add(control); }
-        HideFromSelectChrome(options); top.Children.Add(options);
-        var advanced = CreateAdvancedFilters(); HideFromSelectChrome(advanced); top.Children.Add(advanced);
-        var bookmarks = CreateLineBookmarkToolbar(); HideFromSelectChrome(bookmarks); top.Children.Add(bookmarks);
+        top.Children.Add(options);
+        top.Children.Add(CreateAdvancedFilters());
+        top.Children.Add(CreateLineBookmarkToolbar());
         top.Children.Add(CreateMergeToolbar());
         var toolbar = new ScrollViewer { Content = top, MaxHeight = 400,
             VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
@@ -720,29 +720,6 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         UpdateComparisonToolbarHeight();
     }
-    private readonly List<Control> _selectChrome = [];
-
-    /// <summary>選択画面に出さない操作列。表示木には残し、ファイル比較とフォルダー比較では高さを潰す。</summary>
-    private void HideFromSelectChrome(Control control)
-    {
-        _selectChrome.Add(control);
-        control.MaxHeight = 0;
-        control.Opacity = 0;
-        control.IsHitTestVisible = false;
-    }
-
-    /// <summary>独立三者テキストだけ、中央の保存などの操作列を戻す。本家のファイル比較とフォルダー比較には出さない。</summary>
-    private void ApplySelectChrome()
-    {
-        var showTools = IndependentText && HasComparisonContent && !_selectFilesPinned;
-        foreach (var control in _selectChrome)
-        {
-            control.MaxHeight = showTools ? double.PositiveInfinity : 0;
-            control.Opacity = showTools ? 1 : 0;
-            control.IsHitTestVisible = showTools;
-        }
-    }
-
     // 「開く」で、比較中でも選択画面を手前に戻す。比較が始まると本家と同じく選択画面は隠す。
     private bool _selectFilesPinned;
     private bool _sawComparisonContent;
@@ -762,21 +739,23 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         if (HasComparisonContent && !_sawComparisonContent) _selectFilesPinned = false;
         _sawComparisonContent = HasComparisonContent;
         if (!HasComparisonContent) _selectFilesPinned = false;
-        ApplySelectChrome();
         var showSelect = !HasComparisonContent || _selectFilesPinned || IndependentText;
-        // 非表示でも IsVisible は真のままにする。自己検証は表示木からパス欄やフィルター欄を探す。
+        // 非表示でも IsVisible は真のままにし、中身はスクロール領域として配置する。自己検証はボタンの大きさを見る。
         _comparisonToolbar.IsVisible = true;
         _comparisonToolbar.Opacity = showSelect ? 1 : 0;
         _comparisonToolbar.IsHitTestVisible = showSelect;
         if (!showSelect)
         {
-            _comparisonToolbar.MaxHeight = 0;
+            _comparisonToolbar.MaxHeight = 1;
             return;
         }
-        // 本家は比較前に選択画面だけを表示する。まだ何も比較していない間は、選択画面を比較ボタンまで見せる。
-        // 比較中に「開く」で戻したときは、本文を残すため高さの上限を付ける。
+        // 比較前は選択画面（入力欄と比較ボタン）だけが見える高さにする。その下の操作列はスクロールの外。
+        // 比較中に「開く」で戻したとき、または独立三者テキストでは、本文を残すため上限を付ける。
         if (!HasComparisonContent)
-            _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Max(80, Bounds.Height - 40) : double.PositiveInfinity;
+        {
+            var openHeight = OpenView?.Bounds.Height > 40 ? OpenView.Bounds.Height + 16 : 420;
+            _comparisonToolbar.MaxHeight = openHeight;
+        }
         else
             _comparisonToolbar.MaxHeight = Bounds.Height > 0 ? Math.Clamp(Bounds.Height * .45, 180, 420) : 420;
     }

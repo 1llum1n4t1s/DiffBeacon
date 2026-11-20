@@ -111,7 +111,7 @@ internal static class HeadlessOpenViewChecks
         File.WriteAllText(leftFile, "a\nb\n"); File.WriteAllText(rightFile, "a\nc\n");
         pane.LeftPath.Text = leftFile; pane.RightPath.Text = rightFile;
         pump(pane.ComparePathsAsync()); Dispatcher.UIThread.RunJobs();
-        check("open view hides after comparing so the editors fill the window", pane.CurrentDiff is not null && toolbar.MaxHeight == 0 && toolbar.Opacity == 0,
+        check("open view hides after comparing so the editors fill the window", pane.CurrentDiff is not null && toolbar.MaxHeight <= 1 && toolbar.Opacity == 0,
             $"opacity={toolbar.Opacity} max={toolbar.MaxHeight} pane={pane.Bounds.Height}");
         window.FocusPaths(); Dispatcher.UIThread.RunJobs();
         check("open command brings the select view back over a comparison", toolbar.Opacity == 1 && toolbar.MaxHeight > 0 && (pane.LeftPath.IsFocused || pane.LeftPath.IsKeyboardFocusWithin),
