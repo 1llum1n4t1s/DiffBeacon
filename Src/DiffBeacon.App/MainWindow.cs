@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Interactivity;
 using Avalonia.Controls.Documents;
 using Avalonia.Controls.Presenters;
 using Avalonia.Input;
@@ -8,6 +9,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using DiffBeacon.Core;
 using DiffBeacon.Providers;
 
@@ -321,13 +323,15 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled };
         // 設定・操作欄が折り返しても、比較本文に領域を残す。
         _comparisonToolbar = toolbar;
-        // 比較中は選択画面を畳む。自己検証がボタンを表示へ戻してからマウスで押すので、そのときだけ広げる。
-        toolbar.AddHandler(Control.RequestBringIntoViewEvent, (_, _) =>
+        // 比較中は選択画面を畳む。ボタンを表示へ戻す要求が来たら広げ、レイアウトの後でもう一度合わせる。
+        AddHandler(RequestBringIntoViewEvent, (_, args) =>
         {
-            if (toolbar.MaxHeight > 1 || _selectFilesPinned || !HasComparisonContent) return;
+            if (toolbar.MaxHeight > 1 || !HasComparisonContent) return;
+            if (args.TargetObject is not Control target || !toolbar.IsVisualAncestorOf(target)) return;
             _selectFilesPinned = true;
             UpdateComparisonToolbarHeight();
-        });
+            Dispatcher.UIThread.Post(() => target.BringIntoView(), DispatcherPriority.Loaded);
+        }, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
         SizeChanged += (_, _) => UpdateComparisonToolbarHeight();
         _views.SelectionChanged += (_, _) => UpdateComparisonToolbarHeight();
         DockPanel.SetDock(toolbar, Dock.Top); root.Children.Add(toolbar);
