@@ -70,6 +70,7 @@ internal static class HeadlessSelfTest
         {
             Progress("initial-ui", "start");
             MainWindow.PreferSelectDialog = false;
+            ShellFileIcon.UseNative = false;
             AppBuilder.Configure<BeaconApplication>().UseSkia().UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).WithInterFont().SetupWithoutStarting();
             var left = Path.Combine(output, "left.txt"); var right = Path.Combine(output, "right.txt");
             File.WriteAllText(left, "title\r\nleft value\r\ntail\r\n", new UTF8Encoding(false));

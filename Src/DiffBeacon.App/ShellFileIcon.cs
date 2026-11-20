@@ -12,12 +12,15 @@ namespace DiffBeacon.App;
 /// </summary>
 internal static partial class ShellFileIcon
 {
+    /// <summary>自己検証ではネイティブのアイコン取得を止める。製品ではシェルアイコンを使う。</summary>
+    internal static bool UseNative { get; set; } = true;
     /// <summary>比較の種類に合う 16px のアイコン。取れない環境では空の絵を返す。</summary>
     internal static Bitmap ForProject(ComparisonProject project)
     {
         var folder = string.Equals(project.Mode, "Folder", StringComparison.OrdinalIgnoreCase)
             || Directory.Exists(project.LeftPath) || Directory.Exists(project.RightPath);
         var path = FirstPath(project);
+        if (!UseNative) return Placeholder(folder);
         if (OperatingSystem.IsWindows())
         {
             var icon = WindowsIcon(string.IsNullOrWhiteSpace(path) ? (folder ? "folder" : "file.txt") : path, folder || Directory.Exists(path));
