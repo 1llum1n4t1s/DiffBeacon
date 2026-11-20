@@ -88,7 +88,10 @@ public sealed partial class MainWindow
     private void AttachProjectSession(ComparisonPane pane)
     {
         var project = pane.CaptureProject();
-        var item = CreateSessionTab(pane, ProjectTitle(project, _sessions.Count), project);
+        var item = CreateSessionTab(pane, ProjectTitle(project), project);
+        pane.LeftPath.TextChanged += (_, _) => RefreshSessionHeaders();
+        pane.BasePath.TextChanged += (_, _) => RefreshSessionHeaders();
+        pane.RightPath.TextChanged += (_, _) => RefreshSessionHeaders();
         _sessions.Add(item); _tabs.ItemsSource = _sessions.ToArray();
     }
 
@@ -110,8 +113,8 @@ public sealed partial class MainWindow
         if (_sessions.Count == 0) { ArchiveTexts.Clear(); AddSession(); } else _tabs.SelectedItem = _sessions[^1];
         return true;
     }
-    /// <summary>本家 MergeTextFormatter::GetTitleString。説明があればそれ、無ければファイル名。全部同じ名前なら「名前 x N」。</summary>
-    private static string ProjectTitle(ComparisonProject project, int index)
+    /// <summary>本家 MergeTextFormatter::GetTitleString。説明があればそれ、無ければファイル名。全部同じ名前なら「名前 x N」。空なら「左無題 - 右無題」。</summary>
+    private static string ProjectTitle(ComparisonProject project)
     {
         static string Label(string? description, string? path)
         {
@@ -127,7 +130,7 @@ public sealed partial class MainWindow
             Label(project.BaseDescription, project.BasePath),
             Label(project.RightDescription, project.RightPath),
         }.Where(name => name.Length > 0).ToArray();
-        if (names.Length == 0) return $"無題 {index + 1}";
+        if (names.Length == 0) return UiText.Phrase("Untitled Left") + " - " + UiText.Phrase("Untitled Right");
         if (names.All(name => string.Equals(name, names[0], StringComparison.OrdinalIgnoreCase)))
             return names.Length == 1 ? names[0] : $"{names[0]} x {names.Length}";
         return string.Join(" - ", names);
@@ -138,7 +141,7 @@ public sealed partial class MainWindow
             if (_sessions[index].Header is StackPanel panel)
             {
                 var project = ((ComparisonPane)_sessions[index].Content!).CaptureProject();
-                panel.Children.OfType<TextBlock>().Single().Text = ProjectTitle(project, index);
+                panel.Children.OfType<TextBlock>().Single().Text = ProjectTitle(project);
                 if (panel.Children.OfType<Border>().FirstOrDefault() is { } icon) ApplySessionIcon(icon, project);
             }
     }

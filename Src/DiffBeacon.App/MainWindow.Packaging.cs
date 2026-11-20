@@ -29,7 +29,7 @@ public sealed partial class MainWindow
         for (var i = 0; i < panes.Length; i++)
         {
             var project = panes[i].CaptureProject();
-            choices.Children.Add(new CheckBox { Name = "package-entry-" + i, Content = ProjectTitle(project, i), IsChecked = ReferenceEquals(panes[i], ActivePane), Tag = panes[i] });
+            choices.Children.Add(new CheckBox { Name = "package-entry-" + i, Content = ProjectTitle(project), IsChecked = ReferenceEquals(panes[i], ActivePane), Tag = panes[i] });
         }
         content.Children.Add(new ScrollViewer { Content = choices, MaxHeight = 220 });
         foreach (var (name, label, value) in new[] { ("documents", "比較元の文書", true), ("report", "HTMLレポート", false), ("patch", "Unifiedパッチ", false), ("project", "比較プロジェクト", true), ("clipboard", "保存したアーカイブをクリップボードへコピー", false) })

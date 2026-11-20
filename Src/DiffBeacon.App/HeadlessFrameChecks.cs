@@ -50,6 +50,12 @@ internal static class HeadlessFrameChecks
         File.WriteAllText(right, string.Join("\n", new[] { "a", "same", "B", "same", "C" }.Concat(middle).Concat(tail).Append("tail-right").Append("added")) + "\n", new UTF8Encoding(false));
         pane.LeftPath.Text = left; pane.RightPath.Text = right;
         pump(pane.ComparePathsAsync());
+        var sessionTab = window.GetVisualDescendants().OfType<TabItem>().Single(item => ReferenceEquals(item.Content, pane));
+        var sessionTitle = (sessionTab.Header as Panel)?.Children.OfType<TextBlock>().Single().Text ?? "";
+        var pipe = sessionTab.GetVisualDescendants().FirstOrDefault(visual => visual.Name == "PART_SelectedPipe");
+        check("frame session tab title is the two file names", sessionTitle == "frame-left.txt - frame-right.txt", sessionTitle);
+        check("frame session tab has no selection underline", pipe is null || !pipe.IsVisible, pipe?.Name ?? "");
+        check("frame session tab keeps caption clear of the border", sessionTab.Bounds.Height >= 28, sessionTab.Bounds.Height.ToString("0.0"));
         var blocks = pane.CurrentDiff?.Blocks;
         check("frame fixture produces multiple difference blocks", blocks is { Count: >= 2 }, blocks?.Count.ToString() ?? "null");
         Click(Button("LastDiff"));

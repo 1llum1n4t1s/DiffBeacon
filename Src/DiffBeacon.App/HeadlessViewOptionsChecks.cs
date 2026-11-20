@@ -1,8 +1,10 @@
 using System.Text;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 
 namespace DiffBeacon.App;
 
@@ -277,10 +279,20 @@ internal static partial class HeadlessViewOptionsChecks
         options.ViewTopMargin = true;
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
         screenshot("file-compare.png");
-        var extraTab = window.AddSession();
+        var extraPane = window.AddSession();
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        var extraTab = window.GetVisualDescendants().OfType<TabItem>().Single(item => ReferenceEquals(item.Content, extraPane));
+        var emptyTitle = (extraTab.Header as Panel)?.Children.OfType<TextBlock>().Single().Text ?? "";
+        check("empty session tab uses WinMerge untitled names", emptyTitle == "左無題 - 右無題" && !emptyTitle.Contains("比較", StringComparison.Ordinal), emptyTitle);
         screenshot("tab-bar.png");
-        window.ClickSessionClose(extraTab);
+        foreach (var (scale, label) in new[] { (1.25, "125"), (1.5, "150"), (2.0, "200") })
+        {
+            window.SetRenderScaling(scale);
+            window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+            screenshot("tab-bar-" + label + ".png");
+        }
+        window.SetRenderScaling(1);
+        window.ClickSessionClose(extraPane);
         Dispatcher.UIThread.RunJobs();
         view.Open();
         Dispatcher.UIThread.RunJobs();

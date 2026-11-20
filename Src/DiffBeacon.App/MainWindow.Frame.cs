@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Styling;
 
 namespace DiffBeacon.App;
 
@@ -244,14 +245,21 @@ public sealed partial class MainWindow
         return button;
     }
 
+    /// <summary>タブの文字。Windows は Yu Gothic UI、Mac はヒラギノ。無い環境は Noto Sans CJK JP に落ちる。</summary>
+    internal static readonly FontFamily TabFont = new("Yu Gothic UI, Yu Gothic, Meiryo, Hiragino Sans, Hiragino Kaku Gothic ProN, Noto Sans CJK JP, WenQuanYi Micro Hei, sans-serif");
+
     /// <summary>
     /// 本家のMDIタブ（小さな文字の見出し）に合わせ、Fluent の大きなタブ見出しを詰める。比較タブと、ペイン内の表示切替タブの両方に使う。
+    /// Fluent の選択下線（PART_SelectedPipe）は見出しの下ではなく見出しの上に重なるので、テーマごと外す。
     /// </summary>
     internal static void CompactTab(TabItem item)
     {
-        item.FontSize = 13;
-        item.MinHeight = 0;
-        item.Padding = new Thickness(10, 3);
+        item.FontFamily = TabFont;
+        item.FontSize = 12;
+        item.Padding = new Thickness(8, 4);
+        item.MinHeight = 28;
+        item.VerticalContentAlignment = VerticalAlignment.Center;
+        ApplySessionTabChrome(item);
     }
 
     /// <summary>
@@ -263,7 +271,8 @@ public sealed partial class MainWindow
     {
         var titleText = new TextBlock
         {
-            Text = title, MaxWidth = 280, FontSize = 12, Foreground = Brushes.Black,
+            Text = title, MaxWidth = 280, FontFamily = TabFont, FontSize = 12, Foreground = Brushes.Black,
+            TextDecorations = null, TextWrapping = TextWrapping.NoWrap,
             TextTrimming = TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center,
         };
         var close = new Button
@@ -276,43 +285,81 @@ public sealed partial class MainWindow
         header.Children.Add(SessionKindIcon(project));
         header.Children.Add(titleText);
         header.Children.Add(close);
-        var item = new TabItem { Header = header, Content = pane, FontSize = 12, MinHeight = 0, Padding = new Thickness(0), Foreground = Brushes.Black };
+        var item = new TabItem
+        {
+            Header = header, Content = pane, FontFamily = TabFont, FontSize = 12,
+            MinHeight = 28, Padding = new Thickness(0), Foreground = Brushes.Black,
+            VerticalContentAlignment = VerticalAlignment.Center, FocusAdorner = null,
+        };
         close.Click += async (_, _) => await CloseSessionAsync(item);
-        ApplySessionTabChrome(item, close);
+        ApplySessionTabChrome(item);
         return item;
     }
 
-    /// <summary>選択中は白の角丸（COLOR_3DHIGHLIGHT）と影、それ以外はタブバー（COLOR_3DFACE）の地のまま。</summary>
-    private static void ApplySessionTabChrome(TabItem item, Button close)
+    /// <summary>
+    /// Fluent の TabItem テーマを外す。既定テンプレートの PART_SelectedPipe は高さ 2 の下線で、
+    /// MinHeight を詰めると文字（特に游ゴシックの下端）に重なる。下線の部品は置かない。
+    /// </summary>
+    private static void ApplySessionTabChrome(TabItem item)
     {
-        item.Template = new FuncControlTemplate<TabItem>((tab, _) =>
+        item.Theme = SessionTabTheme;
+        item.Styles.Add(new Style(selector => selector.OfType<Control>().Name("PART_SelectedPipe"))
         {
-            var border = new Border
-            {
-                CornerRadius = new CornerRadius(3),
-                Margin = new Thickness(3, 3, 3, 1),
-                Padding = new Thickness(4, 1, 2, 1),
-                MinHeight = 22,
-                BorderThickness = new Thickness(1),
-                VerticalAlignment = VerticalAlignment.Center,
-                Child = new ContentPresenter { Content = tab.Header },
-            };
-            void Paint()
-            {
-                var selected = tab.IsSelected;
-                border.Background = selected ? Brushes.White : Brushes.Transparent;
-                border.BorderBrush = selected ? new SolidColorBrush(Color.FromRgb(176, 176, 176)) : Brushes.Transparent;
-                border.BoxShadow = selected ? BoxShadows.Parse("1 1 2 0 #66000000") : new BoxShadows();
-                close.IsVisible = selected || tab.IsPointerOver;
-            }
-            tab.PropertyChanged += (_, args) =>
-            {
-                if (args.Property == TabItem.IsSelectedProperty || args.Property == InputElement.IsPointerOverProperty) Paint();
-            };
-            Paint();
-            return border;
+            Setters = { new Setter(Visual.IsVisibleProperty, false) },
         });
     }
+
+    private static readonly ControlTheme SessionTabTheme = new(typeof(TabItem))
+    {
+        Setters =
+        {
+            new Setter(TabItem.FontFamilyProperty, TabFont),
+            new Setter(TabItem.FontSizeProperty, 12d),
+            new Setter(TabItem.ForegroundProperty, Brushes.Black),
+            new Setter(TabItem.BackgroundProperty, Brushes.Transparent),
+            new Setter(TabItem.BorderThicknessProperty, new Thickness(0)),
+            new Setter(TabItem.PaddingProperty, new Thickness(0)),
+            new Setter(TabItem.MinHeightProperty, 28d),
+            new Setter(TabItem.VerticalContentAlignmentProperty, VerticalAlignment.Center),
+            new Setter(TabItem.FocusAdornerProperty, null),
+            new Setter(TabItem.TemplateProperty, new FuncControlTemplate<TabItem>((tab, _) =>
+            {
+                var presenter = new ContentPresenter
+                {
+                    Name = "PART_ContentPresenter",
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    RecognizesAccessKey = false,
+                    [!ContentPresenter.ContentProperty] = tab[!TabItem.HeaderProperty],
+                };
+                var border = new Border
+                {
+                    Name = "PART_LayoutRoot",
+                    CornerRadius = new CornerRadius(3),
+                    Margin = new Thickness(3, 3, 3, 1),
+                    Padding = new Thickness(8, 5, 6, 5),
+                    MinHeight = 28,
+                    BorderThickness = new Thickness(1),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Child = presenter,
+                };
+                void Paint()
+                {
+                    var selected = tab.IsSelected;
+                    border.Background = selected ? Brushes.White : Brushes.Transparent;
+                    border.BorderBrush = selected ? new SolidColorBrush(Color.FromRgb(176, 176, 176)) : Brushes.Transparent;
+                    var close = (tab.Header as Panel)?.Children.OfType<Button>().FirstOrDefault();
+                    if (close is not null) close.IsVisible = selected || tab.IsPointerOver;
+                }
+                tab.PropertyChanged += (_, args) =>
+                {
+                    if (args.Property == TabItem.IsSelectedProperty || args.Property == InputElement.IsPointerOverProperty) Paint();
+                };
+                Paint();
+                return border;
+            })),
+        },
+    };
 
     /// <summary>文書タブの小さなアイコン。フォルダー比較は黄色、それ以外は白い紙。</summary>
     private static Control SessionKindIcon(ComparisonProject project)
