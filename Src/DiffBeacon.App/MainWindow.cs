@@ -112,7 +112,9 @@ public sealed partial class MainWindow : Window
         };
         _tabs.SelectionChanged += (_, args) =>
         {
-            if (ReferenceEquals(args.Source, _tabs)) SessionSelectionGeneration++;
+            if (!ReferenceEquals(args.Source, _tabs)) return;
+            SessionSelectionGeneration++;
+            if (_tabs.SelectedItem is not TabItem) return;
             ActivePane.PublishFolderActions();
             UpdateImageDisplayVisibility();
             foreach (var pane in SessionPanes) pane.CancelInactiveFolderCopy(ReferenceEquals(pane, ActivePane));
