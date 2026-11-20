@@ -68,7 +68,18 @@ public sealed partial class ComparisonPane
             // 本家のファイル名の帯（CEditorFilePathBar）。ペインごとに灰色の帯へ見出しとパスを出す。
             var bar = new DockPanel();
             DockPanel.SetDock(_diffPaneCaptions[index], Dock.Left); bar.Children.Add(_diffPaneCaptions[index]); bar.Children.Add(paths[index]);
-            var header = new Border { Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 0, 0, 1), Child = bar };
+            // 本家 CEditorFilePathBar。地は COLOR_3DFACE、パスは COLOR_ACTIVECAPTION と地の中間色の角丸。
+            var chip = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(120, 180, 227)),
+                CornerRadius = new CornerRadius(3),
+                Margin = new Thickness(4, 3),
+                Padding = new Thickness(6, 1),
+                MinHeight = 18,
+                BoxShadow = BoxShadows.Parse("1 1 0 0 #A0A0A0"),
+                Child = bar,
+            };
+            var header = new Border { Background = WinMergeColors.FrameFace, Child = chip };
             var pane = new DockPanel();
             DockPanel.SetDock(header, Dock.Top); pane.Children.Add(header);
             DockPanel.SetDock(side.Ruler, Dock.Top); pane.Children.Add(side.Ruler);

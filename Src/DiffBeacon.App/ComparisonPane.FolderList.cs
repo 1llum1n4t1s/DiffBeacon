@@ -89,16 +89,26 @@ public sealed partial class ComparisonPane
         if (!modeChanged) { RebuildFolderColumnHeader(); return; }
 
         // パス表示のTextBlockは使い回すため、古い帯から外してから並べ直す。
-        foreach (var old in _folderRootBars.Children.OfType<Border>()) old.Child = null;
+        foreach (var old in _folderRootBars.Children.OfType<Border>())
+        {
+            if (old.Child is Border chip) chip.Child = null;
+            old.Child = null;
+        }
         _folderRootBars.Children.Clear(); _folderRootBars.ColumnDefinitions.Clear();
         var visible = _folderRootPaths.Where(path => path.IsVisible).ToArray();
         for (var i = 0; i < visible.Length; i++)
         {
             _folderRootBars.ColumnDefinitions.Add(new ColumnDefinition(1, GridUnitType.Star));
+            var chip = new Border
+            {
+                Background = new SolidColorBrush(Color.FromRgb(120, 180, 227)),
+                CornerRadius = new CornerRadius(3), Margin = new Thickness(3, 2), Padding = new Thickness(4, 0),
+                Child = visible[i],
+            };
             var bar = new Border
             {
-                Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder,
-                BorderThickness = new Thickness(0, 0, i == visible.Length - 1 ? 0 : 1, 1), Child = visible[i],
+                Background = WinMergeColors.FrameFace,
+                BorderThickness = new Thickness(0), Child = chip,
             };
             Grid.SetColumn(bar, i); _folderRootBars.Children.Add(bar);
         }

@@ -277,6 +277,11 @@ internal static partial class HeadlessViewOptionsChecks
         options.ViewTopMargin = true;
         window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
         screenshot("file-compare.png");
+        var extraTab = window.AddSession();
+        window.UpdateLayout(); Dispatcher.UIThread.RunJobs();
+        screenshot("tab-bar.png");
+        window.ClickSessionClose(extraTab);
+        Dispatcher.UIThread.RunJobs();
         view.Open();
         Dispatcher.UIThread.RunJobs();
         screenshot("view-menu-open.png");

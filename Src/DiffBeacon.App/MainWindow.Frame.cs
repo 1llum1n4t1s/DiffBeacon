@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
+using Avalonia.Controls.Templates;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -250,6 +252,88 @@ public sealed partial class MainWindow
         item.FontSize = 13;
         item.MinHeight = 0;
         item.Padding = new Thickness(10, 3);
+    }
+
+    /// <summary>
+    /// 比較タブの見出し。本家 <c>CMyTabCtrl::DrawItem</c>（MDITabBar.cpp）と同じく、
+    /// 種類のアイコン、ファイル名（同じ名前は「名前 x N」）、閉じるボタンを横に並べる。
+    /// 閉じるボタンはポインタが乗ったタブと選択中のタブに出す（本家は乗っているタブだけを描く）。
+    /// </summary>
+    internal TabItem CreateSessionTab(ComparisonPane pane, string title, ComparisonProject project)
+    {
+        var titleText = new TextBlock
+        {
+            Text = title, MaxWidth = 280, FontSize = 12, Foreground = Brushes.Black,
+            TextTrimming = TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center,
+        };
+        var close = new Button
+        {
+            Content = "×", Width = 16, Height = 16, Padding = new Thickness(0), FontSize = 11,
+            Background = Brushes.Transparent, BorderThickness = new Thickness(0),
+            Foreground = Brushes.Black, VerticalAlignment = VerticalAlignment.Center, IsVisible = false,
+        };
+        var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4, VerticalAlignment = VerticalAlignment.Center };
+        header.Children.Add(SessionKindIcon(project));
+        header.Children.Add(titleText);
+        header.Children.Add(close);
+        var item = new TabItem { Header = header, Content = pane, FontSize = 12, MinHeight = 0, Padding = new Thickness(0), Foreground = Brushes.Black };
+        close.Click += async (_, _) => await CloseSessionAsync(item);
+        ApplySessionTabChrome(item, close);
+        return item;
+    }
+
+    /// <summary>選択中は白の角丸（COLOR_3DHIGHLIGHT）と影、それ以外はタブバー（COLOR_3DFACE）の地のまま。</summary>
+    private static void ApplySessionTabChrome(TabItem item, Button close)
+    {
+        item.Template = new FuncControlTemplate<TabItem>((tab, _) =>
+        {
+            var border = new Border
+            {
+                CornerRadius = new CornerRadius(3),
+                Margin = new Thickness(3, 3, 3, 1),
+                Padding = new Thickness(4, 1, 2, 1),
+                MinHeight = 22,
+                BorderThickness = new Thickness(1),
+                VerticalAlignment = VerticalAlignment.Center,
+                Child = new ContentPresenter { Content = tab.Header },
+            };
+            void Paint()
+            {
+                var selected = tab.IsSelected;
+                border.Background = selected ? Brushes.White : Brushes.Transparent;
+                border.BorderBrush = selected ? new SolidColorBrush(Color.FromRgb(176, 176, 176)) : Brushes.Transparent;
+                border.BoxShadow = selected ? BoxShadows.Parse("1 1 2 0 #66000000") : new BoxShadows();
+                close.IsVisible = selected || tab.IsPointerOver;
+            }
+            tab.PropertyChanged += (_, args) =>
+            {
+                if (args.Property == TabItem.IsSelectedProperty || args.Property == InputElement.IsPointerOverProperty) Paint();
+            };
+            Paint();
+            return border;
+        });
+    }
+
+    /// <summary>文書タブの小さなアイコン。フォルダー比較は黄色、それ以外は白い紙。</summary>
+    private static Control SessionKindIcon(ComparisonProject project)
+    {
+        var icon = new Border
+        {
+            Width = 14, Height = 12, Margin = new Thickness(1, 0, 1, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            BorderBrush = new SolidColorBrush(Color.FromRgb(80, 80, 80)),
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(1),
+        };
+        ApplySessionIcon(icon, project);
+        return icon;
+    }
+
+    private static void ApplySessionIcon(Border icon, ComparisonProject project)
+    {
+        var folder = string.Equals(project.Mode, "Folder", StringComparison.OrdinalIgnoreCase)
+            || Directory.Exists(project.LeftPath) || Directory.Exists(project.RightPath);
+        icon.Background = folder ? new SolidColorBrush(Color.FromRgb(255, 205, 66)) : Brushes.White;
     }
 
     private static Control ToolbarSeparator() =>

@@ -94,13 +94,15 @@ public sealed partial class MainWindow : Window
         var header = BuildFrame();
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
+        _tabs.Background = WinMergeColors.FrameFace;
+        _tabs.Padding = new Thickness(0);
         root.Children.Add(_tabs);
         // 多数の比較タブでも見出しが本文を押し出さないよう、既存の見出しpresenterをスクロールする。
         _tabs.TemplateApplied += (_, args) =>
         {
             if (args.NameScope.Find<ItemsPresenter>("PART_ItemsPresenter") is not { Parent: DockPanel dock } presenter) return;
             dock.Children.Remove(presenter);
-            SessionHeaders = new ScrollViewer { Name = "SessionHeaders", MaxHeight = 110, Content = presenter,
+            SessionHeaders = new ScrollViewer { Name = "SessionHeaders", MaxHeight = 110, Background = WinMergeColors.FrameFace, Content = presenter,
                 HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled,
                 VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
             DockPanel.SetDock(SessionHeaders, Dock.Top); dock.Children.Insert(0, SessionHeaders);
@@ -358,6 +360,12 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         // 各側の正本（TextBox）と _editGrid は保存・マージ・既存の契約のため内部に残す（画面には出さない）。
         _views.ItemsSource = new[] { _diffTab, _resultTab, _specialTab };
         foreach (var view in _views.Items.OfType<TabItem>()) MainWindow.CompactTab(view);
+        // 本家のファイル比較に「差分 / マージ結果 / 形式別ビュー」のタブ列は無い。見出しはテストと表示メニューが使うので残し、帯だけ畳む。
+        _views.TemplateApplied += (_, args) =>
+        {
+            if (args.NameScope.Find<Control>("PART_ItemsPresenter") is not { } strip) return;
+            strip.Height = 0; strip.MinHeight = 0; strip.MaxHeight = 0; strip.Opacity = 0; strip.IsHitTestVisible = false;
+        };
         _views.SelectedItem = _diffTab;
         _views.SelectionChanged += (_, _) => (_owner as MainWindow)?.UpdateImageDisplayVisibility();
         root.Children.Add(_views);
@@ -403,7 +411,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
     public async Task ComparePathsAsync()
     {
         try { await ComparePathsAsyncCore(); }
-        finally { _selectFilesPinned = false; UpdateComparisonToolbarHeight(); }
+        finally { _selectFilesPinned = false; UpdateComparisonToolbarHeight(); (_owner as MainWindow)?.RefreshSessionHeaders(); }
     }
 
     private async Task ComparePathsAsyncCore()

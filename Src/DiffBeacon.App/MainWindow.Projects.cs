@@ -88,13 +88,7 @@ public sealed partial class MainWindow
     private void AttachProjectSession(ComparisonPane pane)
     {
         var project = pane.CaptureProject();
-        var title = ProjectTitle(project, _sessions.Count);
-        var header = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
-        header.Children.Add(new TextBlock { Text = title, MaxWidth = 220, TextTrimming = Avalonia.Media.TextTrimming.CharacterEllipsis, VerticalAlignment = VerticalAlignment.Center });
-        var close = new Button { Content = "×", Padding = new Thickness(5, 0) }; header.Children.Add(close);
-        var item = new TabItem { Header = header, Content = pane };
-        CompactTab(item);
-        close.Click += async (_, _) => await CloseSessionAsync(item);
+        var item = CreateSessionTab(pane, ProjectTitle(project, _sessions.Count), project);
         _sessions.Add(item); _tabs.ItemsSource = _sessions.ToArray();
     }
 
@@ -116,13 +110,37 @@ public sealed partial class MainWindow
         if (_sessions.Count == 0) { ArchiveTexts.Clear(); AddSession(); } else _tabs.SelectedItem = _sessions[^1];
         return true;
     }
-    private static string ProjectTitle(ComparisonProject project, int index) => !string.IsNullOrWhiteSpace(project.LeftDescription) ? project.LeftDescription
-        : !string.IsNullOrWhiteSpace(project.RightDescription) ? project.RightDescription : $"比較 {index + 1}";
+    /// <summary>本家 MergeTextFormatter::GetTitleString。説明があればそれ、無ければファイル名。全部同じ名前なら「名前 x N」。</summary>
+    private static string ProjectTitle(ComparisonProject project, int index)
+    {
+        static string Label(string? description, string? path)
+        {
+            if (!string.IsNullOrWhiteSpace(description)) return description.Trim();
+            if (string.IsNullOrWhiteSpace(path)) return "";
+            var trimmed = path.Trim().TrimEnd('\\', '/');
+            var name = Path.GetFileName(trimmed);
+            return string.IsNullOrEmpty(name) ? trimmed : name;
+        }
+        var names = new[]
+        {
+            Label(project.LeftDescription, project.LeftPath),
+            Label(project.BaseDescription, project.BasePath),
+            Label(project.RightDescription, project.RightPath),
+        }.Where(name => name.Length > 0).ToArray();
+        if (names.Length == 0) return $"無題 {index + 1}";
+        if (names.All(name => string.Equals(name, names[0], StringComparison.OrdinalIgnoreCase)))
+            return names.Length == 1 ? names[0] : $"{names[0]} x {names.Length}";
+        return string.Join(" - ", names);
+    }
     internal void RefreshSessionHeaders()
     {
         for (var index = 0; index < _sessions.Count; index++)
             if (_sessions[index].Header is StackPanel panel)
-                panel.Children.OfType<TextBlock>().Single().Text = ProjectTitle(((ComparisonPane)_sessions[index].Content!).CaptureProject(), index);
+            {
+                var project = ((ComparisonPane)_sessions[index].Content!).CaptureProject();
+                panel.Children.OfType<TextBlock>().Single().Text = ProjectTitle(project, index);
+                if (panel.Children.OfType<Border>().FirstOrDefault() is { } icon) ApplySessionIcon(icon, project);
+            }
     }
 }
 
