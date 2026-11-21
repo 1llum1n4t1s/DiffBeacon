@@ -200,12 +200,12 @@ public sealed partial class ComparisonPane
         await clipboard.WriteTextAsync(SelectedDiffText(block, side));
     }
 
-    /// <summary>WinMerge のバッファ番号（0 始まり）を、この画面の側（左 0、中央 1、右 2）にする。</summary>
+    /// <summary>WinMerge のバッファ番号を、画面の左 0・中央 1・右 2 にする。二者の 2 番目は右。</summary>
     private int? SelectedDiffOrdinalSide(int ordinal) => ordinal switch
     {
-        0 => _diffDisplay.PairLeft,
-        1 => _diffDisplay.ThreeWay ? 1 : _diffDisplay.PairRight,
-        2 => _diffDisplay.ThreeWay ? _diffDisplay.PairRight : null,
+        0 => 0,
+        1 => _diffDisplay.ThreeWay ? 1 : 2,
+        2 => _diffDisplay.ThreeWay ? 2 : null,
         _ => null,
     };
 
@@ -225,21 +225,41 @@ public sealed partial class ComparisonPane
     {
         var numbers = _diffDisplay.LineNumbers[side];
         var lines = DiffEditorSide.SplitLines(_diffDisplay.Texts[side]);
+        var displays = DiffDisplays(block);
+        if (displays.Count == 0) return "";
         var builder = new StringBuilder();
-        var lastRow = block.RowStart + block.RowCount - 1;
-        var lastDisplay = -1;
+        var lastDisplay = displays[^1];
+        foreach (var display in displays)
+        {
+            if (display >= numbers.Length || numbers[display] is not int number || number < 1 || number > lines.Count) continue;
+            var line = lines[number - 1];
+            builder.Append(line.Content);
+            if (display != lastDisplay) builder.Append(line.Ending);
+        }
+        builder.Append(EndingOfDisplayRow(side, lastDisplay, lines));
+        return builder.ToString();
+    }
+
+    /// <summary>差異に含まれる表示行。二者の行の間に入る中央だけの行も含む。</summary>
+    private List<int> DiffDisplays(DiffBlock block)
+    {
+        var start = -1;
+        var end = -1;
         for (var row = block.RowStart; row < block.RowStart + block.RowCount; row++)
         {
             var display = _diffDisplay.DisplayRowOf(row);
             if (display < 0) continue;
-            lastDisplay = display;
-            if (display >= numbers.Length || numbers[display] is not int number || number < 1 || number > lines.Count) continue;
-            var line = lines[number - 1];
-            builder.Append(line.Content);
-            if (row != lastRow) builder.Append(line.Ending);
+            if (start < 0 || display < start) start = display;
+            if (display > end) end = display;
         }
-        if (lastDisplay >= 0) builder.Append(EndingOfDisplayRow(side, lastDisplay, lines));
-        return builder.ToString();
+        var displays = new List<int>();
+        if (start < 0) return displays;
+        for (var display = start; display <= end; display++)
+        {
+            var row = _diffDisplay.TwoWayRowOf(display);
+            if (row >= block.RowStart && row < block.RowStart + block.RowCount) displays.Add(display);
+        }
+        return displays;
     }
 
     /// <summary>表示行の改行。ゴースト行は直前の本物の行と同じ改行（表示を作るときと同じ）。</summary>
