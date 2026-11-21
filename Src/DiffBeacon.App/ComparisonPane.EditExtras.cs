@@ -38,9 +38,17 @@ internal sealed class TextMarkerColorizer : DocumentColorizingTransformer
         {
             var marker = Markers[index];
             if (!marker.Regex || marker.Text.Length == 0) continue;
-            var options = RegexOptions.CultureInvariant;
-            if (!marker.MatchCase) options |= RegexOptions.IgnoreCase;
-            _patterns[index] = new Regex(PcrePattern.RewritePossessive(marker.Text), options, TimeSpan.FromMilliseconds(250));
+            try
+            {
+                PcrePattern.RejectUnsupported(marker.Text);
+                var options = RegexOptions.CultureInvariant;
+                if (!marker.MatchCase) options |= RegexOptions.IgnoreCase;
+                _patterns[index] = new Regex(PcrePattern.RewritePossessive(marker.Text), options, TimeSpan.FromMilliseconds(250));
+            }
+            catch (Exception error) when (error is FormatException or ArgumentException or RegexParseException)
+            {
+                _patterns[index] = null;
+            }
         }
     }
 

@@ -94,6 +94,7 @@ public sealed partial class MainWindow
         pane.LeftPath.TextChanged += (_, _) => RefreshSessionHeaders();
         pane.BasePath.TextChanged += (_, _) => RefreshSessionHeaders();
         pane.RightPath.TextChanged += (_, _) => RefreshSessionHeaders();
+        pane.ApplySharedMarkers(_textMarkers, _markersEnabled);
         _sessions.Add(item); _tabs.ItemsSource = _sessions.ToArray();
     }
 

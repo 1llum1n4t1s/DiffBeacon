@@ -161,6 +161,7 @@ public sealed partial class MainWindow : Window
         if (FolderOptions.Diagnostic is { } folderDiagnostic) optionDiagnostics.Add("フォルダー表示設定: " + folderDiagnostic);
         if (FolderColumnOptions.Diagnostic is { } columnDiagnostic) optionDiagnostics.Add(columnDiagnostic);
         if (textViewOptionsStore.Diagnostic is { } viewDiagnostic) optionDiagnostics.Add(viewDiagnostic);
+        if (loadedMarkers.Error is { } markerDiagnostic) optionDiagnostics.Add(markerDiagnostic);
         // 二種類の読込失敗でもOpenedから一つのdialogだけを開く。
         Opened += (_, _) =>
         {
@@ -229,7 +230,6 @@ public sealed partial class MainWindow : Window
         if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
         var pane = new ComparisonPane(this);
         pane.ApplyViewChrome(_showStatusBar, _showLocationPane, _showDiffPane);
-        pane.ApplySharedMarkers(_textMarkers, _markersEnabled);
         AttachProjectSession(pane); _tabs.SelectedItem = _sessions[^1];
         if (arguments is { Length: >= 2 })
         {

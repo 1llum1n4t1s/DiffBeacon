@@ -192,6 +192,18 @@ internal static class HeadlessEditCommandChecks
                 && loadedMarkers.Markers.Length == 1 && loadedMarkers.Markers[0] == regexMarker, markerError ?? loadedMarkers.Error ?? "");
             pane.ApplySharedMarkers(loadedMarkers.Markers, true);
             check("marker regex is accepted by the editors", pane.TextMarkers.Count == 1 && pane.TextMarkerColors[0] == 1, string.Join("|", pane.TextMarkers));
+            window.ReplaceTextMarkers(true, [new TextMarker("shared", 2, false, false, false, true)]);
+            var sharedTab = window.AddSession();
+            check("new tab receives the shared markers", sharedTab.TextMarkers.Count == 1 && sharedTab.TextMarkers[0] == "shared" && sharedTab.TextMarkerColors[0] == 2, string.Join("|", sharedTab.TextMarkers));
+            window.SelectSession(window.SessionPanes.ToList().IndexOf(pane));
+            var badDirectory = Path.Combine(output, "markers-bad");
+            Directory.CreateDirectory(badDirectory);
+            var badOptions = Path.Combine(badDirectory, "view-options.json");
+            File.WriteAllText(Path.Combine(badDirectory, "markers.json"), """{"enabled":true,"markers":[{"text":"(?R)","color":0,"regex":true,"visible":true}]}""");
+            var badLoad = new TextMarkerStore(badOptions).Load();
+            var longText = new string('a', 1025);
+            var longSaved = markerStore.Save(true, [new TextMarker(longText, 0, false, false, false, true)], out var longError);
+            check("marker file rejects an unsupported regex and a long string", badLoad.Error is not null && badLoad.Markers.Length == 0 && !longSaved && longError is not null, (badLoad.Error ?? "") + " / " + (longError ?? ""));
             pane.ClearTextMarkers();
 
             pane.FocusDiffEditorRealLine(0, 0);

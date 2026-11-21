@@ -1,5 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using DiffBeacon.Core;
 
 namespace DiffBeacon.App;
 
@@ -78,11 +80,16 @@ internal sealed class TextMarkerStore
                 var item = settings.Markers[index];
                 if (item.Text.Length is 0 or > 1024 || item.Color is < 0 or > 2)
                     throw new InvalidDataException("印の文字列は1〜1024文字、色は0〜2です。");
+                if (item.Regex)
+                {
+                    PcrePattern.RejectUnsupported(item.Text);
+                    _ = new Regex(PcrePattern.RewritePossessive(item.Text), RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(250));
+                }
                 markers[index] = new TextMarker(item.Text, item.Color, item.MatchCase, item.WholeWord && !item.Regex, item.Regex, item.Visible);
             }
             return (settings.Enabled, markers, null);
         }
-        catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or JsonException)
+        catch (Exception error) when (error is IOException or InvalidDataException or UnauthorizedAccessException or ArgumentException or JsonException or FormatException or RegexParseException)
         {
             return (true, [], "印の設定を読み込めません。印は無しにします: " + error.Message);
         }
@@ -98,6 +105,14 @@ internal sealed class TextMarkerStore
         {
             var path = ImagePngStore.ValidateLocal(_path);
             foreach (var guard in _outputGuards) guard(path);
+            foreach (var marker in markers)
+            {
+                if (marker.Text.Length is 0 or > 1024 || marker.ColorIndex is < 0 or > 2)
+                    throw new InvalidDataException("印の文字列は1〜1024文字、色は0〜2です。");
+                if (!marker.Regex) continue;
+                PcrePattern.RejectUnsupported(marker.Text);
+                _ = new Regex(PcrePattern.RewritePossessive(marker.Text), RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(250));
+            }
             var settings = new TextMarkerSettings
             {
                 Enabled = enabled,

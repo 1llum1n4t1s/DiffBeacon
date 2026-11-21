@@ -81,6 +81,7 @@ public sealed partial class ComparisonPane
         {
             StoreSelected();
             if (draft.Any(marker => marker.Text.Length == 0)) { message.Text = "印の文字列が空です。"; return false; }
+            if (draft.Any(marker => marker.Text.Length > 1024)) { message.Text = "印の文字列は1024文字以下にしてください。"; return false; }
             foreach (var marker in draft)
             {
                 if (!marker.Regex) continue;
