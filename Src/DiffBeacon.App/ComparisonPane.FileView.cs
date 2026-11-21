@@ -51,6 +51,51 @@ public sealed partial class ComparisonPane
     // 差分セルの塗り分けに使う目印。行のある側か、行の無い側（本家の削除色）かを持つ。
     internal sealed record DiffCellTag(bool HasLine);
 
+    private Border? _displayFilterBar;
+    private readonly TextBox _displayFilterBox = new() { Name = "display-filter-text", PlaceholderText = "Line contains \"...\"" };
+
+    /// <summary>表示フィルターの入力欄が見えているか。</summary>
+    internal bool DisplayFilterBarVisible => _displayFilterBar?.IsVisible == true;
+
+    /// <summary>表示フィルターの入力欄を出す、または隠す。出すときはいまの式を欄へ戻す。</summary>
+    internal void SetDisplayFilterBarVisible(bool visible)
+    {
+        if (_displayFilterBar is null) return;
+        if (visible) _displayFilterBox.Text = _displayFilter;
+        _displayFilterBar.IsVisible = visible;
+        if (_owner is MainWindow window) window.SyncDisplayFilterMenu(visible);
+    }
+
+    /// <summary>入力欄の式を表示フィルターにする。Line contains 以外は行を隠さない。</summary>
+    internal void ApplyDisplayFilterFromBar()
+    {
+        _displayFilter = _displayFilterBox.Text ?? "";
+        ApplyDiffContext();
+        _status.Text = _displayFilter.Length == 0 ? "表示フィルターを外しました。"
+            : DisplayFilterPhrases().Count == 0 ? "表示フィルターは Line contains \"...\" だけを使います。"
+            : "表示フィルターを適用しました。";
+    }
+
+    /// <summary>本家の表示フィルターバー。既定では隠す。</summary>
+    private Border BuildDisplayFilterBar()
+    {
+        var apply = new Button { Name = "display-filter-apply", Content = "適用(_A)", Padding = new Thickness(9, 2), Margin = new Thickness(6, 0, 0, 0) };
+        apply.Click += (_, _) => ApplyDisplayFilterFromBar();
+        var row = new DockPanel { Margin = new Thickness(4, 2) };
+        DockPanel.SetDock(apply, Dock.Right);
+        row.Children.Add(apply);
+        row.Children.Add(_displayFilterBox);
+        return new Border
+        {
+            Name = "display-filter-bar",
+            IsVisible = false,
+            Background = WinMergeColors.FrameFace,
+            BorderBrush = WinMergeColors.FrameBorder,
+            BorderThickness = new Thickness(0, 0, 0, 1),
+            Child = row,
+        };
+    }
+
     private Control BuildFileCompareView()
     {
         // 本家のファイル名の帯（CEditorFilePathBar）は、ペインごとにエディターの上へ置く（ComparisonPane.DiffEditors.cs）。
@@ -99,7 +144,12 @@ public sealed partial class ComparisonPane
                      "SystemControlHighlightListAccentHighBrush", "SystemControlHighlightListLowBrush", "SystemControlHighlightListMediumBrush" })
             DiffList.Resources[key] = new SolidColorBrush(Color.FromArgb(40, 0, 0, 0));
         _locationPane.RowRequested += ScrollDiffListToRow;
-        return root;
+        var host = new DockPanel();
+        _displayFilterBar = BuildDisplayFilterBar();
+        DockPanel.SetDock(_displayFilterBar, Dock.Top);
+        host.Children.Add(_displayFilterBar);
+        host.Children.Add(root);
+        return host;
     }
 
     private static TextBlock HeaderPathText(string name) => new()

@@ -152,6 +152,8 @@ public sealed partial class ComparisonPane
         if (string.IsNullOrEmpty(text)) { _status.Text = "表示フィルターに追加する文字列がありません。"; return; }
         var clause = "Line contains \"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
         _displayFilter = _displayFilter.Length == 0 ? clause : _displayFilter + " AND " + clause;
+        _displayFilterBox.Text = _displayFilter;
+        SetDisplayFilterBarVisible(true);
         ApplyDiffContext();
         _status.Text = "表示フィルターに追加しました。";
     }

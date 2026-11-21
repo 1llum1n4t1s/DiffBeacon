@@ -163,6 +163,12 @@ public sealed partial class MainWindow
             ViewOption("Split V&ertically", "view-split", () => options.VerticalSplit, value => options.VerticalSplit = value),
             tabBarVisible,
             menuBarVisible,
+            _displayFilterItem = new MenuItem
+            {
+                Header = UiText.Menu("Displa&y Filter Bar\tCtrl+Shift+L"),
+                ToggleType = MenuItemToggleType.CheckBox,
+                InputGesture = new KeyGesture(Key.L, KeyModifiers.Control | KeyModifiers.Shift),
+            },
             Separator(),
             toolbarVisible,
             toolbarSize,
@@ -177,6 +183,7 @@ public sealed partial class MainWindow
             LanguageMenu(),
             Separator(),
             Labeled("Refresh\tF5", "F5", PaneAction(FrameCommand.Refresh))));
+        _displayFilterItem.Click += (_, _) => ToggleDisplayFilterBar();
         menu.Items.Add(MenuPopup("&Merge",
             Labeled("&Next Difference\tAlt+Down", "Alt+Down", PaneAction(FrameCommand.NextDifference)),
             Labeled("&Previous Difference\tAlt+Up", "Alt+Up", PaneAction(FrameCommand.PreviousDifference)),
@@ -581,6 +588,19 @@ public sealed partial class MainWindow
     private MenuItem? _toolbarMenuItem;
     private MenuItem _recentFiles = new();
     private MenuItem _mergeModeItem = new();
+    private MenuItem _displayFilterItem = new();
+
+    /// <summary>表示メニューの表示フィルターのチェックを、いまの欄の表示に合わせる。</summary>
+    internal void SyncDisplayFilterMenu(bool visible) => _displayFilterItem.IsChecked = visible;
+
+    /// <summary>アクティブなタブの表示フィルター欄を出す、または隠す。</summary>
+    private void ToggleDisplayFilterBar()
+    {
+        if (_sessions.Count == 0) return;
+        var visible = !ActivePane.DisplayFilterBarVisible;
+        ActivePane.SetDisplayFilterBarVisible(visible);
+        ActivePane.SetStatus(visible ? "表示フィルターを表示しました。" : "表示フィルターを隠しました。");
+    }
 
     /// <summary>自己検証用: メニューバーが表示されているか。</summary>
     internal bool FrameMenuVisible => FrameMenu?.IsVisible != false;
@@ -903,6 +923,12 @@ public sealed partial class MainWindow
                 await ActivePane.ExecuteFrameCommandAsync(mergingCommand);
                 return true;
             }
+        }
+        if (e.Key == Key.L && control && shift && !alt && textSearch)
+        {
+            e.Handled = true;
+            ToggleDisplayFilterBar();
+            return true;
         }
         if (e.Key == Key.F9 && !alt && !control && !shift)
         {
