@@ -305,6 +305,14 @@ internal static class HeadlessEditCommandChecks
                 pane.LeftEditor.Text == "common\ntheirs-line\ntail\n" && pane.RightEditor.Text == "common\nmine-line\ntail\n"
                 && pane.LeftEditor.IsReadOnly && !pane.RightEditor.IsReadOnly && pane.RightPath.Text != conflict && pane.ConflictSavePath == conflict && opened.Contains("<<<<<<< mine", StringComparison.Ordinal),
                 Escape(pane.LeftEditor.Text) + " / " + Escape(pane.RightEditor.Text));
+            if (!OperatingSystem.IsWindows())
+            {
+                var tempMode = File.GetUnixFileMode(pane.RightPath.Text!);
+                var directoryMode = File.GetUnixFileMode(Path.GetDirectoryName(pane.RightPath.Text)!);
+                var shared = UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute;
+                check("edit conflict temp is private to the user", (tempMode & shared) == 0 && (directoryMode & shared) == 0 && !pane.RightPath.Text!.Contains("DiffBeacon-conflict" + Path.DirectorySeparatorChar, StringComparison.Ordinal),
+                    tempMode + " " + directoryMode + " " + pane.RightPath.Text);
+            }
             pane.RightEditor.Text = "common\nresolved\ntail\n";
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.SaveRight));
             check("edit conflict save overwrites the original file", File.ReadAllText(conflict) == "common\nresolved\ntail\n" && pane.ConflictSavePath is null, Escape(File.ReadAllText(conflict)));

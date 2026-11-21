@@ -225,14 +225,16 @@ public sealed partial class ComparisonPane
             token.ThrowIfCancellationRequested();
             if (node.Depth >= Math.Min(256, model.Options.MaximumDepth) || seen.Count >= model.Options.MaximumEntries
                 || !seen.Add(node.Entry.RelativePath)) throw new InvalidDataException("ツリー表示の項目数または深度が上限を超えています。");
-            var show = visible.Contains(node.Entry.RelativePath) && FolderRowVisible(node.Entry);
+            var inModel = visible.Contains(node.Entry.RelativePath);
+            var show = inModel && FolderRowVisible(node.Entry);
             if (FolderCanExpand(node.Entry)) present.Add(node.Entry.RelativePath);
             if (tree && show && node.Reachable)
             {
                 rows.Add(node.Entry); depths.Add(node.Entry.RelativePath, node.Depth);
                 if (node.Parent is not null) parents.Add(node.Entry.RelativePath, node.Parent);
             }
-            var reachable = node.Reachable && (!show || expanded.Contains(node.Entry.RelativePath));
+            // 表示で隠したフォルダーは折りたたみのままにする。モデルに無い中間フォルダーだけ子を通す。
+            var reachable = node.Reachable && (!inModel || expanded.Contains(node.Entry.RelativePath));
             var sortedChildren = SortFolderEntries(node.Entry.Children, model.IsThreeWay);
             for (var i = sortedChildren.Count - 1; i >= 0; i--)
                 pending.Push((sortedChildren[i], node.Depth + 1, show ? node.Entry.RelativePath : node.Parent, reachable));

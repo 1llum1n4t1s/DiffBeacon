@@ -63,6 +63,23 @@ internal static class HeadlessFolderViewChecks
         check("folder view hides left-only items", hiddenLeft.Contains("same.txt") && !hiddenLeft.Contains("left-only.txt") && !hiddenLeft.Contains("left-dir") && window.ShowIdenticalItems,
             string.Join("|", hiddenLeft));
         ClickMenu(window, "view-show-unique-left");
+        var treeMode = pane.FolderActionRoot.GetVisualDescendants().OfType<CheckBox>().Single(box => box.Name == "FolderTreeMode");
+        var treeWasOn = treeMode.IsChecked == true;
+        if (!treeWasOn)
+        {
+            treeMode.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            Dispatcher.UIThread.RunJobs();
+        }
+        ClickMenu(window, "view-show-different");
+        var collapsed = pane.FolderOptionsRawRows.Items.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).ToArray();
+        check("folder tree does not reveal children of a collapsed hidden folder", !collapsed.Contains("sub") && !collapsed.Contains("sub/inner.txt") && collapsed.Contains("left-only.txt"),
+            string.Join("|", collapsed));
+        ClickMenu(window, "view-show-different");
+        if (!treeWasOn)
+        {
+            treeMode.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            Dispatcher.UIThread.RunJobs();
+        }
 
         var titles = pane.FolderColumnTitles;
         check("folder view two-way columns follow WinMerge default order",

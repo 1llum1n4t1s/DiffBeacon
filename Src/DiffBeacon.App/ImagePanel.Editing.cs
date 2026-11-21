@@ -225,7 +225,10 @@ public static partial class SpecializedViews
             var pane = _editPane.SelectedIndex;
             if (pane < 0 || pane >= _paths.Length || string.IsNullOrWhiteSpace(_paths[pane]) || !File.Exists(_paths[pane]))
                 throw new InvalidOperationException("文字認識する画像ファイルがありません。");
-            var text = await PlatformOcr.RecognizeAsync(_paths[pane], null, _lifetime.Token);
+            var path = _paths[pane];
+            var generation = _generation;
+            var text = await PlatformOcr.RecognizeAsync(path, null, _lifetime.Token);
+            if (_disposed || generation != _generation || pane >= _paths.Length || !string.Equals(_paths[pane], path, StringComparison.Ordinal)) return;
             var flat = text.Replace("\r", " ").Replace("\n", " ");
             _status.Text = "文字認識: " + flat;
             if (TopLevel.GetTopLevel(this) is MainWindow window) window.AppendOutput(flat);

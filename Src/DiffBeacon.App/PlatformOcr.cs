@@ -16,7 +16,7 @@ internal static class PlatformOcr
     {
         if (TestRecognize is not null) return await TestRecognize(imagePath, cancellationToken);
 #if DIFFBEACON_WINDOWS_OCR
-        var windows = await WindowsMediaOcr.TryRecognizeAsync(imagePath);
+        var windows = await WindowsMediaOcr.TryRecognizeAsync(imagePath, cancellationToken);
         if (windows is not null) return windows;
 #endif
         if (OperatingSystem.IsMacOS() && MacIntegration.TryRecognize(imagePath, out var text, out _)) return text;
@@ -115,8 +115,9 @@ internal static class MacIntegration
 /// <summary>Windows.Media.Ocr。言語パックが無いときは null。</summary>
 internal static class WindowsMediaOcr
 {
-    internal static async Task<string?> TryRecognizeAsync(string imagePath)
+    internal static async Task<string?> TryRecognizeAsync(string imagePath, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var engine = Windows.Media.Ocr.OcrEngine.TryCreateFromUserProfileLanguages();
         if (engine is null) return null;
         var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(imagePath);
@@ -124,6 +125,7 @@ internal static class WindowsMediaOcr
         var decoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
         var bitmap = await decoder.GetSoftwareBitmapAsync();
         var result = await engine.RecognizeAsync(bitmap);
+        cancellationToken.ThrowIfCancellationRequested();
         return result.Text;
     }
 }

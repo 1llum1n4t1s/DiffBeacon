@@ -37,6 +37,21 @@ internal static class HeadlessImageDragChecks
             check("image view ocr reads the selected file", recognizedPath is not null && recognizedPath.Contains("ocr-input-", StringComparison.Ordinal)
                 && ocrOutput.Contains("recognized-text", StringComparison.Ordinal) && status.Contains("recognized-text", StringComparison.Ordinal),
                 (recognizedPath ?? "null") + " / " + status + " / " + ocrOutput);
+            var started = new TaskCompletionSource();
+            var release = new TaskCompletionSource();
+            PlatformOcr.TestRecognize = async (_, token) =>
+            {
+                started.TrySetResult();
+                await release.Task.WaitAsync(token);
+                return "stale-ocr";
+            };
+            ocrButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            for (var i = 0; i < 30 && !started.Task.IsCompleted; i++) Dispatcher.UIThread.RunJobs();
+            Open("ocr-next", [raw, raw]);
+            release.TrySetResult();
+            for (var i = 0; i < 30; i++) Dispatcher.UIThread.RunJobs();
+            var after = window.GetVisualDescendants().OfType<TextBox>().Single(box => box.Name == "output-pane").Text ?? "";
+            check("image view ocr ignores a result from the previous comparison", started.Task.IsCompleted && !after.Contains("stale-ocr", StringComparison.Ordinal), after);
         }
         finally { PlatformOcr.TestRecognize = null; }
         for (var count = 2; count <= 3; count++)

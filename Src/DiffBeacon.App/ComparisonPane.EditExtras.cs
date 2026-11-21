@@ -112,6 +112,7 @@ public sealed partial class ComparisonPane
 
     /// <summary>競合ファイルを開いたときに作った一時ファイル。ペインを閉じるときに消す。</summary>
     private readonly List<string> _conflictTemps = [];
+    private string? _conflictTempDirectory;
 
     /// <summary>いまの行フィルター（除外行の正規表現）。</summary>
     internal string LineFilterPattern { get => _ignoreRegex.Text ?? ""; set => _ignoreRegex.Text = value; }
@@ -592,19 +593,21 @@ public sealed partial class ComparisonPane
         if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
         DiscardChanges();
         DeleteConflictTemps();
-        var folder = Path.Combine(Path.GetTempPath(), "DiffBeacon-conflict");
-        Directory.CreateDirectory(folder);
+        var folder = Path.Combine(Path.GetTempPath(), "DiffBeacon-conflict-" + Guid.NewGuid().ToString("N"));
+        if (OperatingSystem.IsWindows()) Directory.CreateDirectory(folder);
+        else Directory.CreateDirectory(folder, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        _conflictTempDirectory = folder;
         var extension = Path.GetExtension(full);
         var theirsPath = Path.Combine(folder, "confv_" + Guid.NewGuid().ToString("N") + extension);
         var minePath = Path.Combine(folder, "confw_" + Guid.NewGuid().ToString("N") + extension);
         var basePath = Path.Combine(folder, "confb_" + Guid.NewGuid().ToString("N") + extension);
-        await File.WriteAllBytesAsync(theirsPath, document.CaptureBytes(sides.Theirs));
-        await File.WriteAllBytesAsync(minePath, document.CaptureBytes(sides.Mine));
+        await WriteConflictSideAsync(theirsPath, document.CaptureBytes(sides.Theirs));
+        await WriteConflictSideAsync(minePath, document.CaptureBytes(sides.Mine));
         _conflictTemps.Add(theirsPath);
         _conflictTemps.Add(minePath);
         if (sides.ThreeWay)
         {
-            await File.WriteAllBytesAsync(basePath, document.CaptureBytes(sides.Base));
+            await WriteConflictSideAsync(basePath, document.CaptureBytes(sides.Base));
             _conflictTemps.Add(basePath);
         }
         SelectIndependentText(false);
@@ -690,6 +693,15 @@ public sealed partial class ComparisonPane
     }
 
     /// <summary>競合ファイル用の一時ファイルを消す。消せないものは状態欄に理由を残す。</summary>
+    /// <summary>競合の作業ファイルを、本人だけが読める新規ファイルとして書く。</summary>
+    private static async Task WriteConflictSideAsync(string path, byte[] bytes)
+    {
+        var options = new FileStreamOptions { Mode = FileMode.CreateNew, Access = FileAccess.Write, Share = FileShare.None, Options = FileOptions.Asynchronous };
+        if (!OperatingSystem.IsWindows()) options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+        await using var stream = new FileStream(path, options);
+        await stream.WriteAsync(bytes);
+    }
+
     private void DeleteConflictTemps()
     {
         var failed = new List<string>();
@@ -700,6 +712,13 @@ public sealed partial class ComparisonPane
             catch (UnauthorizedAccessException ex) { failed.Add(path + ": " + ex.Message); }
         }
         _conflictTemps.Clear();
+        if (_conflictTempDirectory is { } folder)
+        {
+            try { if (Directory.Exists(folder)) Directory.Delete(folder, recursive: false); }
+            catch (IOException ex) { failed.Add(folder + ": " + ex.Message); }
+            catch (UnauthorizedAccessException ex) { failed.Add(folder + ": " + ex.Message); }
+            _conflictTempDirectory = null;
+        }
         if (failed.Count > 0 && !_disposed) _status.Text = "一時ファイルを消せませんでした。 " + string.Join(" ", failed);
     }
 }
