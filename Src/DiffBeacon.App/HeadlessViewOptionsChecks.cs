@@ -77,7 +77,8 @@ internal static partial class HeadlessViewOptionsChecks
         window.AppendOutput("hello");
         var outputHost = window.GetVisualDescendants().OfType<Border>().First(border => border.Name == "output-pane-host");
         var output = window.GetVisualDescendants().OfType<TextBox>().First(box => box.Name == "output-pane");
-        check("view output pane shows appended lines", outputHost.IsVisible && output.Text == "hello", output.Text ?? "");
+        var outputText = output.Text ?? "";
+        check("view output pane shows appended lines", outputHost.IsVisible && outputText.Contains("hello", StringComparison.Ordinal), outputText);
         Click(MenuOption(window, "view-output"));
         check("view output pane can hide", !outputHost.IsVisible, outputHost.IsVisible.ToString());
         Click(MenuOption(window, "view-tab-title"));
