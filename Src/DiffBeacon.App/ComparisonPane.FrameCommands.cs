@@ -54,7 +54,7 @@ public sealed partial class ComparisonPane
         FrameCommand.AddToLineFilters => Run(AddSelectionToLineFilter),
         FrameCommand.AddToDisplayFilters => Run(AddSelectionToDisplayFilter),
         FrameCommand.AddToSubstitutionFilters => AddSelectionToSubstitutionFilterAsync(),
-        FrameCommand.AddMarker => Run(AddTextMarker),
+        FrameCommand.AddMarker => AddTextMarkerAsync(),
         FrameCommand.OpenRegistered => Run(OpenWithRegisteredApplication),
         FrameCommand.OpenParentFolder => Run(OpenParentFolder),
         FrameCommand.OpenExternalEditor => Run(OpenWithExternalEditor),

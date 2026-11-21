@@ -33,6 +33,13 @@ public sealed partial class MainWindow : Window
     /// 省略したときはメモリだけの設定（headless検証が利用者のAppDataへ書かないため）。
     /// </summary>
     internal FolderColumnOptionsStore FolderColumnOptions { get; }
+    private readonly TextMarkerStore _textMarkersStore;
+    private readonly List<TextMarker> _textMarkers = [];
+    private bool _markersEnabled = true;
+    /// <summary>全比較タブで共有する印。本家のメインマーカー。</summary>
+    internal IReadOnlyList<TextMarker> TextMarkers => _textMarkers;
+    /// <summary>印を塗るか。</summary>
+    internal bool MarkersEnabled => _markersEnabled;
     internal long SessionSelectionGeneration { get; private set; }
     internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
@@ -86,6 +93,11 @@ public sealed partial class MainWindow : Window
         Action<string> textViewGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
         textViewOptionsStore.AddOutputGuard(textViewGuard);
         Closed += (_, _) => textViewOptionsStore.RemoveOutputGuard(textViewGuard);
+        _textMarkersStore = new TextMarkerStore(textViewOptionsStore.Path);
+        _textMarkersStore.AddOutputGuard(textViewGuard);
+        var loadedMarkers = _textMarkersStore.Load();
+        _markersEnabled = loadedMarkers.Enabled;
+        _textMarkers.AddRange(loadedMarkers.Markers);
         Action<string> folderGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
         Action<string> tableGuard = path => { foreach (var pane in SessionPanes) pane.EnsureTableOptionsOutputWritable(path); };
         FolderOptions.AddOutputGuard(folderGuard);
@@ -201,11 +213,23 @@ public sealed partial class MainWindow : Window
         }, Avalonia.Threading.DispatcherPriority.Background);
     }
 
+    /// <summary>印を全部の比較タブへ写し、markers.json へ保存する。</summary>
+    internal void ReplaceTextMarkers(bool enabled, IReadOnlyList<TextMarker> markers)
+    {
+        _textMarkers.Clear();
+        _textMarkers.AddRange(markers);
+        _markersEnabled = enabled;
+        foreach (var pane in SessionPanes) pane.ApplySharedMarkers(_textMarkers, _markersEnabled);
+        if (_textMarkersStore.Save(enabled, _textMarkers, out var error) || error is null || _sessions.Count == 0) return;
+        ActivePane.ShowViewOptionsStatus(error);
+    }
+
     public ComparisonPane AddSession(string[]? arguments = null)
     {
         if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
         var pane = new ComparisonPane(this);
         pane.ApplyViewChrome(_showStatusBar, _showLocationPane, _showDiffPane);
+        pane.ApplySharedMarkers(_textMarkers, _markersEnabled);
         AttachProjectSession(pane); _tabs.SelectedItem = _sessions[^1];
         if (arguments is { Length: >= 2 })
         {

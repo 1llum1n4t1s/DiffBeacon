@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using DiffBeacon.Core;
 using Avalonia.Media;
@@ -9,31 +11,92 @@ using AvaloniaEdit.Rendering;
 
 namespace DiffBeacon.App;
 
-/// <summary>選択した文字列を印として塗る。色の一覧や正規表現の印は持たない。</summary>
+/// <summary>印の文字列を、本家の利用者定義マーカー色（緑・赤・青）で塗る。</summary>
 internal sealed class TextMarkerColorizer : DocumentColorizingTransformer
 {
-    /// <summary>塗る文字列。空なら何も塗らない。</summary>
-    internal List<string> Markers { get; } = [];
+    /// <summary>塗る印。空なら何も塗らない。</summary>
+    internal List<TextMarker> Markers { get; } = [];
 
-    /// <summary>印の背景。本家のマーカー色の既定に近い黄。</summary>
-    private static readonly IBrush Mark = new SolidColorBrush(Color.FromRgb(255, 255, 128));
+    /// <summary>偽のときは印を記憶したまま塗らない。本家の Enable markers。</summary>
+    internal bool Enabled { get; set; } = true;
+
+    /// <summary>本家 COLORINDEX_MARKERBKGND1〜3。検索用の黄（BKGND0）は利用者の印には使わない。</summary>
+    private static readonly IBrush[] Colors =
+    [
+        new SolidColorBrush(Color.FromRgb(127, 255, 127)),
+        new SolidColorBrush(Color.FromRgb(255, 127, 127)),
+        new SolidColorBrush(Color.FromRgb(127, 127, 255)),
+    ];
+
+    private Regex?[] _patterns = [];
+
+    /// <summary>正規表現の印をコンパイルし直す。不正な式は、設定を入れたときに拒否済みである。</summary>
+    internal void InvalidatePatterns()
+    {
+        _patterns = new Regex?[Markers.Count];
+        for (var index = 0; index < Markers.Count; index++)
+        {
+            var marker = Markers[index];
+            if (!marker.Regex || marker.Text.Length == 0) continue;
+            var options = RegexOptions.CultureInvariant;
+            if (!marker.MatchCase) options |= RegexOptions.IgnoreCase;
+            _patterns[index] = new Regex(PcrePattern.RewritePossessive(marker.Text), options, TimeSpan.FromMilliseconds(250));
+        }
+    }
 
     /// <summary>行の中で印の文字列を塗る。</summary>
     protected override void ColorizeLine(DocumentLine line)
     {
-        if (Markers.Count == 0 || CurrentContext is null) return;
+        if (!Enabled || Markers.Count == 0 || CurrentContext is null) return;
         var text = CurrentContext.Document.GetText(line);
-        foreach (var marker in Markers)
+        for (var index = 0; index < Markers.Count; index++)
         {
-            if (marker.Length == 0) continue;
-            var index = 0;
-            while ((index = text.IndexOf(marker, index, StringComparison.Ordinal)) >= 0)
-            {
-                ChangeLinePart(line.Offset + index, line.Offset + index + marker.Length, element => element.BackgroundBrush = Mark);
-                index += marker.Length;
-            }
+            var marker = Markers[index];
+            if (!marker.Visible || marker.Text.Length == 0) continue;
+            var color = Colors[Math.Clamp(marker.ColorIndex, 0, Colors.Length - 1)];
+            if (marker.Regex) PaintRegex(line, text, index, color);
+            else PaintLiteral(line, text, marker, color);
         }
     }
+
+    /// <summary>正規表現ではない印を塗る。</summary>
+    private void PaintLiteral(DocumentLine line, string text, TextMarker marker, IBrush color)
+    {
+        var comparison = marker.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+        var index = 0;
+        while ((index = text.IndexOf(marker.Text, index, comparison)) >= 0)
+        {
+            var end = index + marker.Text.Length;
+            if (!marker.WholeWord || WholeWord(text, index, end))
+                ChangeLinePart(line.Offset + index, line.Offset + end, element => element.BackgroundBrush = color);
+            index = end;
+        }
+    }
+
+    /// <summary>正規表現の印を塗る。空の一致は1文字進めて繰り返さない。</summary>
+    private void PaintRegex(DocumentLine line, string text, int markerIndex, IBrush color)
+    {
+        if (markerIndex >= _patterns.Length || _patterns[markerIndex] is not { } pattern) return;
+        try
+        {
+            foreach (Match match in pattern.Matches(text))
+            {
+                if (match.Length == 0) continue;
+                ChangeLinePart(line.Offset + match.Index, line.Offset + match.Index + match.Length, element => element.BackgroundBrush = color);
+            }
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            // 制限時間を超えた印はこの行だけ塗らない。式自体は残す。
+        }
+    }
+
+    /// <summary>印の両隣が単語の文字でなければ、単語単位とみなす。</summary>
+    private static bool WholeWord(string text, int start, int end)
+        => (start == 0 || !IsWord(text[start - 1])) && (end >= text.Length || !IsWord(text[end]));
+
+    /// <summary>単語の文字。文字、数字、アンダースコア。</summary>
+    private static bool IsWord(char value) => char.IsLetterOrDigit(value) || value == '_';
 }
 
 public sealed partial class ComparisonPane
@@ -64,7 +127,13 @@ public sealed partial class ComparisonPane
     }
 
     /// <summary>印にした文字列。</summary>
-    internal IReadOnlyList<string> TextMarkers => _diffViews[0].MarkerColorizer.Markers;
+    internal IReadOnlyList<string> TextMarkers => _diffViews[0].MarkerColorizer.Markers.Select(marker => marker.Text).ToArray();
+
+    /// <summary>印の色番号。0 が緑、1 が赤、2 が青。</summary>
+    internal IReadOnlyList<int> TextMarkerColors => _diffViews[0].MarkerColorizer.Markers.Select(marker => marker.ColorIndex).ToArray();
+
+    /// <summary>自己検証が、印のダイアログが出たときにボタンを押す。</summary>
+    internal Action<Window>? MarkerDialogShown { get; set; }
 
     /// <summary>
     /// 選択した表示行を、フォーカスのある側から指定した側へコピーする。
@@ -284,24 +353,37 @@ public sealed partial class ComparisonPane
         return "";
     }
 
-    /// <summary>選択を印にして、全ペインで塗る。</summary>
-    internal void AddTextMarker()
+    /// <summary>印のダイアログを出す。選択があれば、本家と同じく新しい印として入れてから出す。</summary>
+    internal async Task AddTextMarkerAsync()
     {
-        if (SelectedLiteral() is not { Length: > 0 } text) { _status.Text = "印にする選択がありません。"; return; }
-        foreach (var side in _diffViews)
-        {
-            if (!side.MarkerColorizer.Markers.Contains(text)) side.MarkerColorizer.Markers.Add(text);
-            side.View.TextArea.TextView.Redraw();
-        }
+        var source = _owner is MainWindow window ? window.TextMarkers : _diffViews[0].MarkerColorizer.Markers;
+        var enabled = _owner is not MainWindow host || host.MarkersEnabled;
+        var draft = source.Select(marker => marker with { }).ToList();
+        var selection = SelectedLiteral();
+        if (selection.Length > 0) draft.Add(new TextMarker(selection, draft.Count % 3, false, false, false, true));
+        var owner = TopLevel.GetTopLevel(this) as Window;
+        if (owner is null) { _status.Text = "印の画面を出せません。"; return; }
+        var accepted = await ShowMarkerDialogAsync(owner, draft, enabled);
+        if (!accepted) return;
         _status.Text = "印を付けました。";
     }
 
     /// <summary>印を全部消す。</summary>
     internal void ClearTextMarkers()
     {
+        if (_owner is MainWindow window) window.ReplaceTextMarkers(window.MarkersEnabled, []);
+        else ApplySharedMarkers([], true);
+    }
+
+    /// <summary>ウィンドウが覚えている印を、この比較の全ペインへ写す。</summary>
+    internal void ApplySharedMarkers(IReadOnlyList<TextMarker> markers, bool enabled)
+    {
         foreach (var side in _diffViews)
         {
             side.MarkerColorizer.Markers.Clear();
+            side.MarkerColorizer.Markers.AddRange(markers);
+            side.MarkerColorizer.Enabled = enabled;
+            side.MarkerColorizer.InvalidatePatterns();
             side.View.TextArea.TextView.Redraw();
         }
     }

@@ -176,9 +176,22 @@ internal static class HeadlessEditCommandChecks
             window.ExternalEditorCommand = "";
 
             Select(pane, 2, right.Document.GetLineByNumber(2).Offset, 5);
+            pane.MarkerDialogShown = dialog => dialog.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "marker-ok").RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddMarker));
-            check("edit marker records the selection", pane.TextMarkers.Count == 1 && pane.TextMarkers[0] == "extra" && pane.DiffEditor(0).Options.EnableRectangularSelection,
+            pane.MarkerDialogShown = null;
+            check("edit marker records the selection in the first color", pane.TextMarkers.Count == 1 && pane.TextMarkers[0] == "extra" && pane.TextMarkerColors[0] == 0 && pane.DiffEditor(0).Options.EnableRectangularSelection,
                 string.Join("|", pane.TextMarkers));
+            pane.ClearTextMarkers();
+            var markerFile = Path.Combine(output, "markers", "view-options.json");
+            Directory.CreateDirectory(Path.GetDirectoryName(markerFile)!);
+            var markerStore = new TextMarkerStore(markerFile);
+            var regexMarker = new TextMarker("e.tra", 1, false, false, true, true);
+            var saved = markerStore.Save(true, [regexMarker], out var markerError);
+            var loadedMarkers = markerStore.Load();
+            check("marker settings round trip keeps regex and color", saved && markerError is null && loadedMarkers.Error is null && loadedMarkers.Enabled
+                && loadedMarkers.Markers.Length == 1 && loadedMarkers.Markers[0] == regexMarker, markerError ?? loadedMarkers.Error ?? "");
+            pane.ApplySharedMarkers(loadedMarkers.Markers, true);
+            check("marker regex is accepted by the editors", pane.TextMarkers.Count == 1 && pane.TextMarkerColors[0] == 1, string.Join("|", pane.TextMarkers));
             pane.ClearTextMarkers();
 
             pane.FocusDiffEditorRealLine(0, 0);
