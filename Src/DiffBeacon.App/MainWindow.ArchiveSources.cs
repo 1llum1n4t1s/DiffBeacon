@@ -1,0 +1,394 @@
+using Avalonia.Controls;
+using DiffBeacon.Core;
+using DiffBeacon.Providers;
+
+namespace DiffBeacon.App;
+
+public sealed partial class MainWindow
+{
+    internal async Task OpenArchiveChildAsync(ComparisonPane parent, ArchivePanel panel, ArchiveOpenRequest request)
+    {
+        bool Current() => SessionPanes.Contains(parent) && ReferenceEquals(ActivePane, parent)
+            && parent.IsArchiveChildCurrent(panel, request);
+        if (!Current()) return;
+        if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
+        var container = request.Mode == ArchiveEntryOpenMode.Archive
+            || request.Mode == ArchiveEntryOpenMode.Auto && ArchivePanel.Supports(request.Row.Path);
+        var image = request.Mode == ArchiveEntryOpenMode.Image
+            || request.Mode == ArchiveEntryOpenMode.Auto && !container && SpecializedViews.IsImage(request.Row.Path);
+        if (image && (request.Row.Left is null || request.Row.Right is null
+            || request.LeftMissingEntryChain is not null || request.RightMissingEntryChain is not null))
+            throw new InvalidDataException("画像比較には左右の実在する内包画像が必要です。");
+        var mode = container ? "Archive" : image ? "Image" : request.Mode == ArchiveEntryOpenMode.Binary ? "Binary" : "Text";
+        var parentProject = parent.CaptureProject();
+        bool InheritedReadOnly(int side) => ProjectInputs.Archive(parentProject, side) is { } typed
+            ? typed.InheritedReadOnly ?? true : side == 0 ? parentProject.LeftReadOnly : parentProject.RightReadOnly;
+        ArchiveProjectInput Input(ArchiveSource source, IReadOnlyList<string>? missing, bool present, int side) => new()
+        {
+            RootPath = source.RootPath,
+            ContainerNameCodePages = ArchiveNameSettings.Capture(missing is null && present && container ? source.ContainerNameCodePages.Append(28591).ToArray() : source.ContainerNameCodePages),
+            ContainerGZipPayloadKinds = ArchivePayloadSettings.Capture(missing is null && present && container ? source.ContainerGZipPayloadKinds.Append(GZipPayloadKind.Auto).ToArray() : source.ContainerGZipPayloadKinds),
+            ContainerCompressionPayloadKinds = ArchivePayloadSettings.Capture(missing is null && present && container ? source.ContainerCompressionPayloadKinds.Append(CompressionPayloadKind.Auto).ToArray() : source.ContainerCompressionPayloadKinds),
+            EntryChain = missing is null && present && container ? source.EntryChain.Append(request.Row.Path).ToArray() : source.EntryChain.ToArray(),
+            LeafEntry = missing is null && present && !container ? request.Row.Path : null, RootSha256 = source.RootSha256,
+            MissingEntryChain = missing is not null ? missing.Append(request.Row.Path).ToArray() : present ? null : [request.Row.Path],
+            InheritedReadOnly = image || InheritedReadOnly(side)
+        };
+        var project = new ComparisonProject
+        {
+            Mode = mode, LeftArchiveInput = Input(request.LeftSource, request.LeftMissingEntryChain, request.Row.Left is not null, 0),
+            RightArchiveInput = Input(request.RightSource, request.RightMissingEntryChain, request.Row.Right is not null, 2),
+            LeftReadOnly = true, RightReadOnly = true, LeftDescription = request.Row.Path, RightDescription = request.Row.Path,
+            ImageSettings = image ? ImageApplicationOptionsStore.DefaultViewSettings(ImageOptions.Current) : new()
+        };
+        ComparisonPane? candidate = new(this);
+        string?[]? left = null, right = null;
+        try
+        {
+            candidate.ApplyProject(project);
+            candidate.ArchiveSourceRetryShown = parent.ArchiveSourceRetryShown;
+            string?[] Passwords(IReadOnlyList<string?> values, ArchiveProjectInput input)
+                => values.Concat(Enumerable.Repeat<string?>(null, input.EntryChain.Length + 1 - values.Count)).ToArray();
+            left = Passwords(request.LeftPasswords, project.LeftArchiveInput!);
+            right = Passwords(request.RightPasswords, project.RightArchiveInput!);
+            parent.ArchiveChildReadStarting?.Invoke(); request.Token.ThrowIfCancellationRequested();
+            if (!Current()) return;
+            if (!await candidate.CompareArchiveProjectAsync(request.Token, left, right, request.Mode == ArchiveEntryOpenMode.Auto && !container && !image)) return;
+            parent.ArchiveChildReadyForAdoption?.Invoke(candidate);
+            request.Token.ThrowIfCancellationRequested();
+            if (!Current()) return;
+            if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
+            AttachProjectSession(candidate); _tabs.SelectedItem = _sessions[^1]; candidate = null;
+        }
+        finally { candidate?.Dispose(); if (left is not null) Array.Clear(left); if (right is not null) Array.Clear(right); }
+    }
+}
+
+public sealed partial class ComparisonPane
+{
+    private string?[][]? _archivePasswords;
+    private string? _lastArchiveComparison;
+    internal Action? ArchiveChildReadStarting { get; set; }
+    internal Action<ComparisonPane>? ArchiveChildReadyForAdoption { get; set; }
+    internal Action? ArchiveSourceReadStarting { get; set; }
+    internal Action? ArchiveSourceReadyForAdoption { get; set; }
+    internal Action<ArchiveSourceRetryDialog>? ArchiveSourceRetryShown { get; set; }
+    internal bool IsArchiveChildCurrent(ArchivePanel panel, ArchiveOpenRequest request)
+        => !_disposed && ReferenceEquals(_specialTab.Content, panel) && CompareButton.IsEnabled && panel.IsCurrent(request);
+    internal bool IsDisposed => _disposed;
+
+    private void EnsureArchiveOutputWritable(string output)
+    {
+        var window = _owner as MainWindow;
+        var projects = window?.SessionPanes.Select(pane => pane.CaptureProject()) ?? [CaptureProject()];
+        ProjectInputs.EnsureOutput(output, projects, window?.WorkspaceSourcePath);
+        EnsureProjectOutputWritable(output);
+    }
+
+    private void BindArchivePanel(ArchivePanel panel)
+    {
+        panel.SetWorkingDocuments(_workingTexts);
+        panel.OpenEntryRequested = (source, request) => _owner is MainWindow window
+            ? window.OpenArchiveChildAsync(this, source, request)
+            : throw new InvalidOperationException("内包比較を開くウィンドウがありません。");
+    }
+
+    private static string ArchiveComparisonIdentity(ComparisonProject project)
+    {
+        // 区切り文字を含む格納名も曖昧にせず、captionを物理入力として判定しない。
+        var result = new System.Text.StringBuilder();
+        void Part(string? value) { result.Append(value?.Length ?? -1).Append(':').Append(value); }
+        Part(project.Mode);
+        foreach (var side in Enumerable.Range(0, 3))
+        {
+            var input = ProjectInputs.Archive(project, side);
+            Part(ProjectInputs.PathFor(project, side)); Part(input?.RootSha256); Part(input?.LeafEntry);
+            Part(input?.InheritedReadOnly?.ToString());
+            result.Append(input?.EntryChain.Length ?? -1).Append(':');
+            if (input is not null) foreach (var hop in input.EntryChain) Part(hop);
+            if (input is not null) foreach (var choice in ArchivePayloadSettings.NormalizedChoices(input.ContainerNameCodePages, input.ContainerGZipPayloadKinds, input.EntryChain.Length + 1, compressionPayloadKinds: input.ContainerCompressionPayloadKinds)) Part(choice);
+            result.Append(input?.MissingEntryChain?.Length ?? -1).Append(':');
+            if (input?.MissingEntryChain is { } missing) foreach (var hop in missing) Part(hop);
+        }
+        return result.ToString();
+    }
+
+    private void ClearArchivePasswords()
+    {
+        if (_archivePasswords is not null) foreach (var side in _archivePasswords) Array.Clear(side);
+        _archivePasswords = null;
+    }
+
+    private void ConfigureArchiveInputControls()
+    {
+        var hasArchives = ProjectInputs.HasArchives(_projectMetadata);
+        _mode.IsEnabled = !hasArchives || !ProjectInputs.HasBase(_projectMetadata)
+            && Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(_projectMetadata, side)).OfType<ArchiveProjectInput>()
+                .All(input => input.LeafEntry is not null || input.MissingEntryChain is not null);
+        foreach (var (box, input) in new[] { (LeftPath, _projectMetadata.LeftArchiveInput), (BasePath, _projectMetadata.BaseArchiveInput), (RightPath, _projectMetadata.RightArchiveInput) })
+        {
+            var fixedInput = input is not null || ReferenceEquals(box, BasePath) && hasArchives && _projectMetadata.Mode == "Archive";
+            box.IsReadOnly = fixedInput;
+            if (box.Parent is Panel row) foreach (var button in row.Children.OfType<Button>()) button.IsEnabled = !fixedInput;
+            if (input is not null) ToolTip.SetTip(box, input.RootPath + "\n" + string.Join(" / ", input.EntryChain.Concat(input.MissingEntryChain ?? (input.LeafEntry is null ? [] : new[] { input.LeafEntry }))));
+            else ToolTip.SetTip(box, null);
+        }
+    }
+
+    internal async Task<bool> CompareArchiveProjectAsync(CancellationToken callerToken = default,
+        IReadOnlyList<string?>? leftPasswords = null, IReadOnlyList<string?>? rightPasswords = null, bool autoLeaf = false, IReadOnlyList<string?>? middlePasswords = null)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        var project = CaptureProject();
+        if (!ProjectInputs.HasArchives(project)) throw new InvalidOperationException("内包入力を指定してください。");
+        if (project.Mode is not ("Text" or "Binary" or "Image" or "Archive") || project.Mode is "Archive" or "Image" && ProjectInputs.HasBase(project))
+            throw new InvalidDataException("内包入力の比較形式または祖先指定が不正です。");
+        ArchiveImageInputValidation.Validate(project);
+        var options = ProjectReport.Options(project);
+        ProjectInputs.EnsureWorkingFormat(project);
+        var requestedIdentity = ArchiveComparisonIdentity(project);
+        var workingGeneration = _workingTexts.Generation;
+        var initialText = (LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, ResultEditor.Text);
+        var initialMerge = (_resultHost, _resultHost?.Session.Current.Version);
+        var initialBinary = _specialTab.Content as SpecializedViews.BinaryPanel;
+        var initialBinaryVersion = initialBinary?.StateStamp;
+        var initialImage = _specialTab.Content as SpecializedViews.ImagePanel;
+        var initialImageSettings = initialImage?.CaptureSettings();
+        InvalidateTextSave();
+        _operation?.Cancel(); _operation?.Dispose();
+        (_specialTab.Content as ArchivePanel)?.CancelOperation();
+        using var operation = CancellationTokenSource.CreateLinkedTokenSource(callerToken);
+        _operation = operation; var token = operation.Token;
+        var candidateTextRole = _textRole.SelectedIndex;
+        var inheritedIndependentStamp = IndependentText ? TextAdoptionStamp() : null;
+        CompareButton.IsEnabled = false; _status.Text = "内包項目を比較しています…";
+        string?[][]? passwords = null;
+        Control? candidate = null;
+        try
+        {
+            passwords = [[], [], []];
+            foreach (var side in Enumerable.Range(0, 3))
+            {
+                var count = (ProjectInputs.Archive(project, side)?.EntryChain.Length ?? 0) + 1;
+                var provided = side == 0 ? leftPasswords : side == 2 ? rightPasswords : middlePasswords;
+                var cached = _lastArchiveComparison == requestedIdentity ? _archivePasswords?[side] : null;
+                var copied = (provided ?? (IReadOnlyList<string?>?)cached)?.ToArray()
+                    ?? (ProjectInputs.Archive(project, side) is { } input ? (_owner as MainWindow)?.ArchiveLifetime.Find(input) : null) ?? new string?[count];
+                if (copied.Length != count || copied.Any(value => value?.Length > 4096))
+                { Array.Clear(copied); throw new ArgumentException("内包入力のパスワード階層が不正です。"); }
+                passwords[side] = copied;
+            }
+            TextDocument? left = null, right = null, ancestor = null;
+            DiffResult? diff = null;
+            while (true)
+            {
+                ArchiveSourceReadStarting?.Invoke(); token.ThrowIfCancellationRequested();
+                try
+                {
+                    if (project.Mode == "Archive")
+                    {
+                        foreach (var side in new[] { 0, 2 })
+                            if (ProjectInputs.Archive(project, side) is { WorkingDocuments: not null } savedInput)
+                                await ValidateWorkingRoutesAsync(savedInput, passwords[side], side);
+                        ArchiveSource Source(int side) => ProjectInputs.Archive(project, side)?.ToSource()
+                            ?? new(Path.GetFullPath(ProjectInputs.PathFor(project, side)));
+                        candidate = await ArchivePanel.CreateForSourcesAsync(Source(0), Source(2), token, EnsureArchiveOutputWritable,
+                            passwords[0][..^1], passwords[2][..^1], passwords[0][^1], passwords[2][^1],
+                            project.LeftArchiveInput?.MissingEntryChain, project.RightArchiveInput?.MissingEntryChain);
+                        BindArchivePanel((ArchivePanel)candidate);
+                    }
+                    else if (project.Mode == "Image")
+                    {
+                        var a = await ProjectInputReader.ReadBytesAsync(project, 0, ImageComparisonEngine.MaximumFileBytes, token, passwords[0]);
+                        var b = await ProjectInputReader.ReadBytesAsync(project, 2, ImageComparisonEngine.MaximumFileBytes, token, passwords[2]);
+                        var leftSnapshot = await ImageComparisonEngine.OpenBytesAsync(a, token);
+                        var rightSnapshot = await ImageComparisonEngine.OpenBytesAsync(b, token);
+                        candidate = await SpecializedViews.ImagesFromSnapshotsAsync(leftSnapshot, rightSnapshot, null,
+                            [ProjectInputs.PathFor(project, 0), ProjectInputs.PathFor(project, 2)], project.ImageSettings,
+                            (_owner as MainWindow)?.ImageOptions, token, fixedReadOnly: true);
+                    }
+                    else if (project.Mode == "Binary" || autoLeaf)
+                    {
+                        var maximum = autoLeaf ? 64 * 1024 * 1024 : 16 * 1024 * 1024;
+                        var a = await ProjectInputReader.ReadBytesAsync(project, 0, maximum, token, passwords[0]);
+                        var b = await ProjectInputReader.ReadBytesAsync(project, 2, maximum, token, passwords[2]);
+                        var c = ProjectInputs.HasBase(project) ? await ProjectInputReader.ReadBytesAsync(project, 1, maximum, token, passwords[1]) : null;
+                        if (autoLeaf)
+                        {
+                            try
+                            {
+                                left = await ProjectInputReader.ReadTextAsync(project, 0, token, passwords: passwords[0]);
+                                right = await ProjectInputReader.ReadTextAsync(project, 2, token, passwords: passwords[2]);
+                            }
+                            catch (Exception exception) when (exception is InvalidDataException or System.Text.DecoderFallbackException)
+                            { left = right = null; project.Mode = "Binary"; }
+                        }
+                        if (project.Mode == "Binary") candidate = SpecializedViews.BinarySnapshot(a, b,
+                            ProjectInputs.Caption(project, 0), ProjectInputs.Caption(project, 2),
+                            project.LeftArchiveInput is { } leftInput ? leftInput.InheritedReadOnly != false : project.LeftReadOnly,
+                            project.RightArchiveInput is { } rightInput ? rightInput.InheritedReadOnly != false : project.RightReadOnly, EnsureArchiveOutputWritable,
+                            ProjectInputs.PathFor(project, 0), ProjectInputs.PathFor(project, 2),
+                            false, false, c, project.BaseArchiveInput is { } middleInput ? middleInput.InheritedReadOnly != false : project.BaseReadOnly);
+                    }
+                    else if (project.Mode == "Text")
+                    {
+                        left = await ProjectInputReader.ReadTextAsync(project, 0, token, passwords: passwords[0]);
+                        right = await ProjectInputReader.ReadTextAsync(project, 2, token, passwords: passwords[2]);
+                    }
+                    else throw new InvalidDataException("内包入力はText、Binary、Image、Archive形式で開いてください。");
+                    if (project.Mode == "Text")
+                    {
+                        if (ProjectInputs.HasBase(project)) ancestor = await ProjectInputReader.ReadTextAsync(project, 1, token, passwords: passwords[1]);
+                        diff = await Task.Run(() => TextDiffer.CompareWithSourcePaths(left!.Text, right!.Text, TextComparisonSources.ForProject(project, left, ancestor, right), options, token), token);
+                    }
+                    break;
+                }
+                catch (OperationCanceledException) { throw; }
+                catch (Exception exception) when (exception is not OutOfMemoryException)
+                {
+                    token.ThrowIfCancellationRequested(); if (_disposed || !ReferenceEquals(_operation, operation)) return false;
+                    var dialog = new ArchiveSourceRetryDialog(project, passwords, exception is ArchiveNameDecodingException);
+                    string?[][]? retry = null;
+                    try
+                    {
+                        var retryTask = dialog.ShowDialog<string?[][]?>(_owner);
+                        using var registration = token.Register(() => Avalonia.Threading.Dispatcher.UIThread.Post(dialog.Close));
+                        ArchiveSourceRetryShown?.Invoke(dialog);
+                        retry = await retryTask;
+                        token.ThrowIfCancellationRequested(); if (_disposed || !ReferenceEquals(_operation, operation)) return false;
+                        if (retry is null) throw new OperationCanceledException("内包比較を中止しました。", token);
+                        dialog.ApplyNameChoices(project);
+                        foreach (var side in passwords) Array.Clear(side); passwords = retry; retry = null;
+                    }
+                    finally { if (retry is not null) foreach (var side in retry) Array.Clear(side); dialog.ClearPasswords(); dialog.Close(); }
+                }
+            }
+            ArchiveSourceReadyForAdoption?.Invoke(); token.ThrowIfCancellationRequested();
+            if (_disposed || !ReferenceEquals(_operation, operation) || ArchiveComparisonIdentity(CaptureProject()) != requestedIdentity
+                || !options.LineTransformRules.SequenceEqual(_projectMetadata.LineTransformRules)
+                || workingGeneration != _workingTexts.Generation || initialText != (LeftEditor.Text, MiddleEditor.Text, RightEditor.Text, ResultEditor.Text)
+                || initialMerge != (_resultHost, _resultHost?.Session.Current.Version) || MergeHasPendingComposition
+                || initialBinary?.StateStamp != initialBinaryVersion || candidateTextRole != _textRole.SelectedIndex
+                || initialImage is not null && initialImage.CaptureSettings() != initialImageSettings
+                || inheritedIndependentStamp is not null && !Equals(inheritedIndependentStamp, TextAdoptionStamp()))
+            {
+                if (!_disposed && ReferenceEquals(_operation, operation))
+                    _status.Text = UiText.Say("比較中に入力・役割または三側の状態が変更されました。前の比較と本文を保持しました。");
+                return false;
+            }
+            AdoptLegacyTextRole();
+            _projectMetadata.LeftArchiveInput = project.LeftArchiveInput?.Copy();
+            _projectMetadata.BaseArchiveInput = project.BaseArchiveInput?.Copy();
+            _projectMetadata.RightArchiveInput = project.RightArchiveInput?.Copy();
+            ResetMergeSession();
+            if (candidate is not null)
+            {
+                SetSpecialView(candidate);
+                if (candidate is SpecializedViews.ImagePanel adoptedImage) adoptedImage.EnableApplicationDefaultsPersistence();
+                candidate = null;
+                _views.SelectedItem = _specialTab; CurrentDiff = null; _textSaveAllowed = false;
+                _status.Text = project.Mode switch
+                {
+                    "Archive" => "内包アーカイブを開きました。",
+                    "Image" => "内包画像を読取り専用で比較しました。",
+                    _ => "内包バイナリを比較しました。"
+                };
+            }
+            else
+            {
+                SpecializedViews.Release(_specialTab.Content as Control); _specialTab.Content = null;
+                _leftDocument = left; _rightDocument = right; _baseDocument = ancestor; _baseText = ancestor?.Text;
+                LeftEditor.Text = _savedLeft = left!.Text; RightEditor.Text = _savedRight = right!.Text;
+                _ancestorEditor.Text = _baseText ?? ""; UpdateEditorLayout(ancestor is not null); _textSaveAllowed = true;
+                _lastArchiveComparison = ArchiveComparisonIdentity(project);
+                ApplyDiff(diff!); _status.Text += " · 実在する内包Textは作業版へ保存し、原本アーカイブは保持します。";
+                if (ProjectInputs.HasMissing(project)) _status.Text += " · 不在側は未作成の文書です。編集できる側は外部ファイルへ保存してください。";
+            }
+            _projectMetadata.Mode = project.Mode; _mode.SelectedIndex = project.Mode switch { "Text" => 1, "Binary" => 3, "Image" => 4, _ => 7 };
+            if (project.Mode == "Image")
+            {
+                _projectMetadata.ImageSettings = project.ImageSettings with { };
+                _lastPackageComparison = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", 4, _provider.SelectedItem as string);
+                _pendingRestoredImageSettings = false;
+            }
+            ConfigureArchiveInputControls();
+            LeftEditor.IsReadOnly = project.LeftReadOnly || project.LeftArchiveInput is not null || !_textSaveAllowed;
+            RightEditor.IsReadOnly = project.RightReadOnly || project.RightArchiveInput is not null || !_textSaveAllowed;
+            _savedLeft = LeftEditor.Text ?? ""; _savedRight = RightEditor.Text ?? "";
+            ClearArchivePasswords(); _archivePasswords = passwords.Select(side => side.ToArray()).ToArray();
+            if (_owner is MainWindow window)
+                foreach (var side in Enumerable.Range(0, 3))
+                    if (ProjectInputs.Archive(project, side) is { } input) window.ArchiveLifetime.Remember(input, passwords[side]);
+            _lastArchiveComparison = ArchiveComparisonIdentity(CaptureProject());
+            _workingDocumentStale = false;
+            for (var side = 0; side < 3; side++)
+                _workingTextRevisions[side] = ProjectInputs.Archive(project, side) is { } input ? _workingTexts.Revision(input) : 0;
+            RefreshTextReadOnly(); UpdateEditorLayout(ancestor is not null);
+            RefreshArchiveDraftCaptions();
+            if (_specialTab.Content is SpecializedViews.BinaryPanel binary) BindBinaryPanel(binary);
+            return true;
+
+            async Task ValidateWorkingRoutesAsync(ArchiveProjectInput input, string?[] parentPasswords, int side)
+            {
+                foreach (var snapshot in input.WorkingDocuments ?? [])
+                {
+                    var route = input.Copy() with { EntryChain = snapshot.EntryChain.ToArray(), ContainerNameCodePages = snapshot.ContainerNameCodePages?.ToArray(), ContainerGZipPayloadKinds = snapshot.ContainerGZipPayloadKinds?.ToArray(), ContainerCompressionPayloadKinds = snapshot.ContainerCompressionPayloadKinds?.ToArray(), LeafEntry = snapshot.LeafEntry, WorkingDocuments = null };
+                    var values = (_owner as MainWindow)?.ArchiveLifetime.Find(route) ?? new string?[route.EntryChain.Length + 1];
+                    // 親と同一routeのprefixだけ継承し、別枝の同じ深さへpasswordを流用しない。
+                    if (route.EntryChain.Take(input.EntryChain.Length).SequenceEqual(input.EntryChain))
+                        for (var layer = 0; layer < parentPasswords.Length; layer++) values[layer] ??= parentPasswords[layer];
+                    try
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                await Task.Run(() => ProjectInputReader.ValidateWorkingSource(input, snapshot, values, token), token);
+                                if (_owner is MainWindow owner) owner.ArchiveLifetime.Remember(route, values);
+                                // 成功した完全routeの同一親prefixだけを戻す。
+                                for (var layer = 0; layer < parentPasswords.Length; layer++) parentPasswords[layer] = values[layer];
+                                break;
+                            }
+                            catch (OperationCanceledException) { throw; }
+                            catch (Exception exception) when (exception is not OutOfMemoryException)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                if (_disposed || !ReferenceEquals(_operation, operation)) throw new OperationCanceledException(token);
+                                var request = new ComparisonProject { Mode = "Text", LeftReadOnly = true, BaseReadOnly = true, RightReadOnly = true };
+                                if (side == 0) request.LeftArchiveInput = route;
+                                else if (side == 1) request.BaseArchiveInput = route;
+                                else request.RightArchiveInput = route;
+                                string?[][] fields = [new string?[1], new string?[1], new string?[1]]; fields[side] = values.ToArray();
+                                var dialog = new ArchiveSourceRetryDialog(request, fields, allowPayloadRetry: false); string?[][]? retry = null;
+                                try
+                                {
+                                    var task = dialog.ShowDialog<string?[][]?>(_owner);
+                                    using var registration = token.Register(() => Avalonia.Threading.Dispatcher.UIThread.Post(dialog.Close));
+                                    ArchiveSourceRetryShown?.Invoke(dialog); retry = await task;
+                                    token.ThrowIfCancellationRequested();
+                                    if (_disposed || !ReferenceEquals(_operation, operation)) throw new OperationCanceledException(token);
+                                    if (retry is null) throw new OperationCanceledException("内包作業版の検証を中止しました。", token);
+                                    Array.Clear(values); values = retry[side].ToArray();
+                                }
+                                finally
+                                {
+                                    foreach (var field in fields) Array.Clear(field);
+                                    if (retry is not null) foreach (var field in retry) Array.Clear(field);
+                                    dialog.ClearPasswords(); dialog.Close();
+                                }
+                            }
+                        }
+                    }
+                    finally { Array.Clear(values); }
+                }
+            }
+        }
+        catch (OperationCanceledException) { if (!_disposed && ReferenceEquals(_operation, operation)) _status.Text = "内包比較を中止しました。"; throw; }
+        finally
+        {
+            SpecializedViews.Release(candidate);
+            if (passwords is not null) foreach (var side in passwords) Array.Clear(side);
+            if (ReferenceEquals(_operation, operation)) { _operation = null; if (!_disposed) CompareButton.IsEnabled = true; }
+        }
+    }
+}

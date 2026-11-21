@@ -1,0 +1,24 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "license": "GPL-2.0",
+  "sources": [
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+      "size": 144678,
+      "gitBlob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpression.cpp",
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e",
+      "size": 17059,
+      "gitBlob": "538df75d94f20e191f0dea9847d9b1f562ec7b8f"
+    },
+    {
+      "path": "Src/FilterEngine/FilterError.h",
+      "sha256": "160a03bf7f2a0ed0a4db66a3d5211a8dccd7445e7eb0d2b7fd640c3fa914fa2b",
+      "size": 1391,
+      "gitBlob": "81e3b35ef89c1a3accd6d49f3379e62beb49ab8b"
+    }
+  ]
+}

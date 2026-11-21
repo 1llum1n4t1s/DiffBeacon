@@ -1,0 +1,25 @@
+{
+  "mtimeNanoseconds": "1700000000123456700",
+  "files": [
+    {
+      "name": "empty.bin",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "unicode-日本語.bin",
+      "size": 267,
+      "sha256": "5fed6b5445554f5ff4a66bf29b9b26b938a9a6a54646ff7f56f04265ae764087"
+    },
+    {
+      "name": "boundary.bin",
+      "size": 65545,
+      "sha256": "8f86808ef47fcf338b5854ae9c4548bda82ee3adfdddc92a97a312d87baea296"
+    },
+    {
+      "name": "cache.bin",
+      "size": 3,
+      "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+    }
+  ]
+}

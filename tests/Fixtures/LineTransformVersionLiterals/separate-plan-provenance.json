@@ -1,0 +1,26 @@
+{
+  "engineering": {
+    "sourcePlanSha256": "d885d3a143edc1bbd87d4cbc4d8bbddd443090032c33caaf9cb60bfa5b15771b",
+    "sourcePlanOrigin": "App/E2E worker Roslyn ValueText extraction from separate C# engineering contracts",
+    "sourcePlanExternalPathForensicOnly": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\version-public-draft-1a2922d8cde44ae186b544f40da15b85\\engineering-plan.json",
+    "retainedRelativePath": "engineering-case-plan.json",
+    "nativeQualified": false,
+    "productGeneratedGolden": false,
+    "budgetCancellation": "separate engineering.ndjson row, not counted as31 contract cases"
+  },
+  "probes": {
+    "sourcePlanSha256": "e67558d295fe47dd2044e1dab6fea817b81a23946bf292a4800915776fba2c6b",
+    "sourcePlanOrigin": "fixed source token/quote spans and explicit valid-Unicode ASCII partial-conversion product contract; expectCompile only",
+    "retainedRelativePath": "probes-case-plan.json",
+    "nativeQualified": false,
+    "productGeneratedGolden": false,
+    "contractCorrection": {
+      "id": "nonASCII-leading-digit",
+      "beforeExpectedCompile": false,
+      "afterExpectedCompile": true,
+      "reason": "Quote scanner accepts valid UTF16; ASCII four-component conversion failure leaves components zero; locale ambiguity does not justify product compile rejection",
+      "nativeGoldenChanged": false,
+      "sourceEvidence": "LineTransformExpression.ReadQuotedLiteral/ReadVersionLiteral plus original quoted constructor partial conversion; Native locale unmeasured"
+    }
+  }
+}

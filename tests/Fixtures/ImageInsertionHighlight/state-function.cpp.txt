@@ -1,0 +1,34 @@
+// GPL-2.0-or-later。固定公開headerとDLLでaligned表示と元座標を採取する。
+static unsigned Big(const unsigned char* p) { return (unsigned(p[0])<<24)|(unsigned(p[1])<<16)|(unsigned(p[2])<<8)|p[3]; }
+static void State(IImgMergeWindow* api, int index, int result) {
+    std::cout << "{\"stateIndex\":" << index << ",\"actionResult\":" << result
+        << ",\"currentDiffIndex\":" << api->GetCurrentDiffIndex() << ",\"highlightAlpha\":" << api->GetDiffColorAlpha()
+        << ",\"mode\":" << api->GetInsertionDeletionDetectionMode()
+        << ",\"differenceCount\":" << api->GetDiffCount() << ",\"conflictCount\":" << api->GetConflictCount()
+        << ",\"undoable\":" << (api->IsUndoable()?"true":"false") << ",\"redoable\":" << (api->IsRedoable()?"true":"false") << ",\"panes\":[";
+    for (int pane=0; pane<api->GetPaneCount(); ++pane) {
+        if(pane) std::cout << ',';
+        const auto file=L"state"+std::to_wstring(index)+L"-pane"+std::to_wstring(pane)+L"-aligned.png";
+        if(!api->SaveDiffImageAs(pane,file.c_str())) throw std::runtime_error("SaveDiffImageAs failed");
+        std::ifstream png(file.c_str(),std::ios::binary); unsigned char header[24]{}; png.read(reinterpret_cast<char*>(header),24);
+        const auto width=Big(header+16),height=Big(header+20);
+        if(!png || width==0 || height==0 || width*static_cast<unsigned long long>(height)>4096) throw std::runtime_error("unexpected original canvas");
+        const POINT offset=api->GetImageOffset(pane);
+        const auto rawfile=L"state"+std::to_wstring(index)+L"-pane"+std::to_wstring(pane)+L".bgra";
+        std::ofstream raw(rawfile.c_str(),std::ios::binary);
+        for(int ry=0;ry<int(height);++ry) for(int rx=0;rx<int(width);++rx) { const RGBQUAD pixel=api->GetPixelColor(pane,rx,ry); raw.write(reinterpret_cast<const char*>(&pixel),4); }
+        raw.close(); if(!raw) throw std::runtime_error("raw output failed");
+        std::cout << "{\"width\":" << api->GetImageWidth(pane) << ",\"height\":" << api->GetImageHeight(pane)
+            << ",\"canvasWidth\":" << width << ",\"canvasHeight\":" << height << ",\"offsetX\":" << offset.x << ",\"offsetY\":" << offset.y
+            << ",\"angle\":" << api->GetRotation(pane) << ",\"flipx\":" << (api->GetHorizontalFlip(pane)?"true":"false") << ",\"flipy\":" << (api->GetVerticalFlip(pane)?"true":"false")
+            << ",\"modified\":" << (api->IsModified(pane)?"true":"false") << ",\"savepoint\":" << api->GetSavePoint(pane) << ",\"mapping\":[";
+        bool first=true;
+        for(int y=-1;y<=int(height);++y) for(int x=-1;x<=int(width);++x) {
+            if(!first) std::cout << ','; first=false; POINT real{}; const POINT requested{x,y};
+            const bool valid=api->ConvertToRealPos(pane,requested,real);
+            std::cout << '[' << x << ',' << y << ',' << (valid?"true":"false") << ',' << real.x << ',' << real.y << ']';
+        }
+        std::cout << "]}";
+    }
+    std::cout << "]}" << std::endl;
+}

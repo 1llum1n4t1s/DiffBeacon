@@ -1,0 +1,89 @@
+{
+  "schema": "aggregate-separate-public-contract-probes-v1",
+  "executed": false,
+  "mainCaseCount": 141,
+  "probes": [
+    {
+      "id": "average-arity-0",
+      "expression": "Average()",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    },
+    {
+      "id": "average-arity-3",
+      "expression": "Average(ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\"))",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    },
+    {
+      "id": "sum-arity-0",
+      "expression": "Sum()",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    },
+    {
+      "id": "sum-arity-3",
+      "expression": "Sum(ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\"))",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    },
+    {
+      "id": "maximum-arity-0",
+      "expression": "Maximum()",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    },
+    {
+      "id": "maximum-arity-3",
+      "expression": "Maximum(ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\"))",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    },
+    {
+      "id": "minimum-arity-0",
+      "expression": "Minimum()",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    },
+    {
+      "id": "minimum-arity-3",
+      "expression": "Minimum(ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\"))",
+      "classification": "separate-public-contract",
+      "expected": "parser argument-count rejection after candidate integration",
+      "evidence": "native source registration arity 1..2; not native constructor result/error equivalence",
+      "executed": false,
+      "producerCompiled": false
+    }
+  ],
+  "engineeringPlans": [
+    {
+      "id": "nonfinite-or-outside-int64-conversion",
+      "executed": false,
+      "expression": null,
+      "classification": "separate-engineering-not-native-golden",
+      "policy": "reject integer conversion unless finite and in [-2^63,2^63)",
+      "nativeBoundary": "undefined/uncollected native conversion outside range; no compatibility expectation"
+    }
+  ]
+}

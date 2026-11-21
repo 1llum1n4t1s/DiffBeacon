@@ -1,0 +1,607 @@
+{
+  "cases": 44,
+  "sources": 4,
+  "proofs": [
+    {
+      "name": "payload.tar.gz.bz2",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9",
+          "decodedBytes": 237
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.bz2.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.Z.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D",
+          "decodedBytes": 23043
+        },
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.gz.Z",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9",
+          "decodedBytes": 237
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.gz.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9",
+          "decodedBytes": 237
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.bz2.bz2",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.Z.Z",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D",
+          "decodedBytes": 23043
+        },
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.Z.bz2.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "467448D524C7255ECCE65198F46BF414952059DEF6CEFB6BDE9C18FAD0667D1B",
+          "decodedBytes": 331
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D",
+          "decodedBytes": 23043
+        },
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tar.gz.gz.gz.gz.gz.gz.gz.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "4A61A4244D60E4009B212A06714A833056C9B9B3474A03D35E684AFB279122E4",
+          "decodedBytes": 354
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "E686EC45A4BCE80A824C130155674895EAD993F3CBAA7BE0E7584C2381F95B19",
+          "decodedBytes": 331
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "0054064297CB8080063CA908B030F38AC65B4F7873B3CF48A1110929CD53E6F4",
+          "decodedBytes": 308
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "249328D4D2A2767128241F1E165625208177DB5F05519EA1B3E6B3AD16BE11EF",
+          "decodedBytes": 294
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "63A0743DD72A748F08A9C65DDD051A96B84963B124A88D2F935A949FA0CEEA6A",
+          "decodedBytes": 271
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "FF033D4AF287ACCBC60962BD7EF3830D8E73209347E6C84C21C656CEF9995A96",
+          "decodedBytes": 248
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9",
+          "decodedBytes": 237
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tgz.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9",
+          "decodedBytes": 237
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tgz.bz2",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9",
+          "decodedBytes": 237
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tgz.Z",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "356CB4272603F8CD5B45E0FA558AB7DE87A734844F322D0D71AFBCF0ADCBCFE9",
+          "decodedBytes": 237
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tbz.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tbz.bz2",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tbz.Z",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tbz2.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tbz2.bz2",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.tbz2.Z",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "18D497A5905B0BF7E67686705E034CE00D3F49AFBE1D6CEAF88D64D19D345E93",
+          "decodedBytes": 257
+        },
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.taz.gz",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D",
+          "decodedBytes": 23043
+        },
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.taz.bz2",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D",
+          "decodedBytes": 23043
+        },
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "payload.taz.Z",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "790E51F22C75EBA2ACC2EE85B25D43782651315618EF23A4E5DAADA891A5439D",
+          "decodedBytes": 23043
+        },
+        {
+          "wrapper": ".Z",
+          "decodedSha256": "73C8B483CFD3C0DAAC791C931FA5DC871ADF7B8BEA2FF6D6251A9DC22451BF9E",
+          "decodedBytes": 20480
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 3
+    },
+    {
+      "name": "empty.tar.gz.bz2",
+      "inputShaVerified": true,
+      "layers": [
+        {
+          "wrapper": ".bz2",
+          "decodedSha256": "272ADECCAFE73E7009D51F2EC2BE9871DB5E0EB14239F483EA429BE26C3C6402",
+          "decodedBytes": 45
+        },
+        {
+          "wrapper": ".gz",
+          "decodedSha256": "84FF92691F909A05B224E1C56ABB4864F01B4F8E3C854E4BB4C7BAF1D3F6D652",
+          "decodedBytes": 10240
+        }
+      ],
+      "allTarBytesMatch": true,
+      "allEntryBytesAndMetadataMatch": true,
+      "entries": 0
+    },
+    {
+      "name": "bad-depth.tar.gz.gz.gz.gz.gz.gz.gz.gz.gz",
+      "inputShaVerified": true,
+      "productMustReject": "shared wrapper depth",
+      "independentFailure": "ValueError"
+    },
+    {
+      "name": "bad-inner.tar.gz.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner .gz integrity",
+      "independentFailure": "BadGzipFile"
+    },
+    {
+      "name": "bad-outer.tar.gz.gz",
+      "inputShaVerified": true,
+      "productMustReject": "outer .gz integrity",
+      "independentFailure": "BadGzipFile"
+    },
+    {
+      "name": "bad-magic.tar.gz.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner wrapper format mismatch",
+      "independentFailure": "BadGzipFile"
+    },
+    {
+      "name": "bad-inner-short.tar.gz.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner .gz EOF",
+      "independentFailure": "EOFError"
+    },
+    {
+      "name": "bad-inner-trailing.tar.gz.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner .gz trailing content",
+      "independentFailure": "BadGzipFile"
+    },
+    {
+      "name": "bad-outer-short.tar.gz.gz",
+      "inputShaVerified": true,
+      "productMustReject": "outer .gz EOF",
+      "independentFailure": "EOFError"
+    },
+    {
+      "name": "bad-inner.tar.bz2.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner .bz2 integrity",
+      "independentFailure": "OSError"
+    },
+    {
+      "name": "bad-outer.tar.gz.bz2",
+      "inputShaVerified": true,
+      "productMustReject": "outer .bz2 integrity",
+      "independentFailure": "OSError"
+    },
+    {
+      "name": "bad-magic.tar.bz2.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner wrapper format mismatch",
+      "independentFailure": "ValueError"
+    },
+    {
+      "name": "bad-inner-short.tar.bz2.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner .bz2 EOF",
+      "independentFailure": "EOFError"
+    },
+    {
+      "name": "bad-inner-trailing.tar.bz2.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner .bz2 trailing content",
+      "independentFailure": "ValueError"
+    },
+    {
+      "name": "bad-outer-short.tar.gz.bz2",
+      "inputShaVerified": true,
+      "productMustReject": "outer .bz2 EOF",
+      "independentFailure": "EOFError"
+    },
+    {
+      "name": "bad-inner.tar.Z.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner .Z integrity",
+      "independentFailure": "ValueError"
+    },
+    {
+      "name": "bad-outer.tar.gz.Z",
+      "inputShaVerified": true,
+      "productMustReject": "outer .Z integrity",
+      "independentFailure": "ValueError"
+    },
+    {
+      "name": "bad-magic.tar.Z.gz",
+      "inputShaVerified": true,
+      "productMustReject": "inner wrapper format mismatch",
+      "independentFailure": "ValueError"
+    },
+    {
+      "name": "bad-middle.tar.gz.bz2.gz",
+      "inputShaVerified": true,
+      "productMustReject": "middle bzip2 integrity",
+      "independentFailure": "OSError"
+    },
+    {
+      "name": "bad-checksum.tar.gz.bz2",
+      "inputShaVerified": true,
+      "productMustReject": "TAR header checksum",
+      "independentFailure": "ReadError"
+    },
+    {
+      "name": "bad-footer.tar.gz.bz2",
+      "inputShaVerified": true,
+      "productMustReject": "TAR truncated body/footer",
+      "independentFailure": "ReadError"
+    },
+    {
+      "name": "bad-trailing.tar.gz.bz2",
+      "inputShaVerified": true,
+      "productMustReject": "TAR trailing content",
+      "independentFailure": "ValueError"
+    },
+    {
+      "name": "bad-empty.tar.gz.bz2",
+      "inputShaVerified": true,
+      "productMustReject": "empty wrapper terminal",
+      "independentFailure": "ReadError"
+    },
+    {
+      "name": "bad-disguised.tar.gz.bz2",
+      "inputShaVerified": true,
+      "productMustReject": "ZIP masquerading as TAR",
+      "independentFailure": "ReadError"
+    },
+    {
+      "name": "source-payload.tar.gz.bz2.zip",
+      "allContainerEntryBytesMatch": true
+    },
+    {
+      "name": "source-payload.taz.gz.zip",
+      "allContainerEntryBytesMatch": true
+    },
+    {
+      "name": "source-bad-checksum.tar.gz.bz2.zip",
+      "allContainerEntryBytesMatch": true
+    },
+    {
+      "name": "source-payload.tar.gz.gz.gz.gz.gz.gz.gz.gz.zip",
+      "allContainerEntryBytesMatch": true
+    }
+  ]
+}

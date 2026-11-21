@@ -1,0 +1,26 @@
+{
+  "caseCount": 159,
+  "files": {
+    ".gitattributes": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+    "adapter.cpp": "4df2a97a24ce59a6db1eeb5318d4a489b5a30570245d6b4121ddd3bd942fc28b",
+    "capture-index.json": "1483abc8bdaa9baafa743d6dca524f85079378ac85c14cd2ca8b6232de9db6d7",
+    "cases.json": "7ba838a06343c663d7857cfc00a1b7e7fecda563f51fa948e239110a08b65ab5",
+    "failure-matrix.md": "b8f14224a74379ebe694e4d67416ac469a387905d5fbc35c0a03cbb50b7accda",
+    "golden.ndjson": "015f153b16c156444226763d7525f7187eed922772b995b593819556abd894f6",
+    "include-specs.json": "d424f75afd74cf1ddb46e5c6a5f57f0a97ea401f5c060a832f5988ffdb97d0d5",
+    "provenance.json": "aabd5ea43de30112618b5acf2b0a81c0500dc0223ead527cf8dd31cd731a1fb4",
+    "README.md": "20cb01de6536985d830a90d3dd57bbdfb046858559479824dded98ef53e30da6",
+    "reproduce.py": "8848e18f0927459bb30a255178ae94a6c49324d0e26bb92babb94412790868b5",
+    "verify.py": "edc6166fc837aa00ecbce6e45e96564d3e5084bdaf342bf059bf923aeb472895",
+    "original/COPYING": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900",
+    "original/FilterExpressionNodes.cpp": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+    "original/FilterExpressionNodes.h": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736",
+    "original/Externals/poco/LICENSE": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5",
+    "original/Externals/poco/Foundation/src/Ascii.cpp": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4",
+    "original/Externals/poco/Foundation/src/Timestamp.cpp": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19",
+    "original/Externals/poco/Foundation/include/Poco/Ascii.h": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1",
+    "original/Externals/poco/Foundation/include/Poco/String.h": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2",
+    "original/Externals/poco/Foundation/include/Poco/Timestamp.h": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1",
+    "original/Externals/poco/Foundation/include/Poco/Types.h": "a9aa7e44ea8ff34d8c97aba0fc8fb6719b788cec13314844ccd8e204c9192a20"
+  }
+}

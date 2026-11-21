@@ -1,0 +1,192 @@
+[
+  {
+    "id": "literal-empty-utf8-e",
+    "function": "ReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00e9"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "09580a",
+    "nullArgs": false
+  },
+  {
+    "id": "literal-empty-utf8-ae",
+    "function": "ReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u00e9"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "09580a",
+    "nullArgs": false
+  },
+  {
+    "id": "literal-empty-ascii-ab",
+    "function": "ReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "09580a",
+    "nullArgs": false
+  },
+  {
+    "id": "literal-nonempty-raw-c3",
+    "function": "ReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "raw",
+        "hex": "c3"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "6109580a",
+    "nullArgs": false
+  },
+  {
+    "id": "literal-inline-string-raw-c3",
+    "function": "ReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "raw",
+        "hex": "c3"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "a"
+              },
+              {
+                "type": "string",
+                "value": "X"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "fileUtf8Hex": null,
+    "nullArgs": false
+  },
+  {
+    "id": "regex-empty-utf8-e",
+    "function": "RegexReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00e9"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "09580a",
+    "nullArgs": false
+  },
+  {
+    "id": "regex-empty-utf8-ae",
+    "function": "RegexReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u00e9"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "09580a",
+    "nullArgs": false
+  },
+  {
+    "id": "regex-empty-ascii-ab",
+    "function": "RegexReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "ab"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "09580a",
+    "nullArgs": false
+  },
+  {
+    "id": "regex-nonempty-raw-c3",
+    "function": "RegexReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "raw",
+        "hex": "c3"
+      },
+      {
+        "type": "path"
+      }
+    ],
+    "fileUtf8Hex": "6109580a",
+    "nullArgs": false
+  },
+  {
+    "id": "regex-inline-string-raw-c3",
+    "function": "RegexReplaceWithList",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "raw",
+        "hex": "c3"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "a"
+              },
+              {
+                "type": "string",
+                "value": "X"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "fileUtf8Hex": null,
+    "nullArgs": false
+  }
+]

@@ -1,0 +1,8 @@
+# 固定SHAの原本は親Archivesのmanifest改行規則より近い位置で保護する。
+*.tar -text
+*.Z -text
+manifest.json -text !eol whitespace=cr-at-eol
+nonblock-provenance.json -text !eol whitespace=cr-at-eol
+nonblock-source-README -text -whitespace
+ncompress-UNLICENSE -text
+reference-source/* -text -whitespace

@@ -1,0 +1,9 @@
+{
+  "sha256": "956B69A5D76D6918CD6D3245B5DB5BFDEF902C82221E2539FFEA1B33996AE40B",
+  "purpose": "Next image-copy kernel research; not production/build dependency",
+  "gitBlob": "fa2f0e71f28a54167c0462545c617f90c133ca82",
+  "repository": "WinMerge/winimerge",
+  "bytes": 18610,
+  "path": "C:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\verification\\image-three-way\\next-reference\\ImgMergeBuffer.hpp",
+  "revision": "da639cdfaeca87aaad0eaceec509afa11ad61421"
+}

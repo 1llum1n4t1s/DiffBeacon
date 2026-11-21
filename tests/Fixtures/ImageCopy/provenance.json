@@ -1,0 +1,40 @@
+{
+  "sourceRevision": "da639cdfaeca87aaad0eaceec509afa11ad61421",
+  "sourceSha256": "956B69A5D76D6918CD6D3245B5DB5BFDEF902C82221E2539FFEA1B33996AE40B",
+  "comparisonSourceSha256": "7071EDFA31CCC138685CA7B9FD3D41EE5E84B942FB3D8028C7E3A31C76F93F28",
+  "goldenSha256": "A1645415624D84B3CB4A328148151A0FAE48B05412CF2E504589CD98C289D65D",
+  "inputSha256": "F5973F242207D870822B4682ECE8AD777F917D7EE96947C517EB74A9821A72FD",
+  "outputSha256": "2F425D01CAA17C4769EE75FD058AA2B4E55948E4BB394A81E87710C73E2C27BF",
+  "adapterSha256": "0923B15AB9457722717D05A41145AC37D1FEDC03EAECC5F91E1D9D14BE6CFA36",
+  "cases": 143,
+  "compiler": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+  "arguments": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+    "/nologo",
+    "/std:c++17",
+    "/EHsc",
+    "/Y-",
+    "/utf-8",
+    "/W3",
+    "/Od",
+    "/FeC:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\verification\\image-copy-reference\\image-copy-probe.exe",
+    "/FoC:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\verification\\image-copy-reference\\",
+    "/IC:\\Users\\IMT\\dev\\DiffBeacon\\artifacts\\verification\\image-copy-reference",
+    "C:\\Users\\IMT\\dev\\DiffBeacon\\tests\\Fixtures\\ImageCopy\\probe-adapter.cpp"
+  ],
+  "buildExit": 0,
+  "probeExit": 0,
+  "sourceUnchanged": true,
+  "license": "GPL-2.0-or-later",
+  "canonicalLicense": "../ImageRegions/LICENSE.txt",
+  "licenseSha256": "D3533C10B656BEC2782600B05B471ABE3AC916E228B27929CDA1F83C49D7E7A5",
+  "imageSourceSha256": "173CE00FE65187D34A6C7D2B10C0B45443EA6CFFBAA50FE1263BCE5840149609",
+  "freeImageMeasured": false,
+  "adapterContract": {
+    "pasteSubImage": "raw BGRA rectangle copy",
+    "save": "UndoRecords savepoint only; no encoder",
+    "offset": 0,
+    "insertionDeletion": "NONE",
+    "setSize": "new zero-filled BGRA"
+  }
+}

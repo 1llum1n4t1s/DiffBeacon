@@ -1,0 +1,12 @@
+Constructed payload.zip, constructed wrapper bytes and scripts:
+CC0 1.0 Universal. To the extent permitted by law, the authors waive all
+copyright and related rights. https://creativecommons.org/publicdomain/zero/1.0/
+
+The source archives outside this directory are existing SharpCompress 0.50.4
+fixtures at commit c083c6efd843a844b0c8f7878787360e815be781 and retain their MIT
+license, URLs, original bytes and SHA-256 documented in ../manifest.json and
+../LICENSE.txt. Wrapping those bytes does not change their license.
+
+Unix compress (.Z) collection uses the existing ncompress 5.1 public-domain
+reference. Its fixed original source, license and adapter provenance are held
+in ../TarZ/reference-source. It is not a product dependency.

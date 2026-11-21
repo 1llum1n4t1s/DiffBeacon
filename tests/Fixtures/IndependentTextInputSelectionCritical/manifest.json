@@ -1,0 +1,106 @@
+{
+  "schema": "input-selection-critical-fixture-v1",
+  "source": "generate.py independent synthetic literals; not WinMerge golden",
+  "license": "MIT",
+  "files": [
+    {
+      "path": "inputs/left.txt",
+      "size": 35,
+      "sha256": "3DD3D93D5D33EE80059BCF53E280167CCE4E21AD0687B7C4F848162BB6E5D3BC"
+    },
+    {
+      "path": "inputs/left.zip",
+      "size": 306,
+      "sha256": "150A1CB5201B56BDB2F472090701D0E2CE8236E1EABC784C3DFE302110AB1319"
+    },
+    {
+      "path": "inputs/left-working.text",
+      "size": 37,
+      "sha256": "4D0328A4916B19A4DF074DBD44DA5BBFAB220DA8B82238D2EBBC33B6B8BD73E4"
+    },
+    {
+      "path": "inputs/middle.txt",
+      "size": 68,
+      "sha256": "09DABA4439AAC6CFD1036014D6566C5EF68F3ABEAB92F44DD08B9959A3D2FC67"
+    },
+    {
+      "path": "inputs/middle.zip",
+      "size": 372,
+      "sha256": "A45447CF06A8FA11566F93EA537F456CD5E215284430406C458D3B94F5D07172"
+    },
+    {
+      "path": "inputs/middle-working.text",
+      "size": 72,
+      "sha256": "5F394BC78A3D0F0139603416372A10717D913A6A6B6E16A7C872EC0B2F7505CD"
+    },
+    {
+      "path": "inputs/right.txt",
+      "size": 42,
+      "sha256": "10375132142A2E6FBB2E56DB4E6D1ED755643CA45B4DDE169B9DEE31904C14D2"
+    },
+    {
+      "path": "inputs/right.zip",
+      "size": 320,
+      "sha256": "77FAB2B49FC537D5B45C3386578B4987F5B4AE4D6982C5DD268AAF29F05E8689"
+    },
+    {
+      "path": "inputs/right-working.text",
+      "size": 44,
+      "sha256": "CCE5E434AB2E67B8A3574A445FEC279D09CC9D576FFCFA5467582559D02D4E99"
+    },
+    {
+      "path": "inputs/left-replacement.zip",
+      "size": 306,
+      "sha256": "8BA24D980CCF6A1309BFE1C23B098FF1ABC7BD0D15BDEE71ECAC0F4EACA6A61B"
+    },
+    {
+      "path": "metadata-false.json",
+      "size": 1385,
+      "sha256": "96565E055DE7DB61548B80BC570756E022EA9D961647C6D50167CC931E8102A9"
+    },
+    {
+      "path": "metadata-true.json",
+      "size": 1382,
+      "sha256": "43A7FDBB7DEC7AF8D7FB57DA39CF009B05A12C733E45CE5384A8F9643E34B6DA"
+    },
+    {
+      "path": "metadata-null.json",
+      "size": 1382,
+      "sha256": "DC89A87981D9B17B4D394ED5863322A6A76606C8BC892513C887AA496280A31C"
+    },
+    {
+      "path": "metadata-omitted.json",
+      "size": 1274,
+      "sha256": "243A51DA6A537D0E2894960E214E78B559E5A0D55534C9BB7A8921C3A26BCDE1"
+    }
+  ],
+  "sides": [
+    {
+      "role": "left",
+      "text": "shared café\r\nLEFT €\nend-left\r",
+      "workingText": "shared café\r\nLEFT €\nsaved-left\r",
+      "bytes": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrAplbmQtbGVmdA0=",
+      "workingBytes": "77u/c2hhcmVkIGNhZsOpDQpMRUZUIOKCrApzYXZlZC1sZWZ0DQ==",
+      "encoding": "utf-8",
+      "bom": true
+    },
+    {
+      "role": "middle",
+      "text": "shared café\r\nMIDDLE £\nend-middle\r",
+      "workingText": "shared café\r\nMIDDLE £\nsaved-middle\r",
+      "bytes": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAGUAbgBkAC0AbQBpAGQAZABsAGUADQA=",
+      "workingBytes": "//5zAGgAYQByAGUAZAAgAGMAYQBmAOkADQAKAE0ASQBEAEQATABFACAAowAKAHMAYQB2AGUAZAAtAG0AaQBkAGQAbABlAA0A",
+      "encoding": "utf-16-le",
+      "bom": true
+    },
+    {
+      "role": "right",
+      "text": "shared café\r\nRIGHT “quote”\nend-right\r",
+      "workingText": "shared café\r\nRIGHT “quote”\nsaved-right\r",
+      "bytes": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQplbmQtcmlnaHQN",
+      "workingBytes": "c2hhcmVkIGNhZsOpDQpSSUdIVCDigJxxdW90ZeKAnQpzYXZlZC1yaWdodA0=",
+      "encoding": "utf-8",
+      "bom": false
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "source": "left",
+    "destination": "middle",
+    "sourceState": "edited",
+    "operation": "whole-text replacement (apply every source hunk)",
+    "expectedPath": "expected/copy-left-to-middle.text",
+    "expectedText": "Shared café\r\nLEFT edited €\ninsert-left\rthird left\rtail-left",
+    "size": 120,
+    "sha256": "3EC4AC5330556C38D8F01E433ED0DC4BF1CFB7CFA1ABE1D4A38356C66FB2A5A5",
+    "encodingName": "utf-16",
+    "hasBom": true,
+    "sourceUnchanged": "expected/left-edited.text",
+    "thirdSideUnchanged": [
+      "expected/right-edited.text"
+    ]
+  },
+  {
+    "source": "left",
+    "destination": "right",
+    "sourceState": "edited",
+    "operation": "whole-text replacement (apply every source hunk)",
+    "expectedPath": "expected/copy-left-to-right.text",
+    "expectedText": "Shared café\r\nLEFT edited €\ninsert-left\rthird left\rtail-left",
+    "size": 59,
+    "sha256": "F8C0BEDAEDDCC696923465BCDE5648C38D2B59A99F089708E4BB0CE6220C8526",
+    "encodingName": "windows-1252",
+    "hasBom": false,
+    "sourceUnchanged": "expected/left-edited.text",
+    "thirdSideUnchanged": [
+      "expected/middle-edited.text"
+    ]
+  },
+  {
+    "source": "middle",
+    "destination": "left",
+    "sourceState": "edited",
+    "operation": "whole-text replacement (apply every source hunk)",
+    "expectedPath": "expected/copy-middle-to-left.text",
+    "expectedText": "Shared café\r\nMIDDLE edited £\ninsert-middle\rthird middle\rtail-middle",
+    "size": 69,
+    "sha256": "9465CF7B98241BD658DB17891E3B68A78551C5F72A68BD3428659B2794310852",
+    "encodingName": "utf-8",
+    "hasBom": false,
+    "sourceUnchanged": "expected/middle-edited.text",
+    "thirdSideUnchanged": [
+      "expected/right-edited.text"
+    ]
+  },
+  {
+    "source": "middle",
+    "destination": "right",
+    "sourceState": "edited",
+    "operation": "whole-text replacement (apply every source hunk)",
+    "expectedPath": "expected/copy-middle-to-right.text",
+    "expectedText": "Shared café\r\nMIDDLE edited £\ninsert-middle\rthird middle\rtail-middle",
+    "size": 67,
+    "sha256": "8A93D93C12A082134762CF3E04B20C3C6F25C20352FC71BABDAD73135C1702A2",
+    "encodingName": "windows-1252",
+    "hasBom": false,
+    "sourceUnchanged": "expected/middle-edited.text",
+    "thirdSideUnchanged": [
+      "expected/left-edited.text"
+    ]
+  },
+  {
+    "source": "right",
+    "destination": "left",
+    "sourceState": "edited",
+    "operation": "whole-text replacement (apply every source hunk)",
+    "expectedPath": "expected/copy-right-to-left.text",
+    "expectedText": "Shared café\r\nRIGHT edited “quote”\ninsert-right\rthird right\rtail-right",
+    "size": 74,
+    "sha256": "382A7C168ECBC6B41AE8D181A2AE246F5194371426B52046B27A9C28DFA53712",
+    "encodingName": "utf-8",
+    "hasBom": false,
+    "sourceUnchanged": "expected/right-edited.text",
+    "thirdSideUnchanged": [
+      "expected/middle-edited.text"
+    ]
+  },
+  {
+    "source": "right",
+    "destination": "middle",
+    "sourceState": "edited",
+    "operation": "whole-text replacement (apply every source hunk)",
+    "expectedPath": "expected/copy-right-to-middle.text",
+    "expectedText": "Shared café\r\nRIGHT edited “quote”\ninsert-right\rthird right\rtail-right",
+    "size": 140,
+    "sha256": "A86888ED2977294EC5EC401468C709192D1C52F9C7A8933DC7B6CB07CA4218CF",
+    "encodingName": "utf-16",
+    "hasBom": true,
+    "sourceUnchanged": "expected/right-edited.text",
+    "thirdSideUnchanged": [
+      "expected/left-edited.text"
+    ]
+  }
+]

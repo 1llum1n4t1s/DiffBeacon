@@ -1,0 +1,199 @@
+{
+  "fixedBeforeProductExecution": true,
+  "productExecuted": false,
+  "nativeFullParserExecuted": false,
+  "nativeLexerSourceExpected": 125,
+  "nativeLexerNulObservation": 1,
+  "cases": [
+    {
+      "id": "empty",
+      "expression": "AllEqual(\"\",'')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": "empty-string"
+    },
+    {
+      "id": "doubled",
+      "expression": "AllEqual(\"a\"\"b\",'a\"b')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": "doublequote"
+    },
+    {
+      "id": "raw-n",
+      "expression": "AllEqual(\"\\n\",'\\\\n')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": "backslash"
+    },
+    {
+      "id": "raw-t",
+      "expression": "AllEqual(\"\\t\",'\\\\t')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "raw-r",
+      "expression": "AllEqual(\"\\r\",'\\\\r')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "raw-backslash",
+      "expression": "AllEqual(\"\\\\\",'\\\\\\\\')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "slash-before-quote",
+      "expression": "AllEqual(\"a\\\",'a\\\\')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "quoted-comment",
+      "expression": "AllEqual(\"a ## b\",'a ## b')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "unquoted-comment",
+      "expression": "AllEqual(\"a\",'a') ## ignored \" and \\",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "comment-needs-whitespace",
+      "expression": "AllEqual(\"a\",'a')##not-comment",
+      "rejected": true,
+      "selected": false,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "singlequote-escape",
+      "expression": "AllEqual('a\\'b',\"a'b\")",
+      "rejected": false,
+      "selected": true,
+      "scope": "DiffBeacon-singlequote-extension",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "singlequote-n",
+      "expression": "Strlen('\\n') == 1",
+      "rejected": false,
+      "selected": true,
+      "scope": "DiffBeacon-singlequote-extension",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "singlequote-t",
+      "expression": "Strlen('\\t') == 1",
+      "rejected": false,
+      "selected": true,
+      "scope": "DiffBeacon-singlequote-extension",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "singlequote-r",
+      "expression": "Strlen('\\r') == 1",
+      "rejected": false,
+      "selected": true,
+      "scope": "DiffBeacon-singlequote-extension",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "singlequote-slash",
+      "expression": "Strlen('\\\\') == 1",
+      "rejected": false,
+      "selected": true,
+      "scope": "DiffBeacon-singlequote-extension",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "date-payload",
+      "expression": "AllEqual(d\"2024-01-02\",d'2024-01-02')",
+      "rejected": false,
+      "selected": true,
+      "scope": "source-derived-date-value;native-lexer-token-only",
+      "relatedNativeCaseId": "d-payload"
+    },
+    {
+      "id": "date-invalid",
+      "expression": "AllEqual(d\"not-valid\",d'2024-01-02')",
+      "rejected": true,
+      "selected": false,
+      "scope": "source-derived-date-rejection;native-lexer-accepts-token-only",
+      "relatedNativeCaseId": "d-invalid"
+    },
+    {
+      "id": "unterminated",
+      "expression": "AllEqual(\"a,'a')",
+      "rejected": true,
+      "selected": false,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": null
+    },
+    {
+      "id": "unterminated-doubled",
+      "expression": "AllEqual(\"a\"\",'a')",
+      "rejected": true,
+      "selected": false,
+      "scope": "source-derived-public-consumer",
+      "relatedNativeCaseId": "doublequote-without-close"
+    },
+    {
+      "id": "doubled-false-control",
+      "expression": "AllEqual(\"a\"\"b\",'ab')",
+      "rejected": false,
+      "selected": false,
+      "relatedNativeCaseId": "doublequote",
+      "scope": "source-derived-public-negative-control"
+    },
+    {
+      "id": "raw-tab-character",
+      "expression": "AllEqual(\"a\tb\",'a\\tb')",
+      "rejected": false,
+      "selected": true,
+      "relatedNativeCaseId": null,
+      "scope": "source-derived-public-consumer;tab-is-not-a-physical-line-break"
+    },
+    {
+      "id": "legacy-regex-comment",
+      "expression": "row\\.bin|\"a\\\"b\" ## (",
+      "rule": "f",
+      "rejected": false,
+      "selected": true,
+      "scope": "legacy-regex-comment-preservation; native outer FileFilterMgr source; not expression lexer observation",
+      "relatedNativeCaseId": null
+    }
+  ],
+  "unprojectedControls": [
+    {
+      "inputUtf8Hex": "610a62",
+      "reason": "physical-flt-line-break",
+      "observation": "singlequote CR/LF escape is separately observed"
+    },
+    {
+      "inputUtf8Hex": "610d62",
+      "reason": "physical-flt-line-break",
+      "observation": "singlequote CR/LF escape is separately observed"
+    }
+  ],
+  "nativeEvidenceScope": "relatedNativeCaseId is source-rule context, not identical full expression or native full-parser/value qualification"
+}

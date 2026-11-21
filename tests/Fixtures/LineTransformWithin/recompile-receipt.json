@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "command": [
+    "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\iswithin-oracle-20261012-2ad71\\run2\\reference.exe"
+  ],
+  "pid": 31824,
+  "birthFileTime": 134362195689853584,
+  "heldProcessHandleSignaled": true,
+  "startedUtc": "2026-10-11T19:12:48.984486+00:00",
+  "endedUtc": "2026-10-11T19:12:48.999006+00:00",
+  "exitCode": 0,
+  "timeout": false,
+  "stdoutEof": true,
+  "stderrEof": true,
+  "stdoutSha256": "c7348fc20d2e5611451a96c2f76c884702917bbfbf15948c1bf80a8f7b892d5d",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "caseCount": 72,
+  "compilerPath": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+  "compilerSha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57",
+  "executableSha256": "6d2c32d6076696de54eea6dc97a4a9be6889a0c78f9a0e2ec07958a05491dba1"
+}

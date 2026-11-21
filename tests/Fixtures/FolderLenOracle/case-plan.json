@@ -1,0 +1,861 @@
+[
+  {
+    "id": "array-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-single",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-mixed",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": false
+            },
+            {
+              "type": "none"
+            },
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "string",
+              "value": "abc"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-values",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "value": false
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "none"
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-deep",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "array",
+                      "value": [
+                        {
+                          "type": "boolean",
+                          "value": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-and-scalars",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "boolean",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "value": false
+                }
+              ]
+            },
+            {
+              "type": "none"
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "string",
+              "value": "abc"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-many",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-none",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-true",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-false",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-integer-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-integer-negative",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-integer-min",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-integer-max",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-double-zero",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-double-negative",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": -2.25
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-timestamp",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-empty",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-ascii",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "abcXYZ012"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-japanese",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-emoji",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "😀"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-mixed",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "A日😀Z"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-combining",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "é"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-precomposed",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "é"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-japanese-combining",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "が"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-zwj",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "👩‍💻"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-flag",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "🇯🇵"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-nul",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-controls",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\r\n\t"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-boundary-utf8",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "߿ࠀ￿𐀀􏿿"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-variation",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "✈️"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-repeated",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "😀日é😀日é😀日é😀日é😀日é😀日é😀日é😀日é"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "evaluation-exception",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "abc"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-0",
+    "mode": "arity",
+    "args": []
+  },
+  {
+    "id": "arity-1",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-2",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-3",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      }
+    ]
+  }
+]

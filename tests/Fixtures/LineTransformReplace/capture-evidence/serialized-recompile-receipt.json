@@ -1,0 +1,21 @@
+{
+  "command": [
+    "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\ltf1011\\replace-serialized-reference\\run2\\reference.exe"
+  ],
+  "pid": 34680,
+  "birthFileTime": 134362115331363969,
+  "heldProcessHandleSignaled": true,
+  "startedUtc": "2026-10-11T16:58:53.135214+00:00",
+  "endedUtc": "2026-10-11T16:58:53.148665+00:00",
+  "exitCode": 0,
+  "timeout": false,
+  "stdoutEof": true,
+  "stderrEof": true,
+  "stdoutSha256": "f5558c313d3ff5ad9d02a1207384eac497a65c04973607f4d33ea43ebb6c8182",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "caseCount": 100,
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "compilerPath": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+  "compilerSha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57",
+  "executableSha256": "3ff062bc70c96147b9ef4b32f1e4cabc9ab6686338c4ee2c6b8f889e3c2badd0"
+}

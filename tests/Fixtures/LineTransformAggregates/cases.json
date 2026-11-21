@@ -1,0 +1,4622 @@
+[
+  {
+    "id": "average-integers",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 6
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-fractional",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "double",
+        "value": 3.75
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-negative",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": -7
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "integer",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-integer-double-result",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "double",
+        "value": 2.0
+      },
+      {
+        "type": "double",
+        "value": 4.0
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-precision-safe",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 9007199254740991
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-booleans",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-all-false",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-all-true",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-empty-provider",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-all-none",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-strings-cs",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-strings-ci",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-strings-ci-tie",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "A"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-unicode",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "string",
+        "value": "い"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-array-values",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 4
+          },
+          {
+            "type": "integer",
+            "value": 8
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-array-empty-nested",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "integer",
+                "value": 9
+              }
+            ]
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-array-bool",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-number-first-mixed",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "integer",
+        "value": 7
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-bool-first-mixed",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-string-first-mixed",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "string",
+        "value": "Z"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-condition-all-false",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-condition-all-false-value-throws",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "suppressed-zero"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-one"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-two"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-condition-false",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-condition-nonbool",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-condition-arrays",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      },
+      {
+        "type": "integer",
+        "value": 4
+      }
+    ],
+    "conditions": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-condition-throw",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "throw",
+        "value": "condition-error"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-value-throw",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "value-error"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-raw-string",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          98
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          99
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "raw-byte-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-typed-timestamp",
+    "mode": "scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      },
+      {
+        "type": "timestamp",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "typed-timestamp-observation-no-format",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-original-direct-scalar",
+    "mode": "literal-scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "average-original-direct-array",
+    "mode": "literal-scan",
+    "function": "Average",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-integers",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 6
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-fractional",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "double",
+        "value": 3.75
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-negative",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": -7
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "integer",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-integer-double-result",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "double",
+        "value": 2.0
+      },
+      {
+        "type": "double",
+        "value": 4.0
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-precision-safe",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 9007199254740991
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-booleans",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-all-false",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-all-true",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-empty-provider",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-all-none",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-strings-cs",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-strings-ci",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-strings-ci-tie",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "A"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-unicode",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "い"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-array-values",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 4
+          },
+          {
+            "type": "integer",
+            "value": 8
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-array-empty-nested",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "integer",
+                "value": 9
+              }
+            ]
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-array-bool",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-number-first-mixed",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "integer",
+        "value": 7
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-bool-first-mixed",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-string-first-mixed",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "string",
+        "value": "Z"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-condition-all-false",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-condition-all-false-value-throws",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "suppressed-zero"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-one"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-two"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-condition-false",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-condition-nonbool",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-condition-arrays",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      },
+      {
+        "type": "integer",
+        "value": 4
+      }
+    ],
+    "conditions": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-condition-throw",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "throw",
+        "value": "condition-error"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-value-throw",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "value-error"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-raw-string",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          98
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          99
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "raw-byte-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-typed-timestamp",
+    "mode": "scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      },
+      {
+        "type": "timestamp",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "typed-timestamp-observation-no-format",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-original-direct-scalar",
+    "mode": "literal-scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "sum-original-direct-array",
+    "mode": "literal-scan",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-integers",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 6
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-fractional",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "double",
+        "value": 3.75
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-negative",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": -7
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "integer",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-integer-double-result",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "double",
+        "value": 2.0
+      },
+      {
+        "type": "double",
+        "value": 4.0
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-precision-safe",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 9007199254740991
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-booleans",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-all-false",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-all-true",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-empty-provider",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-all-none",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-strings-cs",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-strings-ci",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-strings-ci-tie",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "A"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-unicode",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "い"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-array-values",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 4
+          },
+          {
+            "type": "integer",
+            "value": 8
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-array-empty-nested",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "integer",
+                "value": 9
+              }
+            ]
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-array-bool",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-number-first-mixed",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "integer",
+        "value": 7
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-bool-first-mixed",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-string-first-mixed",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "string",
+        "value": "Z"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-condition-all-false",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-condition-all-false-value-throws",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "suppressed-zero"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-one"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-two"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-condition-false",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-condition-nonbool",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-condition-arrays",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      },
+      {
+        "type": "integer",
+        "value": 4
+      }
+    ],
+    "conditions": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-condition-throw",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "throw",
+        "value": "condition-error"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-value-throw",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "value-error"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-raw-string",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          98
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          99
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "raw-byte-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-typed-timestamp",
+    "mode": "scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      },
+      {
+        "type": "timestamp",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "typed-timestamp-observation-no-format",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-original-direct-scalar",
+    "mode": "literal-scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "maximum-original-direct-array",
+    "mode": "literal-scan",
+    "function": "Maximum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-integers",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 6
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-fractional",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "double",
+        "value": 3.75
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-negative",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": -7
+      },
+      {
+        "type": "integer",
+        "value": -2
+      },
+      {
+        "type": "integer",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-integer-double-result",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "double",
+        "value": 2.0
+      },
+      {
+        "type": "double",
+        "value": 4.0
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-precision-safe",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 9007199254740991
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-booleans",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-all-false",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-all-true",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-empty-provider",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-all-none",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-strings-cs",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-strings-ci",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-strings-ci-tie",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "A"
+      },
+      {
+        "type": "string",
+        "value": "b"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": false,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-unicode",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "い"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-array-values",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 4
+          },
+          {
+            "type": "integer",
+            "value": 8
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-array-empty-nested",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "integer",
+                "value": 9
+              }
+            ]
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-array-bool",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-number-first-mixed",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "integer",
+        "value": 7
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-bool-first-mixed",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-string-first-mixed",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "string",
+        "value": "Z"
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-condition-all-false",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-condition-all-false-value-throws",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "throw",
+        "value": "suppressed-zero"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-one"
+      },
+      {
+        "type": "throw",
+        "value": "suppressed-two"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-condition-false",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-condition-nonbool",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      },
+      {
+        "type": "throw",
+        "value": "must-not-evaluate"
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-condition-arrays",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      },
+      {
+        "type": "integer",
+        "value": 4
+      }
+    ],
+    "conditions": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-condition-throw",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "throw",
+        "value": "condition-error"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-value-throw",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "throw",
+        "value": "value-error"
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-raw-string",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          98
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          97,
+          0,
+          99
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "raw-byte-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-typed-timestamp",
+    "mode": "scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      },
+      {
+        "type": "timestamp",
+        "value": -4
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "typed-timestamp-observation-no-format",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-original-direct-scalar",
+    "mode": "literal-scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      },
+      {
+        "type": "integer",
+        "value": 5
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "minimum-original-direct-array",
+    "mode": "literal-scan",
+    "function": "Minimum",
+    "rows": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "integer",
+            "value": 1
+          },
+          {
+            "type": "integer",
+            "value": 2
+          },
+          {
+            "type": "none"
+          }
+        ]
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 7,
+    "classification": "original-native-literal-leaf-at-controlled-trace-boundary",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "cache-live-mutation",
+    "mode": "cache-mutation",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "shared-four-functions-one-node",
+    "mode": "cross-function-cache",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "equivalent-distinct-value-nodes",
+    "mode": "distinct-values",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "same-value-distinct-condition-nodes",
+    "mode": "distinct-conditions",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "same-value-same-condition-cache",
+    "mode": "same-condition-cache",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "first-call-after-provider-update",
+    "mode": "first-call-delayed",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "failed-value-retry-no-partial-cache",
+    "mode": "retry-value-error",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "failed-condition-retry-no-partial-cache",
+    "mode": "retry-condition-error",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "nested-inner-success-outer-error",
+    "mode": "nested-error",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "nested-aggregate-constant-per-line",
+    "mode": "nested-success",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "nested-condition-shared-cache",
+    "mode": "nested-condition",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "none-result-success-cache",
+    "mode": "empty-cache",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "provider-null-does-not-evaluate",
+    "mode": "provider-null",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "context-case-change-cache-identity",
+    "mode": "case-change-cache",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-node-provider-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "caller-live-rule-cache",
+    "mode": "caller-live",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-caller-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "caller-next-invocation-new-epoch",
+    "mode": "caller-epoch",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-caller-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  },
+  {
+    "id": "caller-failure-keeps-prior-setline",
+    "mode": "caller-error",
+    "function": "Sum",
+    "rows": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 2
+      },
+      {
+        "type": "integer",
+        "value": 3
+      }
+    ],
+    "conditions": null,
+    "caseSensitive": true,
+    "outerLineIndex": 1,
+    "classification": "native-caller-observation",
+    "contextSentinel": {
+      "diffItemPresent": true,
+      "matchRangesSeed": 1,
+      "insideRangesSeed": 1
+    }
+  }
+]

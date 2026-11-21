@@ -1,0 +1,11 @@
+{
+  "size": 105804,
+  "sha256": "014fa78df132e1897bf93681d27afce7f86b287e262b93af7324cbf61a8370be",
+  "indexedEntries": 62,
+  "allEntryShaSizeCrcVerified": true,
+  "excludedReproducible": [
+    "reference.exe",
+    "adapter.obj",
+    "reused PCRE2 source/obj (source SHA and actual object SHA in provenance)"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "beforeImplementation": true,
+  "matrix": [
+    "presence: compare dirs 1/2/3, every in-range presence mask including missing all, missing sides yield none without retrieval",
+    "prefix: bare Prop preserves left/middle/right order; Left=0, Middle=1, Right=dirs-1; single-pane bare returns scalar",
+    "conversion: EMPTY I4 UI4 I8 UI8-overflow R8 LPWSTR BOOL(FILETIME); vector LPWSTR nested in side array, empty vector; vector UI1 lowercase hex and empty; unsupported R4 NULL I2 BSTR vector-I4 yield none",
+    "truth: false/true/noncanonical BOOL; scalar integer/double/string/timestamp are not true; recursive ContainsTrue accepts nested boolean only, shallow evalAsBool differs",
+    "validation: missing/null/wrong-count/nonliteral args; System canonical, case variants, invalid name, Hash.MD5/SHA1/SHA256 exact and wrong-case",
+    "real services: Shell System.Size/FileName/FileExtension/DateModified from deterministic files; native hash-only false return despite populated values; mixed store true; nonexistent path fallback; independent hashlib for empty, unicode-name and 64KiB boundary files",
+    "lifetime: property cache reused after file changes and remains missing until cache reset (adapter context, native prop)",
+    "boundary: no lexer/parser/flt-loader/property-name collector/global scanner/GUI/AOT/macOS equivalence claim"
+  ]
+}

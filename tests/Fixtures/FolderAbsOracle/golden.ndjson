@@ -1,0 +1,41 @@
+{"id":"int--9223372036854775808","status":"ok","error":"","result":{"type":"int64","value":-9223372036854775808},"trace":[0]}
+{"id":"int--9223372036854775807","status":"ok","error":"","result":{"type":"int64","value":9223372036854775807},"trace":[0]}
+{"id":"int--9007199254740993","status":"ok","error":"","result":{"type":"int64","value":9007199254740993},"trace":[0]}
+{"id":"int--2147483648","status":"ok","error":"","result":{"type":"int64","value":2147483648},"trace":[0]}
+{"id":"int--123","status":"ok","error":"","result":{"type":"int64","value":123},"trace":[0]}
+{"id":"int--1","status":"ok","error":"","result":{"type":"int64","value":1},"trace":[0]}
+{"id":"int-0","status":"ok","error":"","result":{"type":"int64","value":0},"trace":[0]}
+{"id":"int-1","status":"ok","error":"","result":{"type":"int64","value":1},"trace":[0]}
+{"id":"int-123","status":"ok","error":"","result":{"type":"int64","value":123},"trace":[0]}
+{"id":"int-2147483647","status":"ok","error":"","result":{"type":"int64","value":2147483647},"trace":[0]}
+{"id":"int-9007199254740993","status":"ok","error":"","result":{"type":"int64","value":9007199254740993},"trace":[0]}
+{"id":"int-9223372036854775807","status":"ok","error":"","result":{"type":"int64","value":9223372036854775807},"trace":[0]}
+{"id":"double-poszero","status":"ok","error":"","result":{"type":"double","value":"0000000000000000"},"trace":[0]}
+{"id":"double-negzero","status":"ok","error":"","result":{"type":"double","value":"0000000000000000"},"trace":[0]}
+{"id":"double-positive","status":"ok","error":"","result":{"type":"double","value":"3ff4000000000000"},"trace":[0]}
+{"id":"double-negative","status":"ok","error":"","result":{"type":"double","value":"3ff4000000000000"},"trace":[0]}
+{"id":"double-subnormal","status":"ok","error":"","result":{"type":"double","value":"0000000000000001"},"trace":[0]}
+{"id":"double-negsubnormal","status":"ok","error":"","result":{"type":"double","value":"0000000000000001"},"trace":[0]}
+{"id":"double-max","status":"ok","error":"","result":{"type":"double","value":"7fefffffffffffff"},"trace":[0]}
+{"id":"double-negmax","status":"ok","error":"","result":{"type":"double","value":"7fefffffffffffff"},"trace":[0]}
+{"id":"double-inf","status":"ok","error":"","result":{"type":"double","value":"7ff0000000000000"},"trace":[0]}
+{"id":"double-neginf","status":"ok","error":"","result":{"type":"double","value":"7ff0000000000000"},"trace":[0]}
+{"id":"double-nan","status":"ok","error":"","result":{"type":"double","value":"7ff8000000001234"},"trace":[0]}
+{"id":"double-negnan","status":"ok","error":"","result":{"type":"double","value":"7ff8000000001234"},"trace":[0]}
+{"id":"reject-none-None","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"reject-bool-True","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"reject-bool-False","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"reject-string--25","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"reject-string-word","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"reject-timestamp-None","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"reject-regex-None","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"reject-file-None","status":"ok","error":"","result":{"type":"none"},"trace":[0]}
+{"id":"empty-array","status":"ok","error":"","result":{"type":"array","items":[]},"trace":[0]}
+{"id":"numeric-array","status":"ok","error":"","result":{"type":"array","items":[{"type":"int64","value":5},{"type":"double","value":"4008000000000000"},{"type":"int64","value":-9223372036854775808}]},"trace":[0]}
+{"id":"mixed-array","status":"ok","error":"","result":{"type":"array","items":[{"type":"none"},{"type":"none"},{"type":"none"},{"type":"int64","value":7},{"type":"none"},{"type":"none"},{"type":"none"}]},"trace":[0]}
+{"id":"nested-array","status":"ok","error":"","result":{"type":"array","items":[{"type":"none"},{"type":"none"},{"type":"int64","value":3}]},"trace":[0]}
+{"id":"throw-first","status":"error","error":"probe-0","result":{"type":"none"},"trace":[0]}
+{"id":"arity-null","status":"error","error":"abs function requires at least 1 argument","result":{"type":"none"},"trace":[]}
+{"id":"arity-empty","status":"error","error":"abs function requires at least 1 argument","result":{"type":"none"},"trace":[]}
+{"id":"arity-two","status":"error","error":"abs function requires at most 1 argument","result":{"type":"none"},"trace":[]}
+{"id":"arity-three","status":"error","error":"abs function requires at most 1 argument","result":{"type":"none"},"trace":[]}

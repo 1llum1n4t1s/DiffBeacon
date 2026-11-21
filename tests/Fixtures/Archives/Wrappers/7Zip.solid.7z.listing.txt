@@ -1,0 +1,50 @@
+Path = exe
+Size = 0
+Packed Size = 0
+Modified = 2022-02-15 21:08:14.1957309
+Attributes = D
+CRC = 
+Encrypted = -
+Method = 
+Block = 
+
+Path = jpg
+Size = 0
+Packed Size = 0
+Modified = 2022-02-14 18:38:18.9730814
+Attributes = D
+CRC = 
+Encrypted = -
+Method = 
+Block = 
+
+Path = jpg\test.jpg
+Size = 40372
+Packed Size = 41523
+Modified = 2022-02-14 18:38:18.9730814
+Attributes = A
+CRC = 088814E3
+Encrypted = -
+Method = LZMA2:17
+Block = 0
+
+Path = тест.txt
+Size = 15498
+Packed Size = 
+Modified = 2022-02-14 18:38:18.9730814
+Attributes = A
+CRC = 9BD160FA
+Encrypted = -
+Method = LZMA2:17
+Block = 0
+
+Path = exe\test.exe
+Size = 45056
+Packed Size = 17208
+Modified = 2022-02-14 18:38:18.9720830
+Attributes = A
+CRC = CFB109C8
+Encrypted = -
+Method = BCJ LZMA2:17
+Block = 1
+

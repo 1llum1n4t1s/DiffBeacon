@@ -1,0 +1,4841 @@
+[
+  {
+    "id": "matchcontext-empty",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-none",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-all",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-alternating",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-interior",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-edges",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-scalar",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-arrays",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "true"
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchcontext-null-provider",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchcontext-throw-scan",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchcontext-nested-match",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchcontext-nested-aggregate",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchcontext-outer-throw-after-inner",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchcontext-new-context",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchcontext-different-ast",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchcontext-mutate-cached",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchblockcount-empty",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-none",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-all",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-alternating",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-interior",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-edges",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-scalar",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-arrays",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "true"
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockcount-null-provider",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchblockcount-throw-scan",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchblockcount-nested-match",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchblockcount-nested-aggregate",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchblockcount-outer-throw-after-inner",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchblockcount-new-context",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchblockcount-different-ast",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchblockcount-mutate-cached",
+    "function": "matchblockcount",
+    "nativeFunction": "MatchBlockCountFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchblocknumber-empty",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-none",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-all",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-alternating",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-interior",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-edges",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-scalar",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-arrays",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "true"
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocknumber-null-provider",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchblocknumber-throw-scan",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchblocknumber-nested-match",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchblocknumber-nested-aggregate",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchblocknumber-outer-throw-after-inner",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchblocknumber-new-context",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchblocknumber-different-ast",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchblocknumber-mutate-cached",
+    "function": "matchblocknumber",
+    "nativeFunction": "MatchBlockNumberFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchblocksize-empty",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-none",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-all",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-alternating",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-interior",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-edges",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-scalar",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-arrays",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "true"
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblocksize-null-provider",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchblocksize-throw-scan",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchblocksize-nested-match",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchblocksize-nested-aggregate",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchblocksize-outer-throw-after-inner",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchblocksize-new-context",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchblocksize-different-ast",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchblocksize-mutate-cached",
+    "function": "matchblocksize",
+    "nativeFunction": "MatchBlockSizeFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "matchblockoffset-empty",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-none",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-all",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-alternating",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-interior",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-edges",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-scalar",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-arrays",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "true"
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "matchblockoffset-null-provider",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "null-provider"
+  },
+  {
+    "id": "matchblockoffset-throw-scan",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "throw-scan"
+  },
+  {
+    "id": "matchblockoffset-nested-match",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-match"
+  },
+  {
+    "id": "matchblockoffset-nested-aggregate",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "nested-aggregate"
+  },
+  {
+    "id": "matchblockoffset-outer-throw-after-inner",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "outer-throw-after-inner"
+  },
+  {
+    "id": "matchblockoffset-new-context",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "new-context"
+  },
+  {
+    "id": "matchblockoffset-different-ast",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "different-ast"
+  },
+  {
+    "id": "matchblockoffset-mutate-cached",
+    "function": "matchblockoffset",
+    "nativeFunction": "MatchBlockOffsetFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "mutate-cached"
+  },
+  {
+    "id": "context-b-3-a-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -3
+    },
+    "after": {
+      "type": "integer",
+      "value": -3
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-3-a-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -3
+    },
+    "after": {
+      "type": "integer",
+      "value": -1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-3-a0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -3
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-3-a1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -3
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-3-a2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -3
+    },
+    "after": {
+      "type": "integer",
+      "value": 2
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-3-a7",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -3
+    },
+    "after": {
+      "type": "integer",
+      "value": 7
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-1-a-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -1
+    },
+    "after": {
+      "type": "integer",
+      "value": -3
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-1-a-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -1
+    },
+    "after": {
+      "type": "integer",
+      "value": -1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-1-a0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -1
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-1-a1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -1
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-1-a2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -1
+    },
+    "after": {
+      "type": "integer",
+      "value": 2
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b-1-a7",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": -1
+    },
+    "after": {
+      "type": "integer",
+      "value": 7
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b0-a-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": -3
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b0-a-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": -1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b0-a0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b0-a1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b0-a2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 2
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b0-a7",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 0
+    },
+    "after": {
+      "type": "integer",
+      "value": 7
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b1-a-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "integer",
+      "value": -3
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b1-a-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "integer",
+      "value": -1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b1-a0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b1-a1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b1-a2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "integer",
+      "value": 2
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b1-a7",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "integer",
+      "value": 7
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b2-a-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 2
+    },
+    "after": {
+      "type": "integer",
+      "value": -3
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b2-a-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 2
+    },
+    "after": {
+      "type": "integer",
+      "value": -1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b2-a0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 2
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b2-a1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 2
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b2-a2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 2
+    },
+    "after": {
+      "type": "integer",
+      "value": 2
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b2-a7",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 2
+    },
+    "after": {
+      "type": "integer",
+      "value": 7
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b7-a-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 7
+    },
+    "after": {
+      "type": "integer",
+      "value": -3
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b7-a-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 7
+    },
+    "after": {
+      "type": "integer",
+      "value": -1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b7-a0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 7
+    },
+    "after": {
+      "type": "integer",
+      "value": 0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b7-a1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 7
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b7-a2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 7
+    },
+    "after": {
+      "type": "integer",
+      "value": 2
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "context-b7-a7",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 7
+    },
+    "after": {
+      "type": "integer",
+      "value": 7
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "bool",
+      "value": true
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-after-0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "bool",
+      "value": true
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-after-throws-0",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "bool",
+      "value": true
+    },
+    "after": {
+      "type": "throw",
+      "value": "after-error"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "double",
+      "value": 1.0
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-after-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "double",
+      "value": 1.0
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-after-throws-1",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "double",
+      "value": 1.0
+    },
+    "after": {
+      "type": "throw",
+      "value": "after-error"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-after-2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "none"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-after-throws-2",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "none"
+    },
+    "after": {
+      "type": "throw",
+      "value": "after-error"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "string",
+      "value": "1"
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-after-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "string",
+      "value": "1"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-after-throws-3",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "string",
+      "value": "1"
+    },
+    "after": {
+      "type": "throw",
+      "value": "after-error"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-4",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "array",
+      "value": [
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ]
+    },
+    "after": {
+      "type": "integer",
+      "value": 1
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-after-4",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "integer",
+      "value": 1
+    },
+    "after": {
+      "type": "array",
+      "value": [
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ]
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "invalid-before-after-throws-4",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "array",
+      "value": [
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ]
+    },
+    "after": {
+      "type": "throw",
+      "value": "after-error"
+    },
+    "mode": "scan"
+  },
+  {
+    "id": "before-throws",
+    "function": "matchcontext",
+    "nativeFunction": "LineMatchContextFunc",
+    "rows": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "before": {
+      "type": "throw",
+      "value": "before-error"
+    },
+    "after": {
+      "type": "throw",
+      "value": "after-error"
+    },
+    "mode": "scan"
+  }
+]

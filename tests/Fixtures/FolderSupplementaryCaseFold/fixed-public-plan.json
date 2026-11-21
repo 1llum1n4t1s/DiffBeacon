@@ -1,0 +1,5436 @@
+[
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-000",
+    "nativeIds": [
+      "replace-ci-u10400",
+      "replace-ci-u10401",
+      "replace-ci-u10402",
+      "replace-ci-u10403",
+      "replace-ci-u10404",
+      "replace-ci-u10405",
+      "replace-ci-u10406",
+      "replace-ci-u10407",
+      "replace-ci-u10408",
+      "replace-ci-u10409",
+      "replace-ci-u1040a",
+      "replace-ci-u1040b",
+      "replace-ci-u1040c",
+      "replace-ci-u1040d",
+      "replace-ci-u1040e",
+      "replace-ci-u1040f"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-000",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-016",
+    "nativeIds": [
+      "replace-ci-u10410",
+      "replace-ci-u10411",
+      "replace-ci-u10412",
+      "replace-ci-u10413",
+      "replace-ci-u10414",
+      "replace-ci-u10415",
+      "replace-ci-u10416",
+      "replace-ci-u10417",
+      "replace-ci-u10418",
+      "replace-ci-u10419",
+      "replace-ci-u1041a",
+      "replace-ci-u1041b",
+      "replace-ci-u1041c",
+      "replace-ci-u1041d",
+      "replace-ci-u1041e",
+      "replace-ci-u1041f"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-016",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-032",
+    "nativeIds": [
+      "replace-ci-u10420",
+      "replace-ci-u10421",
+      "replace-ci-u10422",
+      "replace-ci-u10423",
+      "replace-ci-u10424",
+      "replace-ci-u10425",
+      "replace-ci-u10426",
+      "replace-ci-u10427",
+      "replace-ci-u104b0",
+      "replace-ci-u104b1",
+      "replace-ci-u104b2",
+      "replace-ci-u104b3",
+      "replace-ci-u104b4",
+      "replace-ci-u104b5",
+      "replace-ci-u104b6",
+      "replace-ci-u104b7"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-032",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-048",
+    "nativeIds": [
+      "replace-ci-u104b8",
+      "replace-ci-u104b9",
+      "replace-ci-u104ba",
+      "replace-ci-u104bb",
+      "replace-ci-u104bc",
+      "replace-ci-u104bd",
+      "replace-ci-u104be",
+      "replace-ci-u104bf",
+      "replace-ci-u104c0",
+      "replace-ci-u104c1",
+      "replace-ci-u104c2",
+      "replace-ci-u104c3",
+      "replace-ci-u104c4",
+      "replace-ci-u104c5",
+      "replace-ci-u104c6",
+      "replace-ci-u104c7"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-048",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-064",
+    "nativeIds": [
+      "replace-ci-u104c8",
+      "replace-ci-u104c9",
+      "replace-ci-u104ca",
+      "replace-ci-u104cb",
+      "replace-ci-u104cc",
+      "replace-ci-u104cd",
+      "replace-ci-u104ce",
+      "replace-ci-u104cf",
+      "replace-ci-u104d0",
+      "replace-ci-u104d1",
+      "replace-ci-u104d2",
+      "replace-ci-u104d3",
+      "replace-ci-u10570",
+      "replace-ci-u10571",
+      "replace-ci-u10572",
+      "replace-ci-u10573"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-064",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-080",
+    "nativeIds": [
+      "replace-ci-u10574",
+      "replace-ci-u10575",
+      "replace-ci-u10576",
+      "replace-ci-u10577",
+      "replace-ci-u10578",
+      "replace-ci-u10579",
+      "replace-ci-u1057a",
+      "replace-ci-u1057c",
+      "replace-ci-u1057d",
+      "replace-ci-u1057e",
+      "replace-ci-u1057f",
+      "replace-ci-u10580",
+      "replace-ci-u10581",
+      "replace-ci-u10582",
+      "replace-ci-u10583",
+      "replace-ci-u10584"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-080",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-096",
+    "nativeIds": [
+      "replace-ci-u10585",
+      "replace-ci-u10586",
+      "replace-ci-u10587",
+      "replace-ci-u10588",
+      "replace-ci-u10589",
+      "replace-ci-u1058a",
+      "replace-ci-u1058c",
+      "replace-ci-u1058d",
+      "replace-ci-u1058e",
+      "replace-ci-u1058f",
+      "replace-ci-u10590",
+      "replace-ci-u10591",
+      "replace-ci-u10592",
+      "replace-ci-u10594",
+      "replace-ci-u10595",
+      "replace-ci-u10c80"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-096",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-112",
+    "nativeIds": [
+      "replace-ci-u10c81",
+      "replace-ci-u10c82",
+      "replace-ci-u10c83",
+      "replace-ci-u10c84",
+      "replace-ci-u10c85",
+      "replace-ci-u10c86",
+      "replace-ci-u10c87",
+      "replace-ci-u10c88",
+      "replace-ci-u10c89",
+      "replace-ci-u10c8a",
+      "replace-ci-u10c8b",
+      "replace-ci-u10c8c",
+      "replace-ci-u10c8d",
+      "replace-ci-u10c8e",
+      "replace-ci-u10c8f",
+      "replace-ci-u10c90"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-112",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-128",
+    "nativeIds": [
+      "replace-ci-u10c91",
+      "replace-ci-u10c92",
+      "replace-ci-u10c93",
+      "replace-ci-u10c94",
+      "replace-ci-u10c95",
+      "replace-ci-u10c96",
+      "replace-ci-u10c97",
+      "replace-ci-u10c98",
+      "replace-ci-u10c99",
+      "replace-ci-u10c9a",
+      "replace-ci-u10c9b",
+      "replace-ci-u10c9c",
+      "replace-ci-u10c9d",
+      "replace-ci-u10c9e",
+      "replace-ci-u10c9f",
+      "replace-ci-u10ca0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-128",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-144",
+    "nativeIds": [
+      "replace-ci-u10ca1",
+      "replace-ci-u10ca2",
+      "replace-ci-u10ca3",
+      "replace-ci-u10ca4",
+      "replace-ci-u10ca5",
+      "replace-ci-u10ca6",
+      "replace-ci-u10ca7",
+      "replace-ci-u10ca8",
+      "replace-ci-u10ca9",
+      "replace-ci-u10caa",
+      "replace-ci-u10cab",
+      "replace-ci-u10cac",
+      "replace-ci-u10cad",
+      "replace-ci-u10cae",
+      "replace-ci-u10caf",
+      "replace-ci-u10cb0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-144",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-160",
+    "nativeIds": [
+      "replace-ci-u10cb1",
+      "replace-ci-u10cb2",
+      "replace-ci-u10d50",
+      "replace-ci-u10d51",
+      "replace-ci-u10d52",
+      "replace-ci-u10d53",
+      "replace-ci-u10d54",
+      "replace-ci-u10d55",
+      "replace-ci-u10d56",
+      "replace-ci-u10d57",
+      "replace-ci-u10d58",
+      "replace-ci-u10d59",
+      "replace-ci-u10d5a",
+      "replace-ci-u10d5b",
+      "replace-ci-u10d5c",
+      "replace-ci-u10d5d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-160",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-176",
+    "nativeIds": [
+      "replace-ci-u10d5e",
+      "replace-ci-u10d5f",
+      "replace-ci-u10d60",
+      "replace-ci-u10d61",
+      "replace-ci-u10d62",
+      "replace-ci-u10d63",
+      "replace-ci-u10d64",
+      "replace-ci-u10d65",
+      "replace-ci-u118a0",
+      "replace-ci-u118a1",
+      "replace-ci-u118a2",
+      "replace-ci-u118a3",
+      "replace-ci-u118a4",
+      "replace-ci-u118a5",
+      "replace-ci-u118a6",
+      "replace-ci-u118a7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-176",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-192",
+    "nativeIds": [
+      "replace-ci-u118a8",
+      "replace-ci-u118a9",
+      "replace-ci-u118aa",
+      "replace-ci-u118ab",
+      "replace-ci-u118ac",
+      "replace-ci-u118ad",
+      "replace-ci-u118ae",
+      "replace-ci-u118af",
+      "replace-ci-u118b0",
+      "replace-ci-u118b1",
+      "replace-ci-u118b2",
+      "replace-ci-u118b3",
+      "replace-ci-u118b4",
+      "replace-ci-u118b5",
+      "replace-ci-u118b6",
+      "replace-ci-u118b7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-192",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-208",
+    "nativeIds": [
+      "replace-ci-u118b8",
+      "replace-ci-u118b9",
+      "replace-ci-u118ba",
+      "replace-ci-u118bb",
+      "replace-ci-u118bc",
+      "replace-ci-u118bd",
+      "replace-ci-u118be",
+      "replace-ci-u118bf",
+      "replace-ci-u16e40",
+      "replace-ci-u16e41",
+      "replace-ci-u16e42",
+      "replace-ci-u16e43",
+      "replace-ci-u16e44",
+      "replace-ci-u16e45",
+      "replace-ci-u16e46",
+      "replace-ci-u16e47"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-208",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-224",
+    "nativeIds": [
+      "replace-ci-u16e48",
+      "replace-ci-u16e49",
+      "replace-ci-u16e4a",
+      "replace-ci-u16e4b",
+      "replace-ci-u16e4c",
+      "replace-ci-u16e4d",
+      "replace-ci-u16e4e",
+      "replace-ci-u16e4f",
+      "replace-ci-u16e50",
+      "replace-ci-u16e51",
+      "replace-ci-u16e52",
+      "replace-ci-u16e53",
+      "replace-ci-u16e54",
+      "replace-ci-u16e55",
+      "replace-ci-u16e56",
+      "replace-ci-u16e57"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-224",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-240",
+    "nativeIds": [
+      "replace-ci-u16e58",
+      "replace-ci-u16e59",
+      "replace-ci-u16e5a",
+      "replace-ci-u16e5b",
+      "replace-ci-u16e5c",
+      "replace-ci-u16e5d",
+      "replace-ci-u16e5e",
+      "replace-ci-u16e5f",
+      "replace-ci-u1e900",
+      "replace-ci-u1e901",
+      "replace-ci-u1e902",
+      "replace-ci-u1e903",
+      "replace-ci-u1e904",
+      "replace-ci-u1e905",
+      "replace-ci-u1e906",
+      "replace-ci-u1e907"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-240",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-256",
+    "nativeIds": [
+      "replace-ci-u1e908",
+      "replace-ci-u1e909",
+      "replace-ci-u1e90a",
+      "replace-ci-u1e90b",
+      "replace-ci-u1e90c",
+      "replace-ci-u1e90d",
+      "replace-ci-u1e90e",
+      "replace-ci-u1e90f",
+      "replace-ci-u1e910",
+      "replace-ci-u1e911",
+      "replace-ci-u1e912",
+      "replace-ci-u1e913",
+      "replace-ci-u1e914",
+      "replace-ci-u1e915",
+      "replace-ci-u1e916",
+      "replace-ci-u1e917"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-256",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-ci-272",
+    "nativeIds": [
+      "replace-ci-u1e918",
+      "replace-ci-u1e919",
+      "replace-ci-u1e91a",
+      "replace-ci-u1e91b",
+      "replace-ci-u1e91c",
+      "replace-ci-u1e91d",
+      "replace-ci-u1e91e",
+      "replace-ci-u1e91f",
+      "replace-ci-u1e920",
+      "replace-ci-u1e921"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-ci-272",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-000",
+    "nativeIds": [
+      "replace-cs-u10400",
+      "replace-cs-u10401",
+      "replace-cs-u10402",
+      "replace-cs-u10403",
+      "replace-cs-u10404",
+      "replace-cs-u10405",
+      "replace-cs-u10406",
+      "replace-cs-u10407",
+      "replace-cs-u10408",
+      "replace-cs-u10409",
+      "replace-cs-u1040a",
+      "replace-cs-u1040b",
+      "replace-cs-u1040c",
+      "replace-cs-u1040d",
+      "replace-cs-u1040e",
+      "replace-cs-u1040f"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-000",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-016",
+    "nativeIds": [
+      "replace-cs-u10410",
+      "replace-cs-u10411",
+      "replace-cs-u10412",
+      "replace-cs-u10413",
+      "replace-cs-u10414",
+      "replace-cs-u10415",
+      "replace-cs-u10416",
+      "replace-cs-u10417",
+      "replace-cs-u10418",
+      "replace-cs-u10419",
+      "replace-cs-u1041a",
+      "replace-cs-u1041b",
+      "replace-cs-u1041c",
+      "replace-cs-u1041d",
+      "replace-cs-u1041e",
+      "replace-cs-u1041f"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-016",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-032",
+    "nativeIds": [
+      "replace-cs-u10420",
+      "replace-cs-u10421",
+      "replace-cs-u10422",
+      "replace-cs-u10423",
+      "replace-cs-u10424",
+      "replace-cs-u10425",
+      "replace-cs-u10426",
+      "replace-cs-u10427",
+      "replace-cs-u104b0",
+      "replace-cs-u104b1",
+      "replace-cs-u104b2",
+      "replace-cs-u104b3",
+      "replace-cs-u104b4",
+      "replace-cs-u104b5",
+      "replace-cs-u104b6",
+      "replace-cs-u104b7"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-032",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-048",
+    "nativeIds": [
+      "replace-cs-u104b8",
+      "replace-cs-u104b9",
+      "replace-cs-u104ba",
+      "replace-cs-u104bb",
+      "replace-cs-u104bc",
+      "replace-cs-u104bd",
+      "replace-cs-u104be",
+      "replace-cs-u104bf",
+      "replace-cs-u104c0",
+      "replace-cs-u104c1",
+      "replace-cs-u104c2",
+      "replace-cs-u104c3",
+      "replace-cs-u104c4",
+      "replace-cs-u104c5",
+      "replace-cs-u104c6",
+      "replace-cs-u104c7"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-048",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-064",
+    "nativeIds": [
+      "replace-cs-u104c8",
+      "replace-cs-u104c9",
+      "replace-cs-u104ca",
+      "replace-cs-u104cb",
+      "replace-cs-u104cc",
+      "replace-cs-u104cd",
+      "replace-cs-u104ce",
+      "replace-cs-u104cf",
+      "replace-cs-u104d0",
+      "replace-cs-u104d1",
+      "replace-cs-u104d2",
+      "replace-cs-u104d3",
+      "replace-cs-u10570",
+      "replace-cs-u10571",
+      "replace-cs-u10572",
+      "replace-cs-u10573"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-064",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-080",
+    "nativeIds": [
+      "replace-cs-u10574",
+      "replace-cs-u10575",
+      "replace-cs-u10576",
+      "replace-cs-u10577",
+      "replace-cs-u10578",
+      "replace-cs-u10579",
+      "replace-cs-u1057a",
+      "replace-cs-u1057c",
+      "replace-cs-u1057d",
+      "replace-cs-u1057e",
+      "replace-cs-u1057f",
+      "replace-cs-u10580",
+      "replace-cs-u10581",
+      "replace-cs-u10582",
+      "replace-cs-u10583",
+      "replace-cs-u10584"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-080",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-096",
+    "nativeIds": [
+      "replace-cs-u10585",
+      "replace-cs-u10586",
+      "replace-cs-u10587",
+      "replace-cs-u10588",
+      "replace-cs-u10589",
+      "replace-cs-u1058a",
+      "replace-cs-u1058c",
+      "replace-cs-u1058d",
+      "replace-cs-u1058e",
+      "replace-cs-u1058f",
+      "replace-cs-u10590",
+      "replace-cs-u10591",
+      "replace-cs-u10592",
+      "replace-cs-u10594",
+      "replace-cs-u10595",
+      "replace-cs-u10c80"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-096",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-112",
+    "nativeIds": [
+      "replace-cs-u10c81",
+      "replace-cs-u10c82",
+      "replace-cs-u10c83",
+      "replace-cs-u10c84",
+      "replace-cs-u10c85",
+      "replace-cs-u10c86",
+      "replace-cs-u10c87",
+      "replace-cs-u10c88",
+      "replace-cs-u10c89",
+      "replace-cs-u10c8a",
+      "replace-cs-u10c8b",
+      "replace-cs-u10c8c",
+      "replace-cs-u10c8d",
+      "replace-cs-u10c8e",
+      "replace-cs-u10c8f",
+      "replace-cs-u10c90"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-112",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-128",
+    "nativeIds": [
+      "replace-cs-u10c91",
+      "replace-cs-u10c92",
+      "replace-cs-u10c93",
+      "replace-cs-u10c94",
+      "replace-cs-u10c95",
+      "replace-cs-u10c96",
+      "replace-cs-u10c97",
+      "replace-cs-u10c98",
+      "replace-cs-u10c99",
+      "replace-cs-u10c9a",
+      "replace-cs-u10c9b",
+      "replace-cs-u10c9c",
+      "replace-cs-u10c9d",
+      "replace-cs-u10c9e",
+      "replace-cs-u10c9f",
+      "replace-cs-u10ca0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-128",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-144",
+    "nativeIds": [
+      "replace-cs-u10ca1",
+      "replace-cs-u10ca2",
+      "replace-cs-u10ca3",
+      "replace-cs-u10ca4",
+      "replace-cs-u10ca5",
+      "replace-cs-u10ca6",
+      "replace-cs-u10ca7",
+      "replace-cs-u10ca8",
+      "replace-cs-u10ca9",
+      "replace-cs-u10caa",
+      "replace-cs-u10cab",
+      "replace-cs-u10cac",
+      "replace-cs-u10cad",
+      "replace-cs-u10cae",
+      "replace-cs-u10caf",
+      "replace-cs-u10cb0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-144",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-160",
+    "nativeIds": [
+      "replace-cs-u10cb1",
+      "replace-cs-u10cb2",
+      "replace-cs-u10d50",
+      "replace-cs-u10d51",
+      "replace-cs-u10d52",
+      "replace-cs-u10d53",
+      "replace-cs-u10d54",
+      "replace-cs-u10d55",
+      "replace-cs-u10d56",
+      "replace-cs-u10d57",
+      "replace-cs-u10d58",
+      "replace-cs-u10d59",
+      "replace-cs-u10d5a",
+      "replace-cs-u10d5b",
+      "replace-cs-u10d5c",
+      "replace-cs-u10d5d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-160",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-176",
+    "nativeIds": [
+      "replace-cs-u10d5e",
+      "replace-cs-u10d5f",
+      "replace-cs-u10d60",
+      "replace-cs-u10d61",
+      "replace-cs-u10d62",
+      "replace-cs-u10d63",
+      "replace-cs-u10d64",
+      "replace-cs-u10d65",
+      "replace-cs-u118a0",
+      "replace-cs-u118a1",
+      "replace-cs-u118a2",
+      "replace-cs-u118a3",
+      "replace-cs-u118a4",
+      "replace-cs-u118a5",
+      "replace-cs-u118a6",
+      "replace-cs-u118a7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-176",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-192",
+    "nativeIds": [
+      "replace-cs-u118a8",
+      "replace-cs-u118a9",
+      "replace-cs-u118aa",
+      "replace-cs-u118ab",
+      "replace-cs-u118ac",
+      "replace-cs-u118ad",
+      "replace-cs-u118ae",
+      "replace-cs-u118af",
+      "replace-cs-u118b0",
+      "replace-cs-u118b1",
+      "replace-cs-u118b2",
+      "replace-cs-u118b3",
+      "replace-cs-u118b4",
+      "replace-cs-u118b5",
+      "replace-cs-u118b6",
+      "replace-cs-u118b7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-192",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-208",
+    "nativeIds": [
+      "replace-cs-u118b8",
+      "replace-cs-u118b9",
+      "replace-cs-u118ba",
+      "replace-cs-u118bb",
+      "replace-cs-u118bc",
+      "replace-cs-u118bd",
+      "replace-cs-u118be",
+      "replace-cs-u118bf",
+      "replace-cs-u16e40",
+      "replace-cs-u16e41",
+      "replace-cs-u16e42",
+      "replace-cs-u16e43",
+      "replace-cs-u16e44",
+      "replace-cs-u16e45",
+      "replace-cs-u16e46",
+      "replace-cs-u16e47"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-208",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-224",
+    "nativeIds": [
+      "replace-cs-u16e48",
+      "replace-cs-u16e49",
+      "replace-cs-u16e4a",
+      "replace-cs-u16e4b",
+      "replace-cs-u16e4c",
+      "replace-cs-u16e4d",
+      "replace-cs-u16e4e",
+      "replace-cs-u16e4f",
+      "replace-cs-u16e50",
+      "replace-cs-u16e51",
+      "replace-cs-u16e52",
+      "replace-cs-u16e53",
+      "replace-cs-u16e54",
+      "replace-cs-u16e55",
+      "replace-cs-u16e56",
+      "replace-cs-u16e57"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-224",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-240",
+    "nativeIds": [
+      "replace-cs-u16e58",
+      "replace-cs-u16e59",
+      "replace-cs-u16e5a",
+      "replace-cs-u16e5b",
+      "replace-cs-u16e5c",
+      "replace-cs-u16e5d",
+      "replace-cs-u16e5e",
+      "replace-cs-u16e5f",
+      "replace-cs-u1e900",
+      "replace-cs-u1e901",
+      "replace-cs-u1e902",
+      "replace-cs-u1e903",
+      "replace-cs-u1e904",
+      "replace-cs-u1e905",
+      "replace-cs-u1e906",
+      "replace-cs-u1e907"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-240",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-256",
+    "nativeIds": [
+      "replace-cs-u1e908",
+      "replace-cs-u1e909",
+      "replace-cs-u1e90a",
+      "replace-cs-u1e90b",
+      "replace-cs-u1e90c",
+      "replace-cs-u1e90d",
+      "replace-cs-u1e90e",
+      "replace-cs-u1e90f",
+      "replace-cs-u1e910",
+      "replace-cs-u1e911",
+      "replace-cs-u1e912",
+      "replace-cs-u1e913",
+      "replace-cs-u1e914",
+      "replace-cs-u1e915",
+      "replace-cs-u1e916",
+      "replace-cs-u1e917"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-256",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-low-needle-cs-272",
+    "nativeIds": [
+      "replace-cs-u1e918",
+      "replace-cs-u1e919",
+      "replace-cs-u1e91a",
+      "replace-cs-u1e91b",
+      "replace-cs-u1e91c",
+      "replace-cs-u1e91d",
+      "replace-cs-u1e91e",
+      "replace-cs-u1e91f",
+      "replace-cs-u1e920",
+      "replace-cs-u1e921"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-low-needle-cs-272",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-000",
+    "nativeIds": [
+      "replace-ci-u10428",
+      "replace-ci-u10429",
+      "replace-ci-u1042a",
+      "replace-ci-u1042b",
+      "replace-ci-u1042c",
+      "replace-ci-u1042d",
+      "replace-ci-u1042e",
+      "replace-ci-u1042f",
+      "replace-ci-u10430",
+      "replace-ci-u10431",
+      "replace-ci-u10432",
+      "replace-ci-u10433",
+      "replace-ci-u10434",
+      "replace-ci-u10435",
+      "replace-ci-u10436",
+      "replace-ci-u10437"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-000",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-016",
+    "nativeIds": [
+      "replace-ci-u10438",
+      "replace-ci-u10439",
+      "replace-ci-u1043a",
+      "replace-ci-u1043b",
+      "replace-ci-u1043c",
+      "replace-ci-u1043d",
+      "replace-ci-u1043e",
+      "replace-ci-u1043f",
+      "replace-ci-u10440",
+      "replace-ci-u10441",
+      "replace-ci-u10442",
+      "replace-ci-u10443",
+      "replace-ci-u10444",
+      "replace-ci-u10445",
+      "replace-ci-u10446",
+      "replace-ci-u10447"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-016",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-032",
+    "nativeIds": [
+      "replace-ci-u10448",
+      "replace-ci-u10449",
+      "replace-ci-u1044a",
+      "replace-ci-u1044b",
+      "replace-ci-u1044c",
+      "replace-ci-u1044d",
+      "replace-ci-u1044e",
+      "replace-ci-u1044f",
+      "replace-ci-u104d8",
+      "replace-ci-u104d9",
+      "replace-ci-u104da",
+      "replace-ci-u104db",
+      "replace-ci-u104dc",
+      "replace-ci-u104dd",
+      "replace-ci-u104de",
+      "replace-ci-u104df"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-032",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-048",
+    "nativeIds": [
+      "replace-ci-u104e0",
+      "replace-ci-u104e1",
+      "replace-ci-u104e2",
+      "replace-ci-u104e3",
+      "replace-ci-u104e4",
+      "replace-ci-u104e5",
+      "replace-ci-u104e6",
+      "replace-ci-u104e7",
+      "replace-ci-u104e8",
+      "replace-ci-u104e9",
+      "replace-ci-u104ea",
+      "replace-ci-u104eb",
+      "replace-ci-u104ec",
+      "replace-ci-u104ed",
+      "replace-ci-u104ee",
+      "replace-ci-u104ef"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-048",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-064",
+    "nativeIds": [
+      "replace-ci-u104f0",
+      "replace-ci-u104f1",
+      "replace-ci-u104f2",
+      "replace-ci-u104f3",
+      "replace-ci-u104f4",
+      "replace-ci-u104f5",
+      "replace-ci-u104f6",
+      "replace-ci-u104f7",
+      "replace-ci-u104f8",
+      "replace-ci-u104f9",
+      "replace-ci-u104fa",
+      "replace-ci-u104fb",
+      "replace-ci-u10597",
+      "replace-ci-u10598",
+      "replace-ci-u10599",
+      "replace-ci-u1059a"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-064",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-080",
+    "nativeIds": [
+      "replace-ci-u1059b",
+      "replace-ci-u1059c",
+      "replace-ci-u1059d",
+      "replace-ci-u1059e",
+      "replace-ci-u1059f",
+      "replace-ci-u105a0",
+      "replace-ci-u105a1",
+      "replace-ci-u105a3",
+      "replace-ci-u105a4",
+      "replace-ci-u105a5",
+      "replace-ci-u105a6",
+      "replace-ci-u105a7",
+      "replace-ci-u105a8",
+      "replace-ci-u105a9",
+      "replace-ci-u105aa",
+      "replace-ci-u105ab"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-080",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-096",
+    "nativeIds": [
+      "replace-ci-u105ac",
+      "replace-ci-u105ad",
+      "replace-ci-u105ae",
+      "replace-ci-u105af",
+      "replace-ci-u105b0",
+      "replace-ci-u105b1",
+      "replace-ci-u105b3",
+      "replace-ci-u105b4",
+      "replace-ci-u105b5",
+      "replace-ci-u105b6",
+      "replace-ci-u105b7",
+      "replace-ci-u105b8",
+      "replace-ci-u105b9",
+      "replace-ci-u105bb",
+      "replace-ci-u105bc",
+      "replace-ci-u10cc0"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-096",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-112",
+    "nativeIds": [
+      "replace-ci-u10cc1",
+      "replace-ci-u10cc2",
+      "replace-ci-u10cc3",
+      "replace-ci-u10cc4",
+      "replace-ci-u10cc5",
+      "replace-ci-u10cc6",
+      "replace-ci-u10cc7",
+      "replace-ci-u10cc8",
+      "replace-ci-u10cc9",
+      "replace-ci-u10cca",
+      "replace-ci-u10ccb",
+      "replace-ci-u10ccc",
+      "replace-ci-u10ccd",
+      "replace-ci-u10cce",
+      "replace-ci-u10ccf",
+      "replace-ci-u10cd0"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-112",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-128",
+    "nativeIds": [
+      "replace-ci-u10cd1",
+      "replace-ci-u10cd2",
+      "replace-ci-u10cd3",
+      "replace-ci-u10cd4",
+      "replace-ci-u10cd5",
+      "replace-ci-u10cd6",
+      "replace-ci-u10cd7",
+      "replace-ci-u10cd8",
+      "replace-ci-u10cd9",
+      "replace-ci-u10cda",
+      "replace-ci-u10cdb",
+      "replace-ci-u10cdc",
+      "replace-ci-u10cdd",
+      "replace-ci-u10cde",
+      "replace-ci-u10cdf",
+      "replace-ci-u10ce0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-128",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-144",
+    "nativeIds": [
+      "replace-ci-u10ce1",
+      "replace-ci-u10ce2",
+      "replace-ci-u10ce3",
+      "replace-ci-u10ce4",
+      "replace-ci-u10ce5",
+      "replace-ci-u10ce6",
+      "replace-ci-u10ce7",
+      "replace-ci-u10ce8",
+      "replace-ci-u10ce9",
+      "replace-ci-u10cea",
+      "replace-ci-u10ceb",
+      "replace-ci-u10cec",
+      "replace-ci-u10ced",
+      "replace-ci-u10cee",
+      "replace-ci-u10cef",
+      "replace-ci-u10cf0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-144",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-160",
+    "nativeIds": [
+      "replace-ci-u10cf1",
+      "replace-ci-u10cf2",
+      "replace-ci-u10d70",
+      "replace-ci-u10d71",
+      "replace-ci-u10d72",
+      "replace-ci-u10d73",
+      "replace-ci-u10d74",
+      "replace-ci-u10d75",
+      "replace-ci-u10d76",
+      "replace-ci-u10d77",
+      "replace-ci-u10d78",
+      "replace-ci-u10d79",
+      "replace-ci-u10d7a",
+      "replace-ci-u10d7b",
+      "replace-ci-u10d7c",
+      "replace-ci-u10d7d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-160",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-176",
+    "nativeIds": [
+      "replace-ci-u10d7e",
+      "replace-ci-u10d7f",
+      "replace-ci-u10d80",
+      "replace-ci-u10d81",
+      "replace-ci-u10d82",
+      "replace-ci-u10d83",
+      "replace-ci-u10d84",
+      "replace-ci-u10d85",
+      "replace-ci-u118c0",
+      "replace-ci-u118c1",
+      "replace-ci-u118c2",
+      "replace-ci-u118c3",
+      "replace-ci-u118c4",
+      "replace-ci-u118c5",
+      "replace-ci-u118c6",
+      "replace-ci-u118c7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-176",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-192",
+    "nativeIds": [
+      "replace-ci-u118c8",
+      "replace-ci-u118c9",
+      "replace-ci-u118ca",
+      "replace-ci-u118cb",
+      "replace-ci-u118cc",
+      "replace-ci-u118cd",
+      "replace-ci-u118ce",
+      "replace-ci-u118cf",
+      "replace-ci-u118d0",
+      "replace-ci-u118d1",
+      "replace-ci-u118d2",
+      "replace-ci-u118d3",
+      "replace-ci-u118d4",
+      "replace-ci-u118d5",
+      "replace-ci-u118d6",
+      "replace-ci-u118d7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-192",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-208",
+    "nativeIds": [
+      "replace-ci-u118d8",
+      "replace-ci-u118d9",
+      "replace-ci-u118da",
+      "replace-ci-u118db",
+      "replace-ci-u118dc",
+      "replace-ci-u118dd",
+      "replace-ci-u118de",
+      "replace-ci-u118df",
+      "replace-ci-u16e60",
+      "replace-ci-u16e61",
+      "replace-ci-u16e62",
+      "replace-ci-u16e63",
+      "replace-ci-u16e64",
+      "replace-ci-u16e65",
+      "replace-ci-u16e66",
+      "replace-ci-u16e67"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-208",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-224",
+    "nativeIds": [
+      "replace-ci-u16e68",
+      "replace-ci-u16e69",
+      "replace-ci-u16e6a",
+      "replace-ci-u16e6b",
+      "replace-ci-u16e6c",
+      "replace-ci-u16e6d",
+      "replace-ci-u16e6e",
+      "replace-ci-u16e6f",
+      "replace-ci-u16e70",
+      "replace-ci-u16e71",
+      "replace-ci-u16e72",
+      "replace-ci-u16e73",
+      "replace-ci-u16e74",
+      "replace-ci-u16e75",
+      "replace-ci-u16e76",
+      "replace-ci-u16e77"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-224",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-240",
+    "nativeIds": [
+      "replace-ci-u16e78",
+      "replace-ci-u16e79",
+      "replace-ci-u16e7a",
+      "replace-ci-u16e7b",
+      "replace-ci-u16e7c",
+      "replace-ci-u16e7d",
+      "replace-ci-u16e7e",
+      "replace-ci-u16e7f",
+      "replace-ci-u1e922",
+      "replace-ci-u1e923",
+      "replace-ci-u1e924",
+      "replace-ci-u1e925",
+      "replace-ci-u1e926",
+      "replace-ci-u1e927",
+      "replace-ci-u1e928",
+      "replace-ci-u1e929"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-240",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-256",
+    "nativeIds": [
+      "replace-ci-u1e92a",
+      "replace-ci-u1e92b",
+      "replace-ci-u1e92c",
+      "replace-ci-u1e92d",
+      "replace-ci-u1e92e",
+      "replace-ci-u1e92f",
+      "replace-ci-u1e930",
+      "replace-ci-u1e931",
+      "replace-ci-u1e932",
+      "replace-ci-u1e933",
+      "replace-ci-u1e934",
+      "replace-ci-u1e935",
+      "replace-ci-u1e936",
+      "replace-ci-u1e937",
+      "replace-ci-u1e938",
+      "replace-ci-u1e939"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-256",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-ci-272",
+    "nativeIds": [
+      "replace-ci-u1e93a",
+      "replace-ci-u1e93b",
+      "replace-ci-u1e93c",
+      "replace-ci-u1e93d",
+      "replace-ci-u1e93e",
+      "replace-ci-u1e93f",
+      "replace-ci-u1e940",
+      "replace-ci-u1e941",
+      "replace-ci-u1e942",
+      "replace-ci-u1e943"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-ci-272",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-000",
+    "nativeIds": [
+      "replace-cs-u10428",
+      "replace-cs-u10429",
+      "replace-cs-u1042a",
+      "replace-cs-u1042b",
+      "replace-cs-u1042c",
+      "replace-cs-u1042d",
+      "replace-cs-u1042e",
+      "replace-cs-u1042f",
+      "replace-cs-u10430",
+      "replace-cs-u10431",
+      "replace-cs-u10432",
+      "replace-cs-u10433",
+      "replace-cs-u10434",
+      "replace-cs-u10435",
+      "replace-cs-u10436",
+      "replace-cs-u10437"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-000",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-016",
+    "nativeIds": [
+      "replace-cs-u10438",
+      "replace-cs-u10439",
+      "replace-cs-u1043a",
+      "replace-cs-u1043b",
+      "replace-cs-u1043c",
+      "replace-cs-u1043d",
+      "replace-cs-u1043e",
+      "replace-cs-u1043f",
+      "replace-cs-u10440",
+      "replace-cs-u10441",
+      "replace-cs-u10442",
+      "replace-cs-u10443",
+      "replace-cs-u10444",
+      "replace-cs-u10445",
+      "replace-cs-u10446",
+      "replace-cs-u10447"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-016",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-032",
+    "nativeIds": [
+      "replace-cs-u10448",
+      "replace-cs-u10449",
+      "replace-cs-u1044a",
+      "replace-cs-u1044b",
+      "replace-cs-u1044c",
+      "replace-cs-u1044d",
+      "replace-cs-u1044e",
+      "replace-cs-u1044f",
+      "replace-cs-u104d8",
+      "replace-cs-u104d9",
+      "replace-cs-u104da",
+      "replace-cs-u104db",
+      "replace-cs-u104dc",
+      "replace-cs-u104dd",
+      "replace-cs-u104de",
+      "replace-cs-u104df"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-032",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-048",
+    "nativeIds": [
+      "replace-cs-u104e0",
+      "replace-cs-u104e1",
+      "replace-cs-u104e2",
+      "replace-cs-u104e3",
+      "replace-cs-u104e4",
+      "replace-cs-u104e5",
+      "replace-cs-u104e6",
+      "replace-cs-u104e7",
+      "replace-cs-u104e8",
+      "replace-cs-u104e9",
+      "replace-cs-u104ea",
+      "replace-cs-u104eb",
+      "replace-cs-u104ec",
+      "replace-cs-u104ed",
+      "replace-cs-u104ee",
+      "replace-cs-u104ef"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-048",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-064",
+    "nativeIds": [
+      "replace-cs-u104f0",
+      "replace-cs-u104f1",
+      "replace-cs-u104f2",
+      "replace-cs-u104f3",
+      "replace-cs-u104f4",
+      "replace-cs-u104f5",
+      "replace-cs-u104f6",
+      "replace-cs-u104f7",
+      "replace-cs-u104f8",
+      "replace-cs-u104f9",
+      "replace-cs-u104fa",
+      "replace-cs-u104fb",
+      "replace-cs-u10597",
+      "replace-cs-u10598",
+      "replace-cs-u10599",
+      "replace-cs-u1059a"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-064",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-080",
+    "nativeIds": [
+      "replace-cs-u1059b",
+      "replace-cs-u1059c",
+      "replace-cs-u1059d",
+      "replace-cs-u1059e",
+      "replace-cs-u1059f",
+      "replace-cs-u105a0",
+      "replace-cs-u105a1",
+      "replace-cs-u105a3",
+      "replace-cs-u105a4",
+      "replace-cs-u105a5",
+      "replace-cs-u105a6",
+      "replace-cs-u105a7",
+      "replace-cs-u105a8",
+      "replace-cs-u105a9",
+      "replace-cs-u105aa",
+      "replace-cs-u105ab"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-080",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-096",
+    "nativeIds": [
+      "replace-cs-u105ac",
+      "replace-cs-u105ad",
+      "replace-cs-u105ae",
+      "replace-cs-u105af",
+      "replace-cs-u105b0",
+      "replace-cs-u105b1",
+      "replace-cs-u105b3",
+      "replace-cs-u105b4",
+      "replace-cs-u105b5",
+      "replace-cs-u105b6",
+      "replace-cs-u105b7",
+      "replace-cs-u105b8",
+      "replace-cs-u105b9",
+      "replace-cs-u105bb",
+      "replace-cs-u105bc",
+      "replace-cs-u10cc0"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-096",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-112",
+    "nativeIds": [
+      "replace-cs-u10cc1",
+      "replace-cs-u10cc2",
+      "replace-cs-u10cc3",
+      "replace-cs-u10cc4",
+      "replace-cs-u10cc5",
+      "replace-cs-u10cc6",
+      "replace-cs-u10cc7",
+      "replace-cs-u10cc8",
+      "replace-cs-u10cc9",
+      "replace-cs-u10cca",
+      "replace-cs-u10ccb",
+      "replace-cs-u10ccc",
+      "replace-cs-u10ccd",
+      "replace-cs-u10cce",
+      "replace-cs-u10ccf",
+      "replace-cs-u10cd0"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-112",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-128",
+    "nativeIds": [
+      "replace-cs-u10cd1",
+      "replace-cs-u10cd2",
+      "replace-cs-u10cd3",
+      "replace-cs-u10cd4",
+      "replace-cs-u10cd5",
+      "replace-cs-u10cd6",
+      "replace-cs-u10cd7",
+      "replace-cs-u10cd8",
+      "replace-cs-u10cd9",
+      "replace-cs-u10cda",
+      "replace-cs-u10cdb",
+      "replace-cs-u10cdc",
+      "replace-cs-u10cdd",
+      "replace-cs-u10cde",
+      "replace-cs-u10cdf",
+      "replace-cs-u10ce0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-128",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-144",
+    "nativeIds": [
+      "replace-cs-u10ce1",
+      "replace-cs-u10ce2",
+      "replace-cs-u10ce3",
+      "replace-cs-u10ce4",
+      "replace-cs-u10ce5",
+      "replace-cs-u10ce6",
+      "replace-cs-u10ce7",
+      "replace-cs-u10ce8",
+      "replace-cs-u10ce9",
+      "replace-cs-u10cea",
+      "replace-cs-u10ceb",
+      "replace-cs-u10cec",
+      "replace-cs-u10ced",
+      "replace-cs-u10cee",
+      "replace-cs-u10cef",
+      "replace-cs-u10cf0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-144",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-160",
+    "nativeIds": [
+      "replace-cs-u10cf1",
+      "replace-cs-u10cf2",
+      "replace-cs-u10d70",
+      "replace-cs-u10d71",
+      "replace-cs-u10d72",
+      "replace-cs-u10d73",
+      "replace-cs-u10d74",
+      "replace-cs-u10d75",
+      "replace-cs-u10d76",
+      "replace-cs-u10d77",
+      "replace-cs-u10d78",
+      "replace-cs-u10d79",
+      "replace-cs-u10d7a",
+      "replace-cs-u10d7b",
+      "replace-cs-u10d7c",
+      "replace-cs-u10d7d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-160",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-176",
+    "nativeIds": [
+      "replace-cs-u10d7e",
+      "replace-cs-u10d7f",
+      "replace-cs-u10d80",
+      "replace-cs-u10d81",
+      "replace-cs-u10d82",
+      "replace-cs-u10d83",
+      "replace-cs-u10d84",
+      "replace-cs-u10d85",
+      "replace-cs-u118c0",
+      "replace-cs-u118c1",
+      "replace-cs-u118c2",
+      "replace-cs-u118c3",
+      "replace-cs-u118c4",
+      "replace-cs-u118c5",
+      "replace-cs-u118c6",
+      "replace-cs-u118c7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-176",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-192",
+    "nativeIds": [
+      "replace-cs-u118c8",
+      "replace-cs-u118c9",
+      "replace-cs-u118ca",
+      "replace-cs-u118cb",
+      "replace-cs-u118cc",
+      "replace-cs-u118cd",
+      "replace-cs-u118ce",
+      "replace-cs-u118cf",
+      "replace-cs-u118d0",
+      "replace-cs-u118d1",
+      "replace-cs-u118d2",
+      "replace-cs-u118d3",
+      "replace-cs-u118d4",
+      "replace-cs-u118d5",
+      "replace-cs-u118d6",
+      "replace-cs-u118d7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-192",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-208",
+    "nativeIds": [
+      "replace-cs-u118d8",
+      "replace-cs-u118d9",
+      "replace-cs-u118da",
+      "replace-cs-u118db",
+      "replace-cs-u118dc",
+      "replace-cs-u118dd",
+      "replace-cs-u118de",
+      "replace-cs-u118df",
+      "replace-cs-u16e60",
+      "replace-cs-u16e61",
+      "replace-cs-u16e62",
+      "replace-cs-u16e63",
+      "replace-cs-u16e64",
+      "replace-cs-u16e65",
+      "replace-cs-u16e66",
+      "replace-cs-u16e67"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-208",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-224",
+    "nativeIds": [
+      "replace-cs-u16e68",
+      "replace-cs-u16e69",
+      "replace-cs-u16e6a",
+      "replace-cs-u16e6b",
+      "replace-cs-u16e6c",
+      "replace-cs-u16e6d",
+      "replace-cs-u16e6e",
+      "replace-cs-u16e6f",
+      "replace-cs-u16e70",
+      "replace-cs-u16e71",
+      "replace-cs-u16e72",
+      "replace-cs-u16e73",
+      "replace-cs-u16e74",
+      "replace-cs-u16e75",
+      "replace-cs-u16e76",
+      "replace-cs-u16e77"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-224",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-240",
+    "nativeIds": [
+      "replace-cs-u16e78",
+      "replace-cs-u16e79",
+      "replace-cs-u16e7a",
+      "replace-cs-u16e7b",
+      "replace-cs-u16e7c",
+      "replace-cs-u16e7d",
+      "replace-cs-u16e7e",
+      "replace-cs-u16e7f",
+      "replace-cs-u1e922",
+      "replace-cs-u1e923",
+      "replace-cs-u1e924",
+      "replace-cs-u1e925",
+      "replace-cs-u1e926",
+      "replace-cs-u1e927",
+      "replace-cs-u1e928",
+      "replace-cs-u1e929"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-240",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-256",
+    "nativeIds": [
+      "replace-cs-u1e92a",
+      "replace-cs-u1e92b",
+      "replace-cs-u1e92c",
+      "replace-cs-u1e92d",
+      "replace-cs-u1e92e",
+      "replace-cs-u1e92f",
+      "replace-cs-u1e930",
+      "replace-cs-u1e931",
+      "replace-cs-u1e932",
+      "replace-cs-u1e933",
+      "replace-cs-u1e934",
+      "replace-cs-u1e935",
+      "replace-cs-u1e936",
+      "replace-cs-u1e937",
+      "replace-cs-u1e938",
+      "replace-cs-u1e939"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-256",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "direct-high-needle-cs-272",
+    "nativeIds": [
+      "replace-cs-u1e93a",
+      "replace-cs-u1e93b",
+      "replace-cs-u1e93c",
+      "replace-cs-u1e93d",
+      "replace-cs-u1e93e",
+      "replace-cs-u1e93f",
+      "replace-cs-u1e940",
+      "replace-cs-u1e941",
+      "replace-cs-u1e942",
+      "replace-cs-u1e943"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "list-high-needle-cs-272",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 2,
+    "id": "scope-enable",
+    "expression": "@cs AllEqual(Array(RegexReplace('𐐀','(?i:𐐨)','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "scope-disable",
+    "expression": "@ci AllEqual(Array(RegexReplace('𐐀','(?-i:𐐨)','X'),'𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "scope-restore-cs",
+    "expression": "@cs AllEqual(Array(RegexReplace('𐐀𐐀','(?i:𐐨)𐐨','X'),'𐐀𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "scope-restore-ci",
+    "expression": "@ci AllEqual(Array(RegexReplace('𐐀𐐀','(?-i:𐐀)𐐨','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "quantifier-ci",
+    "expression": "@ci AllEqual(Array(RegexReplace('𐐀𐐀','𐐨+','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "quantifier-cs",
+    "expression": "@cs AllEqual(Array(RegexReplace('𐐀𐐀','𐐨+','X'),'𐐀𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "capture-original",
+    "expression": "@ci AllEqual(Array(RegexExtract('𐐀!','(𐐨)(!)',1),'𐐀')) and AllEqual(Array(RegexExtract('𐐀!','(𐐨)(!)',2),'!'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "capture-quantifier",
+    "expression": "@ci AllEqual(Array(RegexExtract('𐐀𐐀!','(𐐨+)(!)',1),'𐐀𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "bmp-ci",
+    "expression": "@ci AllEqual(Array(RegexReplace('AΣſ','aσs','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "bmp-cs",
+    "expression": "@cs AllEqual(Array(RegexReplace('AΣſ','aσs','X'),'AΣſ'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 2,
+    "id": "noncased-supplementary",
+    "expression": "@ci AllEqual(Array(RegexReplace('😀😀','😀+','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-000",
+    "nativeIds": [
+      "replace-ci-u10400",
+      "replace-ci-u10401",
+      "replace-ci-u10402",
+      "replace-ci-u10403",
+      "replace-ci-u10404",
+      "replace-ci-u10405",
+      "replace-ci-u10406",
+      "replace-ci-u10407",
+      "replace-ci-u10408",
+      "replace-ci-u10409",
+      "replace-ci-u1040a",
+      "replace-ci-u1040b",
+      "replace-ci-u1040c",
+      "replace-ci-u1040d",
+      "replace-ci-u1040e",
+      "replace-ci-u1040f"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-000",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-016",
+    "nativeIds": [
+      "replace-ci-u10410",
+      "replace-ci-u10411",
+      "replace-ci-u10412",
+      "replace-ci-u10413",
+      "replace-ci-u10414",
+      "replace-ci-u10415",
+      "replace-ci-u10416",
+      "replace-ci-u10417",
+      "replace-ci-u10418",
+      "replace-ci-u10419",
+      "replace-ci-u1041a",
+      "replace-ci-u1041b",
+      "replace-ci-u1041c",
+      "replace-ci-u1041d",
+      "replace-ci-u1041e",
+      "replace-ci-u1041f"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-016",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-032",
+    "nativeIds": [
+      "replace-ci-u10420",
+      "replace-ci-u10421",
+      "replace-ci-u10422",
+      "replace-ci-u10423",
+      "replace-ci-u10424",
+      "replace-ci-u10425",
+      "replace-ci-u10426",
+      "replace-ci-u10427",
+      "replace-ci-u104b0",
+      "replace-ci-u104b1",
+      "replace-ci-u104b2",
+      "replace-ci-u104b3",
+      "replace-ci-u104b4",
+      "replace-ci-u104b5",
+      "replace-ci-u104b6",
+      "replace-ci-u104b7"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-032",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-048",
+    "nativeIds": [
+      "replace-ci-u104b8",
+      "replace-ci-u104b9",
+      "replace-ci-u104ba",
+      "replace-ci-u104bb",
+      "replace-ci-u104bc",
+      "replace-ci-u104bd",
+      "replace-ci-u104be",
+      "replace-ci-u104bf",
+      "replace-ci-u104c0",
+      "replace-ci-u104c1",
+      "replace-ci-u104c2",
+      "replace-ci-u104c3",
+      "replace-ci-u104c4",
+      "replace-ci-u104c5",
+      "replace-ci-u104c6",
+      "replace-ci-u104c7"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-048",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-064",
+    "nativeIds": [
+      "replace-ci-u104c8",
+      "replace-ci-u104c9",
+      "replace-ci-u104ca",
+      "replace-ci-u104cb",
+      "replace-ci-u104cc",
+      "replace-ci-u104cd",
+      "replace-ci-u104ce",
+      "replace-ci-u104cf",
+      "replace-ci-u104d0",
+      "replace-ci-u104d1",
+      "replace-ci-u104d2",
+      "replace-ci-u104d3",
+      "replace-ci-u10570",
+      "replace-ci-u10571",
+      "replace-ci-u10572",
+      "replace-ci-u10573"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-064",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-080",
+    "nativeIds": [
+      "replace-ci-u10574",
+      "replace-ci-u10575",
+      "replace-ci-u10576",
+      "replace-ci-u10577",
+      "replace-ci-u10578",
+      "replace-ci-u10579",
+      "replace-ci-u1057a",
+      "replace-ci-u1057c",
+      "replace-ci-u1057d",
+      "replace-ci-u1057e",
+      "replace-ci-u1057f",
+      "replace-ci-u10580",
+      "replace-ci-u10581",
+      "replace-ci-u10582",
+      "replace-ci-u10583",
+      "replace-ci-u10584"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-080",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-096",
+    "nativeIds": [
+      "replace-ci-u10585",
+      "replace-ci-u10586",
+      "replace-ci-u10587",
+      "replace-ci-u10588",
+      "replace-ci-u10589",
+      "replace-ci-u1058a",
+      "replace-ci-u1058c",
+      "replace-ci-u1058d",
+      "replace-ci-u1058e",
+      "replace-ci-u1058f",
+      "replace-ci-u10590",
+      "replace-ci-u10591",
+      "replace-ci-u10592",
+      "replace-ci-u10594",
+      "replace-ci-u10595",
+      "replace-ci-u10c80"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-096",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-112",
+    "nativeIds": [
+      "replace-ci-u10c81",
+      "replace-ci-u10c82",
+      "replace-ci-u10c83",
+      "replace-ci-u10c84",
+      "replace-ci-u10c85",
+      "replace-ci-u10c86",
+      "replace-ci-u10c87",
+      "replace-ci-u10c88",
+      "replace-ci-u10c89",
+      "replace-ci-u10c8a",
+      "replace-ci-u10c8b",
+      "replace-ci-u10c8c",
+      "replace-ci-u10c8d",
+      "replace-ci-u10c8e",
+      "replace-ci-u10c8f",
+      "replace-ci-u10c90"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-112",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-128",
+    "nativeIds": [
+      "replace-ci-u10c91",
+      "replace-ci-u10c92",
+      "replace-ci-u10c93",
+      "replace-ci-u10c94",
+      "replace-ci-u10c95",
+      "replace-ci-u10c96",
+      "replace-ci-u10c97",
+      "replace-ci-u10c98",
+      "replace-ci-u10c99",
+      "replace-ci-u10c9a",
+      "replace-ci-u10c9b",
+      "replace-ci-u10c9c",
+      "replace-ci-u10c9d",
+      "replace-ci-u10c9e",
+      "replace-ci-u10c9f",
+      "replace-ci-u10ca0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-128",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-144",
+    "nativeIds": [
+      "replace-ci-u10ca1",
+      "replace-ci-u10ca2",
+      "replace-ci-u10ca3",
+      "replace-ci-u10ca4",
+      "replace-ci-u10ca5",
+      "replace-ci-u10ca6",
+      "replace-ci-u10ca7",
+      "replace-ci-u10ca8",
+      "replace-ci-u10ca9",
+      "replace-ci-u10caa",
+      "replace-ci-u10cab",
+      "replace-ci-u10cac",
+      "replace-ci-u10cad",
+      "replace-ci-u10cae",
+      "replace-ci-u10caf",
+      "replace-ci-u10cb0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-144",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-160",
+    "nativeIds": [
+      "replace-ci-u10cb1",
+      "replace-ci-u10cb2",
+      "replace-ci-u10d50",
+      "replace-ci-u10d51",
+      "replace-ci-u10d52",
+      "replace-ci-u10d53",
+      "replace-ci-u10d54",
+      "replace-ci-u10d55",
+      "replace-ci-u10d56",
+      "replace-ci-u10d57",
+      "replace-ci-u10d58",
+      "replace-ci-u10d59",
+      "replace-ci-u10d5a",
+      "replace-ci-u10d5b",
+      "replace-ci-u10d5c",
+      "replace-ci-u10d5d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-160",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-176",
+    "nativeIds": [
+      "replace-ci-u10d5e",
+      "replace-ci-u10d5f",
+      "replace-ci-u10d60",
+      "replace-ci-u10d61",
+      "replace-ci-u10d62",
+      "replace-ci-u10d63",
+      "replace-ci-u10d64",
+      "replace-ci-u10d65",
+      "replace-ci-u118a0",
+      "replace-ci-u118a1",
+      "replace-ci-u118a2",
+      "replace-ci-u118a3",
+      "replace-ci-u118a4",
+      "replace-ci-u118a5",
+      "replace-ci-u118a6",
+      "replace-ci-u118a7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-176",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-192",
+    "nativeIds": [
+      "replace-ci-u118a8",
+      "replace-ci-u118a9",
+      "replace-ci-u118aa",
+      "replace-ci-u118ab",
+      "replace-ci-u118ac",
+      "replace-ci-u118ad",
+      "replace-ci-u118ae",
+      "replace-ci-u118af",
+      "replace-ci-u118b0",
+      "replace-ci-u118b1",
+      "replace-ci-u118b2",
+      "replace-ci-u118b3",
+      "replace-ci-u118b4",
+      "replace-ci-u118b5",
+      "replace-ci-u118b6",
+      "replace-ci-u118b7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-192",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-208",
+    "nativeIds": [
+      "replace-ci-u118b8",
+      "replace-ci-u118b9",
+      "replace-ci-u118ba",
+      "replace-ci-u118bb",
+      "replace-ci-u118bc",
+      "replace-ci-u118bd",
+      "replace-ci-u118be",
+      "replace-ci-u118bf",
+      "replace-ci-u16e40",
+      "replace-ci-u16e41",
+      "replace-ci-u16e42",
+      "replace-ci-u16e43",
+      "replace-ci-u16e44",
+      "replace-ci-u16e45",
+      "replace-ci-u16e46",
+      "replace-ci-u16e47"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-208",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-224",
+    "nativeIds": [
+      "replace-ci-u16e48",
+      "replace-ci-u16e49",
+      "replace-ci-u16e4a",
+      "replace-ci-u16e4b",
+      "replace-ci-u16e4c",
+      "replace-ci-u16e4d",
+      "replace-ci-u16e4e",
+      "replace-ci-u16e4f",
+      "replace-ci-u16e50",
+      "replace-ci-u16e51",
+      "replace-ci-u16e52",
+      "replace-ci-u16e53",
+      "replace-ci-u16e54",
+      "replace-ci-u16e55",
+      "replace-ci-u16e56",
+      "replace-ci-u16e57"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-224",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-240",
+    "nativeIds": [
+      "replace-ci-u16e58",
+      "replace-ci-u16e59",
+      "replace-ci-u16e5a",
+      "replace-ci-u16e5b",
+      "replace-ci-u16e5c",
+      "replace-ci-u16e5d",
+      "replace-ci-u16e5e",
+      "replace-ci-u16e5f",
+      "replace-ci-u1e900",
+      "replace-ci-u1e901",
+      "replace-ci-u1e902",
+      "replace-ci-u1e903",
+      "replace-ci-u1e904",
+      "replace-ci-u1e905",
+      "replace-ci-u1e906",
+      "replace-ci-u1e907"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-240",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-256",
+    "nativeIds": [
+      "replace-ci-u1e908",
+      "replace-ci-u1e909",
+      "replace-ci-u1e90a",
+      "replace-ci-u1e90b",
+      "replace-ci-u1e90c",
+      "replace-ci-u1e90d",
+      "replace-ci-u1e90e",
+      "replace-ci-u1e90f",
+      "replace-ci-u1e910",
+      "replace-ci-u1e911",
+      "replace-ci-u1e912",
+      "replace-ci-u1e913",
+      "replace-ci-u1e914",
+      "replace-ci-u1e915",
+      "replace-ci-u1e916",
+      "replace-ci-u1e917"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-256",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-ci-272",
+    "nativeIds": [
+      "replace-ci-u1e918",
+      "replace-ci-u1e919",
+      "replace-ci-u1e91a",
+      "replace-ci-u1e91b",
+      "replace-ci-u1e91c",
+      "replace-ci-u1e91d",
+      "replace-ci-u1e91e",
+      "replace-ci-u1e91f",
+      "replace-ci-u1e920",
+      "replace-ci-u1e921"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-ci-272",
+    "nativeIds": [
+      "replacewithlist-low-needle-ci"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-000",
+    "nativeIds": [
+      "replace-cs-u10400",
+      "replace-cs-u10401",
+      "replace-cs-u10402",
+      "replace-cs-u10403",
+      "replace-cs-u10404",
+      "replace-cs-u10405",
+      "replace-cs-u10406",
+      "replace-cs-u10407",
+      "replace-cs-u10408",
+      "replace-cs-u10409",
+      "replace-cs-u1040a",
+      "replace-cs-u1040b",
+      "replace-cs-u1040c",
+      "replace-cs-u1040d",
+      "replace-cs-u1040e",
+      "replace-cs-u1040f"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-000",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-016",
+    "nativeIds": [
+      "replace-cs-u10410",
+      "replace-cs-u10411",
+      "replace-cs-u10412",
+      "replace-cs-u10413",
+      "replace-cs-u10414",
+      "replace-cs-u10415",
+      "replace-cs-u10416",
+      "replace-cs-u10417",
+      "replace-cs-u10418",
+      "replace-cs-u10419",
+      "replace-cs-u1041a",
+      "replace-cs-u1041b",
+      "replace-cs-u1041c",
+      "replace-cs-u1041d",
+      "replace-cs-u1041e",
+      "replace-cs-u1041f"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-016",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-032",
+    "nativeIds": [
+      "replace-cs-u10420",
+      "replace-cs-u10421",
+      "replace-cs-u10422",
+      "replace-cs-u10423",
+      "replace-cs-u10424",
+      "replace-cs-u10425",
+      "replace-cs-u10426",
+      "replace-cs-u10427",
+      "replace-cs-u104b0",
+      "replace-cs-u104b1",
+      "replace-cs-u104b2",
+      "replace-cs-u104b3",
+      "replace-cs-u104b4",
+      "replace-cs-u104b5",
+      "replace-cs-u104b6",
+      "replace-cs-u104b7"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-032",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-048",
+    "nativeIds": [
+      "replace-cs-u104b8",
+      "replace-cs-u104b9",
+      "replace-cs-u104ba",
+      "replace-cs-u104bb",
+      "replace-cs-u104bc",
+      "replace-cs-u104bd",
+      "replace-cs-u104be",
+      "replace-cs-u104bf",
+      "replace-cs-u104c0",
+      "replace-cs-u104c1",
+      "replace-cs-u104c2",
+      "replace-cs-u104c3",
+      "replace-cs-u104c4",
+      "replace-cs-u104c5",
+      "replace-cs-u104c6",
+      "replace-cs-u104c7"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-048",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-064",
+    "nativeIds": [
+      "replace-cs-u104c8",
+      "replace-cs-u104c9",
+      "replace-cs-u104ca",
+      "replace-cs-u104cb",
+      "replace-cs-u104cc",
+      "replace-cs-u104cd",
+      "replace-cs-u104ce",
+      "replace-cs-u104cf",
+      "replace-cs-u104d0",
+      "replace-cs-u104d1",
+      "replace-cs-u104d2",
+      "replace-cs-u104d3",
+      "replace-cs-u10570",
+      "replace-cs-u10571",
+      "replace-cs-u10572",
+      "replace-cs-u10573"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-064",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-080",
+    "nativeIds": [
+      "replace-cs-u10574",
+      "replace-cs-u10575",
+      "replace-cs-u10576",
+      "replace-cs-u10577",
+      "replace-cs-u10578",
+      "replace-cs-u10579",
+      "replace-cs-u1057a",
+      "replace-cs-u1057c",
+      "replace-cs-u1057d",
+      "replace-cs-u1057e",
+      "replace-cs-u1057f",
+      "replace-cs-u10580",
+      "replace-cs-u10581",
+      "replace-cs-u10582",
+      "replace-cs-u10583",
+      "replace-cs-u10584"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-080",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-096",
+    "nativeIds": [
+      "replace-cs-u10585",
+      "replace-cs-u10586",
+      "replace-cs-u10587",
+      "replace-cs-u10588",
+      "replace-cs-u10589",
+      "replace-cs-u1058a",
+      "replace-cs-u1058c",
+      "replace-cs-u1058d",
+      "replace-cs-u1058e",
+      "replace-cs-u1058f",
+      "replace-cs-u10590",
+      "replace-cs-u10591",
+      "replace-cs-u10592",
+      "replace-cs-u10594",
+      "replace-cs-u10595",
+      "replace-cs-u10c80"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-096",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-112",
+    "nativeIds": [
+      "replace-cs-u10c81",
+      "replace-cs-u10c82",
+      "replace-cs-u10c83",
+      "replace-cs-u10c84",
+      "replace-cs-u10c85",
+      "replace-cs-u10c86",
+      "replace-cs-u10c87",
+      "replace-cs-u10c88",
+      "replace-cs-u10c89",
+      "replace-cs-u10c8a",
+      "replace-cs-u10c8b",
+      "replace-cs-u10c8c",
+      "replace-cs-u10c8d",
+      "replace-cs-u10c8e",
+      "replace-cs-u10c8f",
+      "replace-cs-u10c90"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-112",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-128",
+    "nativeIds": [
+      "replace-cs-u10c91",
+      "replace-cs-u10c92",
+      "replace-cs-u10c93",
+      "replace-cs-u10c94",
+      "replace-cs-u10c95",
+      "replace-cs-u10c96",
+      "replace-cs-u10c97",
+      "replace-cs-u10c98",
+      "replace-cs-u10c99",
+      "replace-cs-u10c9a",
+      "replace-cs-u10c9b",
+      "replace-cs-u10c9c",
+      "replace-cs-u10c9d",
+      "replace-cs-u10c9e",
+      "replace-cs-u10c9f",
+      "replace-cs-u10ca0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-128",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-144",
+    "nativeIds": [
+      "replace-cs-u10ca1",
+      "replace-cs-u10ca2",
+      "replace-cs-u10ca3",
+      "replace-cs-u10ca4",
+      "replace-cs-u10ca5",
+      "replace-cs-u10ca6",
+      "replace-cs-u10ca7",
+      "replace-cs-u10ca8",
+      "replace-cs-u10ca9",
+      "replace-cs-u10caa",
+      "replace-cs-u10cab",
+      "replace-cs-u10cac",
+      "replace-cs-u10cad",
+      "replace-cs-u10cae",
+      "replace-cs-u10caf",
+      "replace-cs-u10cb0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-144",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-160",
+    "nativeIds": [
+      "replace-cs-u10cb1",
+      "replace-cs-u10cb2",
+      "replace-cs-u10d50",
+      "replace-cs-u10d51",
+      "replace-cs-u10d52",
+      "replace-cs-u10d53",
+      "replace-cs-u10d54",
+      "replace-cs-u10d55",
+      "replace-cs-u10d56",
+      "replace-cs-u10d57",
+      "replace-cs-u10d58",
+      "replace-cs-u10d59",
+      "replace-cs-u10d5a",
+      "replace-cs-u10d5b",
+      "replace-cs-u10d5c",
+      "replace-cs-u10d5d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-160",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-176",
+    "nativeIds": [
+      "replace-cs-u10d5e",
+      "replace-cs-u10d5f",
+      "replace-cs-u10d60",
+      "replace-cs-u10d61",
+      "replace-cs-u10d62",
+      "replace-cs-u10d63",
+      "replace-cs-u10d64",
+      "replace-cs-u10d65",
+      "replace-cs-u118a0",
+      "replace-cs-u118a1",
+      "replace-cs-u118a2",
+      "replace-cs-u118a3",
+      "replace-cs-u118a4",
+      "replace-cs-u118a5",
+      "replace-cs-u118a6",
+      "replace-cs-u118a7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-176",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-192",
+    "nativeIds": [
+      "replace-cs-u118a8",
+      "replace-cs-u118a9",
+      "replace-cs-u118aa",
+      "replace-cs-u118ab",
+      "replace-cs-u118ac",
+      "replace-cs-u118ad",
+      "replace-cs-u118ae",
+      "replace-cs-u118af",
+      "replace-cs-u118b0",
+      "replace-cs-u118b1",
+      "replace-cs-u118b2",
+      "replace-cs-u118b3",
+      "replace-cs-u118b4",
+      "replace-cs-u118b5",
+      "replace-cs-u118b6",
+      "replace-cs-u118b7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-192",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-208",
+    "nativeIds": [
+      "replace-cs-u118b8",
+      "replace-cs-u118b9",
+      "replace-cs-u118ba",
+      "replace-cs-u118bb",
+      "replace-cs-u118bc",
+      "replace-cs-u118bd",
+      "replace-cs-u118be",
+      "replace-cs-u118bf",
+      "replace-cs-u16e40",
+      "replace-cs-u16e41",
+      "replace-cs-u16e42",
+      "replace-cs-u16e43",
+      "replace-cs-u16e44",
+      "replace-cs-u16e45",
+      "replace-cs-u16e46",
+      "replace-cs-u16e47"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-208",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-224",
+    "nativeIds": [
+      "replace-cs-u16e48",
+      "replace-cs-u16e49",
+      "replace-cs-u16e4a",
+      "replace-cs-u16e4b",
+      "replace-cs-u16e4c",
+      "replace-cs-u16e4d",
+      "replace-cs-u16e4e",
+      "replace-cs-u16e4f",
+      "replace-cs-u16e50",
+      "replace-cs-u16e51",
+      "replace-cs-u16e52",
+      "replace-cs-u16e53",
+      "replace-cs-u16e54",
+      "replace-cs-u16e55",
+      "replace-cs-u16e56",
+      "replace-cs-u16e57"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-224",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-240",
+    "nativeIds": [
+      "replace-cs-u16e58",
+      "replace-cs-u16e59",
+      "replace-cs-u16e5a",
+      "replace-cs-u16e5b",
+      "replace-cs-u16e5c",
+      "replace-cs-u16e5d",
+      "replace-cs-u16e5e",
+      "replace-cs-u16e5f",
+      "replace-cs-u1e900",
+      "replace-cs-u1e901",
+      "replace-cs-u1e902",
+      "replace-cs-u1e903",
+      "replace-cs-u1e904",
+      "replace-cs-u1e905",
+      "replace-cs-u1e906",
+      "replace-cs-u1e907"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-240",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-256",
+    "nativeIds": [
+      "replace-cs-u1e908",
+      "replace-cs-u1e909",
+      "replace-cs-u1e90a",
+      "replace-cs-u1e90b",
+      "replace-cs-u1e90c",
+      "replace-cs-u1e90d",
+      "replace-cs-u1e90e",
+      "replace-cs-u1e90f",
+      "replace-cs-u1e910",
+      "replace-cs-u1e911",
+      "replace-cs-u1e912",
+      "replace-cs-u1e913",
+      "replace-cs-u1e914",
+      "replace-cs-u1e915",
+      "replace-cs-u1e916",
+      "replace-cs-u1e917"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-256",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-low-needle-cs-272",
+    "nativeIds": [
+      "replace-cs-u1e918",
+      "replace-cs-u1e919",
+      "replace-cs-u1e91a",
+      "replace-cs-u1e91b",
+      "replace-cs-u1e91c",
+      "replace-cs-u1e91d",
+      "replace-cs-u1e91e",
+      "replace-cs-u1e91f",
+      "replace-cs-u1e920",
+      "replace-cs-u1e921"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-low-needle-cs-272",
+    "nativeIds": [
+      "replacewithlist-low-needle-cs"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-000",
+    "nativeIds": [
+      "replace-ci-u10428",
+      "replace-ci-u10429",
+      "replace-ci-u1042a",
+      "replace-ci-u1042b",
+      "replace-ci-u1042c",
+      "replace-ci-u1042d",
+      "replace-ci-u1042e",
+      "replace-ci-u1042f",
+      "replace-ci-u10430",
+      "replace-ci-u10431",
+      "replace-ci-u10432",
+      "replace-ci-u10433",
+      "replace-ci-u10434",
+      "replace-ci-u10435",
+      "replace-ci-u10436",
+      "replace-ci-u10437"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-000",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-016",
+    "nativeIds": [
+      "replace-ci-u10438",
+      "replace-ci-u10439",
+      "replace-ci-u1043a",
+      "replace-ci-u1043b",
+      "replace-ci-u1043c",
+      "replace-ci-u1043d",
+      "replace-ci-u1043e",
+      "replace-ci-u1043f",
+      "replace-ci-u10440",
+      "replace-ci-u10441",
+      "replace-ci-u10442",
+      "replace-ci-u10443",
+      "replace-ci-u10444",
+      "replace-ci-u10445",
+      "replace-ci-u10446",
+      "replace-ci-u10447"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-016",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-032",
+    "nativeIds": [
+      "replace-ci-u10448",
+      "replace-ci-u10449",
+      "replace-ci-u1044a",
+      "replace-ci-u1044b",
+      "replace-ci-u1044c",
+      "replace-ci-u1044d",
+      "replace-ci-u1044e",
+      "replace-ci-u1044f",
+      "replace-ci-u104d8",
+      "replace-ci-u104d9",
+      "replace-ci-u104da",
+      "replace-ci-u104db",
+      "replace-ci-u104dc",
+      "replace-ci-u104dd",
+      "replace-ci-u104de",
+      "replace-ci-u104df"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-032",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-048",
+    "nativeIds": [
+      "replace-ci-u104e0",
+      "replace-ci-u104e1",
+      "replace-ci-u104e2",
+      "replace-ci-u104e3",
+      "replace-ci-u104e4",
+      "replace-ci-u104e5",
+      "replace-ci-u104e6",
+      "replace-ci-u104e7",
+      "replace-ci-u104e8",
+      "replace-ci-u104e9",
+      "replace-ci-u104ea",
+      "replace-ci-u104eb",
+      "replace-ci-u104ec",
+      "replace-ci-u104ed",
+      "replace-ci-u104ee",
+      "replace-ci-u104ef"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-048",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-064",
+    "nativeIds": [
+      "replace-ci-u104f0",
+      "replace-ci-u104f1",
+      "replace-ci-u104f2",
+      "replace-ci-u104f3",
+      "replace-ci-u104f4",
+      "replace-ci-u104f5",
+      "replace-ci-u104f6",
+      "replace-ci-u104f7",
+      "replace-ci-u104f8",
+      "replace-ci-u104f9",
+      "replace-ci-u104fa",
+      "replace-ci-u104fb",
+      "replace-ci-u10597",
+      "replace-ci-u10598",
+      "replace-ci-u10599",
+      "replace-ci-u1059a"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-064",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-080",
+    "nativeIds": [
+      "replace-ci-u1059b",
+      "replace-ci-u1059c",
+      "replace-ci-u1059d",
+      "replace-ci-u1059e",
+      "replace-ci-u1059f",
+      "replace-ci-u105a0",
+      "replace-ci-u105a1",
+      "replace-ci-u105a3",
+      "replace-ci-u105a4",
+      "replace-ci-u105a5",
+      "replace-ci-u105a6",
+      "replace-ci-u105a7",
+      "replace-ci-u105a8",
+      "replace-ci-u105a9",
+      "replace-ci-u105aa",
+      "replace-ci-u105ab"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-080",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-096",
+    "nativeIds": [
+      "replace-ci-u105ac",
+      "replace-ci-u105ad",
+      "replace-ci-u105ae",
+      "replace-ci-u105af",
+      "replace-ci-u105b0",
+      "replace-ci-u105b1",
+      "replace-ci-u105b3",
+      "replace-ci-u105b4",
+      "replace-ci-u105b5",
+      "replace-ci-u105b6",
+      "replace-ci-u105b7",
+      "replace-ci-u105b8",
+      "replace-ci-u105b9",
+      "replace-ci-u105bb",
+      "replace-ci-u105bc",
+      "replace-ci-u10cc0"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-096",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-112",
+    "nativeIds": [
+      "replace-ci-u10cc1",
+      "replace-ci-u10cc2",
+      "replace-ci-u10cc3",
+      "replace-ci-u10cc4",
+      "replace-ci-u10cc5",
+      "replace-ci-u10cc6",
+      "replace-ci-u10cc7",
+      "replace-ci-u10cc8",
+      "replace-ci-u10cc9",
+      "replace-ci-u10cca",
+      "replace-ci-u10ccb",
+      "replace-ci-u10ccc",
+      "replace-ci-u10ccd",
+      "replace-ci-u10cce",
+      "replace-ci-u10ccf",
+      "replace-ci-u10cd0"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-112",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-128",
+    "nativeIds": [
+      "replace-ci-u10cd1",
+      "replace-ci-u10cd2",
+      "replace-ci-u10cd3",
+      "replace-ci-u10cd4",
+      "replace-ci-u10cd5",
+      "replace-ci-u10cd6",
+      "replace-ci-u10cd7",
+      "replace-ci-u10cd8",
+      "replace-ci-u10cd9",
+      "replace-ci-u10cda",
+      "replace-ci-u10cdb",
+      "replace-ci-u10cdc",
+      "replace-ci-u10cdd",
+      "replace-ci-u10cde",
+      "replace-ci-u10cdf",
+      "replace-ci-u10ce0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-128",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-144",
+    "nativeIds": [
+      "replace-ci-u10ce1",
+      "replace-ci-u10ce2",
+      "replace-ci-u10ce3",
+      "replace-ci-u10ce4",
+      "replace-ci-u10ce5",
+      "replace-ci-u10ce6",
+      "replace-ci-u10ce7",
+      "replace-ci-u10ce8",
+      "replace-ci-u10ce9",
+      "replace-ci-u10cea",
+      "replace-ci-u10ceb",
+      "replace-ci-u10cec",
+      "replace-ci-u10ced",
+      "replace-ci-u10cee",
+      "replace-ci-u10cef",
+      "replace-ci-u10cf0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-144",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-160",
+    "nativeIds": [
+      "replace-ci-u10cf1",
+      "replace-ci-u10cf2",
+      "replace-ci-u10d70",
+      "replace-ci-u10d71",
+      "replace-ci-u10d72",
+      "replace-ci-u10d73",
+      "replace-ci-u10d74",
+      "replace-ci-u10d75",
+      "replace-ci-u10d76",
+      "replace-ci-u10d77",
+      "replace-ci-u10d78",
+      "replace-ci-u10d79",
+      "replace-ci-u10d7a",
+      "replace-ci-u10d7b",
+      "replace-ci-u10d7c",
+      "replace-ci-u10d7d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-160",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-176",
+    "nativeIds": [
+      "replace-ci-u10d7e",
+      "replace-ci-u10d7f",
+      "replace-ci-u10d80",
+      "replace-ci-u10d81",
+      "replace-ci-u10d82",
+      "replace-ci-u10d83",
+      "replace-ci-u10d84",
+      "replace-ci-u10d85",
+      "replace-ci-u118c0",
+      "replace-ci-u118c1",
+      "replace-ci-u118c2",
+      "replace-ci-u118c3",
+      "replace-ci-u118c4",
+      "replace-ci-u118c5",
+      "replace-ci-u118c6",
+      "replace-ci-u118c7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-176",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-192",
+    "nativeIds": [
+      "replace-ci-u118c8",
+      "replace-ci-u118c9",
+      "replace-ci-u118ca",
+      "replace-ci-u118cb",
+      "replace-ci-u118cc",
+      "replace-ci-u118cd",
+      "replace-ci-u118ce",
+      "replace-ci-u118cf",
+      "replace-ci-u118d0",
+      "replace-ci-u118d1",
+      "replace-ci-u118d2",
+      "replace-ci-u118d3",
+      "replace-ci-u118d4",
+      "replace-ci-u118d5",
+      "replace-ci-u118d6",
+      "replace-ci-u118d7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-192",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-208",
+    "nativeIds": [
+      "replace-ci-u118d8",
+      "replace-ci-u118d9",
+      "replace-ci-u118da",
+      "replace-ci-u118db",
+      "replace-ci-u118dc",
+      "replace-ci-u118dd",
+      "replace-ci-u118de",
+      "replace-ci-u118df",
+      "replace-ci-u16e60",
+      "replace-ci-u16e61",
+      "replace-ci-u16e62",
+      "replace-ci-u16e63",
+      "replace-ci-u16e64",
+      "replace-ci-u16e65",
+      "replace-ci-u16e66",
+      "replace-ci-u16e67"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-208",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-224",
+    "nativeIds": [
+      "replace-ci-u16e68",
+      "replace-ci-u16e69",
+      "replace-ci-u16e6a",
+      "replace-ci-u16e6b",
+      "replace-ci-u16e6c",
+      "replace-ci-u16e6d",
+      "replace-ci-u16e6e",
+      "replace-ci-u16e6f",
+      "replace-ci-u16e70",
+      "replace-ci-u16e71",
+      "replace-ci-u16e72",
+      "replace-ci-u16e73",
+      "replace-ci-u16e74",
+      "replace-ci-u16e75",
+      "replace-ci-u16e76",
+      "replace-ci-u16e77"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-224",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-240",
+    "nativeIds": [
+      "replace-ci-u16e78",
+      "replace-ci-u16e79",
+      "replace-ci-u16e7a",
+      "replace-ci-u16e7b",
+      "replace-ci-u16e7c",
+      "replace-ci-u16e7d",
+      "replace-ci-u16e7e",
+      "replace-ci-u16e7f",
+      "replace-ci-u1e922",
+      "replace-ci-u1e923",
+      "replace-ci-u1e924",
+      "replace-ci-u1e925",
+      "replace-ci-u1e926",
+      "replace-ci-u1e927",
+      "replace-ci-u1e928",
+      "replace-ci-u1e929"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-240",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-256",
+    "nativeIds": [
+      "replace-ci-u1e92a",
+      "replace-ci-u1e92b",
+      "replace-ci-u1e92c",
+      "replace-ci-u1e92d",
+      "replace-ci-u1e92e",
+      "replace-ci-u1e92f",
+      "replace-ci-u1e930",
+      "replace-ci-u1e931",
+      "replace-ci-u1e932",
+      "replace-ci-u1e933",
+      "replace-ci-u1e934",
+      "replace-ci-u1e935",
+      "replace-ci-u1e936",
+      "replace-ci-u1e937",
+      "replace-ci-u1e938",
+      "replace-ci-u1e939"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-256",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-ci-272",
+    "nativeIds": [
+      "replace-ci-u1e93a",
+      "replace-ci-u1e93b",
+      "replace-ci-u1e93c",
+      "replace-ci-u1e93d",
+      "replace-ci-u1e93e",
+      "replace-ci-u1e93f",
+      "replace-ci-u1e940",
+      "replace-ci-u1e941",
+      "replace-ci-u1e942",
+      "replace-ci-u1e943"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-ci-272",
+    "nativeIds": [
+      "replacewithlist-high-needle-ci"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @ci"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-000",
+    "nativeIds": [
+      "replace-cs-u10428",
+      "replace-cs-u10429",
+      "replace-cs-u1042a",
+      "replace-cs-u1042b",
+      "replace-cs-u1042c",
+      "replace-cs-u1042d",
+      "replace-cs-u1042e",
+      "replace-cs-u1042f",
+      "replace-cs-u10430",
+      "replace-cs-u10431",
+      "replace-cs-u10432",
+      "replace-cs-u10433",
+      "replace-cs-u10434",
+      "replace-cs-u10435",
+      "replace-cs-u10436",
+      "replace-cs-u10437"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-000",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 0,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-016",
+    "nativeIds": [
+      "replace-cs-u10438",
+      "replace-cs-u10439",
+      "replace-cs-u1043a",
+      "replace-cs-u1043b",
+      "replace-cs-u1043c",
+      "replace-cs-u1043d",
+      "replace-cs-u1043e",
+      "replace-cs-u1043f",
+      "replace-cs-u10440",
+      "replace-cs-u10441",
+      "replace-cs-u10442",
+      "replace-cs-u10443",
+      "replace-cs-u10444",
+      "replace-cs-u10445",
+      "replace-cs-u10446",
+      "replace-cs-u10447"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-016",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 16,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-032",
+    "nativeIds": [
+      "replace-cs-u10448",
+      "replace-cs-u10449",
+      "replace-cs-u1044a",
+      "replace-cs-u1044b",
+      "replace-cs-u1044c",
+      "replace-cs-u1044d",
+      "replace-cs-u1044e",
+      "replace-cs-u1044f",
+      "replace-cs-u104d8",
+      "replace-cs-u104d9",
+      "replace-cs-u104da",
+      "replace-cs-u104db",
+      "replace-cs-u104dc",
+      "replace-cs-u104dd",
+      "replace-cs-u104de",
+      "replace-cs-u104df"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-032",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 32,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-048",
+    "nativeIds": [
+      "replace-cs-u104e0",
+      "replace-cs-u104e1",
+      "replace-cs-u104e2",
+      "replace-cs-u104e3",
+      "replace-cs-u104e4",
+      "replace-cs-u104e5",
+      "replace-cs-u104e6",
+      "replace-cs-u104e7",
+      "replace-cs-u104e8",
+      "replace-cs-u104e9",
+      "replace-cs-u104ea",
+      "replace-cs-u104eb",
+      "replace-cs-u104ec",
+      "replace-cs-u104ed",
+      "replace-cs-u104ee",
+      "replace-cs-u104ef"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-048",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 48,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-064",
+    "nativeIds": [
+      "replace-cs-u104f0",
+      "replace-cs-u104f1",
+      "replace-cs-u104f2",
+      "replace-cs-u104f3",
+      "replace-cs-u104f4",
+      "replace-cs-u104f5",
+      "replace-cs-u104f6",
+      "replace-cs-u104f7",
+      "replace-cs-u104f8",
+      "replace-cs-u104f9",
+      "replace-cs-u104fa",
+      "replace-cs-u104fb",
+      "replace-cs-u10597",
+      "replace-cs-u10598",
+      "replace-cs-u10599",
+      "replace-cs-u1059a"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-064",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 64,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-080",
+    "nativeIds": [
+      "replace-cs-u1059b",
+      "replace-cs-u1059c",
+      "replace-cs-u1059d",
+      "replace-cs-u1059e",
+      "replace-cs-u1059f",
+      "replace-cs-u105a0",
+      "replace-cs-u105a1",
+      "replace-cs-u105a3",
+      "replace-cs-u105a4",
+      "replace-cs-u105a5",
+      "replace-cs-u105a6",
+      "replace-cs-u105a7",
+      "replace-cs-u105a8",
+      "replace-cs-u105a9",
+      "replace-cs-u105aa",
+      "replace-cs-u105ab"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-080",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 80,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-096",
+    "nativeIds": [
+      "replace-cs-u105ac",
+      "replace-cs-u105ad",
+      "replace-cs-u105ae",
+      "replace-cs-u105af",
+      "replace-cs-u105b0",
+      "replace-cs-u105b1",
+      "replace-cs-u105b3",
+      "replace-cs-u105b4",
+      "replace-cs-u105b5",
+      "replace-cs-u105b6",
+      "replace-cs-u105b7",
+      "replace-cs-u105b8",
+      "replace-cs-u105b9",
+      "replace-cs-u105bb",
+      "replace-cs-u105bc",
+      "replace-cs-u10cc0"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-096",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 96,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-112",
+    "nativeIds": [
+      "replace-cs-u10cc1",
+      "replace-cs-u10cc2",
+      "replace-cs-u10cc3",
+      "replace-cs-u10cc4",
+      "replace-cs-u10cc5",
+      "replace-cs-u10cc6",
+      "replace-cs-u10cc7",
+      "replace-cs-u10cc8",
+      "replace-cs-u10cc9",
+      "replace-cs-u10cca",
+      "replace-cs-u10ccb",
+      "replace-cs-u10ccc",
+      "replace-cs-u10ccd",
+      "replace-cs-u10cce",
+      "replace-cs-u10ccf",
+      "replace-cs-u10cd0"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-112",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 112,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-128",
+    "nativeIds": [
+      "replace-cs-u10cd1",
+      "replace-cs-u10cd2",
+      "replace-cs-u10cd3",
+      "replace-cs-u10cd4",
+      "replace-cs-u10cd5",
+      "replace-cs-u10cd6",
+      "replace-cs-u10cd7",
+      "replace-cs-u10cd8",
+      "replace-cs-u10cd9",
+      "replace-cs-u10cda",
+      "replace-cs-u10cdb",
+      "replace-cs-u10cdc",
+      "replace-cs-u10cdd",
+      "replace-cs-u10cde",
+      "replace-cs-u10cdf",
+      "replace-cs-u10ce0"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-128",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 128,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-144",
+    "nativeIds": [
+      "replace-cs-u10ce1",
+      "replace-cs-u10ce2",
+      "replace-cs-u10ce3",
+      "replace-cs-u10ce4",
+      "replace-cs-u10ce5",
+      "replace-cs-u10ce6",
+      "replace-cs-u10ce7",
+      "replace-cs-u10ce8",
+      "replace-cs-u10ce9",
+      "replace-cs-u10cea",
+      "replace-cs-u10ceb",
+      "replace-cs-u10cec",
+      "replace-cs-u10ced",
+      "replace-cs-u10cee",
+      "replace-cs-u10cef",
+      "replace-cs-u10cf0"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-144",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 144,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-160",
+    "nativeIds": [
+      "replace-cs-u10cf1",
+      "replace-cs-u10cf2",
+      "replace-cs-u10d70",
+      "replace-cs-u10d71",
+      "replace-cs-u10d72",
+      "replace-cs-u10d73",
+      "replace-cs-u10d74",
+      "replace-cs-u10d75",
+      "replace-cs-u10d76",
+      "replace-cs-u10d77",
+      "replace-cs-u10d78",
+      "replace-cs-u10d79",
+      "replace-cs-u10d7a",
+      "replace-cs-u10d7b",
+      "replace-cs-u10d7c",
+      "replace-cs-u10d7d"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-160",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 160,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-176",
+    "nativeIds": [
+      "replace-cs-u10d7e",
+      "replace-cs-u10d7f",
+      "replace-cs-u10d80",
+      "replace-cs-u10d81",
+      "replace-cs-u10d82",
+      "replace-cs-u10d83",
+      "replace-cs-u10d84",
+      "replace-cs-u10d85",
+      "replace-cs-u118c0",
+      "replace-cs-u118c1",
+      "replace-cs-u118c2",
+      "replace-cs-u118c3",
+      "replace-cs-u118c4",
+      "replace-cs-u118c5",
+      "replace-cs-u118c6",
+      "replace-cs-u118c7"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-176",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 176,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-192",
+    "nativeIds": [
+      "replace-cs-u118c8",
+      "replace-cs-u118c9",
+      "replace-cs-u118ca",
+      "replace-cs-u118cb",
+      "replace-cs-u118cc",
+      "replace-cs-u118cd",
+      "replace-cs-u118ce",
+      "replace-cs-u118cf",
+      "replace-cs-u118d0",
+      "replace-cs-u118d1",
+      "replace-cs-u118d2",
+      "replace-cs-u118d3",
+      "replace-cs-u118d4",
+      "replace-cs-u118d5",
+      "replace-cs-u118d6",
+      "replace-cs-u118d7"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-192",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 192,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-208",
+    "nativeIds": [
+      "replace-cs-u118d8",
+      "replace-cs-u118d9",
+      "replace-cs-u118da",
+      "replace-cs-u118db",
+      "replace-cs-u118dc",
+      "replace-cs-u118dd",
+      "replace-cs-u118de",
+      "replace-cs-u118df",
+      "replace-cs-u16e60",
+      "replace-cs-u16e61",
+      "replace-cs-u16e62",
+      "replace-cs-u16e63",
+      "replace-cs-u16e64",
+      "replace-cs-u16e65",
+      "replace-cs-u16e66",
+      "replace-cs-u16e67"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-208",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 208,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-224",
+    "nativeIds": [
+      "replace-cs-u16e68",
+      "replace-cs-u16e69",
+      "replace-cs-u16e6a",
+      "replace-cs-u16e6b",
+      "replace-cs-u16e6c",
+      "replace-cs-u16e6d",
+      "replace-cs-u16e6e",
+      "replace-cs-u16e6f",
+      "replace-cs-u16e70",
+      "replace-cs-u16e71",
+      "replace-cs-u16e72",
+      "replace-cs-u16e73",
+      "replace-cs-u16e74",
+      "replace-cs-u16e75",
+      "replace-cs-u16e76",
+      "replace-cs-u16e77"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-224",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 224,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-240",
+    "nativeIds": [
+      "replace-cs-u16e78",
+      "replace-cs-u16e79",
+      "replace-cs-u16e7a",
+      "replace-cs-u16e7b",
+      "replace-cs-u16e7c",
+      "replace-cs-u16e7d",
+      "replace-cs-u16e7e",
+      "replace-cs-u16e7f",
+      "replace-cs-u1e922",
+      "replace-cs-u1e923",
+      "replace-cs-u1e924",
+      "replace-cs-u1e925",
+      "replace-cs-u1e926",
+      "replace-cs-u1e927",
+      "replace-cs-u1e928",
+      "replace-cs-u1e929"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-240",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 240,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-256",
+    "nativeIds": [
+      "replace-cs-u1e92a",
+      "replace-cs-u1e92b",
+      "replace-cs-u1e92c",
+      "replace-cs-u1e92d",
+      "replace-cs-u1e92e",
+      "replace-cs-u1e92f",
+      "replace-cs-u1e930",
+      "replace-cs-u1e931",
+      "replace-cs-u1e932",
+      "replace-cs-u1e933",
+      "replace-cs-u1e934",
+      "replace-cs-u1e935",
+      "replace-cs-u1e936",
+      "replace-cs-u1e937",
+      "replace-cs-u1e938",
+      "replace-cs-u1e939"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-256",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 256,
+    "length": 16,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "direct-high-needle-cs-272",
+    "nativeIds": [
+      "replace-cs-u1e93a",
+      "replace-cs-u1e93b",
+      "replace-cs-u1e93c",
+      "replace-cs-u1e93d",
+      "replace-cs-u1e93e",
+      "replace-cs-u1e93f",
+      "replace-cs-u1e940",
+      "replace-cs-u1e941",
+      "replace-cs-u1e942",
+      "replace-cs-u1e943"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "list-high-needle-cs-272",
+    "nativeIds": [
+      "replacewithlist-high-needle-cs"
+    ],
+    "start": 272,
+    "length": 10,
+    "phase": "function-body",
+    "directive": "@noopt @cs"
+  },
+  {
+    "count": 3,
+    "id": "scope-enable",
+    "expression": "@cs AllEqual(Array(RegexReplace('𐐀','(?i:𐐨)','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "scope-disable",
+    "expression": "@ci AllEqual(Array(RegexReplace('𐐀','(?-i:𐐨)','X'),'𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "scope-restore-cs",
+    "expression": "@cs AllEqual(Array(RegexReplace('𐐀𐐀','(?i:𐐨)𐐨','X'),'𐐀𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "scope-restore-ci",
+    "expression": "@ci AllEqual(Array(RegexReplace('𐐀𐐀','(?-i:𐐀)𐐨','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "quantifier-ci",
+    "expression": "@ci AllEqual(Array(RegexReplace('𐐀𐐀','𐐨+','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "quantifier-cs",
+    "expression": "@cs AllEqual(Array(RegexReplace('𐐀𐐀','𐐨+','X'),'𐐀𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "capture-original",
+    "expression": "@ci AllEqual(Array(RegexExtract('𐐀!','(𐐨)(!)',1),'𐐀')) and AllEqual(Array(RegexExtract('𐐀!','(𐐨)(!)',2),'!'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "capture-quantifier",
+    "expression": "@ci AllEqual(Array(RegexExtract('𐐀𐐀!','(𐐨+)(!)',1),'𐐀𐐀'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "bmp-ci",
+    "expression": "@ci AllEqual(Array(RegexReplace('AΣſ','aσs','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "bmp-cs",
+    "expression": "@cs AllEqual(Array(RegexReplace('AΣſ','aσs','X'),'AΣſ'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  },
+  {
+    "count": 3,
+    "id": "noncased-supplementary",
+    "expression": "@ci AllEqual(Array(RegexReplace('😀😀','😀+','X'),'X'))",
+    "nativeIds": [],
+    "phase": "derived-control"
+  }
+]

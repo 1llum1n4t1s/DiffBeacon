@@ -1,0 +1,61 @@
+{
+  "id": "CF-SUPP-01",
+  "files": {
+    ".gitattributes": {
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "derived-cases.json": {
+      "size": 1260,
+      "sha256": "afbd62172045ea272334658281dc1650062ee928ffe412bd974d480bc6c27cf5"
+    },
+    "failure-matrix.json": {
+      "size": 3875,
+      "sha256": "7f29b760cb7beca79cf90f4a3a11f35a5e815158b9725cf0d1e727a98cc405d6"
+    },
+    "fixed-public-plan.json": {
+      "size": 129099,
+      "sha256": "2dbded178fd5b4c201d837903285a4e3b959b46ccdc3ae9181be3559c37cc0b6"
+    },
+    "LICENSE.PCRE2.txt": {
+      "size": 153,
+      "sha256": "c04702200d427f5211d3968ba362cb65db015d45beaaeea33f84c9b8cb0597ff"
+    },
+    "LICENSE.Poco.txt": {
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    "LICENSE.WinMerge.md": {
+      "size": 17895,
+      "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e"
+    },
+    "managed-runner-source.zip": {
+      "size": 45946,
+      "sha256": "b8aa0c2fc641fc9b235473130ac24716896cf23a141c98c696c0dd472374dcb8"
+    },
+    "native-casefold-proof.zip": {
+      "size": 105804,
+      "sha256": "014fa78df132e1897bf93681d27afce7f86b287e262b93af7324cbf61a8370be"
+    },
+    "proof-receipt.json": {
+      "size": 326,
+      "sha256": "a3cd33fe350e0ce7297e8b7cd456f1917b6d860d8fb3fbb66afc44f7813b66b4"
+    },
+    "provenance.json": {
+      "size": 2918,
+      "sha256": "2829c86077bc244dc2432b2fb4c870b4a305bce1c9c80f6385c4b6b73f758b3d"
+    },
+    "README.md": {
+      "size": 8750,
+      "sha256": "25637af0b6b292d0cf6de166d1cee44892e0b14e5760f42aee568e65c49618c8"
+    },
+    "verify-proof.py": {
+      "size": 6518,
+      "sha256": "e7a84e5a8eacc0d44bee06749a5c10e4df1808009ba6ae127c6857435f38a2d0"
+    },
+    "verify.py": {
+      "size": 18106,
+      "sha256": "fc35768e6ded65166cc7b76b9023f3484e8948ff33a11a0e7bfa8ecf39bc3bab"
+    }
+  }
+}

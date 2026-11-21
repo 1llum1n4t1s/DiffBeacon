@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "cases.json",
+      "size": 3666,
+      "sha256": "f6ea1690492d53e48b15a993c464a6ab50755e2d38499cfb3c66d7cfffacee9f"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 2880,
+      "sha256": "278da6e91438ffc83b988f17c669855da495aec41fe5db45dbf9643ff2155bce"
+    },
+    {
+      "path": "native-boundary-proof.zip",
+      "size": 135555,
+      "sha256": "75ea1db305f68b6c6db657d91a365b742b42f7d865e6ee0802da9507a0ed9b0c"
+    },
+    {
+      "path": "README.md",
+      "size": 5690,
+      "sha256": "9eb51a37ecf1e01fddd0fe1e43ca79bf20765508b3a01d6442a59c7e7ba678ce"
+    },
+    {
+      "path": "verify.py",
+      "size": 9877,
+      "sha256": "7eb84a26cfb7c48b6b63a43d39a8d2c6d103fb31ce565a98c0c389ba185f049f"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "failures": [
+    "arity other than two accepted or arguments evaluated during validation",
+    "non-array evaluates index; first or index evaluated twice",
+    "Array elements not evaluated left-to-right before index; exception swallowed or later argument evaluated",
+    "non-int64 index converted; negative index wraps more than once; empty/out-of-range returns element",
+    "returned slot/type/value changed, nested arrays flattened",
+    "logical shallow truth confused with recursive direct-filter truth",
+    "raw source span or either independent native stdout differs"
+  ]
+}

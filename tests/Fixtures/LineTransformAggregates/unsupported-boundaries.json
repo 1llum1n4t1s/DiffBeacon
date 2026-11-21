@@ -1,0 +1,47 @@
+[
+  {
+    "boundary": "out-of-range-double-to-int64",
+    "executed": false,
+    "reason": "C++ floating to signed integer conversion outside representable range has no portable defined result; no golden generated."
+  },
+  {
+    "boundary": "nan-infinity",
+    "executed": false,
+    "reason": "Sum/Maximum/Minimum integral-result cast may be undefined; no inferred native result."
+  },
+  {
+    "boundary": "null-sharedContext",
+    "executed": false,
+    "reason": "Original code dereferences sharedContext without a safety contract."
+  },
+  {
+    "boundary": "same-node-recursion-concurrent-reentry",
+    "executed": false,
+    "reason": "Original success cache has no recursion or parallel synchronization guarantee."
+  },
+  {
+    "boundary": "full-parser-optimizer-public-AST",
+    "executed": false,
+    "reason": "Capture uses explicit controlled ExprNode/provider adapter; registration bytes are source evidence only."
+  },
+  {
+    "boundary": "typed-Timestamp-format",
+    "executed": false,
+    "reason": "Timestamp type/value/comparison observed, original ToStringValue timestamp formatting path deliberately not entered; full Poco LocalDateTime formatting outside scope."
+  },
+  {
+    "boundary": "invalid-arity-zero-three",
+    "executed": false,
+    "reason": "Registration 1..2 is fixed source evidence; unguarded direct function args[0] is not a parser/constructor rejection observation."
+  },
+  {
+    "boundary": "macOS-other-compiler",
+    "executed": false,
+    "reason": "Native capture qualified only Windows x64 MSVC 14.51."
+  },
+  {
+    "boundary": "Poco-RegularExpressionException-runtime-branch",
+    "executed": false,
+    "reason": "Original TransformLine branch and original enum Regex=8 are source evidence; no Regex exception or full Poco/parser runtime in this controlled aggregate capture. EvaluationFailed=11 is runtime observed with original enum."
+  }
+]

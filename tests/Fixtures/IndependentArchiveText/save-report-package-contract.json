@@ -1,0 +1,30 @@
+{
+  "provenance": "synthetic",
+  "status": "product verification pending",
+  "saveBytes": {
+    "left": "expected/left-edited.text",
+    "middle": "expected/middle-edited.text",
+    "right": "expected/right-edited.text"
+  },
+  "workingSave": "keep original ZIP bytes; use workspace-saved.json snapshot metadata/assets",
+  "externalSave": "same bytes as working save; change only saved side Archive->Physical; protect original roots",
+  "workspace": "v6 Independent, middle descriptor + baseArchiveInput payload, relative roots/assets",
+  "htmlText": {
+    "left": "Shared café\r\nLEFT edited €\ninsert-left\rthird left\rtail-left",
+    "middle": "Shared café\r\nMIDDLE edited £\ninsert-middle\rthird middle\rtail-middle",
+    "right": "Shared café\r\nRIGHT edited “quote”\ninsert-right\rthird right\rtail-right"
+  },
+  "htmlChecks": [
+    "reconstruct all 3 sides incl mixed endings from report structure",
+    "Independent labels, no ancestor/merge/patch",
+    "escape text, mark dirty when unsaved"
+  ],
+  "packageChecks": [
+    "all entries CRC/SHA, safe relative paths",
+    "original 3 root ZIPs byte exact",
+    "3 saved asset bytes exact",
+    "v6 Independent descriptor/chain/leaf/SHA preserved",
+    "extract and independently read every nested ZIP, then product reload separately"
+  ],
+  "notPredicted": "product package entry names, asset copy layout and HTML markup depend on implementation"
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "input322-synthetic-provenance-v1",
+  "origin": "Independent literal Python stdlib; not WinMerge original; no product-derived golden",
+  "sources": [
+    {
+      "path": "Src/DiffBeacon.App/HeadlessIndependentTextInputSelectionRouteChecks.cs",
+      "size": 16578,
+      "sha256": "BCD656D63015C0E1F4E98648EE5780A4A48D72AA79553E93425F2FD0323FFFFC"
+    },
+    {
+      "path": "tests/Fixtures/IndependentTextInputSelectionRoutes/generate.py",
+      "size": 1594,
+      "sha256": "5B60DA9AE10A46AC9914A290F390B2F3156BFCBA3667EED85F6959B3ABC2C734"
+    },
+    {
+      "path": "tests/Fixtures/IndependentTextInputSelectionRoutes/verify.py",
+      "size": 12245,
+      "sha256": "E9C5C835FA7B08E033979B371C2F2B4519B380AC090D1E9FB59DB8F42443EE2F"
+    },
+    {
+      "path": "tests/Fixtures/IndependentTextInputSelectionRoutes/LICENSE",
+      "size": 1064,
+      "sha256": "7A04D94AABC637A0216287CC94AB8778205AC45A022987224472C1B85B60D73F"
+    }
+  ]
+}

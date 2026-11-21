@@ -1,0 +1,1844 @@
+[
+  {
+    "id": "StrCount-arity-empty",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [],
+    "throws": []
+  },
+  {
+    "id": "StrCount-arity-one",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61616161"
+      }
+    ],
+    "throws": [
+      0
+    ]
+  },
+  {
+    "id": "StrCount-arity-four",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61616161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  {
+    "id": "StrCount-null-args",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "StrCount-overlap-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161616161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-overlap-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161616161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-empty-source-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-empty-source-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-missing-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "616263"
+      },
+      {
+        "type": "string",
+        "value": "7a"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-missing-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "616263"
+      },
+      {
+        "type": "string",
+        "value": "7a"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-longer-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "string",
+        "value": "616161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-longer-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "string",
+        "value": "616161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-nul-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6100626100"
+      },
+      {
+        "type": "string",
+        "value": "00"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-nul-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6100626100"
+      },
+      {
+        "type": "string",
+        "value": "00"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-utf8-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cace8aa9e78e697a5e69cace8aa9e"
+      },
+      {
+        "type": "string",
+        "value": "e8aa9e"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-utf8-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cace8aa9e78e697a5e69cace8aa9e"
+      },
+      {
+        "type": "string",
+        "value": "e8aa9e"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-ascii-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61416141"
+      },
+      {
+        "type": "string",
+        "value": "4141"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-ascii-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61416141"
+      },
+      {
+        "type": "string",
+        "value": "4141"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-accent-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "c389c3a9"
+      },
+      {
+        "type": "string",
+        "value": "c3a9"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-accent-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "c389c3a9"
+      },
+      {
+        "type": "string",
+        "value": "c3a9"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-sharp-s-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "53747261c39f65"
+      },
+      {
+        "type": "string",
+        "value": "5353"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-sharp-s-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "53747261c39f65"
+      },
+      {
+        "type": "string",
+        "value": "5353"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-fullwidth-cs",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "efbca1efbd81"
+      },
+      {
+        "type": "string",
+        "value": "efbd81"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-fullwidth-ci",
+    "function": "StrCount",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "efbca1efbd81"
+      },
+      {
+        "type": "string",
+        "value": "efbd81"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-needle-none",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-needle-empty",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-needle-int",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 1
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-needle-double",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-needle-bool",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-needle-array",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "61"
+          }
+        ]
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-source-none",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-source-int",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "int64",
+        "value": -121
+      },
+      {
+        "type": "string",
+        "value": "31"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-source-double",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "string",
+        "value": "31"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-source-bool",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-source-array",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "61616161"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int64",
+            "value": 121
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "double",
+            "value": 1.25
+          },
+          {
+            "type": "array",
+            "items": [
+              {
+                "type": "string",
+                "value": "6161"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-source-empty-array",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrCount-throw-0",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": [
+      0
+    ]
+  },
+  {
+    "id": "StrCount-throw-1",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": [
+      1
+    ]
+  },
+  {
+    "id": "StrFind-arity-empty",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [],
+    "throws": []
+  },
+  {
+    "id": "StrFind-arity-one",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61616161"
+      }
+    ],
+    "throws": [
+      0
+    ]
+  },
+  {
+    "id": "StrFind-arity-four",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61616161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  {
+    "id": "StrFind-null-args",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": [
+      0,
+      1
+    ]
+  },
+  {
+    "id": "StrFind-overlap-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161616161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-overlap-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161616161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-empty-source-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-empty-source-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-missing-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "616263"
+      },
+      {
+        "type": "string",
+        "value": "7a"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-missing-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "616263"
+      },
+      {
+        "type": "string",
+        "value": "7a"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-longer-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "string",
+        "value": "616161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-longer-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "string",
+        "value": "616161"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-nul-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6100626100"
+      },
+      {
+        "type": "string",
+        "value": "00"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-nul-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6100626100"
+      },
+      {
+        "type": "string",
+        "value": "00"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-utf8-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cace8aa9e78e697a5e69cace8aa9e"
+      },
+      {
+        "type": "string",
+        "value": "e8aa9e"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-utf8-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cace8aa9e78e697a5e69cace8aa9e"
+      },
+      {
+        "type": "string",
+        "value": "e8aa9e"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-ascii-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61416141"
+      },
+      {
+        "type": "string",
+        "value": "4141"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-ascii-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61416141"
+      },
+      {
+        "type": "string",
+        "value": "4141"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-accent-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "c389c3a9"
+      },
+      {
+        "type": "string",
+        "value": "c3a9"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-accent-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "c389c3a9"
+      },
+      {
+        "type": "string",
+        "value": "c3a9"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-sharp-s-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "53747261c39f65"
+      },
+      {
+        "type": "string",
+        "value": "5353"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-sharp-s-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "53747261c39f65"
+      },
+      {
+        "type": "string",
+        "value": "5353"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-fullwidth-cs",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "efbca1efbd81"
+      },
+      {
+        "type": "string",
+        "value": "efbd81"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-fullwidth-ci",
+    "function": "StrFind",
+    "caseSensitive": false,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "efbca1efbd81"
+      },
+      {
+        "type": "string",
+        "value": "efbd81"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-needle-none",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-needle-empty",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-needle-int",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 1
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-needle-double",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-needle-bool",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-needle-array",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "6161"
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "61"
+          }
+        ]
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-source-none",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-source-int",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "int64",
+        "value": -121
+      },
+      {
+        "type": "string",
+        "value": "31"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-source-double",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "double",
+        "value": 1.25
+      },
+      {
+        "type": "string",
+        "value": "31"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-source-bool",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-source-array",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "61616161"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int64",
+            "value": 121
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "double",
+            "value": 1.25
+          },
+          {
+            "type": "array",
+            "items": [
+              {
+                "type": "string",
+                "value": "6161"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-source-empty-array",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "string",
+        "value": "61"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "StrFind-throw-0",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": [
+      0
+    ]
+  },
+  {
+    "id": "StrFind-throw-1",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": [
+      1
+    ]
+  },
+  {
+    "id": "StrFind-throw-2",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": [
+      2
+    ]
+  },
+  {
+    "id": "find-occurrence-zero",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-one",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": 1
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-two",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-negative",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": -1
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-min",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-max",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-double0",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "double",
+        "value": 0.0
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-double1",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-bool",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-string",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "string",
+        "value": "30"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-none",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-occurrence-array",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "e697a5e69cac6161e697a5e69cac6161"
+      },
+      {
+        "type": "string",
+        "value": "6161"
+      },
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-empty-needle-third-throws",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "61"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": [
+      2
+    ]
+  },
+  {
+    "id": "find-invalid-needle-third-throws",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "throws": [
+      2
+    ]
+  },
+  {
+    "id": "count-int64-min-string",
+    "function": "StrCount",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "string",
+        "value": "38"
+      }
+    ],
+    "throws": []
+  },
+  {
+    "id": "find-int64-max-string",
+    "function": "StrFind",
+    "caseSensitive": true,
+    "nullArgs": false,
+    "args": [
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      },
+      {
+        "type": "string",
+        "value": "37"
+      }
+    ],
+    "throws": []
+  }
+]

@@ -1,0 +1,103 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "upstream": "https://github.com/WinMerge/winmerge",
+  "copiedFrom": "FolderStrSearchOracle and LineTransformSearch pinned original blobs",
+  "sources": [
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "file": "original/FilterExpressionNodes.cpp",
+      "blob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "file": "original/FilterExpressionNodes.h",
+      "blob": "c5533753a5d4f3200f077e0302cc28c2f3871cc9",
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Src/COPYING",
+      "file": "original/COPYING",
+      "blob": "7d1f8605f8f722063883b7feefec942fe2f28206",
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900",
+      "localBytesMatch": true,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/Ascii.h",
+      "file": "original/Poco-Ascii.h",
+      "blob": "5121dba871b7f49b15d2bbff4179b8fed0dfbacb",
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/String.h",
+      "file": "original/Poco-String.h",
+      "blob": "f47347b01ba18bd761bb2755b1785172fe4f7ef4",
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Externals/poco/Foundation/src/Ascii.cpp",
+      "file": "original/Poco-Ascii.cpp",
+      "blob": "5d5fab79218311816d919e443dc79508b1919457",
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Externals/poco/LICENSE",
+      "file": "original/Poco-LICENSE",
+      "blob": "2f2f957ce4f48733875f0791d0d383e8d9319205",
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Src/Common/unicoder.cpp",
+      "file": "original/unicoder.cpp",
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7",
+      "blob": "81e6dbdf90c6a4bfa1c3dd44afc01944c8928c4f",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    },
+    {
+      "path": "Src/FilterEngine/FilterParser.h",
+      "file": "original/FilterParser.h",
+      "size": 1472,
+      "sha256": "ac27e0af541b10bea4b78ee5f31b055896de73cef0ce826d9eec6707f493ff41",
+      "blob": "fb22d0905005d1598f15d1d9e2625be11fe767b1",
+      "localBytesMatch": false,
+      "localCrLfToLfMatch": true,
+      "storedMatchesPinnedBlob": true
+    }
+  ],
+  "pocoBinding": {
+    "kind": "vendoredTreeNotGitlink",
+    "tree": "f200ba8bf24b1c41158323be7e156adc8f0cf7e5",
+    "caseInsensitive": "actual unmodified Poco Ascii class, inline functions, properties table and toLower template"
+  },
+  "boundary": "Exact named bodies plus literal/throw-node bindings; unsupported branches throw adapter errors. No TCHAR/transcoding, parser, optimizer or product evaluation."
+}

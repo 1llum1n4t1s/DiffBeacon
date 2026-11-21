@@ -1,0 +1,59 @@
+{
+  "compilerCommand": "@echo off\ncall \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" > \"<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\\vcvars.log\" 2>&1\nif errorlevel 1 exit /b %errorlevel%\ncl /nologo /Bv /std:c++20 /EHsc /utf-8 /Od /I\"<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\" /Fo\"<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\\reference.obj\" /Fe\"<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\\reference.exe\" \"D:\\Dev\\DiffBeacon\\tests\\Fixtures\\FolderNumericConversionOracle\\adapter.cpp\" /link /INCREMENTAL:NO\n",
+  "compilerBuildExitCode": 0,
+  "compilerStdoutSha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7",
+  "compilerStderrSha256": "071d5f2547381d10fa8574337ff332f7e893a1da514ba521fe9ef07126058ffc",
+  "inputSha256": {
+    "adapter.cpp": "d68a3dc2139a7a26d1dee621d1c654ede14b4d115e08108225d320529ef072d9",
+    "reproduce.py": "82f53677c194bcb9397a0971da877bd92390e864e4e18deb3dab5e7775063ee1",
+    "cases.json": "9b71acb9b99b1d656738ee1639c9caaf0ce667b906c41818381a71a35872e184",
+    "provenance.json": "68a1c62329ee8837f422116bc94b604d6fdf382cf1e7a2bae46f8db933cdd78f"
+  },
+  "extractionSha256": {
+    "stringification.inc": "adea9b9815235f0fd7de35efd59beffc5b0391e1966f6113aa0de8830ef0cdb9",
+    "lifting.inc": "126cbbad74be7e91496113b1aa4bdad6a00918df254f7118388bb06eefa1fd71",
+    "numeric.inc": "76d87413cfc596c10c7eae4bdd28e61100e35fab77ace20049b81093b547319b"
+  },
+  "runs": [
+    {
+      "run": 1,
+      "pid": 41276,
+      "processCreationFiletime": 134368957343931458,
+      "startedUtc": "2026-10-19T15:02:14.271555+00:00",
+      "finishedUtc": "2026-10-19T15:02:14.606439+00:00",
+      "exitCode": 0,
+      "stdoutEof": true,
+      "stderrEof": true,
+      "heldNativeProcessHandle": true,
+      "stdoutSha256": "52d07df1d5b0da74350a3d946c344ea8e6fc5aada7513fdedebccb852c2e125a",
+      "stdoutBytes": 51711,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "executableSha256": "36c2193c319f75384344e18ff7e05c4022aba0f6f1f95b78e116c3f00abeb4bc",
+      "command": [
+        "<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\\reference.exe"
+      ],
+      "cwd": "<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified",
+      "temp": "<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\\temp"
+    },
+    {
+      "run": 2,
+      "pid": 38256,
+      "processCreationFiletime": 134368957346072642,
+      "startedUtc": "2026-10-19T15:02:14.606844+00:00",
+      "finishedUtc": "2026-10-19T15:02:14.617068+00:00",
+      "exitCode": 0,
+      "stdoutEof": true,
+      "stderrEof": true,
+      "heldNativeProcessHandle": true,
+      "stdoutSha256": "52d07df1d5b0da74350a3d946c344ea8e6fc5aada7513fdedebccb852c2e125a",
+      "stdoutBytes": 51711,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "executableSha256": "36c2193c319f75384344e18ff7e05c4022aba0f6f1f95b78e116c3f00abeb4bc",
+      "command": [
+        "<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\\reference.exe"
+      ],
+      "cwd": "<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified",
+      "temp": "<作業フォルダー>\\DiffBeacon\\numeric-oracle-20261019-r1\\capture-certified\\temp"
+    }
+  ]
+}

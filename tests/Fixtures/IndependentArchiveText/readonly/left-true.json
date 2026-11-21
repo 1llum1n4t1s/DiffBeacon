@@ -1,0 +1,57 @@
+{
+  "formatVersion": 6,
+  "activeEntryIndex": 0,
+  "entries": [
+    {
+      "mode": "Text",
+      "leftPath": "",
+      "basePath": "",
+      "rightPath": "",
+      "leftReadOnly": true,
+      "baseReadOnly": true,
+      "rightReadOnly": true,
+      "textInputs": {
+        "semantics": "Independent",
+        "left": {
+          "kind": "Archive"
+        },
+        "middle": {
+          "kind": "Archive"
+        },
+        "right": {
+          "kind": "Archive"
+        }
+      },
+      "leftArchiveInput": {
+        "rootPath": "inputs/left.zip",
+        "entryChain": [
+          "outer.zip",
+          "inner.zip"
+        ],
+        "leafEntry": "texts/leaf.txt",
+        "rootSha256": "1FA7AA8D2329C5CCCD54403834E046E67106670512E700E79ACAF10D04A13B88",
+        "inheritedReadOnly": true
+      },
+      "baseArchiveInput": {
+        "rootPath": "inputs/middle.zip",
+        "entryChain": [
+          "outer.zip",
+          "inner.zip"
+        ],
+        "leafEntry": "texts/leaf.txt",
+        "rootSha256": "8F5750B666FF7ED364B3DBCB7E26CD53BD3CC1A0F1C25FBEB671F669762833C0",
+        "inheritedReadOnly": false
+      },
+      "rightArchiveInput": {
+        "rootPath": "inputs/right.zip",
+        "entryChain": [
+          "outer.zip",
+          "inner.zip"
+        ],
+        "leafEntry": "texts/leaf.txt",
+        "rootSha256": "9C849047318AD3A5036BE7A759914158BC24E8D5691B5E542D6685AC34A98308",
+        "inheritedReadOnly": false
+      }
+    }
+  ]
+}

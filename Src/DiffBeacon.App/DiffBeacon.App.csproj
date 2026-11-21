@@ -1,0 +1,112 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>DiffBeacon</AssemblyName>
+    <PublishAot>true</PublishAot>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <RuntimeIdentifiers>win-x64;win-arm64;osx-x64;osx-arm64;linux-x64</RuntimeIdentifiers>
+    <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+    <!-- Windows の発行だけ WinRT（Windows.Media.Ocr）をプロセス内で使う。ロックファイルは net11.0 のままなので、この TFM の復元はロックしない。 -->
+    <TargetFramework Condition="$([MSBuild]::IsOSPlatform('Windows'))">net11.0-windows10.0.19041.0</TargetFramework>
+    <RestoreLockedMode Condition="$([MSBuild]::IsOSPlatform('Windows'))">false</RestoreLockedMode>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::IsOSPlatform('Windows'))">10.0.19041.0</SupportedOSPlatformVersion>
+    <BuiltInComInteropSupport Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</BuiltInComInteropSupport>
+    <DefineConstants Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(DefineConstants);DIFFBEACON_WINDOWS_OCR</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../DiffBeacon.Core/DiffBeacon.Core.csproj" />
+    <ProjectReference Include="../DiffBeacon.Providers/DiffBeacon.Providers.csproj" />
+    <PackageReference Include="Avalonia" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.6" />
+    <PackageReference Include="Avalonia.Headless" Version="12.1.6" />
+    <!-- 本家WinMergeのような直接編集の本文に使う（MIT、ライセンスは AvaloniaEdit.LICENSE.txt を同梱）。 -->
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="12.0.0" />
+    <!-- テーマ（コンパイル済みXAML）を型名で読み込むため、発行時の削減で型が消えないよう丸ごと保持する（BeaconApplication.AvaloniaEditTheme）。 -->
+    <TrimmerRootAssembly Include="AvaloniaEdit" />
+    <PackageReference Include="TiffLibrary" Version="0.6.65" />
+    <None Include="TiffLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="JpegLibrary.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="AvaloniaEdit.LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <!-- 本家WinMergeのツールバー画像（GPL v2、32px × 26枚のストリップ）。MainWindow.Frame.cs で切り出して使う。 -->
+    <EmbeddedResource Include="../res/ToolbarEnabled32.png" LogicalName="DiffBeacon.Frame.ToolbarEnabled32.png" />
+    <!-- 本家WinMergeのフォルダー一覧アイコン（GPL v2、Merge2.rc の IDI_* と同じ .ico）。ComparisonPane.FolderList.cs で16pxを取り出す。 -->
+    <EmbeddedResource Include="../res/lfile.ico;../res/mfile.ico;../res/rfile.ico;../res/lmissing.ico;../res/mmissing.ico;../res/rmissing.ico;../res/notequalfile.ico;../res/equalfile.ico;../res/fileunknown.ico;../res/lfolder.ico;../res/mfolder.ico;../res/rfolder.ico;../res/lmissingfolder.ico;../res/mmissingfolder.ico;../res/rmissingfolder.ico;../res/fileskip.ico;../res/folderskip.ico;../res/notequalfolder.ico;../res/equalfolder.ico;../res/folder.ico;../res/error.ico" LogicalName="DiffBeacon.FolderIcons.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Zip.deflate.WinzipAES.zip" LogicalName="DiffBeacon.SelfTest.Encrypted.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Sources/two-passwords.zip" LogicalName="DiffBeacon.SelfTest.Sources.two-passwords.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/7Zip.solid.7z" LogicalName="DiffBeacon.SelfTest.Wrappers.7Zip.solid.7z" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Rar5.solid.rar" LogicalName="DiffBeacon.SelfTest.Wrappers.Rar5.solid.rar" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/Wrappers/metadata-golden.json" LogicalName="DiffBeacon.SelfTest.Wrappers.Metadata.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/TarWrappers/payload.*;../../tests/Fixtures/Archives/TarWrappers/empty.tar.gz.bz2;../../tests/Fixtures/Archives/TarWrappers/manifest.json" LogicalName="DiffBeacon.SelfTest.TarWrappers.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/same-first-left.gif" LogicalName="DiffBeacon.SelfTest.Images.same-first-left.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/same-first-right.gif" LogicalName="DiffBeacon.SelfTest.Images.same-first-right.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/short.gif" LogicalName="DiffBeacon.SelfTest.Images.short.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/disposal.gif" LogicalName="DiffBeacon.SelfTest.Images.disposal.gif" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/disposal-2.png" LogicalName="DiffBeacon.SelfTest.Images.disposal-2.png" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageHighlight/winimerge-image-highlight-golden.json" LogicalName="DiffBeacon.SelfTest.ImageHighlight.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageCopy/winimerge-image-copy-golden.json" LogicalName="DiffBeacon.SelfTest.ImageCopy.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageInsertions/winimerge-insertions-golden.json.gz" LogicalName="DiffBeacon.ImageInsertions.Golden.json.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageInsertionHighlight/winimerge-insertion-highlight-golden.json.gz" LogicalName="DiffBeacon.ImageInsertionHighlight.Golden.json.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/Apng/*.png" LogicalName="DiffBeacon.SelfTest.Apng.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/Apng/expectations.json" LogicalName="DiffBeacon.SelfTest.Apng.expectations.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/Tiff/*.tif" LogicalName="DiffBeacon.SelfTest.Tiff.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/Tiff/*.tiff" LogicalName="DiffBeacon.SelfTest.Tiff.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="../../tests/Fixtures/Images/Tiff/expectations.json" LogicalName="DiffBeacon.SelfTest.Tiff.expectations.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransforms/cases.json" LogicalName="DiffBeacon.LineTransformCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformArrays/cases.json" LogicalName="DiffBeacon.LineTransformArrayCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformSearch/cases.json" LogicalName="DiffBeacon.LineTransformSearchCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformReplace/public-case-plan.json" LogicalName="DiffBeacon.LineTransformReplaceCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformReplace/serialized-golden.ndjson" LogicalName="DiffBeacon.LineTransformReplaceSerializedGolden" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformRanges/public-case-plan.json" LogicalName="DiffBeacon.LineTransformRangeCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformRanges/golden.ndjson" LogicalName="DiffBeacon.LineTransformRangeGolden" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformWithin/public-case-plan.json" LogicalName="DiffBeacon.LineTransformWithinCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformWithin/golden.ndjson" LogicalName="DiffBeacon.LineTransformWithinGolden" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformAggregates/golden.ndjson" LogicalName="DiffBeacon.LineTransformAggregateGolden" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformAggregates/cases.json" LogicalName="DiffBeacon.LineTransformAggregateNativeCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformAggregates/public-case-plan.json" LogicalName="DiffBeacon.LineTransformAggregateCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformAggregates/probes.json" LogicalName="DiffBeacon.LineTransformAggregateProbes" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformSizeLiterals/golden.ndjson" LogicalName="DiffBeacon.LineTransformSizeLiteralGolden" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformSizeLiterals/public-case-plan.json" LogicalName="DiffBeacon.LineTransformSizeLiteralCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformSizeLiterals/public-probes-and-boundaries.json" LogicalName="DiffBeacon.LineTransformSizeLiteralProbes" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformDurationLiterals/golden.ndjson" LogicalName="DiffBeacon.LineTransformDurationLiteralGolden" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformDurationLiterals/public-case-plan.json" LogicalName="DiffBeacon.LineTransformDurationLiteralCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformDurationLiterals/public-probes-and-boundaries.json" LogicalName="DiffBeacon.LineTransformDurationLiteralProbes" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformVersionLiterals/public-case-plan.json" LogicalName="DiffBeacon.LineTransformVersionLiteralCases" />
+    <EmbeddedResource Include="../../tests/Fixtures/LineTransformVersionLiterals/probes-case-plan.json" LogicalName="DiffBeacon.LineTransformVersionLiteralProbes" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageTransforms/input.png" LogicalName="DiffBeacon.SelfTest.ImageTransforms.input.png" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageTransforms/ui-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageTransforms.json.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageOffsets/winimerge-offsets-golden.json" LogicalName="DiffBeacon.SelfTest.ImageOffsets.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageRectangles/cases.json" LogicalName="DiffBeacon.SelfTest.ImageRectangles.Cases.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageRectangles/winimerge-rectangles-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageRectangles.Golden.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageResize/cases.json" LogicalName="DiffBeacon.SelfTest.ImageResize.Cases.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/ImageResize/winimerge-resize-golden.json.gz" LogicalName="DiffBeacon.SelfTest.ImageResize.Golden.gz" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareCompression/inputs.zip" LogicalName="DiffBeacon.SelfTest.BareCompression.inputs.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareCompression/expected.json" LogicalName="DiffBeacon.SelfTest.BareCompression.expected.json" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareGZip/extra-inputs.zip" LogicalName="DiffBeacon.SelfTest.BareGZip.extra.zip" />
+    <EmbeddedResource Include="../../tests/Fixtures/Archives/BareGZip/extra-expected.json" LogicalName="DiffBeacon.SelfTest.BareGZip.extra.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="../../Translations/WinMerge/*.po" Link="Translations\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/.gitattributes" Link="tests\Fixtures\FolderOptimizer\.gitattributes" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/failure-matrix.json" Link="tests\Fixtures\FolderOptimizer\failure-matrix.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/finite-schema.py" Link="tests\Fixtures\FolderOptimizer\finite-schema.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/fixed-manifest.json" Link="tests\Fixtures\FolderOptimizer\fixed-manifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/lexer-plan.json" Link="tests\Fixtures\FolderOptimizer\lexer-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/native-classification.json" Link="tests\Fixtures\FolderOptimizer\native-classification.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/native-proof.zip" Link="tests\Fixtures\FolderOptimizer\native-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/old-new-plan.json" Link="tests\Fixtures\FolderOptimizer\old-new-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/projection.py" Link="tests\Fixtures\FolderOptimizer\projection.py" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/proof-binding.json" Link="tests\Fixtures\FolderOptimizer\proof-binding.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/public-plan.json" Link="tests\Fixtures\FolderOptimizer\public-plan.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/README.md" Link="tests\Fixtures\FolderOptimizer\README.md" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/required-host-checks.json" Link="tests\Fixtures\FolderOptimizer\required-host-checks.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/runner-source-chain.json" Link="tests\Fixtures\FolderOptimizer\runner-source-chain.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/runner-source-proof.zip" Link="tests\Fixtures\FolderOptimizer\runner-source-proof.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/semantic-expectations.json" Link="tests\Fixtures\FolderOptimizer\semantic-expectations.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/source-support.json" Link="tests\Fixtures\FolderOptimizer\source-support.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/source-support.zip" Link="tests\Fixtures\FolderOptimizer\source-support.zip" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../tests/Fixtures/FolderOptimizer/verify.py" Link="tests\Fixtures\FolderOptimizer\verify.py" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

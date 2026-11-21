@@ -1,0 +1,191 @@
+[
+  {
+    "nativeId": "all",
+    "expression": "v\"1.2.3.4\"",
+    "nativeValue": "281483566841860",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "plus-all",
+    "expression": "v\"+1.+2.+3.+4\"",
+    "nativeValue": "281483566841860",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "plus-zero",
+    "expression": "v\"+0.+0.+0.+0\"",
+    "nativeValue": "0",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "negative-zero",
+    "expression": "v\"-0.-0.-0.-0\"",
+    "nativeValue": "0",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "minus-revision",
+    "expression": "v\"0.0.0.-1\"",
+    "nativeValue": "-1",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "negative-min-revision",
+    "expression": "v\"0.0.0.-2147483648\"",
+    "nativeValue": "-2147483648",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "negative-revision-upper",
+    "expression": "v\"32767.65535.65535.-1\"",
+    "nativeValue": "9223372036854710271",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "leading-zeros",
+    "expression": "v\"0001.0002.0003.0004\"",
+    "nativeValue": "281483566841860",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "zero-all",
+    "expression": "v\"0.0.0.0\"",
+    "nativeValue": "0",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "revision-65534",
+    "expression": "v\"0.0.0.65534\"",
+    "nativeValue": "65534",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "revision-65535",
+    "expression": "v\"0.0.0.65535\"",
+    "nativeValue": "65535",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "revision-65536",
+    "expression": "v\"0.0.0.65536\"",
+    "nativeValue": "65536",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "revision-overlap",
+    "expression": "v\"0.0.1.65536\"",
+    "nativeValue": "131072",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "build-65534",
+    "expression": "v\"0.0.65534.0\"",
+    "nativeValue": "4294836224",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "build-65535",
+    "expression": "v\"0.0.65535.0\"",
+    "nativeValue": "4294901760",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "build-65536",
+    "expression": "v\"0.0.65536.0\"",
+    "nativeValue": "4294967296",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "build-overlap",
+    "expression": "v\"0.1.65536.0\"",
+    "nativeValue": "8589934592",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "minor-65534",
+    "expression": "v\"0.65534.0.0\"",
+    "nativeValue": "281466386776064",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "minor-65535",
+    "expression": "v\"0.65535.0.0\"",
+    "nativeValue": "281470681743360",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "minor-65536",
+    "expression": "v\"0.65536.0.0\"",
+    "nativeValue": "281474976710656",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "minor-overlap",
+    "expression": "v\"1.65536.0.0\"",
+    "nativeValue": "562949953421312",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "major-32766",
+    "expression": "v\"32766.0.0.0\"",
+    "nativeValue": "9222809086901354496",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "major-32767",
+    "expression": "v\"32767.0.0.0\"",
+    "nativeValue": "9223090561878065152",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "positive-max",
+    "expression": "v\"32767.65535.65535.65535\"",
+    "nativeValue": "9223372036854775807",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "build-int-max",
+    "expression": "v\"0.0.2147483647.0\"",
+    "nativeValue": "140737488289792",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "minor-int-max",
+    "expression": "v\"0.2147483647.0.0\"",
+    "nativeValue": "9223372032559808512",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  },
+  {
+    "nativeId": "revision-int-max",
+    "expression": "v\"0.0.0.2147483647\"",
+    "nativeValue": "2147483647",
+    "status": "planned/unexecuted",
+    "qualification": "no old lexer/parser/directive or public producer executed"
+  }
+]

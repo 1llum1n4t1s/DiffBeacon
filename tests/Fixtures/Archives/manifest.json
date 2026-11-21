@@ -1,0 +1,80 @@
+{
+  "repository": "https://github.com/adamhathcock/sharpcompress",
+  "version": "0.50.4",
+  "commit": "c083c6efd843a844b0c8f7878787360e815be781",
+  "license": "MIT",
+  "licenseSource": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/LICENSE.txt",
+  "licenseSha256": "B7CA2B6174CEE11AFE41D78B48527E3D7659A4435C25019A4A5E072299A2F8ED",
+  "fixtures": [
+    {
+      "file": "7Zip.solid.7z",
+      "sourcePath": "tests/TestArchives/Archives/7Zip.solid.7z",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Archives/7Zip.solid.7z",
+      "bytes": 58959,
+      "sha256": "3C336BF14BEF2DC998B548A304C0C07C9C9DA899F90E426A965A5F322E232B53"
+    },
+    {
+      "file": "7Zip.LZMA2.Aes.7z",
+      "sourcePath": "tests/TestArchives/Archives/7Zip.LZMA2.Aes.7z",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Archives/7Zip.LZMA2.Aes.7z",
+      "bytes": 59652,
+      "sha256": "FA05B223E2BF44E404B6D3886DB1B9FD661C0D6AD2856EEE5D9C007A579EA8B4"
+    },
+    {
+      "file": "Rar.encrypted_filesAndHeader.rar",
+      "sourcePath": "tests/TestArchives/Archives/Rar.encrypted_filesAndHeader.rar",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Archives/Rar.encrypted_filesAndHeader.rar",
+      "bytes": 60172,
+      "sha256": "3944A0CF36758D042C238DACAE56A4FA494B6F790C4F0DD719D9A47B7C845202"
+    },
+    {
+      "file": "Rar5.encrypted_filesAndHeader.rar",
+      "sourcePath": "tests/TestArchives/Archives/Rar5.encrypted_filesAndHeader.rar",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Archives/Rar5.encrypted_filesAndHeader.rar",
+      "bytes": 60686,
+      "sha256": "63FC4B5576F7482311E950155607E171696588881BDD277C8C099EFD2F98B6E2"
+    },
+    {
+      "file": "Rar5.solid.rar",
+      "sourcePath": "tests/TestArchives/Archives/Rar5.solid.rar",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Archives/Rar5.solid.rar",
+      "bytes": 60046,
+      "sha256": "3043D68C5A81F46ADCBB5393632D243944EAD44EB383A677AC82E68AFDDE27CF"
+    },
+    {
+      "file": "Zip.deflate.WinzipAES.zip",
+      "sourcePath": "tests/TestArchives/Archives/Zip.deflate.WinzipAES.zip",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Archives/Zip.deflate.WinzipAES.zip",
+      "bytes": 61208,
+      "sha256": "DEB1D7C7E0F0A6BC78C41EE9FE3F9BF501695F7D01091987A4CE22A9963BE32B"
+    }
+  ],
+  "expectedEntries": [
+    {
+      "path": "exe/test.exe",
+      "size": 45056,
+      "sha256": "8557928804F57ECC340B3BB38B095A3607474EC8DEB0076F316FCFE02B562106",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Original/exe/test.exe"
+    },
+    {
+      "path": "jpg/test.jpg",
+      "size": 40372,
+      "sha256": "B251C7501FB0F55DD4A92FEABE0A6F5733BC40A02679498155FAE9B30138FC53",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Original/jpg/test.jpg"
+    },
+    {
+      "path": "тест.txt",
+      "size": 15498,
+      "sha256": "4D581D93D369F6E1C9B295FF38D82DABD577F927DFAF0C35818C015C85E322D9",
+      "sourceUrl": "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/TestArchives/Original/тест.txt",
+      "sourceBytes": 15044,
+      "sourceSha256": "1A3DE4E51EB2F58672E42443B0E8EA618BA464931166539498FF2AB77EEC3838",
+      "derivation": "Decode original bytes as UTF-8, normalize CRLF to LF, replace LF with CRLF, encode as UTF-8 without BOM. Independently computed bytes/hash match official archive text."
+    }
+  ],
+  "passwordSources": [
+    "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/SharpCompress.Test/SevenZip/SevenZipArchiveTests.cs",
+    "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/SharpCompress.Test/Rar/RarArchiveTests.cs",
+    "https://raw.githubusercontent.com/adamhathcock/sharpcompress/c083c6efd843a844b0c8f7878787360e815be781/tests/SharpCompress.Test/Zip/ZipArchiveTests.cs"
+  ]
+}

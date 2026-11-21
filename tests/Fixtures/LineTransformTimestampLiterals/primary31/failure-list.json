@@ -1,0 +1,17 @@
+{
+  "beforePreparation": [
+    "source375 bytes/Git blobs/raw12spans/license/adapters mismatch",
+    "ZIP unsafe path/duplicate/CRC/SHA/entry or size drift",
+    "proof producer/source/object/exe/actualheldPIDbirth/OSexit/bothEOF missing or changed",
+    "Native62 raw record ids/types/Int64 strings/serializedhex/profile drift",
+    "sameProfile only; otherlocale/TZ/DST comparison forbidden",
+    "embedded-nul unsafe utcTime signed multiplication; raw forensic only/publicnull/no freshserialization",
+    "oldresult compilerCount35 is not actual newcompile1",
+    "repro output repo/.codex/artifacts/unknownreparse/notfresh or unexpected capacity/timeouts",
+    "repro old35object reuse or missing source/headers/featureoverride/stub",
+    "new safe30 scope/recompile/link/run requires newexactGO; oldGO never authorizes",
+    "golden numeric/calendar arithmetic prohibited; join raw strings only"
+  ],
+  "productAdoptionApproved": false,
+  "reproductionApproved": false
+}

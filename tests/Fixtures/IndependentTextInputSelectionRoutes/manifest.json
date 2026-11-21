@@ -1,0 +1,29 @@
+{
+  "schema": "input322-fixtures-v1",
+  "inputs": {
+    "inputs/left.txt": {
+      "size": 35,
+      "sha256": "3dd3d93d5d33ee80059bcf53e280167cce4e21ad0687b7c4f848162bb6e5d3bc"
+    },
+    "inputs/left.zip": {
+      "size": 294,
+      "sha256": "535ca0252f43759a1af62ee2d6781296498b7ac1c0b0789f65df3818ff1123fe"
+    },
+    "inputs/middle.txt": {
+      "size": 68,
+      "sha256": "09daba4439aac6cfd1036014d6566c5ef68f3abeab92f44dd08b9959a3d2fc67"
+    },
+    "inputs/middle.zip": {
+      "size": 327,
+      "sha256": "8f5f76982d390cc8459962380ed34386cf1eeb35bdbe7d0afd33f4d49bbcaf92"
+    },
+    "inputs/right.txt": {
+      "size": 42,
+      "sha256": "10375132142a2e6fbb2e56db4e6d1ed755643ca45b4dde169b9dee31904c14d2"
+    },
+    "inputs/right.zip": {
+      "size": 301,
+      "sha256": "0b09de0c03e3527e20f8f952cc6b6e174d9611d15a7649f704e140c51e8a163d"
+    }
+  }
+}

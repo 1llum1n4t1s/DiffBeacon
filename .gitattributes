@@ -3,3 +3,119 @@ Docs/Manual/**/*.xml	text eol=lf
 Translations/**/*.po	text eol=lf
 Translations/**/*.pot	text eol=lf
 Testing/Data/Compare/**/ignore_eof_*.txt -text
+tests/Fixtures/LineAlignment/legacy-line-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/LineAlignment/legacy-line-pair-dummy-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/LineAlignment/legacy-line-expanded-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/GnuLines/legacy-gnu-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageRegions/winimerge-image-regions-golden.json -text whitespace=cr-at-eol
+# 原本bytesのSHAを固定するため、上流の空白も変更しない。
+tests/Fixtures/ImageRegions/reference-source/ImgDiffBuffer.hpp -text -whitespace
+tests/Fixtures/ImageRegions/reference-source/image.hpp -text -whitespace
+tests/Fixtures/ImageRegions/LICENSE.txt -text whitespace=cr-at-eol
+tests/Fixtures/ImageHighlight/winimerge-image-highlight-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageHighlight/probe-adapter.cpp -text whitespace=cr-at-eol
+tests/Fixtures/ImageCopy/winimerge-image-copy-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageCopy/reference-source/ImgMergeBuffer.hpp -text -whitespace
+tests/Fixtures/ImageCopy/probe-adapter.cpp -text whitespace=cr-at-eol
+# APNGの期待値・再生成器・ライセンスの固定SHAをOSの改行変換から保護する。
+tests/Fixtures/Images/Apng/expectations.json -text whitespace=cr-at-eol
+tests/Fixtures/Images/Apng/generate.py -text
+tests/Fixtures/Images/Apng/LICENSE.txt -text
+tests/Fixtures/Images/Tiff/expectations.json -text whitespace=cr-at-eol
+tests/Fixtures/Images/Tiff/generate.py -text
+tests/Fixtures/Images/Tiff/LICENSE.txt -text
+Src/DiffBeacon.App/TiffLibrary.LICENSE.txt -text
+Src/DiffBeacon.App/JpegLibrary.LICENSE.txt -text
+# 原本の回転・反転・コピー採取と自作入力の固定SHAを保持する。
+tests/Fixtures/ImageTransforms/winimerge-transforms-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageTransforms/input.png -text
+tests/Fixtures/ImageTransforms/extract.py -text
+tests/Fixtures/ImageTransforms/LICENSE.txt -text
+tests/Fixtures/ImageTransforms/ui-golden.json.gz -text
+tests/Fixtures/ImageOffsets/winimerge-offsets-golden.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageOffsets/extract.py -text
+tests/Fixtures/ImageInsertions/extract.py -text
+tests/Fixtures/ImageInsertions/winimerge-insertions-golden.json.gz -text
+tests/Fixtures/ImageLines/winimerge-image-lines-golden.json.gz -text
+tests/Fixtures/ImageLines/reference-source/Diff.hpp -text -whitespace
+tests/Fixtures/ImageInsertionHighlight/winimerge-insertion-highlight-golden.json.gz -text
+tests/Fixtures/ImageInsertionHighlight/extract.py -text
+tests/Fixtures/ImageInsertionHighlight/capture.py -text whitespace=cr-at-eol
+tests/Fixtures/ImageInsertionHighlight/state-function.cpp.txt -text whitespace=cr-at-eol
+tests/Fixtures/ImageInsertionHighlight/LICENSE.txt -text whitespace=cr-at-eol
+# 矩形原本の採取データと無改変関数は固定SHAを維持する。
+tests/Fixtures/ImageRectangles/*.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageRectangles/*.inc -text -whitespace
+tests/Fixtures/ImageRectangles/kernel-probe.cpp -text -whitespace
+tests/Fixtures/ImageRectangles/winimerge-rectangles-golden.json.gz -text
+tests/Fixtures/ImageRectangles/extract.py -text whitespace=cr-at-eol
+tests/Fixtures/ImageRectangles/GPL-LICENSE.txt -text whitespace=cr-at-eol
+tests/Fixtures/ImageResize/*.json -text whitespace=cr-at-eol
+tests/Fixtures/ImageResize/probe-*.cpp -text -whitespace
+tests/Fixtures/ImageResize/generate-reference.py -text
+tests/Fixtures/ImageResize/winimerge-resize-golden.json.gz -text
+tests/Fixtures/ImageResize/GPL-LICENSE.txt -text whitespace=cr-at-eol
+# ワイプ原本の全BGRA採取データとadapterは固定SHAを維持する。
+tests/Fixtures/ImageWipes/winimerge-image-wipe-golden.json.gz -text -whitespace
+tests/Fixtures/ImageWipes/probe-adapter.cpp -text whitespace=cr-at-eol
+# 重ね合わせ原本の全BGRA採取データとadapterは固定SHAを維持する。
+tests/Fixtures/ImageOverlays/winimerge-image-overlay-golden.json.gz -text -whitespace
+tests/Fixtures/ImageOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
+# 時刻依存overlay原本のclock mock核と全BGRA採取データを保護する。
+tests/Fixtures/ImageTemporalOverlays/golden.json.gz -text -whitespace
+tests/Fixtures/ImageTemporalOverlays/probe-adapter.cpp -text whitespace=cr-at-eol
+# Frhed clipboard原本、全634採取入力とgoldenのSHAを維持する。
+tests/Fixtures/BinaryClipboard/** -text
+# フォルダーモデルの固定期待値と独立readerは採取時のSHAを維持する。
+tests/Fixtures/FolderSync/** -text -eol whitespace=cr-at-eol
+# 三者フォルダーの採取原本・sliceは改行変換せずSHAを保持する。
+tests/Fixtures/FolderThreeWay/original/** -text -eol -whitespace
+tests/Fixtures/FolderThreeWay/verify.py -text -eol
+
+# 固定原本の採取元はOSの改行変換を避け、provenanceに記録したraw bytesを保持する。
+Src/DiffWrapper.cpp -text -eol -whitespace
+Src/CompareEngines/FullQuickCompare.cpp -text -eol -whitespace
+Src/DiffList.cpp -text -eol -whitespace
+Src/DiffList.h -text -eol -whitespace
+Src/Diff3.h -text -eol -whitespace
+Src/COPYING -text -eol -whitespace
+build/LegacyGnuReference/OriginalTranslationUnit.c -text -eol -whitespace
+build/LegacyGnuReference/UnsupportedPaths.c -text -eol -whitespace
+Src/diffutils/src/analyze.c -text -eol -whitespace
+Src/diffutils/src/io.c -text -eol -whitespace
+Src/diffutils/src/util.c -text -eol -whitespace
+Src/diffutils/lib/cmpbuf.c -text -eol -whitespace
+Src/diffutils/src/diff.h -text -eol -whitespace
+Src/diffutils/src/system.h -text -eol -whitespace
+Src/diffutils/config.h -text -eol -whitespace
+Src/diffutils/lib/cmpbuf.h -text -eol -whitespace
+Src/DiffItem.h -text -eol -whitespace
+tests/Fixtures/IndependentText/verify.py -text
+tests/Fixtures/IndependentArchiveText/** -text
+tests/Fixtures/IndependentTextInputSelection/** -text
+tests/Fixtures/IndependentTextInputSelectionCritical/** -text
+tests/Fixtures/IndependentTextInputLifetime/** -text
+tests/Fixtures/IndependentTextInputSelectionRoutes/** -text
+tests/Fixtures/IndependentTextInputSavedArchives/** -text
+Src/DiffBeacon.App/HeadlessIndependentTextInputSelectionCriticalChecks.cs -text !eol
+Src/DiffBeacon.App/HeadlessIndependentTextInputLifetimeChecks.cs -text !eol
+Src/DiffBeacon.App/HeadlessIndependentTextInputSelectionRouteChecks.cs -text !eol
+Src/DiffBeacon.App/HeadlessIndependentTextInputSavedArchiveChecks.cs -text !eol
+tests/Fixtures/BinaryThreeWay/verify.py -text !eol
+tests/Fixtures/BinaryCopyAll/verify.py -text !eol
+tests/Fixtures/BinaryRangeEdits/verify.py -text !eol
+tests/Fixtures/ArchiveDraft/verify.py -text !eol
+tests/Fixtures/Archives/Sources/regenerate.py -text !eol
+tests/DiffBeacon.E2E/archive_wrapper_verifier.py -text !eol
+tests/Fixtures/IndependentTextInputSelectionArchives/** -text !eol
+tests/Fixtures/IndependentTextInputSelectionCipher/** -text !eol
+tests/Fixtures/Archives/BareGZip/** -text !eol
+build/WinIMergeDllReference/** -text !eol
+tests/Fixtures/FolderSubstrOracle/** -text
+tests/Fixtures/FolderStringByteObserversOracle/** -text
+tests/Fixtures/FolderReplaceOracle/** -text
+# FolderProviderNull の独立readerは、Windows（CRLF）で採取したソース全体のSHAを照合する。
+# macOSでもCRLFで展開して同じbytesにする（Git blob自体はLFのまま変えない）。
+Src/FilterEngine/FilterExpression.cpp text eol=crlf
+Src/DirDoc.cpp text eol=crlf
+Src/FilterEngine/FunctionNodeProperty.cpp text eol=crlf

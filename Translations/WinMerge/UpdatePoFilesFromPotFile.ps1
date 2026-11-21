@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 
 public class PoFileUpdater
 {
+    public static Func<string, bool> CleanupBackup;
     public static void Main(string[] args)
     {
         DateTime startTime = DateTime.Now;
@@ -29,6 +30,7 @@ public class PoFileUpdater
         bool bPotChanged = GetArchiveBit(sPotFile);
         string[] oLanguages = args;
         if (oLanguages.Length == 0) { oLanguages = Directory.GetFiles(sDir); }
+        int skipped = 0;
         foreach (string sLanguage in oLanguages) //For all languages...
         {
             if (Path.GetExtension(sLanguage).ToLower() == ".po")
@@ -40,14 +42,14 @@ public class PoFileUpdater
                 var oLanguagePoContent = GetContentFromPoFile(sLanguage);
                 if (oLanguagePoContent.Count > 0) //If content exists...
                 {
-                    CreateUpdatedPoFile(sLanguage, oEnglishPotContent, oLanguagePoContent);
+                    if (!CreateUpdatedPoFile(sLanguage, oEnglishPotContent, oLanguagePoContent)) { skipped++; continue; }
                 }
                 SetArchiveBit(sLanguage, false);
             }
         }
 
         double seconds = (DateTime.Now - startTime).TotalSeconds;
-        Console.WriteLine("All PO files updated, after " + seconds + " second(s).");
+        Console.WriteLine("PO file update finished, retained " + skipped + " file(s), after " + seconds + " second(s).");
     }
 
     ////
@@ -171,7 +173,7 @@ public class PoFileUpdater
 
     ////
     // ...
-    static void CreateUpdatedPoFile(string sPoPath, IDictionary<string, CSubContent> oEnglishPotContent, IDictionary<string, CSubContent> oLanguagePoContent)
+    static bool CreateUpdatedPoFile(string sPoPath, IDictionary<string, CSubContent> oEnglishPotContent, IDictionary<string, CSubContent> oLanguagePoContent)
     {
         //--------------------------------------------------------------------------------
         // Backup the old PO file...
@@ -179,7 +181,7 @@ public class PoFileUpdater
         string sBakPath = "sPoPath.bak";
         if (File.Exists(sBakPath))
         {
-            File.Delete(sBakPath);
+            if (CleanupBackup == null || !CleanupBackup(sBakPath)) { return false; }
         }
         File.Move(sPoPath, sBakPath);
         //--------------------------------------------------------------------------------
@@ -218,6 +220,7 @@ public class PoFileUpdater
                 i++;
             }
         }
+        return true;
     }
 
     ////
@@ -258,5 +261,65 @@ public class PoFileUpdater
     }
 }
 "@
+
+# 旧翻訳バックアップを許可された翻訳root内で整理する。
+[PoFileUpdater]::CleanupBackup = [Func[string, bool]] {
+    param([string]$BackupPath)
+    & {
+    param([string[]]$Paths, [string]$Root, [string]$Ledger, [switch]$ReturnReceipt, [switch]$AllowLeafLink, [switch]$IgnoreMissing)
+    if ([string]::IsNullOrWhiteSpace($Root) -or -not [IO.Path]::IsPathFullyQualified($Root)) { throw 'Absolute cleanup root required' }
+    $rootPath = [IO.Path]::GetFullPath($Root).TrimEnd('\','/')
+    if ($rootPath -eq [IO.Path]::GetPathRoot($Root).TrimEnd('\','/')) { throw 'Filesystem root cleanup prohibited' }
+    if ($Paths.Count -eq 0) { throw 'Empty cleanup target set' }
+    $rootItem = Get-Item -LiteralPath $rootPath -Force -ErrorAction Stop
+    if (-not $rootItem.PSIsContainer) { throw 'Cleanup root must be a directory' }
+    $validated = [Collections.Generic.List[string]]::new()
+    $owned = @(foreach ($path in $Paths) {
+        if ([string]::IsNullOrWhiteSpace($path) -or -not [IO.Path]::IsPathFullyQualified($path)) { throw 'Absolute cleanup target required' }
+        $full = [IO.Path]::GetFullPath($path).TrimEnd('\','/')
+        if (-not $full.StartsWith($rootPath + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw "Cleanup target outside root: $full" }
+        foreach ($prior in $validated) {
+            if ($full -eq $prior -or $full.StartsWith($prior + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) -or $prior.StartsWith($full + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'Duplicate or overlapping cleanup targets' }
+        }
+        $validated.Add($full)
+        if (-not (Test-Path -LiteralPath $full) -and -not $IgnoreMissing) { throw "Cleanup target missing: $full" }
+        for ($cursor = $full; $cursor; $cursor = [IO.Path]::GetDirectoryName($cursor)) {
+            if (Test-Path -LiteralPath $cursor) {
+                $item = Get-Item -LiteralPath $cursor -Force -ErrorAction Stop
+                if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -and -not ($AllowLeafLink -and $cursor -eq $full)) { throw "Cleanup link refused: $cursor" }
+            }
+        }
+        if (Test-Path -LiteralPath $full) {
+            $item = Get-Item -LiteralPath $full -Force -ErrorAction Stop
+            if ($item.PSIsContainer -and -not ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                $pending = [Collections.Generic.Stack[string]]::new(); $pending.Push($full)
+                while ($pending.Count) {
+                    foreach ($child in Get-ChildItem -LiteralPath $pending.Pop() -Force -ErrorAction Stop) {
+                        if ($child.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw "Cleanup child link refused: $($child.FullName)" }
+                        if ($child.PSIsContainer) { $pending.Push($child.FullName) }
+                    }
+                }
+            }
+        }
+        $full
+    })
+    if ($Ledger -and @( $owned | Where-Object { $Ledger -eq $_ -or $Ledger.StartsWith($_ + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase) }).Count) { throw 'Cleanup ledger is inside target' }
+    $entries = @(foreach ($full in $owned) {
+        if (Test-Path -LiteralPath $full) {
+            $item = Get-Item -LiteralPath $full -Force -ErrorAction Stop
+            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { Remove-Item -LiteralPath $full -Force -ErrorAction Stop }
+            else { Remove-Item -LiteralPath $full -Recurse -Force -ErrorAction Stop }
+        }
+        if (Test-Path -LiteralPath $full) { throw "Cleanup target remains: $full" }
+        [pscustomobject]@{ original = @{Path=$full}; sourceAbsent=$true }
+    })
+    if ($Ledger) {
+        New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($Ledger)) -Force | Out-Null
+        [pscustomobject]@{state='complete'; items=$entries; protocol='direct-delete'} | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $Ledger -Encoding utf8
+    }
+    if ($ReturnReceipt) { foreach ($full in $owned) { [pscustomobject]@{Target=$full; State='complete'; LedgerPath=$Ledger} } }
+} -Paths ([IO.Path]::GetFullPath($BackupPath)) -Root $PSScriptRoot
+    return $true
+}
 
 [PoFileUpdater]::Main($args)

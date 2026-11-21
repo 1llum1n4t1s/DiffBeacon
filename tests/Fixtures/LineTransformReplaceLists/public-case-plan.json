@@ -1,0 +1,528 @@
+[
+  {
+    "id": "literal-file-global-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-global-ci",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-sequential-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-metachar-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-replacement-group-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-comments-empty-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-leading-space-comment-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-empty-from-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-empty-to-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-utf8-bom-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-utf8-bom-ci",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-mixed-eol-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-invalid-regex-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-no-final-eol-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-blank-file-cs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-file-open-failure",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-typed-empty",
+    "expression": "@cs @noopt ReplaceWithList(\"aba a\",Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "literal-typed-string-pair",
+    "expression": "@cs @noopt ReplaceWithList(\"aba a\",Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "literal-typed-sequential-string",
+    "expression": "@cs @noopt ReplaceWithList(\"aba a\",Array(Array(\"a\",\"b\"),Array(\"b\",\"c\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "literal-typed-regex-pair",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-typed-mixed-pairs",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-typed-wrong-arity-pairs",
+    "expression": "@cs @noopt ReplaceWithList(\"aba a\",Array(Array(\"a\"),Array(\"a\",\"X\",\"ignored\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "literal-typed-nonstring-replacement",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-typed-numeric-pattern",
+    "expression": "@cs @noopt ReplaceWithList(\"aba a\",Array(Array(ToInt(\"1\"),\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "literal-typed-invalid-string-regex",
+    "expression": "@cs @noopt ReplaceWithList(\"aba a\",Array(Array(\"[\",\"X\"),Array(\"a\",\"Y\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "literal-array-source",
+    "expression": "@cs @noopt ReplaceWithList(Array(\"a a\",ToInt(\"123\"),true,none,Array(\"a\")),Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "5b6120612c203132332c20747275652c206e6f6e652c205b615d5d"
+    ]
+  },
+  {
+    "id": "literal-compiled-global-array",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-case-string-True",
+    "expression": "@cs @noopt ReplaceWithList(\"Aa a\",Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "41612061"
+    ]
+  },
+  {
+    "id": "literal-case-string-False",
+    "expression": "@ci @noopt ReplaceWithList(\"Aa a\",Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "41612061"
+    ]
+  },
+  {
+    "id": "literal-arity-0",
+    "expression": "@cs @noopt ReplaceWithList()",
+    "sourceLineCount": 1,
+    "expectedOutcome": "compile-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-arity-1",
+    "expression": "@cs @noopt ReplaceWithList(\"a\")",
+    "sourceLineCount": 1,
+    "expectedOutcome": "compile-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-arity-3",
+    "expression": "@cs @noopt ReplaceWithList(\"a\",\"a\",\"a\")",
+    "sourceLineCount": 1,
+    "expectedOutcome": "compile-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-null-args",
+    "expression": "@cs @noopt ReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-eager-first-throw",
+    "expression": "@cs @noopt ReplaceWithList((1/(LineNumber-LineNumber)),Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "literal-eager-second-throw",
+    "expression": "@cs @noopt ReplaceWithList(\"a\",(1/(LineNumber-LineNumber)))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-global-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-global-ci",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-sequential-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-metachar-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-replacement-group-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-comments-empty-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-leading-space-comment-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-empty-from-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-empty-to-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-utf8-bom-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-utf8-bom-ci",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-mixed-eol-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-invalid-regex-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-no-final-eol-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-blank-file-cs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-file-open-failure",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-typed-empty",
+    "expression": "@cs @noopt RegexReplaceWithList(\"aba a\",Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "regex-typed-string-pair",
+    "expression": "@cs @noopt RegexReplaceWithList(\"aba a\",Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "5862582058"
+    ]
+  },
+  {
+    "id": "regex-typed-sequential-string",
+    "expression": "@cs @noopt RegexReplaceWithList(\"aba a\",Array(Array(\"a\",\"b\"),Array(\"b\",\"c\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6363632063"
+    ]
+  },
+  {
+    "id": "regex-typed-regex-pair",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-typed-mixed-pairs",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-typed-wrong-arity-pairs",
+    "expression": "@cs @noopt RegexReplaceWithList(\"aba a\",Array(Array(\"a\"),Array(\"a\",\"X\",\"ignored\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "regex-typed-nonstring-replacement",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-typed-numeric-pattern",
+    "expression": "@cs @noopt RegexReplaceWithList(\"aba a\",Array(Array(ToInt(\"1\"),\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "6162612061"
+    ]
+  },
+  {
+    "id": "regex-typed-invalid-string-regex",
+    "expression": "@cs @noopt RegexReplaceWithList(\"aba a\",Array(Array(\"[\",\"X\"),Array(\"a\",\"Y\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "5962592059"
+    ]
+  },
+  {
+    "id": "regex-array-source",
+    "expression": "@cs @noopt RegexReplaceWithList(Array(\"a a\",ToInt(\"123\"),true,none,Array(\"a\")),Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "5b5820582c203132332c20747275652c206e6f6e652c205b585d5d"
+    ]
+  },
+  {
+    "id": "regex-compiled-global-array",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-case-string-True",
+    "expression": "@cs @noopt RegexReplaceWithList(\"Aa a\",Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "41582058"
+    ]
+  },
+  {
+    "id": "regex-case-string-False",
+    "expression": "@ci @noopt RegexReplaceWithList(\"Aa a\",Array(Array(\"a\",\"X\")))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "58582058"
+    ]
+  },
+  {
+    "id": "regex-arity-0",
+    "expression": "@cs @noopt RegexReplaceWithList()",
+    "sourceLineCount": 1,
+    "expectedOutcome": "compile-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-arity-1",
+    "expression": "@cs @noopt RegexReplaceWithList(\"a\")",
+    "sourceLineCount": 1,
+    "expectedOutcome": "compile-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-arity-3",
+    "expression": "@cs @noopt RegexReplaceWithList(\"a\",\"a\",\"a\")",
+    "sourceLineCount": 1,
+    "expectedOutcome": "compile-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-null-args",
+    "expression": "@cs @noopt RegexReplaceWithList(none,Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-eager-first-throw",
+    "expression": "@cs @noopt RegexReplaceWithList((1/(LineNumber-LineNumber)),Array())",
+    "sourceLineCount": 1,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "regex-eager-second-throw",
+    "expression": "@cs @noopt RegexReplaceWithList(\"a\",(1/(LineNumber-LineNumber)))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  }
+]

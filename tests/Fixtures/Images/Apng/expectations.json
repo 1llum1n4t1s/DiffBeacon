@@ -1,0 +1,844 @@
+{
+  "format": 1,
+  "license": "CC0-1.0",
+  "pixelFormat": "BGRA8888 Unpremul tightly packed",
+  "source": "https://www.w3.org/TR/2025/REC-png-3-20250624/",
+  "expectationMethod": "literal hand-written full canvases, no decoder/compositor expectation generation",
+  "assets": {
+    "same-first-left.png": {
+      "valid": true,
+      "description": "same red first frame; green later",
+      "defaultImageIncluded": true,
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD//wAA//8AAP//AAD//w==",
+          "pixelSha256": "D37A4C2900BB85DFD24592C0B52E8DCD72E0EA45C47FA2DB0CF1C4C132C80C66"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AP8A/wD/AP8A/wD/AP8A/w==",
+          "pixelSha256": "92473E976B82A7533986F1B8AA449430293F8D8BC65D72157440ABBAA543DAA2"
+        }
+      ],
+      "fileSha256": "E639CF5E07268ACA960F2CF5141E3E19BE4C645706930B1121257EBE65741BC4",
+      "fileBytes": 200
+    },
+    "control-before-actl.png": {
+      "valid": true,
+      "description": "legal fcTL sequence0 before acTL; both before IDAT",
+      "defaultImageIncluded": true,
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD//wAA//8AAP//AAD//w==",
+          "pixelSha256": "D37A4C2900BB85DFD24592C0B52E8DCD72E0EA45C47FA2DB0CF1C4C132C80C66"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AP8A/wD/AP8A/wD/AP8A/w==",
+          "pixelSha256": "92473E976B82A7533986F1B8AA449430293F8D8BC65D72157440ABBAA543DAA2"
+        }
+      ],
+      "fileSha256": "79CB5122CF11ED52BAA6A7D0CF527B6A66B8FB95EB172415E16D2EC94908107B",
+      "fileBytes": 200
+    },
+    "same-first-right.png": {
+      "valid": true,
+      "description": "same red first frame; blue later",
+      "defaultImageIncluded": true,
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD//wAA//8AAP//AAD//w==",
+          "pixelSha256": "D37A4C2900BB85DFD24592C0B52E8DCD72E0EA45C47FA2DB0CF1C4C132C80C66"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA//8AAP//AAD//wAA/w==",
+          "pixelSha256": "FB3A6A641BBCE9B762A240D320A72E963EBBFD6D38CF17E86F37F165574BDBE0"
+        }
+      ],
+      "fileSha256": "E21E714C6741EDFD84A98F227D5FA35BAC5B510059B627F395E7DC546330CD43",
+      "fileBytes": 202
+    },
+    "default-excluded.png": {
+      "valid": true,
+      "description": "white default PNG is not an animation frame",
+      "defaultImageIncluded": false,
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA//8AAP//AAD//wAA/w==",
+          "pixelSha256": "FB3A6A641BBCE9B762A240D320A72E963EBBFD6D38CF17E86F37F165574BDBE0"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA//8AAP//AAD/AP8A/w==",
+          "pixelSha256": "F5D25414B824AF96074765AF30E342958725E56541512834425A121223E8AA28"
+        }
+      ],
+      "fileSha256": "38741701912E224FC914D450E936B3254C10C64EE5F78432A379D1B17959C195",
+      "fileBytes": 228
+    },
+    "offset-disposals.png": {
+      "valid": true,
+      "description": "offsets; NONE then BACKGROUND then PREVIOUS",
+      "defaultImageIncluded": true,
+      "frameCount": 4,
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA//8AAP//AAD//wAA//8AAP//AAD/",
+          "pixelSha256": "1308C8D07D8BD47A24E30B627CAAF193042EFA719622F09C65D5C97EAA9E4C3A"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA/wAA////AAD//wAA//8AAP//AAD/",
+          "pixelSha256": "52F405971868B3CE6DDD496D09A95B9AF07102D8E3F449BD2F873AE84776246A"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA/wAAAAD/AAD//wAA//8AAP8A/wD/",
+          "pixelSha256": "1F64BDEEDDFF62683FC1DECC56F0478757DD15643E92C372BFD832CB59DD2E03"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/////wAAAAD/AAD//wAA//8AAP//AAD/",
+          "pixelSha256": "1734DBD4B4AEC211B5E12F8E05AF199908E7EF9F8F883EF1BAA2554B326609F7"
+        }
+      ],
+      "fileSha256": "760557179B81C8822484D9E84D09FCEB5D5B473FCA238F78C75726FDBCD5FDD0",
+      "fileBytes": 330
+    },
+    "source-over.png": {
+      "valid": true,
+      "description": "alpha128 red OVER blue; transparent SOURCE replaces alpha and hidden RGB",
+      "defaultImageIncluded": true,
+      "frameCount": 3,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA//8AAP//AAD//wAA/w==",
+          "pixelSha256": "FB3A6A641BBCE9B762A240D320A72E963EBBFD6D38CF17E86F37F165574BDBE0"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              127,
+              0,
+              128,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "fwCA//8AAP//AAD//wAA/w==",
+          "pixelSha256": "8D03B15C26F48A24B3034BF665E01E64A12B36FE77DA12A00B80232C3C8F911A"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              127,
+              0,
+              128,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ]
+          ],
+          "bgraBase64": "fwCA//8AAP//AAD/DSVHAA==",
+          "pixelSha256": "7A14A55FE1DF64B4937D82A9E6CCF974D43515F2444F601281FCDE8FF7A0C5D2"
+        }
+      ],
+      "fileSha256": "1958E3C77C9A4E43912859F48F4FB44B745A3A0DBE001ED572A687BC825C2918",
+      "fileBytes": 265
+    },
+    "first-previous.png": {
+      "valid": true,
+      "description": "first-frame PREVIOUS treated as BACKGROUND",
+      "defaultImageIncluded": true,
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD//wAA//8AAP//AAD//w==",
+          "pixelSha256": "D37A4C2900BB85DFD24592C0B52E8DCD72E0EA45C47FA2DB0CF1C4C132C80C66"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAAAAAAAAAAAAAAA/wAA/w==",
+          "pixelSha256": "7CCBA4545E4DC3DB4657516DF26A19E8BAC4BB636A357C423EFA35539EB9BFE9"
+        }
+      ],
+      "fileSha256": "E4595CCA9B637362C6613E031206C46FE385F766CA087CA079AD3950C1CCDF2F",
+      "fileBytes": 199
+    },
+    "hidden-source-first.png": {
+      "valid": true,
+      "description": "first SOURCE retains encoded unassociated alpha0 RGB",
+      "defaultImageIncluded": true,
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              13,
+              37,
+              71,
+              0
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ]
+          ],
+          "bgraBase64": "DSVHAA0lRwANJUcADSVHAA==",
+          "pixelSha256": "25B98749B4BA17631F242B638FB5F6D41ADFF4BFCCAB79FCA873E7E5B7AE0A7C"
+        },
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ]
+          ],
+          "bgraBase64": "/////w0lRwANJUcADSVHAA==",
+          "pixelSha256": "891C4DF1EAA95C27C7E7E730749F2E663D59DFAE2EA7274B513EEEC560A98AC5"
+        }
+      ],
+      "fileSha256": "1F51E1463A3572CA1330147F5A93F8225509E13F7F0116DB90FF43E700879BFD",
+      "fileBytes": 197
+    },
+    "static-red.png": {
+      "valid": true,
+      "description": "single-frame repeat-last comparison",
+      "defaultImageIncluded": null,
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 2,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD//wAA//8AAP//AAD//w==",
+          "pixelSha256": "D37A4C2900BB85DFD24592C0B52E8DCD72E0EA45C47FA2DB0CF1C4C132C80C66"
+        }
+      ],
+      "fileSha256": "D28C139BBA718D60154960EACA75535A5CC5B59FE2153E998A29251E8E5F4667",
+      "fileBytes": 74
+    },
+    "broken-sequence.png": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "fcTL/fdAT sequence gap",
+      "fileSha256": "75DA89FD505D83F3DC5A20B1A1E2C81CC8FA7D03B85C33705777C17778BA3C55",
+      "fileBytes": 200
+    },
+    "broken-crc.png": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "fdAT CRC mismatch",
+      "fileSha256": "35FA70D59A46A9CDF5BE73D01DE0C1E2FF1456F13C6214354BACE54E93CDD7FD",
+      "fileBytes": 200
+    },
+    "broken-rect.png": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "x_offset + frame width exceeds canvas",
+      "fileSha256": "10DC19D246CEC4067CC677116155796DBF76E44B2EC444D803C61735AA8B20F5",
+      "fileBytes": 200
+    },
+    "broken-count.png": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "declared count differs from fcTL count",
+      "fileSha256": "266B861B8A2938865491318DD933C62C71A8F409FFAB5FF4980B093DE1C23D07",
+      "fileBytes": 200
+    },
+    "truncated-fdat.png": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "truncated animation chunk; no fallback to static PNG",
+      "fileSha256": "720CCEEAA21BAA62D0D095C7E0CA88B91DE1EFE5A5D0A1F0834F61F437F71897",
+      "fileBytes": 168
+    },
+    "oversized-canvas.png": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "1600万画素canvas bound before image allocation",
+      "fileSha256": "22FC6F60A9969011B21BDC0879320758CCEE1913A4545FA43B009423F3F8603F",
+      "fileBytes": 200
+    },
+    "oversized-frame-count.png": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "1024 animation frame bound before canvas/frame allocation",
+      "fileSha256": "F2ED75C533CB438454EDE2679ADBB7332A4F78D12F9F2FF0659478644A7B47FD",
+      "fileBytes": 200
+    }
+  },
+  "generatorSha256": "0C96723C855E762DE3362B51A7380D02914833351B2948182CBA92C40AE2D6AC"
+}

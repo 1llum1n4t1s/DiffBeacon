@@ -1,0 +1,1 @@
+struct ValueType2 { ValueType value; };

@@ -1,0 +1,26 @@
+{
+  "schema": "input348-saved-archive-provenance-v1",
+  "origin": "Independent literal stdlib fixtures; product output is not an expectation",
+  "sources": [
+    {
+      "path": "Src/DiffBeacon.App/HeadlessIndependentTextInputSavedArchiveChecks.cs",
+      "size": 23471,
+      "sha256": "1E56741C2C4ADFF3E278892462568806752C0F39934606BE46C8B2BE61663B91"
+    },
+    {
+      "path": "tests/Fixtures/IndependentTextInputSavedArchives/generate.py",
+      "size": 1717,
+      "sha256": "4104901AFDF4DB4A5219F276391718E48B5BCDA32B2167F18CFBF434000751D8"
+    },
+    {
+      "path": "tests/Fixtures/IndependentTextInputSavedArchives/verify.py",
+      "size": 19325,
+      "sha256": "44875020FED75A21D6017C67EC078B786225E826D3D48CEA135C829B865762A7"
+    },
+    {
+      "path": "tests/Fixtures/IndependentTextInputSavedArchives/LICENSE",
+      "size": 1064,
+      "sha256": "7A04D94AABC637A0216287CC94AB8778205AC45A022987224472C1B85B60D73F"
+    }
+  ]
+}

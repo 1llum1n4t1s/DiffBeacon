@@ -1,0 +1,181 @@
+{
+  "schema": "line-transform-aggregates-native-fixed-manifest-v1",
+  "scope": "Exact formal family files except this manifest. Frozen Native141 raw bytes/proof/source/producer/reader unchanged; portable public141 projection104/37 and separate8 probes are planned, uncompiled/unexecuted. Actual serialized-key observer is separate from original Native typed/context/cache observations.",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "adapter.cpp",
+      "size": 16988,
+      "sha256": "3b7522f927a3408a95133eaabba182f920df51b59b583fd1629ffc5968b98bf9"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Ascii.h",
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/String.h",
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Timestamp.h",
+      "size": 6256,
+      "sha256": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Types.h",
+      "size": 4608,
+      "sha256": "a9aa7e44ea8ff34d8c97aba0fc8fb6719b788cec13314844ccd8e204c9192a20"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Ascii.cpp",
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Timestamp.cpp",
+      "size": 3853,
+      "sha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19"
+    },
+    {
+      "path": "additional-original/Src/FileTransform.cpp",
+      "size": 51547,
+      "sha256": "a37500cf3ad1e1713752474a9d3e3e400e4ed3806c23ef22d220fdbdf7f6f599"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterError.h",
+      "size": 1391,
+      "sha256": "160a03bf7f2a0ed0a4db66a3d5211a8dccd7445e7eb0d2b7fd640c3fa914fa2b"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterExpression.cpp",
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/FilterExpression.h",
+      "size": 3539,
+      "sha256": "115ff8a8cef7760ae6a2019b57ab6c760a55fe6b4484c1e1c4c5a9cf845b0f0c"
+    },
+    {
+      "path": "additional-original/Src/FilterEngine/ILineDataProvider.h",
+      "size": 1300,
+      "sha256": "841545932977bc270fb7d2a61f421fe9930c285200502e619e9061f77f8f555b"
+    },
+    {
+      "path": "capture-receipt.json",
+      "size": 1207,
+      "sha256": "386feda6feac1fe0462d48626ad395d00f456b5475ef616d3287073333edbe02"
+    },
+    {
+      "path": "capture.ps1",
+      "size": 2000,
+      "sha256": "cfee5076e926e95698a213cac4dbc70e7da960ec6a83750f6da34be260f3e5bc"
+    },
+    {
+      "path": "capture.py",
+      "size": 12272,
+      "sha256": "95f708210aaa44cac81cd59f2601e198e0d5117164f7c1dc00cadc52c7fe00a7"
+    },
+    {
+      "path": "case_plan.py",
+      "size": 6200,
+      "sha256": "e9ac367399d938903d996a4c37ff6c03ea616c4748a3e0ed428bd4c1739e73f3"
+    },
+    {
+      "path": "cases.json",
+      "size": 94938,
+      "sha256": "a8e2bd941871ab9f77e737e2888c5936dc633e147d6bd02c82d6f268138ceaf9"
+    },
+    {
+      "path": "generate-public-plan.py",
+      "size": 8451,
+      "sha256": "4402973a55facf67da54580ad3f79e2caf89b9a13ff8cfd99cf40ef6d82c07e8"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 169546,
+      "sha256": "74e1f5b6bb58af0433cb0d198ee3360da1ebcd1f8845da9b5ce2fd0e2f549e91"
+    },
+    {
+      "path": "native-proof-manifest.json",
+      "size": 17891,
+      "sha256": "5f5f8495dd16340f29d629f3cc446f7295908d3df96997bd99c8b7ef88ba0d82"
+    },
+    {
+      "path": "native-proof.zip",
+      "size": 492313,
+      "sha256": "039e9b4e77d8164b4e97bb726350675a4d8c6de2d73fe8daa1a3de03cdca7d4f"
+    },
+    {
+      "path": "probes.json",
+      "size": 3662,
+      "sha256": "49cd80f9607f9053626537e543a796b8a4ca90ec7e28ad3e335d8d7a2d111e7c"
+    },
+    {
+      "path": "provenance.json",
+      "size": 25898,
+      "sha256": "68d67665387e5816c3cfadacd68e1b80bea01bab572653c58e4a4a12dbf2c681"
+    },
+    {
+      "path": "public-case-plan.json",
+      "size": 475377,
+      "sha256": "625f31ca3678cecb3b6c4e3d0e57f59fd6c98dc4c4d0c9d89dcc43707858dce9"
+    },
+    {
+      "path": "public-plan-metadata.json",
+      "size": 1240,
+      "sha256": "0271a1a14e98c02eec7af3d00c3b33bfb5c4ae8bdd445ef868225fd2ff73c60d"
+    },
+    {
+      "path": "README.md",
+      "size": 7580,
+      "sha256": "06368e3f9825dc06387cdf080e19562d166eb036715cb694683f0c50ed38e1d5"
+    },
+    {
+      "path": "recompile-receipt.json",
+      "size": 1207,
+      "sha256": "116fe8f78003c7e207e8ccf71023ae3ef086b1114da455d9ca426e5497906fae"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 1135,
+      "sha256": "87f1507d32247d05c44fcd606667bb884c2a4390e3b7fd16e46154cf13ff4510"
+    },
+    {
+      "path": "scope-and-failure-plan.md",
+      "size": 2404,
+      "sha256": "5c48c7a016bd215c14ed4fcacd0665d76d730a9a73bda35bdc155ca4f53de379"
+    },
+    {
+      "path": "source-manifest.json",
+      "size": 5789,
+      "sha256": "4836ea6b8079603782457f9d8091056746c3117c3bc155b5db9e6dfbc448c8c8"
+    },
+    {
+      "path": "unsupported-boundaries.json",
+      "size": 1935,
+      "sha256": "350f28e89faa7d6960ca6dd01dfa7a311553c3b125c3676b70fc9688494c4f3c"
+    },
+    {
+      "path": "verify-public-plan.py",
+      "size": 9137,
+      "sha256": "ef780cd0cce1d46a3c6fdae13a879cbdddb34642d6f4bfed9ba522577491d344"
+    },
+    {
+      "path": "verify-public.py",
+      "size": 7631,
+      "sha256": "d0eea6dc46aa6579f0ec6d75c007d8e47d1c739db6ee11f280fbc6809854691e"
+    },
+    {
+      "path": "verify.py",
+      "size": 12635,
+      "sha256": "f0af0749d213621eca797d863733047b3a3a7b9b8fe90a9192e2060869dc9108"
+    }
+  ]
+}

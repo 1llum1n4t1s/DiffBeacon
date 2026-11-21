@@ -1,0 +1,65 @@
+{
+  "schema": "input306-pins-v1",
+  "files": [
+    {
+      "path": ".gitattributes.proposal",
+      "bytes": 265,
+      "sha256": "52FAB557BBEDA180E2039CECFDD5267DB5067672B98B79886A740C709D55BC94"
+    },
+    {
+      "path": "coverage.md",
+      "bytes": 1820,
+      "sha256": "A32DBEE33A87620C35ADD1906CEFEF679E07E80948416F625E84BDBE70CDBB87"
+    },
+    {
+      "path": "failure-spec.md",
+      "bytes": 1863,
+      "sha256": "613BA465D7E4E6EBA79D67F9F94F6A024580C9ABB110734FFB7AA9DB70BDA2CD"
+    },
+    {
+      "path": "generate.py",
+      "bytes": 4071,
+      "sha256": "EB45202C064CC7FF2F4D805E391B83C6694603DFC50D02A87C172EFDEF3FB9B5"
+    },
+    {
+      "path": "IndependentTextInputSelectionCipherScenarios.cs.proposal",
+      "bytes": 3781,
+      "sha256": "554E9C0C777837B21A453DB5B6A495F9D6A8BFD8B99FCAA2D872018C5CFE01BB"
+    },
+    {
+      "path": "inputs/cipher-siblings.zip",
+      "bytes": 1142,
+      "sha256": "2F21B10F8EA7BA6A9D0DE923657DEFBA52CA06672BAA17011877382A204384A4"
+    },
+    {
+      "path": "integration-proposal.json",
+      "bytes": 5857,
+      "sha256": "3ACAF23F627918BABAC524DA8B81C451A0CB7AD4D4F98AB69AA74675ED16F99F"
+    },
+    {
+      "path": "LICENSE.txt",
+      "bytes": 465,
+      "sha256": "23FAAD26F762AAA33FE8EC40DB46C5832DC08017EAFB4B5C04562B612F9AB147"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 1043,
+      "sha256": "F27E1E3692E41D6ACDBBB0EFDC41569941CC28F032B35A527649E0DFD8707C8A"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1960,
+      "sha256": "231B2512F220F27D36FC187ED51A169ADA5CB917C0A91DF0BCA365F091867082"
+    },
+    {
+      "path": "source_license.txt",
+      "bytes": 732,
+      "sha256": "ED635C89CCD2B21E5D1617133BDA3338ECD91C4C380C97ECC5B4A75D46488B4D"
+    },
+    {
+      "path": "verify.py",
+      "bytes": 13145,
+      "sha256": "2DE096D5B20FFED4CBC991CF4A51A050E56765E3969E8E11A040711927B0E8E5"
+    }
+  ]
+}

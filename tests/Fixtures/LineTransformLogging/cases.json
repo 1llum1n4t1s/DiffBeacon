@@ -1,0 +1,621 @@
+[
+  {
+    "id": "level-0-plain",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 0,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-0-named",
+    "directives": "@name=filter log-call",
+    "node": {
+      "op": "log",
+      "level": 0,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-0-unicode",
+    "directives": " \t@NAME=\" 名前 空白 \"  log-call",
+    "node": {
+      "op": "log",
+      "level": 0,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-1-plain",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 1,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-1-named",
+    "directives": "@name=filter log-call",
+    "node": {
+      "op": "log",
+      "level": 1,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-1-unicode",
+    "directives": " \t@NAME=\" 名前 空白 \"  log-call",
+    "node": {
+      "op": "log",
+      "level": 1,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-2-plain",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-2-named",
+    "directives": "@name=filter log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "level-2-unicode",
+    "directives": " \t@NAME=\" 名前 空白 \"  log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-none",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": null
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-false",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": false
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-true",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": true
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-integer",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": -9223372036854775807
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-double",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": 1.25
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-empty",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": ""
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-unicode",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "雪\t改行\n"
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-array",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": [
+            null,
+            true,
+            false,
+            7,
+            "雪",
+            [],
+            [
+              "a",
+              null
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "string-empty-array",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": []
+        }
+      ]
+    }
+  },
+  {
+    "id": "multiple",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 1,
+      "args": [
+        {
+          "op": "value",
+          "value": "first"
+        },
+        {
+          "op": "value",
+          "value": null
+        },
+        {
+          "op": "value",
+          "value": [
+            true,
+            "last"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "zero-args",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 0,
+      "args": []
+    }
+  },
+  {
+    "id": "zero-args-name",
+    "directives": "@name=\"\" log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": []
+    }
+  },
+  {
+    "id": "duplicate-name",
+    "directives": "@name=first @name=\"last name\" log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "flags-name",
+    "directives": "@ci @noopt @name=sample log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "nested-order",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "log",
+          "level": 0,
+          "args": [
+            {
+              "op": "value",
+              "value": "inner-a"
+            }
+          ]
+        },
+        {
+          "op": "log",
+          "level": 1,
+          "args": [
+            {
+              "op": "value",
+              "value": "inner-b"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "short-false",
+    "directives": "log-call",
+    "node": {
+      "op": "if",
+      "args": [
+        {
+          "op": "value",
+          "value": false
+        },
+        {
+          "op": "log",
+          "level": 0,
+          "args": [
+            {
+              "op": "throw"
+            }
+          ]
+        },
+        {
+          "op": "log",
+          "level": 2,
+          "args": [
+            {
+              "op": "value",
+              "value": "chosen"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "short-true",
+    "directives": "log-call",
+    "node": {
+      "op": "if",
+      "args": [
+        {
+          "op": "value",
+          "value": true
+        },
+        {
+          "op": "log",
+          "level": 1,
+          "args": [
+            {
+              "op": "value",
+              "value": "chosen"
+            }
+          ]
+        },
+        {
+          "op": "log",
+          "level": 0,
+          "args": [
+            {
+              "op": "throw"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "short-none",
+    "directives": "log-call",
+    "node": {
+      "op": "if",
+      "args": [
+        {
+          "op": "value",
+          "value": null
+        },
+        {
+          "op": "log",
+          "level": 0,
+          "args": [
+            {
+              "op": "throw"
+            }
+          ]
+        },
+        {
+          "op": "log",
+          "level": 2,
+          "args": [
+            {
+              "op": "value",
+              "value": "chosen"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "throw-first",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "throw"
+        },
+        {
+          "op": "log",
+          "level": 0,
+          "args": [
+            {
+              "op": "value",
+              "value": "unreached"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "throw-after-inner",
+    "directives": "@name=before log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "log",
+          "level": 0,
+          "args": [
+            {
+              "op": "value",
+              "value": "completed"
+            }
+          ]
+        },
+        {
+          "op": "throw"
+        },
+        {
+          "op": "log",
+          "level": 1,
+          "args": [
+            {
+              "op": "value",
+              "value": "unreached"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "nested-throw",
+    "directives": "log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "log",
+          "level": 0,
+          "args": [
+            {
+              "op": "value",
+              "value": "first"
+            }
+          ]
+        },
+        {
+          "op": "log",
+          "level": 1,
+          "args": [
+            {
+              "op": "value",
+              "value": "partial"
+            },
+            {
+              "op": "throw"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "directive-missing",
+    "directives": "@name= log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "directive-unclosed",
+    "directives": "@name=\"bad log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "directive-unknown",
+    "directives": "@mystery log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "directive-trailing",
+    "directives": "@name=\"ok\"tail log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  },
+  {
+    "id": "directive-space-around-equals",
+    "directives": "@name =x log-call",
+    "node": {
+      "op": "log",
+      "level": 2,
+      "args": [
+        {
+          "op": "value",
+          "value": "message"
+        }
+      ]
+    }
+  }
+]

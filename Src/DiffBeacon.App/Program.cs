@@ -1,0 +1,146 @@
+using Avalonia;
+
+namespace DiffBeacon.App;
+
+public static class Program
+{
+    public static string[] Arguments { get; private set; } = [];
+
+    [STAThread]
+    public static int Main(string[] args)
+    {
+        Console.OutputEncoding = new System.Text.UTF8Encoding(false);
+        if (Console.IsInputRedirected) Console.InputEncoding = new System.Text.UTF8Encoding(false, true);
+        Arguments = args;
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-properties-only")
+            return HeadlessSelfTest.Run(args[1], folderPropertiesOnly: true);
+        // 画像のドラッグ（MOVE同期・表示位置調整）だけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-drag-only")
+            return HeadlessSelfTest.Run(args[1], imageDragOnly: true);
+        // 本家WinMerge風のフォルダー比較一覧（列・アイコン・行の色・文言）だけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--open-view-only")
+            return HeadlessSelfTest.Run(args[1], openViewOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-view-only")
+            return HeadlessSelfTest.Run(args[1], folderViewOnly: true);
+        // 本家WinMerge風の外枠（メニュー・ツールバー・差分色）だけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--frame-only")
+            return HeadlessSelfTest.Run(args[1], frameOnly: true);
+        // 表示メニューの本文の設定（拡大／縮小・空白・改行・行内差異・行番号・マージン）だけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--view-options-only")
+            return HeadlessSelfTest.Run(args[1], viewOptionsOnly: true);
+        // 編集メニューの切り取り・コピー・貼り付け・すべて選択・ブックマークだけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--edit-commands-only")
+            return HeadlessSelfTest.Run(args[1], editCommandsOnly: true);
+        // 検索・置換・移動のダイアログだけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--find-replace-only")
+            return HeadlessSelfTest.Run(args[1], findReplaceOnly: true);
+        // 差分タブの本文を直接編集するエディターだけを検証する。
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--diff-edit-only")
+            return HeadlessSelfTest.Run(args[1], diffEditOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--line-transform-replace-lists-only")
+            return HeadlessSelfTest.Run(args[1], lineTransformReplaceListsOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--bare-compression-only")
+            return HeadlessSelfTest.Run(args[1], bareCompressionOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--bare-gzip-only")
+            return HeadlessSelfTest.Run(args[1], bareGZipOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-defaults-only")
+            return HeadlessSelfTest.Run(args[1], imageDefaultsOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--image-copy-only")
+            return HeadlessSelfTest.Run(args[1], imageCopyOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-headers-only")
+            return HeadlessSelfTest.Run(args[1], tableHeadersOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-raw-search-only")
+            return HeadlessSelfTest.Run(args[1], tableRawSearchOnly: true);
+if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-column-ignore-only")
+    return HeadlessSelfTest.Run(args[1], tableColumnIgnoreOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--line-transform-only")
+            return HeadlessSelfTest.Run(args[1], lineTransformOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--table-column-range-only")
+            return HeadlessSelfTest.Run(args[1], tableColumnRangeOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--text-bookmarks-only")
+            return HeadlessSelfTest.Run(args[1], textBookmarksOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-saved-archives")
+            return HeadlessSelfTest.Run(args[1], independentTextInputSavedArchivesOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-routes")
+            return HeadlessSelfTest.Run(args[1], independentTextInputRoutesOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-lifetime")
+            return HeadlessSelfTest.Run(args[1], independentTextInputLifetimeOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-cipher")
+            return HeadlessSelfTest.Run(args[1], independentTextInputCipherOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-input-archives")
+            return HeadlessSelfTest.Run(args[1], independentTextInputArchivesOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text-inputs")
+            return HeadlessSelfTest.Run(args[1], independentTextInputsOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-archive-text")
+            return HeadlessSelfTest.Run(args[1], independentArchiveTextOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test-independent-text")
+            return HeadlessSelfTest.Run(args[1], independentTextOnly: true);
+        if (args.Length == 5 && args[0] == "--binary-bytecode-self-test") return BinaryBytecodeSelfTest(args);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-search-only")
+            return HeadlessSelfTest.Run(args[1], binarySearchOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-replace-only")
+            return HeadlessSelfTest.Run(args[1], binaryReplaceOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-clipboard-only")
+            return HeadlessSelfTest.Run(args[1], binaryClipboardOnly: true);
+        if (args.Length == 2 && args[0] == "--self-test") return HeadlessSelfTest.Run(args[1]);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-copy-only")
+            return HeadlessSelfTest.Run(args[1], folderCopyOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-kind-only")
+            return HeadlessFolderCopyChecks.RunKindReplacementOnly(args[1]);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--port-gaps-only")
+            return HeadlessPortGapChecks.Run(args[1]);
+        if (args.Length is 1 or 2 && args[0] == "--register-shell")
+        {
+            ShellIntegration.RegisterCurrentUser(args.Length == 2 ? args[1] : Environment.ProcessPath ?? throw new InvalidOperationException("実行ファイルのパスを取得できません。"));
+            return 0;
+        }
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--folder-threeway-only")
+            return HeadlessSelfTest.Run(args[1], folderThreeWayOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-range-edits-only")
+            return HeadlessSelfTest.Run(args[1], binaryRangeEditsOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-copy-all-only")
+            return HeadlessSelfTest.Run(args[1], binaryCopyAllOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--archive-sources-only")
+            return HeadlessSelfTest.Run(args[1], archiveSourcesOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--archive-working-review-only")
+            return HeadlessSelfTest.Run(args[1], archiveWorkingReviewOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-working-only")
+            return HeadlessSelfTest.Run(args[1], binaryWorkingOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--tar-wrapper-gui-only")
+            return HeadlessSelfTest.Run(args[1], tarWrapperGuiOnly: true);
+        if (args.Length == 3 && args[0] == "--self-test" && args[2] == "--binary-threeway-only")
+            return HeadlessSelfTest.Run(args[1], binaryThreeWayOnly: true);
+        if (args.Length == 3 && args[0] == "--clipboard-self-test")
+            return DesktopClipboardSelfTest.Run(args[1], args[2]);
+        if (args.Length > 0 && args[0].StartsWith("--", StringComparison.Ordinal))
+            return CommandLine.RunAsync(args).GetAwaiter().GetResult();
+        return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+    }
+
+    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<BeaconApplication>()
+        .UsePlatformDetect().WithInterFont().LogToTrace();
+
+    private static int BinaryBytecodeSelfTest(string[] args)
+    {
+        try
+        {
+            if (args[1] is not ("encode" or "decode" or "decode-oem") || args[2] is not ("little" or "big")) throw new ArgumentException("encode|decode|decode-oem little|big INPUT OUTPUT を指定してください。");
+            var input = Path.GetFullPath(args[3]); var output = Path.GetFullPath(args[4]);
+            DiffBeacon.Development.DevelopmentOutputGuard.Validate(output);
+            if (DiffBeacon.Providers.ArchivePaths.SameFile(input, output)) throw new IOException("入力を出力へ指定できません。");
+            for (var path = input; path is not null; path = Path.GetDirectoryName(path))
+                if ((File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0) throw new IOException("リンクを入力へ指定できません。");
+            var limit = args[1] == "encode" ? DiffBeacon.Core.BinaryEditSession.MaximumFileBytes : DiffBeacon.Core.BinaryBytecode.MaximumTextBytes;
+            using var stream = new FileStream(input, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (stream.Length > limit) throw new InvalidDataException("検証入力が上限を超えています。");
+            var source = new byte[stream.Length]; stream.ReadExactly(source);
+            var bytes = args[1] == "encode" ? System.Text.Encoding.ASCII.GetBytes(DiffBeacon.Core.BinaryBytecode.Encode(source)) : BinaryTextEncoding.DecodeBytecode(source, args[2] == "big", args[1] == "decode-oem");
+            // 独立検証用出力も通常保存と同じリンク/readonly保護を使用する。
+            using var session = new DiffBeacon.Core.BinaryEditSession(bytes, []);
+            DiffBeacon.Core.BinaryFileStore.SaveCopyAsync(output, session.Capture(0)).GetAwaiter().GetResult();
+            Console.WriteLine($"{{\"length\":{bytes.Length},\"pid\":{Environment.ProcessId}}}"); return 0;
+        }
+        catch (Exception error) when (error is IOException or ArgumentException or InvalidOperationException or FormatException or UnauthorizedAccessException)
+        { Console.Error.WriteLine(error.Message); return 2; }
+    }
+}

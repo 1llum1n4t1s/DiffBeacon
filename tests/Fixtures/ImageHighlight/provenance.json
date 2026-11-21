@@ -1,0 +1,13 @@
+{
+  "compilerVersion": "19.51.36260.0",
+  "canonicalRegionGoldenSha256": "07BF82D5179A748A568A0B6EB0AAA37B171F04FBF4228920A38698DDD8C05965",
+  "revision": "da639cdfaeca87aaad0eaceec509afa11ad61421",
+  "canonicalLicense": "../ImageRegions/LICENSE.txt",
+  "os": "Microsoft Windows NT 10.0.26300.0",
+  "goldenSha256": "853A08102656CD1F726E39647D98AF47CF4C8918C7F3EB051D078FEA87BC057A",
+  "imageSourceSha256": "173CE00FE65187D34A6C7D2B10C0B45443EA6CFFBAA50FE1263BCE5840149609",
+  "sourceSha256": "7071EDFA31CCC138685CA7B9FD3D41EE5E84B942FB3D8028C7E3A31C76F93F28",
+  "tag": "v1.0.54",
+  "repository": "WinMerge/winimerge",
+  "license": "GPL-2.0-or-later"
+}

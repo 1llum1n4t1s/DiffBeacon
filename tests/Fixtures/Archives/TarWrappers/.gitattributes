@@ -1,0 +1,8 @@
+*.gz -text
+*.bz2 -text
+*.Z -text
+*.zip -text
+manifest.json -text whitespace=cr-at-eol
+independent-proof.json -text whitespace=cr-at-eol
+*.py -text
+LICENSE.txt -text

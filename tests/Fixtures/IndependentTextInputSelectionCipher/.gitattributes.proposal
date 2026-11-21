@@ -1,0 +1,8 @@
+# 親が近い.gitattributesとして適用。共有属性ファイルは担当が変更しない。
+inputs/** -text !eol
+manifest.json -text !eol
+LICENSE.txt -text !eol
+generate.py -text !eol
+verify.py -text !eol
+pins.json -text !eol
+source_license.txt -text !eol

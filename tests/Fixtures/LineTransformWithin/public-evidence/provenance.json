@@ -1,0 +1,12 @@
+{
+  "schema": "iswithin-direct-public-capture-v1",
+  "sourceProofZipSha256": "1b32e5f7c2dd4119d75decafeb69a1a772cb2d92d4550b3f2be3a68d24b10670",
+  "actualEntry": "results/within-public-1.stdout",
+  "secondEntry": "results/within-public-2.stdout",
+  "probeEntry": "results/within-probes.stdout",
+  "actualSha256": "45538147eac08b50d2997081ef0164f6fdc3b91159f32a567ad6e4877419f5a9",
+  "probeSha256": "13aa8e9d6f47e8f51ad35dd772b122ddaedcce138ba4588cf23ebed52694f8bf",
+  "method": "Direct byte copy of actual standalone PureCore process stdout; no projection/formatter/re-execution.",
+  "qualification": "External unadopted PureCore proposal only. No App/E2E/UI/AOT qualification.",
+  "proposalSha256": "702f005f46b20b5d12ba17d2761c63687d0920279de276f60e53eb76187c4552"
+}

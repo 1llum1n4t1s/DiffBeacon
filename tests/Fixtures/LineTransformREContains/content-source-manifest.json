@@ -1,0 +1,25 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "files": {
+    "original/Src/FilterEngine/FileContentRef.cpp": {
+      "size": 4679,
+      "sha256": "ff483c0cd3a62882238617d6a10dc320d3fa20a26da6db3dee188b03a227a5a6",
+      "gitBlob": "c2e3a7d279ee1a65752559fd68bd44886cb67b78"
+    },
+    "original/Src/Common/UniFile.cpp": {
+      "size": 21099,
+      "sha256": "b7bdc8dcf021aaa4a862319f4ad3c60b5e6ecc03cec1e3f012c4e67514d28e8f",
+      "gitBlob": "df39b395075009d6a4ec05d4ea49655616db06de"
+    },
+    "original/Src/Common/unicoder.cpp": {
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7",
+      "gitBlob": "81e6dbdf90c6a4bfa1c3dd44afc01944c8928c4f"
+    },
+    "original/LICENSE.md": {
+      "size": 17895,
+      "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e",
+      "gitBlob": "28fbecabf5c0c4489cdd781e297cdf1c4cd7fde6"
+    }
+  }
+}

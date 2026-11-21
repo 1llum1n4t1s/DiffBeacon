@@ -1,0 +1,2841 @@
+[
+  {
+    "id": "default-combining",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "combining-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "combining-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "combining-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "combining-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-precomposed",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00e9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "precomposed-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00e9"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "precomposed-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00e9"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "precomposed-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00e9"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "precomposed-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00e9"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-compatibility",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\uff21\u2460\u212b\u00a0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "compatibility-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\uff21\u2460\u212b\u00a0"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "compatibility-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\uff21\u2460\u212b\u00a0"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "compatibility-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\uff21\u2460\u212b\u00a0"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "compatibility-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb03\uff21\u2460\u212b\u00a0"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-hangul",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u1100\u1161\u11a8"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "hangul-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u1100\u1161\u11a8"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "hangul-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u1100\u1161\u11a8"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "hangul-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u1100\u1161\u11a8"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "hangul-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u1100\u1161\u11a8"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-ordering",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0315\u0300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ordering-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0315\u0300"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ordering-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0315\u0300"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ordering-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0315\u0300"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ordering-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0315\u0300"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-supplementary",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud834\udd5e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "supplementary-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud834\udd5e"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "supplementary-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud834\udd5e"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "supplementary-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud834\udd5e"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "supplementary-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud835\udc00\ud83d\ude00\ud834\udd5e"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-japanese",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\uff76\uff9e"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "japanese-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\uff76\uff9e"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "japanese-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\uff76\uff9e"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "japanese-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\uff76\uff9e"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "japanese-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u30ab\u3099\uff76\uff9e"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-empty",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "empty-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "empty-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "empty-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "empty-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "default-ascii",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 123"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ascii-NFC",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 123"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ascii-NFD",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 123"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ascii-NFKC",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 123"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "ascii-NFKD",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC xyz 123"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-C",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "C"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-D",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "D"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-KC",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "KC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-KD",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "KD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-nfc",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "nfc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-nfd",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "nfd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-nfkc",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "nfkc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-nfkd",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "nfkd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-c",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-d",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "d"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-kc",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "kc"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "alias-kd",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "string",
+        "value": "kd"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "int-alias-1",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "int",
+        "value": "1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "int-alias-2",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "int",
+        "value": "2"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "int-alias-5",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "int",
+        "value": "5"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "int-alias-6",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "int",
+        "value": "6"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-0",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-skips-value-0",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-1",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": " NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-skips-value-1",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": " NFC"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-2",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "NFC "
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-skips-value-2",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "NFC "
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-3",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "NFK"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-skips-value-3",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "NFK"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-4",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-skips-value-4",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "1"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-5",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "\uff23"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-skips-value-5",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "\uff23"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-6",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "NFC\u0000"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-skips-value-6",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "NFC\u0000"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-string-7",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "string",
+        "value": "\u00e9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-string-skips-value-7",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "\u00e9"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-int-0",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-int-skips-value-0",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-int-3",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "int",
+        "value": "3"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-int-skips-value-3",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "int",
+        "value": "3"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-int-4",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "int",
+        "value": "4"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-int-skips-value-4",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "int",
+        "value": "4"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-int--1",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "int",
+        "value": "-1"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-int-skips-value--1",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "int",
+        "value": "-1"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-int-7",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "int",
+        "value": "7"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-int-skips-value-7",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "int",
+        "value": "7"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-int-9223372036854775807",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-int-skips-value-9223372036854775807",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "invalid-int--9223372036854775808",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301"
+      },
+      {
+        "type": "int",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "invalid-int-skips-value--9223372036854775808",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "int",
+        "value": "-9223372036854775808"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "wrong-form-default-0",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "double",
+        "value": "2.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-1",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "double",
+        "value": "5.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-2",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "double",
+        "value": "0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-3",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "wrong-form-default-4",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-5",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-6",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-7",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-8",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "NFD"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "wrong-form-default-9",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "wrong-form-default-10",
+    "args": [
+      {
+        "type": "string",
+        "value": "e\u0301\ufb03"
+      },
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "value-type-0",
+    "args": [
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-1",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-2",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-3",
+    "args": [
+      {
+        "type": "int",
+        "value": "0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-4",
+    "args": [
+      {
+        "type": "int",
+        "value": "-42"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-5",
+    "args": [
+      {
+        "type": "int",
+        "value": "9223372036854775807"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-6",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-7",
+    "args": [
+      {
+        "type": "double",
+        "value": "-0.0"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-8",
+    "args": [
+      {
+        "type": "double",
+        "value": "NAN"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "value-type-9",
+    "args": [
+      {
+        "type": "double",
+        "value": "INFINITY"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "value-type-10",
+    "args": [
+      {
+        "type": "regex"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "value-type-11",
+    "args": [
+      {
+        "type": "file"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "value-type-12",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-13",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "e\u0301"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "int",
+            "value": "12"
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "value-type-14",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "e\u0301"
+              },
+              {
+                "type": "string",
+                "value": "\ufb03"
+              },
+              {
+                "type": "none"
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "value": []
+          },
+          {
+            "type": "string",
+            "value": "e\u0301"
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "nested-NFKC",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\ufb03"
+              },
+              {
+                "type": "array",
+                "value": [
+                  {
+                    "type": "string",
+                    "value": "e\u0301"
+                  },
+                  {
+                    "type": "none"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "none"
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-projectable"
+  },
+  {
+    "id": "bytes-0-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-0-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-0-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-0-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-1-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "6500cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-1-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "6500cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-1-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "6500cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-1-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "6500cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-2-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "65cc810078"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-2-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "65cc810078"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-2-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "65cc810078"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-2-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "65cc810078"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-3-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-3-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-3-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-3-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "80"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-4-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-4-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-4-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-4-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c0af"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-5-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-5-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-5-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-5-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-6-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-6-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-6-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-6-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-7-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-7-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-7-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-7-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-8-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ff65cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-8-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ff65cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-8-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ff65cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-8-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09f9880ff65cc81"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-9-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-9-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-9-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-9-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbd"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-10-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-10-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-10-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-10-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f48fbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-11-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c280"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-11-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c280"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-11-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c280"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-11-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c280"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-12-NFC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-12-NFD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-12-NFKC",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFKC"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "bytes-12-NFKD",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "efbfbf"
+      },
+      {
+        "type": "string",
+        "value": "NFKD"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "one-value-throws",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "form-throws",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [
+      1
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "both-throw-form-first",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      }
+    ],
+    "throws": [
+      0,
+      1
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "value-throws-after-valid-form",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "NFD"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "value-throws-after-ignored-form",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "arity-zero",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "arity-three",
+    "args": [
+      {
+        "type": "string",
+        "value": "unused"
+      },
+      {
+        "type": "string",
+        "value": "NFC"
+      },
+      {
+        "type": "string",
+        "value": "unused"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "arity-null",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "native-only"
+  }
+]

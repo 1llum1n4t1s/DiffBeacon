@@ -1,0 +1,52 @@
+{
+  "files": {
+    "adapter.cpp": {
+      "size": 7373,
+      "sha256": "a41db49d48ee61c54d59d74c9d481b8cbe8206a8cfb431de7b5b8062b367be30"
+    },
+    "archive-provenance.json": {
+      "size": 16637,
+      "sha256": "55cab46f1265b4b548670cc4491d531853c1f7eaf0fbf742ed8d4d3ede223584"
+    },
+    "boundaries.md": {
+      "size": 3922,
+      "sha256": "3bbc02d6399301157405b7830ea40c4907d68909a00476a92ba2640f2f3e52df"
+    },
+    "capture-index.json": {
+      "size": 427,
+      "sha256": "2d10ccdf8384fdbcccb6002378d62d1fc075ac1548f842fda1e353f3761bf873"
+    },
+    "cases.json": {
+      "size": 305284,
+      "sha256": "61a4a039818f15750b28b3e6315357326e13b62e16dd7a7273665c8f092bef4e"
+    },
+    "failure-matrix.md": {
+      "size": 2047,
+      "sha256": "3b48f08b25c489a85dec3cd029eb1017f68b9f7a905aa0bf0184ccfe1033840c"
+    },
+    "golden.ndjson": {
+      "size": 110340,
+      "sha256": "bc9f6308d0aba0d170b398f6065aea3757ad345130e4ed2e06cf87be532f160a"
+    },
+    "include-specs.json": {
+      "size": 8839,
+      "sha256": "27ded63cb865e51812cd190ea0aa19f233e3d72a44212b7e13d385617ac19dfa"
+    },
+    "reference-source.zip": {
+      "size": 582865,
+      "sha256": "18ed25d74eba5e151bf5fd1a2e811b2490af2ce4c3e39b273a2d563abe8da4e7"
+    },
+    "reproduce.py": {
+      "size": 5548,
+      "sha256": "950b1963fce2970c06409be97b03025b8560605adee43c4135ec5b643c7558a1"
+    },
+    "source-archive-manifest.json": {
+      "size": 14958,
+      "sha256": "27fd523be1ed4460f77428f8ac0455dbc83ae0d4b3269e3c26442078f691da9a"
+    },
+    "verify.py": {
+      "size": 9359,
+      "sha256": "a4adcb398ca3b1435308784a7c4822576570fd98e44b74f6c31f8255f1a12cce"
+    }
+  }
+}

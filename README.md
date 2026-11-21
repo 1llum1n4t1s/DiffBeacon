@@ -1,167 +1,144 @@
-# WinMerge
+# DiffBeacon
 
-[![logo](Docs/Logos/WinMerge_logo_24bit.png)](https://github.com/WinMerge/winmerge)
+WinMerge を基にした、ファイル・フォルダー比較アプリです。C# / .NET 11（SDK 11.0.100）/ Avalonia 12.1.6 への移植を進めています。**WinMerge の全機能との互換性はまだ完成していません。** 対応状況は [移行一覧](Docs/MIGRATION.md) を参照してください。
 
-[WinMerge](https://winmerge.org/) is an open-source differencing and merging tool for Windows.  
-It compares files and folders and presents differences in a clear, visual format that is easy to understand and work with.  
-WinMerge has been actively developed since 2000.
+## 使い方
 
-[![Build status](https://ci.appveyor.com/api/projects/status/h3v3ap1kswi1tyyt?svg=true)](https://ci.appveyor.com/project/sdottaka/winmerge/build/artifacts)
-[![CI](https://github.com/WinMerge/winmerge/workflows/CI/badge.svg)](https://github.com/WinMerge/winmerge/actions)
-[![sourceforge.net downloads](https://img.shields.io/sourceforge/dt/winmerge)](https://sourceforge.net/projects/winmerge/files/)
-[![GitHub Releases](https://img.shields.io/github/downloads/winmerge/winmerge/total.svg)](https://github.com/WinMerge/winmerge/releases/latest)
-[![Translation status](https://img.shields.io/badge/translations-41-green)](https://github.com/WinMerge/winmerge/blob/master/Translations/TranslationsStatus.md)
+アプリを起動し、左と右のファイルまたはフォルダーを選んで「比較」を押します。差分を選択し「選択差分 →」または「← 選択差分」でコピーし、「左を保存」または「右を保存」で編集した側を保存します。
 
----
+ウィンドウが小さく設定や操作ボタンが隠れる場合は、上部の操作欄を縦にスクロールしてください。画像ビューの操作欄やバイナリビューもスクロールして保存などのボタンを表示できます。比較タブが増えた場合は見出し欄を縦にスクロールできます。選択中のタブはウィンドウを縮めても見出し欄に表示されます。
 
-## What Can WinMerge Do?
+入力とは別にマージ結果を作るには、比較後に「マージ開始」を押し、結果の差分を選んで「左を採用」「右を採用」などを使います。結果タブと4ペイン表示の結果欄で、編集とUndo/Redoを共有します。祖先ファイルも指定して比較すると、祖先の採用が使えます。中央を「比較対象」にした独立三者では「中央を採用」を使え、中央を祖先として自動統合しません。「自動マージ」は祖先に対する独立変更を自動で統合します。「ファイル > 保存 > マージ結果を保存」で保存先を選び、未解決の差分が残る場合は確認して保存します。入力を保持するには別の保存先を選んでください。
 
-WinMerge provides a rich set of features for comparing and merging files and folders:
+- テキスト：GNU diffに基づく行対応、差分・行内強調、編集、差分移動、検索、空白・大文字小文字・空行・数字・コメント・正規表現の除外、順序付き置換フィルター。処理上限時も元の全行を保持して変更区間を表示します。
+- マージ結果：差分ごとに左・右（三者では祖先または独立した中央も）を選択し、複数の採用順序を指定。確定した本文の手編集と採用のUndo/Redo、未解決数、行の採用元を表示。未解決区間は短く表示し、保存時は競合を入力本文付きマーカーへ展開します。三者の非競合で未採用の区間は原型の選択規則で入力本文へ展開します。
+- フォルダー：再帰比較、内容・SHA-256・日時とサイズ、除外パス／`.flt`（Windows Shellプロパティ、全側の`AllEqual`、絶対`FullPath`条件を含む）、除外項目の表示、複数選択と左右の「すべて／差分」コピー・差分ファイルのOSごみ箱移動。WindowsのローカルNTFS間ではファイルの拡張属性（EA）を転写し、既存コピー先の作成日時とアクセス制御（DACL）を保持します。新規ファイルは親フォルダーのアクセス制御を継承し、コピー元の作成日時・アクセス制御は転写しません。[操作と対応範囲](Docs/FOLDER-COPY.md)を参照してください。
+- バイナリ：二者・三者の16進表示・固定長編集・任意位置のバイト挿入／上書き／削除・差分範囲コピー・共有Undo／Redo・通常保存・別名保存。三者では中央も独立して編集・保存でき、全6方向へ差分範囲と全体をコピーできます。差分は同じ位置のバイトが全入力で一致するかで判定し、祖先に対する競合分類は行いません。アーカイブ内の編集は原本とは別の作業版へ保存し、比較プロジェクトとレポート・パッチなしの包装に保持できます。通常ファイルの中央入力と内包の左右入力も組み合わせられます。比較先の読込み中にHexを編集した場合は、前のバイナリ表示と編集を保持します。各入力16 MiBまで。
+- 画像：二者・三者表示、領域の強調と移動、差分色の不透明度（0～1）、XOR／Alpha／アニメーションの重ね合わせ、差分の点滅、倍率、閾値付きピクセル差分、行・列の挿入削除検出、GIF／WebP／APNGの手動フレーム選択・同期移動、TIFF／BigTIFFの主ページ比較。表示移動・位置調整・縦／横ワイプ・矩形選択を使えます。静止画は領域／全領域コピー、三者の自動コピー、共有Undo／Redo、原画のPNG／単ページTIFF（`.tif`／`.tiff`）別名保存が使えます。整列モードと未保存編集を含むHTMLも保存できます。CLIでは重ね合わせ・点滅・ワイプを指定したHTMLも出力できます。[画像の操作と制限](Docs/IMAGE-VIEWER.md)を参照してください。
+- JSON：構造の正規化。CSV / TSV：二者・三者の行合わせ、比較行からの列除外（ペイン別指定・プロジェクト保存）、セル編集・Undo/Redo・検索。列除外は行対応キーだけに適用し、原文とセル差分を保持します。
+- アーカイブ：7z／RAR／ZIP／TAR系（TAR.Zを含む）・単一ファイルgzip／BZip2／Zの内容比較、暗号化・solidの読込み、プレビュー、エントリ保存・全件展開、非暗号化7z／ZIP派生／TAR系・単一ファイルgzipの作成・再梱包。
+- XML / HTML / Web応答 / Office / TAR：標準プロバイダーで比較用テキストへ変換。外部実行ファイルは明示登録したときだけ使用。
+- ファイルフィルター：旧 `.flt` の include / exclude、ファイル・ディレクトリ規則、名前・サイズ・日時の条件式。WindowsのShellプロパティとフォルダー比較の各側`FullPath`にも対応します。
+- 比較プロジェクトの保存・読込み、WinMerge プロジェクトの読込み、unified patch、HTMLレポート。
 
-- **File Comparison**  
-  Compare two or three text files side by side, with differences highlighted line by line.  
-  Inline differences within a line can also be shown.
+画像の回転・反転と表示位置は対象ペインを選んで操作し、読取り専用や複数ページの表示にも使えます。「ドラッグ操作」で「操作なし」「表示を移動」（既定）「画像位置を調整」「矩形選択」を選べます。左右／三者表示ではスクロールが同期します。「画像位置を調整」はドラッグを離すと位置を確定し、「位置 ←／→／↑／↓」でも1ピクセルずつ移動できます。操作モードは全タブで共有され、次回起動にも保存します。静止画は「矩形選択」で範囲を選び、コピー・切取り・削除・移動・貼り付け、右辺・下辺・右下角からのサイズ変更ができます。貼り付けはEnterで確定、Escapeで浮動状態を取り消します。コピーは変換・移動後の座標で行い、PNG保存は表示変換や位置を焼き込まない原画を保存します。Undo／Redoは原画を戻し、表示位置は保持します。詳しくは[画像の操作と制限](Docs/IMAGE-VIEWER.md)をご覧ください。
 
-- **Folder Comparison**  
-  Compare the contents of two folders to see which files differ, are missing, or exist only on one side.  
-  Folder comparisons support **advanced filter expressions**, allowing you to include or exclude files and folders based on names, paths, sizes, timestamps, and other attributes.
+テキストの強調は変更ブロック内の単語を対応させ、離れた変更範囲をそれぞれ示します。詳細比較の上限に達した行は行全体を強調し、状態欄に件数を表示します。
 
-- **Merging**  
-  Merge changes between files or folders by selectively applying differences from one side to the other.
+中央も編集する場合は、形式を「テキスト」にして「中央の役割」を「比較対象」に切り替えます。三つの物理ファイル、またはパスを空にした無題文書を開けます。「三側の入力を選択」から、左・中央・右それぞれに通常ファイル・無題文書・アーカイブ内のファイルを指定できます。アーカイブは一覧を検証して実在するファイルを選び、内包アーカイブは「選択したアーカイブを開く」で移動します。暗号化された入力では各階層のパスワードを入力して再試行します。三側と比較する組を確認して「比較」を押すと、新しいタブに開きます。内包ファイルは既定で読取り専用です。作業編集を行う側は「内包ファイルの作業編集を許可」を選んでください。保存済みの比較プロジェクトからも三側の入力と内包の作業版を復元できます。パッチなしで包装したZIPは通常のアーカイブ比較で開き、すべて展開した後の `project.json` を開くと復元できます。「左と中央」「中央と右」「左と右」を選び、差分コピーの両方向を使います。「中央を保存」は読込み時の文字コード・BOMを保持します。無題文書は外部保存し、未保存の本文がある間はプロジェクト保存と包装を拒否します。三側の現在本文はHTMLレポートに含まれます。固定祖先のマージは「中央の役割」を「祖先」に戻して比較します。内包入力の通常保存は左・中央・右それぞれの作業版へ保存し、元アーカイブを保持します。継承した読取り専用が明示的に解除されている側だけ編集・コピー先・作業保存・外部保存ができます。外部保存は指定した側だけ通常ファイルへ切り替えます。内包の未保存編集がある間もプロジェクト保存と包装を拒否します。独立比較の不在入力・プロバイダー変換・パッチ包装は未対応です。
 
-- **Syntax Highlighting**  
-  Syntax highlighting for many programming languages and file formats helps make code and structured text easier to read and compare.
+バイナリビューのHex欄は1桁ずつ直接編集でき、下欄は文字入力に対応します。Shiftと矢印、マウスなどのドラッグ、各側の「バイト選択」で任意範囲を選べます。Insertキーで挿入／上書きを切り替え、Deleteは選択／現在のバイトを削除します。Backspaceは挿入時に前バイトを削除し、上書き時は前へ移動します。別途入力した未適用Hex本文がある場合は、対象側の「編集を適用」を押してから操作してください。「全体コピー」は確認後に全バイトを先頭から上書きし、短いコピー元では末尾を保持します。空のコピー元では変更しません。
 
-- **Patch File Creation**  
-  Generate patch files in normal, context, or unified diff formats.
+各側の「コピー」「切り取り」は開始・終了位置（終了バイトを含む）またはバイト数を指定できます。「貼り付け」はFrhedのバイトコードを解釈し、`A<bh:00>` は41 00の2バイト、`41 00` は文字列として貼り付けます。「形式を選んで貼り付け」はOSクリップボードの文字列／バイト形式を選択できます。文字として貼り付ける設定、ANSI／OEM、エンディアン、繰り返しと元バイトのskipを指定できます。選択があれば常に選択置換で、選択がなければ挿入／上書きの設定に従います。Cutは公開成功後にだけ削除し、比較・選択・編集・読取り専用が操作中に変わった場合は本文を保持します。共有Undo／Redoと保存点に対応します。
 
-- **Flexible Ignore Options**  
-  Ignore differences such as whitespace changes, case differences, or lines matching regular expressions.
+バイナリ検索では、各側の「検索」、またはHex／文字欄にフォーカスしてCtrl+Fで検索ダイアログを開きます。文字列や `A<bh:00>` のようなバイトコードを入力でき、ANSI／OEM、UTF-16LEの文字列、数値バイトコードのbig-endianを選べます。検索入力は32 Ki文字までです。「次を検索」／F3、「前を検索」／Shift+F3は、選択範囲があればその全バイト、なければ前回の検索語を使います。選択範囲も前回の語もない場合は「検索」から入力してください。現在の開始位置を除いて検索し、末尾／先頭で折り返しません。大文字小文字を区別しない設定はASCII A～Zだけに適用します。読取り専用側も検索でき、検索自体は本文・履歴・保存点を変更しません。
 
-- **Shell Integration**  
-  Integrates with Windows Explorer, enabling direct comparison via the right-click context menu.
+各側の「置換」、またはHex／文字欄のCtrl+H（macOSはCommand+H）でバイナリ置換ダイアログを開きます。選択／前回の検索bytes、文字列／バイトコードとANSI／OEMを使い、「次を検索」「前を検索」「選択範囲を置換」「前方を全置換」「後方を全置換」を操作できます。置換文字列は空欄で削除、「文字列として置換」でバイトコードを解釈せず入力できます。全置換は現在の選択範囲を検索語との一致にかかわらず最初に置換し、その方向へ続けます。選択がなければ現在位置の次／前から検索し、折り返しません。前方の空置換は削除位置の次のbyteから再検索するため、隣接する一致が残る場合があります。大文字小文字の折畳みはASCIIだけです。一操作は一度のUndoで戻せ、同じbytesへの選択置換は履歴を作りません。読取り専用・未適用Hex・不正入力・上限超過は置換を拒否し、取消やタブ移動で古くなった結果も本文へ反映しません。
 
-- **Archive Support**  
-  Using 7-Zip, WinMerge can compare files inside many archive formats as if they were normal folders.
+「バイト挿入」「バイト上書き」「バイト削除」の範囲ダイアログでは、0始まりの開始位置と削除数を10進整数、挿入・上書きする内容を16進値で指定します。挿入は末尾まで、上書きは既存範囲内だけに対応し、削除は後続バイトを詰めます。先に全側のHex編集を適用してください。入力中に比較・編集・保存状態が変わった場合は適用しません。各入力16 MiB、共有履歴64 MiB／256操作までです。
 
-In short, WinMerge is useful for anyone who needs to track changes, compare versions of files or directories, or merge modifications efficiently.
+表ビューではセルを選択して上部の編集欄を変更し、「セルを変更」で本文へ反映します。同セル内の前後検索、固定した文字選択範囲、一件・選択ペインの全置換が使えます。未反映のセル編集は先に反映・破棄してください。行・列・ペインを指定して選択し、列の多い表は「前の列」「次の列」で移動できます。詳しくは[表の操作と制限](Docs/TABLE-EDITOR.md)を参照してください。
 
----
+画面上部は本家WinMergeと同じく、メニューバー（ファイル／編集／表示／マージ／ツール／プラグイン／ウィンドウ／ヘルプ）と、本家のアイコンを使ったツールバーです。既定は明るい配色で、「表示 > ダーク テーマ」で切り替えます。差分は本家の既定色（行のある側が黄、行の無い側が灰、選択中の差分は赤系）で表示します。「差分」タブは本家のファイル比較画面と同じく、左端のロケーションペイン（ファイル全体の差分の見取り図。クリックでその位置へ移動）、各ペイン上のファイル名の帯、下段の Diff ペイン（選択行の左右を表示）で構成します。本文は本家と同じく直接編集でき、編集すると少し待って自動で再比較します（他の側にだけある行の向かいには空行が入り、そこへ入力するとその位置に行が入ります）。祖先のある三者比較と独立三者Textは左・中・右の3ペインで表示し、祖先は読取り専用です。Ctrl+Z／Ctrl+Y（メニュー・ツールバーの「元に戻す」「やり直し」も同じ）は本家と同じく全ペインで一つの履歴で、どのペインで押しても最後の変更から順に戻り・進みます。差分のコピーも元に戻せます。「すべてを右側／左側にコピー」は確認の後にすべての差異を一度にコピーし（一回の「元に戻す」で戻ります）、F4／Shift+F4（「行内差異を選択」）はフォーカスのあるペインで次／前の行内差分を選択し、Alt+Shift+Up は前のコンフリクトへ移動します。「編集 > 検索」（Ctrl+F）・「置換」（Ctrl+H）は本家と同じダイアログで、フォーカスのあるペインの本文を探して置き換えます（単語単位・大文字と小文字の区別・正規表現・折り返さない。F3／Shift+F3 で次／前、Ctrl+F3 で選択中の文字列を探します）。「すべて置換」は一回の「元に戻す」で戻ります。「編集 > 移動」（Ctrl+G）で、左・中・右の行番号か差異の番号へ移動します。切り取り・コピー・貼り付け（Ctrl+X／Ctrl+C／Ctrl+V、本文の右クリックメニューにもあります）は、他の側にだけある行の向かいの空行を含めずに本物の本文だけを扱い、貼り付けた改行はその行の改行にそろえます。「編集 > ブックマーク」の Ctrl+F2 で行にブックマークを付け外しし、F2／Shift+F2 で次／前のブックマークへ移動します（行番号の左に印が出ます）。「表示 > 拡大/縮小」（Ctrl++／Ctrl+-、Ctrl+* または Ctrl+0 で標準、本文の上の Ctrl+ホイールでも可）で全ペインの本文の文字の大きさを変え（スクロールした位置でも一番上に見えていた行を保ちます）、「空白を表示」「改行を表示」「行内差異を表示」「行番号を表示」「マージンを表示」（ブックマークの印の欄）で本文の表示を切り替えます。これらと「表示 > ツールバー」は全タブ共通で、本家と同じく変えるたびに保存し、次に起動したときも同じ表示で始まります（保存先は利用者のローカルアプリデータの `Kagayoi/DiffBeacon/view-options.json`。読めない設定は既定の表示で始め、ファイルは書き換えません）。フォルダー比較の一覧も本家と同じく、名前／フォルダー／比較結果／左右の更新日時／拡張子の列（三者比較では中更新日時を追加）、状態ごとのアイコンと行の色（相違は黄、片側だけは灰、除外は淡い黄）で表示し、新しい側の更新日時に「* 」を付けます。列見出しのクリックで並べ替え（同じ列をもう一度押すと降順）、見出しの境界のドラッグで列幅を変えられます。「ツール > 列の設定」または列見出しの右クリックの「列の設定」で、表示する列と順序を選べます（左右（中）のサイズ・短縮サイズ・属性、日時比較、比較結果(簡易)の列も追加できます）。表示する列・列幅・並べ替えは二者と三者で別に保存し、次に開いたフォルダー比較でも使います。比較対象は、タブ上部の「ファイルまたはフォルダーの選択」欄（本家の選択画面と同じく 1 番目／2 番目／3 番目（オプション）の欄、参照、交換ボタン、フォルダーのフィルター）で指定し、「比較(M)」で比較します。「ファイル > 開く」（Ctrl+O）でこの欄へ戻ります。複数の比較は「ファイル > 新規」（Ctrl+N）でタブを追加し、「ウィンドウ > 閉じる」（Ctrl+W）で閉じます。差分の移動とコピーは本家と同じキーです（Alt+↓／Alt+↑ で次／前、Alt+Home／Alt+End で最初／最後、Alt+→／Alt+← で右／左へコピー、F5 で再比較）。F7 / Shift+F7 でも差分を移動できます。テキスト保存では読込み時の文字コードとBOMを保持します。バイナリと静止画像の別名保存は形式別ビューの操作を使ってください。画像はPNGへ保存し、成功した側だけのパスを更新します。多ページ編集と元形式への保存は未対応です。
 
-## How to Contribute
+初回にアーカイブを開けない場合は、ダイアログで左右の任意のパスワードを入力し、「再試行」で読み込めます。開いた後はアーカイブビューのマスク付き入力欄と「アーカイブを再比較」を使います。破損・取消・読込み失敗では前の一覧とプレビューを保持します。項目を選び「左エントリを書き出す」または「右エントリを書き出す」で内容を保存できます。「左を再梱包」「右を再梱包」は選んだ側の全内容を、「アーカイブ作成」は保存先の形式を選んでから入力を指定します。GZip（単一ファイル）の`.gz`／`.gzip`はファイルを一つ選び、出力の格納名文字コードをダイアログで指定します。既定はLatin-1（28591）です。日本語名にはUTF-8（65001）や932を明示してください。TAR + GZip（`.tar.gz`／`.tgz`）などTAR系形式はフォルダーを選びます。保存先の拡張子で7z・ZIP（jar/ear/war/xpi）・TAR・tar.gz/tgz・tar.bz2/tbz2/tbz・tar.Z/taz・単一ファイルのgz/gzip/bz2/Zを選びます。出力は暗号化せず、元の属性・アクセス制御・圧縮方式は保持しません。比較元への上書きはできません。TAR.Zはアプリだけで読み書きでき、外部の圧縮ツールは不要です。裸gzip・BZip2・Zは空ファイルを含む通常ファイル1件だけを作成・再梱包し、ディレクトリエントリや複数ファイルを拒否します。`.tar.gz`／`.tgz`出力はTAR形式を保ち、複合圧縮鎖への書込みと内側アーカイブの再梱包は未対応です。
 
-If you find a bug or would like to request a feature, please [submit an issue](https://github.com/WinMerge/winmerge/issues).
+単一ファイルのBZip2（`.bz2`／`.bzip2`）とZ（`.Z`）も読み込めます。本文の形式は左右別に「自動判定」「単一ファイル」「TARアーカイブ」から選びます。自動判定は明示的なTAR／複合拡張子を優先し、それ以外は復号した先頭からTARか単一ファイルかを判定します。「単一ファイル」はTAR風の本文も一つのファイルとして取り出し、「TARアーカイブ」は完全なTARでなければ拒否します。空の本文も単一ファイルです。名前は入力の最後の拡張子を除いたbasenameで、拡張子がない場合は`noname`です。内包項目は内側アーカイブを開く操作で明示的に開けます。拡張子のないBZip2／Z項目もこの操作では選べますが、自動判定の対象を拡張子なしへ広げず、内包項目を自動再帰しません。原本への書戻しは行いません。
 
-To contribute code:
+ZIP（jar/ear/war/xpi）・7z・RAR・TARを`.gz`・`.bz2`・`.Z`で包んだ入力も、明示的な複合拡張子から読み込めます。例えば`payload.tar.gz.bz2`や`payload.zip.Z.bz2.gz`を比較・プレビュー・展開・通常形式へ再梱包できます。TARの短縮拡張子（tgz/tbz/tbz2/taz）に外側の圧縮層を付けた入力にも対応します。圧縮層は短縮拡張子の分も含めて最大8段で、各段の内容は256 MiB、鎖全体の復号出力は1 GiBまでです。複合形式の作成と内側アーカイブの再梱包は未対応です。裸BZip2／Zの作成・再梱包は単一ファイルに対応します。
 
-1. [Fork the WinMerge repository](https://github.com/WinMerge/winmerge/fork)
-2. Create a feature branch on your fork
-3. Follow the existing coding style (use [Allman indentation](https://en.wikipedia.org/wiki/Indentation_style#Allman_style))
-4. Submit a [Pull Request](https://github.com/WinMerge/winmerge/pulls) describing your changes
+GUIでは片側だけ存在する項目を含めてファイルを選び、「選択項目を比較」またはダブルクリックで子比較を開けます。「自動」は対応する拡張子のアーカイブを内側の一覧へ、画像を画像比較へ、それ以外をテキスト／バイナリへ開きます。形式を明示選択することもできます。不在の内包アーカイブ側は空一覧として扱うため、さらに内側の項目にも進めます。深い一覧の再梱包／全件展開は未対応です。
 
----
+実在する内包テキストとバイナリは、開いた側の読取り専用指定に従って編集できます。「左を保存」「右を保存」はウィンドウ内に作業版を保持し、再比較・親一覧・プレビューにも反映します。次回起動へ残すには、ウィンドウを閉じる前に比較プロジェクトを保存してください。編集可能な側を外部へ別名保存すると、成功した側だけ通常ファイルへ切り替えます。読取り専用バイナリの別名保存は、入力を変更しない複製として保存します。不在バイナリは外部への保存先を選んで保存します。片側不在は空入力として比較でき、実在する空ファイルと区別して保存します。元アーカイブへ書き戻しません。
 
-## Folder Structure
+内包画像は画像パネルで読取り専用スナップショットとして比較します。画像を編集・保存してアーカイブへ書き戻すことはできません。内包画像のCLIレポートと包装は未対応です。
 
-The WinMerge repository is organized as follows:
+内包テキスト／バイナリの作業版を含むプロジェクトは、JSONと同じ場所の `<JSONファイル名>.assets` フォルダー（例：`comparison.json.assets`）に本文を保存します。移動するときは両方を一緒に移してください。暗号化アーカイブから編集した本文も、このフォルダーでは暗号化しません。比較の包装には原本アーカイブと作業版を別々に含めます。プロジェクト保存・包装の前に編集中の内包テキスト／バイナリを保存してください。
 
-- `ArchiveSupport/Merge7z`  
-  Merge7z DLLs that connect WinMerge with 7-Zip. Required to build `WinMergeU.exe`.  
-  A standalone installer for these DLLs is also included.
+不在のテキスト側は元の読取り専用指定を引き継ぎ、編集可能な側では同じ画面で編集・差分コピーできます。「左を保存」「右を保存」で外部ファイルへ保存し、成功した側だけを通常ファイルへ切り替えます。編集した不在側は、外部へ保存するまでプロジェクト保存・包装ができません。未保存のHTMLには編集中の本文と未保存状態を記録します。継承情報のない以前のプロジェクトの不在側は読取り専用で復元します。
 
-- `Build`  
-  Output directory created during compilation. Contains executables, libraries, manuals, etc.
+復元した内包プロジェクトは「比較」を押して読み込み、暗号化されている場合は各階層のパスワードを再入力します。パスワードと復号本文は保存しません。最新の実測範囲は[移行対応表](Docs/MIGRATION.md)を参照してください。
 
-- `BuildTmp`  
-  Temporary files created during compilation. Safe to delete.
+CLIでは、アーカイブ内のアーカイブを明示的に選び、一覧とファイルを取得できます。例えば`source.json`に `{"rootPath":"outer.zip","entryChain":["folder/inner.zip"]}` を保存し、`DiffBeacon --archive-source-list source.json` で内側の一覧、`DiffBeacon --archive-source-entry source.json document.txt saved.txt` で内容を取得します。`rootPath`はこのJSONからの相対パスを使えます。`rootSha256`を指定すると元アーカイブの変更も拒否します。内包階層と圧縮層の合計は最大8段で、全階層の復号量・件数・作業量を共有します。暗号化入力は末尾の`--password-stdin`と、外側から順に1アーカイブにつき1行を使います。暗号化していない階層にも空行を置いてください。Source専用JSONと比較プロジェクトのJSONは別の形式です。
 
-- `ColorSchemes`  
-  Color schemes and themes.
+「左をすべて展開」「右をすべて展開」は、展開フォルダー名を入力して親フォルダーを選び、新しいフォルダーへ全内容を保存します。既存の展開先を上書きせず、破損などで失敗したら途中出力を公開しません。パスワードは比較プロジェクトには保存されません。
 
-- `Docs`  
-  User and developer documentation. Open `Docs/index.html` to browse locally.
+コメント構文や空白モードは比較設定で選び、置換規則は「置換フィルター…」で順番に登録します。これらは比較に使う内容だけを加工し、原文や保存内容は変えません。
 
-- `Externals`  
-  Third-party libraries used by WinMerge (some customized).
+詳細フィルターでは「句読点で単語を分割」を切り替え、「単語区切り文字」で文字集合を指定できます。設定は比較プロジェクトへ保存され、区切り設定がない旧プロジェクトではWinMergeの既定値を使います。
 
-- `Filters`  
-  File and folder filter definitions.
+「プロジェクトを保存」は、すべての比較タブの入力パス・設定・順序と選択中のタブを保存します。「プロジェクトを開く」で全タブを復元でき、複数の比較を含む旧`.WinMerge`と従来の単一JSONも読み込めます。プロジェクトは最大256比較・4 MiBです。画像はページ番号・回転／反転・表示位置・差分ブロックサイズ・閾値・倍率・重ね合わせ不透明度・差分色の不透明度・強調・表示方式・レポートの全／選択も保存・復元します。重ね合わせの方式・点滅・周期は全画像タブで共有するアプリ設定で、プロジェクトには含まれません。画像の未保存編集は含まれないため、原画をPNGへ保存してからプロジェクトを保存してください。編集本文、マージの採用状態・Undo/Redo履歴は含まれないため、本文は各保存ボタンで別途保存してください。
 
-- `Installer`  
-  WinMerge installer sources.
+「比較の設定…」では左右の説明、読取り専用、ファイルマスク／式、表の区切り文字・引用符・引用内改行を指定します。フォルダーの再帰・比較方式・除外パスもプロジェクトへ保存します。読取り専用側への編集・コピー・入力の上書きは拒否し、内容を別の場所へ書き出すことはできます。ただし、静止画像は読取り専用側のPNG／TIFF別名保存もできません。画像の共有Undo／Redoは読取り専用指定後も使えます。未対応の旧設定は保持して画面に表示します。旧プラグインや未登録の比較ツールは、プロジェクトを開いただけでは実行しません。
 
-- `Plugins`  
-  Runtime plugin DLLs and scripts.
+「比較を包装…」では、保存済みの比較タブを選び、文書・HTMLレポート・Unifiedパッチ・比較プロジェクトを1つのアーカイブへまとめます。既定では文書と比較プロジェクトを含め、レポート・パッチは必要に応じて指定します。アーカイブを新しいフォルダーへ展開して`project.json`を開くと、同梱文書から比較を再開できます。文書を含めない場合は元のファイルを参照します。保存したアーカイブをファイルとしてクリップボードへコピーする指定もできます。未保存の編集や比較後に変更したパスがある場合は、保存・再比較してから実行してください。
 
-- `ShellExtension`  
-  Windows Explorer shell extension that adds context menu entries.
+包装は二者・三者のローカルファイルに対応し、各256 MiB、入力と生成物の合計1 GiB、レポート・パッチ各32 MiBまでです。
 
-- `Src`  
-  Main WinMerge source code.
+内包入力では元アーカイブを同梱し、格納階層と原本SHAを保存するため、展開後も同じ内包比較を再開できます。内包テキストはHTMLとパッチにも対応し、片側不在の新規・削除（空ファイルを含む）もパッチへ記録します。パッチは外部のファイルに使い、元アーカイブを書き換えません。内包バイナリ／アーカイブは文書とプロジェクトの包装だけに対応し、レポート・パッチは指定できません。暗号化された内包入力の包装とCLIレポートは未対応です。
 
-- `Testing`  
-  Test files and scripts, including unit tests based on the  
-  [Google Test Framework](https://github.com/google/googletest).
+画像レポートには[画像の上限](Docs/IMAGE-VIEWER.md)も適用します。未保存の画像編集がある場合は包装できないため、編集した側をPNGで別名保存してから実行してください。URLはプロジェクトの参照として保持し、レポート・パッチを作るにはローカルへ保存する必要があります。フォルダー比較の包装、Webの詳細レポート、一時ZIPだけをクリップボードへ置く操作は未対応です。テキストのレポートは祖先を含む全ペインを行と行内差分で表示し、表はセル単位、JSONはキー順・数値を正規化して比較します。画像は同梱原本と同じ内容から、プロジェクトに保存した全／選択フレーム・閾値・強調設定で各入力の表示・原画と左右差分PNGをHTMLへ埋め込みます。他の形式はサイズ・SHA-256などを表示します。現在のパッチはテキスト・表の原文が対象で、他の形式だけなら空のパッチになります。
 
-- `Tools/Scripts`  
-  Various development utilities.
+「ツール > レポートの生成」では、現在のテキスト・表・JSON・二者／三者画像比較を1つのHTMLへ保存します。テキスト・表・JSON・静止画像の未保存の編集も反映し、入力ファイルは変更しません。プロバイダー比較では変換後のテキストを出力します。画像は表示中の確定内容と閾値を使い、既定では全フレーム、「レポートは全フレーム」を無効にすると表示中の組だけを出力します。出力はUTF-8で32 MiBまでです。比較元のパスや形式を変更した場合は先に再比較してください。生成中は「中止」で取り消せます。比較入力・フィルター・開いた／保存した比較プロジェクトへの上書きや、読取り専用に指定したフォルダー内への保存はできません。
 
-- `Translation`  
-  Language and translation files.
+### 一般行変換
 
-The changelog is available at:  
-[Docs/Users/ChangeLog.md](https://github.com/WinMerge/winmerge/blob/master/Docs/Users/ChangeLog.md)
+`RegexReplaceWithList(Line,Array(Array("foo","bar")))`で式内のregex置換リスト、`ReplaceWithList(Line,"replacements.tsv")`でTAB区切りの通常置換リストを使えます。`ReplaceWithList`は式内の文字列pattern pairを適用しないため、inlineリストでは`RegexReplaceWithList`を使います。相対リストpathはprocessの作業ディレクトリを基準にし、最適化ありのliteral pathは比較のcompile時、`@noopt`や動的pathは評価時に読みます。各4 MiB上限・リンク拒否・共有予算があり、読込み済みリストを出力先へ指定できません。包装は式のliteral・文字列連結・If／Choose／At(Array(...))から候補を列挙してリストを同梱します。行本文から計算する未列挙pathの包装と旧Windowsの任意codepage推定は対応範囲外です。
 
----
+`Now()`は現在の日時、`Today()`はローカルな今日の0時を返します。一つの式を比較用に準備する時点で捕捉し、全行で同じ値を使います。再比較や別の式では捕捉し直すため、実行時刻と時差に依存する規則です。
 
-## How to Run and Debug
+共通設定の「行変換…」で、テキストと表の比較キーに式を順番に適用できます。原文・文字コード・BOM・改行、編集と保存する本文は保持します。表の静的な列範囲／列除外は行対応だけの設定ですが、一般行変換で一致した差は意味差分から除外されます。
 
-WinMerge provides multiple Visual Studio solution files (`.sln`) for building and debugging.
+CLIでは `--compare left.txt right.txt --line-transform all 'Trim(Line)'`、表では `--table left.csv right.csv --line-transform all 'ColumnRange("1,3-")'` のように使います。`--line-transform all|left|base|right EXPRESSION` は複数指定でき、指定順を保持します。規則は比較プロジェクト／workspaceに保存し、`--report-project`では保存規則を使います。同コマンドで行変換を明示した場合はその規則で置き換えます。式・対象と未対応の範囲は [Coreの行変換](Src/DiffBeacon.Core/README.md#一般行変換) を参照してください。
 
-After running one of the `BuildAll` scripts, you can launch WinMerge from:
+日時リテラルは `d"2000-01-01T00:00:00Z"` または `D"2000-01-01T00:00:00Z"` と書けます。日時同士の比較と差、整数マイクロ秒の加減算、範囲判定、最小・最大に使えます。地域設定と時差を使う入力では実行環境により比較キーが変わるため、環境に依存しない規則には明示した時差を使ってください。`ToDateTime(Line)`で文字列を日時へ、`ToDateStr(Line)`でローカルな日付へ変換できます。解釈できない入力は前者では空の値、後者では比較エラーになります。配列と型の扱いはCoreの行変換を参照してください。
 
-Build\X64\Release\WinMergeU.exe
+`StartOfWeek(Line)`・`StartOfMonth(Line)`・`StartOfYear(Line)`では、日時を日曜始まりの週・月・年の初めへ揃えられます。ローカルな日付と時差を使うため、実行環境に依存する規則です。不正な日時は比較エラーになります。
 
-If you built for a different architecture, check the corresponding output folder.
-To debug, you can also start WinMerge normally and attach Visual Studio to the running process.
+## 対応環境
 
----
+Windows x64 / ARM64、macOS Apple Silicon に対応する Native AOT 発行物を生成します。macOS Intel（`osx-x64`）は発行スクリプトが受け付けますが、CI・配布・検証の対象外です。macOS の最低バージョンは14.0です。各プラットフォームの実測結果と未検証項目は [移行一覧](Docs/MIGRATION.md) を参照してください。
 
-## Build WinMerge
+## 入手と起動
 
-### Visual Studio 2017
+[GitHub Actions](https://github.com/1llum1n4t1s/DiffBeacon/actions) の成功した `.NET CI` 実行のうち、全構成で検証したrun（master・PR・手動・定期実行）から、OS と CPU に合う `DiffBeacon-<RID>` 成果物を取得できます。これは検証用のビルドで、署名済みの配布物ではありません。
 
-- Community / Professional / Enterprise
-- VC++ 2017 (v141) toolset
-- Visual C++ MFC and ATL
-- Windows 10 SDK
-- Optional: Windows XP support for C++
+- Windows：`win-x64` または `win-arm64` の成果物を展開し、同梱ファイルを一緒に置いたまま `DiffBeacon.exe` を起動します。
+- macOS：`osx-arm64`（Apple Silicon）の成果物内の `DiffBeacon.app.tar.gz` を展開します。tar は実行権限を保持するため、展開した `DiffBeacon.app` を使ってください。署名・公証は発行工程に含まれていません。
 
-### Visual Studio 2022 or later
+BZip2／Zの読込みCLIは`--compression-payload-kind auto|file|tar`です。アーカイブ比較の右側だけを変える場合は`--right-compression-payload-kind auto|file|tar`を使い、省略時は左の指定を継承します。gzipは別の`--gzip-payload-kind`／`--right-gzip-payload-kind`を使います。異なる圧縮形式へのFile／Tar指定、両形式の非Auto指定の併用、作成時の読込み設定は拒否します。
 
-- Community / Professional / Enterprise
-- MSVC v143 or newer
-- Visual C++ MFC and ATL
-- Windows 10 SDK
+アーカイブ作成のCLIは`DiffBeacon --archive-create SOURCE_FILE_OR_DIRECTORY OUTPUT`です。裸`.gz`／`.gzip`の作成・再梱包では`--output-gzip-name-code-page 65001`などで出力格納名の文字コードを指定できます。読込みの`--gzip-name-code-page`とは独立しており、作成・再梱包以外やTAR + GZip出力には指定できません。
 
-### Additional Tools
+コマンドラインでも比較できます。`DiffBeacon --help` で一覧を表示し、`DiffBeacon --compare LEFT RIGHT` でテキストを比較します。Windows では `DiffBeacon.exe`、macOS では `DiffBeacon.app/Contents/MacOS/DiffBeacon` が実行ファイルです。終了コードは0が一致・成功、1が差分・競合、2がエラーです。
 
-- git
-- Inno Setup 5.x and 6.x
-- 7-Zip
-- Python
-- Pandoc
-- MSYS2 (including `po4a` and `diffutils`)
+独立三者テキストのCLIは `DiffBeacon --compare LEFT RIGHT --middle MIDDLE --independent-text --pair middle-right` です。pairは `left-middle`（既定）・`middle-right`・`left-right` を指定でき、JSONには選んだ二側の本文と三入力の役割を出力します。独立比較のJSONは改行を含め32 MiB以内で、超過時はstdoutへ部分出力せず終了2を返します。内包入力は保存した比較プロジェクトから `--project-copy`・`--report-project`・`--package-project` を使います。包装ではパッチを含めない設定にしてください。
 
-## How to Build
+テキスト比較の `--max-work N` は行対応と行内差分それぞれの処理予算を指定します。行内差分の区切り文字分割は既定で有効で、`--no-separators` で無効化し、`--separators TEXT` で区切り文字集合を指定できます。両オプションは `--compare`・`--word-diff`・`--table` で使えます。行対応を省略した場合は JSON の `lineFallback`・`lineFallbackReason` に示し、元の全行を保持して未確定部分を変更扱いにします。
 
-```bash
-git clone --recurse-submodules https://github.com/WinMerge/winmerge
-cd winmerge
-DownloadDeps.cmd
-BuildAll.cmd [x86|x64|ARM64]
-# or
-BuildAll.vs2022.cmd [x86|x64|ARM64]
-# or
-BuildAll.vs2017.cmd [x86|x64|ARM|ARM64]
-```
+画像は `DiffBeacon --image LEFT [MIDDLE] RIGHT` で全フレームを同番号で比較し、後続フレームの変更や枚数差も検出します。特定の組だけを比較するには `--left-frame N [--middle-frame N] --right-frame N` を全入力分指定します。番号は1始まり、`--threshold X` は有限の非負数（既定0）、BGRAユークリッド距離で判定します。`--highlight-alpha X` は差分色の不透明度（有限の0～1、既定0.7）を指定し、差分判定や原画を変更しません。行・列の挿入削除検出は `--insertion-deletion-mode none|vertical|horizontal`（既定 `none`）で指定します。表示位置は `--left-offset X,Y`・`--middle-offset X,Y`・`--right-offset X,Y` で非負の絶対座標を指定できます。`--report-project` でも同じ指定で保存設定を上書きしてレポートを生成でき、プロジェクト自体は変更しません。画素数などの JSON 出力と上限は [画像の操作](Docs/IMAGE-VIEWER.md) を参照してください。
+
+表は `DiffBeacon --table LEFT RIGHT`、三者は `DiffBeacon --table LEFT RIGHT --base BASE` で比較します。`--word-level`、`--eol strict|ignore`、`--no-separators`／`--separators TEXT`、大文字小文字・空白などの比較設定を指定でき、元行の対応をJSONで返します。`--max-work N` で行合わせの処理予算を指定できます。上限で詳細な行合わせを省略した場合は `alignmentFallback`・`alignmentFallbackReason` に示し、元行を省略せず順序を保って対応させます。詳しくは[表の契約](Docs/TABLE-EDITOR.md#比較と原文の契約)を参照してください。
+
+`DiffBeacon --word-diff LEFT RIGHT` は原文の変更区間を JSON で返します。`ranges` の各要素は `[左の開始位置, 左の長さ, 右の開始位置, 右の長さ]` で、位置は0始まりの UTF-16 単位です。既定では文字単位まで絞り込み、`--word-level` で単語単位にできます。`--eol strict|ignore|space`、`--no-separators`、`--separators TEXT` などの指定は `--help` で確認できます。詳細比較を省略した場合は `fallback` と `fallbackReason` に示し、両原文全体を変更区間として返します。
+
+保存した比較プロジェクトを包装するには、`DiffBeacon --package-project project.json comparison.zip --report --patch` を使います。`--entries 1,3` で包装する比較を番号で選択でき、`--no-documents`・`--no-project` で文書・プロジェクトを除外できます。
+
+比較プロジェクトから単体HTMLを作るには、`DiffBeacon --report-project project.json comparison.html` を使います。既定では選択中の比較、`--entry 2`では指定した番号の比較を出力します。テキスト・表・JSONの二者／三者比較と二者／三者画像比較に対応します。画像はプロジェクトに保存した全／選択フレーム・閾値・強調設定を使います。フレーム・閾値・差分色の不透明度は `--image` と同じオプションで明示指定すると、その値を優先します。画像設定を持たない旧プロジェクトでは全フレーム・閾値0・強調ありで、差分色の不透明度を省略した設定は0.7です。レポート生成の終了コードは、差分の有無にかかわらず成功時0です。
+
+## 制限と困ったとき
+
+WinMerge の旧ActiveXプラグイン、ブラウザーのDOM・JavaScript・画面比較、Explorer / Finder 拡張、インストーラー登録は未対応です。プロバイダーで変換した内容は読取り専用で、元ファイルへのテキスト保存はできません。
+
+- 上限エラー：テキスト読込みは既定64 MiB、バイナリビューの表示・編集は各16 MiBが上限です。画像は入力各64 MiB・1600万ピクセルまでで、比較キャンバス・フレーム数・復号作業量にも上限があります。詳しくは [画像の操作](Docs/IMAGE-VIEWER.md)、変換形式の範囲と制限は [プロバイダーの説明](Src/DiffBeacon.Providers/README.md) を参照してください。
+- 保存できない：読取り専用属性や書込み権限を確認してください。読込み後に入力パスを変えた場合は、比較して開き直してから保存します。
+- 文字化け：BOMなしの文字コード推定は完全ではありません。読込み・保存の対応とフォールバックは [テキスト処理の説明](Src/DiffBeacon.Core/README.md#テキスト比較と保存) を参照してください。
+- アーカイブを開けない：暗号化入力はアーカイブビューでパスワードを入力してください。標準プロバイダーの `archive` にはパスワードを指定できません。分割アーカイブ、リンクや危険・重複した格納名は拒否します。RAR作成と暗号化出力は未対応です。
+
+## 開発と検証
+
+ソースからのビルドと検証・発行は [開発手順](Docs/DEVELOPMENT.md)、作業規約は [AGENTS.md](AGENTS.md)、システム構造は [DESIGN.md](DESIGN.md) を参照してください。
+
+## ライセンス
+
+元となった [WinMerge](https://github.com/WinMerge/winmerge) と同じく [GNU GPL v2](LICENSE.md) に従います。元の著作権表記とライセンスを保持しています。依存ライブラリのライセンスはそれぞれのパッケージに従います。

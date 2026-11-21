@@ -1,0 +1,22 @@
+{
+  "command": [
+    "C:\\Program Files\\dotnet\\dotnet.exe",
+    "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\iswithin-core-20261012-2ad71-004b3b\\observer\\bin\\Release\\net10.0\\Observer.dll",
+    "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\line-transform-iswithin-20261012-2ad71\\LineTransformWithin\\public-case-plan.json",
+    "A2FCCA950BD5E5CFA48F3FF43E4436AE0F5FD55EFF9661DA1D5A979CC9051135",
+    "--probes"
+  ],
+  "actualPid": 28456,
+  "birthFileTime": 134362205117460523,
+  "startedUtc": "2026-10-11T19:28:31.725596+00:00",
+  "endedUtc": "2026-10-11T19:28:31.910874+00:00",
+  "exitCode": 0,
+  "timeout": false,
+  "heldProcessHandleSignaled": true,
+  "stdoutEof": true,
+  "stderrEof": true,
+  "stdoutSha256": "13aa8e9d6f47e8f51ad35dd772b122ddaedcce138ba4588cf23ebed52694f8bf",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cwd": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\iswithin-core-20261012-2ad71-004b3b",
+  "packages": "C:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\iswithin-core-20261012-2ad71-004b3b\\packages"
+}

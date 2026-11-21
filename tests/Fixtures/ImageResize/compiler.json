@@ -1,0 +1,16 @@
+{
+  "command": [
+    "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64\\cl.EXE",
+    "/nologo",
+    "/std:c++17",
+    "/EHsc",
+    "/MT",
+    "/utf-8",
+    "/W4",
+    "/Od",
+    "/FeE:\\DiffBeacon-artifacts\\reference\\image-rectangle-v1.0.54\\resize-kernel\\probe.exe",
+    "/FoE:\\DiffBeacon-artifacts\\reference\\image-rectangle-v1.0.54\\resize-kernel\\probe.obj",
+    "E:\\DiffBeacon-artifacts\\reference\\image-rectangle-v1.0.54\\resize-kernel\\probe.cpp"
+  ],
+  "exit": 0
+}

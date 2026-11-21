@@ -1,0 +1,62 @@
+[
+  {
+    "kind": "lexer-proposal",
+    "input": "v\"1.2.3.4\"",
+    "status": "planned/unexecuted"
+  },
+  {
+    "kind": "lexer-proposal",
+    "input": "V\"1.2.3.4\"",
+    "status": "planned/unexecuted; uppercase unsupported inferred from static rule"
+  },
+  {
+    "kind": "lexer-proposal",
+    "input": "v\"1\\.2\"",
+    "status": "planned/unexecuted; no lexer escape qualification"
+  },
+  {
+    "kind": "lexer-proposal",
+    "input": "v\"\"",
+    "status": "planned/unexecuted"
+  },
+  {
+    "kind": "AST-boundary",
+    "input": "Version node vs current long literal folding",
+    "status": "unqualified; parser and Optimize full AST not executed"
+  },
+  {
+    "kind": "UB-exclusion",
+    "input": "-1.0.0.0 / 0.-1.0.0 / 0.0.-1.0",
+    "status": "excluded; signed negative shifts; no native golden"
+  },
+  {
+    "kind": "UB-exclusion",
+    "input": "32768.0.0.0",
+    "status": "excluded; shift into signed sign bit; no portable golden"
+  },
+  {
+    "kind": "UB-exclusion",
+    "input": "32767.65535.65535.65536",
+    "status": "excluded; signed sum overflow; no native golden"
+  },
+  {
+    "kind": "UB-exclusion",
+    "input": "2147483648.0.0.0 / 0.0.0.-2147483649",
+    "status": "excluded; int sscanf conversion outside representable range; no native golden"
+  },
+  {
+    "kind": "locale-exclusion",
+    "input": "nonASCII digits or whitespace",
+    "status": "excluded/unexecuted; no native golden"
+  },
+  {
+    "kind": "defined-case-analysis",
+    "input": "0.0.0.-2147483648",
+    "status": "executed; shifted terms zero, int-representable negative revision, int64 addition cannot overflow"
+  },
+  {
+    "kind": "defined-case-analysis",
+    "input": "0.2147483647.0.0",
+    "status": "executed; nonnegative int64 shift32 remains below INT64_MAX; no other nonzero terms"
+  }
+]

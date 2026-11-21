@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "frozenBeforeCaptureCode": true,
+  "cases": 67,
+  "failures": [
+    {
+      "condition": "scalar boolean",
+      "expected": "inverted boolean"
+    },
+    {
+      "condition": "scalar none/int/double/string/Timestamp",
+      "expected": "undefined / JSON null"
+    },
+    {
+      "condition": "direct array",
+      "expected": "same order, count and slots; invert each direct element bool interpretation"
+    },
+    {
+      "condition": "[true,false,1]",
+      "expected": [
+        false,
+        true,
+        null
+      ]
+    },
+    {
+      "condition": "[[true],[],[[true]]]",
+      "expected": [
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "condition": "nested array element",
+      "expected": "bool is presence of direct true boolean only; no recursive mapping"
+    },
+    {
+      "condition": "legal argument",
+      "expected": "exactly one evaluation [0]"
+    },
+    {
+      "condition": "throwing argument",
+      "expected": "argument-0 propagates with trace [0]"
+    },
+    {
+      "condition": "separate original arity block 0/2/3",
+      "expected": "reject before any evaluation"
+    },
+    {
+      "condition": "separate original arity block 1",
+      "expected": "accept without evaluation"
+    }
+  ],
+  "excluded": [
+    "parser",
+    "full constructor",
+    "full .flt path",
+    "product execution"
+  ]
+}

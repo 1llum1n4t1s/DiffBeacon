@@ -1,0 +1,2095 @@
+[
+  {
+    "id": "single-none",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "single-boolean",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "single-integer",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "single-double",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "single-string",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "single-timestamp",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-none-none",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-none-boolean",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-none-integer",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-none-double",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-none-string",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-none-timestamp",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-boolean-none",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-boolean-boolean",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-boolean-integer",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-boolean-double",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-boolean-string",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-boolean-timestamp",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-integer-none",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-integer-boolean",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-integer-integer",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-integer-double",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-integer-string",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-integer-timestamp",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-double-none",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-double-boolean",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-double-integer",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-double-double",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-double-string",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-double-timestamp",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-string-none",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-string-boolean",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-string-integer",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-string-double",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-string-string",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-string-timestamp",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-timestamp-none",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-timestamp-boolean",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-timestamp-integer",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-timestamp-double",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-timestamp-string",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "types-timestamp-timestamp",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "bool-value",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "integer-value",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 8
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "double-value",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 7.0
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 7.5
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "timestamp-value",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123456
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1700000000123457
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-case",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Same"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "same"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-unicode",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "string-unicode-case",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "Ä"
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "ä"
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-all-match",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-first-mismatch-short-circuit",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 8
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "scalar-later-mismatch-short-circuit",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 8
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "scalar-first-throws",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-next-throws",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "scalar-later-throws",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-empty",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-empty-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-singleton",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-singleton-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-equal",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "integer",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-equal-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "integer",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-mismatch",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "integer",
+              "value": 8
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-mismatch-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "integer",
+              "value": 8
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-none-equal",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            },
+            {
+              "type": "none"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-none-equal-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            },
+            {
+              "type": "none"
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-none-mismatch",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            },
+            {
+              "type": "integer",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-none-mismatch-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            },
+            {
+              "type": "integer",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-type-mismatch",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "double",
+              "value": 7.0
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-type-mismatch-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "double",
+              "value": 7.0
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-case-mismatch",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "Same"
+            },
+            {
+              "type": "string",
+              "value": "same"
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-case-mismatch-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "Same"
+            },
+            {
+              "type": "string",
+              "value": "same"
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-timestamp-equal",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "timestamp",
+              "value": 1700000000123456
+            },
+            {
+              "type": "timestamp",
+              "value": 1700000000123456
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-timestamp-equal-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "timestamp",
+              "value": 1700000000123456
+            },
+            {
+              "type": "timestamp",
+              "value": 1700000000123456
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-timestamp-mismatch",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "timestamp",
+              "value": 1700000000123456
+            },
+            {
+              "type": "timestamp",
+              "value": 1
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-timestamp-mismatch-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "timestamp",
+              "value": 1700000000123456
+            },
+            {
+              "type": "timestamp",
+              "value": 1
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-nested-equal",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "string",
+                  "value": "Same"
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "timestamp",
+                  "value": 1700000000123456
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "string",
+                  "value": "Same"
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "timestamp",
+                  "value": 1700000000123456
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-equal-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "string",
+                  "value": "Same"
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "timestamp",
+                  "value": 1700000000123456
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "string",
+                  "value": "Same"
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "timestamp",
+                  "value": 1700000000123456
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-nested-order",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "string",
+                  "value": "Same"
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "string",
+                  "value": "Same"
+                },
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-order-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "string",
+                  "value": "Same"
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "string",
+                  "value": "Same"
+                },
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-nested-length",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-length-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                },
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-nested-type",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "double",
+                  "value": 7.0
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-type-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "double",
+                  "value": 7.0
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-nested-empty-equal",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            },
+            {
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-empty-equal-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            },
+            {
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-nested-empty-nonempty",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-empty-nonempty-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 7
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "array-nested-deep",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "integer",
+                      "value": 7
+                    },
+                    {
+                      "type": "none"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "integer",
+                      "value": 7
+                    },
+                    {
+                      "type": "none"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "array-nested-deep-ignores-throw",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "integer",
+                      "value": 7
+                    },
+                    {
+                      "type": "none"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "integer",
+                      "value": 7
+                    },
+                    {
+                      "type": "none"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "scalar-then-array",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 7
+            },
+            {
+              "type": "integer",
+              "value": 7
+            }
+          ]
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        },
+        "throws": true
+      }
+    ]
+  }
+]

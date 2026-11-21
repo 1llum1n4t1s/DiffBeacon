@@ -1,0 +1,160 @@
+{
+  "schema": "input301-fixture-v1",
+  "license": "CC0-1.0",
+  "literalLeafHex": "6e65737465642061726368697665206c6561660d0a5554462d383a20e697a5e69cac0a",
+  "literalLeafText": "nested archive leaf\r\nUTF-8: 日本\n",
+  "reusedSource": "tests/Fixtures/Archives/Sources/README.md",
+  "reusedPins": [
+    {
+      "path": "tests/Fixtures/Archives/Sources/two-passwords.zip",
+      "bytes": 289,
+      "sha256": "496ED5656BDBC5C165412FFBF25326EF48088AA8A94CC4F8CF2E6AEBE3DA1E6E"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/plain-encrypted.zip",
+      "bytes": 222,
+      "sha256": "241D672E85B4F045C0D10AAD35E99D786076FC272430E7F677A62C34FB2AA207"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/leaf.zip",
+      "bytes": 339,
+      "sha256": "6970F48B96DF6E48C8729CF2AE927377994E0D5617156CF1D76CE85693344019"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/late-bad-sibling.zip",
+      "bytes": 390,
+      "sha256": "FA5B0EF47AB5A53318AE5907818B2848A72DE6523207C50490C1C652F3E1A453"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/depth-8.zip",
+      "bytes": 935,
+      "sha256": "2783C228E58E9778E1E91635177B1ECA31367B67169DB410579ACB4426A56983"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/depth-9.zip",
+      "bytes": 1056,
+      "sha256": "7C887190CBE3A05055C576344CC8BFFB79DBEBEE5548D73C00E143D8AF76C9F3"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/root-a.zip",
+      "bytes": 135,
+      "sha256": "CC74DA8184D8CFA6576761FA0FCE529CBA0844CF7F5B5A0641A66B01BE06429B"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/README.md",
+      "bytes": 1282,
+      "sha256": "AF6743DB67DE92D59CB516B308A4E4B1E1649AE507B179C6E4D7A6AE38AFC411"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/regenerate.py",
+      "bytes": 14253,
+      "sha256": "A5E0CB0B2F9E0E610EFB9367CEA4D634AD38B1A6DA27FFEA72087E34C7D2BE74"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/manifest.json",
+      "bytes": 9610,
+      "sha256": "07AB91DD960B1369E61182261C958AF611B03E0E44CD3387A9E50ADB324DF2FE"
+    },
+    {
+      "path": "tests/Fixtures/Archives/Sources/.gitattributes",
+      "bytes": 76,
+      "sha256": "9FD65A6700E0C648AAC5015022756266454969E695B16E09D8DDB19AE49A3F22"
+    }
+  ],
+  "generated": [
+    {
+      "path": "inputs/siblings.zip",
+      "bytes": 637,
+      "sha256": "CDCFC6A7B8E0F0E25764909D91F4D430E1AA93A9F27838BEEAABAD780C9D1BB5"
+    },
+    {
+      "path": "inputs/dangerous.zip",
+      "bytes": 239,
+      "sha256": "2EE62112E87B98E2C1B94F735316AA873EACC3456E953FCC641229A080A9876F"
+    }
+  ],
+  "cases": [
+    {
+      "id": "password-retry",
+      "accepted": true,
+      "root": "two-passwords.zip",
+      "chain": [
+        "inner.zip"
+      ],
+      "leaf": "leaf.txt"
+    },
+    {
+      "id": "siblings",
+      "accepted": true,
+      "root": "siblings.zip",
+      "chain": [
+        "right.zip"
+      ],
+      "leaf": "leaf.txt"
+    },
+    {
+      "id": "root-clear",
+      "accepted": false
+    },
+    {
+      "id": "password-limit",
+      "accepted": false
+    },
+    {
+      "id": "late-crc",
+      "accepted": false
+    },
+    {
+      "id": "dangerous",
+      "accepted": false
+    },
+    {
+      "id": "directory",
+      "accepted": false
+    },
+    {
+      "id": "missing",
+      "accepted": false
+    },
+    {
+      "id": "depth8",
+      "accepted": true,
+      "root": "depth-8.zip",
+      "chain": [
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip"
+      ],
+      "leaf": "leaf.txt"
+    },
+    {
+      "id": "depth9",
+      "accepted": false
+    },
+    {
+      "id": "root-budget",
+      "accepted": false
+    },
+    {
+      "id": "work-budget",
+      "accepted": false
+    },
+    {
+      "id": "link",
+      "accepted": false
+    },
+    {
+      "id": "stale-root",
+      "accepted": false
+    },
+    {
+      "id": "close-pending",
+      "accepted": false
+    }
+  ]
+}

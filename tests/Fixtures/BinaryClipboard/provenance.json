@@ -1,0 +1,101 @@
+{
+  "repository": "https://github.com/WinMerge/frhed",
+  "commit": "f952092530cc16e2f8832fc15dc6ba4b13cbc032",
+  "license": "GPL-2.0-only",
+  "licenseFile": "GPL.txt",
+  "sourceFiles": [
+    {
+      "file": "BinTrans.cpp",
+      "url": "https://raw.githubusercontent.com/WinMerge/frhed/f952092530cc16e2f8832fc15dc6ba4b13cbc032/FRHED/BinTrans.cpp",
+      "size": 10688,
+      "sha256": "df9c12ca0c24193cbfed0bbe9d7be0fc08fe96bd2017759e28de4544a649555e"
+    },
+    {
+      "file": "BinTrans.h",
+      "url": "https://raw.githubusercontent.com/WinMerge/frhed/f952092530cc16e2f8832fc15dc6ba4b13cbc032/FRHED/BinTrans.h",
+      "size": 1886,
+      "sha256": "cf6511c2743004ff0a77f18da83e50777e309d8b5bf8c58d5429c4d569db8a85"
+    },
+    {
+      "file": "hexwnd.h",
+      "url": "https://raw.githubusercontent.com/WinMerge/frhed/f952092530cc16e2f8832fc15dc6ba4b13cbc032/FRHED/hexwnd.h",
+      "size": 14555,
+      "sha256": "8c9ce0906f257a3d9a8aca92d281a63dde67bfb1f617d4f18549054991aa9fa9"
+    },
+    {
+      "file": "heksedit.h",
+      "url": "https://raw.githubusercontent.com/WinMerge/frhed/f952092530cc16e2f8832fc15dc6ba4b13cbc032/FRHED/heksedit.h",
+      "size": 5505,
+      "sha256": "7201bd920b1a87748c18171c71f356e41795bbceb537436a21d1e44fa200c40e"
+    },
+    {
+      "file": "GPL.txt",
+      "url": "https://raw.githubusercontent.com/WinMerge/frhed/f952092530cc16e2f8832fc15dc6ba4b13cbc032/GPL.txt",
+      "size": 17987,
+      "sha256": "ba9ed2269151ad63b922598f3c5c19ddf781b2bbb6cb843ed9f085ecd1679c5d"
+    }
+  ],
+  "functions": [
+    {
+      "name": "iFindBytePos",
+      "startLine": 61,
+      "endLine": 65,
+      "sha256": "42eaa1c8285e0f30ae64f3b229654cc7fd481fec01ce34a38d39ddf2182e57c3",
+      "size": 156
+    },
+    {
+      "name": "iBytes2BytecodeDestLen",
+      "startLine": 87,
+      "endLine": 104,
+      "sha256": "265038fd30c5d83bbce060715435881fc19e0864d044d66fb80c2089869d6757",
+      "size": 501
+    },
+    {
+      "name": "iIsBytecode",
+      "startLine": 112,
+      "endLine": 180,
+      "sha256": "9fe8a93eb8db7890d4975acf4c4da9567ea8fb994244b4def959522759640f88",
+      "size": 1362
+    },
+    {
+      "name": "iTranslateOneBytecode",
+      "startLine": 186,
+      "endLine": 295,
+      "sha256": "3fa34511e9bd1fd902e198bff3078c7f0ae133b84e2b90193788ec532b3f011e",
+      "size": 1832
+    },
+    {
+      "name": "iLengthOfTransToBin",
+      "startLine": 299,
+      "endLine": 349,
+      "sha256": "21d21a4dec406602be24015f1adc230513d4940fcfc5baa190f1693c8b5dd994",
+      "size": 794
+    },
+    {
+      "name": "iCreateBcTranslation",
+      "startLine": 353,
+      "endLine": 403,
+      "sha256": "a11a3889a4549152df6efd7d6ae2e7a27425dcc277b1e4a314414adeb7f40a40",
+      "size": 1191
+    },
+    {
+      "name": "iTranslateBytesToBC",
+      "startLine": 429,
+      "endLine": 467,
+      "sha256": "4003df0b17246e8b902350537dc2fd24805e59c1a5aebaf672547e12d7261e0d",
+      "size": 691
+    }
+  ],
+  "extractedSha256": "72c3ba571171698554fc40d2fdf9140de87844593f38868879d66a4786202014",
+  "constants": {
+    "ANSI_SET": "ANSI_FIXED_FONT (hexwnd.h:52)",
+    "OEM_SET": "OEM_FIXED_FONT (hexwnd.h:53)",
+    "ENDIAN_LITTLE": "0 (heksedit.h:47, inherited by HexEditorWindow)",
+    "ENDIAN_BIG": "1 (heksedit.h:48)"
+  },
+  "exclusions": [
+    "All fl/do tokens: iTranslateOneBytecode returns uninitialized int value, even for valid finite aligned inputs (BinTrans.cpp:200,294).",
+    "Numeric token >=50 characters; sscanf failure; integer overflow; type/mode mismatch; nonfinite; misaligned floating point; huge input.",
+    "OEM/locale-specific nonASCII text; OS clipboard; GUI; Paste repeat/skip; direct nibble editing."
+  ]
+}

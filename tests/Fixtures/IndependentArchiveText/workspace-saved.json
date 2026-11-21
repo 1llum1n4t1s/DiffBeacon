@@ -1,0 +1,96 @@
+{
+  "formatVersion": 6,
+  "activeEntryIndex": 0,
+  "entries": [
+    {
+      "mode": "Text",
+      "leftPath": "",
+      "basePath": "",
+      "rightPath": "",
+      "leftReadOnly": true,
+      "baseReadOnly": true,
+      "rightReadOnly": true,
+      "textInputs": {
+        "semantics": "Independent",
+        "left": {
+          "kind": "Archive"
+        },
+        "middle": {
+          "kind": "Archive"
+        },
+        "right": {
+          "kind": "Archive"
+        }
+      },
+      "leftArchiveInput": {
+        "rootPath": "inputs/left.zip",
+        "entryChain": [
+          "outer.zip",
+          "inner.zip"
+        ],
+        "leafEntry": "texts/leaf.txt",
+        "rootSha256": "1FA7AA8D2329C5CCCD54403834E046E67106670512E700E79ACAF10D04A13B88",
+        "inheritedReadOnly": false,
+        "workingTexts": [
+          {
+            "entryChain": [
+              "outer.zip",
+              "inner.zip"
+            ],
+            "leafEntry": "texts/leaf.txt",
+            "snapshotPath": "workspace-saved.json.assets/82043DC209B112E6FD57546A70578AE47FB8D04EA7FEBFBBAFF56CE98C1FB23E.text",
+            "sha256": "82043DC209B112E6FD57546A70578AE47FB8D04EA7FEBFBBAFF56CE98C1FB23E",
+            "encodingName": "utf-8",
+            "hasBom": false
+          }
+        ]
+      },
+      "baseArchiveInput": {
+        "rootPath": "inputs/middle.zip",
+        "entryChain": [
+          "outer.zip",
+          "inner.zip"
+        ],
+        "leafEntry": "texts/leaf.txt",
+        "rootSha256": "8F5750B666FF7ED364B3DBCB7E26CD53BD3CC1A0F1C25FBEB671F669762833C0",
+        "inheritedReadOnly": false,
+        "workingTexts": [
+          {
+            "entryChain": [
+              "outer.zip",
+              "inner.zip"
+            ],
+            "leafEntry": "texts/leaf.txt",
+            "snapshotPath": "workspace-saved.json.assets/95368149D9AC9BA3E8D9575318697E6C0D4AE62596F81D35633BA9800659B6AB.text",
+            "sha256": "95368149D9AC9BA3E8D9575318697E6C0D4AE62596F81D35633BA9800659B6AB",
+            "encodingName": "utf-16",
+            "hasBom": true
+          }
+        ]
+      },
+      "rightArchiveInput": {
+        "rootPath": "inputs/right.zip",
+        "entryChain": [
+          "outer.zip",
+          "inner.zip"
+        ],
+        "leafEntry": "texts/leaf.txt",
+        "rootSha256": "9C849047318AD3A5036BE7A759914158BC24E8D5691B5E542D6685AC34A98308",
+        "inheritedReadOnly": false,
+        "workingTexts": [
+          {
+            "entryChain": [
+              "outer.zip",
+              "inner.zip"
+            ],
+            "leafEntry": "texts/leaf.txt",
+            "snapshotPath": "workspace-saved.json.assets/08856C7C050D9C4080D073528A0629B9F1FD23666651CA1F98EA09398321E3E9.text",
+            "sha256": "08856C7C050D9C4080D073528A0629B9F1FD23666651CA1F98EA09398321E3E9",
+            "encodingName": "windows-1252",
+            "hasBom": false
+          }
+        ]
+      }
+    }
+  ]
+}

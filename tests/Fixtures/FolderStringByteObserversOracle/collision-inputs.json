@@ -1,0 +1,72 @@
+[
+  {
+    "left": "80",
+    "right": "c3",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "a9",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "e4",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "e4b8",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "b8",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "ad",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "f0",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "f09f",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "9f",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "80",
+    "right": "98",
+    "replacementUtf8": "efbfbd"
+  },
+  {
+    "left": "a9e4",
+    "right": "b8ad",
+    "replacementUtf8": "efbfbdefbfbd"
+  },
+  {
+    "left": "a9e4",
+    "right": "adf0",
+    "replacementUtf8": "efbfbdefbfbd"
+  },
+  {
+    "left": "a9e4",
+    "right": "9f98",
+    "replacementUtf8": "efbfbdefbfbd"
+  },
+  {
+    "left": "a9e4",
+    "right": "9880",
+    "replacementUtf8": "efbfbdefbfbd"
+  }
+]

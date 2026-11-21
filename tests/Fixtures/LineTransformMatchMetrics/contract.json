@@ -1,0 +1,32 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "nativeCaseCount": 160,
+  "functions": [
+    "MatchCount",
+    "MatchNumber",
+    "MatchDistance",
+    "MatchDistanceBefore",
+    "MatchDistanceAfter"
+  ],
+  "failurePlan": [
+    "Empty/no/all/edge/multiple ranges, nearest tie and missing direction.",
+    "Non-bool scalar, direct bool array, nested array and mixed predicate values.",
+    "First/middle/last scan throw, no partial outer cache publication, nested inner cache survival.",
+    "Repeated same AST, separate AST, changed cached predicate, cleared context and cross-function same-AST cache.",
+    "Missing provider and outside line indexes are native-only probes.",
+    "Public bridge compares all-row serialized keys indirectly; runtime rejection does not assert native exception class.",
+    "Two independent MSVC compilations and child runs must match raw stdout bytes; every source span and proof entry is pinned."
+  ],
+  "publicBridge": {
+    "serialized-key-comparison": 95,
+    "runtime-rejection": 15,
+    "native-only": 50
+  },
+  "notObserved": [
+    "Native parser/whole optimizer execution",
+    "Native type/cache/AST identity via public CLI",
+    "Product cancellation or GUI",
+    "Same compiled plan across real Transform calls",
+    "Native AOT or other OS"
+  ]
+}

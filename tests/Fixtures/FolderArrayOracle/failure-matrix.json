@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "failures": [
+    "zero/null arity",
+    "variadic truncation",
+    "type coercion",
+    "flattening/reordering",
+    "short circuit on false/none/empty",
+    "multiple evaluation",
+    "evaluation after exception",
+    "source or stdout drift"
+  ]
+}

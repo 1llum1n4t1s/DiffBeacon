@@ -1,0 +1,76 @@
+{
+  "files": {
+    ".gitattributes": {
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    "adapter.cpp": {
+      "size": 4466,
+      "sha256": "0d1311d3bfbe1c2ee25600ee2cd74f3dce7181223ba3e8bfd644ccfe773c777e"
+    },
+    "capture-index.json": {
+      "size": 567,
+      "sha256": "463c4c6270769248a3f5c7fe6aa92e8fdbbd5b03ee76e2e9ca27d2dfe168bc71"
+    },
+    "cases.json": {
+      "size": 33614,
+      "sha256": "fd4f24f146296be9ba94f3a6c58f0aa03097249b7349f7496f798e84dc366cee"
+    },
+    "failure-matrix.md": {
+      "size": 2619,
+      "sha256": "b87d671ba5225b350301b26cdd4fb7cb0ac86fb79664360314fd784832f939ca"
+    },
+    "golden.ndjson": {
+      "size": 9596,
+      "sha256": "cec7b277620a3d46fe7f6c6de9072f486a196c21cdb83e1ab64f6954297bc4e9"
+    },
+    "original/COPYING": {
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    "original/FilterExpressionNodes.cpp": {
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    "original/FilterExpressionNodes.h": {
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    "original/FilterParser.y": {
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    "original/Poco-Ascii.cpp": {
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4"
+    },
+    "original/Poco-Ascii.h": {
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1"
+    },
+    "original/Poco-LICENSE": {
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    "original/Poco-String.h": {
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2"
+    },
+    "provenance.json": {
+      "size": 3768,
+      "sha256": "5e08a9e067018888f0cbf3a7f3ea86ed9bf4923fa63b2138489403b5f5974ac8"
+    },
+    "README.md": {
+      "size": 4414,
+      "sha256": "00fca88af3e1c0aa66009623c3e88d3826d9d15b4e9492365ead379fa508af67"
+    },
+    "reproduce.py": {
+      "size": 4787,
+      "sha256": "1929e3e4e1734db6e3999aab5550c57e8c5784ffd20ee77bd8b6309daeaf9d05"
+    },
+    "verify.py": {
+      "size": 7263,
+      "sha256": "4a98cf7b803e103adf34d86c5b5d95b8991e9abe1493855b942822c5e6e48903"
+    }
+  }
+}

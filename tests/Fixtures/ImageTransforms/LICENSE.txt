@@ -1,0 +1,10 @@
+SPDX-License-Identifier: CC0-1.0
+
+The self-authored input PNG and extraction utility are dedicated to the public
+domain under CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+The golden records observations of WinIMerge v1.0.54, not an independently
+implemented copy algorithm. WinIMerge source is GPLv2; its canonical license
+is ../ImageRegions/LICENSE.txt and must remain available with this fixture.
+The upstream license is referenced without duplicating its canonical text.

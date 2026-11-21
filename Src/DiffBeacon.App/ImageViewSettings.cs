@@ -1,0 +1,65 @@
+namespace DiffBeacon.App;
+
+public sealed record ImageViewSettings
+{
+    public int LeftFrame { get; set; } = 1;
+    public int MiddleFrame { get; set; } = 1;
+    public int RightFrame { get; set; } = 1;
+    public double Threshold { get; set; }
+    public double Zoom { get; set; } = 1;
+    private readonly struct OpacityValue(double value, bool isExplicit) : IEquatable<OpacityValue>
+    {
+        internal double Value { get; } = value;
+        internal bool IsExplicit { get; } = isExplicit;
+        public bool Equals(OpacityValue other) => Value.Equals(other.Value);
+        public override bool Equals(object? obj) => obj is OpacityValue other && Equals(other);
+        public override int GetHashCode() => Value.GetHashCode();
+    }
+    private OpacityValue _overlayOpacity = new(.3, false);
+    public double OverlayOpacity { get => _overlayOpacity.Value; set => _overlayOpacity = new(value, true); }
+    internal bool HasExplicitOverlayOpacity => _overlayOpacity.IsExplicit;
+    internal void SetInheritedOverlayOpacity(double value) => _overlayOpacity = new(value, false);
+    internal void RestoreOverlayOpacityPresence(bool explicitValue) => _overlayOpacity = new(_overlayOpacity.Value, explicitValue);
+    public double HighlightAlpha { get; set; } = .7;
+    public bool ShowDifferences { get; set; } = true;
+    public bool ReportAllFrames { get; set; } = true;
+    public string View { get; set; } = "SideBySide";
+    public int BlockSize { get; set; } = 8;
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]
+    public int InsertionDeletionMode { get; set; }
+    public ImageOrientation LeftOrientation { get; set; } = new();
+    public ImageOrientation MiddleOrientation { get; set; } = new();
+    public ImageOrientation RightOrientation { get; set; } = new();
+    public ImageOffset LeftOffset { get; set; }
+    public ImageOffset MiddleOffset { get; set; }
+    public ImageOffset RightOffset { get; set; }
+
+    internal int[] FrameNumbers(bool three) => three ? [LeftFrame, MiddleFrame, RightFrame] : [LeftFrame, RightFrame];
+    internal ImageOrientation[] Orientations(bool three) => three
+        ? [LeftOrientation, MiddleOrientation, RightOrientation] : [LeftOrientation, RightOrientation];
+    internal ImageOffset[] Offsets(bool three) => three
+        ? [LeftOffset, MiddleOffset, RightOffset] : [LeftOffset, RightOffset];
+
+    internal static void Validate(ImageViewSettings? settings)
+    {
+        if (settings is null) throw new InvalidDataException("画像設定が null です。");
+        ImageOrientation.Validate(settings.LeftOrientation); ImageOrientation.Validate(settings.MiddleOrientation);
+        ImageOrientation.Validate(settings.RightOrientation);
+        foreach (var offset in settings.Offsets(true))
+            if (offset.X < 0 || offset.Y < 0 || offset.X > ImageComparisonEngine.MaximumPixels || offset.Y > ImageComparisonEngine.MaximumPixels)
+                throw new InvalidDataException("保存する画像位置は非負の比較キャンバス範囲内です。");
+        if (settings.BlockSize is < 1 or > 256) throw new InvalidDataException("画像差分のブロックサイズは1～256です。");
+        ImageComparisonEngine.ValidateInsertionDeletionMode(settings.InsertionDeletionMode);
+        if (settings.LeftFrame is < 1 or > 1024 || settings.MiddleFrame is < 1 or > 1024 || settings.RightFrame is < 1 or > 1024)
+            throw new InvalidDataException("保存する画像ページ番号は1～1024です。");
+        if (!double.IsFinite(settings.Threshold) || settings.Threshold is < 0 or > 510)
+            throw new InvalidDataException("保存する画像閾値は0～510の有限値です。");
+        if (!double.IsFinite(settings.Zoom) || settings.Zoom is < .1 or > 8)
+            throw new InvalidDataException("保存する画像倍率は0.1～8の有限値です。");
+        if (!double.IsFinite(settings.OverlayOpacity) || settings.OverlayOpacity is < 0 or > 1)
+            throw new InvalidDataException("画像の重ね合わせ不透明度は0～1の有限値です。");
+        ImageComparisonEngine.ValidateHighlightAlpha(settings.HighlightAlpha);
+        if (settings.View is not ("SideBySide" or "Overlay" or "PixelDifference"))
+            throw new InvalidDataException("画像の表示方式が不正です。");
+    }
+}

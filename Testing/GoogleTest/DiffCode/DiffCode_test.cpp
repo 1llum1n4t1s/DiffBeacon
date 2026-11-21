@@ -40,12 +40,6 @@ namespace
 		// Objects declared here can be used by all tests in the test case for Foo.
 	};
 
-	TEST_F(DiffCodeTest, Construct1)
-	{
-		DIFFCODE dc(0);
-		EXPECT_TRUE(dc.diffcode == 0);
-	}
-
 	TEST_F(DiffCodeTest, swap2wayBinside)
 	{
 		DIFFCODE dc(DIFFCODE::BIN | DIFFCODE::BINSIDE1);

@@ -1,0 +1,141 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "reusedArchiveSha256": "18ed25d74eba5e151bf5fd1a2e811b2490af2ce4c3e39b273a2d563abe8da4e7",
+  "sources": [
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "blob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+      "origin": "sibling-fixed-reference-zip",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "blob": "c5533753a5d4f3200f077e0302cc28c2f3871cc9",
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736",
+      "origin": "sibling-fixed-reference-zip",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpression.h",
+      "blob": "1ce387b86911b4cafc3b8dbbbd3e34f4e554f185",
+      "size": 3539,
+      "sha256": "115ff8a8cef7760ae6a2019b57ab6c760a55fe6b4484c1e1c4c5a9cf845b0f0c",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FilterEngine/ILineDataProvider.h",
+      "blob": "c85e30328c157be0bfd166c8695e973585ee5df4",
+      "size": 1300,
+      "sha256": "841545932977bc270fb7d2a61f421fe9930c285200502e619e9061f77f8f555b",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpression.cpp",
+      "blob": "538df75d94f20e191f0dea9847d9b1f562ec7b8f",
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Src/FileTransform.cpp",
+      "blob": "a99444d7ced77e805824a807cdf5b803bae1d7d9",
+      "size": 51547,
+      "sha256": "a37500cf3ad1e1713752474a9d3e3e400e4ed3806c23ef22d220fdbdf7f6f599",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/Ascii.h",
+      "blob": "5121dba871b7f49b15d2bbff4179b8fed0dfbacb",
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "BSL-1.0"
+    },
+    {
+      "path": "Externals/poco/Foundation/src/Ascii.cpp",
+      "blob": "5d5fab79218311816d919e443dc79508b1919457",
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "BSL-1.0"
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/String.h",
+      "blob": "f47347b01ba18bd761bb2755b1785172fe4f7ef4",
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "BSL-1.0"
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/Timestamp.h",
+      "blob": "cb7ae662db95afd24f558292b55f667234cb2604",
+      "size": 6256,
+      "sha256": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "BSL-1.0"
+    },
+    {
+      "path": "Externals/poco/Foundation/src/Timestamp.cpp",
+      "blob": "bf612e7f1775ee688a112523d404ffa0ec57d6bd",
+      "size": 3853,
+      "sha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "BSL-1.0"
+    },
+    {
+      "path": "Externals/poco/Foundation/include/Poco/Types.h",
+      "blob": "2e9941f49f3faee46678314bb91781d6c4afce65",
+      "size": 4608,
+      "sha256": "a9aa7e44ea8ff34d8c97aba0fc8fb6719b788cec13314844ccd8e204c9192a20",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "BSL-1.0"
+    },
+    {
+      "path": "LICENSE.md",
+      "blob": "28fbecabf5c0c4489cdd781e297cdf1c4cd7fde6",
+      "size": 17895,
+      "sha256": "aef8b4222b79d0dbf6bf17cfff71c90a6a6bb8917a4162abe417b469ed22da2e",
+      "origin": "sibling-fixed-reference-zip",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    },
+    {
+      "path": "Externals/poco/LICENSE",
+      "blob": "2f2f957ce4f48733875f0791d0d383e8d9319205",
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5",
+      "origin": "sibling-fixed-reference-zip",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "BSL-1.0"
+    },
+    {
+      "path": "Src/FilterEngine/FilterError.h",
+      "blob": "81e3b35ef89c1a3accd6d49f3379e62beb49ab8b",
+      "size": 1391,
+      "sha256": "160a03bf7f2a0ed0a4db66a3d5211a8dccd7445e7eb0d2b7fd640c3fa914fa2b",
+      "origin": "additional-local-raw-git-blob",
+      "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "license": "GPL-2.0"
+    }
+  ]
+}

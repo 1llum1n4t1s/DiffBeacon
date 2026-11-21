@@ -1,0 +1,32 @@
+[
+  {
+    "entry": "before/adapter.cpp",
+    "size": 7033,
+    "crc32": "2a94b38f",
+    "sha256": "35e4a82c87c146c1e7245d3f8925da0f1e22b9d8adb83f06cc12fc2067b599b8"
+  },
+  {
+    "entry": "before/cases.json",
+    "size": 30453,
+    "crc32": "ec4510ad",
+    "sha256": "76298ea1c62b03019c980ea708aa675567bcb565e6981f39305ad2cbb7e311fb"
+  },
+  {
+    "entry": "before/cases.inc",
+    "size": 11920,
+    "crc32": "1ea9b7e1",
+    "sha256": "d38e05fa6709afe6a847740afd8721849ad0d63c50b453f84158380dfb4066f1"
+  },
+  {
+    "entry": "initial-native92/proof.json",
+    "size": 7921,
+    "crc32": "5be0d185",
+    "sha256": "21fb9c513b2287b00f2a2c7fec5e0962b933dfcfd35bcec0960c7040f4656938"
+  },
+  {
+    "entry": "initial-native92/golden.ndjson",
+    "size": 27560,
+    "crc32": "9b8a8c51",
+    "sha256": "d62ce9ce3434147bd5c5b5180c0c6bb6fa60e55cdbdb34bac08f86561af94a9c"
+  }
+]

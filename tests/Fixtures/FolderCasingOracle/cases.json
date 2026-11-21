@@ -1,0 +1,970 @@
+[
+  {
+    "id": "lower-ascii",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "AbC XYZ 019_-/"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-ascii",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "AbC XYZ 019_-/"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-empty",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-empty",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-turkish",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "I i \u0130 \u0131"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-turkish",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "I i \u0130 \u0131"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-sharp-s",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00df \u1e9e Stra\u00dfe"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-sharp-s",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00df \u1e9e Stra\u00dfe"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-sigma",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u03a3 \u03c3 \u03c2 \u039f\u03a3 \u039f\u03a3\u0391"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-sigma",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u03a3 \u03c3 \u03c2 \u039f\u03a3 \u039f\u03a3\u0391"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-combining",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "I\u0307 A\u030a E\u0301"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-combining",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "I\u0307 A\u030a E\u0301"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-supplementary",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud801\udc00\ud801\udc28 \ud83a\udd00\ud83a\udd22 \ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-supplementary",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ud801\udc00\ud801\udc28 \ud83a\udd00\ud83a\udd22 \ud83d\ude00"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-embedded-nul",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "A\u0000Z"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "upper-embedded-nul",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "A\u0000Z"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "lower-ligatures",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb00 \ufb01 \ufb03"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-ligatures",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "\ufb00 \ufb01 \ufb03"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-latin",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00c0\u00c9\u00c6 \u0152 \u0141"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-latin",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u00c0\u00c9\u00c6 \u0152 \u0141"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-cyrillic",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0410\u0411\u0412 \u0430\u0431\u0432"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-cyrillic",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "\u0410\u0411\u0412 \u0430\u0431\u0432"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-none",
+    "function": "lower",
+    "args": [
+      {
+        "type": "none",
+        "value": null
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-none",
+    "function": "upper",
+    "args": [
+      {
+        "type": "none",
+        "value": null
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-bool-true",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-bool-true",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-bool-false",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-bool-false",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-integer",
+    "function": "lower",
+    "args": [
+      {
+        "type": "int",
+        "value": "-123"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-integer",
+    "function": "upper",
+    "args": [
+      {
+        "type": "int",
+        "value": "-123"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-double",
+    "function": "lower",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "upper-double",
+    "function": "upper",
+    "args": [
+      {
+        "type": "double",
+        "value": "1.25"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-flt-candidate"
+  },
+  {
+    "id": "lower-regex",
+    "function": "lower",
+    "args": [
+      {
+        "type": "regex",
+        "value": null
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "upper-regex",
+    "function": "upper",
+    "args": [
+      {
+        "type": "regex",
+        "value": null
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "lower-file",
+    "function": "lower",
+    "args": [
+      {
+        "type": "file",
+        "value": null
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "upper-file",
+    "function": "upper",
+    "args": [
+      {
+        "type": "file",
+        "value": null
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "lower-shallow",
+    "function": "lower",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "AbC"
+          },
+          {
+            "type": "none",
+            "value": null
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "int",
+            "value": "4"
+          },
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\u0130\u03a3"
+              },
+              {
+                "type": "none",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "upper-shallow",
+    "function": "upper",
+    "args": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "string",
+            "value": "AbC"
+          },
+          {
+            "type": "none",
+            "value": null
+          },
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "int",
+            "value": "4"
+          },
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "string",
+                "value": "\u0130\u03a3"
+              },
+              {
+                "type": "none",
+                "value": null
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "lower-empty-array",
+    "function": "lower",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "upper-empty-array",
+    "function": "upper",
+    "args": [
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "lower-throws",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "upper-throws",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "ABC"
+      }
+    ],
+    "throws": [
+      0
+    ],
+    "nullArgs": false,
+    "projection": "native-only"
+  },
+  {
+    "id": "lower-zero",
+    "function": "lower",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "arity-boundary"
+  },
+  {
+    "id": "lower-null",
+    "function": "lower",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "arity-boundary"
+  },
+  {
+    "id": "lower-two",
+    "function": "lower",
+    "args": [
+      {
+        "type": "string",
+        "value": "A"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      }
+    ],
+    "throws": [
+      0,
+      1
+    ],
+    "nullArgs": false,
+    "projection": "arity-boundary"
+  },
+  {
+    "id": "upper-zero",
+    "function": "upper",
+    "args": [],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "arity-boundary"
+  },
+  {
+    "id": "upper-null",
+    "function": "upper",
+    "args": [],
+    "throws": [],
+    "nullArgs": true,
+    "projection": "arity-boundary"
+  },
+  {
+    "id": "upper-two",
+    "function": "upper",
+    "args": [
+      {
+        "type": "string",
+        "value": "A"
+      },
+      {
+        "type": "string",
+        "value": "B"
+      }
+    ],
+    "throws": [
+      0,
+      1
+    ],
+    "nullArgs": false,
+    "projection": "arity-boundary"
+  },
+  {
+    "id": "lower-substr-continuation",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-substr-continuation",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "a9"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-substr-lead",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c3"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-substr-lead",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c3"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-truncated-three",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-truncated-three",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e282"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-truncated-four",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09090"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-truncated-four",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f09090"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-stray-continuations",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "8081"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-stray-continuations",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "8081"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-overlong",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-overlong",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "c080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-surrogate",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-surrogate",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "eda080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-too-high",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-too-high",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "f4908080"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-bad-sequence-ascii",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e24142"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-bad-sequence-ascii",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "e24142"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-ff-ascii",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "ff4142"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-ff-ascii",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "ff4142"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "lower-nul-bad-nul",
+    "function": "lower",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00c300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  },
+  {
+    "id": "upper-nul-bad-nul",
+    "function": "upper",
+    "args": [
+      {
+        "type": "bytes",
+        "value": "00c300"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false,
+    "projection": "public-substr-byte-candidate"
+  }
+]

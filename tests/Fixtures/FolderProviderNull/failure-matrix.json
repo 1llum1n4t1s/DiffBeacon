@@ -1,0 +1,4341 @@
+{
+  "nativeCases": 159,
+  "nativePublicNotation": 114,
+  "controlledProbeNotProjected": 45,
+  "productExecuted": false,
+  "plannedCommands": 864,
+  "unverified": [
+    "lexer/depth limit injection",
+    "cancellation injection",
+    "native full parser/constructor/child Optimize",
+    "actual typed public None value",
+    "property/list OS read instrumentation",
+    "native TraceThrow exception type/message equivalence"
+  ],
+  "cases": [
+    {
+      "id": "native-average-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n2-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n2-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n2-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n2-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n2-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-average-n2-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n2-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n2-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n2-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n2-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n2-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-maximum-n2-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n2-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n2-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n2-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n2-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n2-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-minimum-n2-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n2-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n2-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n2-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n2-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n2-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-sum-n2-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcount-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcount-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcount-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcount-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcount-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcount-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchnumber-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchnumber-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchnumber-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchnumber-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchnumber-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchnumber-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistance-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistance-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistance-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistance-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistance-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistance-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistancebefore-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistancebefore-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistancebefore-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistancebefore-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistancebefore-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistancebefore-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistanceafter-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistanceafter-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistanceafter-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistanceafter-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistanceafter-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchdistanceafter-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcontext-n3-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcontext-n3-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcontext-n3-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcontext-n3-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcontext-n3-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchcontext-n3-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchinside-n2-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchinside-n2-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchinside-n2-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchinside-n2-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchinside-n2-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchinside-n2-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockcount-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockcount-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockcount-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockcount-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockcount-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockcount-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocknumber-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocknumber-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocknumber-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocknumber-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocknumber-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocknumber-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockoffset-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockoffset-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockoffset-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockoffset-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockoffset-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblockoffset-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocksize-n1-integer",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocksize-n1-bool",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocksize-n1-string",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocksize-n1-none",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocksize-n1-array",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "native-matchblocksize-n1-double",
+      "scope": "native-none-public-notation",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "average-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "maximum-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "minimum-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "sum-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcount-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchnumber-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistance-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistancebefore-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchdistanceafter-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchcontext-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchinside-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockcount-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocknumber-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblockoffset-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-rule-e",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "e",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-rule-de",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "de",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-neq",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-lt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-gt-not",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-if",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-direct",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-case",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-inner-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-outer-log",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-property-child",
+      "scope": "derived-public-contract",
+      "expected": "Windows: validated property preparation then None; non-Windows: preparation rejects with exit 2 / empty stdout / Windows diagnostic / retained inputs",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-external-list-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-throw-child",
+      "scope": "derived-public-contract",
+      "expected": "native None projected through public selection",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-zero",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-excess",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-missing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-trailing-comma",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-missing-close",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-unknown-child",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-malformed-nested",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "matchblocksize-reject-bare",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "throw-sentinel-standalone",
+      "scope": "derived-public-throw-control",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "reject-alias-MatchBefore",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    },
+    {
+      "id": "reject-alias-MatchAfter",
+      "scope": "derived-parser-rejection",
+      "expected": "exit 2 / stdout empty / input and existing sentinel unchanged",
+      "rule": "fe",
+      "optimizationDirective": "@noopt",
+      "nativePhaseQualification": "native-function-body-only",
+      "nativeOptimizedPhaseQualified": false,
+      "nativeDefaultOptimizationQualified": false
+    }
+  ],
+  "optimizationDirective": "@noopt",
+  "nativePhaseQualification": "native-function-body-only",
+  "nativeOptimizedPhaseQualified": false,
+  "nativeDefaultOptimizationQualified": false
+}

@@ -1,0 +1,3968 @@
+[
+  {
+    "id": "empty",
+    "mode": "evaluate",
+    "args": []
+  },
+  {
+    "id": "null",
+    "mode": "null",
+    "args": []
+  },
+  {
+    "id": "scalar-0",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-1",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-2",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-3",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-4",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-5",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-6",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-7",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-8",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-9",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-10",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-11",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-12",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-13",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-14",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      }
+    ]
+  },
+  {
+    "id": "scalar-15",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "mixed-order",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "reverse-order",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  {
+    "id": "integer-double-slots",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "nested",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        }
+      },
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            }
+          ]
+        }
+      },
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": []
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 2
+                },
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "timestamp",
+                      "value": 42
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "tail"
+        }
+      }
+    ]
+  },
+  {
+    "id": "no-short-circuit",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9
+        }
+      }
+    ]
+  },
+  {
+    "id": "variadic-128",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 2
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 3
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 4
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 5
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 6
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 8
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 10
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 11
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 12
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 13
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 14
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 15
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 16
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 17
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 18
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 19
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 20
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 21
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 22
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 23
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 24
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 25
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 26
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 27
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 28
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 29
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 30
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 31
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 32
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 33
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 34
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 35
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 36
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 37
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 38
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 39
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 40
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 41
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 42
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 43
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 44
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 45
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 46
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 47
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 48
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 49
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 50
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 51
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 52
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 53
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 54
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 55
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 56
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 57
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 58
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 59
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 60
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 61
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 62
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 63
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 64
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 65
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 66
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 67
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 68
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 69
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 70
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 71
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 72
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 73
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 74
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 75
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 76
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 77
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 78
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 79
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 80
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 81
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 82
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 83
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 84
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 85
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 86
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 87
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 88
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 89
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 90
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 91
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 92
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 93
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 94
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 95
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 96
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 97
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 98
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 99
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 100
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 101
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 102
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 103
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 104
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 105
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 106
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 107
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 108
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 109
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 110
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 111
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 112
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 113
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 114
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 115
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 116
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 117
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 118
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 119
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 120
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 121
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 122
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 123
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 124
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 125
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 126
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 127
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-1-0",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "throws-4-0",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-4-1",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-4-2",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-4-3",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "throws-16-0",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-1",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-2",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-3",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-4",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-5",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-6",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-7",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-8",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-9",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-10",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-11",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-12",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-13",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-14",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        }
+      }
+    ]
+  },
+  {
+    "id": "throws-16-15",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      },
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 0.0
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": -2.5
+        }
+      },
+      {
+        "value": {
+          "type": "double",
+          "value": 1.0000000000000002
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 0
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": -1
+        }
+      },
+      {
+        "value": {
+          "type": "timestamp",
+          "value": 1234567890123456
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "A\u0000B\n\"\\"
+        }
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": "日本語😀"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-0",
+    "mode": "arity",
+    "args": []
+  },
+  {
+    "id": "arity-1",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "arity-2",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "arity-16",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 2
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 3
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 4
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 5
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 6
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 8
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 10
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 11
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 12
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 13
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 14
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 15
+        }
+      }
+    ]
+  },
+  {
+    "id": "arity-128",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 0
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 1
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 2
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 3
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 4
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 5
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 6
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 7
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 8
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 9
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 10
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 11
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 12
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 13
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 14
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 15
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 16
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 17
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 18
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 19
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 20
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 21
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 22
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 23
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 24
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 25
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 26
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 27
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 28
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 29
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 30
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 31
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 32
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 33
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 34
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 35
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 36
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 37
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 38
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 39
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 40
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 41
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 42
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 43
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 44
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 45
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 46
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 47
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 48
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 49
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 50
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 51
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 52
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 53
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 54
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 55
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 56
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 57
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 58
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 59
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 60
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 61
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 62
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 63
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 64
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 65
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 66
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 67
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 68
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 69
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 70
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 71
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 72
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 73
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 74
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 75
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 76
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 77
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 78
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 79
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 80
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 81
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 82
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 83
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 84
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 85
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 86
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 87
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 88
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 89
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 90
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 91
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 92
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 93
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 94
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 95
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 96
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 97
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 98
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 99
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 100
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 101
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 102
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 103
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 104
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 105
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 106
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 107
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 108
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 109
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 110
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 111
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 112
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 113
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 114
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 115
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 116
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 117
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 118
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 119
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 120
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 121
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 122
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 123
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 124
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 125
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 126
+        }
+      },
+      {
+        "value": {
+          "type": "integer",
+          "value": 127
+        }
+      }
+    ]
+  }
+]

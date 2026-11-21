@@ -1,0 +1,12 @@
+{
+  "runs": [
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\substr-oracle-20261020-r1\\run1",
+      "receiptSha256": "91ad0a7b4581d25c07021f7f8d93e13f080a47efa7291d825e4d6bfa45998fc0"
+    },
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\substr-oracle-20261020-r1\\run2",
+      "receiptSha256": "635d9fe0478b5d5f25b3861132e387970aeee48e11b3c88088963405e02014cb"
+    }
+  ]
+}

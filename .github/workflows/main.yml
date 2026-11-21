@@ -1,48 +1,164 @@
-name: CI
+name: .NET CI
 
+# 検証専用のCI。配布物はWindowsをこのPCで署名付きビルドし、macOSは自前Macでビルドするため、
+# CIの発行物は配布に使わない。作業ブランチへのpushはwin-x64だけで素早く確認し、
+# 全構成（win-arm64・osx-arm64を含む）はmasterへのpush、PR、手動実行、週1回の定期実行で回す。
+#
+# 所要時間を抑えるため、同じ検査を二度流さない・同じコードの網羅を全構成で繰り返さない。
+# - 全体自己検証は、E2Eの限定selectorが独立readerと一緒に同じ検査を実行する単位を省く（-SkipE2ECoveredSelfTest）。
+# - 式評価などOS非依存の網羅オラクルは、全構成を回す実行のwin-x64だけで全件（--oracles full）流す。
+#   win-arm64・osx-arm64と、作業ブランチのpushは代表だけの smoke とし、省いた単位は skipped としてE2Eの結果に残る。
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 18 * * 0'
   push:
-    branches: [ master ]
+    # 製品・検証・CIに影響しない変更（文書、旧WinMergeの参照用ディレクトリ）ではCIを起動しない。
+    # 後勝ちなので、Src配下はDiffBeacon.*だけを対象へ戻す。fixtureのREADMEはSHA固定されているため除外しない。
+    paths:
+      - '**'
+      - '!*.md'
+      - '!Docs/**'
+      - '!Src/**'
+      - 'Src/DiffBeacon.*/**'
+      - '!Src/DiffBeacon.*/**/*.md'
+      - '!ArchiveSupport/**'
+      - '!ColorSchemes/**'
+      - '!Filters/**'
+      - '!Installer/**'
+      - '!Plugins/**'
+      - '!ShellExtension/**'
+      - '!Testing/**'
+      - '!Tools/**'
+      - '!Translations/**'
   pull_request:
-    branches: [ master ]
+    # pushと同じ対象。YAMLアンカーに頼らず明示的に複製する。
+    paths:
+      - '**'
+      - '!*.md'
+      - '!Docs/**'
+      - '!Src/**'
+      - 'Src/DiffBeacon.*/**'
+      - '!Src/DiffBeacon.*/**/*.md'
+      - '!ArchiveSupport/**'
+      - '!ColorSchemes/**'
+      - '!Filters/**'
+      - '!Installer/**'
+      - '!Plugins/**'
+      - '!ShellExtension/**'
+      - '!Testing/**'
+      - '!Tools/**'
+      - '!Translations/**'
 
 permissions:
   contents: read
 
+# 同じrefの古いrunは新しいpushで打ち切る（定期実行は打ち切らない）。
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'schedule' }}
+
+env:
+  # 全構成で検証するか。製品ブランチと master への push、PR、手動、定期実行は macOS を含む。他の作業ブランチは win-x64 だけ。
+  DIFFBEACON_FULL_MATRIX: ${{ github.event_name != 'push' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/avalonia-net10-native-port' }}
+
 jobs:
-  build:
-    if: "!contains(github.event.head_commit.message, 'skip ci')"
-    
-    runs-on: windows-latest
-
-    steps:  
-    - name: Configure Git for long paths
-      run: git config --global core.longpaths true
-
-    - uses: actions/checkout@v6
-      with:
-        submodules: 'recursive'
-
-    - name: Cache
-      uses: actions/cache@v5
-      with:
-        path: Build/WinMergeDownloadDeps
-        key: WinMergeDownloadDeps
-
-    - name: Build
-      run: |
-        .\DownloadDeps.cmd
-        .\BuildAll.cmd x64 -ci
-
-    - name: Upload zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: WinMerge-x64.zip
-        path: Build/Releases/*.zip
-
-    - name: Upload installer
-      uses: actions/upload-artifact@v4
-      with:
-        name: WinMerge-x64-Setup-x64.exe
-        path: Build/Releases/*.exe
+  build-and-verify:
+    if: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+    name: Native AOT / ${{ matrix.rid }}
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON((github.event_name != 'push' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/codex/avalonia-net10-native-port') && '[{"rid":"win-x64","runs-on":["windows-2025"],"oracles":"full"},{"rid":"win-arm64","runs-on":["windows-11-arm"],"oracles":"smoke"},{"rid":"osx-arm64","runs-on":["macos-15"],"oracles":"smoke"}]' || '[{"rid":"win-x64","runs-on":["windows-2025"],"oracles":"smoke"}]') }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: false
+          # 固定readerは履歴上の原典コミット（例: 6780924ba）のblobを `git rev-parse <commit>:<path>` で照合する。
+          # 浅いcheckoutではそのコミットが無いため、全履歴（pack約111MiB）を取得する。
+          fetch-depth: 0
+      # optimizer等の固定期待値は、ローカル日時をUTC+9（Tokyo、夏時間なし）で解釈して採取した。
+      # GitHubのWindows runnerはUTCなので、採取時と同じタイムゾーンへ切り替える。
+      # ja-JP／LCID1041まで要求する暦関数スイートは、locale不一致のため従来どおり理由付きでskipされる。
+      - name: Use the captured Tokyo time zone
+        if: runner.os == 'Windows'
+        # Git bash は /s をパスへ変換するため、変換を止めてから tzutil を呼ぶ。
+        run: MSYS2_ARG_CONV_EXCL='*' tzutil /s "Tokyo Standard Time" && MSYS2_ARG_CONV_EXCL='*' tzutil /g
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 11.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      # 全構成がGitHub提供runnerなので、setup-python で3.13を使う（以前のself-hosted macOS用のuv迂回は不要になった）。
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Show verification Python
+        run: python --version
+      - name: Select external run output
+        run: |
+          set -euo pipefail
+          runRoot="${RUNNER_TEMP}/Codex/DiffBeacon/ci-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.rid }}"
+          echo "DIFFBEACON_RUN_ROOT=${runRoot}" >> "$GITHUB_ENV"
+      - name: Build verification projects
+        run: |
+          set -euo pipefail
+          dotnet build tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release
+          dotnet build tests/DiffBeacon.FakeProvider/DiffBeacon.FakeProvider.csproj -c Release
+      - name: Verify macOS SDK file kind ABI
+        if: startsWith(matrix.rid, 'osx-')
+        run: |
+          set -euo pipefail
+          dotnet run --project build/DiffBeacon.BuildTool/DiffBeacon.BuildTool.csproj -c Release -- mac-reference --output "${DIFFBEACON_RUN_ROOT}/folder-reference"
+      - name: Publish and verify native application
+        run: |
+          set -euo pipefail
+          dotnet run --project build/DiffBeacon.BuildTool/DiffBeacon.BuildTool.csproj -c Release -- publish --rid "${{ matrix.rid }}" --output "${DIFFBEACON_RUN_ROOT}/publish" --artifacts "${DIFFBEACON_RUN_ROOT}/build" --timeout 1200 --skip-e2e-covered
+      - name: Build independent Z decoder for verification
+        run: |
+          set -euo pipefail
+          dotnet run --project build/DiffBeacon.BuildTool/DiffBeacon.BuildTool.csproj -c Release --no-build -- z-reference --output "${DIFFBEACON_RUN_ROOT}/z-reference"
+      - name: Run end-to-end scenarios
+        run: |
+          set -euo pipefail
+          app="$(dotnet run --project build/DiffBeacon.BuildTool/DiffBeacon.BuildTool.csproj -c Release --no-build -- manifest-executable --publish "${DIFFBEACON_RUN_ROOT}/publish/${{ matrix.rid }}")"
+          decoder="ncompress"
+          if [ "${{ runner.os }}" = "Windows" ]; then decoder="ncompress.exe"; fi
+          dotnet run --project tests/DiffBeacon.E2E/DiffBeacon.E2E.csproj -c Release --no-build -- --output "${DIFFBEACON_RUN_ROOT}/e2e" --app "$app" --z-reference "${DIFFBEACON_RUN_ROOT}/z-reference/${decoder}" --oracles ${{ matrix.oracles }}
+      - name: Verify actual OS clipboard across application processes
+        run: |
+          set -euo pipefail
+          app="$(dotnet run --project build/DiffBeacon.BuildTool/DiffBeacon.BuildTool.csproj -c Release --no-build -- manifest-executable --publish "${DIFFBEACON_RUN_ROOT}/publish/${{ matrix.rid }}")"
+          "$app" --clipboard-self-test "${DIFFBEACON_RUN_ROOT}/verification/desktop-clipboard" --write
+          "$app" --clipboard-self-test "${DIFFBEACON_RUN_ROOT}/verification/desktop-clipboard" --read
+          "$app" --clipboard-self-test "${DIFFBEACON_RUN_ROOT}/verification/desktop-binary-clipboard" --binary-write
+          "$app" --clipboard-self-test "${DIFFBEACON_RUN_ROOT}/verification/desktop-binary-clipboard" --binary-read
+      - name: Record evidence directories and file hashes before upload
+        if: always()
+        run: python -B build/Capture-EvidenceInventory.py --base-directory "${DIFFBEACON_RUN_ROOT}" --root e2e --root verification --root "publish/verification/${{ matrix.rid }}" --root z-reference --root folder-reference --root "publish/${{ matrix.rid }}/publish-manifest.json" --output evidence.json
+      - name: Upload verification evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: verification-${{ matrix.rid }}
+          path: |
+            ${{ env.DIFFBEACON_RUN_ROOT }}/e2e/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/verification/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/publish/verification/${{ matrix.rid }}/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/publish-manifest.json
+            ${{ env.DIFFBEACON_RUN_ROOT }}/z-reference/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/folder-reference/
+            ${{ env.DIFFBEACON_RUN_ROOT }}/evidence.json
+          if-no-files-found: warn
+      # 配布物はローカルで作るため、発行物の保存は全構成のrunに限る（作業ブランチのpushでは保存しない）。
+      - name: Upload native application
+        if: env.DIFFBEACON_FULL_MATRIX == 'true'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: DiffBeacon-${{ matrix.rid }}
+          path: ${{ env.DIFFBEACON_RUN_ROOT }}/publish/${{ matrix.rid }}/
+          if-no-files-found: error

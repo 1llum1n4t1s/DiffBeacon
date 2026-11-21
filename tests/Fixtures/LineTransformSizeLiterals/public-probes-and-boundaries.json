@@ -1,0 +1,139 @@
+{
+  "tokenRuleProbes": [
+    {
+      "text": "1KB",
+      "sizeLexemeMatchesStaticRule": true,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1kb",
+      "sizeLexemeMatchesStaticRule": true,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1.5mB",
+      "sizeLexemeMatchesStaticRule": true,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": ".1KB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1.KB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1e2KB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1 KB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1KBB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1KiB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1PB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "KB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "0x10KB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1.2.3KB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    },
+    {
+      "text": "1\nKB",
+      "sizeLexemeMatchesStaticRule": false,
+      "classification": "static-lexer-rule-only",
+      "executed": false,
+      "actualLexerOrParserExecuted": false,
+      "source": "FilterLexer.re6..10,33..40; case-insensitive re2c flag; not generated lexer/full parser"
+    }
+  ],
+  "unsupported": [
+    {
+      "id": "int64-upper-cast",
+      "inputs": [
+        "9223372036854775808B",
+        "8388608TB"
+      ],
+      "executed": false,
+      "classification": "undefined-or-platform-specific-cast-do-not-use-golden",
+      "boundary": "double scaled value >=2^63 or nonfinite; native cast not executed; proposed public reject policy separate"
+    },
+    {
+      "id": "stod-underflow-vs-public-parse",
+      "nativeCaseId": "constructor-stod-underflow",
+      "publicExecuted": false,
+      "classification": "native-stod-exception-catch0-only; C# parse0 not observed"
+    },
+    {
+      "id": "real-parser-directives-and-fullAST",
+      "executed": false,
+      "classification": "source evidence and manual optimizer routing only; parser/directive semantics not qualified"
+    }
+  ]
+}

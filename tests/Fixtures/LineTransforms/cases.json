@@ -1,0 +1,3137 @@
+[
+  {
+    "id": "range-00",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-01",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-02",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-03",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-04",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3,1,2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"3,1,2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-05",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1,1,2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1,1,2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-06",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1-2,2-3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1-2,2-3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-07",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-08",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!1,!3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!1,!3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-09",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!1-"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!1-\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-10",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2-"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2-\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-11",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1-"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1-\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-12",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "4"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"4\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-13",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "4-"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"4-\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-14",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1-3,!2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1-3,!2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-15",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!2,1-3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!2,1-3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-16",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1-3,!1-3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1-3,!1-3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-17",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": " 2 , 1 "
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\" 2 , 1 \")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-18",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2 - , !3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2 - , !3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-19",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!9"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!9\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-20",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,2,!1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,2,!1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-21",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3-5,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"3-5,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-22",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1-2147483647"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1-2147483647\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-23",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "alpha,beta,gamma\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!2-2147483647"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!2-2147483647\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-00",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c,\"d\"\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-01",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a\"\"b\",c,\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-02",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      ",,\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-03",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"\",,\"z\"\r"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-04",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b,c\",,tail"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-05",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"unclosed,b,c\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-06",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "日本語,é,🙂\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-07",
+    "table": true,
+    "delimiter": ";",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a;\"b;c\";d\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-08",
+    "table": true,
+    "delimiter": "\t",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a\tb\tc\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "raw-09",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\" a \", b , c \r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "eol-00",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-eol-00",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "eol-01",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\r"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-eol-01",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\r"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "eol-02",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-eol-02",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "eol-03",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-eol-03",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-00",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c,d\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!1-"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!1-\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-01",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c,d\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-02",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c,d\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "4"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"4\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-03",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c,d\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-04",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c,d\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1,3"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1,3\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "plain-05",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a,b\",c,d\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1-"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1-\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "dynamic-line-number",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\r\n",
+      "d,e,f\n",
+      "g,h,i"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "if",
+                "children": [
+                  {
+                    "op": "equal",
+                    "children": [
+                      {
+                        "op": "number",
+                        "children": [],
+                        "side": 0,
+                        "integer": 0
+                      },
+                      {
+                        "op": "integer",
+                        "integer": 1
+                      }
+                    ],
+                    "side": 0,
+                    "integer": 0
+                  },
+                  {
+                    "op": "string",
+                    "text": "2,1"
+                  },
+                  {
+                    "op": "string",
+                    "text": "!2"
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(If((LineNumber = 1), \"2,1\", \"!2\"))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "dynamic-column-count",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n",
+      "c,d,e\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "if",
+                "children": [
+                  {
+                    "op": "equal",
+                    "children": [
+                      {
+                        "op": "count",
+                        "children": [],
+                        "side": 0,
+                        "integer": 0
+                      },
+                      {
+                        "op": "integer",
+                        "integer": 2
+                      }
+                    ],
+                    "side": 0,
+                    "integer": 0
+                  },
+                  {
+                    "op": "string",
+                    "text": "2"
+                  },
+                  {
+                    "op": "string",
+                    "text": "3,1"
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(If((ColumnCount = 2), \"2\", \"3,1\"))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "dynamic-column-field",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "2,one,two\n",
+      "1,three,four"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "column",
+                "children": [],
+                "side": 0,
+                "integer": 1
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(Column1)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "dynamic-untaken-invalid",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n",
+      "c,d"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "if",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 1
+                  },
+                  {
+                    "op": "string",
+                    "text": "2"
+                  },
+                  {
+                    "op": "string",
+                    "text": "0"
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(If(true, \"2\", \"0\"))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "dynamic-taken-invalid",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "if",
+                "children": [
+                  {
+                    "op": "bool",
+                    "integer": 0
+                  },
+                  {
+                    "op": "string",
+                    "text": "2"
+                  },
+                  {
+                    "op": "string",
+                    "text": "0"
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(If(false, \"2\", \"0\"))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "if-bool-only-00",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "T"
+              },
+              {
+                "op": "string",
+                "text": "F"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If(true, \"T\", \"F\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "if-bool-only-01",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 0
+              },
+              {
+                "op": "string",
+                "text": "T"
+              },
+              {
+                "op": "string",
+                "text": "F"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If(false, \"T\", \"F\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "if-bool-only-02",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              },
+              {
+                "op": "string",
+                "text": "T"
+              },
+              {
+                "op": "string",
+                "text": "F"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If(1, \"T\", \"F\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "if-bool-only-03",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "string",
+                "text": "true"
+              },
+              {
+                "op": "string",
+                "text": "T"
+              },
+              {
+                "op": "string",
+                "text": "F"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If(\"true\", \"T\", \"F\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "if-bool-only-04",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "none"
+              },
+              {
+                "op": "string",
+                "text": "T"
+              },
+              {
+                "op": "string",
+                "text": "F"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If(none, \"T\", \"F\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "if-untaken-runtime-range",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "line",
+                "children": [],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "range",
+                "children": [
+                  {
+                    "op": "if",
+                    "children": [
+                      {
+                        "op": "bool",
+                        "integer": 0
+                      },
+                      {
+                        "op": "string",
+                        "text": "1"
+                      },
+                      {
+                        "op": "string",
+                        "text": "0"
+                      }
+                    ],
+                    "side": 0,
+                    "integer": 0
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If(true, Line, ColumnRange(If(false, \"1\", \"0\")))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "if-untaken-literal-invalid",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "bool",
+                "integer": 1
+              },
+              {
+                "op": "line",
+                "children": [],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "range",
+                "children": [
+                  {
+                    "op": "string",
+                    "text": "0"
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If(true, Line, ColumnRange(\"0\"))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-00",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": ""
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-01",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": " "
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\" \")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-02",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "0"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"0\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-03",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "-1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"-1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-04",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3-1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"3-1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-05",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1,"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1,\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-06",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "!"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"!\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-07",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1x"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1x\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-08",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2147483648"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2147483648\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "invalid-09",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1,,2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1,,2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-non-string",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(1)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "line-at-previous",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a\n",
+      "b\r\n",
+      "c"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "equal",
+                "children": [
+                  {
+                    "op": "number",
+                    "children": [],
+                    "side": 0,
+                    "integer": 0
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "string",
+                "text": "changed"
+              },
+              {
+                "op": "lineat",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If((LineNumber = 1), \"changed\", LineAt(1))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "line-at-next",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a\n",
+      "b\r\n",
+      "c"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "lineat",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 3
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "LineAt(3)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "line-offset-next",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a\n",
+      "b\r\n",
+      "c"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "offsetat",
+            "children": [
+              {
+                "op": "integer",
+                "integer": 1
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "LineOffsetAt(1)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "group-same-mask",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a\n",
+      "b\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "equal",
+                "children": [
+                  {
+                    "op": "number",
+                    "children": [],
+                    "side": 0,
+                    "integer": 0
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "string",
+                "text": "changed1"
+              },
+              {
+                "op": "string",
+                "text": "changed2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          },
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "equal",
+                "children": [
+                  {
+                    "op": "number",
+                    "children": [],
+                    "side": 0,
+                    "integer": 0
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "lineat",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "lineat",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If((LineNumber = 1), \"changed1\", \"changed2\")",
+          "If((LineNumber = 1), LineAt(2), LineAt(1))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "group-mask-boundary",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a\n",
+      "b\n"
+    ],
+    "groups": [
+      {
+        "mask": 1,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "equal",
+                "children": [
+                  {
+                    "op": "number",
+                    "children": [],
+                    "side": 0,
+                    "integer": 0
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "string",
+                "text": "changed1"
+              },
+              {
+                "op": "string",
+                "text": "changed2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If((LineNumber = 1), \"changed1\", \"changed2\")"
+        ]
+      },
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "if",
+            "children": [
+              {
+                "op": "equal",
+                "children": [
+                  {
+                    "op": "number",
+                    "children": [],
+                    "side": 0,
+                    "integer": 0
+                  },
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "lineat",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 2
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              },
+              {
+                "op": "lineat",
+                "children": [
+                  {
+                    "op": "integer",
+                    "integer": 1
+                  }
+                ],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "If((LineNumber = 1), LineAt(2), LineAt(1))"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "single-provider-prefix-0",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "a,b,c\n"
+    ],
+    "groups": [
+      {
+        "mask": 1,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3,1"
+              }
+            ],
+            "side": -1,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "RightColumnRange(\"3,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "single-provider-prefix-1",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 1,
+    "lines": [
+      "a,b,c\n"
+    ],
+    "groups": [
+      {
+        "mask": 2,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3,1"
+              }
+            ],
+            "side": -1,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "RightColumnRange(\"3,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "single-provider-prefix-2",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 2,
+    "lines": [
+      "a,b,c\n"
+    ],
+    "groups": [
+      {
+        "mask": 4,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3,1"
+              }
+            ],
+            "side": -1,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "RightColumnRange(\"3,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "target-mask-skip",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 2,
+    "lines": [
+      "a,b\n"
+    ],
+    "groups": [
+      {
+        "mask": 1,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "2"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"2\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "trim-then-range",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      " a , b , c \r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "trim",
+            "children": [
+              {
+                "op": "line",
+                "children": [],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          },
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "Trim(Line)",
+          "ColumnRange(\"3,1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "range-then-trim",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      " a , b , c \r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          },
+          {
+            "op": "trim",
+            "children": [
+              {
+                "op": "line",
+                "children": [],
+                "side": 0,
+                "integer": 0
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"3,1\")",
+          "Trim(Line)"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "empty-document",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "empty-row",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"1\")"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "identity-unicode",
+    "table": false,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "日本語\n",
+      "﻿café\r\n",
+      "🙂"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "line",
+            "children": [],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "Line"
+        ]
+      }
+    ],
+    "note": ""
+  },
+  {
+    "id": "caller-escaped-logical-row",
+    "table": true,
+    "delimiter": ",",
+    "quote": "\"",
+    "pane": 0,
+    "lines": [
+      "\"a\u001br\u001bnb\",c,\"d\u001b\u001be\"\r\n"
+    ],
+    "groups": [
+      {
+        "mask": 7,
+        "ast": [
+          {
+            "op": "range",
+            "children": [
+              {
+                "op": "string",
+                "text": "3,1"
+              }
+            ],
+            "side": 0,
+            "integer": 0
+          }
+        ],
+        "expressions": [
+          "ColumnRange(\"3,1\")"
+        ]
+      }
+    ],
+    "note": "DiffTextBuffer.cpp:485-487 caller escaping supplied as fixed input; adapter does not invoke caller"
+  }
+]

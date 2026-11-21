@@ -1,0 +1,38 @@
+{
+  "productExecuted": false,
+  "newReaderExecuted": false,
+  "fullParserNativeExecuted": false,
+  "counts": {
+    "nativeCases": 6756,
+    "publicPlans": 5304,
+    "nativeBound": 5208,
+    "sourceDerived": 96,
+    "excluded": 1548,
+    "byDirs": {
+      "2": 2652,
+      "3": 2652
+    },
+    "windowsOnly": 2
+  },
+  "files": {
+    ".gitattributes": "8b9c3028d6467ff3be7c793141927841d70f47f52d0590677438f488ca154992",
+    "failure-matrix.json": "db1b4810aeb14c30e87d06abd0912459d48e97bf9516c801f395ed7f3b148730",
+    "finite-schema.py": "59cf5cdbe6b3ad349cd5cee6ec70b554e5f37a61649e5b35fee9d27778a678ae",
+    "lexer-plan.json": "e3748a5199512212abfa6e2b2b148e0141859617759f052bfee47d5270958cf8",
+    "native-classification.json": "ee5bdbc4906052f0094deb3f6ff524c134ff2acea10731afbffd11cb90d863ec",
+    "native-proof.zip": "f2955cd07049d8f6318ba3dc301e52b5a008d548f2ead8d5b5c2ab027cf1766e",
+    "old-new-plan.json": "02709a535bd8e43feff0420230204c2f0bca43e7ce12430bf18bad0d9b56f18e",
+    "projection.py": "c6b2c624a7362006c2f5116e059ba60bf297aba115a3fd8db42fa9d892a87e8a",
+    "proof-binding.json": "63905a9a9a3bb7d1bcdbec7926658c2b3c88c3d92cc81849b864c510a661fac8",
+    "public-plan.json": "9924cb05ffe49e3bf0608e780da18b023389b2fb0349e8e65073cd74bfe15381",
+    "README.md": "f7fdd99c366ee7f37dcb6e24d36e6f0938cab1def4830cfcb7735bb61b17e976",
+    "required-host-checks.json": "9e7fe80dbb53cf2550fce148ef156300f4d71f8f233450a1121eaeceb15efcab",
+    "runner-source-chain.json": "4bca1b0c42ddead16cf89a565221b56a072ba284bf22d928f655a28bce51d68d",
+    "runner-source-proof.zip": "e5d2542770ec01406f04b394797444d28aad3bf3cd3a94dd2422543b420dff68",
+    "semantic-expectations.json": "cee6a2d7d41dbc521fff50ec310bdd919af961af69267ce0ee2e6b0a9fa41e27",
+    "source-support.json": "cfaa700d070d0aef5f263cb22f974033fa1454b9993fb4ccbefe8569ed5b5f2d",
+    "source-support.zip": "b29f0a170b05fca40c1e40b130774f1ee295838587113fcf0f421c041bfb3161",
+    "verify.py": "1b4ca18c7c15385da565850b3dfb8fb1dff6dd22339672500dafddcd59dc2731"
+  },
+  "additionalLexicalPlanCount": 22
+}

@@ -1,0 +1,479 @@
+using System.Text.RegularExpressions;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Layout;
+using Avalonia.LogicalTree;
+using Avalonia.Threading;
+using Avalonia.VisualTree;
+using DiffBeacon.Core;
+using DiffBeacon.Providers;
+
+namespace DiffBeacon.App;
+
+public sealed partial class MainWindow
+{
+    private bool _openingWorkspace;
+    internal string? WorkspaceSourcePath { get; private set; }
+    public IReadOnlyList<ComparisonPane> SessionPanes => _sessions.Select(item => (ComparisonPane)item.Content!).ToArray();
+    public void SelectSession(int index) => _tabs.SelectedItem = _sessions[index];
+    internal Action<string>? OutputReadyForPublication { get; set; }
+
+    internal Action<string, Action> CaptureOutputPublisher(bool protectWorkspaceSource = true)
+    {
+        var initial = SessionPanes.Select(pane => pane.CaptureProject()).ToArray();
+        var initialSource = protectWorkspaceSource ? WorkspaceSourcePath : null;
+        return (path, publish) =>
+        {
+            void Validate()
+            {
+                OutputReadyForPublication?.Invoke(path);
+                var current = SessionPanes.ToArray();
+                foreach (var pane in current) pane.EnsureProjectOutputWritable(path);
+                ProjectInputs.EnsureOutput(path, initial.Concat(current.Select(pane => pane.CaptureProject()))
+                    .Append(new ComparisonProject { LeftPath = protectWorkspaceSource ? WorkspaceSourcePath ?? "" : "" }), initialSource);
+                // UIが次の候補を採用する前に、検査とatomic公開を同じdispatcher区間で完了する。
+                publish();
+            }
+            if (Dispatcher.UIThread.CheckAccess()) Validate();
+            else Dispatcher.UIThread.InvokeAsync(Validate).GetAwaiter().GetResult();
+        };
+    }
+
+    public async Task SaveWorkspaceAsync(string path, CancellationToken token = default)
+    {
+        var target = Path.GetFullPath(path);
+        foreach (var pane in SessionPanes) pane.EnsureArchiveDraftSaved();
+        foreach (var pane in SessionPanes) pane.EnsureProjectOutputWritable(path);
+        var outputPublisher = CaptureOutputPublisher(protectWorkspaceSource: false);
+        await WorkspaceStore.SaveWorkspaceWithOutputGuardAsync(target,
+            new ComparisonWorkspace { Entries = SessionPanes.Select(pane => pane.CaptureProject()).ToArray(), ActiveEntryIndex = _sessions.IndexOf((TabItem)_tabs.SelectedItem!) },
+            token, null, ArchiveLifetime.RegisterAsset, outputPublisher);
+        WorkspaceSourcePath = target;
+    }
+
+    public async Task<bool> OpenWorkspaceAsync(string path, bool discardChanges = false, CancellationToken token = default)
+    {
+        if (_openingWorkspace) throw new InvalidOperationException("プロジェクトを開いています。");
+        _openingWorkspace = true;
+        var prepared = new List<ComparisonPane>();
+        try
+        {
+            // 全設定を検証してから既存タブを置換し、読込み失敗では編集内容を残す。
+            var source = Path.GetFullPath(path);
+            var workspace = await WorkspaceStore.LoadWorkspaceAsync(source, token);
+            var workingTexts = new ArchiveWorkingStore();
+            foreach (var project in workspace.Entries)
+            {
+                var pane = new ComparisonPane(this, workingTexts) { IsWorkspaceCandidate = true };
+                prepared.Add(pane); pane.ApplyProject(project);
+                if (ProjectInputs.IsIndependentText(project))
+                    await pane.PrepareIndependentProjectAsync(token);
+            }
+            token.ThrowIfCancellationRequested();
+            if (!discardChanges && SessionPanes.Any(pane => pane.HasUnsavedChanges)
+                && !await Dialogs.ConfirmAsync(this, "未保存の変更", "すべての比較タブをプロジェクトで置き換えます。編集内容を破棄しますか？")) return false;
+            token.ThrowIfCancellationRequested();
+            foreach (var old in SessionPanes) old.Dispose();
+            ArchiveTexts.Clear(); ArchiveTexts = workingTexts;
+            _sessions.Clear(); _tabs.ItemsSource = null;
+            foreach (var pane in prepared) { pane.ActivateWorkspaceCandidate(); AttachProjectSession(pane); }
+            prepared.Clear();
+            _tabs.SelectedItem = _sessions[workspace.ActiveEntryIndex];
+            WorkspaceSourcePath = source;
+            foreach (var pane in SessionPanes)
+                if (!ProjectInputs.IsIndependentText(pane.CaptureProject())) await pane.CompareProjectAsync();
+            return true;
+        }
+        finally { foreach (var pane in prepared) pane.Dispose(); _openingWorkspace = false; }
+    }
+
+    private void AttachProjectSession(ComparisonPane pane)
+    {
+        var project = pane.CaptureProject();
+        var item = CreateSessionTab(pane, ProjectTitle(project), project);
+        pane.LeftPath.TextChanged += (_, _) => RefreshSessionHeaders();
+        pane.BasePath.TextChanged += (_, _) => RefreshSessionHeaders();
+        pane.RightPath.TextChanged += (_, _) => RefreshSessionHeaders();
+        _sessions.Add(item); _tabs.ItemsSource = _sessions.ToArray();
+    }
+
+    /// <summary>セッションタブの×を押す。見出しは作成したパネルから取る。</summary>
+    internal void ClickSessionClose(ComparisonPane pane)
+    {
+        var item = _sessions.First(tab => ReferenceEquals(tab.Content, pane));
+        var button = item.Header is Panel panel
+            ? panel.GetLogicalDescendants().OfType<Button>().FirstOrDefault(candidate => Equals(candidate.Content, "×"))
+            : null;
+        button ??= item.GetVisualDescendants().OfType<Button>().First(candidate => Equals(candidate.Content, "×"));
+        button.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+    }
+
+    // タブの×ボタンと、本家の「ウィンドウ > 閉じる (Ctrl+W)」で共通に使う。未保存なら確認してから閉じる。
+    private async Task<bool> CloseSessionAsync(TabItem item)
+    {
+        if (!_sessions.Contains(item)) return false;
+        var pane = (ComparisonPane)item.Content!;
+        if (pane.HasUnsavedChanges && !await Dialogs.ConfirmAsync(this, "未保存の変更", "変更を保存せずにタブを閉じますか？")) return false;
+        _sessions.Remove(item); pane.Dispose(); _tabs.ItemsSource = _sessions.ToArray();
+        if (_sessions.Count == 0) { ArchiveTexts.Clear(); AddSession(); } else _tabs.SelectedItem = _sessions[^1];
+        return true;
+    }
+    /// <summary>本家 MergeTextFormatter::GetTitleString。説明があればそれ、無ければファイル名。全部同じ名前なら「名前 x N」。空なら「左無題 - 右無題」。</summary>
+    private static string ProjectTitle(ComparisonProject project)
+    {
+        static string Label(string? description, string? path)
+        {
+            if (!string.IsNullOrWhiteSpace(description)) return description.Trim();
+            if (string.IsNullOrWhiteSpace(path)) return "";
+            var trimmed = path.Trim().TrimEnd('\\', '/');
+            var name = Path.GetFileName(trimmed);
+            return string.IsNullOrEmpty(name) ? trimmed : name;
+        }
+        var names = new[]
+        {
+            Label(project.LeftDescription, project.LeftPath),
+            Label(project.BaseDescription, project.BasePath),
+            Label(project.RightDescription, project.RightPath),
+        }.Where(name => name.Length > 0).ToArray();
+        if (names.Length == 0) return UiText.Phrase("Untitled Left") + " - " + UiText.Phrase("Untitled Right");
+        if (names.All(name => string.Equals(name, names[0], StringComparison.OrdinalIgnoreCase)))
+            return names.Length == 1 ? names[0] : $"{names[0]} x {names.Length}";
+        return string.Join(" - ", names);
+    }
+    internal enum SessionCloseScope { Others, Right, Left }
+
+    /// <summary>右クリックで、対象以外・右側・左側のタブを本家の順（右から）に閉じる。</summary>
+    private async Task CloseOtherSessionsAsync(TabItem keep, SessionCloseScope scope)
+    {
+        var index = _sessions.IndexOf(keep);
+        if (index < 0) return;
+        _tabs.SelectedItem = keep;
+        for (var i = _sessions.Count - 1; i >= 0; i--)
+        {
+            if (scope == SessionCloseScope.Others && i == index) continue;
+            if (scope == SessionCloseScope.Right && i <= index) continue;
+            if (scope == SessionCloseScope.Left && i >= index) continue;
+            if (!await CloseSessionAsync(_sessions[i])) return;
+        }
+    }
+
+    /// <summary>ドラッグ先のタブと位置を入れ替える。</summary>
+    private void MoveSession(TabItem item, TabItem over)
+    {
+        var from = _sessions.IndexOf(item);
+        var to = _sessions.IndexOf(over);
+        if (from < 0 || to < 0 || from == to) return;
+        _sessions.RemoveAt(from);
+        _sessions.Insert(to, item);
+        _tabs.ItemsSource = _sessions.ToArray();
+        _tabs.SelectedItem = item;
+    }
+
+    private void ApplyTabAutoWidth()
+    {
+        var width = _tabAutoMaxWidth ? 280 : double.PositiveInfinity;
+        foreach (var tab in _sessions)
+            if (tab.Header is StackPanel panel && panel.Children.OfType<TextBlock>().FirstOrDefault() is { } text)
+                text.MaxWidth = width;
+    }
+
+    internal void RefreshSessionHeaders()
+    {
+        for (var index = 0; index < _sessions.Count; index++)
+            if (_sessions[index].Header is StackPanel panel)
+            {
+                var project = ((ComparisonPane)_sessions[index].Content!).CaptureProject();
+                panel.Children.OfType<TextBlock>().Single().Text = ProjectTitle(project);
+                if (panel.Children.OfType<Image>().FirstOrDefault() is { } icon) ApplySessionIcon(icon, project);
+            }
+    }
+}
+
+public sealed partial class ComparisonPane
+{
+    private ComparisonProject _projectMetadata = new();
+    private long _archiveRequestGeneration;
+    private long _archivePanelRequestGeneration = -1;
+    private bool _hasRestoredImageSettings;
+    private bool _pendingRestoredImageSettings;
+    private static readonly string[] ModeNames = ["Auto", "Text", "Folder", "Binary", "Image", "Json", "Table", "Archive", "Provider"];
+
+    public ComparisonProject CaptureProject() => CaptureProjectInputs(WorkspaceStore.CloneProject(_projectMetadata with
+    {
+        FolderListDependencies = FolderListDependencyPaths.ToArray(),
+        LeftPath = _projectMetadata.LeftArchiveInput is null ? LeftPath.Text ?? "" : "",
+        BasePath = _projectMetadata.BaseArchiveInput is null ? BasePath.Text ?? "" : "",
+        RightPath = _projectMetadata.RightArchiveInput is null ? RightPath.Text ?? "" : "",
+        Mode = _mode.SelectedIndex == 8 && (_provider.SelectedItem as string == "web-text" || (_provider.SelectedItem is null && _projectMetadata.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase))) ? "Web" : ModeNames[Math.Clamp(_mode.SelectedIndex, 0, ModeNames.Length - 1)],
+        TableDelimiter = _mode.SelectedIndex == 6 ? _tableSyntax?.Delimiter ?? _projectMetadata.TableDelimiter : _projectMetadata.TableDelimiter,
+        ProviderId = _provider.SelectedItem as string ?? _projectMetadata.ProviderId, FileFilterPath = _fileFilter.Text,
+        Recursive = _recursive.IsChecked == true, FolderMode = _folderMode.SelectedIndex switch { 1 => "Hash", 2 => "TimestampAndSize", _ => "Content" }, FolderShowFiltered = _showFilteredDirectories.IsChecked == true,
+        ExcludedPaths = _excludes.Text, IgnoreCase = _ignoreCase.IsChecked == true, IgnoreWhitespace = _ignoreSpace.IsChecked == true,
+        IgnoreBlankLines = _ignoreBlank.IsChecked == true, IgnoreLinePattern = _ignoreRegex.Text,
+        IgnoreNumbers = _ignoreNumbers.IsChecked == true, CommentSyntax = (CommentSyntax)_comments.SelectedIndex,
+        Whitespace = (WhitespaceMode)_whitespace.SelectedIndex, InlineCharacterLevel = _inlineDiffLevel.SelectedIndex != 1,
+        BreakOnSeparators = _breakOnSeparators.IsChecked == true,
+        WordBreakSeparators = _wordBreakSeparators.Text ?? "", SubstitutionRules = _substitutions.ToArray(),
+        ImageSettings = CaptureImageSettings(), TextInputs = CaptureTextInputDescriptor(),
+        TextComparisonPair = _textRole.SelectedIndex == 1 || IndependentText ? _textPair.SelectedIndex switch { 0 => "LeftMiddle", 1 => "MiddleRight", 2 => "LeftRight", _ => null } : null
+    }));
+
+    private ComparisonProject CaptureProjectInputs(ComparisonProject project)
+        => project.Mode == "Image" && ProjectInputs.HasArchives(project)
+            ? project with { ProtectedArchiveAssets = (_owner as MainWindow)?.ArchiveLifetime.Assets ?? project.ProtectedArchiveAssets }
+            : CaptureWorkingProject(project);
+
+    public void ApplyProject(ComparisonProject project)
+    {
+        ArgumentNullException.ThrowIfNull(project);
+        if (project.WordBreakSeparators is null || project.WordBreakSeparators.Length > ComparisonOptions.MaximumWordBreakSeparatorsLength)
+            throw new InvalidDataException($"単語区切り文字は {ComparisonOptions.MaximumWordBreakSeparatorsLength} 文字まで指定できます。");
+        _ = WorkspaceStore.CloneTableColumnIgnoreRules(project.TableColumnIgnoreRules);
+        _ = WorkspaceStore.CloneTableColumnRangeRules(project.TableColumnRangeRules);
+        _ = WorkspaceStore.CloneLineTransformRules(project.LineTransformRules, project);
+        project.TextInputs?.Validate(project);
+        if (project.TextComparisonPair is not null && (!ProjectInputs.IsIndependentText(project) || project.TextComparisonPair is not ("LeftMiddle" or "MiddleRight" or "LeftRight")))
+            throw new InvalidDataException("Textの比較ペアが比較役割と一致しません。");
+        ImageViewSettings.Validate(project.ImageSettings);
+        if (!ProjectInputs.HasBase(project) && (project.ImageSettings.MiddleFrame != 1 || !project.ImageSettings.MiddleOrientation.IsIdentity || project.ImageSettings.MiddleOffset != default))
+            throw new InvalidDataException("中央入力のない比較では中央の画像ページ番号を1、回転・反転を無効にしてください。");
+        if (ProjectInputs.HasArchives(project))
+        {
+            project = project with { Mode = project.Mode.ToLowerInvariant() switch
+            { "text" or "1" => "Text", "binary" or "3" => "Binary", "image" or "4" => "Image", "archive" or "7" => "Archive", _ => project.Mode } };
+            if (project.Mode is not ("Text" or "Binary" or "Image" or "Archive") || project.Mode is "Archive" or "Image" && ProjectInputs.HasBase(project))
+                throw new InvalidDataException("内包入力の比較形式または祖先指定が不正です。");
+            ArchiveImageInputValidation.Validate(project);
+            foreach (var (path, input) in new[] { (project.LeftPath, project.LeftArchiveInput), (project.BasePath, project.BaseArchiveInput), (project.RightPath, project.RightArchiveInput) })
+                if (input is not null && !string.IsNullOrWhiteSpace(path)) throw new InvalidDataException("同じ側に物理pathと内包入力を重ねて指定できません。");
+        }
+        foreach (var side in Enumerable.Range(0, 3))
+            ProjectInputs.Archive(project, side)?.Validate(project.Mode == "Archive", side == 0 ? project.LeftReadOnly : side == 1 ? project.BaseReadOnly : project.RightReadOnly);
+        ProjectInputs.EnsureWorkingFormat(project);
+        _workingTexts.Import(Enumerable.Range(0, 3).Select(side => ProjectInputs.Archive(project, side)).OfType<ArchiveProjectInput>());
+        if (_owner is MainWindow window && !IsWorkspaceCandidate)
+            foreach (var copy in Enumerable.Range(0, 3).SelectMany(side => ProjectInputs.Archive(project, side)?.WorkingDocuments ?? []))
+                if (copy.SnapshotPath is { } asset && Path.IsPathFullyQualified(asset)) window.ArchiveLifetime.RegisterAsset(asset);
+        _tableSyntax = null;
+        InvalidateTextSave(); InvalidateFolderCopy();
+        _operation?.Cancel(); (_specialTab.Content as ArchivePanel)?.CancelChildOperation();
+        ClearArchivePasswords(); _lastArchiveComparison = null;
+        _archiveRequestGeneration++;
+        _projectMetadata = WorkspaceStore.CloneProject(project);
+        _hasRestoredImageSettings = true;
+        _pendingRestoredImageSettings = true;
+        LeftPath.Text = ProjectInputs.IsUntitled(project, 0) ? "" : ProjectInputs.Caption(project, 0);
+        BasePath.Text = ProjectInputs.IsUntitled(project, 1) ? "" : ProjectInputs.Caption(project, 1);
+        RightPath.Text = ProjectInputs.IsUntitled(project, 2) ? "" : ProjectInputs.Caption(project, 2);
+        ConfigureArchiveInputControls();
+        _provider.IsEnabled = !ProjectInputs.HasArchives(project);
+        var mode = Array.FindIndex(ModeNames, name => name.Equals(project.Mode, StringComparison.OrdinalIgnoreCase));
+        if (project.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase)) mode = 8;
+        if (mode < 0 && int.TryParse(project.Mode, out var oldIndex) && oldIndex is >= 0 and <= 8) mode = oldIndex;
+        _mode.SelectedIndex = mode >= 0 ? mode : throw new InvalidDataException($"未対応の比較形式です: {project.Mode}");
+        _textRole.SelectedIndex = ProjectInputs.IsIndependentText(project) ? 1 : 0;
+        _textPair.SelectedIndex = project.TextComparisonPair switch { null or "LeftMiddle" => 0, "MiddleRight" => 1, "LeftRight" => 2, _ => throw new InvalidDataException("Textの比較ペアが不正です。") };
+        RefreshIndependentControls();
+        if (project.ProviderId is not null)
+        {
+            if (_providers.Providers.Any(provider => provider.Id == project.ProviderId)) _provider.SelectedItem = project.ProviderId;
+            else { _provider.SelectedIndex = -1; _status.Text = $"比較ツール {project.ProviderId} は未登録です。利用するツールを明示選択してください。"; }
+        }
+        else if (project.Mode.Equals("Web", StringComparison.OrdinalIgnoreCase)) _provider.SelectedItem = "web-text";
+        _fileFilter.Text = project.FileFilterPath; _recursive.IsChecked = project.Recursive; _excludes.Text = project.ExcludedPaths;
+        _showFilteredDirectories.IsChecked = project.FolderShowFiltered;
+        _folderMode.SelectedIndex = project.FolderMode switch { "Content" => 0, "Hash" => 1, "TimestampAndSize" => 2, _ => throw new InvalidDataException("フォルダー比較方式が不正です。") };
+        _ignoreCase.IsChecked = project.IgnoreCase; _ignoreSpace.IsChecked = project.IgnoreWhitespace;
+        _ignoreBlank.IsChecked = project.IgnoreBlankLines; _ignoreRegex.Text = project.IgnoreLinePattern;
+        _inlineDiffLevel.SelectedIndex = project.InlineCharacterLevel ? 0 : 1;
+        _breakOnSeparators.IsChecked = project.BreakOnSeparators; _wordBreakSeparators.Text = project.WordBreakSeparators;
+        SetAdvancedFilters(project.IgnoreNumbers, project.CommentSyntax, project.Whitespace, project.SubstitutionRules);
+        _lineTransformCount.Text = $"行変換 {project.LineTransformRules.Length}件";
+        LeftEditor.IsReadOnly = project.LeftReadOnly || project.LeftArchiveInput is not null; RightEditor.IsReadOnly = project.RightReadOnly || project.RightArchiveInput is not null;
+        _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
+        if (project.LeftArchiveInput is null) ToolTip.SetTip(LeftPath, ProjectCaption(false));
+        if (project.RightArchiveInput is null) ToolTip.SetTip(RightPath, ProjectCaption(true));
+        UpdateEditorLayout(ProjectInputs.HasBase(project));
+        if (ProjectInputs.HasArchives(project)) _status.Text = "内包入力を復元しました。「比較」で明示的に読み込んでください。パスワードは保存されません。";
+    }
+
+    private ImageViewSettings CaptureImageSettings(bool useApplicationDefaults = false)
+    {
+        var current = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
+        if ((!useApplicationDefaults || !_pendingRestoredImageSettings) && _lastPackageComparison == current && _specialTab.Content is SpecializedViews.ImagePanel image) return image.CaptureSettings();
+        var settings = useApplicationDefaults && !_hasRestoredImageSettings && _owner is MainWindow window
+            ? ImageApplicationOptionsStore.DefaultViewSettings(window.ImageOptions.Current)
+            : _projectMetadata.ImageSettings with { };
+        // 別の入力へ切り替えた側は先頭から開き、元プロジェクトのページ番号を流用しない。
+        if (current.Item1 != _projectMetadata.LeftPath) { settings.LeftFrame = 1; settings.LeftOrientation = new(); settings.LeftOffset = default; }
+        if (current.Item2 != _projectMetadata.BasePath || string.IsNullOrWhiteSpace(current.Item2)) { settings.MiddleFrame = 1; settings.MiddleOrientation = new(); settings.MiddleOffset = default; }
+        if (current.Item3 != _projectMetadata.RightPath) { settings.RightFrame = 1; settings.RightOrientation = new(); settings.RightOffset = default; }
+        return settings;
+    }
+
+    public async Task CompareProjectAsync()
+    {
+        if (IndependentText) { await PrepareIndependentProjectAsync(CancellationToken.None); return; }
+        if (ProjectInputs.HasArchives(_projectMetadata))
+        { _status.Text = "内包入力を復元しました。「比較」で明示的に読み込んでください。パスワードは保存されません。"; return; }
+        try
+        {
+            if (_mode.SelectedIndex == 8 && _provider.SelectedItem is not string)
+                throw new InvalidOperationException($"比較ツール {_projectMetadata.ProviderId} は未登録です。実行するツールを選択してください。");
+            await ComparePathsAsync();
+        }
+        catch (OperationCanceledException) { _status.Text = "比較を中止しました。"; }
+        catch (Exception exception) when (exception is not OutOfMemoryException) { _status.Text = exception.Message; }
+        if (_projectMetadata.LegacySettings.Count > 0)
+            _status.Text += " · 未適用の旧設定を保持しています: " + string.Join(", ", _projectMetadata.LegacySettings.Keys);
+    }
+
+    private void EnsureSideWritable(bool right)
+    {
+        if (CanEditArchiveText(right)) return;
+        if ((right ? _projectMetadata.RightArchiveInput : _projectMetadata.LeftArchiveInput) is not null)
+            throw new InvalidOperationException("内包入力は読取り専用です。元アーカイブへ保存できません。");
+        if (right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly)
+            throw new InvalidOperationException($"{(right ? "右" : "左")}はプロジェクトで読取り専用に指定されています。");
+    }
+
+    private string ProjectCaption(bool right)
+    {
+        var description = right ? _projectMetadata.RightDescription : _projectMetadata.LeftDescription;
+        var readOnly = right ? _projectMetadata.RightReadOnly : _projectMetadata.LeftReadOnly;
+        if (CanEditArchiveText(right)) readOnly = false;
+        var caption = string.IsNullOrWhiteSpace(description) ? right ? "右" : "左" : description;
+        if (ProjectInputs.Archive(_projectMetadata, right ? 2 : 0)?.MissingEntryChain is not null
+            && !caption.Contains("（存在しない）", StringComparison.Ordinal)) caption += "（存在しない）";
+        if (HasArchiveDraft(right)) caption += "（未保存）";
+        return caption + (readOnly ? "（読取り専用）" : "");
+    }
+
+    internal void EnsureProjectOutputWritable(string path)
+    {
+        EnsureWindowProjectOutputWritable(path);
+        EnsurePaneProjectOutputWritable(path);
+    }
+
+    private void EnsureWindowProjectOutputWritable(string path, FolderPathProtection.ProtectionContext? protection = null)
+    {
+        var listProtection = protection ?? FolderPathProtection.CreateContext();
+        foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this])
+            foreach (var source in LineTransformListEnvironments.ProtectedPaths(pane._projectMetadata).Concat(pane.FolderListDependencyPaths))
+                if (listProtection.SameContainer(source, path))
+                    throw new InvalidOperationException("置換リストを上書きできません。");
+        var lifetime = (_owner as MainWindow)?.ArchiveLifetime;
+        if (protection is null) lifetime?.EnsureOutput(path);
+        else foreach (var asset in lifetime?.Assets ?? [])
+            if (protection.SameContainer(asset, path))
+                throw new InvalidOperationException("公開または読込み済みの作業snapshotを上書きできません。");
+        foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this])
+        {
+            if (pane._specialTab.Content is ArchivePanel { IsDisposed: false } panel
+                && (Same(panel.ConfirmedLeft.RootPath, path) || Same(panel.ConfirmedRight.RootPath, path)))
+                throw new InvalidOperationException("表示中のアーカイブ原本を上書きできません。");
+            foreach (var root in pane._detachedArchiveRoots)
+                if (Same(root, path))
+                    throw new InvalidOperationException("外部保存した文書のアーカイブ原本を上書きできません。");
+        }
+        var archiveProjects = (_owner as MainWindow)?.SessionPanes.Select(pane => pane.CaptureProject()) ?? [CaptureProject()];
+        foreach (var project in archiveProjects)
+            foreach (var side in Enumerable.Range(0, 3))
+                if (ProjectInputs.Archive(project, side) is { } input && Same(input.RootPath, path))
+                    throw new InvalidOperationException("比較中のアーカイブ原本を上書きできません。");
+        bool Same(string first, string second) => protection?.SameContainer(first, second) ?? ArchivePaths.SameFile(first, second);
+    }
+
+    private void EnsurePaneProjectOutputWritable(string path, FolderPathProtection.ProtectionContext? protection = null)
+    {
+        foreach (var (source, readOnly) in new[] { (LeftPath.Text, _projectMetadata.LeftReadOnly), (BasePath.Text, _projectMetadata.BaseReadOnly), (RightPath.Text, _projectMetadata.RightReadOnly) })
+        {
+            if (!readOnly || string.IsNullOrWhiteSpace(source)) continue;
+            if (Uri.TryCreate(source, UriKind.Absolute, out var uri) && !uri.IsFile) continue;
+            var protectedSource = protection is not null && uri is { IsFile: true } ? uri.LocalPath : source;
+            if (protection?.SameContainer(protectedSource, path) ?? ArchivePaths.SameFile(source, path))
+                throw new InvalidOperationException("読取り専用に指定された入力を上書きできません。");
+            if (protection is not null)
+            {
+                if (FolderComparisons.IsDirectory(protectedSource) && protection.Within(path, protectedSource))
+                    throw new InvalidOperationException("読取り専用に指定されたフォルダー内へ保存できません。");
+                continue;
+            }
+            if (FolderComparisons.IsDirectory(source))
+                for (var current = Path.GetDirectoryName(DirectoryComparer.NormalizeRootPath(path)); current is not null; current = Path.GetDirectoryName(current))
+                    if (ArchivePaths.SameFile(DirectoryComparer.NormalizeRootPath(source), current)) throw new InvalidOperationException("読取り専用に指定されたフォルダー内へ保存できません。");
+        }
+    }
+
+    private static FileFilter? ResolveProjectFilter(string? filterPath, string? legacyFilter,
+        IFileFilterListEnvironment? listEnvironment = null, CancellationToken cancellationToken = default)
+    {
+        if (!string.IsNullOrWhiteSpace(filterPath)) return FileFilter.Load(filterPath, LineTransformStringEnvironments.ForFolderFilters(), timestampEnvironment: LineTransformTimestampEnvironments.ForFolderFilters(), logEnvironment: LineTransformLogEnvironments.Trace, listEnvironment: listEnvironment, cancellationToken: cancellationToken);
+        var legacy = legacyFilter?.Trim();
+        if (string.IsNullOrWhiteSpace(legacy)) return null;
+        if (legacy.Length > 16_384) throw new FormatException("ファイルフィルターは16,384文字以下にしてください。");
+        if (new[] { "fe:", "de:", "e:", "fe!:", "de!:", "e!:" }.Any(prefix => legacy.StartsWith(prefix, StringComparison.Ordinal)))
+            return FileFilter.Parse(legacy, stringEnvironment: LineTransformStringEnvironments.ForFolderFilters(), timestampEnvironment: LineTransformTimestampEnvironments.ForFolderFilters(), logEnvironment: LineTransformLogEnvironments.Trace, listEnvironment: listEnvironment, cancellationToken: cancellationToken);
+        if (legacy.Contains(':') || legacy.Contains('|') || legacy.Contains('!') || legacy.Contains('/') || legacy.Contains('\\'))
+            throw new FormatException("この旧ファイルフィルターは未対応です。比較の設定から対応する .flt を選択してください。");
+        var masks = legacy.Split([';', ' ', ','], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (masks.Length is 0 or > 512) throw new FormatException("ファイルマスクは1〜512個にしてください。");
+        var pattern = string.Join('|', masks.Select(mask => mask is "*" or "*.*" ? ".*" : Regex.Escape(mask).Replace("\\*", ".*").Replace("\\?", ".")));
+        return FileFilter.Parse("def: exclude\nd: .*\nf: ^(?:" + pattern + ")$", cancellationToken: cancellationToken);
+    }
+
+    private async Task EditProjectOptionsAsync()
+    {
+        var project = CaptureProject();
+        var dialog = new Window { Title = "比較の設定", Width = 540, Height = 590, WindowStartupLocation = WindowStartupLocation.CenterOwner };
+        var panel = new StackPanel { Margin = new Thickness(20), Spacing = 8 };
+        TextBox Field(string title, string? value) { panel.Children.Add(new TextBlock { Text = title }); var box = new TextBox { Text = value }; panel.Children.Add(box); return box; }
+        var left = Field("左の説明", project.LeftDescription); var middle = Field(project.Mode == "Binary" || ProjectInputs.IsIndependentText(project) ? "中央の説明" : "祖先の説明", project.BaseDescription); var right = Field("右の説明", project.RightDescription);
+        var leftRo = new CheckBox { Content = "左を読取り専用にする", IsChecked = project.LeftReadOnly };
+        var baseRo = new CheckBox { Content = project.Mode is "Binary" or "Folder" || ProjectInputs.IsIndependentText(project) ? "中央を読取り専用にする" : "祖先ファイルへの上書きを禁止する", IsChecked = project.BaseReadOnly };
+        var rightRo = new CheckBox { Content = "右を読取り専用にする", IsChecked = project.RightReadOnly };
+        if (project.LeftArchiveInput is { MissingEntryChain: not null } leftMissing) leftRo.IsChecked = leftMissing.InheritedReadOnly ?? true;
+        if (project.RightArchiveInput is { MissingEntryChain: not null } rightMissing) rightRo.IsChecked = rightMissing.InheritedReadOnly ?? true;
+        var fixedImageReadOnly = project.Mode == "Image" && ProjectInputs.HasArchives(project);
+        leftRo.IsEnabled = !fixedImageReadOnly && project.LeftArchiveInput is null; baseRo.IsEnabled = project.BaseArchiveInput is null; rightRo.IsEnabled = !fixedImageReadOnly && project.RightArchiveInput is null;
+        panel.Children.Add(leftRo); panel.Children.Add(baseRo); panel.Children.Add(rightRo);
+        var filter = Field("ファイルマスク／式（.flt指定がある場合はそちらを使用）", project.LegacyFilter);
+        var delimiter = Field("表の区切り文字（空欄: 自動、\\t: タブ）", project.TableDelimiter?.ToString());
+        var quote = Field("表の引用符（空欄: ダブルクォート）", project.TableQuote?.ToString());
+        var multiline = new CheckBox { Content = "引用符内の改行を許可する", IsChecked = project.TableAllowNewlinesInQuotes ?? true }; panel.Children.Add(multiline);
+        if (project.LegacySettings.Count > 0) panel.Children.Add(new TextBlock { Text = "未適用の旧設定: " + string.Join(", ", project.LegacySettings.Keys), TextWrapping = Avalonia.Media.TextWrapping.Wrap });
+        var error = new TextBlock { TextWrapping = Avalonia.Media.TextWrapping.Wrap }; panel.Children.Add(error);
+        var buttons = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, HorizontalAlignment = HorizontalAlignment.Right };
+        var cancel = new Button { Content = "キャンセル" }; cancel.Click += (_, _) => dialog.Close(); buttons.Children.Add(cancel);
+        var save = new Button { Content = "適用" }; buttons.Children.Add(save); panel.Children.Add(buttons);
+        save.Click += (_, _) =>
+        {
+            try
+            {
+                char? Character(string? value) => string.IsNullOrEmpty(value) ? null : value == "\\t" ? '\t' : value.Length == 1 ? value[0] : throw new FormatException("区切り文字と引用符は1文字で指定してください。");
+                var delimiterValue = Character(delimiter.Text); var quoteValue = Character(quote.Text);
+                StructuredComparer.ParseDelimited("", delimiterValue ?? ',', quoteValue ?? '"', multiline.IsChecked == true);
+                _tableSyntax = null;
+                InvalidateFolderCopy();
+                _projectMetadata = project with { LeftDescription = left.Text, BaseDescription = middle.Text, RightDescription = right.Text,
+                    LeftReadOnly = project.LeftArchiveInput is not null || leftRo.IsChecked == true,
+                    BaseReadOnly = project.BaseArchiveInput is not null || baseRo.IsChecked == true,
+                    RightReadOnly = project.RightArchiveInput is not null || rightRo.IsChecked == true,
+                    LegacyFilter = filter.Text, TableDelimiter = delimiterValue, TableQuote = quoteValue, TableAllowNewlinesInQuotes = multiline.IsChecked == true };
+                RefreshTextReadOnly();
+                var binary = _specialTab.Content is SpecializedViews.BinaryPanel;
+                SpecializedViews.SetProjectReadOnly(_specialTab.Content as Control,
+                    binary ? BinaryReadOnly(0) : _projectMetadata.LeftReadOnly,
+                    binary ? BinaryReadOnly(2) : _projectMetadata.RightReadOnly, binary ? BinaryReadOnly(1) : _projectMetadata.BaseReadOnly);
+                if (_specialTab.Content is SpecializedViews.BinaryPanel binaryPanel)
+                    foreach (var side in binaryPanel.ProjectSides) binaryPanel.SetCaption(side, (side switch { 0 => _projectMetadata.LeftDescription, 1 => _projectMetadata.BaseDescription, _ => _projectMetadata.RightDescription }) ?? ProjectInputs.Caption(CaptureProject(), side));
+                _leftCaption.Text = ProjectCaption(false); _rightCaption.Text = ProjectCaption(true);
+                if (_owner is MainWindow owner) owner.RefreshSessionHeaders();
+                UpdateEditorLayout(_baseText is not null); _status.Text = "比較の設定を適用しました。表・フィルターの変更は再比較で反映されます。";
+                dialog.Close();
+            }
+            catch (Exception ex) when (ex is FormatException or ArgumentException) { error.Text = ex.Message; }
+        };
+        dialog.Content = new ScrollViewer { Content = panel }; await dialog.ShowDialog(_owner);
+    }
+}

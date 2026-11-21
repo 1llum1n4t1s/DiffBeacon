@@ -1,0 +1,21 @@
+<Project InitialTargets="DiffBeaconValidateDevelopmentOutput">
+  <Target Name="DiffBeaconValidateDevelopmentOutput">
+    <XmlPeek Condition="'$(DiffBeaconWorkRoot)' != ''" XmlInputPath="$(MSBuildThisFileDirectory)Directory.Build.local.props" Query="/Project/PropertyGroup/DiffBeaconWorkRoot/text()">
+      <Output TaskParameter="Result" PropertyName="_DiffBeaconCanonicalWorkRoot" />
+    </XmlPeek>
+    <Error Condition="'$(DiffBeaconWorkRoot)' != '' and '$(DiffBeaconWorkRoot)' != '$(_DiffBeaconCanonicalWorkRoot)'" Text="DiffBeaconWorkRootをローカル正本から上書きできません。" />
+    <!-- このcheckoutだけの設定が消えた場合もCへ戻さない。CIや別利用者には適用しない。 -->
+    <Error Condition="$([MSBuild]::IsOSPlatform('Windows')) and '$(GITHUB_ACTIONS)' != 'true' and '$(USERPROFILE)' == 'C:\Users\IMT' and '$(MSBuildThisFileDirectory)' == 'D:\Dev\DiffBeacon\' and '$(DiffBeaconWorkRoot)' == ''"
+           Text="Directory.Build.local.props が必要です。build/Dev.ps1 を使用してください。Cへのfallbackは禁止です。" />
+    <!-- Exec自身が一時cmdを作る前にTEMP/TMPを検証する。 -->
+    <Error Condition="'$(DiffBeaconWorkRoot)' != '' and ('$(TEMP)' == '' or '$(TMP)' == '')" Text="TEMP/TMPが未設定です。build/Dev.ps1を使用してください。" />
+    <Error Condition="'$(DiffBeaconWorkRoot)' != '' and (!$([System.IO.Path]::GetFullPath('$(TEMP)').StartsWith('$(DiffBeaconWorkRoot)\', System.StringComparison.OrdinalIgnoreCase)) or !$([System.IO.Path]::GetFullPath('$(TMP)').StartsWith('$(DiffBeaconWorkRoot)\', System.StringComparison.OrdinalIgnoreCase)))"
+           Text="TEMP/TMP は開発workroot配下に必要です。build/Dev.ps1 を使用してください。" />
+    <ItemGroup Condition="'$(DiffBeaconWorkRoot)' != ''">
+      <_DiffBeaconTempAncestor Include="$(TEMP);$(TEMP)\..;$(TEMP)\..\..;$(TEMP)\..\..\..;$(TEMP)\..\..\..\..;$(TEMP)\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..\..\..\..\..\..\..;$(TEMP)\..\..\..\..\..\..\..\..\..\..\..\..\..\..\..\..;$(TMP);$(TMP)\..;$(TMP)\..\..;$(TMP)\..\..\..;$(TMP)\..\..\..\..;$(TMP)\..\..\..\..\..;$(TMP)\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..\..\..\..\..\..\..;$(TMP)\..\..\..\..\..\..\..\..\..\..\..\..\..\..\..\.." />
+    </ItemGroup>
+    <Error Condition="'$(DiffBeaconWorkRoot)' != '' and ($([System.Text.RegularExpressions.Regex]::Split('$(TEMP)', '[\\/]').Length) &gt; 17 or $([System.Text.RegularExpressions.Regex]::Split('$(TMP)', '[\\/]').Length) &gt; 17)" Text="TEMP/TMPの階層が深すぎます。build/Dev.ps1を使用してください。" />
+    <Error Condition="'$(DiffBeaconWorkRoot)' != '' and Exists('%(_DiffBeaconTempAncestor.Identity)') and $([System.IO.File]::GetAttributes('%(_DiffBeaconTempAncestor.FullPath)').ToString().Contains('ReparsePoint'))" Text="TEMP/TMPの祖先にリンクは使用できません: %(_DiffBeaconTempAncestor.FullPath)" />
+    <Exec Condition="'$(DiffBeaconWorkRoot)' != ''" Command="pwsh -NoProfile -File &quot;$(MSBuildThisFileDirectory)build/Assert-DevelopmentOutput.ps1&quot; -MSBuildPaths &quot;$(ArtifactsPath)|$(BaseOutputPath)|$(OutputPath)|$(OutDir)|$(BaseIntermediateOutputPath)|$(IntermediateOutputPath)|$(MSBuildProjectExtensionsPath)|$(RestoreOutputPath)|$(PublishDir)|$(PublishUrl)|$(PackageOutputPath)|$(RestorePackagesPath)|$(TargetDir)|$(CompilerGeneratedFilesOutputPath)|$(NativeIntermediateOutputPath)|$(IlcOutputPath)&quot; -MSBuildFiles &quot;$(NuGetLockFilePath)|$(TargetPath)|$(ProjectAssetsFile)|$(GeneratedAssemblyInfoFile)|$(GeneratedGlobalUsingsFile)|$(DocumentationFile)|$(ErrorLog)&quot; -ProjectDirectory &quot;$(MSBuildProjectDirectory)&quot; -ConfiguredRoot &quot;$(DiffBeaconWorkRoot)&quot;" />
+  </Target>
+</Project>

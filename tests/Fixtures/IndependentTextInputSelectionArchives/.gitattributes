@@ -1,0 +1,6 @@
+# 追加fixtureの原本SHAを近い属性で保持する。
+inputs/** -text !eol
+manifest.json -text !eol
+LICENSE.txt -text !eol
+generate.py -text !eol
+verify.py -text !eol

@@ -1,0 +1,9 @@
+CC0 1.0 Universal
+
+The new input301 generator, reader, dangerous-path ZIP and sibling wrapper ZIP
+are dedicated to the public domain under CC0-1.0.
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The embedded ZipCrypto inner container is reused byte-for-byte from the existing
+CC0 synthetic tests/Fixtures/Archives/Sources/two-passwords.zip. Its source and
+fixed SHA are recorded in manifest.json; no production or user credential is used.

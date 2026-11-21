@@ -1,0 +1,41 @@
+{
+  "supervisorSha256": "d4a8540cfb981eb598dedeb4c73d3bd02f3ff08074212053f00ea015a97b71f5",
+  "planSha256": "b3760e5a1f2d5703a62a7785b99bcd1007dc07a384b60b5af8bfc0f9b8eda53d",
+  "casePlanSha256": "80576cccf7b567b3f3d187cbaaa6ad6f197b55b55a7a6c0e152e4f12741761db",
+  "sourcePreflightSha256": "83e066a78914d1527b33952e1c0643495b34e64b64e261748a8292a1840eb435",
+  "environmentSha256": "393b0a3f4da39cb9c8c7e4da161c2d47009e66a2bea8fa2f0f04c095f25d3730",
+  "pathIdentitySha256": "9a09a3a7be30e42fe4e147824e29800a9e77c6d0f1e52e2dc7e40c37f16659ef",
+  "pathHelperSha256": "548e38cb91548df2181387d4e64d9020f0139416f36da8d456f7877267c21dc7",
+  "compilerInputUtf8Sha256": "2770bfe4cc8433a8dc1f5f7175ec18e0c75d0a1d7245d9428bc06b0a573935fa",
+  "boundaryValidationSha256": "2a7e73a6e3de4ad6283b0a9bb5432f590b28706edc601140d57751a466bab68f",
+  "inheritedParentProofReferenceSha256": "423f331510095b049dc4900fb4f0a55adef02cec63f965b4b731bc4b155f55d1",
+  "pinnedFiles": {
+    "native_execution_supervisor.authoritative.py": "supervisorSha256",
+    "native-execution-plan.authoritative.json": "planSha256",
+    "execution-case-plan.json": "casePlanSha256",
+    "source-preflight-manifest.authoritative.json": "sourcePreflightSha256",
+    "environment-whitelist.sdk-only.json": "environmentSha256",
+    "path-identity-contract.json": "pathIdentitySha256",
+    "path_identity.py": "pathHelperSha256",
+    "compiler-input-utf8-manifest.json": "compilerInputUtf8Sha256",
+    "boundary_validation.py": "boundaryValidationSha256",
+    "inherited-parent-proof-reference.json": "inheritedParentProofReferenceSha256"
+  },
+  "authoritativeSupervisor": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-boundary-compiler-utf8-prep-20261012-180810-6cb73710\\native_execution_supervisor.authoritative.py",
+  "python": {
+    "canonical": "C:\\Users\\IMT\\AppData\\Roaming\\uv\\python\\cpython-3.14.7-windows-x86_64-none\\python.exe",
+    "sha256": "955abd94682c5a420c414df94fe640682775bdde4983006ca1244dd487aad15b",
+    "version": "3.14.7 (main, Aug  5 2026, 16:11:39) [MSC v.1944 64 bit (AMD64)]",
+    "samefileAlias": "C:\\Users\\IMT\\AppData\\Roaming\\uv\\python\\cpython-3.14-windows-x86_64-none\\python.exe"
+  },
+  "supersedes": {
+    "path": "C:\\Users\\IMT\\AppData\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\timestamp-atomic-link-prep-20261012-171720-fbd4c7dd\\execution-authority.json",
+    "sha256": "b5a2165c8cc81533c4a878812a1fafcda413fda045f75fa2380de16e9d8e0c2e",
+    "oldRunNotResent": true
+  },
+  "currentCompilerLinkNativeCommandsExecuted": 0,
+  "GORequired": true,
+  "ownedProcessTerminationAuthorization": "fresh heldHandle+birth job/child only; previous/shared excluded",
+  "scope": "original-ctor-evaluate-timestamp-arm-only-with-adapter-utcTime-guard",
+  "unsafeOriginalSerializerForbidden": true
+}

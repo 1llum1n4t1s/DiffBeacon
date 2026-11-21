@@ -1,0 +1,52 @@
+{
+  "fixedBeforeProductExecution": true,
+  "nativeCaseCount": 2416,
+  "plannedProductCommands": 2094,
+  "classification": {
+    "public-constructor-arity-diagnostic": 224,
+    "public-value-and-runtime-child-count": 1472,
+    "native-only-internal-type": 288,
+    "native-only-controlled-throw": 80,
+    "public-nested-literal-range-boundary": 96,
+    "public-literal-range-value-or-diagnostic;native-only-cache-trace": 256
+  },
+  "dirs": [
+    2,
+    3
+  ],
+  "prefixes": [
+    "",
+    "left",
+    "middle",
+    "right"
+  ],
+  "failures": [
+    "arity constructor rejects",
+    "At guards skip all runtime children",
+    "Column typed/range validation and per-side reevaluation",
+    "Range grammar runtime or literal preparation rejection",
+    "None versus empty string and side arrays",
+    "exact argument log count/order",
+    "all row and side paths/kind/status/filter",
+    "process exit/EOF/cleanup",
+    "input/filter/list SHA retention"
+  ],
+  "publicInternalPhaseObservation": false,
+  "constantStringCacheTrace": "native-only; public literal does not expose child trace",
+  "unimplemented": [
+    {
+      "id": "child-optimize-fold-before-provider-guard",
+      "expression": "@opt LineAt(ColumnRange(Substr('0',0)))",
+      "expected": "reject before runtime provider guard",
+      "nativeExactAst": false,
+      "status": "required-unimplemented; not weakened or counted as passed",
+      "reason": "native child Optimize folds nonliteral Substr to StringLiteral; candidate fold not implemented"
+    }
+  ],
+  "unexercised": [
+    "budget/cancellation injection",
+    "provider-present text context",
+    "native parser equivalence",
+    "readonly write paths: folder CLI does not write outputs"
+  ]
+}

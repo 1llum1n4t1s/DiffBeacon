@@ -1,0 +1,3299 @@
+[
+  {
+    "id": "int-below",
+    "args": [
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-lower",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-inside",
+    "args": [
+      {
+        "type": "int64",
+        "value": 2
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-upper",
+    "args": [
+      {
+        "type": "int64",
+        "value": 3
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-above",
+    "args": [
+      {
+        "type": "int64",
+        "value": 4
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-equal",
+    "args": [
+      {
+        "type": "int64",
+        "value": 2
+      },
+      {
+        "type": "int64",
+        "value": 2
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-reversed",
+    "args": [
+      {
+        "type": "int64",
+        "value": 2
+      },
+      {
+        "type": "int64",
+        "value": 3
+      },
+      {
+        "type": "int64",
+        "value": 1
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-negative",
+    "args": [
+      {
+        "type": "int64",
+        "value": -1
+      },
+      {
+        "type": "int64",
+        "value": -2
+      },
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-min",
+    "args": [
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "int-max",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775806
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iii-round-lower",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740994
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iii-round-upper",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iii-min",
+    "args": [
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iii-max",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775806
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iii-fraction",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iid-round-lower",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "double",
+        "value": "4340000000000001"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iid-round-upper",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iid-min",
+    "args": [
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iid-max",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775806
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-iid-fraction",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idi-round-lower",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740994
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idi-round-upper",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idi-min",
+    "args": [
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idi-max",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idi-fraction",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idd-round-lower",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000001"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idd-round-upper",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idd-min",
+    "args": [
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idd-max",
+    "args": [
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-idd-fraction",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-dii-round-lower",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740994
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-dii-round-upper",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-dii-min",
+    "args": [
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-dii-max",
+    "args": [
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775806
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-dii-fraction",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-did-round-lower",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      },
+      {
+        "type": "double",
+        "value": "4340000000000001"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-did-round-upper",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740992
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-did-min",
+    "args": [
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-did-max",
+    "args": [
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775806
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-did-fraction",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddi-round-lower",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740994
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddi-round-upper",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9007199254740993
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddi-min",
+    "args": [
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": -9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddi-max",
+    "args": [
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddi-fraction",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddd-round-lower",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000001"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddd-round-upper",
+    "args": [
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4340000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddd-min",
+    "args": [
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "c3e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddd-max",
+    "args": [
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "43e0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "mixed-ddd-fraction",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-negzero",
+    "args": [
+      {
+        "type": "double",
+        "value": "8000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-poszero-upper",
+    "args": [
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "bff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "8000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-subnormal",
+    "args": [
+      {
+        "type": "double",
+        "value": "0000000000000001"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-positive-inf",
+    "args": [
+      {
+        "type": "double",
+        "value": "7ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "7ff0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-negative-inf",
+    "args": [
+      {
+        "type": "double",
+        "value": "fff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "fff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-max-finite",
+    "args": [
+      {
+        "type": "double",
+        "value": "7fefffffffffffff"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "7ff0000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-0",
+    "args": [
+      {
+        "type": "double",
+        "value": "7ff8000000001234"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-1",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "7ff8000000001234"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-2",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "7ff8000000001234"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-lower-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-upper-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "c"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-mixed-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-empty-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-reversed-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-accent-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "Ä"
+      },
+      {
+        "type": "string",
+        "value": "ä"
+      },
+      {
+        "type": "string",
+        "value": "ö"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-japanese-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "い"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "う"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-utf8-v-ascii-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "string",
+        "value": "zz"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-prefix-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "éa"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "éb"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-nul-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "a\u0000a"
+      },
+      {
+        "type": "string",
+        "value": "a\u0000c"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-nul-upper-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000c"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a\u0000c"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-ascii-Z-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "Z"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "zz"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-nonascii-no-fold-cs",
+    "args": [
+      {
+        "type": "string",
+        "value": "Ä"
+      },
+      {
+        "type": "string",
+        "value": "ä"
+      },
+      {
+        "type": "string",
+        "value": "å"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-lower-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-upper-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "c"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-mixed-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "B"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-empty-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-reversed-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-accent-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "Ä"
+      },
+      {
+        "type": "string",
+        "value": "ä"
+      },
+      {
+        "type": "string",
+        "value": "ö"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-japanese-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "い"
+      },
+      {
+        "type": "string",
+        "value": "あ"
+      },
+      {
+        "type": "string",
+        "value": "う"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-utf8-v-ascii-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "z"
+      },
+      {
+        "type": "string",
+        "value": "zz"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-prefix-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "éa"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "éb"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-nul-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000b"
+      },
+      {
+        "type": "string",
+        "value": "a\u0000a"
+      },
+      {
+        "type": "string",
+        "value": "a\u0000c"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-nul-upper-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "a\u0000c"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "a\u0000c"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-ascii-Z-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "Z"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "zz"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-nonascii-no-fold-ci",
+    "args": [
+      {
+        "type": "string",
+        "value": "Ä"
+      },
+      {
+        "type": "string",
+        "value": "ä"
+      },
+      {
+        "type": "string",
+        "value": "å"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-lower",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-upper",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 20
+      },
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-below",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 9
+      },
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-negative",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": -1
+      },
+      {
+        "type": "timestamp",
+        "value": -2
+      },
+      {
+        "type": "timestamp",
+        "value": 0
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-equal",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 1
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-reversed",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 1
+      },
+      {
+        "type": "timestamp",
+        "value": 2
+      },
+      {
+        "type": "timestamp",
+        "value": 0
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-min",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "timestamp",
+        "value": -9223372036854775808
+      },
+      {
+        "type": "timestamp",
+        "value": -9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-max",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 9223372036854775807
+      },
+      {
+        "type": "timestamp",
+        "value": 9223372036854775806
+      },
+      {
+        "type": "timestamp",
+        "value": 9223372036854775807
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-0-0",
+    "args": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-0-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-0-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-1-0",
+    "args": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-1-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-1-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-2-0",
+    "args": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-2-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-2-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-3-0",
+    "args": [
+      {
+        "type": "string",
+        "value": "1"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-3-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "string",
+        "value": "1"
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-3-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "string",
+        "value": "1"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-4-0",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-4-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-4-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "timestamp",
+        "value": 1
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-5-0",
+    "args": [
+      {
+        "type": "regex"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-5-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "regex"
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-5-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "regex"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-6-0",
+    "args": [
+      {
+        "type": "file"
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-6-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "file"
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-6-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "file"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-7-0",
+    "args": [
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-7-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-7-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "array",
+        "items": []
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-8-0",
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 0
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-8-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 0
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "reject-8-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-intlower",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "timestamp",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "timestamp-intupper",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 1
+      },
+      {
+        "type": "timestamp",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-intupper",
+    "args": [
+      {
+        "type": "string",
+        "value": "b"
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-stringlower",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "string",
+        "value": "0"
+      },
+      {
+        "type": "double",
+        "value": "4008000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "double-stringupper",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "string",
+        "value": "3"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "array-empty",
+    "args": [
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "array-mixed",
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 0
+          },
+          {
+            "type": "int64",
+            "value": 1
+          },
+          {
+            "type": "int64",
+            "value": 3
+          },
+          {
+            "type": "double",
+            "value": "4004000000000000"
+          },
+          {
+            "type": "string",
+            "value": "x"
+          },
+          {
+            "type": "none"
+          },
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "timestamp",
+            "value": 1
+          },
+          {
+            "type": "regex"
+          },
+          {
+            "type": "file"
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "array-nested",
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 1
+          },
+          {
+            "type": "array",
+            "items": [
+              {
+                "type": "int64",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "type": "array",
+            "items": []
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "array-boundlower",
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 1
+          },
+          {
+            "type": "int64",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 0
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "array-boundupper",
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 1
+          },
+          {
+            "type": "int64",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "int64",
+            "value": 3
+          }
+        ]
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "array-strings",
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "string",
+            "value": "a"
+          },
+          {
+            "type": "string",
+            "value": "B"
+          },
+          {
+            "type": "string",
+            "value": "c"
+          },
+          {
+            "type": "array",
+            "items": [
+              {
+                "type": "string",
+                "value": "b"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "string",
+        "value": "a"
+      },
+      {
+        "type": "string",
+        "value": "c"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "array-timestamps",
+    "args": [
+      {
+        "type": "array",
+        "items": [
+          {
+            "type": "timestamp",
+            "value": 10
+          },
+          {
+            "type": "timestamp",
+            "value": 20
+          },
+          {
+            "type": "int64",
+            "value": 11
+          }
+        ]
+      },
+      {
+        "type": "timestamp",
+        "value": 10
+      },
+      {
+        "type": "timestamp",
+        "value": 20
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "throws-all",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0,
+      1,
+      2
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "throws-upper",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0,
+      2
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "throws-value",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "throws-bad-bounds-value",
+    "args": [
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "throws-empty-value-lower",
+    "args": [
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      1
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "throws-empty-value-upper",
+    "args": [
+      {
+        "type": "array",
+        "items": []
+      },
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      2
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "arity-0",
+    "args": [],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "arity-1",
+    "args": [
+      {
+        "type": "int64",
+        "value": 0
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "arity-2",
+    "args": [
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 1
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0,
+      1
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "arity-4",
+    "args": [
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 2
+      },
+      {
+        "type": "int64",
+        "value": 3
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "nullArgs": false
+  },
+  {
+    "id": "arity-null",
+    "args": [],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": true
+  },
+  {
+    "id": "string-highbit-order-cs",
+    "caseSensitive": true,
+    "args": [
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "z"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "string-highbit-order-ci",
+    "caseSensitive": false,
+    "args": [
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "z"
+      }
+    ],
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "singleton-int64-145",
+    "args": [
+      {
+        "type": "int64",
+        "value": 2
+      },
+      {
+        "type": "int64",
+        "value": 2
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "singleton-double-146",
+    "args": [
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "singleton-timestamp-147",
+    "args": [
+      {
+        "type": "timestamp",
+        "value": 2
+      },
+      {
+        "type": "timestamp",
+        "value": 2
+      },
+      {
+        "type": "timestamp",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "singleton-string-148",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "singleton-string-149",
+    "args": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": ""
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "singleton-string-150",
+    "args": [
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "singleton-string-151",
+    "args": [
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      },
+      {
+        "type": "string",
+        "value": "é"
+      }
+    ],
+    "caseSensitive": false,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-negative-0",
+    "args": [
+      {
+        "type": "double",
+        "value": "fff8000000001234"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-negative-1",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "fff8000000001234"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-negative-2",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "fff8000000001234"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-positive-0",
+    "args": [
+      {
+        "type": "double",
+        "value": "7ff8000000001234"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-positive-1",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "7ff8000000001234"
+      },
+      {
+        "type": "double",
+        "value": "4000000000000000"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "nan-positive-2",
+    "args": [
+      {
+        "type": "double",
+        "value": "3ff0000000000000"
+      },
+      {
+        "type": "double",
+        "value": "0000000000000000"
+      },
+      {
+        "type": "double",
+        "value": "7ff8000000001234"
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [],
+    "nullArgs": false
+  },
+  {
+    "id": "arity-null-ignored-vector",
+    "args": [
+      {
+        "type": "int64",
+        "value": 0
+      },
+      {
+        "type": "int64",
+        "value": 1
+      },
+      {
+        "type": "int64",
+        "value": 2
+      }
+    ],
+    "caseSensitive": true,
+    "throws": [
+      0,
+      1,
+      2
+    ],
+    "nullArgs": true
+  }
+]

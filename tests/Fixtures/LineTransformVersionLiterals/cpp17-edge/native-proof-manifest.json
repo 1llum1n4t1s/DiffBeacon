@@ -1,0 +1,278 @@
+[
+  {
+    "path": "run1/adapter.cpp",
+    "size": 2624,
+    "crc32": 1727111795,
+    "sha256": "273847f536175936c8be572013b85a8e53e5c4003b992bc94ab7878599e20f71"
+  },
+  {
+    "path": "run1/cases.inc",
+    "size": 1968,
+    "crc32": 771109917,
+    "sha256": "6297f9465e3fe325fb9796300a1447c9a948ccfa273bceda2d31beb9e259dee0"
+  },
+  {
+    "path": "run1/compile-receipt.json",
+    "size": 871,
+    "crc32": 1272610050,
+    "sha256": "08178c818efe5b002d87c87e65f85573a1956a588eb499a70da668f0f9f4f6f7"
+  },
+  {
+    "path": "run1/compile.rsp",
+    "size": 415,
+    "crc32": 1887784477,
+    "sha256": "12747f1ebe50c377f95db22118cd87ed60e60a5c0d1053c22f977d4df7d537a0"
+  },
+  {
+    "path": "run1/compile.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run1/compile.stdout.raw",
+    "size": 13,
+    "crc32": 1466176782,
+    "sha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7"
+  },
+  {
+    "path": "run1/compiler-env-receipt.json",
+    "size": 801,
+    "crc32": 1376769996,
+    "sha256": "388ebf493ef3e8fae6d4c3acd75d29fa7ceee1b2159027583ab34e83c57dd3f3"
+  },
+  {
+    "path": "run1/compiler-env.cmd",
+    "size": 180,
+    "crc32": 2228547846,
+    "sha256": "78f6cd9eb2cf48d1482fd19c5faa1cede822b426f5323fe17863b9c4114999cc"
+  },
+  {
+    "path": "run1/compiler-env.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run1/compiler-env.stdout.raw",
+    "size": 4751,
+    "crc32": 95191616,
+    "sha256": "1ce5398b023e936f02bf0cb5a539549737224e0ee13ff3f44d2d55662f289fb2"
+  },
+  {
+    "path": "run1/expr-node.inc",
+    "size": 163,
+    "crc32": 1348959164,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  {
+    "path": "run1/filter-lexer-header.inc",
+    "size": 1032,
+    "crc32": 3783048518,
+    "sha256": "6d84235dd0ac7be1deadab88e77fe5fb548464ebc93569259cc61b4d5b0ef906"
+  },
+  {
+    "path": "run1/free-strings.inc",
+    "size": 92,
+    "crc32": 183299462,
+    "sha256": "9d63760e401e667b44e61333a68e0f1a18a945967646c2b2e978157a39b9b852"
+  },
+  {
+    "path": "run1/native-receipt.json",
+    "size": 750,
+    "crc32": 1217408456,
+    "sha256": "2b8fa2bd9844bbe7d906d9ad6a93ca87436a62ce68db80117eb2a28e051271a1"
+  },
+  {
+    "path": "run1/native.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run1/native.stdout.raw",
+    "size": 7080,
+    "crc32": 108557473,
+    "sha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17"
+  },
+  {
+    "path": "run1/reference.exe",
+    "size": 303616,
+    "crc32": 2234481931,
+    "sha256": "806c7bd8e6ab5239bcff04c764913a451dce687c4746c9df1f2cc8a9c6dc083f"
+  },
+  {
+    "path": "run1/to-string-value.inc",
+    "size": 1257,
+    "crc32": 77772815,
+    "sha256": "364fddb14994e0b992fb3aa40b83b25ec2b2a0b71dde9763f2f5e12eccc5aaf1"
+  },
+  {
+    "path": "run1/unescape-quotes.inc",
+    "size": 371,
+    "crc32": 454712230,
+    "sha256": "a0ef90adf103c169a886ea7484636f037513074b49409f311a8c9e2176d971c9"
+  },
+  {
+    "path": "run1/value-type.inc",
+    "size": 217,
+    "crc32": 1559003,
+    "sha256": "e12d216131223fba52af51ab8927095e6405c01727448288792d96d373f8d1df"
+  },
+  {
+    "path": "run1/value-type2.inc",
+    "size": 39,
+    "crc32": 878893374,
+    "sha256": "8cf757903b72da6e018561ad0ddd22233660537d92c39ca2aabceef0a5bbc936"
+  },
+  {
+    "path": "run1/version-ctor.inc",
+    "size": 313,
+    "crc32": 1463603583,
+    "sha256": "9b62a2b64995f6d16db2ecb026308c0e651f16ccffe498d6bd9b264fc82152e7"
+  },
+  {
+    "path": "run1/version-node.inc",
+    "size": 191,
+    "crc32": 2834923247,
+    "sha256": "a85a2cdfeee501a8f7f1c7d4408033ff439f0fed282cbb6368e11e19f357ecb2"
+  },
+  {
+    "path": "run2/adapter.cpp",
+    "size": 2624,
+    "crc32": 1727111795,
+    "sha256": "273847f536175936c8be572013b85a8e53e5c4003b992bc94ab7878599e20f71"
+  },
+  {
+    "path": "run2/cases.inc",
+    "size": 1968,
+    "crc32": 771109917,
+    "sha256": "6297f9465e3fe325fb9796300a1447c9a948ccfa273bceda2d31beb9e259dee0"
+  },
+  {
+    "path": "run2/compile-receipt.json",
+    "size": 871,
+    "crc32": 1600707999,
+    "sha256": "39750853770662200c0eaab96e8184e730c455b738c4327005ce37730da7b934"
+  },
+  {
+    "path": "run2/compile.rsp",
+    "size": 415,
+    "crc32": 1559975572,
+    "sha256": "6dfb8c61448b446b6ff8ce413ec1d4d359707122a23d12692b82ad6bb0ece717"
+  },
+  {
+    "path": "run2/compile.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run2/compile.stdout.raw",
+    "size": 13,
+    "crc32": 1466176782,
+    "sha256": "4dd7f88da67b99e887070d3a4215d9e65e1f4f62d003f7902619c2a055fa4ce7"
+  },
+  {
+    "path": "run2/compiler-env-receipt.json",
+    "size": 801,
+    "crc32": 4013800978,
+    "sha256": "a7fe569d94aad3e466c7ddf845371ebb16bea8cbac124328523e4f893bd91603"
+  },
+  {
+    "path": "run2/compiler-env.cmd",
+    "size": 180,
+    "crc32": 2228547846,
+    "sha256": "78f6cd9eb2cf48d1482fd19c5faa1cede822b426f5323fe17863b9c4114999cc"
+  },
+  {
+    "path": "run2/compiler-env.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run2/compiler-env.stdout.raw",
+    "size": 4751,
+    "crc32": 95191616,
+    "sha256": "1ce5398b023e936f02bf0cb5a539549737224e0ee13ff3f44d2d55662f289fb2"
+  },
+  {
+    "path": "run2/expr-node.inc",
+    "size": 163,
+    "crc32": 1348959164,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  {
+    "path": "run2/filter-lexer-header.inc",
+    "size": 1032,
+    "crc32": 3783048518,
+    "sha256": "6d84235dd0ac7be1deadab88e77fe5fb548464ebc93569259cc61b4d5b0ef906"
+  },
+  {
+    "path": "run2/free-strings.inc",
+    "size": 92,
+    "crc32": 183299462,
+    "sha256": "9d63760e401e667b44e61333a68e0f1a18a945967646c2b2e978157a39b9b852"
+  },
+  {
+    "path": "run2/native-receipt.json",
+    "size": 750,
+    "crc32": 4232767431,
+    "sha256": "06b5e1d963bd89f4833ee7358d023b3810ce369415406d3d934f1f69342b39d6"
+  },
+  {
+    "path": "run2/native.stderr.raw",
+    "size": 0,
+    "crc32": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "run2/native.stdout.raw",
+    "size": 7080,
+    "crc32": 108557473,
+    "sha256": "55736e5dd34abd7082582ed2bcab425be2dea7d5c17802ebc152b22fc9fb3d17"
+  },
+  {
+    "path": "run2/reference.exe",
+    "size": 303616,
+    "crc32": 2238579980,
+    "sha256": "33316a36c71ffc00406d19e9b7b79a64c14c4196b98292c934d37ffc8ea06d4e"
+  },
+  {
+    "path": "run2/to-string-value.inc",
+    "size": 1257,
+    "crc32": 77772815,
+    "sha256": "364fddb14994e0b992fb3aa40b83b25ec2b2a0b71dde9763f2f5e12eccc5aaf1"
+  },
+  {
+    "path": "run2/unescape-quotes.inc",
+    "size": 371,
+    "crc32": 454712230,
+    "sha256": "a0ef90adf103c169a886ea7484636f037513074b49409f311a8c9e2176d971c9"
+  },
+  {
+    "path": "run2/value-type.inc",
+    "size": 217,
+    "crc32": 1559003,
+    "sha256": "e12d216131223fba52af51ab8927095e6405c01727448288792d96d373f8d1df"
+  },
+  {
+    "path": "run2/value-type2.inc",
+    "size": 39,
+    "crc32": 878893374,
+    "sha256": "8cf757903b72da6e018561ad0ddd22233660537d92c39ca2aabceef0a5bbc936"
+  },
+  {
+    "path": "run2/version-ctor.inc",
+    "size": 313,
+    "crc32": 1463603583,
+    "sha256": "9b62a2b64995f6d16db2ecb026308c0e651f16ccffe498d6bd9b264fc82152e7"
+  },
+  {
+    "path": "run2/version-node.inc",
+    "size": 191,
+    "crc32": 2834923247,
+    "sha256": "a85a2cdfeee501a8f7f1c7d4408033ff439f0fed282cbb6368e11e19f357ecb2"
+  }
+]

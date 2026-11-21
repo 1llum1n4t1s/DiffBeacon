@@ -1,0 +1,296 @@
+{
+  "status": "passed",
+  "scope": "synthetic fixture and independent oracle only; product not run",
+  "allZipEntries": [
+    {
+      "side": "left",
+      "entryChain": [],
+      "entry": "outer.zip",
+      "size": 732,
+      "sha256": "FC5053E75F54DC64B92530067895CF2B3ADA2172E6A39AFE7A03D35A22A92C57",
+      "crc32": "F982D6F6",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [],
+      "entry": "sibling.txt",
+      "size": 23,
+      "sha256": "3E92317DBE18060FB8F3FA3EE0C52F76FA9E407A80DE59206BBAA8EFD6598DCB",
+      "crc32": "B6261BA1",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [],
+      "entry": "empty.txt",
+      "size": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "crc32": "00000000",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [],
+      "entry": "provenance.txt",
+      "size": 31,
+      "sha256": "C3D18FFAB02AA76CCD04F0B7D9ADB0877A17D409A090E9BE3FE26B3E220BAF5C",
+      "crc32": "B435D710",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [
+        "outer.zip"
+      ],
+      "entry": "inner.zip",
+      "size": 468,
+      "sha256": "653D3FB4E746E21D7A04915B325927CE001DD0778A996A48E9480942658E5BE3",
+      "crc32": "D4F5B77E",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [
+        "outer.zip"
+      ],
+      "entry": "sibling.txt",
+      "size": 25,
+      "sha256": "3F93A90CD85DECDEB62BD28B29E7D123EFED9DA230CA9CCC64FB10062455324F",
+      "crc32": "58BF7AC2",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "texts/leaf.txt",
+      "size": 52,
+      "sha256": "187D865032AB4B93D9BD8D9424BCB139A504648C3BA890F54D261812C260DF50",
+      "crc32": "CB678071",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "texts/sibling.txt",
+      "size": 30,
+      "sha256": "7111221B7126DEFC79B011895D12E7A8F6FD653893B53E2B253E175501E558DC",
+      "crc32": "681953FD",
+      "passed": true
+    },
+    {
+      "side": "left",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "metadata.txt",
+      "size": 25,
+      "sha256": "DCDE601C6069BDDFF6F852F797DF2EEF3BEC69E5EA349B1E50FE3272F7764989",
+      "crc32": "CD6911CB",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [],
+      "entry": "outer.zip",
+      "size": 826,
+      "sha256": "5212DB28E6A3525F4F966A4AE97DD6A326E0B20F6141DD5F081F0E76A023AACE",
+      "crc32": "ECAB470F",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [],
+      "entry": "sibling.txt",
+      "size": 23,
+      "sha256": "3E92317DBE18060FB8F3FA3EE0C52F76FA9E407A80DE59206BBAA8EFD6598DCB",
+      "crc32": "B6261BA1",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [],
+      "entry": "empty.txt",
+      "size": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "crc32": "00000000",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [],
+      "entry": "provenance.txt",
+      "size": 31,
+      "sha256": "C3D18FFAB02AA76CCD04F0B7D9ADB0877A17D409A090E9BE3FE26B3E220BAF5C",
+      "crc32": "B435D710",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [
+        "outer.zip"
+      ],
+      "entry": "inner.zip",
+      "size": 562,
+      "sha256": "8C90AF29B71ADF2B7726C01A7D9F588E6B8CF33B54A6D00F7D7E2B085F6885AF",
+      "crc32": "3567F323",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [
+        "outer.zip"
+      ],
+      "entry": "sibling.txt",
+      "size": 25,
+      "sha256": "3F93A90CD85DECDEB62BD28B29E7D123EFED9DA230CA9CCC64FB10062455324F",
+      "crc32": "58BF7AC2",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "texts/leaf.txt",
+      "size": 112,
+      "sha256": "C71E0616366F520FDF2F7A2D3ED97CECA689794EFAFD95C4A3BA871B5D0089BF",
+      "crc32": "C07E839C",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "texts/sibling.txt",
+      "size": 64,
+      "sha256": "0EF15A57F70516E9D85DEFA998FBEACA9B04CF99A32420C1787C6FDF40280647",
+      "crc32": "B7E312CE",
+      "passed": true
+    },
+    {
+      "side": "middle",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "metadata.txt",
+      "size": 25,
+      "sha256": "DCDE601C6069BDDFF6F852F797DF2EEF3BEC69E5EA349B1E50FE3272F7764989",
+      "crc32": "CD6911CB",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [],
+      "entry": "outer.zip",
+      "size": 738,
+      "sha256": "C26792463D710DB8775D0E27F330B23ED82916F36A867FC38A8E15B3FBA59C38",
+      "crc32": "06E41A28",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [],
+      "entry": "sibling.txt",
+      "size": 23,
+      "sha256": "3E92317DBE18060FB8F3FA3EE0C52F76FA9E407A80DE59206BBAA8EFD6598DCB",
+      "crc32": "B6261BA1",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [],
+      "entry": "empty.txt",
+      "size": 0,
+      "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "crc32": "00000000",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [],
+      "entry": "provenance.txt",
+      "size": 31,
+      "sha256": "C3D18FFAB02AA76CCD04F0B7D9ADB0877A17D409A090E9BE3FE26B3E220BAF5C",
+      "crc32": "B435D710",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [
+        "outer.zip"
+      ],
+      "entry": "inner.zip",
+      "size": 474,
+      "sha256": "1248507C8E7BDE8B5223445F75C1CF1C5280B33DD06A5775DD6F6D3C9E8DA87A",
+      "crc32": "BD83C4DB",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [
+        "outer.zip"
+      ],
+      "entry": "sibling.txt",
+      "size": 25,
+      "sha256": "3F93A90CD85DECDEB62BD28B29E7D123EFED9DA230CA9CCC64FB10062455324F",
+      "crc32": "58BF7AC2",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "texts/leaf.txt",
+      "size": 58,
+      "sha256": "7B9DB7D0B6C919F1B3DECC1194BEE5B873483BE6650D1B5C6BBB2839F53A20BE",
+      "crc32": "0550C552",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "texts/sibling.txt",
+      "size": 30,
+      "sha256": "E07DD97AB189D51FFB414B32A51AD1383075F59F2358AF1D7B4FB7921FFF7238",
+      "crc32": "7BCAE4F6",
+      "passed": true
+    },
+    {
+      "side": "right",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "entry": "metadata.txt",
+      "size": 25,
+      "sha256": "DCDE601C6069BDDFF6F852F797DF2EEF3BEC69E5EA349B1E50FE3272F7764989",
+      "crc32": "CD6911CB",
+      "passed": true
+    }
+  ],
+  "zipEntryCount": 27,
+  "rootCount": 3,
+  "nestedDepth": 2,
+  "copyCaseCount": 6,
+  "expectedSaveByteCases": 6,
+  "workspaceSavedSides": 3,
+  "readonlyFixturesGeneratedOnly": 9,
+  "bytesBeforeEvidence": 91017
+}

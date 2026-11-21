@@ -1,0 +1,27 @@
+{
+  "oldScopesImmutableNotResent": true,
+  "oldRawNotDuplicatedIntoCandidate": true,
+  "entries": [
+    {
+      "phase": "PREP-only reader: implicit cp932 decode of new UTF8 source",
+      "supervisorPid": 22888,
+      "wrapperPid": 9228,
+      "exitCode": 1,
+      "proofSha256": "4b037dbeb9cb574a5ecd2070351170c7bd304da26016fa341c3e11ddddce5076",
+      "supervisorHeldReceiptSha256": "d8011ec45b5054b01f7049c8a22cbc4b89ef803bc024e09de182696a51c944a7"
+    },
+    {
+      "phase": "adapter compile without source charset: C4819/undefined types",
+      "compilerPid": 36884,
+      "supervisorPid": 8228,
+      "compilerExitCode": 2,
+      "linkCount": 0,
+      "nativeRunCount": 0,
+      "compileReceiptSha256": "4d61cff86b92b8d433e21aa8e2b9f0a027bea5b65436c346eb531b28f6b383a4",
+      "stdoutSha256": "615b995e531ebe43ccc6ea7abcf4ad2b1d40ac192eadd4b646c5b8b12a623e75",
+      "GOsha256": "7583b9cc1326408ac2b7ae51a3656bda96afcb11fc94b6761efe581d47c96295",
+      "failureQualificationSha256": "e4734fadf17304768cc0d707b266ee73341d0c531c3864add003d452ad1ad07d"
+    }
+  ],
+  "scope": "minimum SHA/phase/PIDs only; default never opens old failures"
+}

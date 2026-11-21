@@ -1,0 +1,16 @@
+{
+  "executed": false,
+  "expectationSource": "semantic-expectations.json plus unchanged old main artifacts",
+  "oldProgramSourceSha256": "a2f9d00429659169f9a5d1c156a73f8bda4d4dce0da5752e1cb5d218d1992617",
+  "oldMainSourceSha256": "1a823a954a0000a2375664b328a40030b313f3b52f68d0903b4ac811912c34cd",
+  "candidateManifestSha256": "962c7f240b31f7ea24b89206c33f1c3d4c3c86621a82f441b1e2223764213432",
+  "executionContract": [
+    "Parent chooses immutable old App DLL and separately built candidate02 App DLL and records each whole DLL/source manifest SHA; no overwriting current runtime.",
+    "Create same immutable directory bytes/masks/timestamps and same exact predicate bytes for both App processes; use separate old/new output directories.",
+    "Invoke existing OS producer, preserve raw stdout/stderr, actual exit/PID/birth/EOF/timeout evidence and SHA of inputs, filters and existing output sentinel before/after.",
+    "Run same-predicate rows listed in semantic-expectations for old and new even when old parser rejects; preserve old failures as historical observations.",
+    "Evaluate old against fixed old expectation and new against fixed source-derived expectation. Never choose expected values after either process result.",
+    "Run new helper selector for dirs2 and dirs3, the full copied folder-property scenario retaining both 23-function cohort helpers, and actual headless host lifetime checks separately.",
+    "New numeric root/comparison/Duration/Version/plus controls are source-derived extension or grammar controls, not a claim that native full parser was executed."
+  ]
+}

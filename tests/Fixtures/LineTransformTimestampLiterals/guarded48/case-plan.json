@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 1,
+  "scope": "original-ctor-evaluate-timestamp-arm-only-with-adapter-utcTime-guard",
+  "constructorCases": [
+    {
+      "id": "raw-int64-min",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "-9223372036854775808",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-int64-max",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "9223372036854775807",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-epoch-minus-second",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "-1000000",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-epoch-minus-us",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "-1",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-epoch-zero",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "0",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-epoch-plus-us",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "1",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-epoch-plus-second",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "1000000",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-2038-last-second",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "2147483647000000",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-2038-next-second",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "2147483648000000",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-3000-end",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "32535215999000000",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-3001-start",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "32535216000000000",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "raw-9999-end",
+      "callerKind": "rawTimestampCtor",
+      "rawTimestampInt64Decimal": "253402300799000000",
+      "stringUtf8Hex": null,
+      "expected": null,
+      "requiredCapture": "real Poco::Timestamp(TimeVal) then original DateTimeLiteral(Timestamp)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-year-0000",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "303030302d30312d30315430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-year-0001",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "303030312d30312d30315430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-year-0004-leap",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "303030342d30322d32395430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-year-0100-not-leap",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "303130302d30322d32395430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-year-0400-leap",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "303430302d30322d32395430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-year-1900-not-leap",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313930302d30322d32395430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-year-2000-leap",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302d30322d32395430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-2038-last-second",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323033382d30312d31395430333a31343a30375a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-2038-next-second",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323033382d30312d31395430333a31343a30385a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-3000-end",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "333030302d31322d33315432333a35393a35395a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-3001-start",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "333030312d30312d30315430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-9999-end",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "393939392d31322d33315432333a35393a35395a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-10000-start",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "31303030302d30312d30315430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-none",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-empty",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e5a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-zero",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-6-zero",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e3030303030305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-6-one",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e3030303030315a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-6-max",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e3939393939395a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-7-one",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e313030303030305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-7",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e313233343536375a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-fraction-9",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30302e3132333435363738395a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-date-dash",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302d30312d3032",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-date-slash",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302f30312f3032",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-date-dot",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302e30312e3032",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-format-slash",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302f30312f30322030333a30343a3035",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-format-dot",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302e30312e30322030333a30343a3035",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-format-named-month",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "30322d4a616e2d323030302030333a30343a3035",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-trailing-iso",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d30315430303a30303a30305a20747261696c696e67",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-trailing-date",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302d30312d303220747261696c696e67",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-trailing-slash",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "323030302f30312f30322030333a30343a303520747261696c696e67",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-trailing-named-month",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "30322d4a616e2d323030302030333a30343a303520747261696c696e67",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-locale-1900",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "31393030e5b9b431e69c8832e697a52033e6998234e5888635e7a792",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-locale-1969",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "31393639e5b9b43132e69c883331e697a5203233e699823539e588863539e7a792",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-locale-1970",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "31393730e5b9b431e69c8831e697a52030e6998230e5888630e7a792",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    },
+    {
+      "id": "string-embedded-nul-forensic-guard",
+      "callerKind": "stringCtor",
+      "rawTimestampInt64Decimal": null,
+      "stringUtf8Hex": "313937302d30312d3031005430303a30303a30305a",
+      "expected": null,
+      "requiredCapture": "original DateTimeLiteral(string)/Evaluate; unchanged original Timestamp serializer arm result raw UTF8 hex only when observed raw epoch satisfies adapter defined-arithmetic guard"
+    }
+  ],
+  "caseCount": 48,
+  "callerSchema": {
+    "rawTimestampCtor": "rawTimestampInt64Decimal signed decimal string; stringUtf8Hex=null",
+    "stringCtor": "stringUtf8Hex raw bytes; rawTimestampInt64Decimal=null"
+  },
+  "serializationRuntimePolicy": {
+    "guardOrigin": "adapter-only",
+    "epochOffsetInt64Decimal": "122192928000000000",
+    "safeRawMinimumInt64Decimal": "-922337203685477580",
+    "safeRawMaximumInt64Decimal": "910117910885477580",
+    "unsafeAction": "preserve observed raw, serializationRequested=false, serializationStatus=not-requested-unsafe-original-utcTime; never call original arm",
+    "checksAllCasesIncludingLocaleAndEmbeddedNul": true
+  },
+  "originalUtcTimeSourceLocalPath": "boundary-raw-spans/Timestamp-utcTime.inc",
+  "futureNativeExpectedNull": true,
+  "publicParserTypeObservationQualified": false,
+  "goldenGenerated": false,
+  "noReproductionRunPlannedHere": true
+}

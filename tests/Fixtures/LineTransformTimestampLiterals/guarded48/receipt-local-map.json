@@ -1,0 +1,30 @@
+{
+  "actualReceipts": [
+    {
+      "id": "compile-boundary-adapter",
+      "localReceiptPath": "forensic/compile-boundary-adapter.receipt.json",
+      "stdoutLocalPath": "forensic/compile-boundary-adapter.stdout.raw",
+      "stderrLocalPath": "forensic/compile-boundary-adapter.stderr.raw"
+    },
+    {
+      "id": "link-native",
+      "localReceiptPath": "forensic/link-native.receipt.json",
+      "stdoutLocalPath": "forensic/link-native.stdout.raw",
+      "stderrLocalPath": "forensic/link-native.stderr.raw"
+    },
+    {
+      "id": "native-run-1",
+      "localReceiptPath": "forensic/native-run-1.receipt.json",
+      "stdoutLocalPath": "native-run-1.ndjson",
+      "stderrLocalPath": "forensic/native-run-1.stderr.raw"
+    },
+    {
+      "id": "native-run-2",
+      "localReceiptPath": "forensic/native-run-2.receipt.json",
+      "stdoutLocalPath": "native-run-2.ndjson",
+      "stderrLocalPath": "forensic/native-run-2.stderr.raw"
+    }
+  ],
+  "scope": "relative files map to immutable receipt stream hashes; absolute actor paths are forensic only",
+  "oldActorPathsNeverOpenedByDefaultVerifier": true
+}

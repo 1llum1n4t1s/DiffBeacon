@@ -1,0 +1,416 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "sourceManifestSha256": "444afed17f9bde7b11fae0a8b77a4aa7516127a99b9b53ed7403a0a057488133",
+  "extractions": [
+    {
+      "file": "string.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 76207,
+      "endByte": 77464,
+      "startLine": 2315,
+      "endLine": 2357,
+      "sha256": "364fddb14994e0b992fb3aa40b83b25ec2b2a0b71dde9763f2f5e12eccc5aaf1",
+      "outerLf": true
+    },
+    {
+      "file": "get.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 1277,
+      "endByte": 1512,
+      "startLine": 51,
+      "endLine": 58,
+      "sha256": "f66596a0c1646cfc43167b4282173894287169a389fce1e5c5e5a27ccf849059",
+      "outerLf": true
+    },
+    {
+      "file": "escape.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 1514,
+      "endByte": 1885,
+      "startLine": 60,
+      "endLine": 75,
+      "sha256": "95b75f084a39117432c0a828e81a9805eadd93c1adde55f70d3b477d72e801cd",
+      "outerLf": true
+    },
+    {
+      "file": "flags.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 1933,
+      "endByte": 2092,
+      "startLine": 78,
+      "endLine": 81,
+      "sha256": "bd2c8e05ca1855dbabe853949c457586fa8b711201b8c60244bccd7c1a02b168",
+      "outerLf": true
+    },
+    {
+      "file": "create.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 2136,
+      "endByte": 2422,
+      "startLine": 84,
+      "endLine": 94,
+      "sha256": "03e45685c8c02936f6b92560c3d91a009a9bf123f61a7b0486745effae825510",
+      "outerLf": true
+    },
+    {
+      "file": "lifting.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 56747,
+      "endByte": 57135,
+      "startLine": 1693,
+      "endLine": 1704,
+      "sha256": "5c4b109fd6a2b058f9dde10e0f837e88ed0943bda5172b9519f586b812ba19c5",
+      "outerLf": true
+    },
+    {
+      "file": "subst-string.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 3284,
+      "endByte": 3646,
+      "startLine": 130,
+      "endLine": 142,
+      "sha256": "1d351218c8fe07a85f9ca3fbc421775a7bcd8cc3ad498b907c9e0e828649f420",
+      "outerLf": true
+    },
+    {
+      "file": "subst-regex.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 3711,
+      "endByte": 3991,
+      "startLine": 145,
+      "endLine": 156,
+      "sha256": "c41913c85a4c0b38a360b459f87def41a7c095fadec34fc142ba2e1e276a1c5e",
+      "outerLf": true
+    },
+    {
+      "file": "regex-literal-ctor.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 144413,
+      "endByte": 144677,
+      "startLine": 4570,
+      "endLine": 4574,
+      "sha256": "1c4aaeaa2b475c69a2793756c65b93f25dedbafc97c980456a60cc48e61f95f4",
+      "outerLf": true
+    },
+    {
+      "file": "replace-list-func.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 67427,
+      "endByte": 68890,
+      "startLine": 2046,
+      "endLine": 2091,
+      "sha256": "3e5a8daeea005bab802cd0a1145ab1610afa7a9e0325d3f29d646ccad53e3cee",
+      "outerLf": true
+    },
+    {
+      "file": "regex-list-func.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 65868,
+      "endByte": 67425,
+      "startLine": 1996,
+      "endLine": 2044,
+      "sha256": "b03cafe2895feaf2dd95abd6b4384ed989b0e97cc42c1eec6fb63a12c962e3a3",
+      "outerLf": true
+    },
+    {
+      "file": "ExprNode.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 694,
+      "endByte": 857,
+      "startLine": 26,
+      "endLine": 31,
+      "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5",
+      "outerLf": true
+    },
+    {
+      "file": "BoolLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 3521,
+      "endByte": 3703,
+      "startLine": 127,
+      "endLine": 132,
+      "sha256": "1deaefccf3b46603af70f8f67a6c2208d23355a4f40c3135764897779ca1f708",
+      "outerLf": true
+    },
+    {
+      "file": "NoneLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 3969,
+      "endByte": 4132,
+      "startLine": 144,
+      "endLine": 148,
+      "sha256": "25966355015b119c7c597f97171ec2ebe304d2c7f8a167d1267e6ab29a8d449a",
+      "outerLf": true
+    },
+    {
+      "file": "DoubleLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 4134,
+      "endByte": 4324,
+      "startLine": 150,
+      "endLine": 155,
+      "sha256": "ac28e07c55b0193d4cd8a49c5be3808887ec950ff134bb803cd979aa5ff79cd2",
+      "outerLf": true
+    },
+    {
+      "file": "IntLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 4326,
+      "endByte": 4512,
+      "startLine": 157,
+      "endLine": 162,
+      "sha256": "914ab5d902cdb0e8fe0eea3589dc09ddff1e353afb31edfb8bbf32fd6447d4ff",
+      "outerLf": true
+    },
+    {
+      "file": "StringLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 4514,
+      "endByte": 4721,
+      "startLine": 164,
+      "endLine": 169,
+      "sha256": "dc6588cf3720b9ea55168687fd4c610444707956401dec9909ae59d22aca88a9",
+      "outerLf": true
+    },
+    {
+      "file": "DateTimeLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 4910,
+      "endByte": 5169,
+      "startLine": 178,
+      "endLine": 184,
+      "sha256": "a4d0c8c922f8e4783cbff72a797c6ddbeb6f3c045da1988ec38c1bc3432348ab",
+      "outerLf": true
+    },
+    {
+      "file": "RegularExpressionLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 5559,
+      "endByte": 5831,
+      "startLine": 200,
+      "endLine": 205,
+      "sha256": "0798b15c4dfe46989e360b2a7ceef98bfad08b5068be1c244c22ee8281466a9f",
+      "outerLf": true
+    },
+    {
+      "file": "ArrayLiteral.inc",
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "startByte": 5833,
+      "endByte": 6088,
+      "startLine": 207,
+      "endLine": 212,
+      "sha256": "89f4a5ef9f7837a8c6e0755c2e211f50a87d22964fbd43103bfdd12a4da4650e",
+      "outerLf": true
+    },
+    {
+      "file": "options.inc",
+      "path": "Externals/poco/Foundation/include/Poco/RegularExpression.h",
+      "startByte": 817,
+      "endByte": 3444,
+      "startLine": 39,
+      "endLine": 75,
+      "sha256": "9d6972661f5b35235d52886983c885c7799719f99291860e6ad71bab07c5b5c8",
+      "outerLf": true
+    },
+    {
+      "file": "poco-subst-inline.inc",
+      "path": "Externals/poco/Foundation/include/Poco/RegularExpression.h",
+      "startByte": 10910,
+      "endByte": 11071,
+      "startLine": 230,
+      "endLine": 233,
+      "sha256": "82d17d5b5722f3c82f8b11662e61cac78b5c04ba55fa50f3f1cb8f19fb85c32f",
+      "outerLf": true
+    },
+    {
+      "file": "match-type.inc",
+      "path": "Externals/poco/Foundation/include/Poco/RegularExpression.h",
+      "startByte": 3447,
+      "endByte": 3675,
+      "startLine": 77,
+      "endLine": 82,
+      "sha256": "f72e4d558a741f3b55f15708e9cb6cd4f4ac96920482f1fa1dd6ca9adfd76fd9",
+      "outerLf": true
+    },
+    {
+      "file": "match-data.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 393,
+      "endByte": 977,
+      "startLine": 25,
+      "endLine": 56,
+      "sha256": "61e3790ee5d23e31a7adab9475a2a58510f9076219b59b31040740545ab5cda3",
+      "outerLf": true
+    },
+    {
+      "file": "poco-ctor.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 1002,
+      "endByte": 2944,
+      "startLine": 63,
+      "endLine": 108,
+      "sha256": "a1ada29e04ebd22b0dac6a0e6275a48da741f1b5d20397e2b83065a6c2c25121",
+      "outerLf": true
+    },
+    {
+      "file": "poco-dtor.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 2947,
+      "endByte": 3057,
+      "startLine": 111,
+      "endLine": 114,
+      "sha256": "6d7ed580075328fcdc07bf67e85d42f366e441d9571409e0274cdbe2cc4eb16c",
+      "outerLf": true
+    },
+    {
+      "file": "poco-subst.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 6889,
+      "endByte": 7370,
+      "startLine": 255,
+      "endLine": 272,
+      "sha256": "4133aaa6a4a42920b9b6e27b3dc44831f098669221156df60f7d21ead5a4bd04",
+      "outerLf": true
+    },
+    {
+      "file": "poco-subst-one.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 7373,
+      "endByte": 9286,
+      "startLine": 275,
+      "endLine": 346,
+      "sha256": "aaccf421c4af63a34fbde380070b42f4403f996624122fdf2d56a3a2d82b367a",
+      "outerLf": true
+    },
+    {
+      "file": "poco-match.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 3060,
+      "endByte": 4107,
+      "startLine": 117,
+      "endLine": 147,
+      "sha256": "ad2820a6b22fe5062a3b0c3ac75a05d4bf02adcef3ecc3ce2b7dcb2127eac3bc",
+      "outerLf": true
+    },
+    {
+      "file": "poco-match-vector.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 4110,
+      "endByte": 5343,
+      "startLine": 150,
+      "endLine": 195,
+      "sha256": "bf76a19c9d0ba034ada8e82bab4a32bd89ee1ff06f1ba6af713946c68fb8c31b",
+      "outerLf": true
+    },
+    {
+      "file": "poco-compile-options.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 9786,
+      "endByte": 10585,
+      "startLine": 358,
+      "endLine": 386,
+      "sha256": "4746dd19901dc27a70ca44dbfd0dae8a8f202d00d1782ac456dfc92f1d5dd060",
+      "outerLf": true
+    },
+    {
+      "file": "poco-match-options.inc",
+      "path": "Externals/poco/Foundation/src/RegularExpression.cpp",
+      "startByte": 10588,
+      "endByte": 11066,
+      "startLine": 389,
+      "endLine": 407,
+      "sha256": "90146176f4ef0bc6301df8d29b7fd9cfe3ded5a96f5727586dc92809a5cffcdd",
+      "outerLf": true
+    },
+    {
+      "file": "guess-encoding.inc",
+      "path": "Src/FilterEngine/ReplaceList.cpp",
+      "startByte": 409,
+      "endByte": 943,
+      "startLine": 21,
+      "endLine": 35,
+      "sha256": "096a5c94623f617ada21db78e92b28dc57bb9056f6aaff8cdce45638e19511ae",
+      "outerLf": true
+    },
+    {
+      "file": "load-impl.inc",
+      "path": "Src/FilterEngine/ReplaceList.cpp",
+      "startByte": 945,
+      "endByte": 2204,
+      "startLine": 37,
+      "endLine": 92,
+      "sha256": "1fdc2c27cb223ef1f63aa844be41e571a206659ba6044d8f88d83f83ef0379c3",
+      "outerLf": true
+    },
+    {
+      "file": "load-list.inc",
+      "path": "Src/FilterEngine/ReplaceList.cpp",
+      "startByte": 2206,
+      "endByte": 3682,
+      "startLine": 94,
+      "endLine": 139,
+      "sha256": "ac874c1931c49030d0d422fe420c66162e7bcc9a25c9c5a74345d8975b7c6f10",
+      "outerLf": true
+    },
+    {
+      "file": "load-regex-list.inc",
+      "path": "Src/FilterEngine/ReplaceList.cpp",
+      "startByte": 3684,
+      "endByte": 4838,
+      "startLine": 141,
+      "endLine": 172,
+      "sha256": "c1a42ce57e1be41096a93f92631e751132873973c2113ea2f593975f8d1d916b",
+      "outerLf": true
+    },
+    {
+      "file": null,
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 134103,
+      "endByte": 141466,
+      "startLine": 4297,
+      "endLine": 4488,
+      "sha256": "76aeff597580a348b6756fea0be3a47abf30c2bca71df1f69cfa311b38ba07ae",
+      "outerLf": false
+    },
+    {
+      "file": null,
+      "path": "Src/Common/UniFile.cpp",
+      "startByte": 7265,
+      "endByte": 7944,
+      "startLine": 297,
+      "endLine": 334,
+      "sha256": "6304cedbd4fb40e3e0a8f729e6ce7a7fec57186be2abbfa2ed4c33a1e415f1a9",
+      "outerLf": false
+    },
+    {
+      "file": null,
+      "path": "Src/Common/UniFile.cpp",
+      "startByte": 10161,
+      "endByte": 15664,
+      "startLine": 410,
+      "endLine": 665,
+      "sha256": "5d77eaed428ae24827a208e4b63b174b54257c158a1e565fdd81d918c679595e",
+      "outerLf": false
+    },
+    {
+      "file": null,
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 117528,
+      "endByte": 117574,
+      "startLine": 3831,
+      "endLine": 3831,
+      "sha256": "81ba404c16ea06505b14d95a29b297d9581c9ef78d63e06932cfbc01d7c5e02a",
+      "outerLf": false
+    },
+    {
+      "file": null,
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "startByte": 117436,
+      "endByte": 117492,
+      "startLine": 3829,
+      "endLine": 3829,
+      "sha256": "c33ad516d99fc34945d5c3c92e2e31a3f8836c74f263b7d3cec24aceac28fa5d",
+      "outerLf": false
+    }
+  ]
+}

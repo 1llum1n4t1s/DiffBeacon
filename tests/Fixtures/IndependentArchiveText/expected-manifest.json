@@ -1,0 +1,797 @@
+{
+  "provenance": "synthetic Python literal text + explicit codec/preamble; no product outputs",
+  "schema": "artifact oracle 1 (not product version)",
+  "fixtures": [
+    {
+      "side": "left",
+      "rootPath": "inputs/left.zip",
+      "size": 1223,
+      "sha256": "1FA7AA8D2329C5CCCD54403834E046E67106670512E700E79ACAF10D04A13B88",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "leafEntry": "texts/leaf.txt",
+      "siblingLeafEntry": "texts/sibling.txt",
+      "pythonCodec": "utf-8",
+      "preambleHex": "",
+      "encodingName": "utf-8",
+      "hasBom": false,
+      "originalText": "Shared café\r\nLEFT original €\nthird left\rtail-left",
+      "editedText": "Shared café\r\nLEFT edited €\ninsert-left\rthird left\rtail-left",
+      "layers": [
+        {
+          "entryChain": [],
+          "entries": [
+            {
+              "name": "outer.zip",
+              "size": 732,
+              "crc32": "F982D6F6",
+              "sha256": "FC5053E75F54DC64B92530067895CF2B3ADA2172E6A39AFE7A03D35A22A92C57",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "sibling.txt",
+              "size": 23,
+              "crc32": "B6261BA1",
+              "sha256": "3E92317DBE18060FB8F3FA3EE0C52F76FA9E407A80DE59206BBAA8EFD6598DCB",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "empty.txt",
+              "size": 0,
+              "crc32": "00000000",
+              "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "provenance.txt",
+              "size": 31,
+              "crc32": "B435D710",
+              "sha256": "C3D18FFAB02AA76CCD04F0B7D9ADB0877A17D409A090E9BE3FE26B3E220BAF5C",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        },
+        {
+          "entryChain": [
+            "outer.zip"
+          ],
+          "entries": [
+            {
+              "name": "inner.zip",
+              "size": 468,
+              "crc32": "D4F5B77E",
+              "sha256": "653D3FB4E746E21D7A04915B325927CE001DD0778A996A48E9480942658E5BE3",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "sibling.txt",
+              "size": 25,
+              "crc32": "58BF7AC2",
+              "sha256": "3F93A90CD85DECDEB62BD28B29E7D123EFED9DA230CA9CCC64FB10062455324F",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        },
+        {
+          "entryChain": [
+            "outer.zip",
+            "inner.zip"
+          ],
+          "entries": [
+            {
+              "name": "texts/leaf.txt",
+              "size": 52,
+              "crc32": "CB678071",
+              "sha256": "187D865032AB4B93D9BD8D9424BCB139A504648C3BA890F54D261812C260DF50",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "texts/sibling.txt",
+              "size": 30,
+              "crc32": "681953FD",
+              "sha256": "7111221B7126DEFC79B011895D12E7A8F6FD653893B53E2B253E175501E558DC",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "metadata.txt",
+              "size": 25,
+              "crc32": "CD6911CB",
+              "sha256": "DCDE601C6069BDDFF6F852F797DF2EEF3BEC69E5EA349B1E50FE3272F7764989",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "side": "middle",
+      "rootPath": "inputs/middle.zip",
+      "size": 1317,
+      "sha256": "8F5750B666FF7ED364B3DBCB7E26CD53BD3CC1A0F1C25FBEB671F669762833C0",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "leafEntry": "texts/leaf.txt",
+      "siblingLeafEntry": "texts/sibling.txt",
+      "pythonCodec": "utf-16-le",
+      "preambleHex": "fffe",
+      "encodingName": "utf-16",
+      "hasBom": true,
+      "originalText": "Shared café\r\nMIDDLE original £\nthird middle\rtail-middle",
+      "editedText": "Shared café\r\nMIDDLE edited £\ninsert-middle\rthird middle\rtail-middle",
+      "layers": [
+        {
+          "entryChain": [],
+          "entries": [
+            {
+              "name": "outer.zip",
+              "size": 826,
+              "crc32": "ECAB470F",
+              "sha256": "5212DB28E6A3525F4F966A4AE97DD6A326E0B20F6141DD5F081F0E76A023AACE",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "sibling.txt",
+              "size": 23,
+              "crc32": "B6261BA1",
+              "sha256": "3E92317DBE18060FB8F3FA3EE0C52F76FA9E407A80DE59206BBAA8EFD6598DCB",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "empty.txt",
+              "size": 0,
+              "crc32": "00000000",
+              "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "provenance.txt",
+              "size": 31,
+              "crc32": "B435D710",
+              "sha256": "C3D18FFAB02AA76CCD04F0B7D9ADB0877A17D409A090E9BE3FE26B3E220BAF5C",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        },
+        {
+          "entryChain": [
+            "outer.zip"
+          ],
+          "entries": [
+            {
+              "name": "inner.zip",
+              "size": 562,
+              "crc32": "3567F323",
+              "sha256": "8C90AF29B71ADF2B7726C01A7D9F588E6B8CF33B54A6D00F7D7E2B085F6885AF",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "sibling.txt",
+              "size": 25,
+              "crc32": "58BF7AC2",
+              "sha256": "3F93A90CD85DECDEB62BD28B29E7D123EFED9DA230CA9CCC64FB10062455324F",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        },
+        {
+          "entryChain": [
+            "outer.zip",
+            "inner.zip"
+          ],
+          "entries": [
+            {
+              "name": "texts/leaf.txt",
+              "size": 112,
+              "crc32": "C07E839C",
+              "sha256": "C71E0616366F520FDF2F7A2D3ED97CECA689794EFAFD95C4A3BA871B5D0089BF",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "texts/sibling.txt",
+              "size": 64,
+              "crc32": "B7E312CE",
+              "sha256": "0EF15A57F70516E9D85DEFA998FBEACA9B04CF99A32420C1787C6FDF40280647",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "metadata.txt",
+              "size": 25,
+              "crc32": "CD6911CB",
+              "sha256": "DCDE601C6069BDDFF6F852F797DF2EEF3BEC69E5EA349B1E50FE3272F7764989",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "side": "right",
+      "rootPath": "inputs/right.zip",
+      "size": 1229,
+      "sha256": "9C849047318AD3A5036BE7A759914158BC24E8D5691B5E542D6685AC34A98308",
+      "entryChain": [
+        "outer.zip",
+        "inner.zip"
+      ],
+      "leafEntry": "texts/leaf.txt",
+      "siblingLeafEntry": "texts/sibling.txt",
+      "pythonCodec": "cp1252",
+      "preambleHex": "",
+      "encodingName": "windows-1252",
+      "hasBom": false,
+      "originalText": "Shared café\r\nRIGHT original “quote”\nthird right\rtail-right",
+      "editedText": "Shared café\r\nRIGHT edited “quote”\ninsert-right\rthird right\rtail-right",
+      "layers": [
+        {
+          "entryChain": [],
+          "entries": [
+            {
+              "name": "outer.zip",
+              "size": 738,
+              "crc32": "06E41A28",
+              "sha256": "C26792463D710DB8775D0E27F330B23ED82916F36A867FC38A8E15B3FBA59C38",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "sibling.txt",
+              "size": 23,
+              "crc32": "B6261BA1",
+              "sha256": "3E92317DBE18060FB8F3FA3EE0C52F76FA9E407A80DE59206BBAA8EFD6598DCB",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "empty.txt",
+              "size": 0,
+              "crc32": "00000000",
+              "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "provenance.txt",
+              "size": 31,
+              "crc32": "B435D710",
+              "sha256": "C3D18FFAB02AA76CCD04F0B7D9ADB0877A17D409A090E9BE3FE26B3E220BAF5C",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        },
+        {
+          "entryChain": [
+            "outer.zip"
+          ],
+          "entries": [
+            {
+              "name": "inner.zip",
+              "size": 474,
+              "crc32": "BD83C4DB",
+              "sha256": "1248507C8E7BDE8B5223445F75C1CF1C5280B33DD06A5775DD6F6D3C9E8DA87A",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "sibling.txt",
+              "size": 25,
+              "crc32": "58BF7AC2",
+              "sha256": "3F93A90CD85DECDEB62BD28B29E7D123EFED9DA230CA9CCC64FB10062455324F",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        },
+        {
+          "entryChain": [
+            "outer.zip",
+            "inner.zip"
+          ],
+          "entries": [
+            {
+              "name": "texts/leaf.txt",
+              "size": 58,
+              "crc32": "0550C552",
+              "sha256": "7B9DB7D0B6C919F1B3DECC1194BEE5B873483BE6650D1B5C6BBB2839F53A20BE",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "texts/sibling.txt",
+              "size": 30,
+              "crc32": "7BCAE4F6",
+              "sha256": "E07DD97AB189D51FFB414B32A51AD1383075F59F2358AF1D7B4FB7921FFF7238",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            },
+            {
+              "name": "metadata.txt",
+              "size": 25,
+              "crc32": "CD6911CB",
+              "sha256": "DCDE601C6069BDDFF6F852F797DF2EEF3BEC69E5EA349B1E50FE3272F7764989",
+              "dateTime": [
+                2020,
+                1,
+                2,
+                3,
+                4,
+                6
+              ],
+              "compression": 0,
+              "externalAttributes": 2175008800,
+              "createSystem": 3,
+              "createVersion": 20,
+              "extractVersion": 20,
+              "internalAttributes": 0,
+              "flags": 0,
+              "extraHex": "",
+              "commentHex": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expectedBytes": [
+    {
+      "path": "expected/left-original.text",
+      "side": "left",
+      "state": "original",
+      "text": "Shared café\r\nLEFT original €\nthird left\rtail-left",
+      "size": 52,
+      "sha256": "187D865032AB4B93D9BD8D9424BCB139A504648C3BA890F54D261812C260DF50"
+    },
+    {
+      "path": "expected/left-edited.text",
+      "side": "left",
+      "state": "edited",
+      "text": "Shared café\r\nLEFT edited €\ninsert-left\rthird left\rtail-left",
+      "size": 62,
+      "sha256": "82043DC209B112E6FD57546A70578AE47FB8D04EA7FEBFBBAFF56CE98C1FB23E"
+    },
+    {
+      "path": "expected/middle-original.text",
+      "side": "middle",
+      "state": "original",
+      "text": "Shared café\r\nMIDDLE original £\nthird middle\rtail-middle",
+      "size": 112,
+      "sha256": "C71E0616366F520FDF2F7A2D3ED97CECA689794EFAFD95C4A3BA871B5D0089BF"
+    },
+    {
+      "path": "expected/middle-edited.text",
+      "side": "middle",
+      "state": "edited",
+      "text": "Shared café\r\nMIDDLE edited £\ninsert-middle\rthird middle\rtail-middle",
+      "size": 136,
+      "sha256": "95368149D9AC9BA3E8D9575318697E6C0D4AE62596F81D35633BA9800659B6AB"
+    },
+    {
+      "path": "expected/right-original.text",
+      "side": "right",
+      "state": "original",
+      "text": "Shared café\r\nRIGHT original “quote”\nthird right\rtail-right",
+      "size": 58,
+      "sha256": "7B9DB7D0B6C919F1B3DECC1194BEE5B873483BE6650D1B5C6BBB2839F53A20BE"
+    },
+    {
+      "path": "expected/right-edited.text",
+      "side": "right",
+      "state": "edited",
+      "text": "Shared café\r\nRIGHT edited “quote”\ninsert-right\rthird right\rtail-right",
+      "size": 69,
+      "sha256": "08856C7C050D9C4080D073528A0629B9F1FD23666651CA1F98EA09398321E3E9"
+    }
+  ]
+}

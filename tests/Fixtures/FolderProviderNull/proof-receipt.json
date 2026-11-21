@@ -1,0 +1,9 @@
+{
+  "size": 71828,
+  "sha256": "48fdbeda29a72c4e3515ef83951e2f3400495a64d05afd375c0ddcf4f72b111a",
+  "indexedEntries": 96,
+  "allEntryShaSizeCrcVerified": true,
+  "excludedReproducible": [
+    "two native exe/obj; original source ZIP reused by SHA"
+  ]
+}

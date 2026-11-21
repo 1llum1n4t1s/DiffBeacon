@@ -1,0 +1,36 @@
+[
+  {
+    "id": "compile-vs-runtime-phase",
+    "reason": "CLI exit 2/stdout empty cannot distinguish parser/optimizer/runtime; require real App headless Parse phase evidence",
+    "nativeCases": [
+      "c03879",
+      "c03915",
+      "c03939"
+    ],
+    "passed": false
+  },
+  {
+    "id": "clock-capture",
+    "reason": "native fixed now/today needs controlled ILineTransformTimestampClockEnvironment",
+    "passed": false
+  },
+  {
+    "id": "list-two-evaluation-lifetime",
+    "reason": "native c06123/c06147 compile read once, both values first despite mutation; CLI only observes value1 and no injected read count",
+    "nativeCases": [
+      "c06123",
+      "c06147"
+    ],
+    "passed": false
+  },
+  {
+    "id": "native-internal-probes-arrays-regex",
+    "reason": "classified individually; dynamic/Array/pattern public construction changes native trace or literal provenance; no blanket public impossibility claim",
+    "passed": false
+  },
+  {
+    "id": "gui-cancel-stale-output-protection",
+    "reason": "existing headless actual cancel/readProgress, dependency currency, filtered kind collision and unchanged accepted model remain necessary",
+    "passed": false
+  }
+]

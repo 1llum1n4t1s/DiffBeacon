@@ -1,0 +1,2796 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "nodesSha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135",
+  "files": [
+    {
+      "path": "startof-actual-capture-closure.v4.zip",
+      "size": 1036937,
+      "sha256": "1965de864574bf4c00da5484ba18e3dba6d459d9ceb1ec04906aa17a64dc8d21"
+    }
+  ],
+  "closureEntryCount": 66,
+  "referenceSourceEntryCount": 394,
+  "rawRowsEach": 126,
+  "measuredBodyEach": 108,
+  "publicBodyCases": 108,
+  "excludedNoGolden": 18,
+  "serializerSystemStringReturns": 14,
+  "classification": "original three function-body observations only; same natural Tokyo/ja-JP Windows profile",
+  "licenses": "reference-source.zip licenses preserved byte-for-byte",
+  "unqualified": [
+    "Native full AST/parser/Optimize",
+    "zeroarity",
+    "dynamic NUL",
+    "null arrays",
+    "unsafe extremes",
+    "other profile",
+    "macOS",
+    "DST",
+    "minimum floating year"
+  ],
+  "closureEntryPins": [
+    {
+      "path": "ast-parentage-proof.json",
+      "size": 1380,
+      "crc32": 2311999610,
+      "sha256": "64fe50c954265c651e6d44564ad2d30e5f7f3177566d99889e78be0ca6d8988a"
+    },
+    {
+      "path": "cases.inc",
+      "size": 17367,
+      "crc32": 3040954723,
+      "sha256": "71cdf4cb5e998154f26a84adb505a4f33ef4731c9cac456953ea9ce1bc04725d"
+    },
+    {
+      "path": "closure-manifest.json",
+      "size": 11254,
+      "crc32": 3151565838,
+      "sha256": "1acacdbcc28f5a093752d10f53533a16edfc700521deb07f67bd6934a2aed039"
+    },
+    {
+      "path": "environment.sdk-only.json",
+      "size": 2812,
+      "crc32": 2988443303,
+      "sha256": "4b832cbf4e7c1ab76f36733ac2c05c48711241701dc74cd3843da47b28785256"
+    },
+    {
+      "path": "execution-authority.json",
+      "size": 4839,
+      "crc32": 680984200,
+      "sha256": "f2ab35bba5ff0b6f580c1d0ea3c1f3c186628a538baf2d6b85317851a7283195"
+    },
+    {
+      "path": "execution-result.json",
+      "size": 16225,
+      "crc32": 1523536519,
+      "sha256": "c927b24ea4b2ce4ef281e8548340e3715c7acc7862bb9b304c9cb12e78152b30"
+    },
+    {
+      "path": "execution-started.json",
+      "size": 975,
+      "crc32": 2873132080,
+      "sha256": "bef56afef3b68240482e40dd0ec08b205945b6166ebef1374c01afad96384ea3"
+    },
+    {
+      "path": "failure-case-plan.json",
+      "size": 70649,
+      "crc32": 185293713,
+      "sha256": "93ec0a8d508a99822a80f5e0fbf989dfcf84de755c673870a99bb79b70cacce3"
+    },
+    {
+      "path": "go.schema.json",
+      "size": 1251,
+      "crc32": 1749983743,
+      "sha256": "c868972215e1fd15f6780cbdc79ebb517661e1aac1bdfdfc69746d668a545518"
+    },
+    {
+      "path": "keep-alias-proof.v4.json",
+      "size": 7431,
+      "crc32": 2994452628,
+      "sha256": "dda31d4d763144d37d5ef24841f3cee779e0fdcacb4b0a27a69227d4af22de78"
+    },
+    {
+      "path": "launch-contract.json",
+      "size": 1520,
+      "crc32": 4040364690,
+      "sha256": "9beabd4690b636e9fd3610174b91f032674dffdd6f73f2c55ba8bda656555731"
+    },
+    {
+      "path": "native-capture-qualified.v4.json",
+      "size": 2781,
+      "crc32": 2936290172,
+      "sha256": "ac91c0be25d56d71a7e567301dbbb0a88d8142f1acde24603215238fd487ed49"
+    },
+    {
+      "path": "native-capture-statistics.v4.json",
+      "size": 33081,
+      "crc32": 4143384206,
+      "sha256": "d27b161d921c5eb142a91b73cff663128a7db04a69cc28697e46b0c003b70bdc"
+    },
+    {
+      "path": "native-execution-plan.json",
+      "size": 14705,
+      "crc32": 1602484352,
+      "sha256": "05c53d5a51a4a8e2d1da2caaa0553b8f5e20ab7824048e787e40ca3802d7a3b1"
+    },
+    {
+      "path": "native-golden-candidate.v4.json",
+      "size": 96828,
+      "crc32": 2513372669,
+      "sha256": "ef4a647f7d3155bf5078dbcb28b9f50c1db1a1338dacd08fd4e789db90acfe9c"
+    },
+    {
+      "path": "native_executor.py",
+      "size": 23865,
+      "crc32": 932560636,
+      "sha256": "6a508b6b1b3f1694a7309eb8b698122de833f94c9e3f93014d4a6647e3299840"
+    },
+    {
+      "path": "original-pieces/applyToScalarOrArray.inc",
+      "size": 389,
+      "crc32": 1666010546,
+      "sha256": "126cbbad74be7e91496113b1aa4bdad6a00918df254f7118388bb06eefa1fd71"
+    },
+    {
+      "path": "original-pieces/DateTimeCtor.inc",
+      "size": 202,
+      "crc32": 259945803,
+      "sha256": "9a04bafe2a175625b041bbc6cd020f6c6ac17ee636998f5c41df3b7b1b05662b"
+    },
+    {
+      "path": "original-pieces/DateTimeLiteral.inc",
+      "size": 260,
+      "crc32": 3838000716,
+      "sha256": "60a1ff50e758b905b0e5e1f3b1b91655e63752423dcce22da191915089482fb1"
+    },
+    {
+      "path": "original-pieces/ExprNode.inc",
+      "size": 164,
+      "crc32": 4031815247,
+      "sha256": "a81db4258264cd5a49abc8af5fbbdf94664cda381443c9cf629cb8215948199e"
+    },
+    {
+      "path": "original-pieces/ParseDateTime.inc",
+      "size": 862,
+      "crc32": 4184740126,
+      "sha256": "18f4a4ad3947e5de6c19bab2186596a33e3eb232386bdc17dc5321f151d4cb8a"
+    },
+    {
+      "path": "original-pieces/RealFilterEvalContext.inc",
+      "size": 371,
+      "crc32": 3648566423,
+      "sha256": "4174dafcb0aa3772dff814c363841ffbe306b202e630b9323b2e9ef4542ccb14"
+    },
+    {
+      "path": "original-pieces/StartOfMonthFunc.inc",
+      "size": 462,
+      "crc32": 939748642,
+      "sha256": "3fa0ffa5db73b074291b5a03e8bde723b0c88a790214bdc47cfabf9732696e43"
+    },
+    {
+      "path": "original-pieces/StartOfWeekFunc.inc",
+      "size": 577,
+      "crc32": 1154442576,
+      "sha256": "8c0253d1a607de055427f366cda4e3b261372263f8aa12f1b36ccb7f1879e726"
+    },
+    {
+      "path": "original-pieces/StartOfYearFunc.inc",
+      "size": 449,
+      "crc32": 2105655440,
+      "sha256": "9c82a4ccc28958a7f9e788c34ed7061004114c95def3ac110d2fe9c1af26c4b9"
+    },
+    {
+      "path": "original-pieces/TimestampSerializerArm.inc",
+      "size": 236,
+      "crc32": 2668991525,
+      "sha256": "92e046211ff13fb53ff93e7d5fa4c60d8e5f735be287ec891dba9aff2f2161c3"
+    },
+    {
+      "path": "original-pieces/toLocalDateTime.inc",
+      "size": 306,
+      "crc32": 1374955961,
+      "sha256": "59439073210e764eeb425ea0566816f581260ed24a88ffd7cbe1fbad96b6423f"
+    },
+    {
+      "path": "original-pieces/ucr-toTString.inc",
+      "size": 264,
+      "crc32": 534521308,
+      "sha256": "525f8e4ee69e52a8a4795b10f4a0b2e52d9c62cffb33d83750e8c5ee7d6875cb"
+    },
+    {
+      "path": "original-pieces/ucr-toUTF8-return.inc",
+      "size": 100,
+      "crc32": 1325241643,
+      "sha256": "a26d8c674f99b9c3050ee124a1b0093a3eaf12577f12884cf82e6c2a8da65c3c"
+    },
+    {
+      "path": "original-pieces/ucr-toUTF8-wide.inc",
+      "size": 616,
+      "crc32": 3256581727,
+      "sha256": "9ef06df44c8ce18a2b67c4dfc3d0aa1c64002fca817b2fa0e7957d30dd3ac456"
+    },
+    {
+      "path": "original-pieces/Ucs4_to_Utf8.inc",
+      "size": 1252,
+      "crc32": 333852593,
+      "sha256": "78361d539d37b2a8291ebde33dc553ccc154ada4b230df48cac4dc40cb87bce2"
+    },
+    {
+      "path": "original-pieces/ValueType.inc",
+      "size": 385,
+      "crc32": 1577395034,
+      "sha256": "d6aa2ad12d811492d3bace3491e88e8dd113bc867e560c7a6ba4ca6bde1e42a7"
+    },
+    {
+      "path": "original-pieces/WindowsLocaleFallback.inc",
+      "size": 865,
+      "crc32": 4185855761,
+      "sha256": "9e4f715b49fe3b9dff3a921125ec453caae2b57e8887d5ec9da5297e8826833e"
+    },
+    {
+      "path": "outer/parent-execute-v4-launch.json",
+      "size": 388,
+      "crc32": 547722979,
+      "sha256": "c219878c506d5c034679cfc6516870106a675986a8805baf32dac317cb1f6e91"
+    },
+    {
+      "path": "outer/parent-execute-v4-result.json",
+      "size": 444,
+      "crc32": 7295257,
+      "sha256": "2d2b2b891cded50270615b5ff9b8340a19cef23b2274ee801cee263b8d352e7b"
+    },
+    {
+      "path": "outer/parent-execute-v4.stderr.raw",
+      "size": 0,
+      "crc32": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "outer/parent-execute-v4.stdout.raw",
+      "size": 0,
+      "crc32": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "parent-exact-execution-go.json",
+      "size": 745,
+      "crc32": 1314104237,
+      "sha256": "7847abd9235b96d42df8e4413b06b073be2884a9624c2ef4e112ff21018216f9"
+    },
+    {
+      "path": "preparation-result.json",
+      "size": 1459,
+      "crc32": 1301137511,
+      "sha256": "cf6c56b10f5ac3ee9912258e0fc23b17eb99e40ffddbe66471ca3ebe1a6987dc"
+    },
+    {
+      "path": "prepare_alias_v4.py",
+      "size": 8147,
+      "crc32": 3147029192,
+      "sha256": "8607307410031f20f768fff1294d046c8f8cad6b753389efa104fd75f4016912"
+    },
+    {
+      "path": "proof/compile-three-startof-adapter.receipt.json",
+      "size": 3819,
+      "crc32": 2793323747,
+      "sha256": "d9f7329a4c933ad1d8d23c3198f27830f43731575986e1428fa42793e8970307"
+    },
+    {
+      "path": "proof/compile-three-startof-adapter.stderr.raw",
+      "size": 0,
+      "crc32": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "proof/compile-three-startof-adapter.stdout.raw",
+      "size": 23,
+      "crc32": 2068408515,
+      "sha256": "bc02519a2babc4741f7e6290e8b3f84dffbdf61f88156664d8ba3914b4ea07c2"
+    },
+    {
+      "path": "proof/link-three-startof-capture.receipt.json",
+      "size": 7434,
+      "crc32": 2035872408,
+      "sha256": "ad64451b3c31dc652fe96950b3cd20be5594221138ce4c579f3b0ab8b8e6d5bf"
+    },
+    {
+      "path": "proof/link-three-startof-capture.stderr.raw",
+      "size": 0,
+      "crc32": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "proof/link-three-startof-capture.stdout.raw",
+      "size": 0,
+      "crc32": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "proof/native-run-1.receipt.json",
+      "size": 1780,
+      "crc32": 1074481543,
+      "sha256": "c3f3725c9d578294b9ee5bad3d0d7a6a9abb512c94fcc6d26e5746e3274dc5cc"
+    },
+    {
+      "path": "proof/native-run-1.stderr.raw",
+      "size": 0,
+      "crc32": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "proof/native-run-1.stdout.raw",
+      "size": 158912,
+      "crc32": 321880456,
+      "sha256": "d370e83fa2cebb21a4dcb8f0928461ebbc56c1472202f496b904fda8bfa347c8"
+    },
+    {
+      "path": "proof/native-run-2.receipt.json",
+      "size": 1780,
+      "crc32": 3509083825,
+      "sha256": "55a73f7f7ae23a22d6a8e2537311fb549effd2e055297f4d37afa6e3b17f5940"
+    },
+    {
+      "path": "proof/native-run-2.stderr.raw",
+      "size": 0,
+      "crc32": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "proof/native-run-2.stdout.raw",
+      "size": 158912,
+      "crc32": 4055876056,
+      "sha256": "517f7b563f8f6b5439ce4a253335ef55568dd54716234ca303c3dac77dfdbb03"
+    },
+    {
+      "path": "prove_structure.py",
+      "size": 3989,
+      "crc32": 677490038,
+      "sha256": "df84603f06df9d966b052d0a8e5554ed951b412df3216cdb1220c4aa4679cb4e"
+    },
+    {
+      "path": "read_actual_capture.v4.py",
+      "size": 12141,
+      "crc32": 3214418182,
+      "sha256": "91abf0675c6c78859484630b61fe41f4f7c7824f07c31532db98210a1367f504"
+    },
+    {
+      "path": "read_capture_portable.v4.py",
+      "size": 6853,
+      "crc32": 3950997812,
+      "sha256": "008e0ddc919ca0faf7d9cf191986885c439c5bc32d157bdd7595ca05f13eb9ad"
+    },
+    {
+      "path": "read_portable.py",
+      "size": 2516,
+      "crc32": 225977036,
+      "sha256": "655cd40f825a2776d98aaf6aca328e83101d326d8afbe86d1a1c4baa9718175e"
+    },
+    {
+      "path": "read_prep.py",
+      "size": 5850,
+      "crc32": 3923260534,
+      "sha256": "9a8fc403facd7ae93785aca0ab49131218fd3745b5c97dde603b9f7c86852d85"
+    },
+    {
+      "path": "receipt.schema.json",
+      "size": 1863,
+      "crc32": 1304620317,
+      "sha256": "8649e950f55d8a64e004cb6d4f43d72a9c32207cd6f7e258845ccfd6670510e3"
+    },
+    {
+      "path": "reference-source.zip",
+      "size": 972888,
+      "crc32": 3586926702,
+      "sha256": "044a1e0497951b740f6b11185592983ed9fee921df8d98ca4ffd987031eaa120"
+    },
+    {
+      "path": "retain_actual_capture.v4.py",
+      "size": 3635,
+      "crc32": 4259327540,
+      "sha256": "dfde4fa966ce52271663e76b5ce2c969a0c8cdab313d9bb4391d2e9cd1ce8e10"
+    },
+    {
+      "path": "run_native_held.py",
+      "size": 885,
+      "crc32": 1053020449,
+      "sha256": "16510aba8df876265ec22df3b79a063a4a45c80571b610ceef580fe44cae7018"
+    },
+    {
+      "path": "source-preflight-manifest.json",
+      "size": 375297,
+      "crc32": 3552982222,
+      "sha256": "3722c5ce474138a86a92ee1f5c93c39fd4592fa775f13eb7177ae3e62a5cc0ca"
+    },
+    {
+      "path": "source-safety-proof.json",
+      "size": 4324,
+      "crc32": 2169984828,
+      "sha256": "74bba92eb5cd862c48ad3ea5f96d66695ed30f2236770d5e1d6a5869ce994723"
+    },
+    {
+      "path": "supervisor-diff-from-measured-v9.txt",
+      "size": 8858,
+      "crc32": 2891315061,
+      "sha256": "2683d0f776a0b4369340ffa09353fe6ce54edb2addfdd301f6250e899c94cf8d"
+    },
+    {
+      "path": "timestamp_original.hpp",
+      "size": 1563,
+      "crc32": 2774257160,
+      "sha256": "1ca1e33e3607d1d157c48c3843a914252b8bb7d69ba0b5a4c233ecddebe525c6"
+    },
+    {
+      "path": "timestamp_startof.cpp",
+      "size": 8689,
+      "crc32": 2224546652,
+      "sha256": "0f647a2db50168effe74d226ca827c10ac639437453e1fcb2f3db47b2d8cf615"
+    }
+  ],
+  "referenceSourceEntryPins": [
+    {
+      "path": "adapter/timestamp_adapter.cpp",
+      "size": 8104,
+      "crc32": 2170317695,
+      "sha256": "ccb1aeded1cf522341cee14ac751509d226d433931cc473a2f1985f57e4bd6bf"
+    },
+    {
+      "path": "adapter/timestamp_original.hpp",
+      "size": 1563,
+      "crc32": 2774257160,
+      "sha256": "1ca1e33e3607d1d157c48c3843a914252b8bb7d69ba0b5a4c233ecddebe525c6"
+    },
+    {
+      "path": "licenses/1-COPYING",
+      "size": 18353,
+      "crc32": 1948522898,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    {
+      "path": "licenses/2-LICENSE",
+      "size": 1678,
+      "crc32": 246398350,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    {
+      "path": "licenses/3-LICENSE_1_0.txt",
+      "size": 1361,
+      "crc32": 2440914844,
+      "sha256": "beb8e42e9d6b4284e03304d05a81a0755200a965fc8d0a5e0aea1e84cf805d6e"
+    },
+    {
+      "path": "licenses/4-PCRE2-primary-header-license",
+      "size": 1974,
+      "crc32": 1204108584,
+      "sha256": "00eba5f3e332bee287db16bac43b30379034762d7cb70a9c724a25868285c871"
+    },
+    {
+      "path": "licenses/5-V8-primary-header-license",
+      "size": 1597,
+      "crc32": 1460995797,
+      "sha256": "d684dca7e0f7ee28e00162e7ab15ed4af7fcff45cb9e8f1148855ebc141f2c52"
+    },
+    {
+      "path": "original-pieces/DateTimeCtor.inc",
+      "size": 202,
+      "crc32": 259945803,
+      "sha256": "9a04bafe2a175625b041bbc6cd020f6c6ac17ee636998f5c41df3b7b1b05662b"
+    },
+    {
+      "path": "original-pieces/DateTimeLiteral.inc",
+      "size": 260,
+      "crc32": 3838000716,
+      "sha256": "60a1ff50e758b905b0e5e1f3b1b91655e63752423dcce22da191915089482fb1"
+    },
+    {
+      "path": "original-pieces/ExprNode.inc",
+      "size": 164,
+      "crc32": 4031815247,
+      "sha256": "a81db4258264cd5a49abc8af5fbbdf94664cda381443c9cf629cb8215948199e"
+    },
+    {
+      "path": "original-pieces/ParseDateTime.inc",
+      "size": 862,
+      "crc32": 4184740126,
+      "sha256": "18f4a4ad3947e5de6c19bab2186596a33e3eb232386bdc17dc5321f151d4cb8a"
+    },
+    {
+      "path": "original-pieces/RealFilterEvalContext.inc",
+      "size": 371,
+      "crc32": 3648566423,
+      "sha256": "4174dafcb0aa3772dff814c363841ffbe306b202e630b9323b2e9ef4542ccb14"
+    },
+    {
+      "path": "original-pieces/TimestampSerializerArm.inc",
+      "size": 236,
+      "crc32": 2668991525,
+      "sha256": "92e046211ff13fb53ff93e7d5fa4c60d8e5f735be287ec891dba9aff2f2161c3"
+    },
+    {
+      "path": "original-pieces/Ucs4_to_Utf8.inc",
+      "size": 1252,
+      "crc32": 333852593,
+      "sha256": "78361d539d37b2a8291ebde33dc553ccc154ada4b230df48cac4dc40cb87bce2"
+    },
+    {
+      "path": "original-pieces/ValueType.inc",
+      "size": 385,
+      "crc32": 1577395034,
+      "sha256": "d6aa2ad12d811492d3bace3491e88e8dd113bc867e560c7a6ba4ca6bde1e42a7"
+    },
+    {
+      "path": "original-pieces/WindowsLocaleFallback.inc",
+      "size": 865,
+      "crc32": 4185855761,
+      "sha256": "9e4f715b49fe3b9dff3a921125ec453caae2b57e8887d5ec9da5297e8826833e"
+    },
+    {
+      "path": "original-pieces/ucr-toTString.inc",
+      "size": 264,
+      "crc32": 534521308,
+      "sha256": "525f8e4ee69e52a8a4795b10f4a0b2e52d9c62cffb33d83750e8c5ee7d6875cb"
+    },
+    {
+      "path": "original-pieces/ucr-toUTF8-return.inc",
+      "size": 100,
+      "crc32": 1325241643,
+      "sha256": "a26d8c674f99b9c3050ee124a1b0093a3eaf12577f12884cf82e6c2a8da65c3c"
+    },
+    {
+      "path": "original-pieces/ucr-toUTF8-wide.inc",
+      "size": 616,
+      "crc32": 3256581727,
+      "sha256": "9ef06df44c8ce18a2b67c4dfc3d0aa1c64002fca817b2fa0e7957d30dd3ac456"
+    },
+    {
+      "path": "source/Externals/boost/LICENSE_1_0.txt",
+      "size": 1361,
+      "crc32": 2440914844,
+      "sha256": "beb8e42e9d6b4284e03304d05a81a0755200a965fc8d0a5e0aea1e84cf805d6e"
+    },
+    {
+      "path": "source/Externals/boost/boost/config.hpp",
+      "size": 2216,
+      "crc32": 1550192119,
+      "sha256": "373206390d20aa5bb9e2628eb08543399d73b853af7bfc5f1d2bd9a00bc07593"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/compiler/visualc.hpp",
+      "size": 12785,
+      "crc32": 480948664,
+      "sha256": "1b607140adc4547e10b1203e779c9f0fa0a51173c2b9c750bec3e9daae04bb65"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/detail/cxx_composite.hpp",
+      "size": 9187,
+      "crc32": 3277863253,
+      "sha256": "e1d48a1e474d7b3585f33b188aebc6d9a650155bc299122129896a7a1774841d"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/detail/select_compiler_config.hpp",
+      "size": 5356,
+      "crc32": 3694125861,
+      "sha256": "73059f6ceb2952375b9cfb71ee609bd29c595d9f82014a01676fcc47c3a692d3"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/detail/select_platform_config.hpp",
+      "size": 4588,
+      "crc32": 1142402772,
+      "sha256": "b24a891ef5cf8b032f1073c3e7d7416bba54657e58fec6f89e66c8ff9439665e"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/detail/select_stdlib_config.hpp",
+      "size": 4653,
+      "crc32": 1332323075,
+      "sha256": "d26cb12104c9942b2031500c291ee13754dbb43b1d944fb30a7b98b119b83456"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/detail/suffix.hpp",
+      "size": 48075,
+      "crc32": 130390454,
+      "sha256": "f46a617b5bd44d2076c978ad7151b31f9921517d881f57ee927b26ae4c2383ec"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/helper_macros.hpp",
+      "size": 1120,
+      "crc32": 703264694,
+      "sha256": "ecf739b9b06545ebb0d691e8207cf7b70a5d42d7cb378d5d5502c0c96eefafc2"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/no_tr1/utility.hpp",
+      "size": 854,
+      "crc32": 2237931321,
+      "sha256": "f2f768cf5c0a2800fb8bee3bd521e1e77feb1ca8dc7120d3fed4c7b2a70cacde"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/platform/win32.hpp",
+      "size": 2718,
+      "crc32": 1003847758,
+      "sha256": "eaa82c93bc49969f4e91edd333e1068bb4aeeb97c9a3dcdf51c0f8dab05dc225"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/pragma_message.hpp",
+      "size": 1019,
+      "crc32": 1723565799,
+      "sha256": "1951b59b8db3e8bf1e02c622605c7f45067dc3ce86eee8fba00f656099c64ab9"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/stdlib/dinkumware.hpp",
+      "size": 11403,
+      "crc32": 3250788758,
+      "sha256": "6f8b6f608e92d92e18e436aefe1a56a157b2ad119ad1dec0122e057f1ad11a15"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/user.hpp",
+      "size": 5365,
+      "crc32": 2420975963,
+      "sha256": "d24c2d771df2ee757c930466d69a0fac11cf721aaf89820f32c05c923a4ebca7"
+    },
+    {
+      "path": "source/Externals/boost/boost/config/workaround.hpp",
+      "size": 8171,
+      "crc32": 4074169305,
+      "sha256": "58a94045ef72552481b69a8b614a6c92e0d21ee19798677560ec4d59e10b0f99"
+    },
+    {
+      "path": "source/Externals/boost/boost/core/addressof.hpp",
+      "size": 6153,
+      "crc32": 1516764789,
+      "sha256": "c4a07c20efae1a947f198721961dcd902b43e5615ea0d3d9b2da140a9099b880"
+    },
+    {
+      "path": "source/Externals/boost/boost/core/enable_if.hpp",
+      "size": 3315,
+      "crc32": 48564837,
+      "sha256": "b4aefa20fb7a5d673ee4023e693ca74738dd84ffd5a4c248ddc06c1df812229e"
+    },
+    {
+      "path": "source/Externals/boost/boost/core/invoke_swap.hpp",
+      "size": 2948,
+      "crc32": 953394749,
+      "sha256": "d12bd16dc765118f4af0915a0be9edc9f3d18a4821ed5d76c0f7e0cf87bbdfe0"
+    },
+    {
+      "path": "source/Externals/boost/boost/detail/workaround.hpp",
+      "size": 353,
+      "crc32": 1516364168,
+      "sha256": "5d88074d61d7d93196d72b84fa62ede29be62a3f68386b78bda63eea7b32f2ba"
+    },
+    {
+      "path": "source/Externals/boost/boost/flyweight.hpp",
+      "size": 604,
+      "crc32": 427994314,
+      "sha256": "e70d938e0bbbad6c76e03f1a08e099304fd72fd6174d049c4928eaeb05074d50"
+    },
+    {
+      "path": "source/Externals/boost/boost/flyweight/detail/default_value_policy.hpp",
+      "size": 2042,
+      "crc32": 1053774225,
+      "sha256": "61486ddc10ad741ac3f709123ede31381f04e3c0b2c531e64519398e5cb1ff59"
+    },
+    {
+      "path": "source/Externals/boost/boost/flyweight/detail/perfect_fwd.hpp",
+      "size": 2909,
+      "crc32": 673550085,
+      "sha256": "7625813c5bba7216fb9cd4b5dbe1b75614cc2a9c58103e6439eee9dffe1b79ad"
+    },
+    {
+      "path": "source/Externals/boost/boost/flyweight/detail/value_tag.hpp",
+      "size": 1250,
+      "crc32": 785022533,
+      "sha256": "96d93ef58721f183bf99b44b21fb488a71f0027645271802a0397c0a8f512c49"
+    },
+    {
+      "path": "source/Externals/boost/boost/flyweight/flyweight.hpp",
+      "size": 15434,
+      "crc32": 1906855326,
+      "sha256": "7996264c9f9db581ccb64092d04d04eb050a945ba3c832b9f7a8e0cb104f72b3"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/config.hpp",
+      "size": 3610,
+      "crc32": 3485992848,
+      "sha256": "670b615f3aa2d61eb4f3174f7d325f238de20a87f2226395053d8544aaffd4cf"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_append.hpp",
+      "size": 18330,
+      "crc32": 12355839,
+      "sha256": "4cb2a02b245ec7121ec45a3722a431da580b67c5a3f961c3eaf1dbaa90565126"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_count.hpp",
+      "size": 3695,
+      "crc32": 1269587646,
+      "sha256": "7f413d342b508858c80140ab2aa67f7c1984cb9bc4cae1524c33d6d8e67c9fc9"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_defer.hpp",
+      "size": 2967,
+      "crc32": 193883516,
+      "sha256": "cc33d4e004c7bd3feee19b1de100489ace31b636c5adbabdd61b348dac8bf533"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_fold.hpp",
+      "size": 5753,
+      "crc32": 2931731297,
+      "sha256": "d987988f0303e54cb7536e2e59ddb441dd152f67d909cddc90bd925725493a7b"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_front.hpp",
+      "size": 1116,
+      "crc32": 3201274301,
+      "sha256": "049bcfc7bd007736005b61322ac68c099c558d5322d8b146bdd94103927e78c4"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_is_list.hpp",
+      "size": 800,
+      "crc32": 445820292,
+      "sha256": "d89daf12a8e701dadd9bffa909cc13ff08ee94b33e5554f7c136f9d86d762586"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_is_value_list.hpp",
+      "size": 874,
+      "crc32": 2587468005,
+      "sha256": "1d6001c2b479ae396cdf2ff009a596974c5eb9dde63525b3506485d5915d1c4b"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_list.hpp",
+      "size": 491,
+      "crc32": 2927506317,
+      "sha256": "c2413dc3ed97d171a276c3de93e6406792162d5a99f3fc1b0616f47376833978"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_list_v.hpp",
+      "size": 523,
+      "crc32": 1303874485,
+      "sha256": "1e9b7bc702a0fec478dcfaf2af1543271d67de89e8733cddf696e3d48b482677"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_plus.hpp",
+      "size": 2926,
+      "crc32": 2578008072,
+      "sha256": "9fed767b29dab714be1f0e3e49b0161a7b653cec347fc8cd156fd7c396d63492"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_rename.hpp",
+      "size": 1488,
+      "crc32": 2932910542,
+      "sha256": "b1a6ae78b132eba56b8a40a73e910eb930eaa3447f1a6a069ef948350ffbb15d"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/detail/mp_value.hpp",
+      "size": 602,
+      "crc32": 3860501471,
+      "sha256": "c4920907bf95b31fc7c7db7e09f9351bb4fa4cb48e7246d0f6e6115d8d141deb"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/integral.hpp",
+      "size": 1166,
+      "crc32": 563739858,
+      "sha256": "02032a46a2888c0104e279994becfca1e0264c6fbccc4f00daa85a107951a184"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/list.hpp",
+      "size": 12870,
+      "crc32": 2488265121,
+      "sha256": "98ec8cf7f258133795a01e867e28f31c9f225034a1fd30599323762ee2ee6431"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/utility.hpp",
+      "size": 4957,
+      "crc32": 145128154,
+      "sha256": "952369f292878cf999237a9973832144df7abc833c168c047d0c45a66e247bd3"
+    },
+    {
+      "path": "source/Externals/boost/boost/mp11/version.hpp",
+      "size": 437,
+      "crc32": 1092504659,
+      "sha256": "3661f2fea7da35da1529e1fb0fb4a4c774e8cafe55f04de8d5fd65b147b43be4"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/apply_wrap.hpp",
+      "size": 6177,
+      "crc32": 1543731536,
+      "sha256": "30375a817bb6ebf062cd2858a76ec568347b22c9b86f6071ededee1b79562d10"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/adl_barrier.hpp",
+      "size": 1559,
+      "crc32": 347477505,
+      "sha256": "28814ccd677294dfb0fd2d9a89153206e40dead79a96319fdf9bf951d402bf9c"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/arity.hpp",
+      "size": 1095,
+      "crc32": 4110419638,
+      "sha256": "faa7d7ad0317c59096b66583e4e4f2dc5b03e41b452c6c4d55f887852e98b8ec"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/adl.hpp",
+      "size": 1418,
+      "crc32": 861020719,
+      "sha256": "9866f0a5843296ea77434334ef91c0dcd3fc15fafe5b34f3256b0dfdadbf77c8"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/arrays.hpp",
+      "size": 831,
+      "crc32": 3963397963,
+      "sha256": "3be608dbbab4a8b8c3c5b2ae838a54171539b52e5a2df76a4dfb3c0a7e25c969"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/compiler.hpp",
+      "size": 2138,
+      "crc32": 3014733911,
+      "sha256": "9c90a5f615d04f901ad5c58772e8b3f1331c7d7863011c70d05a6b4bd2b4dbba"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/ctps.hpp",
+      "size": 825,
+      "crc32": 2258126367,
+      "sha256": "2626b1e44e9ec076fbf5f437e123c471a76de21f1ba817cef6c03db88c62e531"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/dtp.hpp",
+      "size": 1577,
+      "crc32": 1818690187,
+      "sha256": "ce114111f7e276ecbb1080ac2a5ad43816044daf6d3181b1bf0ef019db61ab77"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/eti.hpp",
+      "size": 1235,
+      "crc32": 2229598928,
+      "sha256": "7cc8dd5b9009cd8af39c18ef8ae8d2bb210d69197b39f9bbe66cbc7e94e82f87"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/gcc.hpp",
+      "size": 591,
+      "crc32": 1621803873,
+      "sha256": "78f78e3e42144452a092c06969eed8723b081a9faf0c1860013d774c63f83179"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/has_apply.hpp",
+      "size": 905,
+      "crc32": 2452662573,
+      "sha256": "57a0a58f43e03b4e7435db61ba0801dbcada1c522b8905da39b70edfa7df3299"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/has_xxx.hpp",
+      "size": 973,
+      "crc32": 2671646211,
+      "sha256": "19e2087e31f5302aca7c9930f01963c414504a1fa2f416b7d9aa1a65ca36aac6"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/integral.hpp",
+      "size": 1047,
+      "crc32": 1462545804,
+      "sha256": "f034815ed99c91b0c48fac4e0a513fff0eeba2ecf30bb2fffaffd1c1eacb374d"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/intel.hpp",
+      "size": 511,
+      "crc32": 2671976229,
+      "sha256": "5ce4ace676be390de349b31f000af18d49c953e12ffc91c882ee632f1bb4cc2a"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/lambda.hpp",
+      "size": 910,
+      "crc32": 1822184055,
+      "sha256": "ec9f4e943fb91987e5156a11ce26184d9fbaa426f79e5ad3b6aac148486a114e"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/msvc.hpp",
+      "size": 500,
+      "crc32": 186930584,
+      "sha256": "62eef1e28b4ce6ca35d07ece37b8bb455289f6ac4c774ef193a4e5741b0d06e5"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/msvc_typename.hpp",
+      "size": 684,
+      "crc32": 709369342,
+      "sha256": "1b5029e579609be6e766019d5d306e72bd1db06bcc616c3abc661f6bc8b737a5"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/nttp.hpp",
+      "size": 1009,
+      "crc32": 391230524,
+      "sha256": "9073ecf730c3a0993cee681ad5a2cef4669cb13e0afd640de26861d38852715f"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/overload_resolution.hpp",
+      "size": 820,
+      "crc32": 1905074726,
+      "sha256": "41bfd5a9fb070484e8b8fdd3285fc9f53696a878631dae08148674101aa511f1"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/preprocessor.hpp",
+      "size": 1111,
+      "crc32": 84701450,
+      "sha256": "6306ab9e6c324d8c6e55cd3605f8e13bb6f36dd247323d8918d3c07da247c00a"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/static_constant.hpp",
+      "size": 680,
+      "crc32": 3655284340,
+      "sha256": "aca83823971e4b9e0db4deb81dd96e79b2851e00ded38e7a306bbf8f5d268ac2"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/ttp.hpp",
+      "size": 1172,
+      "crc32": 2670465555,
+      "sha256": "c38f532aee9d6d9c19c6ad26e93eec138497e7f41b31f3d9ed10fc76588908f0"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/use_preprocessed.hpp",
+      "size": 525,
+      "crc32": 246223198,
+      "sha256": "8ef95ff5065ffa6144d9c562d71f082ac8091b19ecf3670b7682b18fb9d921d6"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/config/workaround.hpp",
+      "size": 497,
+      "crc32": 32965010,
+      "sha256": "57b4a97e529b168efdeb908260c55002e2569c58c98ea23eff68448dca92a4fc"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/has_apply.hpp",
+      "size": 767,
+      "crc32": 1973261565,
+      "sha256": "3c63998ae37b2a7922f66845fb6fae1fd7aa9658ec0855a3a99aa3d68d67bb8e"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/include_preprocessed.hpp",
+      "size": 1333,
+      "crc32": 3037458554,
+      "sha256": "794b0971976e1b15dc6f55c236347d61e3eacf8f56334934797b184514767a86"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/integral_wrapper.hpp",
+      "size": 3553,
+      "crc32": 2991235572,
+      "sha256": "13d2e389ea11bc9108cd505a165b727ebbbe2b0d3edd5e75f1d8f2e0ec1f1a30"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/lambda_arity_param.hpp",
+      "size": 696,
+      "crc32": 1253351422,
+      "sha256": "82201ea0f099ce7e82f5d4c7927bfbde4622183ac2d0e464824ccbd10ffe83c5"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/lambda_support.hpp",
+      "size": 5366,
+      "crc32": 2654365187,
+      "sha256": "5fc490a0e3f0b1d6bf173efa1ddad047bd5f70ff1a6ddbccd6894f4dee52a11f"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/msvc_never_true.hpp",
+      "size": 743,
+      "crc32": 2651485042,
+      "sha256": "14d46cdb7de3df47a25462d2ae9174c2b029c74c4d3863099a834373672f54b3"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/na.hpp",
+      "size": 1645,
+      "crc32": 2625501867,
+      "sha256": "1a47d9e372cb112a19823d8ddf5c94ee8b10138d28aa868239ed869ac34c0bf9"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/na_fwd.hpp",
+      "size": 673,
+      "crc32": 3172306978,
+      "sha256": "a632e53451b552d1abc6c9118f407a083f8f9ffdd093503de79024fd4b163a04"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/na_spec.hpp",
+      "size": 4449,
+      "crc32": 1339314789,
+      "sha256": "d0d448d10de6efb7bad24e344ad386037eb667137c1eebf6c3f0b406cacde540"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/nttp_decl.hpp",
+      "size": 844,
+      "crc32": 3355733559,
+      "sha256": "809fb409f57a2a5f679758b8ceb5f31ab1c15789217c36c427a7e944cbf133e5"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/preprocessed/plain/apply_wrap.hpp",
+      "size": 1238,
+      "crc32": 4063952210,
+      "sha256": "5af7a500dc1f73b2175dd31d748c42ee2044fe95fe2e3a7e875c2f494aa68219"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/preprocessor/def_params_tail.hpp",
+      "size": 4473,
+      "crc32": 794122768,
+      "sha256": "54274b3bb920f4a7199ce344151990668a74f0a8e73483f8034910e1280d728e"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/preprocessor/enum.hpp",
+      "size": 1940,
+      "crc32": 2782029043,
+      "sha256": "ce1c1241a3a9e79f076d59ab830a906bf3a797503ef0854206750690d08bc204"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/preprocessor/params.hpp",
+      "size": 2203,
+      "crc32": 743858433,
+      "sha256": "0496401dafb11dfcc317fc018c1238d01683aaf0f47e2850bbb13d15e8c1ee2d"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/static_cast.hpp",
+      "size": 770,
+      "crc32": 1700725827,
+      "sha256": "64697b844a2efd8aa3a4a51a93b0dfe6051335490090f3f25c1e4dbe1b55e259"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/template_arity_fwd.hpp",
+      "size": 563,
+      "crc32": 2167977281,
+      "sha256": "cf95228a7010cfaf32d7c214b20000e09c26afdf4739d698d29238098147c80f"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/type_wrapper.hpp",
+      "size": 1181,
+      "crc32": 887674670,
+      "sha256": "5699ac051ca130e263ed8889deea522e9e7ca167a8c1f99f4c01cc4da210c15d"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/value_wknd.hpp",
+      "size": 2029,
+      "crc32": 2882930822,
+      "sha256": "7c84c8e72c3bef461dae2b4f1f905f546bbe05fbec3109193eaa259fbee6efa6"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/aux_/yes_no.hpp",
+      "size": 1206,
+      "crc32": 1693447932,
+      "sha256": "4b4614b5a5643b09fe378ebc95ff754ce511e05825135aa80dd1c9b25dea997c"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/bool.hpp",
+      "size": 964,
+      "crc32": 3727213281,
+      "sha256": "bc2dbc31841313aab6fe3468199c6b15ce12eea0a8bb4b073f8caf10b2a6389b"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/bool_fwd.hpp",
+      "size": 766,
+      "crc32": 3537005214,
+      "sha256": "e2bda031dcee52f1bea6015e5ad2af309e0a0ecce882de63b4d39c9f2c04ed4f"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/eval_if.hpp",
+      "size": 1754,
+      "crc32": 3195443796,
+      "sha256": "fdfad47fe1e2b98d4ffc3cf9c61da48e7aa274713e33233ea01379f8ec13717b"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/has_xxx.hpp",
+      "size": 22066,
+      "crc32": 2376270336,
+      "sha256": "92c329232337e57d575bab770d0494ffbe4335a6c70698a10c169fab038b67bd"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/if.hpp",
+      "size": 2910,
+      "crc32": 2120371845,
+      "sha256": "ecddc91b2a97c7190d6415aa72f1916adc3a03816044b0c772ee56d0c16c210c"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/int.hpp",
+      "size": 520,
+      "crc32": 4056870749,
+      "sha256": "688205b1725a34a4df16cceef3509db8a786731f3b45d6fa1f908ff550654292"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/int_fwd.hpp",
+      "size": 678,
+      "crc32": 864094740,
+      "sha256": "8a609ceed046808f5d3b26893d45d2f55eb5ce6d15243ea770837e4ebfa4c31e"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/integral_c_tag.hpp",
+      "size": 725,
+      "crc32": 733805865,
+      "sha256": "f6fb4fbb74c0630652c670677c672c577a0a6e1b6902cc45181c9e00b51b3145"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/lambda_fwd.hpp",
+      "size": 1201,
+      "crc32": 3734364178,
+      "sha256": "47fbe349690d24ee254e27c87829efbd01234708fae5bca2d016445d2f1a340e"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/limits/arity.hpp",
+      "size": 535,
+      "crc32": 3650333755,
+      "sha256": "a5c11b556382551c904c7e6d1542bb30afc976097bc5350959bffc1cc5bcebf3"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/limits/vector.hpp",
+      "size": 525,
+      "crc32": 2594516539,
+      "sha256": "86064edf12142ce5aa7e21c3a978ffdea88c5dfecb00f34e12d5d9fb99688873"
+    },
+    {
+      "path": "source/Externals/boost/boost/mpl/void_fwd.hpp",
+      "size": 599,
+      "crc32": 1379406364,
+      "sha256": "ed43f10ad35cda66de81db316ea0f9ffe12efc791d206dae028c8e2f8a3b1166"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/arg_list.hpp",
+      "size": 43993,
+      "crc32": 2300828357,
+      "sha256": "8d613efb20499d6d6a59065533a287fa8ddffeeb97ed7637e677fcff2053e2c5"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/augment_predicate.hpp",
+      "size": 5948,
+      "crc32": 4015855761,
+      "sha256": "e2e8244ab8c631af32faf6b27e7fe0385c8a22bc6441bbe781e99fc5a033812d"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/default.hpp",
+      "size": 3331,
+      "crc32": 3728949074,
+      "sha256": "fc2c1a0fe4b9241c66f193fc9e2ec89f2e7e106597b6a61d76a85783d5198e09"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/is_maybe.hpp",
+      "size": 1437,
+      "crc32": 899011750,
+      "sha256": "3e713f4138693ed0a0ddc8ec2e830e6c59c778ddf6c611b4c7dda0941db8e37a"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/lambda_tag.hpp",
+      "size": 477,
+      "crc32": 1185294612,
+      "sha256": "db1b57a7e32b291795253c2a58b8f1299d35a36c35ca96b4a70411fc9ea12472"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/pack/parameter_requirements.hpp",
+      "size": 923,
+      "crc32": 2326205336,
+      "sha256": "fea372fcfc974b72dd108822b9a0fe30ac33538777f49e75e623e11d920e7c79"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/parameter_requirements.hpp",
+      "size": 408,
+      "crc32": 201160869,
+      "sha256": "82293d7bfa4ccf2a23309ae79b114856ecf7f47d45606cda1123ead9b08c51e8"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/preprocessor/nullptr.hpp",
+      "size": 494,
+      "crc32": 304612803,
+      "sha256": "6d53adc87c8b8b81e7fa43ba31e9ee424c7426e4893dd7e9c842a05c1f56cbfd"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/result_of0.hpp",
+      "size": 1471,
+      "crc32": 3466921896,
+      "sha256": "0cc25833b04a64284c9d1fccd1785e443279cb8b43fa4dbb7bbaab15923214cc"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/tagged_argument_fwd.hpp",
+      "size": 1031,
+      "crc32": 933152621,
+      "sha256": "c18548982b36f0ae371f1b4cf476e876a79a7f7df1b6d518b425548e81497d17"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/use_default_tag.hpp",
+      "size": 787,
+      "crc32": 1219378911,
+      "sha256": "52328d68a636d760f3246d76c79dfcca3521aba11474e06dc56240daced2daa9"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/void.hpp",
+      "size": 997,
+      "crc32": 2861765017,
+      "sha256": "f5c4df369880a954286916f67d3e21ca72c402a794abdc7ea08b6f01e18a7033"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/aux_/yesno.hpp",
+      "size": 1523,
+      "crc32": 121448399,
+      "sha256": "e48048e69632ec3c0418371be8f6354c37bd83ee78b770f3af5feeadb8fc45e2"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/config.hpp",
+      "size": 3749,
+      "crc32": 1885022047,
+      "sha256": "82ef295a995c41bb359ec447e6aa3b4b8747729b71b09b415a36142108fc9351"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/keyword_fwd.hpp",
+      "size": 671,
+      "crc32": 839257241,
+      "sha256": "72c84788eb5ad3027fd0bd95dafb0e6a7b0fba4c28d915e5634313a96d57b6ba"
+    },
+    {
+      "path": "source/Externals/boost/boost/parameter/parameters.hpp",
+      "size": 21379,
+      "crc32": 2675653416,
+      "sha256": "63c0485a7671e1ba724a4aad48db0da399c495afabc0c49d560491bde849edba"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/arithmetic/add.hpp",
+      "size": 4268,
+      "crc32": 801456103,
+      "sha256": "7bac45f4f57b9d8dfe630cad3897d0dc2d3cdff6be95fac796e49e2a82c96848"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/arithmetic/dec.hpp",
+      "size": 9324,
+      "crc32": 2534299564,
+      "sha256": "d4a0973c1058da68155167f44f5740c59f51a3ce1ba53337f45bd8c1121c7631"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/arithmetic/inc.hpp",
+      "size": 9298,
+      "crc32": 903209203,
+      "sha256": "346fb6cdde60c4cf12e45fd7ab24ae47f636d0793d972b77f6c933ec7420ce92"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/arithmetic/sub.hpp",
+      "size": 3999,
+      "crc32": 2102888841,
+      "sha256": "5845998c0492921692edf149b89b65b44bb3275f14fccd8e2bd641555547b359"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/array/data.hpp",
+      "size": 1158,
+      "crc32": 3337018961,
+      "sha256": "c9ba29785e03097acd1e9cffa28546484067cdb2e6e7c87b9c979fac8441ba5c"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/array/elem.hpp",
+      "size": 1306,
+      "crc32": 627512110,
+      "sha256": "6bb8e1483c8e071ad03f6a09d71cddf88534984bc8391023da929d1fae3b4805"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/array/size.hpp",
+      "size": 1158,
+      "crc32": 2559807077,
+      "sha256": "27d20a936e02ccbc683835309cbf0ac91ad0ce1b28b309f3dffda497fff2296b"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/cat.hpp",
+      "size": 1018,
+      "crc32": 2418277861,
+      "sha256": "9f232dca396d537f103fd26b7fc4e2026aeb43cb476d069688be697c11a084bf"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/comma_if.hpp",
+      "size": 752,
+      "crc32": 1803004947,
+      "sha256": "e6183a66ed499fc42fa63c51b6d8e80fb38ed7ec988ae2663826beedf4a497ba"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/config/config.hpp",
+      "size": 4143,
+      "crc32": 4161078389,
+      "sha256": "05c8b9e1e0ebec00f1c396e6c01eabdf400f5c1daf6f76da5c312454f736e43a"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/control/detail/msvc/while.hpp",
+      "size": 31126,
+      "crc32": 2610393798,
+      "sha256": "4b77146b65e9e925cef8699476b8344a06ba8a0b0fbc37369be1e7d60141184e"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/control/expr_iif.hpp",
+      "size": 1224,
+      "crc32": 391189821,
+      "sha256": "225dd9118c65de2e473e4cdec0aef9acc4b474216e683b4609bb1072dce32a10"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/control/if.hpp",
+      "size": 906,
+      "crc32": 3028779263,
+      "sha256": "ddb9af759ba3695b91dff747ce2fe18d768cdadf93ddd956884eff8333e4ee40"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/control/iif.hpp",
+      "size": 1325,
+      "crc32": 2292624690,
+      "sha256": "ccffe0f0bbc7ae9e4993a43d77fa0fd23b143d533148e462f1248e809208da04"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/control/while.hpp",
+      "size": 20893,
+      "crc32": 1489998037,
+      "sha256": "903bae4faed121ebd231f0c7f18346660ac5816fcfba2e50b6e66cbe4abf75f2"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/debug/error.hpp",
+      "size": 1574,
+      "crc32": 2625613137,
+      "sha256": "3cee86e4c00fb6e8572acf2efcf121f1b02dec3c89c4ab59d41f584920c79885"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/detail/auto_rec.hpp",
+      "size": 27240,
+      "crc32": 3640552451,
+      "sha256": "b021b4b909cba82d33b282a7709c868706c0f7a423c2a561c4fe336448fea155"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/detail/check.hpp",
+      "size": 2183,
+      "crc32": 1091236597,
+      "sha256": "f44f116a02d55b4e31df2dedb35a1e4e22ba1f62923882c29cf7d7f26497b78b"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/detail/is_binary.hpp",
+      "size": 1241,
+      "crc32": 1514507452,
+      "sha256": "4461a173cb87b7b18002d0b5dc70a709452049b057fc7fb94fa8b941ee89c41a"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/empty.hpp",
+      "size": 742,
+      "crc32": 2671494126,
+      "sha256": "25316276e18b8025ee1260681a106bb60fd2a0595fdbb784a6b9a1f34e32b98e"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/check_empty.hpp",
+      "size": 1031,
+      "crc32": 543954283,
+      "sha256": "1c4a1dd1d4e6a3b4cce449b83aaf9cd0116b0db1f27950fb7bd2c6820603aac6"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/detail/is_empty.hpp",
+      "size": 1728,
+      "crc32": 717062757,
+      "sha256": "61fea803ffa804064d652c03f66ab57bc2eb2a388bf04c78ec20f1d5e75d3255"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/empty.hpp",
+      "size": 567,
+      "crc32": 172814373,
+      "sha256": "0e086fd6efde0fabbf12715c72a80d9fa2916d14bed6a6e8631cc3a9efd7d648"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/expand.hpp",
+      "size": 842,
+      "crc32": 2456323581,
+      "sha256": "2c3dcec5afba1e28fd48da9066b828c386c0149c2a7cf5b27e38ea2c1040ec1e"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/identity.hpp",
+      "size": 759,
+      "crc32": 3429331883,
+      "sha256": "d23be5440b75e32ef9da08bd4cacb7016917a42bd4c30f61fa3d061fa1f645eb"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/is_1.hpp",
+      "size": 946,
+      "crc32": 3837412955,
+      "sha256": "c481a0e24bedd5902ef9729c3b32dcecb214975c940fc22402f4ccb6e8eb5ecf"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/is_empty.hpp",
+      "size": 923,
+      "crc32": 2178630592,
+      "sha256": "4c3757fcba1bb854d9f3b303b551e92220442e01f52d850e20014dc7f3d81035"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/is_empty_variadic.hpp",
+      "size": 2503,
+      "crc32": 1738607705,
+      "sha256": "5e03cd8c60dbbad96f8c88f6428c9e3947c8aa0cb6aefdf4dbec829d26cc1cfe"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/facilities/overload.hpp",
+      "size": 1115,
+      "crc32": 884578313,
+      "sha256": "234ac6d38b2dc7ec1f900107e296de316b2a50e9c842dc5860259f45c2ce5f60"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/identity.hpp",
+      "size": 751,
+      "crc32": 3642280183,
+      "sha256": "5e60eb53975fba657c6f099c0ceb23670388040680ee2b8b3f41c2bc8b6eb002"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/inc.hpp",
+      "size": 736,
+      "crc32": 15537719,
+      "sha256": "bfa9aea1844754bab45515c322a44d5dc8553f67db6358f01ba345dc9793bd18"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/list/adt.hpp",
+      "size": 2171,
+      "crc32": 2510687042,
+      "sha256": "c8c9b63e1be1dd34032d07c726b9b8676d1556b20ff1e05f542aa63da6aa05fd"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/list/detail/fold_left.hpp",
+      "size": 63806,
+      "crc32": 2226023464,
+      "sha256": "879e1b60bc862491d2bbcb4cd88956a6a9d47df8c368e5105f159af4fabf61f7"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/list/detail/fold_right.hpp",
+      "size": 30350,
+      "crc32": 1950609915,
+      "sha256": "ab99e233a51ec48e1308fbcc16658931f743ad9a275b046eac1ffd54ba080098"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/list/fold_left.hpp",
+      "size": 23780,
+      "crc32": 3183337667,
+      "sha256": "658b559232f4468199238b0af84282baac7c66ae3af6731d2cf63bb52f9808dc"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/list/fold_right.hpp",
+      "size": 3053,
+      "crc32": 2873067273,
+      "sha256": "3966e3c186ed35ea881d85ce4f17489ca8fa8629b2441bd6f71edf3af9d8c7e9"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/list/reverse.hpp",
+      "size": 3071,
+      "crc32": 586503442,
+      "sha256": "cd4c1fcd40b8c4c524ed009b7b3c91525a879733777dbf80e22ddeac3cc547c3"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/logical/and.hpp",
+      "size": 916,
+      "crc32": 3305254223,
+      "sha256": "d2de99f30eda56fc4232fce3e4c9dc38de20b4bcdc76dbee46047e120d15359d"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/logical/bitand.hpp",
+      "size": 1415,
+      "crc32": 3213583269,
+      "sha256": "fe547d1d47dd41d44e8a9f3eb964f0c91d6ee6da3b99f80ad784bffd0a61a6d2"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/logical/bool.hpp",
+      "size": 8849,
+      "crc32": 229276819,
+      "sha256": "55b055b965602275dd8b3d66089de3e5e0c06f1ea30677c2c3ce797c993bf279"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/logical/compl.hpp",
+      "size": 1306,
+      "crc32": 723456181,
+      "sha256": "5d12c8c00c74fef902f84cfcfb899dea2bac16ce7c2fd038de84ce1cdc3b6df4"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/punctuation/comma.hpp",
+      "size": 520,
+      "crc32": 340539448,
+      "sha256": "76c39ab0338e79709faa68d8c5097317e93317ee8d9b71e27d3b4a4735f6d66f"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/punctuation/comma_if.hpp",
+      "size": 1012,
+      "crc32": 3282958090,
+      "sha256": "33e2573e29b20c6026f156ea2ace78c311724eb6df949c1ce21e94f28d26ea4c"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/punctuation/detail/is_begin_parens.hpp",
+      "size": 1899,
+      "crc32": 2113070695,
+      "sha256": "310514fccb7ad34582cc5f2e1254742ed7dc604bdfda3ac3e28865d5b6bf2300"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/punctuation/is_begin_parens.hpp",
+      "size": 1510,
+      "crc32": 2785636989,
+      "sha256": "0323a562253cc5e9507588b39d9914c36e3a017b9bcd7d74425e2bf5cfec52fd"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/repeat.hpp",
+      "size": 745,
+      "crc32": 3625587001,
+      "sha256": "4afc30370c1de2b7bd9d2a9670f901d4c5fadb26a5b5d6dd647bf78644df8e3d"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/repetition/enum.hpp",
+      "size": 3042,
+      "crc32": 1375119982,
+      "sha256": "e4f80200a9784526ee7c9f74972169840a73e0b36cd0098e606bddfac459f8e5"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/repetition/enum_params.hpp",
+      "size": 1528,
+      "crc32": 946372752,
+      "sha256": "76fe006a17e57f4da23ffd81f10d1edbecd6fe4063aee2da2e219fc21623a627"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/repetition/enum_trailing_params.hpp",
+      "size": 1853,
+      "crc32": 328021739,
+      "sha256": "b72eb935679d0b4fc2e409632c7cef183adde41a3375bb55f6a3682761b51a53"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/repetition/repeat.hpp",
+      "size": 61556,
+      "crc32": 2127970639,
+      "sha256": "cf349ac292998025fcda341740ff1451707cf2031112c9a583b80e54ebeb9b36"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/seq/elem.hpp",
+      "size": 16900,
+      "crc32": 1840160144,
+      "sha256": "4e9fbac6ccedb644879b42c605100cd171add02f45782eda77580199c93b3d38"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/seq/seq.hpp",
+      "size": 1672,
+      "crc32": 1249536877,
+      "sha256": "ba79028a69388267015b938b93db07805a86c1ca2c464d98a82e7f451e1c769d"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/stringize.hpp",
+      "size": 1033,
+      "crc32": 2627907962,
+      "sha256": "d00383ad50cb82cd3952d9ac1b7c809dc1d9ce826f23bd56e2f3fa27a9afe576"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/tuple/detail/is_single_return.hpp",
+      "size": 1338,
+      "crc32": 1951762477,
+      "sha256": "90f66c4d1ffd0f241dafa9976bc4f1dbaa42180cf1239a4800d24847558ef009"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/tuple/eat.hpp",
+      "size": 12803,
+      "crc32": 3940684492,
+      "sha256": "06ecd3a226acda9afa15af2f90000178c9c3fc998adc54baf56d4a425efc5fc1"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/tuple/elem.hpp",
+      "size": 2192,
+      "crc32": 3961357613,
+      "sha256": "4a799588541b02c0b7c03006950d773c3b0756ff3142af0a0efe9ef85128c532"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/tuple/rem.hpp",
+      "size": 24310,
+      "crc32": 3414779151,
+      "sha256": "035a61fd0140c8ac0e17a9f24c2a474952d11e1f187e35f0b61ebdf491068fb6"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/tuple/size.hpp",
+      "size": 1691,
+      "crc32": 1848043658,
+      "sha256": "63753c1ce2e743620525d1e7647350489448a9c555ca9eb8dbf612d2c05a3c0b"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/variadic/elem.hpp",
+      "size": 14686,
+      "crc32": 1488383488,
+      "sha256": "bf8dcacd98d78b2c097583deec205db3322059204fb71230ab297c1639dd6499"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/variadic/has_opt.hpp",
+      "size": 1418,
+      "crc32": 4054164923,
+      "sha256": "78ef317f6cb9167dc3c47b6e2ef57cb6d2872be33e61cebd1767f6ce3163a498"
+    },
+    {
+      "path": "source/Externals/boost/boost/preprocessor/variadic/size.hpp",
+      "size": 4110,
+      "crc32": 3136953275,
+      "sha256": "6efa634fd178422c97ca3ac1180807f063cee350ed755942fa14134f6861695d"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/add_rvalue_reference.hpp",
+      "size": 2395,
+      "crc32": 3305956679,
+      "sha256": "63434c1016fed7cd6101cddc9577aab469f53958db1f1808d07b8ff0d3608c57"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/conditional.hpp",
+      "size": 843,
+      "crc32": 236010250,
+      "sha256": "72744e48a710e2645ecc6a696b150c63d45507cb33b8090fbc7cb8827b2a3ba7"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/declval.hpp",
+      "size": 1899,
+      "crc32": 634079171,
+      "sha256": "661a695996abdf2523d92fa1d7aa90b676d3439bc7a5bd4c993705b579b2a235"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/detail/config.hpp",
+      "size": 4560,
+      "crc32": 963341902,
+      "sha256": "22c6676f0907a3e6733f0a0f883bb559955ca2b06cdc26aa47610567a8522edb"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/detail/is_member_function_pointer_cxx_11.hpp",
+      "size": 40311,
+      "crc32": 2807864546,
+      "sha256": "39cbec89e4db01eadb1691694c6c8f888705265e29089d4674b95accf477656b"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/integral_constant.hpp",
+      "size": 2546,
+      "crc32": 3903329563,
+      "sha256": "1f0f645fdf4b37a2c3c9267f10cfe0734ff8adfccb399fd0e97c53b770d50013"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/intrinsics.hpp",
+      "size": 23311,
+      "crc32": 1162604880,
+      "sha256": "1981687d37f11a103020b6bec6321ae25f9683e01476968f62f8a175bf625c38"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_arithmetic.hpp",
+      "size": 778,
+      "crc32": 1391671246,
+      "sha256": "f937c0f8958d61efc196a30838fbfc085e6ed6a862fed86bec42e671e5ebe7f3"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_class.hpp",
+      "size": 3595,
+      "crc32": 1957171502,
+      "sha256": "db5ddec8ad15395bd4383f4265adad1f2d4e3cf51575a3ba2e4c8ebec6f5f12d"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_const.hpp",
+      "size": 1630,
+      "crc32": 1258100592,
+      "sha256": "1dc59162cf36e20d626a6ec7f46cf22afdf353df30d566492bfe35898286b0b6"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_enum.hpp",
+      "size": 4996,
+      "crc32": 2992375739,
+      "sha256": "099fec769a429ee66e417d92e93a76586814a9e6545e376db53768d99c382114"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_floating_point.hpp",
+      "size": 2081,
+      "crc32": 563436092,
+      "sha256": "a3feea29f37289f32dfe2ca1efde2a1711f1ca6057c57d6f274aafa2a32661e6"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_integral.hpp",
+      "size": 3968,
+      "crc32": 165423232,
+      "sha256": "44a55b50004642c81f775f8783cc1a2dfa90276262bb337f4fe94321179cb652"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_lvalue_reference.hpp",
+      "size": 2012,
+      "crc32": 3909709761,
+      "sha256": "2cdb7bf7f68f806306da0cae213c6db1d0c739257994a88bef9f035fdb58c6de"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_member_function_pointer.hpp",
+      "size": 824,
+      "crc32": 2504653057,
+      "sha256": "03a81adac172e6e051751acec360a666ff2bd202325560391a9feeb2a71658c7"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_member_pointer.hpp",
+      "size": 1969,
+      "crc32": 929041716,
+      "sha256": "a5c437cb34f43d184ea8c3eaef3e44a553d8bf5ef9d5db3a7c91a058feadc3ed"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_pointer.hpp",
+      "size": 1901,
+      "crc32": 3532365810,
+      "sha256": "582df44459acba171bfaf5f9e7098e6bd051acaf9f83f964245c9c94e886b1be"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_reference.hpp",
+      "size": 938,
+      "crc32": 1106636966,
+      "sha256": "068dcf0a2c20efa45a587ad6c9b8d331f700d153cf35461da3d386fae1d10e35"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_rvalue_reference.hpp",
+      "size": 981,
+      "crc32": 4074015511,
+      "sha256": "48a7ff6930da2d3e6a79042f8105f8c70a6f39c6f202e98b4961f7b5fa5463f5"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_same.hpp",
+      "size": 1511,
+      "crc32": 1857142431,
+      "sha256": "f9836b75f3be3222bc8976cd6485e0270c73df728ae2c06dae33056855483b34"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_scalar.hpp",
+      "size": 966,
+      "crc32": 2456355856,
+      "sha256": "0b1de36f8f54fbd342fae4dd7ce27fa26887e1150828121c3cb4618ed08287a6"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/is_void.hpp",
+      "size": 890,
+      "crc32": 255579015,
+      "sha256": "9e043155d858ee74fb856cfb228922e4b9fff5fbe6dc0cc4f3ad28bdf55ba2aa"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/remove_cv.hpp",
+      "size": 1794,
+      "crc32": 3104488454,
+      "sha256": "440d007534b548b472dd33f0f8c3b18da347527ec3d501566f9ed4257c762497"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/remove_reference.hpp",
+      "size": 1783,
+      "crc32": 2419074724,
+      "sha256": "5556a8862b4134de42763ac42fae1958b7ab00a4897b89286ca0c3328be8308b"
+    },
+    {
+      "path": "source/Externals/boost/boost/type_traits/type_identity.hpp",
+      "size": 636,
+      "crc32": 303496406,
+      "sha256": "c9babe7d5bf2f7b6a711e226cb39af04ce3b7ba8fb18c2de71cf82a6a8960258"
+    },
+    {
+      "path": "source/Externals/boost/boost/utility/detail/result_of_variadic.hpp",
+      "size": 5591,
+      "crc32": 192916762,
+      "sha256": "265736ce0749b57cba104dc4ddedeffadf2923a83ad996ee46a5d94608d6a0be"
+    },
+    {
+      "path": "source/Externals/boost/boost/utility/result_of.hpp",
+      "size": 8064,
+      "crc32": 2619503885,
+      "sha256": "3fb6d352417ed0d0a4dea039359b2b5b33932537380a0ca9b8287cb9a7b0f462"
+    },
+    {
+      "path": "source/Externals/boost/boost/version.hpp",
+      "size": 1117,
+      "crc32": 1710655120,
+      "sha256": "26446b268b3ece5640f913db846f6541f8e6c3dd6fcedfc8aec92669c222443c"
+    },
+    {
+      "path": "source/Externals/crystaledit/editlib/utils/ctchar.h",
+      "size": 10832,
+      "crc32": 851168001,
+      "sha256": "cdc3561014d5150bd9987bda5aaed26cd1f647a271f4faad80998e6c46b1c527"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/CMakeLists.txt",
+      "size": 8525,
+      "crc32": 3652207741,
+      "sha256": "c57b4af42c655807173fb0cade75dec60172dbf698a15369e3e93fc31e049e8e"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/ASCIIEncoding.h",
+      "size": 1172,
+      "crc32": 376889685,
+      "sha256": "3376086b213e5d8689195b43ec0a553bd74e473a3f7d506e11e8d4a5a7ea0148"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Alignment.h",
+      "size": 436,
+      "crc32": 2489447342,
+      "sha256": "93612c0670156048fa3d1297195cad8e720626ecb8a125379357c1f943b988b9"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Any.h",
+      "size": 14608,
+      "crc32": 3957510943,
+      "sha256": "269234eecd8456d7f19407a7ad55de11fc366e0b02db9ade8d9d62f310bfccdd"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Ascii.h",
+      "size": 4739,
+      "crc32": 3887837113,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/AtomicCounter.h",
+      "size": 2760,
+      "crc32": 3841583050,
+      "sha256": "00122e336a329d5c36f32352d01bed1695eed5d3fe0ce25f6d97d2c0efc9ea95"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Buffer.h",
+      "size": 8465,
+      "crc32": 4018535783,
+      "sha256": "93eb5a253313e9a9c4a40eee3b29fad7a93b55ffd0de832576a58f1490f32056"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Bugcheck.h",
+      "size": 5553,
+      "crc32": 1040598726,
+      "sha256": "5f04e4ec91b67fb9e012a503cd04d26cfcd3793e387cf30643c0c56289d602a8"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/ByteOrder.h",
+      "size": 8008,
+      "crc32": 2656816659,
+      "sha256": "1a34dd6e8496ac57dd90ee456318d8c9bfab05f93f254f2e76b7733567e00f6a"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Config.h",
+      "size": 6415,
+      "crc32": 3164960807,
+      "sha256": "e0d38e5ce8c27b2b92a51570aff8d1aa4d7d486fa74b698231eb9b593ff380d0"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/DateTime.h",
+      "size": 11259,
+      "crc32": 1217614177,
+      "sha256": "e71ab8cf1927d0853025ce3a2c4fc3a3a100bd2c12f7410263a3c5f0bea8efd2"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/DateTimeFormat.h",
+      "size": 3554,
+      "crc32": 737447730,
+      "sha256": "d599a043e36acaddef9c6f0b5962d0859067639a0e0a1e863c900a6fe0d78bf9"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/DateTimeFormatter.h",
+      "size": 7403,
+      "crc32": 3471583787,
+      "sha256": "ce6b1aacbdb9e0310742e8bc3e54e9bc6c9471a1a179931fc8a34d1b1c239595"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/DateTimeParser.h",
+      "size": 6003,
+      "crc32": 49726264,
+      "sha256": "3f1e51d1bfce43fe50313094bc8ce04e99fc5e8f310fd9017e7f10bb46d96855"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Debugger.h",
+      "size": 2720,
+      "crc32": 3032143445,
+      "sha256": "d1dcafe07395c8b9e4538791d2a7c32568595bdcec0aa1a60ce3060e8c902c5a"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Exception.h",
+      "size": 9972,
+      "crc32": 2025267836,
+      "sha256": "5f066640c855bfd92787bca9c554e8df0936b7ae5d9866e0c6dfa4cd615b38db"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/FPEnvironment.h",
+      "size": 4491,
+      "crc32": 1282990845,
+      "sha256": "a3442543e96c7e7b904e38298457182e730e534fa1508b1149e6e79516af952f"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/FPEnvironment_WIN32.h",
+      "size": 3488,
+      "crc32": 3938253551,
+      "sha256": "9cacae22bdbefe63315192397beb48716e11478aa3ed233dc5a1117eef9d6781"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/File.h",
+      "size": 10127,
+      "crc32": 2041010775,
+      "sha256": "7ce90d44eb64d8d06afec96aff5e8ad1a0ac855985b3717715cb67e4b40497bf"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/File_WIN32U.h",
+      "size": 2471,
+      "crc32": 619380141,
+      "sha256": "4cc0635c79a3a7e06377d110b04419ed616645bfd9abb68305a1586b81ba83d8"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Format.h",
+      "size": 7019,
+      "crc32": 1515302942,
+      "sha256": "638174e1694263a365f802eedb0f2c4905639885d34b0e19a878b5116665ca0d"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Foundation.h",
+      "size": 3739,
+      "crc32": 1317581713,
+      "sha256": "4c67b4f92ac5cc6d685525e5f0f439cd39dc990b9efd2983178078ef263f2ba2"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Latin1Encoding.h",
+      "size": 1190,
+      "crc32": 1707490074,
+      "sha256": "7926efa6e4a9f0f1633c5433a30e920bf6767621b37274a773b08c99faf591b7"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Latin2Encoding.h",
+      "size": 1284,
+      "crc32": 3145381316,
+      "sha256": "116d729341719f3c22f5fe935606e2e1566f8addd550326a00f62c3e73bfcc1a"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Latin9Encoding.h",
+      "size": 1285,
+      "crc32": 2410490242,
+      "sha256": "ae76259f9b4242c56b1ab80c7c445524b01ad0c01ad66d37ff101af245ca8a31"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/LocalDateTime.h",
+      "size": 10665,
+      "crc32": 1856161058,
+      "sha256": "947482ac4d4ab42b4c2ab35572d9deb73d75952cd00393780cb21f81ad1cd3db"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/MemoryStream.h",
+      "size": 5865,
+      "crc32": 1492972384,
+      "sha256": "a3683a6a286d486e13996130b2d6e0302aea356aedeae85ae5f14575063988f2"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/MetaProgramming.h",
+      "size": 1258,
+      "crc32": 4213220501,
+      "sha256": "7153e6d6ec0984e87857637f764db28b83325f15e7542416f12f434cbcc05a5b"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/NumberFormatter.h",
+      "size": 36963,
+      "crc32": 1798164910,
+      "sha256": "e0ad0a9f3b1190839f9d2e204869cd1bb5d7f8715cf7449234cfae5b8dd41266"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/NumericString.h",
+      "size": 17291,
+      "crc32": 2351117219,
+      "sha256": "eb28721c4995a0fd727d7cdf73f817785046dfff3864ac33ad79e22b4d022d1c"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Platform.h",
+      "size": 9606,
+      "crc32": 4045535792,
+      "sha256": "5cea401eddc6d146b038bb43d08cb56ba1a43f97d623be20c1f71fd4ff8c3e4f"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Platform_WIN32.h",
+      "size": 3483,
+      "crc32": 90444694,
+      "sha256": "264dcfda32b8241bc099da45d98734b095fe8116deb53f5f68b126f8139b3c45"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/RWLock.h",
+      "size": 3591,
+      "crc32": 2684356138,
+      "sha256": "713204d6a0f50b589b6f45a411fdab08db670d9d687341bd77861244026aeff0"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/RWLock_WIN32.h",
+      "size": 943,
+      "crc32": 3278867845,
+      "sha256": "c69ff0fa93c47e984c4d023ef6d58dbd76e9ded0eb8a14e647a609a3cea594ca"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/RegularExpression.h",
+      "size": 11361,
+      "crc32": 3912705063,
+      "sha256": "60cd4ea7e13c8a7df7e1e846a170f679ed846d050d869c334714ce28c096e659"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/SharedPtr.h",
+      "size": 8696,
+      "crc32": 1759533361,
+      "sha256": "568c8840919e508375faad31abca0bc6ba862fab7b0f6afa658a89260d04cb73"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/StreamUtil.h",
+      "size": 2367,
+      "crc32": 2824037318,
+      "sha256": "09900a23f43af569d1527e7a1100f056bbce3983dfc882684844cf80f05a7918"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/String.h",
+      "size": 20500,
+      "crc32": 1877818720,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/TextConverter.h",
+      "size": 2784,
+      "crc32": 3176390977,
+      "sha256": "a1defb089872d27617163294b9be264cf4e90ef476ba32cbd06d9a6e81eb2b08"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/TextEncoding.h",
+      "size": 6929,
+      "crc32": 2028945634,
+      "sha256": "8c8a67667e568ed6c60589769552a28cbebf280cc3b9867061690f9379a64ed7"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/TextIterator.h",
+      "size": 3416,
+      "crc32": 207722041,
+      "sha256": "5b0a46eb888ef9450792b69b474c3bab72049dce6812bcd6449a977fe91943ba"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Timespan.h",
+      "size": 6635,
+      "crc32": 3998993148,
+      "sha256": "acfec4ef556e7b629f8a717dc7f7fa0f8c710e4835a25bc571297cd56a9da40b"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Timestamp.h",
+      "size": 6256,
+      "crc32": 4085655664,
+      "sha256": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Timezone.h",
+      "size": 2126,
+      "crc32": 673329998,
+      "sha256": "899089f2487b4acd425ae2fdeb80bd45c57e1bbc335f73a700f8bfdd2c845932"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Types.h",
+      "size": 4608,
+      "crc32": 417609756,
+      "sha256": "a9aa7e44ea8ff34d8c97aba0fc8fb6719b788cec13314844ccd8e204c9192a20"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/UTF16Encoding.h",
+      "size": 2248,
+      "crc32": 3154793526,
+      "sha256": "6c7198cbc06e776a40800d0abb583ae3d2c058e98b6fbb166ab2c159b9316baf"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/UTF32Encoding.h",
+      "size": 2244,
+      "crc32": 4269857545,
+      "sha256": "0a953c6e636c911413cb2cfa2aa02e2d0b95e29b64e72a64e7a8f241bd8b4a74"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/UTF8Encoding.h",
+      "size": 1732,
+      "crc32": 360456661,
+      "sha256": "410daec2a6491a45f77b1a40a3b0f6ea1bd219c3b83eeb35d4d61b6ac10c631d"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/UTFString.h",
+      "size": 6047,
+      "crc32": 3851601722,
+      "sha256": "19b786e446adc823a9fc655e66a25f538c0b457af26104a5e6e18aa8ee792e57"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/UnWindows.h",
+      "size": 798,
+      "crc32": 3204100072,
+      "sha256": "0e040509c1334682fbdaff0c3b6243ec54fa4aaa1a0ad8e8ca789e9edd4bf3d6"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/UnicodeConverter.h",
+      "size": 4193,
+      "crc32": 2011057607,
+      "sha256": "21f97e1c1ff15af01065f45a7af0ab3d3f14be19a66f94586b516cc92dad0a1a"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Windows1250Encoding.h",
+      "size": 1301,
+      "crc32": 1078873428,
+      "sha256": "3cc5108f3b47f4ef770c6a2b78fbf1fa268e722d7aa5d530e81b721de9c1ed95"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Windows1251Encoding.h",
+      "size": 1301,
+      "crc32": 3852210635,
+      "sha256": "6d564cd496c2acca229c2deb04c1d482495a6b3cf887e1c5683f765257a7a958"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/include/Poco/Windows1252Encoding.h",
+      "size": 1236,
+      "crc32": 1055507128,
+      "sha256": "1637ffa7a09e37fc4794383749b6e8c77f7967634e2719b8263ef39891ca7cb5"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/ASCIIEncoding.cpp",
+      "size": 3168,
+      "crc32": 365049153,
+      "sha256": "909ad349f8fa74ae80c8c4e8307b62d3df91bd4a207c08cad936601580813d3f"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Ascii.cpp",
+      "size": 6623,
+      "crc32": 3855870555,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/AtomicCounter.cpp",
+      "size": 839,
+      "crc32": 1772268327,
+      "sha256": "d5a0992736324eaaf08e0695763b921bc85f4662b38dcbdd53648e9d961ece57"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Bugcheck.cpp",
+      "size": 2255,
+      "crc32": 586665304,
+      "sha256": "327712a9e5f86e645768267cf4f5f781f7dde915e35c2fa00aa3bbe45e2db5f3"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/DateTime.cpp",
+      "size": 11195,
+      "crc32": 2033178960,
+      "sha256": "93e09ccc88f6a658b5ec5fb8ebf4a39e23f29dd2d689f78bdd4704ca51684b4c"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/DateTimeFormat.cpp",
+      "size": 5205,
+      "crc32": 774444398,
+      "sha256": "9f8b35047876e279790fd32dcdd2b408ac5c90e0b340a3f631e8eb43a31eaba9"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/DateTimeFormatter.cpp",
+      "size": 5093,
+      "crc32": 786903999,
+      "sha256": "6f2653eec24e02abf9dc1b2454c02f332f1506e99341a731f5b1644300523fc7"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/DateTimeParser.cpp",
+      "size": 13946,
+      "crc32": 3998239239,
+      "sha256": "8afdcd719c0c7e263d25767312ecc01b9b32de4c29271ad92604a514281d4dbf"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Debugger.cpp",
+      "size": 2404,
+      "crc32": 76588911,
+      "sha256": "f260236d81967c5aa7716a9e658ac2f6c4f615ee820adf55f59fc3f0abc78bf0"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Exception.cpp",
+      "size": 6897,
+      "crc32": 2740417778,
+      "sha256": "aaf4f14a30fe3e6502b405add93efdd79d06520c853bea54ad550ec9ca4ea964"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/FPEnvironment.cpp",
+      "size": 1439,
+      "crc32": 3370668366,
+      "sha256": "6ba2f9530d8e0735c97e8a78a6e57ecf25fc1e957972bbe4524f42ac0916dac9"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/FPEnvironment_WIN32.cpp",
+      "size": 1139,
+      "crc32": 4240137156,
+      "sha256": "65a8fbfefe6d93e750f3daae3aba2631697abca60ac324e9e3bbe2e1c73147ec"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Format.cpp",
+      "size": 7320,
+      "crc32": 3856995719,
+      "sha256": "c707c65e7c358b9de3a243ab02efd7c06d8f79a0a5fe81824c4be4eb2eb2af4d"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Latin1Encoding.cpp",
+      "size": 3281,
+      "crc32": 3213774458,
+      "sha256": "f3bf501be2a4df7c79baab0189abacb5a49895c64112efd87cb214c86afcdfd9"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Latin2Encoding.cpp",
+      "size": 7592,
+      "crc32": 3963143782,
+      "sha256": "3d3c6dc064a87e5ff5be319fc1c5f9198241acb6d46736d9dbd53841516b98be"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Latin9Encoding.cpp",
+      "size": 4426,
+      "crc32": 1842445771,
+      "sha256": "b73b72d702bc6475021dca54216556cfe0de4d3b0ed6f5b0e5d0ab2264c8247b"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/LocalDateTime.cpp",
+      "size": 7108,
+      "crc32": 123156577,
+      "sha256": "8461f1bc6c6cdbd34384dec30039afb263bf025964d9ddcb1762f7f6da0974a2"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/MemoryStream.cpp",
+      "size": 858,
+      "crc32": 117078107,
+      "sha256": "a5862b652bd8bf7811e9724aab23afdfba94f5898e1800ac69ba6ccf8ab17c79"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/NumberFormatter.cpp",
+      "size": 15375,
+      "crc32": 2937927361,
+      "sha256": "bd702409cff7ec3083a8b6ecf82d9fc3227bbe03ff19d51d114baa7e9f0415df"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/NumericString.cpp",
+      "size": 9628,
+      "crc32": 3417334451,
+      "sha256": "a2f5eae69070150fc9f6802471cc1b3a030186e32704620d4f47ccd773bdcbf7"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/RWLock.cpp",
+      "size": 563,
+      "crc32": 2915377258,
+      "sha256": "1a5fb35eb1ab6e47df8f453a40f825ffc0c299af00e7259ce47ca62998f1acb8"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/RWLock_WIN32.cpp",
+      "size": 3976,
+      "crc32": 3565824938,
+      "sha256": "b773f7d950ad54d6bdd6ba7e052529e6dfca6cae2c05437835dd6fe7a0ef4018"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/RegularExpression.cpp",
+      "size": 11089,
+      "crc32": 1484235218,
+      "sha256": "fff9946466099bef0f2c8df3f9a2026931643e968254967bc437eb2ba827bfbb"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/TextConverter.cpp",
+      "size": 2544,
+      "crc32": 3922553488,
+      "sha256": "9a4598d6fbe682c73ac2d877dfb1d38f52b511bc94efbffcd1696f8c77c8c412"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/TextEncoding.cpp",
+      "size": 3667,
+      "crc32": 694515113,
+      "sha256": "272a795ea64a25d43da9aead135d231f1a029d4aabbe627b41a49e674742b26c"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/TextIterator.cpp",
+      "size": 2796,
+      "crc32": 2107993894,
+      "sha256": "8b4c092d5a637bd1487f08819df6548516f6bbb7b55ea7a0d8a7f6b8d6183cb8"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Timespan.cpp",
+      "size": 2666,
+      "crc32": 4162275569,
+      "sha256": "db99b2c6c09c17430f622cfdec82d0ca7243f8ef13219bc0f7e06cd76da1930b"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Timestamp.cpp",
+      "size": 3853,
+      "crc32": 2774467654,
+      "sha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Timezone.cpp",
+      "size": 635,
+      "crc32": 1491991931,
+      "sha256": "5e510c0222a8b8f9c2f9db069f9551d591147ef9e8e704d54ea4996ca171fdc4"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Timezone_WIN32.cpp",
+      "size": 2668,
+      "crc32": 1409842351,
+      "sha256": "a13852b349d6f8354ce2d78dad90224cee53f7b4e8165fdcb869de12ca001f33"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/UTF16Encoding.cpp",
+      "size": 5389,
+      "crc32": 727017510,
+      "sha256": "3d30ef9056af0e793f4592ced8ae241f82b749b51225efd0428434f8b1d1d21d"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/UTF32Encoding.cpp",
+      "size": 3935,
+      "crc32": 798979075,
+      "sha256": "5948ef4ed427d65febbe6b4394712ed00da61d4fe2067ce693c93a0adbf7a200"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/UTF8Encoding.cpp",
+      "size": 5654,
+      "crc32": 1077569737,
+      "sha256": "d61f56ed798ebc3776459979b49246527a16796fa143aec289082722a0ffdeef"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/UnicodeConverter.cpp",
+      "size": 3652,
+      "crc32": 3011668496,
+      "sha256": "60813871b28d2f6f5f6e8e2f0d318276ad337bf5b930d1184805a8d96b477be9"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Windows1250Encoding.cpp",
+      "size": 8819,
+      "crc32": 2437329017,
+      "sha256": "22dae8e8e5a99eed7509379460ea254c59f567bb4a15d38c82a5c0185289ca95"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Windows1251Encoding.cpp",
+      "size": 11460,
+      "crc32": 1038371271,
+      "sha256": "e3150a26651c9fcb704659b122b29f98ceeccfa6222abce36aa219d8c3876058"
+    },
+    {
+      "path": "source/Externals/poco/Foundation/src/Windows1252Encoding.cpp",
+      "size": 5783,
+      "crc32": 4019565789,
+      "sha256": "488c2d7dcb56982dbd3497950a604a1e1fa046de7a42ff348a4816ae84224ef2"
+    },
+    {
+      "path": "source/Externals/poco/LICENSE",
+      "size": 1678,
+      "crc32": 246398350,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/CMakeLists.txt",
+      "size": 1942,
+      "crc32": 3808443627,
+      "sha256": "89a29787041bb499d972044d00addb8f4de7802d2a79112fd01c32dafedd3ad3"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2.c",
+      "size": 901,
+      "crc32": 711091596,
+      "sha256": "7d05fd0a971a5ad96d632c137195b5150c0307ad5fc1067c3f7ed4ce94ddc80a"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2.h",
+      "size": 51918,
+      "crc32": 1120478443,
+      "sha256": "058462dc030e845ee627e19ac36347f561f5cc44d89eaf1c0010f2b363ab68d5"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_auto_possess.c",
+      "size": 42060,
+      "crc32": 1252464318,
+      "sha256": "53855156e91473a9fd905bff2c54bbe395ad479cf6a8d313a4502f85e121bcf4"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_chartables.c",
+      "size": 7703,
+      "crc32": 2188438677,
+      "sha256": "a0ceb94d96a2b438524d0cb85168e1ab5323c871865ddf9d524d45eb1ed131d1"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_chkdint.c",
+      "size": 3140,
+      "crc32": 2759846773,
+      "sha256": "ffc49737b8303e240671ae15662cfe3f33db649bfe303607fc7d12a0f85abac8"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_compile.c",
+      "size": 376050,
+      "crc32": 1395261552,
+      "sha256": "b53694b150220fac015fb2f704fe1d0a505c878c70840d8be62133789177fba9"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_compile.h",
+      "size": 16360,
+      "crc32": 2756416974,
+      "sha256": "a8a64450a3efea195b3cb26a91b5088bcb42f48dd751cac78688d4dda2b45c99"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_compile_cgroup.c",
+      "size": 15844,
+      "crc32": 2189344995,
+      "sha256": "48999c337a5ae7f36ceb4c5d8efb39b1b6784d265d3468ab8878f2b72a7ced6e"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_compile_class.c",
+      "size": 76978,
+      "crc32": 2082424222,
+      "sha256": "21d9faa59fa90a235be4f829ccf716eeebd7ea0273ed0a8a9bc66356bb2b922d"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_config.c",
+      "size": 7634,
+      "crc32": 3722140653,
+      "sha256": "19709c2d378830a5444b046aa4bab11f8192e8958b773814fe17b409a5d1bba8"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_config.h",
+      "size": 19411,
+      "crc32": 3245939545,
+      "sha256": "3c2aab243e323c0aa7796673b9d76d6408a096685a86ff13b1adc479979904b9"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_context.c",
+      "size": 17769,
+      "crc32": 2361092701,
+      "sha256": "fb47ff3678401ea5d6247c24a2ccca2311bb35fddf66cf7ffa0db48de4654978"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_convert.c",
+      "size": 33478,
+      "crc32": 610949557,
+      "sha256": "857aec237a42090723e80f3fa1d720d7847c697022de0c8abb399b67b561c5e9"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_dfa_match.c",
+      "size": 143978,
+      "crc32": 2124693375,
+      "sha256": "2ce982fdb159f9c8edf8978e8c49a94d3df314eda1fb294b7510b58b0f2c15f1"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_error.c",
+      "size": 15717,
+      "crc32": 2367872300,
+      "sha256": "588b2566fc6593541db303e2327a62c310ae67cfffd09b0652e71e5c6e892400"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_extuni.c",
+      "size": 5379,
+      "crc32": 3822924823,
+      "sha256": "f8a404591fc2b13e331b701c39b689cd9f521c33d4efffec1b62b27b54e4d604"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_find_bracket.c",
+      "size": 6862,
+      "crc32": 1538067250,
+      "sha256": "9fde442db9bea0a7b406ff29e65c274ae0286536f14075a62502aef69f3cf0d8"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_internal.h",
+      "size": 108743,
+      "crc32": 4177199693,
+      "sha256": "e44f191498f58fe0f721c8ac0ceb7def25b28da494ee86112cc5a04f0e79497f"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_intmodedep.h",
+      "size": 42450,
+      "crc32": 3056883231,
+      "sha256": "85849c652a50b8299c8cfc88117c449855d57d724c848238a0959c7fa8174371"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_maketables.c",
+      "size": 7076,
+      "crc32": 685316525,
+      "sha256": "126bf7b41c44d61f19cb40ac25d6d50110bab9de50708bb22df645d2920f8e62"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_match.c",
+      "size": 251170,
+      "crc32": 1563976894,
+      "sha256": "ebc3b236a7b825ca1829f30d008628e0af24c8fcbab3e434df921526f0e6d517"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_match_data.c",
+      "size": 6211,
+      "crc32": 2879137186,
+      "sha256": "c9b6b970ed1e8a6d52635f6476274ff28682c55614b100799e482ecbcb1f1857"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_match_next.c",
+      "size": 6147,
+      "crc32": 153173641,
+      "sha256": "226ef5bcd136110ec71426981df42c2f4f0710ea46e6061d2ba05d03cf6a0bc8"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_newline.c",
+      "size": 6307,
+      "crc32": 2277124060,
+      "sha256": "bbfc7e6f1d95a2986948b7d0be5c2355d1560198d403f48fa72e0c82c7c9c920"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_ord2utf.c",
+      "size": 3735,
+      "crc32": 2644830934,
+      "sha256": "6582725ebab88842fffffd348f59f7d6d58d66fe4b68384ecccad526a5203d89"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_pattern_info.c",
+      "size": 11653,
+      "crc32": 1252532771,
+      "sha256": "d63e56279b9e3b9309329cc738003fac3f89c49676d26db7fc647123ce06e50d"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_script_run.c",
+      "size": 11882,
+      "crc32": 1531216540,
+      "sha256": "caf29e2cdc67035be5c131f2434ebe2072e08c8e6f15ca0f3e28e9795d4512f6"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_serialize.c",
+      "size": 9980,
+      "crc32": 3044620942,
+      "sha256": "a7ec2c3078f53013fd93575bdd294ed0c4b95fe19b9d741a0b6ea13f891ecd31"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_string_utils.c",
+      "size": 5251,
+      "crc32": 4083019805,
+      "sha256": "5ade214c7170383b97874ead541bafe1c962e9b7f61ac10e8d87e404be76968f"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_study.c",
+      "size": 60735,
+      "crc32": 3010045539,
+      "sha256": "3bfcfcce37f729252df9e23b5419a93d8542b6dfc5f47ac990d72e74ca9a2e3f"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_substitute.c",
+      "size": 54677,
+      "crc32": 3775050147,
+      "sha256": "725f9f46e4c3997418cd4f59301c8b4ee886098ad7ec353e331b984f6309042c"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_substring.c",
+      "size": 18675,
+      "crc32": 3732872620,
+      "sha256": "ed30dc7b8ef669b3eb0d98fea9552b5613db692236f3c9c1ee0232ff0cf5a9fe"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_tables.c",
+      "size": 13637,
+      "crc32": 3531153413,
+      "sha256": "ab96e9e615b5b43bfd601b0d3d3be67a317c362706167c024f365e8af489e65d"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_ucd.c",
+      "size": 358238,
+      "crc32": 256097692,
+      "sha256": "6ebdc9043dcb13832189a45818f767afe9c4d6df078fb37db6d55d80126dce92"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_ucp.h",
+      "size": 10487,
+      "crc32": 195739982,
+      "sha256": "ed10de32f3b82866379745ba9bec2e17f3585c99f154fb837d1fa444bc90b1eb"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_ucptables_inc.h",
+      "size": 63989,
+      "crc32": 2508501280,
+      "sha256": "42c2304cd9d30f3901e4b72ee797f3ecf0bf969d415c5662d722d6e1ae33fe0b"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_util.h",
+      "size": 7228,
+      "crc32": 1605818355,
+      "sha256": "ae763c7cc12f8b770aeb632de7ed0e8ec77163baf9316f6493be599121ec58c9"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_valid_utf.c",
+      "size": 13053,
+      "crc32": 758805636,
+      "sha256": "fc7271e737bc7828b27bf52ade1feb0e1d29e40a9ef737d102ddb0a8091ccc3f"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/pcre2/src/pcre2_xclass.c",
+      "size": 15524,
+      "crc32": 2831877551,
+      "sha256": "1e8cfe268ec0a322bd6c2dc1e66fdbf515d742760b17584c43eaa7efdcb490b6"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/bignum-dtoa.cc",
+      "size": 27617,
+      "crc32": 712495357,
+      "sha256": "85a803ff5eaea5acc840182ab03dc1205b77519cb61d6615682314eb8aa90914"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/bignum-dtoa.h",
+      "size": 4300,
+      "crc32": 4110097932,
+      "sha256": "d11517ebb69107c515c5b45d820e1a2ff665ac64182f62fdd25bac804acf1d1f"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/bignum.cc",
+      "size": 24858,
+      "crc32": 127901191,
+      "sha256": "cc33c3775d66d138aa49ea5a18e73ad6766ecca17009225811c33cea64bcd11b"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/bignum.h",
+      "size": 5891,
+      "crc32": 3391359256,
+      "sha256": "6b63faea13f36f6026b56855aa8d28329ba1a91c564b9abc94b21608ca42cbfb"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/cached-powers.cc",
+      "size": 9913,
+      "crc32": 2292633597,
+      "sha256": "f0cabcc74f54ca33072671cc6c2819e39e8cd9b55db508946f2bd5acc1b48367"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/cached-powers.h",
+      "size": 3021,
+      "crc32": 2249020893,
+      "sha256": "1da91324ffd4200b3cb41d1f0707277175cdd28fcbffa13104e14df431f00744"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/diy-fp.h",
+      "size": 5030,
+      "crc32": 1618231919,
+      "sha256": "f8f5d66be5684ac547f68b997d41fdc57e8dc2ca1ef2ef2e3b10c6a76c9c5b75"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/double-conversion.h",
+      "size": 1804,
+      "crc32": 354048043,
+      "sha256": "2754e5e7ef1a158d00f529da03dcf943dd239ccc70e798a594f22e13e8dd0f94"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/double-to-string.cc",
+      "size": 16169,
+      "crc32": 2894752796,
+      "sha256": "98b001f0cdfe091af43201bdcb45ed6f68d38e4a823fe29879a894ab7932efc7"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/double-to-string.h",
+      "size": 24647,
+      "crc32": 100677591,
+      "sha256": "cb0b7ec6c4d8896a9d24e737ae4c33e1a341e2e5c61022a9adc1c67f4be0073b"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/fast-dtoa.cc",
+      "size": 31645,
+      "crc32": 737905839,
+      "sha256": "c2042b7bdd218435bcb4881a86a033bbd5dddbb6bd386a3a099247ca67882440"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/fast-dtoa.h",
+      "size": 4064,
+      "crc32": 243963084,
+      "sha256": "523d778935995dea5d21e59f55629ba40eaf68dedfe99e82b71efd4ae75f4e40"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/fixed-dtoa.cc",
+      "size": 15352,
+      "crc32": 872457624,
+      "sha256": "6cbef46bd0f6a482f4c79e34d14e49b448094d85bcefc25177957d84b62b2144"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/fixed-dtoa.h",
+      "size": 2770,
+      "crc32": 1647250612,
+      "sha256": "5c22077d3d333998b87c578aa1a015503d162895e20e5f2ee92721c834748ee1"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/ieee.h",
+      "size": 15223,
+      "crc32": 2434252954,
+      "sha256": "bc9a4adae492f692e19db9c279eac52d4933ddf872aff43056bceee42d65a8f5"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/string-to-double.cc",
+      "size": 27899,
+      "crc32": 108456939,
+      "sha256": "9aafd7e77a23164ee94903cfd16bd1e84344a5d7a18b4ee430e35e76568b108d"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/string-to-double.h",
+      "size": 10848,
+      "crc32": 2834465237,
+      "sha256": "1976310fdd04e3bc350c5f8f4b443ba0287abb4004b318f048ac41611278e4c9"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/strtod.cc",
+      "size": 23469,
+      "crc32": 89815638,
+      "sha256": "923f15ce6bff38b9aaa1f3bced157c468978ac9443fbb781f0826daeae5cd4ee"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/strtod.h",
+      "size": 3038,
+      "crc32": 1502411412,
+      "sha256": "08c3a8f9852b6e3399b694ead7511e0ecadc96a6a61431fc1f9df003f2ff41d8"
+    },
+    {
+      "path": "source/Externals/poco/dependencies/v8_double_conversion/src/utils.h",
+      "size": 15556,
+      "crc32": 1094767783,
+      "sha256": "ab745c4b74fdd27d967d8026d082bff3ef59ca2ca581c163dcf266bebd413795"
+    },
+    {
+      "path": "source/Src/COPYING",
+      "size": 18353,
+      "crc32": 1948522898,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    {
+      "path": "source/Src/Common/UnicodeString.h",
+      "size": 3817,
+      "crc32": 1104645156,
+      "sha256": "53be4bb5c74a724bb4a3b7d07eb4f4699571ad61ec2b09faa4ae98d185d8e72e"
+    },
+    {
+      "path": "source/Src/Common/locality.cpp",
+      "size": 5450,
+      "crc32": 1016656472,
+      "sha256": "adf3710c6e0fb790df5e6280b72f35a71aba0c36b65cd2530958532745e49a7e"
+    },
+    {
+      "path": "source/Src/Common/unicoder.cpp",
+      "size": 35865,
+      "crc32": 3548176634,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7"
+    },
+    {
+      "path": "source/Src/Common/unicoder.h",
+      "size": 4566,
+      "crc32": 559392306,
+      "sha256": "c9e2a29286be06cb4a649c30e9f11f3b53e3f9016925e1ce99f5f1a4bbc1166e"
+    },
+    {
+      "path": "source/Src/DiffFileInfo.h",
+      "size": 1151,
+      "crc32": 267170440,
+      "sha256": "c4dd0f78190ead35f6901598f61e022f0159f44b690b7b9a9f828cc1ce2b6bc2"
+    },
+    {
+      "path": "source/Src/DirItem.h",
+      "size": 1450,
+      "crc32": 2330679099,
+      "sha256": "1fad11953c36a256b54988bf8ba50cd0ce89498a0a80c69e680eb83b67fd4c3e"
+    },
+    {
+      "path": "source/Src/FileFlags.h",
+      "size": 396,
+      "crc32": 3364272677,
+      "sha256": "c40ac9172c270beed0742b339a3fff7b9d265b09478585b6da6ae34d4bd20b49"
+    },
+    {
+      "path": "source/Src/FileTextEncoding.h",
+      "size": 797,
+      "crc32": 1021562425,
+      "sha256": "3391de25adccaea76e8addc47951d32eac73eb5346e21b7e30f3676b55813f5c"
+    },
+    {
+      "path": "source/Src/FileTextStats.h",
+      "size": 650,
+      "crc32": 3340794941,
+      "sha256": "d2ced118ad5bad4a6b1ba6575a15838488bac24ea1a2388c29e51585c51add5e"
+    },
+    {
+      "path": "source/Src/FileVersion.h",
+      "size": 1625,
+      "crc32": 722052207,
+      "sha256": "bc9cfdf245f5def9e6e303ed572163968ad79b4574be6b70533f89adaba76b89"
+    },
+    {
+      "path": "source/Src/FilterEngine/FileContentRef.h",
+      "size": 443,
+      "crc32": 3956910357,
+      "sha256": "2ae3cde57c3d857f2ea1ebb37237360ad72edf414077ace701cf0e8b56e805ad"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterError.h",
+      "size": 1391,
+      "crc32": 1402493456,
+      "sha256": "160a03bf7f2a0ed0a4db66a3d5211a8dccd7445e7eb0d2b7fd640c3fa914fa2b"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterExpression.h",
+      "size": 3539,
+      "crc32": 3712507074,
+      "sha256": "115ff8a8cef7760ae6a2019b57ab6c760a55fe6b4484c1e1c4c5a9cf845b0f0c"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterExpressionNodes.cpp",
+      "size": 144678,
+      "crc32": 110131626,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterExpressionNodes.h",
+      "size": 6089,
+      "crc32": 1027154511,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterLexer.h",
+      "size": 1032,
+      "crc32": 3783048518,
+      "sha256": "6d84235dd0ac7be1deadab88e77fe5fb548464ebc93569259cc61b4d5b0ef906"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterLexer.re",
+      "size": 3901,
+      "crc32": 2013878432,
+      "sha256": "36b06326ab1d6569b74a64edc071829cbe314d3543b7f6b70249e4d4d244a1c6"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterParser.h",
+      "size": 1472,
+      "crc32": 3456668173,
+      "sha256": "ac27e0af541b10bea4b78ee5f31b055896de73cef0ce826d9eec6707f493ff41"
+    },
+    {
+      "path": "source/Src/FilterEngine/FilterParser.y",
+      "size": 7429,
+      "crc32": 2900157914,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    {
+      "path": "source/Src/PropertySystem.h",
+      "size": 1955,
+      "crc32": 2255697327,
+      "sha256": "dedbb889455e1c2c0b30255691a1c6b3cfaacf34e7f40322e45c23688793a385"
+    }
+  ]
+}

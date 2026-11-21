@@ -1,0 +1,96 @@
+using System.Globalization;
+using DiffBeacon.Core;
+
+namespace DiffBeacon.App;
+
+internal static class ReportCommands
+{
+    internal static async Task<int> RunAsync(string[] args)
+    {
+        const string usage = "--report-project INPUT_PROJECT OUTPUT_HTML [--entry N] [--left-frame N [--middle-frame N] --right-frame N] [--threshold X] [--highlight-alpha X]";
+        if (args.Length < 3) throw new ArgumentException(usage);
+        int? index = null;
+        int? leftFrame = null, middleFrame = null, rightFrame = null;
+        double? threshold = null;
+        double? highlightAlpha = null;
+        int? insertionDeletionMode = null;
+        ImageOffset? leftOffset = null, middleOffset = null, rightOffset = null;
+        string? wipeMode = null, wipePosition = null;
+        var displayOptions = new ImageDisplayOptions();
+        var lineTransforms = new List<LineTransformRule>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        for (var optionIndex = 3; optionIndex < args.Length; optionIndex += 2)
+        {
+            var option = args[optionIndex];
+            if (option == "--line-transform")
+            {
+                if (optionIndex + 2 >= args.Length) throw new ArgumentException("--line-transform TARGET EXPRESSION");
+                var parsed = CommandLine.ParseOptions(args[optionIndex..(optionIndex + 3)]);
+                lineTransforms.AddRange(parsed.LineTransformRules);
+                optionIndex++;
+                continue;
+            }
+            if (option is not ("--entry" or "--left-frame" or "--middle-frame" or "--right-frame" or "--threshold" or "--highlight-alpha"
+                or "--left-offset" or "--middle-offset" or "--right-offset" or "--insertion-deletion-mode" or "--wipe-mode" or "--wipe-position") && !ImageDisplayOptions.IsOption(option) || !seen.Add(option)
+                || optionIndex + 1 >= args.Length)
+                throw new ArgumentException(usage);
+            if (ImageDisplayOptions.IsOption(option)) { displayOptions.Parse(option, args[optionIndex + 1]); continue; }
+            if (option == "--wipe-mode") { wipeMode = args[optionIndex + 1]; continue; }
+            if (option == "--wipe-position") { wipePosition = args[optionIndex + 1]; continue; }
+            if (option == "--insertion-deletion-mode")
+            { insertionDeletionMode = ImageComparisonEngine.ParseInsertionDeletionMode(args[optionIndex + 1]); continue; }
+            if (option.EndsWith("-offset", StringComparison.Ordinal))
+            {
+                var position = ImageOffset.Parse(args[optionIndex + 1]);
+                if (option == "--left-offset") leftOffset = position;
+                else if (option == "--middle-offset") middleOffset = position;
+                else rightOffset = position;
+                continue;
+            }
+            if (option == "--highlight-alpha")
+            {
+                if (!double.TryParse(args[optionIndex + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var alpha))
+                    throw new ArgumentException("差分色の不透明度は0～1の有限値です。");
+                ImageComparisonEngine.ValidateHighlightAlpha(alpha); highlightAlpha = alpha; continue;
+            }
+            if (option == "--threshold")
+            {
+                if (!double.TryParse(args[optionIndex + 1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var distance)) throw new ArgumentException("閾値は有限の非負数です。");
+                ImageComparisonEngine.ValidateThreshold(distance); threshold = distance; continue;
+            }
+            if (!int.TryParse(args[optionIndex + 1], NumberStyles.None, CultureInfo.InvariantCulture, out var value)) throw new ArgumentException(usage);
+            switch (option)
+            {
+                case "--entry" when value is >= 1 and <= 256: index = value - 1; break;
+                case "--left-frame" when value >= 1: leftFrame = value; break;
+                case "--right-frame" when value >= 1: rightFrame = value; break;
+                case "--middle-frame" when value >= 1: middleFrame = value; break;
+                default: throw new ArgumentException("比較番号は1〜256、フレームは1以上です。");
+            }
+        }
+        if (leftFrame.HasValue != rightFrame.HasValue) throw new ArgumentException("--left-frame と --right-frame は両方指定してください。");
+        var wipe = ImageWipeSnapshot.Parse(wipeMode, wipePosition);
+        using var cancellation = new CancellationTokenSource();
+        ConsoleCancelEventHandler handler = (_, ev) => { ev.Cancel = true; cancellation.Cancel(); };
+        Console.CancelKeyPress += handler;
+        try
+        {
+            var workspace = await WorkspaceStore.LoadWorkspaceAsync(args[1], cancellation.Token);
+            var entry = index ?? workspace.ActiveEntryIndex;
+            if (lineTransforms.Count > 0)
+            {
+                if (entry < 0 || entry >= workspace.Entries.Length) throw new ArgumentOutOfRangeException(nameof(entry));
+                if (!ProjectReport.IsTextual(workspace.Entries[entry]))
+                    throw new ArgumentException("行変換の上書きにはText・Table・JSONのプロジェクトが必要です。");
+                workspace = workspace with { Entries = workspace.Entries.Select((project, at) => at == entry
+                    ? project with { LineTransformRules = WorkspaceStore.CloneLineTransformRules(lineTransforms, project) } : project).ToArray() };
+            }
+            await ProjectReport.ExportWithWipeAsync(workspace, entry, args[2], args[1], cancellation.Token, leftFrame, rightFrame, threshold, middleFrame,
+                leftOffset, middleOffset, rightOffset, insertionDeletionMode, highlightAlpha, wipe, displayOptions,
+                LineTransformLogEnvironments.StandardError);
+            CommandLine.WriteJson(writer => { writer.WriteString("output", Path.GetFullPath(args[2])); writer.WriteNumber("entry", entry + 1); });
+            return 0;
+        }
+        finally { Console.CancelKeyPress -= handler; }
+    }
+}

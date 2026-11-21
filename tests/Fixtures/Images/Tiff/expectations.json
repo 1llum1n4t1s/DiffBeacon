@@ -1,0 +1,783 @@
+{
+  "format": 1,
+  "license": "CC0-1.0",
+  "licenseSha256": "57A5A54D735E65A149F9AFA052EB444DEFDE757FD2ED647097EAEED5B5ABD607",
+  "source": "https://image-js.github.io/tiff/media/TIFF6.pdf",
+  "pixelFormat": "BGRA8888 Unpremul tightly packed",
+  "expectationMethod": "literal hand-written canvases; no decoder",
+  "generatorSha256": "A33CE46B456D7A21E0F0096406D7A4B60633FA4DBC7A88D257BBDD698EA918BE",
+  "assets": {
+    "two-pages-le.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        },
+        {
+          "width": 1,
+          "height": 3,
+          "bgra": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AP8A////////AAD/",
+          "pixelSha256": "7BB1310E7E553927D5EDBA64CE52A6ABB865900E5727E1A763246EBAEFEAC9B7",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "720E469A71B0DB1B303F21FCEAE43A93558F151435658DF3FA317ED6D4AF7E37",
+      "fileBytes": 415
+    },
+    "two-pages-be.tiff": {
+      "valid": true,
+      "byteOrder": "MM",
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        },
+        {
+          "width": 1,
+          "height": 3,
+          "bgra": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AP8A////////AAD/",
+          "pixelSha256": "7BB1310E7E553927D5EDBA64CE52A6ABB865900E5727E1A763246EBAEFEAC9B7",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "D4E60F8281FB9C4D7C7A79330DD49B6A24577E2CBC4FFFABBAA2B495B8C5DCFB",
+      "fileBytes": 415
+    },
+    "same-first-right.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        },
+        {
+          "width": 1,
+          "height": 3,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD/////////AAD/",
+          "pixelSha256": "2649AC83C89C703014B3B0BFE8FFB7F191AFFC0A0F297AF1222F73A713DC4A43",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "0BA054105721211AF361BBF50DEDAF56D7473AD42A79D85F0C4A4C1A4569B35B",
+      "fileBytes": 415
+    },
+    "same-first-middle.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        },
+        {
+          "width": 1,
+          "height": 3,
+          "bgra": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/wAA////////AAD/",
+          "pixelSha256": "151D6547C753A91772A1EABD9C8299BB25CF9D6980C8DBEEA2E5444717565CB8",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "6B596EFD293B0898B36F1A4F4FCA88E74BF555FC8E3C18CDD5F04DAF64B1F334",
+      "fileBytes": 415
+    },
+    "single-page.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "64E6CEA3A795A196434E7663EBE7775AFFD9B580B9C3F3CC11B1E901301413EC",
+      "fileBytes": 210
+    },
+    "unassociated-alpha.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              128
+            ],
+            [
+              13,
+              37,
+              71,
+              0
+            ]
+          ],
+          "bgraBase64": "AAD/gA0lRwA=",
+          "pixelSha256": "E32750C723A5B876ADDF58812C0878D1A8B2FF0527D6163F34AC629CB7A2B308",
+          "extraSamples": 2
+        }
+      ],
+      "fileSha256": "86A2F58D87B20213D10C2E9B6634C709A1E98A353E806DBB0C25AD8D6C8A1455",
+      "fileBytes": 226
+    },
+    "associated-alpha.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              128
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "bgraBase64": "AAD/gAAAAAA=",
+          "pixelSha256": "F422201E92E59B6A68EE8D671A10D8E69E5E75BD40BD410123E73BD3FFA78955",
+          "extraSamples": 1
+        }
+      ],
+      "fileSha256": "144124BBE6F3222915E47BDD08A68C26826A2DC65564958774C9D743557FB880",
+      "fileBytes": 226
+    },
+    "ifd-cycle.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "main IFD chain cycle",
+      "fileSha256": "2325859655CB84AC0CD6FC8767B7799782718EF72E4D412CF19065829C03E29A",
+      "fileBytes": 415
+    },
+    "ifd-outside.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "next IFD offset outside file",
+      "fileSha256": "695BFA416FEDD1C42E07FFEC49A7C7875C744E141DC684792E58441FD5632C84",
+      "fileBytes": 415
+    },
+    "later-strip-truncated.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "second-page strip missing final sample",
+      "fileSha256": "D5EE91D9A12AB3D68D9D41B3D6C8AEB3C521B35847A81F8ADE12436B269B8E32",
+      "fileBytes": 414
+    },
+    "later-strip-outside.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "second-page strip offset outside file",
+      "fileSha256": "7CDF6B89FA2817950D144538F2F63CA013CC6A746396DF4B7C722FBD553B58E5",
+      "fileBytes": 415
+    },
+    "too-many-pages.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "1025 main IFD pages exceeds 1024 bound",
+      "fileSha256": "A7ABD61FFEE21CB7BE2C57D657B2B1FA42B4806904E853B89D0B8D681D9AE2B3",
+      "fileBytes": 205007
+    },
+    "later-oversized.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "later page exceeds 16M pixels before allocation",
+      "fileSha256": "BEFA7CAEE6D6D395FB67870E072537E7B25F34CA94D46A29E5A2A3ADFB730687",
+      "fileBytes": 415
+    },
+    "packbits-rgb.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "70E10363A9967A4B9FB083616D1FF276B03FA253692430FD33492A738B9DACBC",
+      "fileBytes": 215
+    },
+    "deflate-rgb.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "17E4DB2791B56EC6C8E138507FEF778C49B455489A9BA62B9222E9B0E5EDFCBA",
+      "fileBytes": 220
+    },
+    "lzw-rgb.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "F5F747FA3D0633D3C3E88CA57F5A229E35F7D7CB94580E2D3A331FA0AFD99923",
+      "fileBytes": 217
+    },
+    "palette-8.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "F6B5239006ED6BE29F5D9700BB30F3E79BAB6D484DAF3327BBCF85A184810A43",
+      "fileBytes": 1754
+    },
+    "gray-white-is-zero.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "/////wAAAP8=",
+          "pixelSha256": "C9FA5B8296E4465091D7112F785F5909B7201AFDA9B98C3FFFAE87244919F114",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "C4A6516A020773FD01D13EA7C33180F454CE3609B37385B4F188E70998ACFBB1",
+      "fileBytes": 201
+    },
+    "rgb-16.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 1,
+          "height": 1,
+          "bgra": [
+            [
+              128,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraBase64": "gAD//w==",
+          "pixelSha256": "71F50B60D408111F2F36A52FFD93E265946F1B7A2454B01EA007D9D284694092",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "E6C5343E023E05111001AAF8ECF7278360E6DEA655A88DBDC02671355296D231",
+      "fileBytes": 214
+    },
+    "tile-padding.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "7D3A8B1BB2C3451CA31C109514FB84540541EABED09E62FE4D0204D063304C66",
+      "fileBytes": 992
+    },
+    "bigtiff-le.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        },
+        {
+          "width": 1,
+          "height": 3,
+          "bgra": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AP8A////////AAD/",
+          "pixelSha256": "7BB1310E7E553927D5EDBA64CE52A6ABB865900E5727E1A763246EBAEFEAC9B7",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "9004CB7C5B2AFD47C3CE5E3D10DF3737EC782F7265D10365F2DDB563DA3B0422",
+      "fileBytes": 625
+    },
+    "big-entry-count.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "huge BigTIFF IFD entry count before allocation",
+      "fileSha256": "265A89DE8D05E2831C7E86C1F20244D9ABDBEB32E9E4AE112D915AA072C002A5",
+      "fileBytes": 24
+    },
+    "big-tag-count.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "huge BigTIFF tag count before allocation",
+      "fileSha256": "707161A7F0C0974276FA569D46916B717F36C84B67593EDF070546A13D7428A4",
+      "fileBytes": 625
+    },
+    "bigtiff-be.tif": {
+      "valid": true,
+      "byteOrder": "MM",
+      "frameCount": 2,
+      "frames": [
+        {
+          "width": 2,
+          "height": 1,
+          "bgra": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AAD///8AAP8=",
+          "pixelSha256": "A87056506A35A3B1DF92B87636B5841DDEA18A199859C1C843B6CDBCE40FCE1C",
+          "extraSamples": 0
+        },
+        {
+          "width": 1,
+          "height": 3,
+          "bgra": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              255,
+              255,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraBase64": "AP8A////////AAD/",
+          "pixelSha256": "7BB1310E7E553927D5EDBA64CE52A6ABB865900E5727E1A763246EBAEFEAC9B7",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "C86C68E5467708965D5420B71D572A206965175B29A758859F5B790519A54472",
+      "fileBytes": 625
+    },
+    "tile-huge-dimensions.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "huge tile width before scratch allocation",
+      "fileSha256": "C3ADF510669FE101CD37D0FA7161736DA25941572B622283F64B2D9138F348C8",
+      "fileBytes": 992
+    },
+    "jpeg-huge-sof.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "JPEG SOF exceeds declared TIFF strip dimensions before native decode",
+      "fileSha256": "FEBA4E0121F160ECA3B8355F7B7436800A105E50241B920A0045EAA5CF59BD72",
+      "fileBytes": 231
+    },
+    "jpeg-interchange-outside.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "old JPEGInterchangeFormat offset outside file; reject before library decode",
+      "fileSha256": "BACAF5F20A77983699D6957949D3792106A703B8DE1BEB5AAB3CB1581D2B2703",
+      "fileBytes": 238
+    },
+    "jpeg-interchange-length.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "old JPEGInterchangeFormatLength outside file; reject before library decode",
+      "fileSha256": "50488FDC3610A79BAFC6488103842C1CA074B9D44F0CCCE19AEAE00F549D09B6",
+      "fileBytes": 238
+    },
+    "jpeg-without-scan.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "JPEG SOI/SOF0/EOI without SOS or scan data must not produce successful zero pixels",
+      "fileSha256": "F101CB95F2ACA441DC74932134B802D25491D215945043B9DBA8AE2847AF9969",
+      "fileBytes": 217
+    },
+    "jpeg-gray-128.tif": {
+      "valid": true,
+      "byteOrder": "II",
+      "frameCount": 1,
+      "frames": [
+        {
+          "width": 1,
+          "height": 1,
+          "bgra": [
+            [
+              128,
+              128,
+              128,
+              255
+            ]
+          ],
+          "bgraBase64": "gICA/w==",
+          "pixelSha256": "79DFAD351F79EF0E65A11FFF0A9ED44BF628F9390FF06B92EE4EE5E2477616EA",
+          "extraSamples": 0
+        }
+      ],
+      "fileSha256": "D02D392627C6C6587CF376E2D7B815C5A4476B620D87D05285300683482D3227",
+      "fileBytes": 337
+    },
+    "jpeg-old-table-count.tif": {
+      "valid": false,
+      "expectedExit": 2,
+      "expectedNoSuccessJson": true,
+      "failure": "old JPEG table count5 exceeds SamplesPerPixel1 before table allocation",
+      "fileSha256": "003BFCBECC459C08E2AD2C1F3D9ED1D6D2CE84B14D22C749A76724EA28F09C2E",
+      "fileBytes": 449
+    }
+  }
+}

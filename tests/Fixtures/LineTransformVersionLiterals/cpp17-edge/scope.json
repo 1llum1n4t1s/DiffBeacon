@@ -1,0 +1,19 @@
+{
+  "nativeCases": 18,
+  "nativeRecords": 36,
+  "compilerStandard": "C++17",
+  "implementationDefined": "major32768..65535 sign-bit conversion is captured as MSVC C++17 behavior, not portable value expectation",
+  "runtime": [
+    "original Version constructor/Evaluate",
+    "original ToStringValue int64 branch",
+    "original UnescapeQuotes direct method and empty FreeStrings"
+  ],
+  "unexecuted": [
+    "whole Native AST",
+    "yylex/full parser/directives",
+    "non-int64 serializer/typed context",
+    "actual product/public bridge"
+  ],
+  "legacyClassification": "raw60/supplement128 remain immutable historical narrower assumptions; new edge evidence supersedes only signbit analysis for formal integration",
+  "retention": "minimal KEEP edge evidence for parent review/reproduce; own Temp cleanup requires separate exact GO"
+}

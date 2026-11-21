@@ -1,0 +1,17 @@
+{
+  "nativeCases": 60,
+  "adapterBoundaries": [
+    "ValueType unused arms removed; native integer arm index3 retained",
+    "empty FilterEvalContext stub; original Evaluate ignores context",
+    "output decimal stream and hex decoder are adapter, not original ToStringValue serializer",
+    "no Poco/license-dependent stub needed"
+  ],
+  "unexecuted": [
+    "native lexer/parser/directive",
+    "whole Optimize/type/AST equivalence",
+    "public serialized bridge",
+    "current product behavior"
+  ],
+  "publicPlans": "join native raw values only; planned/unexecuted",
+  "retention": "minimal external draft retained for parent review; delete after acceptance/supersession and parent exact GO; original repository untouched"
+}

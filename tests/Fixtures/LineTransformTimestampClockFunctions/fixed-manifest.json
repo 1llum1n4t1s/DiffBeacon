@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "archive": {
+    "name": "clock-native-portable-v1.zip",
+    "sha256": "23339417df345ce7332b4dfaf4146cad32d51d1fde433beb1d7a42d8a969a1d0",
+    "size": 2765601
+  },
+  "closureManifestSha256": "559708ab72ee04ef143a81d4ec40d15a4a559278e02d14a43f9c1606025458c3",
+  "portableReaderName": "verify_clock_portable.v2.py",
+  "portableReaderSha256": "861486a3b9525b695dee74159f4e25ce8dc2cc01e1b59c52d2d73dd50cc30828",
+  "originalAuthoritySha256": "d76a193fabb2a590bf1673888184665a58afa18cc62442f5d5bd75445edf6baa",
+  "originalGoSha256": "24d2864a54b6c63a8d800b78858d93850abcce7d7a604e4bb5f4ebac0b74d50b",
+  "claims": "self-contained raw/source/proof joins; no actor paths, compiler or Native rerun",
+  "newNativeRunCount": 0,
+  "sourceRows": 437,
+  "spans": 11,
+  "inheritedObjects": 35,
+  "actualCaptureCommands": 4,
+  "snapshotRecords": 4,
+  "licenses": 5,
+  "blobCount": 579
+}

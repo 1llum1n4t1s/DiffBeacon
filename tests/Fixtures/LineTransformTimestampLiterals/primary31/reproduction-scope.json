@@ -1,0 +1,17 @@
+{
+  "status": "parent-review proposal only; no compile/link/run performed",
+  "original31AdapterArchive": "adapter/timestamp_adapter.cpp",
+  "candidateSafe30Adapter": "reproduce-safe30-adapter.cpp",
+  "candidateSha256": "51deb76d152d5dc91301eee2aa5078a79a8033f2203ab25a2576e80d40345896",
+  "derivation": "remove exactly one owned case-table line embedded-nul; original declarations/functions/Timestamp arm unchanged",
+  "excluded": [
+    "embedded-nul"
+  ],
+  "unsafeOriginal31AdapterExecutionProhibited": true,
+  "fullFreshCompileCount": 36,
+  "newLinkCount": 1,
+  "requestedFreshNativeRuns": 2,
+  "nativeCasesPerRun": 30,
+  "nextExactGoRequired": true,
+  "currentCaptureRemains31ForensicRaw": "raw31 immutable; NUL semantic/public exclusion does not rewrite parent qualifications"
+}

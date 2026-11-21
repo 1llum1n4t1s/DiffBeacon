@@ -1,0 +1,20 @@
+[
+  {
+    "path": "Src/FilterEngine/FilterLexer.re",
+    "size": 3901,
+    "sha256": "36b06326ab1d6569b74a64edc071829cbe314d3543b7f6b70249e4d4d244a1c6",
+    "gitBlob": "6163d1a1f5433de3c81eb214530c5f825f694290",
+    "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+    "origin": "local-raw-Git-blob",
+    "license": "GPL-2.0"
+  },
+  {
+    "path": "Src/FilterEngine/FilterParser.y",
+    "size": 7429,
+    "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee",
+    "gitBlob": "2cc89832aee98ab0f6932396eb17b683c5267380",
+    "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+    "origin": "local-raw-Git-blob",
+    "license": "GPL-2.0"
+  }
+]

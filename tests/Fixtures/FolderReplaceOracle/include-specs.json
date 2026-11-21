@@ -1,0 +1,282 @@
+{
+  "string.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        76207,
+        77464
+      ]
+    ],
+    "sha256": "364fddb14994e0b992fb3aa40b83b25ec2b2a0b71dde9763f2f5e12eccc5aaf1"
+  },
+  "get.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        1277,
+        1512
+      ]
+    ],
+    "sha256": "f66596a0c1646cfc43167b4282173894287169a389fce1e5c5e5a27ccf849059"
+  },
+  "escape.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        1514,
+        1885
+      ]
+    ],
+    "sha256": "95b75f084a39117432c0a828e81a9805eadd93c1adde55f70d3b477d72e801cd"
+  },
+  "flags.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        1933,
+        2092
+      ]
+    ],
+    "sha256": "bd2c8e05ca1855dbabe853949c457586fa8b711201b8c60244bccd7c1a02b168"
+  },
+  "create.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        2136,
+        2422
+      ]
+    ],
+    "sha256": "03e45685c8c02936f6b92560c3d91a009a9bf123f61a7b0486745effae825510"
+  },
+  "subst-string.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        3284,
+        3646
+      ]
+    ],
+    "sha256": "1d351218c8fe07a85f9ca3fbc421775a7bcd8cc3ad498b907c9e0e828649f420"
+  },
+  "subst-regex.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        3711,
+        3991
+      ]
+    ],
+    "sha256": "c41913c85a4c0b38a360b459f87def41a7c095fadec34fc142ba2e1e276a1c5e"
+  },
+  "replace.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        64703,
+        65866
+      ]
+    ],
+    "sha256": "1344d065705914f52b620f356cb80a08c932de14af29f4f9f5593e9fd7cecf5a"
+  },
+  "regex-literal-ctor.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        144413,
+        144677
+      ]
+    ],
+    "sha256": "1c4aaeaa2b475c69a2793756c65b93f25dedbafc97c980456a60cc48e61f95f4"
+  },
+  "lifting.inc": {
+    "source": "original/FilterExpressionNodes.cpp",
+    "ranges": [
+      [
+        56747,
+        57135
+      ]
+    ],
+    "sha256": "5c4b109fd6a2b058f9dde10e0f837e88ed0943bda5172b9519f586b812ba19c5"
+  },
+  "ExprNode.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        694,
+        857
+      ]
+    ],
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5"
+  },
+  "BoolLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        3521,
+        3703
+      ]
+    ],
+    "sha256": "1deaefccf3b46603af70f8f67a6c2208d23355a4f40c3135764897779ca1f708"
+  },
+  "NoneLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        3969,
+        4132
+      ]
+    ],
+    "sha256": "25966355015b119c7c597f97171ec2ebe304d2c7f8a167d1267e6ab29a8d449a"
+  },
+  "DoubleLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        4134,
+        4324
+      ]
+    ],
+    "sha256": "ac28e07c55b0193d4cd8a49c5be3808887ec950ff134bb803cd979aa5ff79cd2"
+  },
+  "IntLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        4326,
+        4512
+      ]
+    ],
+    "sha256": "914ab5d902cdb0e8fe0eea3589dc09ddff1e353afb31edfb8bbf32fd6447d4ff"
+  },
+  "StringLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        4514,
+        4721
+      ]
+    ],
+    "sha256": "dc6588cf3720b9ea55168687fd4c610444707956401dec9909ae59d22aca88a9"
+  },
+  "DateTimeLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        4910,
+        5169
+      ]
+    ],
+    "sha256": "a4d0c8c922f8e4783cbff72a797c6ddbeb6f3c045da1988ec38c1bc3432348ab"
+  },
+  "RegularExpressionLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        5559,
+        5831
+      ]
+    ],
+    "sha256": "0798b15c4dfe46989e360b2a7ceef98bfad08b5068be1c244c22ee8281466a9f"
+  },
+  "ArrayLiteral.inc": {
+    "source": "original/FilterExpressionNodes.h",
+    "ranges": [
+      [
+        5833,
+        6088
+      ]
+    ],
+    "sha256": "89f4a5ef9f7837a8c6e0755c2e211f50a87d22964fbd43103bfdd12a4da4650e"
+  },
+  "options.inc": {
+    "source": "zip:original/Externals/poco/Foundation/include/Poco/RegularExpression.h",
+    "ranges": [
+      [
+        817,
+        3444
+      ]
+    ],
+    "sha256": "9d6972661f5b35235d52886983c885c7799719f99291860e6ad71bab07c5b5c8"
+  },
+  "poco-subst-forward.inc": {
+    "source": "zip:original/Externals/poco/Foundation/include/Poco/RegularExpression.h",
+    "ranges": [
+      [
+        10910,
+        11071
+      ]
+    ],
+    "sha256": "82d17d5b5722f3c82f8b11662e61cac78b5c04ba55fa50f3f1cb8f19fb85c32f"
+  },
+  "match-data.inc": {
+    "source": "zip:original/Externals/poco/Foundation/src/RegularExpression.cpp",
+    "ranges": [
+      [
+        393,
+        977
+      ]
+    ],
+    "sha256": "61e3790ee5d23e31a7adab9475a2a58510f9076219b59b31040740545ab5cda3"
+  },
+  "poco-ctor.inc": {
+    "source": "zip:original/Externals/poco/Foundation/src/RegularExpression.cpp",
+    "ranges": [
+      [
+        1002,
+        2944
+      ]
+    ],
+    "sha256": "a1ada29e04ebd22b0dac6a0e6275a48da741f1b5d20397e2b83065a6c2c25121"
+  },
+  "poco-dtor.inc": {
+    "source": "zip:original/Externals/poco/Foundation/src/RegularExpression.cpp",
+    "ranges": [
+      [
+        2947,
+        3057
+      ]
+    ],
+    "sha256": "6d7ed580075328fcdc07bf67e85d42f366e441d9571409e0274cdbe2cc4eb16c"
+  },
+  "poco-subst.inc": {
+    "source": "zip:original/Externals/poco/Foundation/src/RegularExpression.cpp",
+    "ranges": [
+      [
+        6889,
+        7370
+      ]
+    ],
+    "sha256": "4133aaa6a4a42920b9b6e27b3dc44831f098669221156df60f7d21ead5a4bd04"
+  },
+  "poco-one.inc": {
+    "source": "zip:original/Externals/poco/Foundation/src/RegularExpression.cpp",
+    "ranges": [
+      [
+        7373,
+        9286
+      ]
+    ],
+    "sha256": "aaccf421c4af63a34fbde380070b42f4403f996624122fdf2d56a3a2d82b367a"
+  },
+  "poco-compile-options.inc": {
+    "source": "zip:original/Externals/poco/Foundation/src/RegularExpression.cpp",
+    "ranges": [
+      [
+        9786,
+        10585
+      ]
+    ],
+    "sha256": "4746dd19901dc27a70ca44dbfd0dae8a8f202d00d1782ac456dfc92f1d5dd060"
+  },
+  "poco-match-options.inc": {
+    "source": "zip:original/Externals/poco/Foundation/src/RegularExpression.cpp",
+    "ranges": [
+      [
+        10588,
+        11066
+      ]
+    ],
+    "sha256": "90146176f4ef0bc6301df8d29b7fd9cfe3ded5a96f5727586dc92809a5cffcdd"
+  }
+}

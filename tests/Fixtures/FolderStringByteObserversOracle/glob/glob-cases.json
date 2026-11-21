@@ -1,0 +1,5264 @@
+[
+  {
+    "id": "0-True-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-True-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "0-False-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-165"
+  },
+  {
+    "id": "1-True-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-True-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "1-False-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-167"
+  },
+  {
+    "id": "2-True-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-True-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "2-False-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-168"
+  },
+  {
+    "id": "3-True-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-True-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "3-False-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-169"
+  },
+  {
+    "id": "4-True-0",
+    "subjectHex": "c3",
+    "patternHex": "c3",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-1",
+    "subjectHex": "c3",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-2",
+    "subjectHex": "c3",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-3",
+    "subjectHex": "c3",
+    "patternHex": "2ac3",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-4",
+    "subjectHex": "c3",
+    "patternHex": "c32a",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-5",
+    "subjectHex": "c3",
+    "patternHex": "2ac32a",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-6",
+    "subjectHex": "c3",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-7",
+    "subjectHex": "c3",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-8",
+    "subjectHex": "c3",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-9",
+    "subjectHex": "c3",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-True-middle",
+    "subjectHex": "41c35a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-0",
+    "subjectHex": "c3",
+    "patternHex": "c3",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-1",
+    "subjectHex": "c3",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-2",
+    "subjectHex": "c3",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-3",
+    "subjectHex": "c3",
+    "patternHex": "2ac3",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-4",
+    "subjectHex": "c3",
+    "patternHex": "c32a",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-5",
+    "subjectHex": "c3",
+    "patternHex": "2ac32a",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-6",
+    "subjectHex": "c3",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-7",
+    "subjectHex": "c3",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-8",
+    "subjectHex": "c3",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-9",
+    "subjectHex": "c3",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "4-False-middle",
+    "subjectHex": "41c35a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-177"
+  },
+  {
+    "id": "5-True-0",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "a9e4b8adf09f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-1",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-2",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-3",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "2aa9e4b8adf09f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-4",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "a9e4b8adf09f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-5",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "2aa9e4b8adf09f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-6",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-7",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-8",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-9",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-True-middle",
+    "subjectHex": "41a9e4b8adf09f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-0",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "a9e4b8adf09f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-1",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-2",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-3",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "2aa9e4b8adf09f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-4",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "a9e4b8adf09f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-5",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "2aa9e4b8adf09f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-6",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-7",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-8",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-9",
+    "subjectHex": "a9e4b8adf09f98805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "5-False-middle",
+    "subjectHex": "41a9e4b8adf09f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-180"
+  },
+  {
+    "id": "6-True-0",
+    "subjectHex": "a9",
+    "patternHex": "a9",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-1",
+    "subjectHex": "a9",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-2",
+    "subjectHex": "a9",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-3",
+    "subjectHex": "a9",
+    "patternHex": "2aa9",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-4",
+    "subjectHex": "a9",
+    "patternHex": "a92a",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-5",
+    "subjectHex": "a9",
+    "patternHex": "2aa92a",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-6",
+    "subjectHex": "a9",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-7",
+    "subjectHex": "a9",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-8",
+    "subjectHex": "a9",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-9",
+    "subjectHex": "a9",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-True-middle",
+    "subjectHex": "41a95a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-0",
+    "subjectHex": "a9",
+    "patternHex": "a9",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-1",
+    "subjectHex": "a9",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-2",
+    "subjectHex": "a9",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-3",
+    "subjectHex": "a9",
+    "patternHex": "2aa9",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-4",
+    "subjectHex": "a9",
+    "patternHex": "a92a",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-5",
+    "subjectHex": "a9",
+    "patternHex": "2aa92a",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-6",
+    "subjectHex": "a9",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-7",
+    "subjectHex": "a9",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-8",
+    "subjectHex": "a9",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-9",
+    "subjectHex": "a9",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "6-False-middle",
+    "subjectHex": "41a95a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-182"
+  },
+  {
+    "id": "7-True-0",
+    "subjectHex": "a9e4",
+    "patternHex": "a9e4",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-1",
+    "subjectHex": "a9e4",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-2",
+    "subjectHex": "a9e4",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-3",
+    "subjectHex": "a9e4",
+    "patternHex": "2aa9e4",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-4",
+    "subjectHex": "a9e4",
+    "patternHex": "a9e42a",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-5",
+    "subjectHex": "a9e4",
+    "patternHex": "2aa9e42a",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-6",
+    "subjectHex": "a9e4",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-7",
+    "subjectHex": "a9e4",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-8",
+    "subjectHex": "a9e4",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-9",
+    "subjectHex": "a9e4",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-True-middle",
+    "subjectHex": "41a9e45a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-0",
+    "subjectHex": "a9e4",
+    "patternHex": "a9e4",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-1",
+    "subjectHex": "a9e4",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-2",
+    "subjectHex": "a9e4",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-3",
+    "subjectHex": "a9e4",
+    "patternHex": "2aa9e4",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-4",
+    "subjectHex": "a9e4",
+    "patternHex": "a9e42a",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-5",
+    "subjectHex": "a9e4",
+    "patternHex": "2aa9e42a",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-6",
+    "subjectHex": "a9e4",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-7",
+    "subjectHex": "a9e4",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-8",
+    "subjectHex": "a9e4",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-9",
+    "subjectHex": "a9e4",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "7-False-middle",
+    "subjectHex": "41a9e45a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-183"
+  },
+  {
+    "id": "8-True-0",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "a9e4b8adf09f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-1",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-2",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-3",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "2aa9e4b8adf09f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-4",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "a9e4b8adf09f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-5",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "2aa9e4b8adf09f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-6",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-7",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-8",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-9",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-True-middle",
+    "subjectHex": "41a9e4b8adf09f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-0",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "a9e4b8adf09f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-1",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-2",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-3",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "2aa9e4b8adf09f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-4",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "a9e4b8adf09f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-5",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "2aa9e4b8adf09f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-6",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-7",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-8",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-9",
+    "subjectHex": "a9e4b8adf09f9880",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "8-False-middle",
+    "subjectHex": "41a9e4b8adf09f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-184"
+  },
+  {
+    "id": "9-True-0",
+    "subjectHex": "e4",
+    "patternHex": "e4",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-1",
+    "subjectHex": "e4",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-2",
+    "subjectHex": "e4",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-3",
+    "subjectHex": "e4",
+    "patternHex": "2ae4",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-4",
+    "subjectHex": "e4",
+    "patternHex": "e42a",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-5",
+    "subjectHex": "e4",
+    "patternHex": "2ae42a",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-6",
+    "subjectHex": "e4",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-7",
+    "subjectHex": "e4",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-8",
+    "subjectHex": "e4",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-9",
+    "subjectHex": "e4",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-True-middle",
+    "subjectHex": "41e45a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-0",
+    "subjectHex": "e4",
+    "patternHex": "e4",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-1",
+    "subjectHex": "e4",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-2",
+    "subjectHex": "e4",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-3",
+    "subjectHex": "e4",
+    "patternHex": "2ae4",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-4",
+    "subjectHex": "e4",
+    "patternHex": "e42a",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-5",
+    "subjectHex": "e4",
+    "patternHex": "2ae42a",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-6",
+    "subjectHex": "e4",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-7",
+    "subjectHex": "e4",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-8",
+    "subjectHex": "e4",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-9",
+    "subjectHex": "e4",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "9-False-middle",
+    "subjectHex": "41e45a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-187"
+  },
+  {
+    "id": "10-True-0",
+    "subjectHex": "e4b8",
+    "patternHex": "e4b8",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-1",
+    "subjectHex": "e4b8",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-2",
+    "subjectHex": "e4b8",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-3",
+    "subjectHex": "e4b8",
+    "patternHex": "2ae4b8",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-4",
+    "subjectHex": "e4b8",
+    "patternHex": "e4b82a",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-5",
+    "subjectHex": "e4b8",
+    "patternHex": "2ae4b82a",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-6",
+    "subjectHex": "e4b8",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-7",
+    "subjectHex": "e4b8",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-8",
+    "subjectHex": "e4b8",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-9",
+    "subjectHex": "e4b8",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-True-middle",
+    "subjectHex": "41e4b85a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-0",
+    "subjectHex": "e4b8",
+    "patternHex": "e4b8",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-1",
+    "subjectHex": "e4b8",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-2",
+    "subjectHex": "e4b8",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-3",
+    "subjectHex": "e4b8",
+    "patternHex": "2ae4b8",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-4",
+    "subjectHex": "e4b8",
+    "patternHex": "e4b82a",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-5",
+    "subjectHex": "e4b8",
+    "patternHex": "2ae4b82a",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-6",
+    "subjectHex": "e4b8",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-7",
+    "subjectHex": "e4b8",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-8",
+    "subjectHex": "e4b8",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-9",
+    "subjectHex": "e4b8",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "10-False-middle",
+    "subjectHex": "41e4b85a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-188"
+  },
+  {
+    "id": "11-True-0",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "b8adf09f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-1",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-2",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-3",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "2ab8adf09f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-4",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "b8adf09f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-5",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "2ab8adf09f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-6",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-7",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-8",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-9",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-True-middle",
+    "subjectHex": "41b8adf09f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-0",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "b8adf09f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-1",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-2",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-3",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "2ab8adf09f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-4",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "b8adf09f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-5",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "2ab8adf09f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-6",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-7",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-8",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-9",
+    "subjectHex": "b8adf09f98805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "11-False-middle",
+    "subjectHex": "41b8adf09f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-190"
+  },
+  {
+    "id": "12-True-0",
+    "subjectHex": "b8",
+    "patternHex": "b8",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-1",
+    "subjectHex": "b8",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-2",
+    "subjectHex": "b8",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-3",
+    "subjectHex": "b8",
+    "patternHex": "2ab8",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-4",
+    "subjectHex": "b8",
+    "patternHex": "b82a",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-5",
+    "subjectHex": "b8",
+    "patternHex": "2ab82a",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-6",
+    "subjectHex": "b8",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-7",
+    "subjectHex": "b8",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-8",
+    "subjectHex": "b8",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-9",
+    "subjectHex": "b8",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-True-middle",
+    "subjectHex": "41b85a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-0",
+    "subjectHex": "b8",
+    "patternHex": "b8",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-1",
+    "subjectHex": "b8",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-2",
+    "subjectHex": "b8",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-3",
+    "subjectHex": "b8",
+    "patternHex": "2ab8",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-4",
+    "subjectHex": "b8",
+    "patternHex": "b82a",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-5",
+    "subjectHex": "b8",
+    "patternHex": "2ab82a",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-6",
+    "subjectHex": "b8",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-7",
+    "subjectHex": "b8",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-8",
+    "subjectHex": "b8",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-9",
+    "subjectHex": "b8",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "12-False-middle",
+    "subjectHex": "41b85a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-192"
+  },
+  {
+    "id": "13-True-0",
+    "subjectHex": "b8ad",
+    "patternHex": "b8ad",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-1",
+    "subjectHex": "b8ad",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-2",
+    "subjectHex": "b8ad",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-3",
+    "subjectHex": "b8ad",
+    "patternHex": "2ab8ad",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-4",
+    "subjectHex": "b8ad",
+    "patternHex": "b8ad2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-5",
+    "subjectHex": "b8ad",
+    "patternHex": "2ab8ad2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-6",
+    "subjectHex": "b8ad",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-7",
+    "subjectHex": "b8ad",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-8",
+    "subjectHex": "b8ad",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-9",
+    "subjectHex": "b8ad",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-True-middle",
+    "subjectHex": "41b8ad5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-0",
+    "subjectHex": "b8ad",
+    "patternHex": "b8ad",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-1",
+    "subjectHex": "b8ad",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-2",
+    "subjectHex": "b8ad",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-3",
+    "subjectHex": "b8ad",
+    "patternHex": "2ab8ad",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-4",
+    "subjectHex": "b8ad",
+    "patternHex": "b8ad2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-5",
+    "subjectHex": "b8ad",
+    "patternHex": "2ab8ad2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-6",
+    "subjectHex": "b8ad",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-7",
+    "subjectHex": "b8ad",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-8",
+    "subjectHex": "b8ad",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-9",
+    "subjectHex": "b8ad",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "13-False-middle",
+    "subjectHex": "41b8ad5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-193"
+  },
+  {
+    "id": "14-True-0",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "b8adf09f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-1",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-2",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-3",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "2ab8adf09f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-4",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "b8adf09f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-5",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "2ab8adf09f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-6",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-7",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-8",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-9",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-True-middle",
+    "subjectHex": "41b8adf09f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-0",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "b8adf09f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-1",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-2",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-3",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "2ab8adf09f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-4",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "b8adf09f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-5",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "2ab8adf09f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-6",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-7",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-8",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-9",
+    "subjectHex": "b8adf09f9880",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "14-False-middle",
+    "subjectHex": "41b8adf09f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-194"
+  },
+  {
+    "id": "15-True-0",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "adf09f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-1",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-2",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-3",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "2aadf09f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-4",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "adf09f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-5",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "2aadf09f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-6",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-7",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-8",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-9",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-True-middle",
+    "subjectHex": "41adf09f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-0",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "adf09f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-1",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-2",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-3",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "2aadf09f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-4",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "adf09f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-5",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "2aadf09f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-6",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-7",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-8",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-9",
+    "subjectHex": "adf09f98805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "15-False-middle",
+    "subjectHex": "41adf09f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-195"
+  },
+  {
+    "id": "16-True-0",
+    "subjectHex": "ad",
+    "patternHex": "ad",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-1",
+    "subjectHex": "ad",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-2",
+    "subjectHex": "ad",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-3",
+    "subjectHex": "ad",
+    "patternHex": "2aad",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-4",
+    "subjectHex": "ad",
+    "patternHex": "ad2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-5",
+    "subjectHex": "ad",
+    "patternHex": "2aad2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-6",
+    "subjectHex": "ad",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-7",
+    "subjectHex": "ad",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-8",
+    "subjectHex": "ad",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-9",
+    "subjectHex": "ad",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-True-middle",
+    "subjectHex": "41ad5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-0",
+    "subjectHex": "ad",
+    "patternHex": "ad",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-1",
+    "subjectHex": "ad",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-2",
+    "subjectHex": "ad",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-3",
+    "subjectHex": "ad",
+    "patternHex": "2aad",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-4",
+    "subjectHex": "ad",
+    "patternHex": "ad2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-5",
+    "subjectHex": "ad",
+    "patternHex": "2aad2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-6",
+    "subjectHex": "ad",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-7",
+    "subjectHex": "ad",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-8",
+    "subjectHex": "ad",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-9",
+    "subjectHex": "ad",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "16-False-middle",
+    "subjectHex": "41ad5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-197"
+  },
+  {
+    "id": "17-True-0",
+    "subjectHex": "adf0",
+    "patternHex": "adf0",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-1",
+    "subjectHex": "adf0",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-2",
+    "subjectHex": "adf0",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-3",
+    "subjectHex": "adf0",
+    "patternHex": "2aadf0",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-4",
+    "subjectHex": "adf0",
+    "patternHex": "adf02a",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-5",
+    "subjectHex": "adf0",
+    "patternHex": "2aadf02a",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-6",
+    "subjectHex": "adf0",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-7",
+    "subjectHex": "adf0",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-8",
+    "subjectHex": "adf0",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-9",
+    "subjectHex": "adf0",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-True-middle",
+    "subjectHex": "41adf05a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-0",
+    "subjectHex": "adf0",
+    "patternHex": "adf0",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-1",
+    "subjectHex": "adf0",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-2",
+    "subjectHex": "adf0",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-3",
+    "subjectHex": "adf0",
+    "patternHex": "2aadf0",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-4",
+    "subjectHex": "adf0",
+    "patternHex": "adf02a",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-5",
+    "subjectHex": "adf0",
+    "patternHex": "2aadf02a",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-6",
+    "subjectHex": "adf0",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-7",
+    "subjectHex": "adf0",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-8",
+    "subjectHex": "adf0",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-9",
+    "subjectHex": "adf0",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "17-False-middle",
+    "subjectHex": "41adf05a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-198"
+  },
+  {
+    "id": "18-True-0",
+    "subjectHex": "adf09f9880",
+    "patternHex": "adf09f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-1",
+    "subjectHex": "adf09f9880",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-2",
+    "subjectHex": "adf09f9880",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-3",
+    "subjectHex": "adf09f9880",
+    "patternHex": "2aadf09f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-4",
+    "subjectHex": "adf09f9880",
+    "patternHex": "adf09f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-5",
+    "subjectHex": "adf09f9880",
+    "patternHex": "2aadf09f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-6",
+    "subjectHex": "adf09f9880",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-7",
+    "subjectHex": "adf09f9880",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-8",
+    "subjectHex": "adf09f9880",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-9",
+    "subjectHex": "adf09f9880",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-True-middle",
+    "subjectHex": "41adf09f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-0",
+    "subjectHex": "adf09f9880",
+    "patternHex": "adf09f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-1",
+    "subjectHex": "adf09f9880",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-2",
+    "subjectHex": "adf09f9880",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-3",
+    "subjectHex": "adf09f9880",
+    "patternHex": "2aadf09f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-4",
+    "subjectHex": "adf09f9880",
+    "patternHex": "adf09f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-5",
+    "subjectHex": "adf09f9880",
+    "patternHex": "2aadf09f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-6",
+    "subjectHex": "adf09f9880",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-7",
+    "subjectHex": "adf09f9880",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-8",
+    "subjectHex": "adf09f9880",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-9",
+    "subjectHex": "adf09f9880",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "18-False-middle",
+    "subjectHex": "41adf09f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-199"
+  },
+  {
+    "id": "19-True-0",
+    "subjectHex": "f0",
+    "patternHex": "f0",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-1",
+    "subjectHex": "f0",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-2",
+    "subjectHex": "f0",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-3",
+    "subjectHex": "f0",
+    "patternHex": "2af0",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-4",
+    "subjectHex": "f0",
+    "patternHex": "f02a",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-5",
+    "subjectHex": "f0",
+    "patternHex": "2af02a",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-6",
+    "subjectHex": "f0",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-7",
+    "subjectHex": "f0",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-8",
+    "subjectHex": "f0",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-9",
+    "subjectHex": "f0",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-True-middle",
+    "subjectHex": "41f05a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-0",
+    "subjectHex": "f0",
+    "patternHex": "f0",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-1",
+    "subjectHex": "f0",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-2",
+    "subjectHex": "f0",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-3",
+    "subjectHex": "f0",
+    "patternHex": "2af0",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-4",
+    "subjectHex": "f0",
+    "patternHex": "f02a",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-5",
+    "subjectHex": "f0",
+    "patternHex": "2af02a",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-6",
+    "subjectHex": "f0",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-7",
+    "subjectHex": "f0",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-8",
+    "subjectHex": "f0",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-9",
+    "subjectHex": "f0",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "19-False-middle",
+    "subjectHex": "41f05a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-202"
+  },
+  {
+    "id": "20-True-0",
+    "subjectHex": "f09f",
+    "patternHex": "f09f",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-1",
+    "subjectHex": "f09f",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-2",
+    "subjectHex": "f09f",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-3",
+    "subjectHex": "f09f",
+    "patternHex": "2af09f",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-4",
+    "subjectHex": "f09f",
+    "patternHex": "f09f2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-5",
+    "subjectHex": "f09f",
+    "patternHex": "2af09f2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-6",
+    "subjectHex": "f09f",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-7",
+    "subjectHex": "f09f",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-8",
+    "subjectHex": "f09f",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-9",
+    "subjectHex": "f09f",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-True-middle",
+    "subjectHex": "41f09f5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-0",
+    "subjectHex": "f09f",
+    "patternHex": "f09f",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-1",
+    "subjectHex": "f09f",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-2",
+    "subjectHex": "f09f",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-3",
+    "subjectHex": "f09f",
+    "patternHex": "2af09f",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-4",
+    "subjectHex": "f09f",
+    "patternHex": "f09f2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-5",
+    "subjectHex": "f09f",
+    "patternHex": "2af09f2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-6",
+    "subjectHex": "f09f",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-7",
+    "subjectHex": "f09f",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-8",
+    "subjectHex": "f09f",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-9",
+    "subjectHex": "f09f",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "20-False-middle",
+    "subjectHex": "41f09f5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-203"
+  },
+  {
+    "id": "21-True-0",
+    "subjectHex": "9f98805a",
+    "patternHex": "9f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-1",
+    "subjectHex": "9f98805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-2",
+    "subjectHex": "9f98805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-3",
+    "subjectHex": "9f98805a",
+    "patternHex": "2a9f98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-4",
+    "subjectHex": "9f98805a",
+    "patternHex": "9f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-5",
+    "subjectHex": "9f98805a",
+    "patternHex": "2a9f98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-6",
+    "subjectHex": "9f98805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-7",
+    "subjectHex": "9f98805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-8",
+    "subjectHex": "9f98805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-9",
+    "subjectHex": "9f98805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-True-middle",
+    "subjectHex": "419f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-0",
+    "subjectHex": "9f98805a",
+    "patternHex": "9f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-1",
+    "subjectHex": "9f98805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-2",
+    "subjectHex": "9f98805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-3",
+    "subjectHex": "9f98805a",
+    "patternHex": "2a9f98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-4",
+    "subjectHex": "9f98805a",
+    "patternHex": "9f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-5",
+    "subjectHex": "9f98805a",
+    "patternHex": "2a9f98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-6",
+    "subjectHex": "9f98805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-7",
+    "subjectHex": "9f98805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-8",
+    "subjectHex": "9f98805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-9",
+    "subjectHex": "9f98805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "21-False-middle",
+    "subjectHex": "419f98805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-205"
+  },
+  {
+    "id": "22-True-0",
+    "subjectHex": "9f",
+    "patternHex": "9f",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-1",
+    "subjectHex": "9f",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-2",
+    "subjectHex": "9f",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-3",
+    "subjectHex": "9f",
+    "patternHex": "2a9f",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-4",
+    "subjectHex": "9f",
+    "patternHex": "9f2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-5",
+    "subjectHex": "9f",
+    "patternHex": "2a9f2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-6",
+    "subjectHex": "9f",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-7",
+    "subjectHex": "9f",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-8",
+    "subjectHex": "9f",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-9",
+    "subjectHex": "9f",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-True-middle",
+    "subjectHex": "419f5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-0",
+    "subjectHex": "9f",
+    "patternHex": "9f",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-1",
+    "subjectHex": "9f",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-2",
+    "subjectHex": "9f",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-3",
+    "subjectHex": "9f",
+    "patternHex": "2a9f",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-4",
+    "subjectHex": "9f",
+    "patternHex": "9f2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-5",
+    "subjectHex": "9f",
+    "patternHex": "2a9f2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-6",
+    "subjectHex": "9f",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-7",
+    "subjectHex": "9f",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-8",
+    "subjectHex": "9f",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-9",
+    "subjectHex": "9f",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "22-False-middle",
+    "subjectHex": "419f5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-207"
+  },
+  {
+    "id": "23-True-0",
+    "subjectHex": "9f98",
+    "patternHex": "9f98",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-1",
+    "subjectHex": "9f98",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-2",
+    "subjectHex": "9f98",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-3",
+    "subjectHex": "9f98",
+    "patternHex": "2a9f98",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-4",
+    "subjectHex": "9f98",
+    "patternHex": "9f982a",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-5",
+    "subjectHex": "9f98",
+    "patternHex": "2a9f982a",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-6",
+    "subjectHex": "9f98",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-7",
+    "subjectHex": "9f98",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-8",
+    "subjectHex": "9f98",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-9",
+    "subjectHex": "9f98",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-True-middle",
+    "subjectHex": "419f985a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-0",
+    "subjectHex": "9f98",
+    "patternHex": "9f98",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-1",
+    "subjectHex": "9f98",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-2",
+    "subjectHex": "9f98",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-3",
+    "subjectHex": "9f98",
+    "patternHex": "2a9f98",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-4",
+    "subjectHex": "9f98",
+    "patternHex": "9f982a",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-5",
+    "subjectHex": "9f98",
+    "patternHex": "2a9f982a",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-6",
+    "subjectHex": "9f98",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-7",
+    "subjectHex": "9f98",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-8",
+    "subjectHex": "9f98",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-9",
+    "subjectHex": "9f98",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "23-False-middle",
+    "subjectHex": "419f985a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-208"
+  },
+  {
+    "id": "24-True-0",
+    "subjectHex": "9f9880",
+    "patternHex": "9f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-1",
+    "subjectHex": "9f9880",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-2",
+    "subjectHex": "9f9880",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-3",
+    "subjectHex": "9f9880",
+    "patternHex": "2a9f9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-4",
+    "subjectHex": "9f9880",
+    "patternHex": "9f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-5",
+    "subjectHex": "9f9880",
+    "patternHex": "2a9f98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-6",
+    "subjectHex": "9f9880",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-7",
+    "subjectHex": "9f9880",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-8",
+    "subjectHex": "9f9880",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-9",
+    "subjectHex": "9f9880",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-True-middle",
+    "subjectHex": "419f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-0",
+    "subjectHex": "9f9880",
+    "patternHex": "9f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-1",
+    "subjectHex": "9f9880",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-2",
+    "subjectHex": "9f9880",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-3",
+    "subjectHex": "9f9880",
+    "patternHex": "2a9f9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-4",
+    "subjectHex": "9f9880",
+    "patternHex": "9f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-5",
+    "subjectHex": "9f9880",
+    "patternHex": "2a9f98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-6",
+    "subjectHex": "9f9880",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-7",
+    "subjectHex": "9f9880",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-8",
+    "subjectHex": "9f9880",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-9",
+    "subjectHex": "9f9880",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "24-False-middle",
+    "subjectHex": "419f98805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-209"
+  },
+  {
+    "id": "25-True-0",
+    "subjectHex": "98805a",
+    "patternHex": "98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-1",
+    "subjectHex": "98805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-2",
+    "subjectHex": "98805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-3",
+    "subjectHex": "98805a",
+    "patternHex": "2a98805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-4",
+    "subjectHex": "98805a",
+    "patternHex": "98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-5",
+    "subjectHex": "98805a",
+    "patternHex": "2a98805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-6",
+    "subjectHex": "98805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-7",
+    "subjectHex": "98805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-8",
+    "subjectHex": "98805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-9",
+    "subjectHex": "98805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-True-middle",
+    "subjectHex": "4198805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-0",
+    "subjectHex": "98805a",
+    "patternHex": "98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-1",
+    "subjectHex": "98805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-2",
+    "subjectHex": "98805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-3",
+    "subjectHex": "98805a",
+    "patternHex": "2a98805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-4",
+    "subjectHex": "98805a",
+    "patternHex": "98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-5",
+    "subjectHex": "98805a",
+    "patternHex": "2a98805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-6",
+    "subjectHex": "98805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-7",
+    "subjectHex": "98805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-8",
+    "subjectHex": "98805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-9",
+    "subjectHex": "98805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "25-False-middle",
+    "subjectHex": "4198805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-210"
+  },
+  {
+    "id": "26-True-0",
+    "subjectHex": "98",
+    "patternHex": "98",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-1",
+    "subjectHex": "98",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-2",
+    "subjectHex": "98",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-3",
+    "subjectHex": "98",
+    "patternHex": "2a98",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-4",
+    "subjectHex": "98",
+    "patternHex": "982a",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-5",
+    "subjectHex": "98",
+    "patternHex": "2a982a",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-6",
+    "subjectHex": "98",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-7",
+    "subjectHex": "98",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-8",
+    "subjectHex": "98",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-9",
+    "subjectHex": "98",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-True-middle",
+    "subjectHex": "41985a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-0",
+    "subjectHex": "98",
+    "patternHex": "98",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-1",
+    "subjectHex": "98",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-2",
+    "subjectHex": "98",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-3",
+    "subjectHex": "98",
+    "patternHex": "2a98",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-4",
+    "subjectHex": "98",
+    "patternHex": "982a",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-5",
+    "subjectHex": "98",
+    "patternHex": "2a982a",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-6",
+    "subjectHex": "98",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-7",
+    "subjectHex": "98",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-8",
+    "subjectHex": "98",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-9",
+    "subjectHex": "98",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "26-False-middle",
+    "subjectHex": "41985a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-212"
+  },
+  {
+    "id": "27-True-0",
+    "subjectHex": "9880",
+    "patternHex": "9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-1",
+    "subjectHex": "9880",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-2",
+    "subjectHex": "9880",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-3",
+    "subjectHex": "9880",
+    "patternHex": "2a9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-4",
+    "subjectHex": "9880",
+    "patternHex": "98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-5",
+    "subjectHex": "9880",
+    "patternHex": "2a98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-6",
+    "subjectHex": "9880",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-7",
+    "subjectHex": "9880",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-8",
+    "subjectHex": "9880",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-9",
+    "subjectHex": "9880",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-True-middle",
+    "subjectHex": "4198805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-0",
+    "subjectHex": "9880",
+    "patternHex": "9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-1",
+    "subjectHex": "9880",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-2",
+    "subjectHex": "9880",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-3",
+    "subjectHex": "9880",
+    "patternHex": "2a9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-4",
+    "subjectHex": "9880",
+    "patternHex": "98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-5",
+    "subjectHex": "9880",
+    "patternHex": "2a98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-6",
+    "subjectHex": "9880",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-7",
+    "subjectHex": "9880",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-8",
+    "subjectHex": "9880",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-9",
+    "subjectHex": "9880",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "27-False-middle",
+    "subjectHex": "4198805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-213"
+  },
+  {
+    "id": "28-True-0",
+    "subjectHex": "9880",
+    "patternHex": "9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-1",
+    "subjectHex": "9880",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-2",
+    "subjectHex": "9880",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-3",
+    "subjectHex": "9880",
+    "patternHex": "2a9880",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-4",
+    "subjectHex": "9880",
+    "patternHex": "98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-5",
+    "subjectHex": "9880",
+    "patternHex": "2a98802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-6",
+    "subjectHex": "9880",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-7",
+    "subjectHex": "9880",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-8",
+    "subjectHex": "9880",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-9",
+    "subjectHex": "9880",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-True-middle",
+    "subjectHex": "4198805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-0",
+    "subjectHex": "9880",
+    "patternHex": "9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-1",
+    "subjectHex": "9880",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-2",
+    "subjectHex": "9880",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-3",
+    "subjectHex": "9880",
+    "patternHex": "2a9880",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-4",
+    "subjectHex": "9880",
+    "patternHex": "98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-5",
+    "subjectHex": "9880",
+    "patternHex": "2a98802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-6",
+    "subjectHex": "9880",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-7",
+    "subjectHex": "9880",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-8",
+    "subjectHex": "9880",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-9",
+    "subjectHex": "9880",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "28-False-middle",
+    "subjectHex": "4198805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-214"
+  },
+  {
+    "id": "29-True-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-True-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "29-False-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-215"
+  },
+  {
+    "id": "30-True-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-True-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "30-False-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-217"
+  },
+  {
+    "id": "31-True-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-True-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-0",
+    "subjectHex": "805a",
+    "patternHex": "805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-1",
+    "subjectHex": "805a",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-2",
+    "subjectHex": "805a",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-3",
+    "subjectHex": "805a",
+    "patternHex": "2a805a",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-4",
+    "subjectHex": "805a",
+    "patternHex": "805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-5",
+    "subjectHex": "805a",
+    "patternHex": "2a805a2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-6",
+    "subjectHex": "805a",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-7",
+    "subjectHex": "805a",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-8",
+    "subjectHex": "805a",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-9",
+    "subjectHex": "805a",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "31-False-middle",
+    "subjectHex": "41805a5a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-218"
+  },
+  {
+    "id": "32-True-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-True-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": true,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-0",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-1",
+    "subjectHex": "80",
+    "patternHex": "2a",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-2",
+    "subjectHex": "80",
+    "patternHex": "3f",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-3",
+    "subjectHex": "80",
+    "patternHex": "2a80",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-4",
+    "subjectHex": "80",
+    "patternHex": "802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-5",
+    "subjectHex": "80",
+    "patternHex": "2a802a",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-6",
+    "subjectHex": "80",
+    "patternHex": "",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-7",
+    "subjectHex": "80",
+    "patternHex": "80",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-8",
+    "subjectHex": "80",
+    "patternHex": "5b",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-9",
+    "subjectHex": "80",
+    "patternHex": "5c",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "32-False-middle",
+    "subjectHex": "41805a",
+    "patternHex": "412a5a",
+    "caseSensitive": false,
+    "sourceId": "bytes-219"
+  },
+  {
+    "id": "control-726",
+    "subjectHex": "",
+    "patternHex": "",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-727",
+    "subjectHex": "",
+    "patternHex": "2a",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-728",
+    "subjectHex": "",
+    "patternHex": "3f",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-729",
+    "subjectHex": "",
+    "patternHex": "5b",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-730",
+    "subjectHex": "41",
+    "patternHex": "61",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-731",
+    "subjectHex": "c389",
+    "patternHex": "c3a9",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-732",
+    "subjectHex": "f09f9880",
+    "patternHex": "3f",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-733",
+    "subjectHex": "410042",
+    "patternHex": "413f42",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-734",
+    "subjectHex": "78",
+    "patternHex": "5b",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-735",
+    "subjectHex": "78",
+    "patternHex": "5c",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-736",
+    "subjectHex": "78",
+    "patternHex": "5b612d7a5d",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-737",
+    "subjectHex": "78",
+    "patternHex": "5b21615d",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-738",
+    "subjectHex": "ff",
+    "patternHex": "fe",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-739",
+    "subjectHex": "c0af",
+    "patternHex": "3f",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-740",
+    "subjectHex": "f8",
+    "patternHex": "ff",
+    "caseSensitive": true
+  },
+  {
+    "id": "control-741",
+    "subjectHex": "",
+    "patternHex": "",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-742",
+    "subjectHex": "",
+    "patternHex": "2a",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-743",
+    "subjectHex": "",
+    "patternHex": "3f",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-744",
+    "subjectHex": "",
+    "patternHex": "5b",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-745",
+    "subjectHex": "41",
+    "patternHex": "61",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-746",
+    "subjectHex": "c389",
+    "patternHex": "c3a9",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-747",
+    "subjectHex": "f09f9880",
+    "patternHex": "3f",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-748",
+    "subjectHex": "410042",
+    "patternHex": "413f42",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-749",
+    "subjectHex": "78",
+    "patternHex": "5b",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-750",
+    "subjectHex": "78",
+    "patternHex": "5c",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-751",
+    "subjectHex": "78",
+    "patternHex": "5b612d7a5d",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-752",
+    "subjectHex": "78",
+    "patternHex": "5b21615d",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-753",
+    "subjectHex": "ff",
+    "patternHex": "fe",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-754",
+    "subjectHex": "c0af",
+    "patternHex": "3f",
+    "caseSensitive": false
+  },
+  {
+    "id": "control-755",
+    "subjectHex": "f8",
+    "patternHex": "ff",
+    "caseSensitive": false
+  }
+]

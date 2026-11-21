@@ -1,0 +1,596 @@
+[
+  {
+    "id": "whole",
+    "subject": "abc",
+    "pattern": "abc",
+    "caseSensitive": true
+  },
+  {
+    "id": "substring",
+    "subject": "xabcx",
+    "pattern": "abc",
+    "caseSensitive": true
+  },
+  {
+    "id": "prefix",
+    "subject": "abcx",
+    "pattern": "abc",
+    "caseSensitive": true
+  },
+  {
+    "id": "suffix",
+    "subject": "xabc",
+    "pattern": "abc",
+    "caseSensitive": true
+  },
+  {
+    "id": "empty-both",
+    "subject": "",
+    "pattern": "",
+    "caseSensitive": true
+  },
+  {
+    "id": "empty-subject",
+    "subject": "",
+    "pattern": "a",
+    "caseSensitive": true
+  },
+  {
+    "id": "empty-pattern",
+    "subject": "a",
+    "pattern": "",
+    "caseSensitive": true
+  },
+  {
+    "id": "empty-star",
+    "subject": "",
+    "pattern": "*",
+    "caseSensitive": true
+  },
+  {
+    "id": "empty-many-stars",
+    "subject": "",
+    "pattern": "***",
+    "caseSensitive": true
+  },
+  {
+    "id": "empty-question",
+    "subject": "",
+    "pattern": "?",
+    "caseSensitive": true
+  },
+  {
+    "id": "star-zero",
+    "subject": "ab",
+    "pattern": "a*b",
+    "caseSensitive": true
+  },
+  {
+    "id": "star-many",
+    "subject": "axyzb",
+    "pattern": "a*b",
+    "caseSensitive": true
+  },
+  {
+    "id": "star-backtrack",
+    "subject": "abab",
+    "pattern": "*ab",
+    "caseSensitive": true
+  },
+  {
+    "id": "star-multiple",
+    "subject": "abcde",
+    "pattern": "a*c*e",
+    "caseSensitive": true
+  },
+  {
+    "id": "question-bmp",
+    "subject": "猫",
+    "pattern": "?",
+    "caseSensitive": true
+  },
+  {
+    "id": "question-astral",
+    "subject": "😀",
+    "pattern": "?",
+    "caseSensitive": true
+  },
+  {
+    "id": "question-combining",
+    "subject": "é",
+    "pattern": "?",
+    "caseSensitive": true
+  },
+  {
+    "id": "two-combining",
+    "subject": "é",
+    "pattern": "??",
+    "caseSensitive": true
+  },
+  {
+    "id": "star-combining",
+    "subject": "é",
+    "pattern": "*",
+    "caseSensitive": true
+  },
+  {
+    "id": "set-yes",
+    "subject": "b",
+    "pattern": "[abc]",
+    "caseSensitive": true
+  },
+  {
+    "id": "set-no",
+    "subject": "z",
+    "pattern": "[abc]",
+    "caseSensitive": true
+  },
+  {
+    "id": "negset-yes",
+    "subject": "z",
+    "pattern": "[!abc]",
+    "caseSensitive": true
+  },
+  {
+    "id": "negset-no",
+    "subject": "b",
+    "pattern": "[!abc]",
+    "caseSensitive": true
+  },
+  {
+    "id": "range-yes",
+    "subject": "d",
+    "pattern": "[a-z]",
+    "caseSensitive": true
+  },
+  {
+    "id": "range-no",
+    "subject": "D",
+    "pattern": "[a-z]",
+    "caseSensitive": true
+  },
+  {
+    "id": "range-reverse",
+    "subject": "d",
+    "pattern": "[z-a]",
+    "caseSensitive": true
+  },
+  {
+    "id": "set-bmp",
+    "subject": "猫",
+    "pattern": "[犬猫]",
+    "caseSensitive": true
+  },
+  {
+    "id": "set-astral",
+    "subject": "😀",
+    "pattern": "[😀]",
+    "caseSensitive": true
+  },
+  {
+    "id": "range-astral",
+    "subject": "😁",
+    "pattern": "[😀-😂]",
+    "caseSensitive": true
+  },
+  {
+    "id": "regex-punctuation",
+    "subject": "^a.b+$",
+    "pattern": "^a.b+$",
+    "caseSensitive": true
+  },
+  {
+    "id": "regex-parens",
+    "subject": "(a|b){2}",
+    "pattern": "(a|b){2}",
+    "caseSensitive": true
+  },
+  {
+    "id": "regex-dot-no",
+    "subject": "axb",
+    "pattern": "a.b",
+    "caseSensitive": true
+  },
+  {
+    "id": "newline-star",
+    "subject": "a\nb",
+    "pattern": "a*b",
+    "caseSensitive": true
+  },
+  {
+    "id": "newline-question",
+    "subject": "\n",
+    "pattern": "?",
+    "caseSensitive": true
+  },
+  {
+    "id": "newline-literal",
+    "subject": "a\nb",
+    "pattern": "a\nb",
+    "caseSensitive": true
+  },
+  {
+    "id": "crlf-star",
+    "subject": "a\r\nb",
+    "pattern": "a*b",
+    "caseSensitive": true
+  },
+  {
+    "id": "slash-star",
+    "subject": "a/b",
+    "pattern": "*",
+    "caseSensitive": true
+  },
+  {
+    "id": "slash-question",
+    "subject": "/",
+    "pattern": "?",
+    "caseSensitive": true
+  },
+  {
+    "id": "dot-star",
+    "subject": ".abc",
+    "pattern": "*",
+    "caseSensitive": true
+  },
+  {
+    "id": "dot-question",
+    "subject": ".",
+    "pattern": "?",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-a",
+    "subject": "a",
+    "pattern": "[a",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-b",
+    "subject": "b",
+    "pattern": "[a",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-neg-b",
+    "subject": "b",
+    "pattern": "[!a",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-neg-a",
+    "subject": "a",
+    "pattern": "[!a",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-empty",
+    "subject": "",
+    "pattern": "[",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-open",
+    "subject": "a",
+    "pattern": "[",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-bang",
+    "subject": "a",
+    "pattern": "[!",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-range",
+    "subject": "a",
+    "pattern": "[a-",
+    "caseSensitive": true
+  },
+  {
+    "id": "invalid-nonmatch-extra",
+    "subject": "bc",
+    "pattern": "[a",
+    "caseSensitive": true
+  },
+  {
+    "id": "terminal-backslash-empty",
+    "subject": "",
+    "pattern": "\\",
+    "caseSensitive": true
+  },
+  {
+    "id": "terminal-backslash-subject",
+    "subject": "a",
+    "pattern": "\\",
+    "caseSensitive": true
+  },
+  {
+    "id": "terminal-backslash-after-empty",
+    "subject": "a",
+    "pattern": "a\\",
+    "caseSensitive": true
+  },
+  {
+    "id": "terminal-backslash-after-nonempty",
+    "subject": "ab",
+    "pattern": "a\\",
+    "caseSensitive": true
+  },
+  {
+    "id": "terminal-backslash-prefix-miss",
+    "subject": "b",
+    "pattern": "a\\",
+    "caseSensitive": true
+  },
+  {
+    "id": "escaped-star",
+    "subject": "*",
+    "pattern": "\\*",
+    "caseSensitive": true
+  },
+  {
+    "id": "escaped-question",
+    "subject": "?",
+    "pattern": "\\?",
+    "caseSensitive": true
+  },
+  {
+    "id": "escaped-open",
+    "subject": "[",
+    "pattern": "\\[",
+    "caseSensitive": true
+  },
+  {
+    "id": "escaped-close",
+    "subject": "]",
+    "pattern": "\\]",
+    "caseSensitive": true
+  },
+  {
+    "id": "escaped-hyphen",
+    "subject": "-",
+    "pattern": "[\\-]",
+    "caseSensitive": true
+  },
+  {
+    "id": "escaped-bang",
+    "subject": "!",
+    "pattern": "[\\!]",
+    "caseSensitive": true
+  },
+  {
+    "id": "escaped-backslash",
+    "subject": "\\",
+    "pattern": "\\\\",
+    "caseSensitive": true
+  },
+  {
+    "id": "set-empty",
+    "subject": "a",
+    "pattern": "[]",
+    "caseSensitive": true
+  },
+  {
+    "id": "set-neg-empty",
+    "subject": "a",
+    "pattern": "[!]",
+    "caseSensitive": true
+  },
+  {
+    "id": "star-invalid-empty",
+    "subject": "",
+    "pattern": "*[",
+    "caseSensitive": true
+  },
+  {
+    "id": "star-invalid-nonempty",
+    "subject": "a",
+    "pattern": "*[",
+    "caseSensitive": true
+  },
+  {
+    "id": "ascii-ci",
+    "subject": "ABC",
+    "pattern": "abc",
+    "caseSensitive": false
+  },
+  {
+    "id": "ascii-cs",
+    "subject": "ABC",
+    "pattern": "abc",
+    "caseSensitive": true
+  },
+  {
+    "id": "latin-ci",
+    "subject": "ÄÉ",
+    "pattern": "äé",
+    "caseSensitive": false
+  },
+  {
+    "id": "latin-cs",
+    "subject": "ÄÉ",
+    "pattern": "äé",
+    "caseSensitive": true
+  },
+  {
+    "id": "greek-ci",
+    "subject": "Σ",
+    "pattern": "σ",
+    "caseSensitive": false
+  },
+  {
+    "id": "greek-cs",
+    "subject": "Σ",
+    "pattern": "σ",
+    "caseSensitive": true
+  },
+  {
+    "id": "final-sigma-ci",
+    "subject": "ς",
+    "pattern": "σ",
+    "caseSensitive": false
+  },
+  {
+    "id": "final-sigma-cs",
+    "subject": "ς",
+    "pattern": "σ",
+    "caseSensitive": true
+  },
+  {
+    "id": "cyrillic-ci",
+    "subject": "Я",
+    "pattern": "я",
+    "caseSensitive": false
+  },
+  {
+    "id": "cyrillic-cs",
+    "subject": "Я",
+    "pattern": "я",
+    "caseSensitive": true
+  },
+  {
+    "id": "deseret-ci",
+    "subject": "𐐀",
+    "pattern": "𐐨",
+    "caseSensitive": false
+  },
+  {
+    "id": "deseret-cs",
+    "subject": "𐐀",
+    "pattern": "𐐨",
+    "caseSensitive": true
+  },
+  {
+    "id": "dotted-I-ci",
+    "subject": "İ",
+    "pattern": "i",
+    "caseSensitive": false
+  },
+  {
+    "id": "dotted-I-cs",
+    "subject": "İ",
+    "pattern": "i",
+    "caseSensitive": true
+  },
+  {
+    "id": "dotless-I-ci",
+    "subject": "ı",
+    "pattern": "I",
+    "caseSensitive": false
+  },
+  {
+    "id": "dotless-I-cs",
+    "subject": "ı",
+    "pattern": "I",
+    "caseSensitive": true
+  },
+  {
+    "id": "sharp-s-ci",
+    "subject": "ß",
+    "pattern": "SS",
+    "caseSensitive": false
+  },
+  {
+    "id": "sharp-s-cs",
+    "subject": "ß",
+    "pattern": "SS",
+    "caseSensitive": true
+  },
+  {
+    "id": "capital-sharp-ci",
+    "subject": "ẞ",
+    "pattern": "ß",
+    "caseSensitive": false
+  },
+  {
+    "id": "capital-sharp-cs",
+    "subject": "ẞ",
+    "pattern": "ß",
+    "caseSensitive": true
+  },
+  {
+    "id": "kelvin-ci",
+    "subject": "K",
+    "pattern": "k",
+    "caseSensitive": false
+  },
+  {
+    "id": "kelvin-cs",
+    "subject": "K",
+    "pattern": "k",
+    "caseSensitive": true
+  },
+  {
+    "id": "long-s-ci",
+    "subject": "ſ",
+    "pattern": "s",
+    "caseSensitive": false
+  },
+  {
+    "id": "long-s-cs",
+    "subject": "ſ",
+    "pattern": "s",
+    "caseSensitive": true
+  },
+  {
+    "id": "titlecase-ci",
+    "subject": "ǅ",
+    "pattern": "ǆ",
+    "caseSensitive": false
+  },
+  {
+    "id": "titlecase-cs",
+    "subject": "ǅ",
+    "pattern": "ǆ",
+    "caseSensitive": true
+  },
+  {
+    "id": "nfc-nfd-ci",
+    "subject": "é",
+    "pattern": "é",
+    "caseSensitive": false
+  },
+  {
+    "id": "nfc-nfd-cs",
+    "subject": "é",
+    "pattern": "é",
+    "caseSensitive": true
+  },
+  {
+    "id": "range-ci-ci",
+    "subject": "D",
+    "pattern": "[a-z]",
+    "caseSensitive": false
+  },
+  {
+    "id": "range-ci-cs",
+    "subject": "D",
+    "pattern": "[a-z]",
+    "caseSensitive": true
+  },
+  {
+    "id": "range-bmp-ci-ci",
+    "subject": "Ö",
+    "pattern": "[ä-ü]",
+    "caseSensitive": false
+  },
+  {
+    "id": "range-bmp-ci-cs",
+    "subject": "Ö",
+    "pattern": "[ä-ü]",
+    "caseSensitive": true
+  },
+  {
+    "id": "set-ci-ci",
+    "subject": "Σ",
+    "pattern": "[σ]",
+    "caseSensitive": false
+  },
+  {
+    "id": "set-ci-cs",
+    "subject": "Σ",
+    "pattern": "[σ]",
+    "caseSensitive": true
+  }
+]

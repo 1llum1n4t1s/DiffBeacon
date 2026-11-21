@@ -1,0 +1,3344 @@
+[
+  {
+    "id": "trim-value-000",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-001",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-002",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-003",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-004",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-005",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 1.25
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-006",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": -0.0
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-007",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "regex",
+          "value": "ignored"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-008",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "content",
+          "value": " path "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-009",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-010",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-011",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\t\r\n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-012",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "  a  "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-013",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\t a\r\nb \n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-014",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "  x  "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-015",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " x "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-016",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "　x　"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-017",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000bx\u000b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-018",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\fx\f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-019",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " \u0000x\u0000 "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-020",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "no space"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-021",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\r\n\t\tline\n\r "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-022",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0000x\u0000"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-023",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0001x\u0001"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-024",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0002x\u0002"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-025",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0003x\u0003"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-026",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0004x\u0004"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-027",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0005x\u0005"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-028",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0006x\u0006"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-029",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0007x\u0007"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-030",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\bx\b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-031",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\tx\t"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-032",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\nx\n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-033",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000bx\u000b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-034",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\fx\f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-035",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\rx\r"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-036",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000ex\u000e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-037",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000fx\u000f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-038",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0010x\u0010"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-039",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0011x\u0011"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-040",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0012x\u0012"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-041",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0013x\u0013"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-042",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0014x\u0014"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-043",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0015x\u0015"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-044",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0016x\u0016"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-045",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0017x\u0017"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-046",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0018x\u0018"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-047",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0019x\u0019"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-048",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001ax\u001a"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-049",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001bx\u001b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-050",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001cx\u001c"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-051",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001dx\u001d"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-052",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001ex\u001e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-053",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001fx\u001f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-054",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " x "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-055",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-056",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            },
+            {
+              "type": "string",
+              "value": " x "
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "integer",
+              "value": 2
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-value-057",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "string",
+                  "value": " x "
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "string",
+                      "value": " y "
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "value": " z "
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "trim-arg-throws",
+    "function": "trim",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trim-arity-0",
+    "function": "trim",
+    "mode": "arity",
+    "args": []
+  },
+  {
+    "id": "trim-arity-1",
+    "function": "trim",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trim-arity-2",
+    "function": "trim",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trim-arity-3",
+    "function": "trim",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trim-arity-16",
+    "function": "trim",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trim-array-eager--1",
+    "function": "trim",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trim-array-eager-0",
+    "function": "trim",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trim-array-eager-1",
+    "function": "trim",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trim-array-eager-2",
+    "function": "trim",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-000",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-001",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-002",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-003",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-004",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-005",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 1.25
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-006",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": -0.0
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-007",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "regex",
+          "value": "ignored"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-008",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "content",
+          "value": " path "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-009",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-010",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-011",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\t\r\n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-012",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "  a  "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-013",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\t a\r\nb \n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-014",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "  x  "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-015",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " x "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-016",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "　x　"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-017",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000bx\u000b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-018",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\fx\f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-019",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " \u0000x\u0000 "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-020",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "no space"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-021",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\r\n\t\tline\n\r "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-022",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0000x\u0000"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-023",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0001x\u0001"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-024",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0002x\u0002"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-025",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0003x\u0003"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-026",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0004x\u0004"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-027",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0005x\u0005"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-028",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0006x\u0006"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-029",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0007x\u0007"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-030",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\bx\b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-031",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\tx\t"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-032",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\nx\n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-033",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000bx\u000b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-034",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\fx\f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-035",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\rx\r"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-036",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000ex\u000e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-037",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000fx\u000f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-038",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0010x\u0010"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-039",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0011x\u0011"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-040",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0012x\u0012"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-041",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0013x\u0013"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-042",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0014x\u0014"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-043",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0015x\u0015"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-044",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0016x\u0016"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-045",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0017x\u0017"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-046",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0018x\u0018"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-047",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0019x\u0019"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-048",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001ax\u001a"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-049",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001bx\u001b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-050",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001cx\u001c"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-051",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001dx\u001d"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-052",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001ex\u001e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-053",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001fx\u001f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-054",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " x "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-055",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-056",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            },
+            {
+              "type": "string",
+              "value": " x "
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "integer",
+              "value": 2
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-value-057",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "string",
+                  "value": " x "
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "string",
+                      "value": " y "
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "value": " z "
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimleft-arg-throws",
+    "function": "trimleft",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimleft-arity-0",
+    "function": "trimleft",
+    "mode": "arity",
+    "args": []
+  },
+  {
+    "id": "trimleft-arity-1",
+    "function": "trimleft",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimleft-arity-2",
+    "function": "trimleft",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimleft-arity-3",
+    "function": "trimleft",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimleft-arity-16",
+    "function": "trimleft",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimleft-array-eager--1",
+    "function": "trimleft",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trimleft-array-eager-0",
+    "function": "trimleft",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trimleft-array-eager-1",
+    "function": "trimleft",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trimleft-array-eager-2",
+    "function": "trimleft",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-000",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-001",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-002",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "boolean",
+          "value": false
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-003",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": -9223372036854775808
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-004",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-005",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": 1.25
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-006",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "double",
+          "value": -0.0
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-007",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "regex",
+          "value": "ignored"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-008",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "content",
+          "value": " path "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-009",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": ""
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-010",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-011",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\t\r\n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-012",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "  a  "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-013",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\t a\r\nb \n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-014",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "  x  "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-015",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " x "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-016",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "　x　"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-017",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000bx\u000b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-018",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\fx\f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-019",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " \u0000x\u0000 "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-020",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "no space"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-021",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\r\n\t\tline\n\r "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-022",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0000x\u0000"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-023",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0001x\u0001"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-024",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0002x\u0002"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-025",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0003x\u0003"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-026",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0004x\u0004"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-027",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0005x\u0005"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-028",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0006x\u0006"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-029",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0007x\u0007"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-030",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\bx\b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-031",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\tx\t"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-032",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\nx\n"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-033",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000bx\u000b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-034",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\fx\f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-035",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\rx\r"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-036",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000ex\u000e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-037",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u000fx\u000f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-038",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0010x\u0010"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-039",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0011x\u0011"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-040",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0012x\u0012"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-041",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0013x\u0013"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-042",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0014x\u0014"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-043",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0015x\u0015"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-044",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0016x\u0016"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-045",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0017x\u0017"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-046",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0018x\u0018"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-047",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u0019x\u0019"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-048",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001ax\u001a"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-049",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001bx\u001b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-050",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001cx\u001c"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-051",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001dx\u001d"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-052",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001ex\u001e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-053",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": "\u001fx\u001f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-054",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "string",
+          "value": " x "
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-055",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": []
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-056",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "none"
+            },
+            {
+              "type": "string",
+              "value": " x "
+            },
+            {
+              "type": "boolean",
+              "value": true
+            },
+            {
+              "type": "integer",
+              "value": 2
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-value-057",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "array",
+          "value": [
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "string",
+                  "value": " x "
+                },
+                {
+                  "type": "none"
+                },
+                {
+                  "type": "array",
+                  "value": [
+                    {
+                      "type": "string",
+                      "value": " y "
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "value": " z "
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "trimright-arg-throws",
+    "function": "trimright",
+    "mode": "evaluate",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimright-arity-0",
+    "function": "trimright",
+    "mode": "arity",
+    "args": []
+  },
+  {
+    "id": "trimright-arity-1",
+    "function": "trimright",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimright-arity-2",
+    "function": "trimright",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimright-arity-3",
+    "function": "trimright",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimright-arity-16",
+    "function": "trimright",
+    "mode": "arity",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "none"
+        },
+        "throws": true
+      }
+    ]
+  },
+  {
+    "id": "trimright-array-eager--1",
+    "function": "trimright",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trimright-array-eager-0",
+    "function": "trimright",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trimright-array-eager-1",
+    "function": "trimright",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": true
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": false
+      }
+    ]
+  },
+  {
+    "id": "trimright-array-eager-2",
+    "function": "trimright",
+    "mode": "array-expr",
+    "args": [
+      {
+        "value": {
+          "type": "none"
+        }
+      }
+    ],
+    "elements": [
+      {
+        "value": {
+          "type": "string",
+          "value": " a "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " b "
+        },
+        "throws": false
+      },
+      {
+        "value": {
+          "type": "string",
+          "value": " c "
+        },
+        "throws": true
+      }
+    ]
+  }
+]

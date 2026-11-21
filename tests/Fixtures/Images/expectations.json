@@ -1,0 +1,1351 @@
+{
+  "format": 1,
+  "pixelFormat": "BGRA8888 Unpremul tightly packed",
+  "assets": {
+    "same-first-left.gif": {
+      "fileSha256": "6B583AA0F396699D50B0DF1C65C4667290515A99022527E1D5126A27F81567EE",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff",
+          "pixelSha256": "9B35F2646DFF9F19FA0DD89F334E5800C4925F9294E1F825B0DFB61DAA59D0A0"
+        }
+      ]
+    },
+    "same-first-right.gif": {
+      "fileSha256": "8B813BCBFDA2954F70B770ADFB3C5F85101978686B2C8C9750FBA5BA6488481A",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        }
+      ]
+    },
+    "short.gif": {
+      "fileSha256": "A02D71F56DFFBB1000D6EBDE2250EA98965EDED1E8393486C55B35A3B738A030",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        }
+      ]
+    },
+    "disposal.gif": {
+      "fileSha256": "C745263F9FEDB77DAC2FF8F7027AD4192D33B4C83624A97B2060F3FEABC63A47",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff00ff00ff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "D4D1B40D2016C6489083E61DE5506F7492B6745D136AAD4AA77F7D25ADB3F5FE"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff000000000000ffff0000ffff0000ffffff0000ff",
+          "pixelSha256": "85F022EECFE2EC06230EFA55EEF15DBCF63976E8D6610BBCBF82F2AA34ED1977"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff000000000000ffff00ff00ff0000ffff0000ffff",
+          "pixelSha256": "5A285B9D678F15A3B6F0D382710EA195500935EE0835DD6C9C9AAF07B7DAD249"
+        }
+      ]
+    },
+    "disposal-1.png": {
+      "fileSha256": "F7F4BA3E32A1904F6C9CBEA9A479D532AE7AF45A7FBCF8C1A29499231CF3C289",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        }
+      ]
+    },
+    "disposal-2.png": {
+      "fileSha256": "EB316AE561F04A2D701C64A328A7856F1D94629E171BEB085D6AEB6BD95A4300",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff00ff00ff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "D4D1B40D2016C6489083E61DE5506F7492B6745D136AAD4AA77F7D25ADB3F5FE"
+        }
+      ]
+    },
+    "disposal-3.png": {
+      "fileSha256": "DFF376BBF7E524D12B6364088E2FFBAB4FF6275B2FEDC1091E95DB01F3B5698F",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff000000000000ffff0000ffff0000ffffff0000ff",
+          "pixelSha256": "85F022EECFE2EC06230EFA55EEF15DBCF63976E8D6610BBCBF82F2AA34ED1977"
+        }
+      ]
+    },
+    "disposal-4.png": {
+      "fileSha256": "5D8A734F40B2D97890A1471C9748DCDBBD5C965DC777150C2A03EB450CAEC6FA",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff000000000000ffff00ff00ff0000ffff0000ffff",
+          "pixelSha256": "5A285B9D678F15A3B6F0D382710EA195500935EE0835DD6C9C9AAF07B7DAD249"
+        }
+      ]
+    },
+    "transparent-update.gif": {
+      "fileSha256": "42B0380E6B4B08B6BE52605A15847C730741AE5334DC248D9871B64BA02E9A08",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff00ff00ff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "D4D1B40D2016C6489083E61DE5506F7492B6745D136AAD4AA77F7D25ADB3F5FE"
+        }
+      ]
+    },
+    "red.png": {
+      "fileSha256": "F7F4BA3E32A1904F6C9CBEA9A479D532AE7AF45A7FBCF8C1A29499231CF3C289",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        }
+      ]
+    },
+    "green.png": {
+      "fileSha256": "51942B010A9D2783AFD5B53917B3576496DFD7EAF5B01B06D78440F216CE3FD3",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff",
+          "pixelSha256": "9B35F2646DFF9F19FA0DD89F334E5800C4925F9294E1F825B0DFB61DAA59D0A0"
+        }
+      ]
+    },
+    "red-wide.png": {
+      "fileSha256": "D39025E0A27E2C6251D563EAE7DFACFA3DB232CBD5C15780933D3D6CEE715A61",
+      "frames": [
+        {
+          "width": 4,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "F9D2BC2EA8345A97D8A514EAE7F50C165175355A80CA805309429D83748F7EE2"
+        }
+      ]
+    },
+    "alpha-opaque.png": {
+      "fileSha256": "4FF6AB670A58C14270E034E2090D9A432CAA263A14E0A25785386B0C12F880B5",
+      "frames": [
+        {
+          "width": 1,
+          "height": 1,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff",
+          "pixelSha256": "B7D1B3A1104CC86B1CEA310793CF777002DB0517281D135A02DE079B0EA87C23"
+        }
+      ]
+    },
+    "alpha-half.png": {
+      "fileSha256": "AC308CDC947FB054538666CFD4A0C92C3FAB0D5DD51083C0E8EAE204AED8C645",
+      "frames": [
+        {
+          "width": 1,
+          "height": 1,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              128
+            ]
+          ],
+          "bgraHex": "0000ff80",
+          "pixelSha256": "EE9C1470B119A6302D9D54AD4C65D8B5C4F65C6BF12D7DB1630EB0181563F64C"
+        }
+      ]
+    },
+    "threshold-100.png": {
+      "fileSha256": "B57DBE9898D1BEF5A41FCF72F412E9AA903086FCF98C9C76A3CAEB6EE44C6DE2",
+      "frames": [
+        {
+          "width": 1,
+          "height": 1,
+          "rgba": [
+            [
+              100,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "000064ff",
+          "pixelSha256": "C1F85F9DB3FC19FD6D14D90BDCF2F7CE298440148E745B879D7629CF22C9B397"
+        }
+      ]
+    },
+    "threshold-105.png": {
+      "fileSha256": "91FF54203D6914BCD688FC96179B9F04E585940B61CF6AF2CF33CEF0B8DEB87D",
+      "frames": [
+        {
+          "width": 1,
+          "height": 1,
+          "rgba": [
+            [
+              105,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "000069ff",
+          "pixelSha256": "0FB8A499665717B1F669DD447338059D3AE8F130EE5D3977E2767EEF3D0DA5A2"
+        }
+      ]
+    },
+    "broken.gif": {
+      "fileSha256": "DD8776B6EA01C3F4820C4ACE133228D7CE307655E2EBC51FEF4E380135D01554",
+      "frames": []
+    },
+    "truncated.gif": {
+      "fileSha256": "F4C48F6D9CF134A22F242CB6AB85EE6539956B2A576AF35083E31ED167486479",
+      "frames": []
+    },
+    "over-pixel-limit.gif": {
+      "fileSha256": "9467E0E8F100F68C805A1900080FE9E067E61436CB9E3A5A3E5441AD28DDF957",
+      "frames": []
+    },
+    "over-frame-limit.gif": {
+      "fileSha256": "8C50D0BD0B43DFDD497B4BB56DC8FD3B606A05A77AC5F5B7EBC1651E406084AC",
+      "frames": []
+    },
+    "over-work-limit.gif": {
+      "fileSha256": "D78EBD10E42BD5C3804CAE5844764A6BFB60B1CF2FBE04991C81070E88300428",
+      "frames": []
+    },
+    "canvas-wide.gif": {
+      "fileSha256": "3542C271B03C5C762622B1D338D9A262396B6D9402418216B2B882DDF6AF6FB1",
+      "frames": []
+    },
+    "canvas-tall.gif": {
+      "fileSha256": "1B26F13D5FF0A89E1AE42AA026EA8316EE19F08B53F0B6521972D81A9DC081C2",
+      "frames": []
+    },
+    "lossless-left.webp": {
+      "fileSha256": "0CC3FAF3A8B986208104032EC7A210C29EF4B3073C3C4BDD779864E4A6C1827C",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff00ff",
+          "pixelSha256": "9B35F2646DFF9F19FA0DD89F334E5800C4925F9294E1F825B0DFB61DAA59D0A0"
+        }
+      ]
+    },
+    "lossless-right.webp": {
+      "fileSha256": "9584D63CE8E1AC90363289CE307A56D2A2A5195CC34E42025E4D2FBA029B0798",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraHex": "ff0000ffff0000ffff0000ffff0000ffff0000ffff0000ff",
+          "pixelSha256": "1308C8D07D8BD47A24E30B627CAAF193042EFA719622F09C65D5C97EAA9E4C3A"
+        }
+      ]
+    },
+    "lossless-transparent.webp": {
+      "fileSha256": "08B17ACA4E7BEF37FD751AF389F33F061F48CEFF6D1B2577160689F1D1D0DBC1",
+      "frames": [
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "62D7BF737BCBF3DF90471F8FB00F6BCD5F1148B18327EE57943A1E80E7C06281"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ],
+            [
+              255,
+              0,
+              0,
+              255
+            ]
+          ],
+          "bgraHex": "0000ffff00ff00ff0000ffff0000ffff0000ffff0000ffff",
+          "pixelSha256": "D4D1B40D2016C6489083E61DE5506F7492B6745D136AAD4AA77F7D25ADB3F5FE"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              255,
+              255
+            ]
+          ],
+          "bgraHex": "0000000000000000000000000000000000000000ff0000ff",
+          "pixelSha256": "2380EF5D2814CE3D5951CF450D8703873351BA57F6A02FE95773572E6F3ADD05"
+        },
+        {
+          "width": 3,
+          "height": 2,
+          "rgba": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              255,
+              0,
+              255
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "bgraHex": "00000000000000000000000000ff00ff0000000000000000",
+          "pixelSha256": "F029C2D9022EC208F9F891363773F7D6D7EE18C4806A3C22852160154C923E63"
+        }
+      ]
+    }
+  },
+  "webpGenerator": {
+    "pillow": "12.3.0",
+    "libwebp": "1.6.0",
+    "options": {
+      "lossless": true,
+      "exact": true,
+      "duration": 100,
+      "loop": 0
+    }
+  }
+}

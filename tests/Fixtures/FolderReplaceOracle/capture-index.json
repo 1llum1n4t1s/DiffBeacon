@@ -1,0 +1,12 @@
+{
+  "runs": [
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\folder-replace-regex-oracle-20261020-r1\\run1",
+      "receiptSha256": "c68054f1fea358a22242316533505993a2dc68c738b3335b043889939f1c7550"
+    },
+    {
+      "path": "<作業フォルダー>\\DiffBeacon\\folder-replace-regex-oracle-20261020-r1\\run2",
+      "receiptSha256": "f4fcd53837967e101266ba7277787381a9c9af0212c61cc8d37d219574bd0f10"
+    }
+  ]
+}

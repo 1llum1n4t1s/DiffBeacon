@@ -1,0 +1,4 @@
+* -text !eol
+*.md text eol=crlf
+*.py text eol=crlf
+regenerate.py -text !eol

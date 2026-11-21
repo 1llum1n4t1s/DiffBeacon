@@ -1,0 +1,9 @@
+#pragma once
+#define NOMINMAX
+#include <windows.h>
+#include <string>
+#include <memory>
+#include <vector>
+#include <array>
+#include <cwchar>
+#include <algorithm>

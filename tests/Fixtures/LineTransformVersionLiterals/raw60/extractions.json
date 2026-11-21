@@ -1,0 +1,35 @@
+[
+  {
+    "file": "version-ctor.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+    "marker": "VersionLiteral::VersionLiteral(",
+    "startByte": 144098,
+    "endByte": 144411,
+    "startLine": 4563,
+    "endLine": 4568,
+    "sha256": "9b62a2b64995f6d16db2ecb026308c0e651f16ccffe498d6bd9b264fc82152e7",
+    "semicolon": false
+  },
+  {
+    "file": "expr-node.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.h",
+    "marker": "struct ExprNode\n",
+    "startByte": 694,
+    "endByte": 857,
+    "startLine": 26,
+    "endLine": 31,
+    "sha256": "c53fa5a0e0cb8d65480165e6e979b751cddbee0e698b49aa9965429bf8155df5",
+    "semicolon": true
+  },
+  {
+    "file": "version-node.inc",
+    "path": "Src/FilterEngine/FilterExpressionNodes.h",
+    "marker": "struct VersionLiteral :",
+    "startByte": 5366,
+    "endByte": 5557,
+    "startLine": 193,
+    "endLine": 198,
+    "sha256": "a85a2cdfeee501a8f7f1c7d4408033ff439f0fed282cbb6368e11e19f357ecb2",
+    "semicolon": true
+  }
+]

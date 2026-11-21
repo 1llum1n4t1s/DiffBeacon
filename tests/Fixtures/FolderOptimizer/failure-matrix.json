@@ -1,0 +1,53 @@
+{
+  "fixedBeforeManagedExecution": true,
+  "failures": [
+    {
+      "condition": "Evidence drift/incomplete native process",
+      "expected": "SHA, CRC, exact ZIP entry/source closure, two fresh compile/native identities, finite schema, actual exit0/EOF/job receipts must all hold"
+    },
+    {
+      "condition": "Product timeout/start failure/partial stdout",
+      "expected": "Never treated as expected code2; actual PID/birth/OS exit and completed streams required; Mac launch evidence terminal flags true"
+    },
+    {
+      "condition": "Short-circuited child invalid at compile",
+      "expected": "opt rejects source-native zero/regex/range; noopt runtime short circuit preserved; phase remains explicitly unqualified by CLI"
+    },
+    {
+      "condition": "Ordinary optimization exception after earlier folds",
+      "expected": "Original root and earlier prepared child replacements retained; host AST phase check remains pending"
+    },
+    {
+      "condition": "Literal provenance coerced by runtime kind",
+      "expected": "Size/Duration/Version distinction retained; source-derived size-array and negated-size controls differ"
+    },
+    {
+      "condition": "Missing side or third side / metadata changes with Prop",
+      "expected": "None remains None; unprefixed arrays have exact dirs2/3 shape independently of property collection; explicit prefixes and aliases checked"
+    },
+    {
+      "condition": "File/directory same-name collision",
+      "expected": "Global e/fe/de AST predicate and per-side rule kind dispatch preserved"
+    },
+    {
+      "condition": "Mixed kinds or non-Bool root rejected early",
+      "expected": "Public grammar accepts source arithmetic/logical/comparison; runtime kind and ContainsTrue decide result"
+    },
+    {
+      "condition": "Finite Double / truncated Size / Int64 extension boundary",
+      "expected": "Source-fixed numeric expectations; positive2^63 and nonfinite reject; immediate signed minimum and retained plus/KiB extensions succeed"
+    },
+    {
+      "condition": "Literal list replaced between native evaluations",
+      "expected": "Native evidence first/first and read-once retained; managed CLI first value only, actual host two-evaluation proof remains pending"
+    },
+    {
+      "condition": "Input/filter/list/sentinel rewritten",
+      "expected": "Exact original bytes/SHA and complete protected set remain unchanged"
+    },
+    {
+      "condition": "Clock capture/cancel/stale GUI adoption/output dependency drift",
+      "expected": "Pending actual App headless E2E; no CLI/native qualification substitution"
+    }
+  ]
+}

@@ -1,0 +1,2707 @@
+[
+  {
+    "id": "empty",
+    "begin": [],
+    "end": [],
+    "mode": "scan",
+    "sourceLineCount": 0
+  },
+  {
+    "id": "never-start",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "end-without-begin",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "begin-without-end",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "inclusive-boundaries",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "begin-first-end-last",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "single-begin",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 1
+  },
+  {
+    "id": "single-end",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 1
+  },
+  {
+    "id": "single-simultaneous",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 1
+  },
+  {
+    "id": "outside-simultaneous",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "inside-simultaneous-restart",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 6
+  },
+  {
+    "id": "adjacent-ranges",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "separated-ranges",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "nested-begin-ignored",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "all-simultaneous",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "preceding-end",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "begin-at-eof",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 3
+  },
+  {
+    "id": "end-at-begin-before-open",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 5
+  },
+  {
+    "id": "begin-invalid-or-array-18",
+    "begin": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-19",
+    "begin": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-20",
+    "begin": [
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-21",
+    "begin": [
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-22",
+    "begin": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-23",
+    "begin": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-24",
+    "begin": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-25",
+    "begin": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-26",
+    "begin": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-27",
+    "begin": [
+      {
+        "type": "timestamp",
+        "value": 42
+      },
+      {
+        "type": "timestamp",
+        "value": 42
+      },
+      {
+        "type": "timestamp",
+        "value": 42
+      },
+      {
+        "type": "timestamp",
+        "value": 42
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-invalid-or-array-28",
+    "begin": [
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-29",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      },
+      {
+        "type": "none"
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-30",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      },
+      {
+        "type": "integer",
+        "value": 1
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-31",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      },
+      {
+        "type": "double",
+        "value": 1.0
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-32",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      },
+      {
+        "type": "string",
+        "value": "true"
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-33",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "bool",
+            "value": true
+          }
+        ]
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-34",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": false
+          },
+          {
+            "type": "integer",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-35",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "array",
+            "value": [
+              {
+                "type": "bool",
+                "value": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-36",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      },
+      {
+        "type": "array",
+        "value": [
+          {
+            "type": "bool",
+            "value": true
+          },
+          {
+            "type": "bool",
+            "value": false
+          }
+        ]
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-37",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": []
+      },
+      {
+        "type": "array",
+        "value": []
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-38",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "timestamp",
+        "value": 42
+      },
+      {
+        "type": "timestamp",
+        "value": 42
+      },
+      {
+        "type": "timestamp",
+        "value": 42
+      },
+      {
+        "type": "timestamp",
+        "value": 42
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-invalid-or-array-39",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      },
+      {
+        "type": "raw-string",
+        "value": [
+          255,
+          254
+        ]
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-throw-0",
+    "begin": [
+      {
+        "type": "throw",
+        "value": "predicate-begin-0"
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-throw-1",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "throw",
+        "value": "predicate-begin-1"
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "begin-throw-3",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-begin-3"
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-throw-0",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "throw",
+        "value": "predicate-end-0"
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-throw-1",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-end-1"
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "end-throw-3",
+    "begin": [
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "throw",
+        "value": "predicate-end-3"
+      }
+    ],
+    "mode": "scan",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "different-begin",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "different-begin",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "different-end",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "different-end",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "different-pair",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "different-pair",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "swap-pair",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "swap-pair",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "same-pair-new-wrapper",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "same-pair-new-wrapper",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "mutate-cached",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "mutate-cached",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "clear-cache",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "clear-cache",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "new-context",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "new-context",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "outside-lines",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "outside-lines",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "null-provider",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "null-provider",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "cancel-at-begin",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "cancel-at-begin",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "cancel-at-end",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "cancel-at-end",
+    "sourceLineCount": 4
+  },
+  {
+    "id": "inner-success-outer-throw",
+    "begin": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "end": [
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": false
+      },
+      {
+        "type": "bool",
+        "value": true
+      },
+      {
+        "type": "bool",
+        "value": false
+      }
+    ],
+    "mode": "inner-success-outer-throw",
+    "sourceLineCount": 4
+  }
+]

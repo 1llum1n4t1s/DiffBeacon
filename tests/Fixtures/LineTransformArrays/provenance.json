@@ -1,0 +1,77 @@
+{
+  "commit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "sources": [
+    {
+      "path": "Src/FileTransform.cpp",
+      "file": "original/FileTransform.cpp",
+      "blob": "a99444d7ced77e805824a807cdf5b803bae1d7d9",
+      "size": 51547,
+      "sha256": "a37500cf3ad1e1713752474a9d3e3e400e4ed3806c23ef22d220fdbdf7f6f599"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.cpp",
+      "file": "original/FilterExpressionNodes.cpp",
+      "blob": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833",
+      "size": 144678,
+      "sha256": "a2fcca950bd5e5cfa48f3ff43e4436ae0f5fd55eff9661da1d5a979cc9051135"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpressionNodes.h",
+      "file": "original/FilterExpressionNodes.h",
+      "blob": "c5533753a5d4f3200f077e0302cc28c2f3871cc9",
+      "size": 6089,
+      "sha256": "f68282b47c8b68a4ca562f3319fdc785d0430bee8115c7670db72f8f2d586736"
+    },
+    {
+      "path": "Src/FilterEngine/FilterExpression.cpp",
+      "file": "original/FilterExpression.cpp",
+      "blob": "538df75d94f20e191f0dea9847d9b1f562ec7b8f",
+      "size": 17059,
+      "sha256": "ed97832b4287b54b5127fa55d3a0d5a9d2b5c5f34105be160f9eb81205ff589e"
+    },
+    {
+      "path": "Src/FilterEngine/FilterParser.y",
+      "file": "original/FilterParser.y",
+      "blob": "2cc89832aee98ab0f6932396eb17b683c5267380",
+      "size": 7429,
+      "sha256": "fff6c00409383d8c0ebf8555ee1b967711f43a5630ae6b84e57ca062007ad0ee"
+    },
+    {
+      "path": "Src/FilterEngine/ILineDataProvider.h",
+      "file": "original/ILineDataProvider.h",
+      "blob": "c85e30328c157be0bfd166c8695e973585ee5df4",
+      "size": 1300,
+      "sha256": "841545932977bc270fb7d2a61f421fe9930c285200502e619e9061f77f8f555b"
+    },
+    {
+      "path": "Src/COPYING",
+      "file": "original/COPYING",
+      "blob": "7d1f8605f8f722063883b7feefec942fe2f28206",
+      "size": 18353,
+      "sha256": "134f05b0e93a7981f1cf5f535242e326b2d85ba7d6e3dd69c3514ae25ada4900"
+    },
+    {
+      "path": "Src/DiffTextBuffer.cpp",
+      "file": "original/DiffTextBuffer.cpp",
+      "blob": "b3878c00f5100ce861a0479e6e474c3dd5439095",
+      "size": 17297,
+      "sha256": "208c50598a61e464a39d70fd2c7b677071c09c8a80c401cfa46241b131f608b9"
+    },
+    {
+      "path": "Src/Common/unicoder.cpp",
+      "file": "original/unicoder.cpp",
+      "size": 35865,
+      "sha256": "91c7497816aac81031b55aad54ccc9dda1883142430edcfd62c6a4f9dc8b16d7",
+      "blob": "81e6dbdf90c6a4bfa1c3dd44afc01944c8928c4f"
+    },
+    {
+      "path": "Src/FilterEngine/FilterParser.h",
+      "file": "original/FilterParser.h",
+      "size": 1472,
+      "sha256": "ac27e0af541b10bea4b78ee5f31b055896de73cef0ce826d9eec6707f493ff41",
+      "blob": "fb22d0905005d1598f15d1d9e2625be11fe767b1"
+    }
+  ],
+  "boundary": "Unmodified function bodies; explicit AST binding, caseSensitive=true. No legacy parser/Optimize. Unsupported double literal/Poco/date/regex/FileContent construction; dead dependency bindings throw. Numeric computations producing double remain original compute behavior. Extreme indices use original ToIntFunc(string literal), not AST integer injection or lexer enlargement.",
+  "workingTreeMatch": "All saved source files match fixed HEAD raw blobs after CRLF/LF checkout normalization; saved files contain original Git blob bytes."
+}

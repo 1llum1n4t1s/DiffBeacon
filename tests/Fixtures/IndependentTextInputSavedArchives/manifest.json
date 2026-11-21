@@ -1,0 +1,29 @@
+{
+  "schema": "input348-literal-fixture-v1",
+  "inputs": {
+    "inputs/flat/left.zip": {
+      "size": 294,
+      "sha256": "1fbc6dab150cc3325b2805a1f5f5cca3a2a0acd6f5bae38c4afdb20e08971525"
+    },
+    "inputs/flat/middle.zip": {
+      "size": 327,
+      "sha256": "79d5afab869e4a517b8f82b5c229c46cd3ff6979af44113f690eacadec7c2167"
+    },
+    "inputs/flat/right.zip": {
+      "size": 301,
+      "sha256": "1b9440d16f0489ab2888411a849ced5310d86f2bad50aec8b706854c7d0f2584"
+    },
+    "inputs/nested/left.zip": {
+      "size": 770,
+      "sha256": "eb86e7a5129381024ca984bce5aab5291848266f5ed5b003bc90bc370d2a7948"
+    },
+    "inputs/nested/middle.zip": {
+      "size": 803,
+      "sha256": "8c4399e52f2212a4e441b6303d30ed24c113388290a06deb153ab1db0d0756fd"
+    },
+    "inputs/nested/right.zip": {
+      "size": 777,
+      "sha256": "760bcc46992f4293d4e4c606abd037ec61c08050b0f7203354b17d27d339654e"
+    }
+  }
+}

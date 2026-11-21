@@ -1,0 +1,28 @@
+[
+  {
+    "file": "original-types.inc",
+    "lineRanges": [
+      [
+        33,
+        161
+      ]
+    ],
+    "sha256": "D25AA2C4DA9EEEADC2F6DC4CD47B5D107E1793E2D2E7A1ACCBD499E2BC25D0B5",
+    "unaltered": true
+  },
+  {
+    "file": "original-functions.inc",
+    "lineRanges": [
+      [
+        1663,
+        1693
+      ],
+      [
+        1702,
+        1886
+      ]
+    ],
+    "sha256": "7D6BD3067765E75F2690F641A2DADC8ACB6D015183BF871F2B658836D456745B",
+    "unaltered": true
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "sourceHashes": {
+    "ImgMergeBuffer.hpp": "956B69A5D76D6918CD6D3245B5DB5BFDEF902C82221E2539FFEA1B33996AE40B",
+    "ImgDiffBuffer.hpp": "7071EDFA31CCC138685CA7B9FD3D41EE5E84B942FB3D8028C7E3A31C76F93F28"
+  },
+  "extraction": [
+    {
+      "name": "Resize",
+      "source": "ImgMergeBuffer.hpp",
+      "startByte": 4326,
+      "endByteExclusive": 4834,
+      "sha256": "9AA25AF81C42F6729E3DD1148F8E2B8EB8F998A0AB9C355AB393A7FAD645F57B"
+    },
+    {
+      "name": "PasteImageInternal",
+      "source": "ImgMergeBuffer.hpp",
+      "startByte": 13122,
+      "endByteExclusive": 13896,
+      "sha256": "D0B2EF4B42CE541BB2CE060B247D274BE9DE2F29A4A9C783F5CEC2AE883D595C"
+    },
+    {
+      "name": "TemporaryTransformation",
+      "source": "ImgDiffBuffer.hpp",
+      "startByte": 60432,
+      "endByteExclusive": 60722,
+      "sha256": "7FDA0C5779BC8784491FAA61F9F91668C0FD6D820E659EEF542254E86DDC0ACB"
+    },
+    {
+      "name": "TransformImages",
+      "source": "ImgDiffBuffer.hpp",
+      "startByte": 60724,
+      "endByteExclusive": 61353,
+      "sha256": "19DE8EFE5680E137BCED8F988BA784218B87141E86BC5936E165CFE44BC13B45"
+    }
+  ],
+  "probeSha256": "89DE081BE4AC976EC2743F9F4DB165A7409858E752DD573AB29A093DA177C2A9",
+  "prefixSha256": "7F78F2C15D111CA86EADDF9A7FF02FD1653BCCE4F7D951893F77201B9D88FB3B",
+  "suffixSha256": "B263345F3FE9DE17EC2CBC5CB2873007EF8C990E1CA55450CF8BAF4EA237A170",
+  "observationsSha256": "02CC94AE415C836631787D8657C15FCDE58026E8B7BF5D837160CF091794AD1B",
+  "scope": "Unmodified Resize and transformation control flow; zero-filled BGRA and exact right-angle rotation shim; not shipped FreeImage/GUI execution"
+}

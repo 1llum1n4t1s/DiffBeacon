@@ -1,0 +1,42 @@
+[
+  {
+    "id": "doublequote",
+    "bodyHex": "61222262227461696c",
+    "scope": "direct-original-UnescapeQuotes-only"
+  },
+  {
+    "id": "backslash-n",
+    "bodyHex": "615c6e62227461696c",
+    "scope": "direct-original-UnescapeQuotes-only"
+  },
+  {
+    "id": "backslash-quote",
+    "bodyHex": "615c227461696c",
+    "scope": "direct-original-UnescapeQuotes-only"
+  },
+  {
+    "id": "ASCII-newlines",
+    "bodyHex": "610d0a620963227461696c",
+    "scope": "direct-original-UnescapeQuotes-only"
+  },
+  {
+    "id": "unterminated",
+    "bodyHex": "616263",
+    "scope": "direct-original-UnescapeQuotes-only"
+  },
+  {
+    "id": "NUL-before-quote",
+    "bodyHex": "610062227461696c",
+    "scope": "direct-original-UnescapeQuotes-only"
+  },
+  {
+    "id": "empty-quoted",
+    "bodyHex": "227461696c",
+    "scope": "direct-original-UnescapeQuotes-only"
+  },
+  {
+    "id": "doublequote-no-close",
+    "bodyHex": "2222",
+    "scope": "direct-original-UnescapeQuotes-only"
+  }
+]

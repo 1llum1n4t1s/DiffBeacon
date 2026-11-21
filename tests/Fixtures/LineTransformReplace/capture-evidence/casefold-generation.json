@@ -1,0 +1,11 @@
+{
+  "unicode": "16.0.0",
+  "ucdSHA": "6EBDC9043DCB13832189A45818F767AFE9C4D6DF078FB37DB6D55D80126DCE92",
+  "records": 1543,
+  "stage1": 8704,
+  "stage2": 40320,
+  "mapped": 2938,
+  "pairs": 1484,
+  "allScalarEquivalenceVerified": true,
+  "defaultTurkishDisabled": true
+}

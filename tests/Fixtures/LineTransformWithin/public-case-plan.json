@@ -1,0 +1,4265 @@
+{
+  "schema": "iswithin-public-case-plan-v2",
+  "status": "captured fixed native AST; proposed public expressions have not run",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "count": 72,
+  "cases": [
+    {
+      "id": "int-below",
+      "expression": "@cs @noopt IsWithin(0, 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-below",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-lower",
+      "expression": "@cs @noopt IsWithin(1, 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-lower",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-inside",
+      "expression": "@cs @noopt IsWithin(2, 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 2
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-inside",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-upper",
+      "expression": "@cs @noopt IsWithin(3, 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 3
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-upper",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-above",
+      "expression": "@cs @noopt IsWithin(4, 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 4
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-above",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-reversed",
+      "expression": "@cs @noopt IsWithin(2, 3, 1)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 2
+        },
+        {
+          "type": "integer",
+          "value": 3
+        },
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-reversed",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-empty",
+      "expression": "@cs @noopt IsWithin(2, 2, 2)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 2
+        },
+        {
+          "type": "integer",
+          "value": 2
+        },
+        {
+          "type": "integer",
+          "value": 2
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-empty",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-negative",
+      "expression": "@cs @noopt IsWithin(-1, -2, 0)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": -1
+        },
+        {
+          "type": "integer",
+          "value": -2
+        },
+        {
+          "type": "integer",
+          "value": 0
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-negative",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-min",
+      "expression": "@cs @noopt IsWithin(ToInt(\"-9223372036854775808\"), ToInt(\"-9223372036854775808\"), ToInt(\"-9223372036854775807\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": -9223372036854775808
+        },
+        {
+          "type": "integer",
+          "value": -9223372036854775808
+        },
+        {
+          "type": "integer",
+          "value": -9223372036854775807
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-min",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "-9223372036854775808",
+          "publicExpression": "ToInt(\"-9223372036854775808\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "-9223372036854775808",
+          "publicExpression": "ToInt(\"-9223372036854775808\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "-9223372036854775807",
+          "publicExpression": "ToInt(\"-9223372036854775807\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "int-max",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9223372036854775807\"), ToInt(\"9223372036854775806\"), ToInt(\"9223372036854775807\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9223372036854775807
+        },
+        {
+          "type": "integer",
+          "value": 9223372036854775806
+        },
+        {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-max",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9223372036854775807",
+          "publicExpression": "ToInt(\"9223372036854775807\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9223372036854775806",
+          "publicExpression": "ToInt(\"9223372036854775806\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9223372036854775807",
+          "publicExpression": "ToInt(\"9223372036854775807\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "2p53-exact",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9007199254740993\"), ToInt(\"9007199254740993\"), ToInt(\"9007199254740994\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740994
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "2p53-exact",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740994",
+          "publicExpression": "ToInt(\"9007199254740994\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "2p53-lower-out",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9007199254740992\"), ToInt(\"9007199254740993\"), ToInt(\"9007199254740994\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9007199254740992
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740994
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "2p53-lower-out",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740992",
+          "publicExpression": "ToInt(\"9007199254740992\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740994",
+          "publicExpression": "ToInt(\"9007199254740994\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "long-exact-lower-double-upper",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9007199254740992\"), ToInt(\"9007199254740993\"), 9007199254740994.0)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9007199254740992
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        },
+        {
+          "type": "double",
+          "value": 9007199254740994.0
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "long-exact-lower-double-upper",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740992",
+          "publicExpression": "ToInt(\"9007199254740992\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "long-double-lower-exact-upper",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9007199254740992\"), 9007199254740992.0, ToInt(\"9007199254740993\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9007199254740992
+        },
+        {
+          "type": "double",
+          "value": 9007199254740992.0
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "long-double-lower-exact-upper",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740992",
+          "publicExpression": "ToInt(\"9007199254740992\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "long-doubleboth-upper",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9007199254740993\"), 9007199254740992.0, 9007199254740992.0)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        },
+        {
+          "type": "double",
+          "value": 9007199254740992.0
+        },
+        {
+          "type": "double",
+          "value": 9007199254740992.0
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "long-doubleboth-upper",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "long-max-exact-upper",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9223372036854775807\"), 9.223372036854776e+18, ToInt(\"9223372036854775807\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9223372036854775807
+        },
+        {
+          "type": "double",
+          "value": 9.223372036854776e+18
+        },
+        {
+          "type": "integer",
+          "value": 9223372036854775807
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "long-max-exact-upper",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9223372036854775807",
+          "publicExpression": "ToInt(\"9223372036854775807\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9223372036854775807",
+          "publicExpression": "ToInt(\"9223372036854775807\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "long-max-double-upper",
+      "expression": "@cs @noopt IsWithin(ToInt(\"9223372036854775807\"), ToInt(\"9223372036854775806\"), 9.223372036854776e+18)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 9223372036854775807
+        },
+        {
+          "type": "integer",
+          "value": 9223372036854775806
+        },
+        {
+          "type": "double",
+          "value": 9.223372036854776e+18
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "long-max-double-upper",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9223372036854775807",
+          "publicExpression": "ToInt(\"9223372036854775807\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9223372036854775806",
+          "publicExpression": "ToInt(\"9223372036854775806\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "long-min-doublelower",
+      "expression": "@cs @noopt IsWithin(ToInt(\"-9223372036854775808\"), -9.223372036854776e+18, ToInt(\"-9223372036854775807\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": -9223372036854775808
+        },
+        {
+          "type": "double",
+          "value": -9.223372036854776e+18
+        },
+        {
+          "type": "integer",
+          "value": -9223372036854775807
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "long-min-doublelower",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[0]",
+          "nativeType": "integer/int64",
+          "nativeValue": "-9223372036854775808",
+          "publicExpression": "ToInt(\"-9223372036854775808\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "-9223372036854775807",
+          "publicExpression": "ToInt(\"-9223372036854775807\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "double-lower",
+      "expression": "@cs @noopt IsWithin(1.0, 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 1.0
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "double-lower",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "double-upper",
+      "expression": "@cs @noopt IsWithin(3.0, 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 3.0
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "double-upper",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "double-fraction",
+      "expression": "@cs @noopt IsWithin(1.5, 1.0, 2)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 1.5
+        },
+        {
+          "type": "double",
+          "value": 1.0
+        },
+        {
+          "type": "integer",
+          "value": 2
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "double-fraction",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "double-long-upper-round",
+      "expression": "@cs @noopt IsWithin(9007199254740992.0, ToInt(\"9007199254740992\"), ToInt(\"9007199254740993\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 9007199254740992.0
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740992
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "double-long-upper-round",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740992",
+          "publicExpression": "ToInt(\"9007199254740992\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "double-long-lower-round",
+      "expression": "@cs @noopt IsWithin(9007199254740992.0, ToInt(\"9007199254740993\"), ToInt(\"9007199254740994\"))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 9007199254740992.0
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740993
+        },
+        {
+          "type": "integer",
+          "value": 9007199254740994
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "double-long-lower-round",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [
+        {
+          "astPath": "args[1]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740993",
+          "publicExpression": "ToInt(\"9007199254740993\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        },
+        {
+          "astPath": "args[2]",
+          "nativeType": "integer/int64",
+          "nativeValue": "9007199254740994",
+          "publicExpression": "ToInt(\"9007199254740994\")",
+          "kind": "typed-int64-public-bridge",
+          "reason": "Existing public integer literal parser is int32; ToInt decimal-string constructs exact int64. This oracle captures typed argument evaluation, not old parser/ToInt compatibility."
+        }
+      ],
+      "reason": null
+    },
+    {
+      "id": "double-reversed",
+      "expression": "@cs @noopt IsWithin(2.0, 3.0, 1.0)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 2.0
+        },
+        {
+          "type": "double",
+          "value": 3.0
+        },
+        {
+          "type": "double",
+          "value": 1.0
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "double-reversed",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-lower-cs",
+      "expression": "@cs @noopt IsWithin(\"a\", \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-lower-cs",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-upper-cs",
+      "expression": "@cs @noopt IsWithin(\"c\", \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "c"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-upper-cs",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-mixed-cs",
+      "expression": "@cs @noopt IsWithin(\"B\", \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "B"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-mixed-cs",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-empty-cs",
+      "expression": "@cs @noopt IsWithin(\"\", \"\", \"a\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-empty-cs",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-reversed-cs",
+      "expression": "@cs @noopt IsWithin(\"b\", \"c\", \"a\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-reversed-cs",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-accent-cs",
+      "expression": "@cs @noopt IsWithin(\"Ä\", \"ä\", \"ö\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "Ä"
+        },
+        {
+          "type": "string",
+          "value": "ä"
+        },
+        {
+          "type": "string",
+          "value": "ö"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-accent-cs",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-japanese-cs",
+      "expression": "@cs @noopt IsWithin(\"い\", \"あ\", \"う\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "い"
+        },
+        {
+          "type": "string",
+          "value": "あ"
+        },
+        {
+          "type": "string",
+          "value": "う"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-japanese-cs",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-vs-ascii-cs",
+      "expression": "@cs @noopt IsWithin(\"é\", \"z\", \"zz\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "string",
+          "value": "z"
+        },
+        {
+          "type": "string",
+          "value": "zz"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-vs-ascii-cs",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-prefix-cs",
+      "expression": "@cs @noopt IsWithin(\"éa\", \"é\", \"éb\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "éa"
+        },
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "string",
+          "value": "éb"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-prefix-cs",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-lower-ci",
+      "expression": "@ci @noopt IsWithin(\"a\", \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-lower-ci",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-upper-ci",
+      "expression": "@ci @noopt IsWithin(\"c\", \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "c"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-upper-ci",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-mixed-ci",
+      "expression": "@ci @noopt IsWithin(\"B\", \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "B"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-mixed-ci",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-empty-ci",
+      "expression": "@ci @noopt IsWithin(\"\", \"\", \"a\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": ""
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-empty-ci",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "ascii-reversed-ci",
+      "expression": "@ci @noopt IsWithin(\"b\", \"c\", \"a\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "b"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "ascii-reversed-ci",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-accent-ci",
+      "expression": "@ci @noopt IsWithin(\"Ä\", \"ä\", \"ö\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "Ä"
+        },
+        {
+          "type": "string",
+          "value": "ä"
+        },
+        {
+          "type": "string",
+          "value": "ö"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-accent-ci",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-japanese-ci",
+      "expression": "@ci @noopt IsWithin(\"い\", \"あ\", \"う\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "い"
+        },
+        {
+          "type": "string",
+          "value": "あ"
+        },
+        {
+          "type": "string",
+          "value": "う"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-japanese-ci",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-vs-ascii-ci",
+      "expression": "@ci @noopt IsWithin(\"é\", \"z\", \"zz\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "string",
+          "value": "z"
+        },
+        {
+          "type": "string",
+          "value": "zz"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-vs-ascii-ci",
+        "value": {
+          "kind": "bool",
+          "value": false
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "66616c7365",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "utf8-prefix-ci",
+      "expression": "@ci @noopt IsWithin(\"éa\", \"é\", \"éb\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "éa"
+        },
+        {
+          "type": "string",
+          "value": "é"
+        },
+        {
+          "type": "string",
+          "value": "éb"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "utf8-prefix-ci",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "none-value",
+      "expression": "@cs @noopt IsWithin(none, 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "none-value",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "bool-value",
+      "expression": "@cs @noopt IsWithin(true, 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "bool",
+          "value": true
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "bool-value",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "none-lower",
+      "expression": "@cs @noopt IsWithin(1, none, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "none-lower",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "none-upper",
+      "expression": "@cs @noopt IsWithin(1, 0, none)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "none"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "none-upper",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "string-value-numberbounds",
+      "expression": "@cs @noopt IsWithin(\"1\", 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "1"
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "string-value-numberbounds",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "int-stringbounds",
+      "expression": "@cs @noopt IsWithin(1, \"0\", \"3\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "string",
+          "value": "0"
+        },
+        {
+          "type": "string",
+          "value": "3"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "int-stringbounds",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "double-boollower",
+      "expression": "@cs @noopt IsWithin(1.0, false, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "double",
+          "value": 1.0
+        },
+        {
+          "type": "bool",
+          "value": false
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "double-boollower",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "array-lower",
+      "expression": "@cs @noopt IsWithin(1, Array(0), 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "array-lower",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "array-upper",
+      "expression": "@cs @noopt IsWithin(1, 0, Array(3))",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 3
+            }
+          ]
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "array-upper",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "array-empty",
+      "expression": "@cs @noopt IsWithin(Array(), 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": []
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "array-empty",
+        "value": {
+          "kind": "array",
+          "items": []
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "5b5d",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "array-mixed",
+      "expression": "@cs @noopt IsWithin(Array(0, 1, 3, 2.5, \"x\", none, false), 1, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 0
+            },
+            {
+              "type": "integer",
+              "value": 1
+            },
+            {
+              "type": "integer",
+              "value": 3
+            },
+            {
+              "type": "double",
+              "value": 2.5
+            },
+            {
+              "type": "string",
+              "value": "x"
+            },
+            {
+              "type": "none"
+            },
+            {
+              "type": "bool",
+              "value": false
+            }
+          ]
+        },
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "array-mixed",
+        "value": {
+          "kind": "array",
+          "items": [
+            {
+              "kind": "bool",
+              "value": false
+            },
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "none"
+            },
+            {
+              "kind": "none"
+            },
+            {
+              "kind": "none"
+            }
+          ]
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "5b66616c73652c20747275652c20747275652c20747275652c206e6f6e652c206e6f6e652c206e6f6e655d",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "array-nested",
+      "expression": "@cs @noopt IsWithin(Array(1, Array(2), Array()), 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 1
+            },
+            {
+              "type": "array",
+              "value": [
+                {
+                  "type": "integer",
+                  "value": 2
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "array-nested",
+        "value": {
+          "kind": "array",
+          "items": [
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "none"
+            },
+            {
+              "kind": "none"
+            }
+          ]
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "5b747275652c206e6f6e652c206e6f6e655d",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "array-string",
+      "expression": "@ci @noopt IsWithin(Array(\"a\", \"B\", \"c\"), \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "string",
+              "value": "a"
+            },
+            {
+              "type": "string",
+              "value": "B"
+            },
+            {
+              "type": "string",
+              "value": "c"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "array-string",
+        "value": {
+          "kind": "array",
+          "items": [
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "bool",
+              "value": true
+            }
+          ]
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "5b747275652c20747275652c20747275655d",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "eager-min-throw",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "raw-throw-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "throw",
+          "value": "value"
+        },
+        {
+          "type": "throw",
+          "value": "min"
+        },
+        {
+          "type": "throw",
+          "value": "max"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "eager-min-throw",
+        "value": null,
+        "errorUtf8Hex": "6d696e",
+        "evaluated": [
+          1
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": null,
+        "serializationApplied": false
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "eager-max-throw",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "raw-throw-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "throw",
+          "value": "value"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "throw",
+          "value": "max"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "eager-max-throw",
+        "value": null,
+        "errorUtf8Hex": "6d6178",
+        "evaluated": [
+          1,
+          2
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": null,
+        "serializationApplied": false
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "eager-value-throw",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "raw-throw-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "throw",
+          "value": "value"
+        },
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "eager-value-throw",
+        "value": null,
+        "errorUtf8Hex": "76616c7565",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": null,
+        "serializationApplied": false
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "eager-value-none",
+      "expression": "@cs @noopt IsWithin(none, 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "none"
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "eager-value-none",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "arity-0",
+      "expression": "@cs @noopt IsWithin()",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "compile-constructor-rejection",
+      "classification": "constructor-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "arity-0",
+        "value": null,
+        "errorUtf8Hex": "696e76616c696420766563746f7220737562736372697074",
+        "evaluated": [],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": null,
+        "serializationApplied": false
+      },
+      "publicBridges": [],
+      "reason": "Native direct args->at throws out_of_range; public registration requires exactly three and should reject during compile. No value-equivalence claim."
+    },
+    {
+      "id": "arity-1",
+      "expression": "@cs @noopt IsWithin(1)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "compile-constructor-rejection",
+      "classification": "constructor-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "arity-1",
+        "value": null,
+        "errorUtf8Hex": "696e76616c696420766563746f7220737562736372697074",
+        "evaluated": [],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": null,
+        "serializationApplied": false
+      },
+      "publicBridges": [],
+      "reason": "Native direct args->at throws out_of_range; public registration requires exactly three and should reject during compile. No value-equivalence claim."
+    },
+    {
+      "id": "arity-2",
+      "expression": "@cs @noopt IsWithin(1, 0)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "compile-constructor-rejection",
+      "classification": "constructor-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 0
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "arity-2",
+        "value": null,
+        "errorUtf8Hex": "696e76616c696420766563746f7220737562736372697074",
+        "evaluated": [
+          1
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": null,
+        "serializationApplied": false
+      },
+      "publicBridges": [],
+      "reason": "Native direct args->at throws out_of_range; public registration requires exactly three and should reject during compile. No value-equivalence claim."
+    },
+    {
+      "id": "arity-4",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "constructor-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        },
+        {
+          "type": "throw",
+          "value": "fourth-not-evaluated"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "arity-4",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "timestamp-lower",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "typed-timestamp-unrepresentable",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "timestamp",
+          "value": 10
+        },
+        {
+          "type": "timestamp",
+          "value": 10
+        },
+        {
+          "type": "timestamp",
+          "value": 20
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "timestamp-lower",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "timestamp-upper",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "typed-timestamp-unrepresentable",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "timestamp",
+          "value": 20
+        },
+        {
+          "type": "timestamp",
+          "value": 10
+        },
+        {
+          "type": "timestamp",
+          "value": 20
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "timestamp-upper",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "timestamp-mismatch",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "typed-timestamp-unrepresentable",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "timestamp",
+          "value": 10
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 20
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "timestamp-mismatch",
+        "value": {
+          "kind": "none"
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "6e6f6e65",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "array-timestamp",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "typed-timestamp-unrepresentable",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "timestamp",
+              "value": 10
+            },
+            {
+              "type": "timestamp",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "type": "timestamp",
+          "value": 10
+        },
+        {
+          "type": "timestamp",
+          "value": 20
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "array-timestamp",
+        "value": {
+          "kind": "array",
+          "items": [
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "bool",
+              "value": true
+            }
+          ]
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "5b747275652c20747275655d",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "opt-int",
+      "expression": "@cs IsWithin(1, 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "optimizer-traversal",
+      "nativeOracle": {
+        "id": "opt-int",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [
+          0,
+          1,
+          2
+        ],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "opt-array",
+      "expression": "@cs IsWithin(Array(1, none), 0, 3)",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "array",
+          "value": [
+            {
+              "type": "integer",
+              "value": 1
+            },
+            {
+              "type": "none"
+            }
+          ]
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "integer",
+          "value": 3
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "optimizer-traversal",
+      "nativeOracle": {
+        "id": "opt-array",
+        "value": {
+          "kind": "array",
+          "items": [
+            {
+              "kind": "bool",
+              "value": true
+            },
+            {
+              "kind": "none"
+            }
+          ]
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [
+          0,
+          1,
+          2
+        ],
+        "folded": false,
+        "serializedUtf8Hex": "5b747275652c206e6f6e655d",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "opt-throw-max",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "raw-throw-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "integer",
+          "value": 1
+        },
+        {
+          "type": "integer",
+          "value": 0
+        },
+        {
+          "type": "throw",
+          "value": "max"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "optimizer-traversal",
+      "nativeOracle": {
+        "id": "opt-throw-max",
+        "value": null,
+        "errorUtf8Hex": "6d6178",
+        "evaluated": [
+          1,
+          2
+        ],
+        "optimized": [
+          0,
+          1,
+          2
+        ],
+        "folded": false,
+        "serializedUtf8Hex": null,
+        "serializationApplied": false
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    },
+    {
+      "id": "opt-string-ci",
+      "expression": "@ci IsWithin(\"B\", \"a\", \"c\")",
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "serialized-value-equivalence",
+      "classification": "public-literal",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "string",
+          "value": "B"
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "c"
+        }
+      ],
+      "caseSensitive": false,
+      "mode": "optimizer-traversal",
+      "nativeOracle": {
+        "id": "opt-string-ci",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [
+          0,
+          1,
+          2
+        ],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": null
+    },
+    {
+      "id": "raw-nul-string",
+      "expression": null,
+      "publicExecution": "not-executed",
+      "expectedPublicOutcome": "unrepresentable-not-executed",
+      "classification": "raw-byte-string-boundary",
+      "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "originalArgsAST": [
+        {
+          "type": "raw-string",
+          "value": [
+            97,
+            0,
+            98
+          ]
+        },
+        {
+          "type": "string",
+          "value": "a"
+        },
+        {
+          "type": "string",
+          "value": "b"
+        }
+      ],
+      "caseSensitive": true,
+      "mode": "function-body-noopt",
+      "nativeOracle": {
+        "id": "raw-nul-string",
+        "value": {
+          "kind": "bool",
+          "value": true
+        },
+        "errorUtf8Hex": "",
+        "evaluated": [
+          1,
+          2,
+          0
+        ],
+        "optimized": [],
+        "folded": false,
+        "serializedUtf8Hex": "74727565",
+        "serializationApplied": true
+      },
+      "publicBridges": [],
+      "reason": "Exact native AST cannot be represented in a public expression."
+    }
+  ],
+  "publicConstructorProbes": [
+    {
+      "id": "public-arity-4",
+      "expression": "@cs @noopt IsWithin(1, 0, 3, none)",
+      "context": {
+        "kind": "literal-no-getter",
+        "sourceLineHex": "",
+        "sourceLineCount": 1,
+        "rowIndex": 0,
+        "outerEol": 0,
+        "tableMode": false,
+        "pane": "Left",
+        "targetMask": "Left",
+        "forbidRetargeting": true
+      },
+      "expectedPublicOutcome": "compile-constructor-rejection",
+      "publicExecution": "not-executed",
+      "nativeCase": "arity-4",
+      "relation": "Native fourth arg is unrepresentable ThrowNode but not evaluated. This separate public probe changes fourth argument to none and only tests public arity rejection; it is not exact AST/value equivalence."
+    }
+  ],
+  "additionalBoundaries": [
+    {
+      "id": "null-args",
+      "expression": null,
+      "executed": false,
+      "reason": "Native body dereferences args before checking; do not invoke UB."
+    },
+    {
+      "id": "public-depth-and-value-budget",
+      "expression": null,
+      "executed": false,
+      "reason": "Future public compile/evaluate budget rejection E2E; original body has no shared budget, no equivalence claim."
+    },
+    {
+      "id": "timestamp-parser",
+      "expression": null,
+      "executed": false,
+      "reason": "Typed native Timestamp cases captured; public representation and complete date parser are out of scope."
+    }
+  ]
+}

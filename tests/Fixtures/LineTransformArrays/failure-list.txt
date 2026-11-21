@@ -1,0 +1,11 @@
+増分失敗条件（コード生成前）
+1. 空配列・nested/mixed/none の値文字列化と厳密型AllEqualが崩れる。
+2. Atの負index、整数極値、非整数、範囲外と非arrayの扱いが変わる。
+3. AnyOf/AllOf/evalAsBoolのtrue boolだけ集約が一般truthinessになる。
+4. LogicalEach/IfEachの短配列padding、scalar lifting、nested境界が変わる。
+5. IfのlazyとIfEachのeagerを混同、Chooseのclampと非int、選択branchの評価回数が変わる。
+6. computeのnumeric/string/bool/noneとEQ配列再帰、長さ不一致paddingが変わる。
+7. Len、ToString、Trimのscalar/array境界、UTF8 bytes、原文EOL/target groupが変わる。
+8. unsupported double/Poco/date/regex/FileContent型がadapterから構築可能になる。
+9. Optimize/no-optを未実行なのに同等と報告する。今回Optimizeは明示未対応。
+10. source raw blob/SHA、実PID birth、exit、EOF、stdout/stderr hashを省略する。

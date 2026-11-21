@@ -1,0 +1,15 @@
+{
+  "undefinedNativeExecuted": false,
+  "localeSensitiveNativeMeasured": false,
+  "ignoredUnicodeTailPolicy": "not a blanket product rejection reason",
+  "boundaries": [
+    {"kind":"locale-sensitive-nonASCII-scanf","scope":"nonASCII numeric digits or whitespace participating in scanf conversions","status":"Native unmeasured; no golden; separate product engineering scope"},
+    {"kind":"negative-shifted-components","scope":"major/minor/build negative nonzero under C++17","status":"Native undefined excluded; no golden"},
+    {"kind":"major65536-plus","scope":"nonnegative major shifted48 not representable in unsigned64 under C++17","status":"Native undefined excluded; no golden"},
+    {"kind":"int32-scanf-overflow","scope":"parsed %d component outside signed int32","status":"Native undefined excluded; no golden"},
+    {"kind":"signed-sum-overflow","scope":"left-associated int64 intermediate or final sum outside representable range, including32768.0.0.-1 under MSVC result","status":"Native undefined excluded; no golden"},
+    {"kind":"positive-signbit-shift","scope":"major32768..65535 shifted48 fits unsigned64; signed conversion is implementation-defined C++17 behavior","status":"18 selected safe MSVC cases observed in cpp17-edge; original historical raw60 exclusion metadata unchanged"},
+    {"kind":"safe-ignored-Unicode-tail","scope":"Unicode suffix after complete ASCII numeric fields does not require a Unicode %d conversion","status":"not a product rejection rule; no new Native observation/golden is claimed"}
+  ],
+  "scope": "Raw int64 and original ToStringValue UTF8 keys/direct quote method only; Native full AST/parser/directives/typed context remain unqualified."
+}

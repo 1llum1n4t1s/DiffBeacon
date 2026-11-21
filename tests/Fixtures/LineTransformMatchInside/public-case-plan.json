@@ -1,0 +1,591 @@
+[
+  {
+    "id": "empty",
+    "expression": "@cs @noopt MatchInside(false,false)",
+    "sourceLineCount": 0,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "never-start",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,false,false,false,false),Choose(LineNumber-1,false,false,false,false,false))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "end-without-begin",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,false,false,false,false),Choose(LineNumber-1,true,true,true,true,true))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-without-end",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false,false),Choose(LineNumber-1,false,false,false,false,false))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "inclusive-boundaries",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false,false),Choose(LineNumber-1,false,false,false,true,false))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "74727565",
+      "74727565",
+      "74727565",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-first-end-last",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,false,false,false,true))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "single-begin",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true),Choose(LineNumber-1,false))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565"
+    ]
+  },
+  {
+    "id": "single-end",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false),Choose(LineNumber-1,true))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "single-simultaneous",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true),Choose(LineNumber-1,true))",
+    "sourceLineCount": 1,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565"
+    ]
+  },
+  {
+    "id": "outside-simultaneous",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,true,false,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "inside-simultaneous-restart",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,true,false,false,false),Choose(LineNumber-1,false,false,true,false,true,false))",
+    "sourceLineCount": 6,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "adjacent-ranges",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,true,false),Choose(LineNumber-1,false,true,false,true))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "separated-ranges",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,true,false),Choose(LineNumber-1,false,true,false,false,true))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "66616c7365",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "nested-begin-ignored",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,true,false,false),Choose(LineNumber-1,false,false,false,true,false))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "all-simultaneous",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,true,true,true,true),Choose(LineNumber-1,true,true,true,true,true))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "preceding-end",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,false,true,false,false),Choose(LineNumber-1,true,false,false,true,false))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "74727565",
+      "74727565",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-at-eof",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,false,true),Choose(LineNumber-1,false,false,false))",
+    "sourceLineCount": 3,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-at-begin-before-open",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false,false),Choose(LineNumber-1,false,true,false,true,false))",
+    "sourceLineCount": 5,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "74727565",
+      "74727565",
+      "74727565",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-18",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,none,none,none,none),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-19",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\")),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-20",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,1.0,1.0,1.0,1.0),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-21",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,\"true\",\"true\",\"true\",\"true\"),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-22",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,Array(false,true),Array(false,true),Array(false,true),Array(false,true)),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-23",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,Array(false,ToInt(\"1\")),Array(false,ToInt(\"1\")),Array(false,ToInt(\"1\")),Array(false,ToInt(\"1\"))),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-24",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,Array(Array(true)),Array(Array(true)),Array(Array(true)),Array(Array(true))),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-25",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,Array(true,false),Array(true,false),Array(true,false),Array(true,false)),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-26",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,Array(),Array(),Array(),Array()),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "66616c7365",
+      "66616c7365",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "begin-invalid-or-array-27",
+    "expression": "@cs @noopt MatchInside(none,none)",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "begin-invalid-or-array-28",
+    "expression": "@cs @noopt MatchInside(none,none)",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "end-invalid-or-array-29",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,none,none,none,none))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-30",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\"),ToInt(\"1\")))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-31",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,1.0,1.0,1.0,1.0))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-32",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,\"true\",\"true\",\"true\",\"true\"))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-33",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,Array(false,true),Array(false,true),Array(false,true),Array(false,true)))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-34",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,Array(false,ToInt(\"1\")),Array(false,ToInt(\"1\")),Array(false,ToInt(\"1\")),Array(false,ToInt(\"1\"))))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-35",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,Array(Array(true)),Array(Array(true)),Array(Array(true)),Array(Array(true))))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-36",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,Array(true,false),Array(true,false),Array(true,false),Array(true,false)))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "66616c7365",
+      "66616c7365"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-37",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,Array(),Array(),Array(),Array()))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "serialized-key-comparison",
+    "expectedSerializedKeys": [
+      "74727565",
+      "74727565",
+      "74727565",
+      "74727565"
+    ]
+  },
+  {
+    "id": "end-invalid-or-array-38",
+    "expression": "@cs @noopt MatchInside(none,none)",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "end-invalid-or-array-39",
+    "expression": "@cs @noopt MatchInside(none,none)",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "begin-throw-0",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,(1/(LineNumber-LineNumber)),false,false,false),Choose(LineNumber-1,false,false,false,true))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "begin-throw-1",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,(1/(LineNumber-LineNumber)),false,false),Choose(LineNumber-1,false,false,false,true))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "begin-throw-3",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,(1/(LineNumber-LineNumber))),Choose(LineNumber-1,false,false,false,true))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "end-throw-0",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,(1/(LineNumber-LineNumber)),false,false,true))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "end-throw-1",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,false,(1/(LineNumber-LineNumber)),false,true))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "end-throw-3",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,true,false,false,false),Choose(LineNumber-1,false,false,false,(1/(LineNumber-LineNumber))))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "runtime-rejection",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "different-begin",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "different-end",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "different-pair",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "swap-pair",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "same-pair-new-wrapper",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "mutate-cached",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "clear-cache",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "new-context",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "outside-lines",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "null-provider",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "cancel-at-begin",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "cancel-at-end",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  },
+  {
+    "id": "inner-success-outer-throw",
+    "expression": "@cs @noopt MatchInside(Choose(LineNumber-1,false,true,false,false),Choose(LineNumber-1,false,false,true,false))",
+    "sourceLineCount": 4,
+    "expectedOutcome": "native-only",
+    "expectedSerializedKeys": []
+  }
+]

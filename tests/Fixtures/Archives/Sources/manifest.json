@@ -1,0 +1,370 @@
+{
+  "license": "CC0-1.0",
+  "generator": "Python standard library; independent zipfile/tarfile decoders",
+  "files": [
+    {
+      "name": "bad-inner.zip",
+      "bytes": 274,
+      "sha256": "984C5BA626F086E84BEC4C4BFD463AF2FA98924163CAEDFA1FC37D57EA2EDBBC"
+    },
+    {
+      "name": "depth-8.zip",
+      "bytes": 935,
+      "sha256": "2783C228E58E9778E1E91635177B1ECA31367B67169DB410579ACB4426A56983"
+    },
+    {
+      "name": "depth-9.zip",
+      "bytes": 1056,
+      "sha256": "7C887190CBE3A05055C576344CC8BFFB79DBEBEE5548D73C00E143D8AF76C9F3"
+    },
+    {
+      "name": "large-tar.zip",
+      "bytes": 986,
+      "sha256": "A00340F22FE759C75235B2F5D2B4FBE58A0FAAC7B4D96C069635C170FF3C1207"
+    },
+    {
+      "name": "large.tar.gz",
+      "bytes": 285535,
+      "sha256": "D41C5C1922CA95C7B733CED14CC3F26AB202F5B2382FBB41125250861100632C"
+    },
+    {
+      "name": "late-bad-sibling.zip",
+      "bytes": 390,
+      "sha256": "FA5B0EF47AB5A53318AE5907818B2848A72DE6523207C50490C1C652F3E1A453"
+    },
+    {
+      "name": "leaf.zip",
+      "bytes": 339,
+      "sha256": "6970F48B96DF6E48C8729CF2AE927377994E0D5617156CF1D76CE85693344019"
+    },
+    {
+      "name": "nested.zip",
+      "bytes": 390,
+      "sha256": "14032CF75EA70C242F712820555A130157121AD3DE802593F8E587D995A033EF"
+    },
+    {
+      "name": "plain-encrypted.zip",
+      "bytes": 222,
+      "sha256": "241D672E85B4F045C0D10AAD35E99D786076FC272430E7F677A62C34FB2AA207"
+    },
+    {
+      "name": "raw-tar.zip",
+      "bytes": 277,
+      "sha256": "BA95C31513EE931584FFD7492C1E67B6F9D96B2DA47F7ADD58C4F07F6EAD3C56"
+    },
+    {
+      "name": "root-a.zip",
+      "bytes": 135,
+      "sha256": "CC74DA8184D8CFA6576761FA0FCE529CBA0844CF7F5B5A0641A66B01BE06429B"
+    },
+    {
+      "name": "root-b.zip",
+      "bytes": 135,
+      "sha256": "0C39CA743C111D4A22307819B58463110251F1F3B61D857F63BD5B2F7A126C39"
+    },
+    {
+      "name": "small.tar",
+      "bytes": 10240,
+      "sha256": "45C8A28CEDCA660D1965A0EB419B3DCA52999F12FF6FE5EC29FDC01565B58409"
+    },
+    {
+      "name": "two-passwords.zip",
+      "bytes": 289,
+      "sha256": "496ED5656BDBC5C165412FFBF25326EF48088AA8A94CC4F8CF2E6AEBE3DA1E6E"
+    },
+    {
+      "name": "unknown.bz2",
+      "bytes": 183,
+      "sha256": "04E2E6410300C57F576A02B33AD56661117D429FB663DAEE47AA88C5D510BC12"
+    },
+    {
+      "name": "unknown.gz",
+      "bytes": 173,
+      "sha256": "0CB0AD76C0D0758470243D4C4C23CB10B4D6C1C1883DE5DE15E2FFFB048BE0BB"
+    },
+    {
+      "name": "unsupported-inner.zip",
+      "bytes": 141,
+      "sha256": "F0BF018EE261F9FB710A1DE30FF389F38300C30BA6EF8972C71B4DDDA76000B2"
+    },
+    {
+      "name": "wrapped-inner.zip",
+      "bytes": 396,
+      "sha256": "002E59C022299CCE34D78FFD65118B0ED8F3BEE3F0B2515E8A20D46CBCC8A27C"
+    }
+  ],
+  "cases": [
+    {
+      "name": "nested",
+      "file": "nested.zip",
+      "chain": [
+        "inner.zip"
+      ],
+      "entries": [
+        {
+          "path": "empty.txt",
+          "directory": false,
+          "size": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "path": "folder",
+          "directory": true,
+          "size": 0,
+          "sha256": ""
+        },
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ],
+      "decodedBytes": 398,
+      "maximumEntries": 5
+    },
+    {
+      "name": "raw-tar",
+      "file": "raw-tar.zip",
+      "chain": [
+        "inner.tar"
+      ],
+      "entries": [
+        {
+          "path": "empty.txt",
+          "directory": false,
+          "size": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ],
+      "decodedBytes": 10240
+    },
+    {
+      "name": "root-tar",
+      "file": "small.tar",
+      "chain": [],
+      "entries": [
+        {
+          "path": "empty.txt",
+          "directory": false,
+          "size": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ],
+      "decodedBytes": 10240
+    },
+    {
+      "name": "unknown-gzip",
+      "file": "unknown.gz",
+      "chain": [],
+      "entries": [
+        {
+          "path": "empty.txt",
+          "directory": false,
+          "size": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ],
+      "decodedBytes": 10240
+    },
+    {
+      "name": "unknown-bzip",
+      "file": "unknown.bz2",
+      "chain": [],
+      "entries": [
+        {
+          "path": "empty.txt",
+          "directory": false,
+          "size": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ],
+      "decodedBytes": 10240
+    },
+    {
+      "name": "wrapped-inner",
+      "file": "wrapped-inner.zip",
+      "chain": [
+        "inner.zip.gz.bz2"
+      ],
+      "entries": [
+        {
+          "path": "empty.txt",
+          "directory": false,
+          "size": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "path": "folder",
+          "directory": true,
+          "size": 0,
+          "sha256": ""
+        },
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ]
+    },
+    {
+      "name": "depth-eight",
+      "file": "depth-8.zip",
+      "chain": [
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip",
+        "inner.zip"
+      ],
+      "entries": [
+        {
+          "path": "empty.txt",
+          "directory": false,
+          "size": 0,
+          "sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+        },
+        {
+          "path": "folder",
+          "directory": true,
+          "size": 0,
+          "sha256": ""
+        },
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ]
+    },
+    {
+      "name": "large-tar",
+      "file": "large-tar.zip",
+      "chain": [
+        "large.tar.gz"
+      ],
+      "entries": [
+        {
+          "path": "first.bin",
+          "directory": false,
+          "size": 146800640,
+          "sha256": "A6B881004B30E6EADA284149D14F2502F26BF03FAC68D98307F772D0648ABC56"
+        },
+        {
+          "path": "second.bin",
+          "directory": false,
+          "size": 146800640,
+          "sha256": "A6B881004B30E6EADA284149D14F2502F26BF03FAC68D98307F772D0648ABC56"
+        }
+      ],
+      "decodedBytes": 293897055,
+      "listOnly": true
+    },
+    {
+      "name": "large-root-tar",
+      "file": "large.tar.gz",
+      "chain": [],
+      "entries": [
+        {
+          "path": "first.bin",
+          "directory": false,
+          "size": 146800640,
+          "sha256": "A6B881004B30E6EADA284149D14F2502F26BF03FAC68D98307F772D0648ABC56"
+        },
+        {
+          "path": "second.bin",
+          "directory": false,
+          "size": 146800640,
+          "sha256": "A6B881004B30E6EADA284149D14F2502F26BF03FAC68D98307F772D0648ABC56"
+        }
+      ],
+      "decodedBytes": 293611520,
+      "listOnly": true
+    },
+    {
+      "name": "two-passwords",
+      "file": "two-passwords.zip",
+      "chain": [
+        "inner.zip"
+      ],
+      "entries": [
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ],
+      "passwords": [
+        "outer-source-fixture",
+        "inner-source-fixture"
+      ]
+    },
+    {
+      "name": "plain-encrypted",
+      "file": "plain-encrypted.zip",
+      "chain": [
+        "inner.zip"
+      ],
+      "entries": [
+        {
+          "path": "leaf.txt",
+          "directory": false,
+          "size": 35,
+          "sha256": "535E2480D2A0C3A5121F931FB445EC423EE82FAFD33973B5B880FCEF7407489C"
+        }
+      ],
+      "passwords": [
+        "",
+        "inner-source-fixture"
+      ]
+    }
+  ],
+  "largeTar": {
+    "rawBytes": 293611520,
+    "rawSha256": "A0EAD74EA024894716523BE5E4542DA3316B928BCC799B428FEA451803D2E3A1",
+    "entries": [
+      {
+        "path": "first.bin",
+        "directory": false,
+        "size": 146800640,
+        "sha256": "A6B881004B30E6EADA284149D14F2502F26BF03FAC68D98307F772D0648ABC56"
+      },
+      {
+        "path": "second.bin",
+        "directory": false,
+        "size": 146800640,
+        "sha256": "A6B881004B30E6EADA284149D14F2502F26BF03FAC68D98307F772D0648ABC56"
+      }
+    ]
+  }
+}

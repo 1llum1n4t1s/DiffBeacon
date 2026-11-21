@@ -1,0 +1,63 @@
+{
+  "repository": "https://github.com/Frhed/frhed",
+  "commit": "a0a2f13fe4c37a8f979407e997186680450ad7ca",
+  "license": "GPL-2.0-only (GPL.txt; COPYING absent in fixed tree)",
+  "sourceFiles": [
+    {
+      "file": "ReplaceDlg.cpp",
+      "gitPath": "FRHED/ReplaceDlg.cpp",
+      "sha256": "a55a39186b3f88d778bd6833e9be0055264880d03e251e116bb4e075a48649f1",
+      "size": 9108
+    },
+    {
+      "file": "FindUtil.cpp",
+      "gitPath": "FRHED/FindUtil.cpp",
+      "sha256": "b2fb9d356a627201b2f4c930fa6d703f6d24a9a3da7c80d4ae25684272c7452c",
+      "size": 2855
+    },
+    {
+      "file": "hexwnd.cpp",
+      "gitPath": "FRHED/hexwnd.cpp",
+      "sha256": "87bced369b06b3179c8b6da777f5cb3583d6ba155de491cd45baf93192dea0f1",
+      "size": 194242
+    },
+    {
+      "file": "heksedit.rc",
+      "gitPath": "FRHED/heksedit.rc",
+      "sha256": "85f8df4d814e69c29ea8aa149638e2f03dca008162adc4f49e6918d8a169a8a7",
+      "size": 66182
+    },
+    {
+      "file": "GPL.txt",
+      "gitPath": "GPL.txt",
+      "sha256": "ba9ed2269151ad63b922598f3c5c19ddf781b2bbb6cb843ed9f085ecd1679c5d",
+      "size": 17987
+    }
+  ],
+  "functions": [
+    {
+      "file": "ReplaceDlg.cpp",
+      "startLine": 71,
+      "endLine": 171,
+      "sha256": "300ea4df9f1e379a27375c25e9434b9352198b5eba2c4a1c1731dbea64af64f4"
+    },
+    {
+      "file": "ReplaceDlg.cpp",
+      "startLine": 189,
+      "endLine": 236,
+      "sha256": "bc8063b39e394ca797aabf58cf2f0a6605172e78151ab41c3b8638229176fc5f"
+    },
+    {
+      "file": "FindUtil.cpp",
+      "startLine": 30,
+      "endLine": 106,
+      "sha256": "27613344cc2c67edfa4f542a6ee58bfbebe6f460b252193aa6d79df465f4f754"
+    }
+  ],
+  "extractedSha256": "29e366607877b16162f381907c898ca0278a0f2eb9c12abcc2f99f64df685010",
+  "adapterSha256": "33f87d2cbe7285ee25c251d70c75d2b5a40aa1bdf8fc9b8aa7c9fabdfc0411cd",
+  "compilerCommand": "call \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\" && cl /nologo /EHsc /std:c++17 /Od adapter.cpp /Fe:reference.exe",
+  "compilerExitCode": 0,
+  "compilerStdoutBase64": "KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKg0KKiogVmlzdWFsIFN0dWRpbyAyMDI2IERldmVsb3BlciBDb21tYW5kIFByb21wdCB2MTguMTAuMw0KKiogQ29weXJpZ2h0IChjKSAyMDI2IE1pY3Jvc29mdCBDb3Jwb3JhdGlvbg0KKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKg0KW3ZjdmFyc2FsbC5iYXRdIEVudmlyb25tZW50IGluaXRpYWxpemVkIGZvcjogJ3g2NCcNCmFkYXB0ZXIuY3BwDQo=",
+  "compilerStderrBase64": ""
+}

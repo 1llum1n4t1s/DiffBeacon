@@ -1,0 +1,10 @@
+[
+  {
+    "id": "child-optimize-fold-before-provider-guard",
+    "expression": "@opt LineAt(ColumnRange(Substr('0',0)))",
+    "expected": "reject before runtime provider guard",
+    "nativeExactAst": false,
+    "status": "required-unimplemented; not weakened or counted as passed",
+    "reason": "native child Optimize folds nonliteral Substr to StringLiteral; candidate fold not implemented"
+  }
+]

@@ -1,0 +1,142 @@
+{
+  "schema": "line-transform-ranges-fixed-manifest-v1",
+  "scope": "All family files except this manifest; immutable native data and actor metadata unchanged.",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "adapter.cpp",
+      "size": 5373,
+      "sha256": "16dcaadc5d1e169d07a08b5c0cb0f137005fc84b4543a54af4dab6dd80ac7474"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Ascii.h",
+      "size": 4739,
+      "sha256": "c69f06b722744807290c1362735ef24197bbba43d7fcbd5b1113b0b8ab7d8dd1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/String.h",
+      "size": 20500,
+      "sha256": "b31db53cd106cc68cc203aa34aca035d96545cb2b57ae521421cc38ac183f8f2"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Timestamp.h",
+      "size": 6256,
+      "sha256": "2963a74fc71fd18d545c1cc92d701aeb8291be313c18f588b0ce4fbab56bfff1"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/include/Poco/Types.h",
+      "size": 4608,
+      "sha256": "a9aa7e44ea8ff34d8c97aba0fc8fb6719b788cec13314844ccd8e204c9192a20"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Ascii.cpp",
+      "size": 6623,
+      "sha256": "22bf4d334093baf3dbd30f853f0e173a4d17a5df81740cec3cf31d7c1b471cb4"
+    },
+    {
+      "path": "additional-original/Externals/poco/Foundation/src/Timestamp.cpp",
+      "size": 3853,
+      "sha256": "def24c5aa8f4e346a7814ca9d03cf031646b2db6c010abde787b249816ff0d19"
+    },
+    {
+      "path": "capture-receipt.json",
+      "size": 977,
+      "sha256": "3f64cb3af454e28ebc6f165dbfd2b5abecf07c3bf8e407dd6d4620d3e9ac2739"
+    },
+    {
+      "path": "capture.py",
+      "size": 14943,
+      "sha256": "09bacfe1eb875ac7da5b7c7b8222cfefe7c2283bdc1ce257fd3e24ca29f1c690"
+    },
+    {
+      "path": "captured-legacy-actual.ndjson",
+      "size": 41453,
+      "sha256": "5a74c06c0ba35afd4af201c353abceb6e7a61ddc2a61898871668d4fbe72cf92"
+    },
+    {
+      "path": "captured-legacy-probes.ndjson",
+      "size": 666,
+      "sha256": "196d7cae34b1982aaa767ed6969afc01c53338c56a079ed29a6dfc5e66291f5d"
+    },
+    {
+      "path": "cases.json",
+      "size": 27084,
+      "sha256": "0827eefdbfa0c7f4e7a2dca71bf2373128f6ed43deb6cf3f718a73cc21e5343c"
+    },
+    {
+      "path": "contract-actual.ndjson",
+      "size": 42789,
+      "sha256": "673fba82259304ad889e0f4b43a894ad3ccecc083c2e2dd5862c967eeacd252d"
+    },
+    {
+      "path": "contract-derivation.json",
+      "size": 747,
+      "sha256": "4e2c24561b286a8fc29e0586626ec923b078098fbe4cd2be3481d5dd1f1caaf5"
+    },
+    {
+      "path": "contract-probes.ndjson",
+      "size": 653,
+      "sha256": "f97ea3ab2c0dcf4cff146f73275e8ab0efef930e21f6c358fc45d24d4127925e"
+    },
+    {
+      "path": "golden.ndjson",
+      "size": 14070,
+      "sha256": "43c68c5c42f7bcce3fa508727759d5f43e7e938fe722a4108ff3151e9a3055d6"
+    },
+    {
+      "path": "make_public_plan.py",
+      "size": 3897,
+      "sha256": "1f9f95ac8cebacbf585b0ea57af42a4f7c9ea56ef1d8e6e593b858e18417544e"
+    },
+    {
+      "path": "native-proof-manifest.json",
+      "size": 6149,
+      "sha256": "716ab605fb0b3a037f3fc3153108238639b05e0cf32daae2830f449774047b38"
+    },
+    {
+      "path": "native-proof.zip",
+      "size": 15611,
+      "sha256": "845c89da7b32d1a2fd2229c24ce717b7131a2043075632844d7404cb8d864cb4"
+    },
+    {
+      "path": "provenance.json",
+      "size": 11495,
+      "sha256": "dd5434f10c24309d14afc6ef3711d3e9d5281667e107ee3a4711ab29aefe7d07"
+    },
+    {
+      "path": "public-case-plan.json",
+      "size": 114810,
+      "sha256": "f201d12937d34271ec05e851830c641110b941ae469542ec442a0ad6a8083f1d"
+    },
+    {
+      "path": "README.md",
+      "size": 4344,
+      "sha256": "cae0c547972945f8766af275663bf8e20e1cd4994d8d8d5eb39b1575426e12b1"
+    },
+    {
+      "path": "recompile-receipt.json",
+      "size": 977,
+      "sha256": "c697309d9eeb273a41a79c9a0c94a2184ce2dabbadbe89e534ae422ee3e746ba"
+    },
+    {
+      "path": "reproduce.py",
+      "size": 1019,
+      "sha256": "de4263f8a7e1ad999ae2c09c96665bd8ab5e5a9b9d1a51fd197933c310d3eba8"
+    },
+    {
+      "path": "verify.py",
+      "size": 4582,
+      "sha256": "f6256cef0ae7264a5f75c38486daf19b0126f98914919b1d9bdcbb3e0f66ac49"
+    },
+    {
+      "path": "verify_immutable_source.py",
+      "size": 3205,
+      "sha256": "084f4f54aa957054b41ba174201c765da6bb8f6adb6441a7ed017f65d1d6599a"
+    }
+  ]
+}

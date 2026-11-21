@@ -1,0 +1,50 @@
+{
+  "schema": "independent-text-input-lifetime-fixture-v1",
+  "source": "generate.py synthetic literals; not WinMerge golden",
+  "license": "MIT",
+  "files": [
+    {
+      "path": "inputs/left.txt",
+      "size": 31,
+      "sha256": "5B6E18BE22A4E593565CEDFEE84E94FC68CDD8A57EE5277B3F39097F70906069"
+    },
+    {
+      "path": "inputs/left.zip",
+      "size": 145,
+      "sha256": "77294B550A1108CCCE77F6758B6F964106436CC0BF14005E0F46A7A2A9764330"
+    },
+    {
+      "path": "inputs/middle.txt",
+      "size": 32,
+      "sha256": "A0ECCE899874E2FF4A5968C20FEE1DA51C4401C821DE00C8C15A4D793CA756F5"
+    },
+    {
+      "path": "inputs/middle.zip",
+      "size": 146,
+      "sha256": "8A4581589E21D9F4C0E12D3F52EAEDFEE9B8A3569D3DE2D3558EABA616CDA935"
+    },
+    {
+      "path": "inputs/right.txt",
+      "size": 31,
+      "sha256": "E20BDAC5C20E63642D155B55BB3E2DA2F42A30980608B5A5B7705C040543A3A2"
+    },
+    {
+      "path": "inputs/right.zip",
+      "size": 145,
+      "sha256": "A62590239C8C75F77AB0D646F40B7B297F48AF8AED8A0A2B4AEF5D7D24E906CE"
+    }
+  ],
+  "texts": [
+    "lifetime left café\r\nleft tail\n",
+    "lifetime middle £\r\nmiddle tail\n",
+    "lifetime right €\r\nright tail\n"
+  ],
+  "recipes": [
+    "PPP",
+    "UUU",
+    "AAA",
+    "APU",
+    "UAP",
+    "PUA"
+  ]
+}

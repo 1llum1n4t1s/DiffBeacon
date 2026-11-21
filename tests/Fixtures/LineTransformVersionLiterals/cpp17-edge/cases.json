@@ -1,0 +1,146 @@
+[
+  {
+    "id": "major32768-zero",
+    "inputHex": "33323736382e302e302e30",
+    "quotedBodyHex": "33323736382e302e302e3022",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32769-zero",
+    "inputHex": "33323736392e302e302e30",
+    "quotedBodyHex": "33323736392e302e302e3022",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65534-zero",
+    "inputHex": "36353533342e302e302e30",
+    "quotedBodyHex": "36353533342e302e302e3022",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65535-zero",
+    "inputHex": "36353533352e302e302e30",
+    "quotedBodyHex": "36353533352e302e302e3022",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32768-positive-tail",
+    "inputHex": "33323736382e36353533352e36353533352e3635353335",
+    "quotedBodyHex": "33323736382e36353533352e36353533352e363535333522",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32769-positive-tail",
+    "inputHex": "33323736392e36353533352e36353533352e3635353335",
+    "quotedBodyHex": "33323736392e36353533352e36353533352e363535333522",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65534-positive-tail",
+    "inputHex": "36353533342e36353533352e36353533352e3635353335",
+    "quotedBodyHex": "36353533342e36353533352e36353533352e363535333522",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65535-positive-tail",
+    "inputHex": "36353533352e36353533352e36353533352e3635353335",
+    "quotedBodyHex": "36353533352e36353533352e36353533352e363535333522",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32768-minor-intmax",
+    "inputHex": "33323736382e323134373438333634372e302e30",
+    "quotedBodyHex": "33323736382e323134373438333634372e302e3022",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32769-build-intmax",
+    "inputHex": "33323736392e302e323134373438333634372e30",
+    "quotedBodyHex": "33323736392e302e323134373438333634372e3022",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65534-revision-intmax",
+    "inputHex": "36353533342e302e302e32313437343833363437",
+    "quotedBodyHex": "36353533342e302e302e3231343734383336343722",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65535-all-intmax",
+    "inputHex": "36353533352e323134373438333634372e323134373438333634372e32313437343833363437",
+    "quotedBodyHex": "36353533352e323134373438333634372e323134373438333634372e3231343734383336343722",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32768-partial",
+    "inputHex": "33323736382e32",
+    "quotedBodyHex": "33323736382e3222",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65535-partial-stop",
+    "inputHex": "36353533352e2e33",
+    "quotedBodyHex": "36353533352e2e3322",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32768-whitespace-plus",
+    "inputHex": "20092b33323736382e2b302e2b302e2b30",
+    "quotedBodyHex": "20092b33323736382e2b302e2b302e2b3022",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65535-space-tail",
+    "inputHex": "36353533352e2036353533352e2036353533352e2036353533357461696c",
+    "quotedBodyHex": "36353533352e2036353533352e2036353533352e2036353533357461696c22",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major32769-negative-revision",
+    "inputHex": "33323736392e302e302e2d31",
+    "quotedBodyHex": "33323736392e302e302e2d3122",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  },
+  {
+    "id": "major65535-negative-revision-intmin",
+    "inputHex": "36353533352e302e302e2d32313437343833363438",
+    "quotedBodyHex": "36353533352e302e302e2d3231343734383336343822",
+    "scope": "MSVC-C++17-signbit-constructor-int64-serialized-key-and-directquote",
+    "classification": "public-proposal",
+    "provenance": "original exact fixed source methods; implementation-defined signed conversion platform observation"
+  }
+]

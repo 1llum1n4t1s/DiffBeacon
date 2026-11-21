@@ -1,0 +1,84 @@
+{
+  "files": {
+    "adapter.cpp": {
+      "size": 2216,
+      "sha256": "8f0953edbf84731568583a9dcfa0d400bcf972523e8e5b097845ba02f3432bce"
+    },
+    "boundaries.md": {
+      "size": 4503,
+      "sha256": "48e2858eb3c105fb53fc29a7baf36ae79fa58b531b33cf4c4b0bd39ed6cefb5a"
+    },
+    "capture-index.json": {
+      "size": 417,
+      "sha256": "0cc1122d026558cda9de95dfe104d69156958f24c7b09463c49fe62b803e765f"
+    },
+    "failure-matrix.md": {
+      "size": 1289,
+      "sha256": "3979a2db36a9e56f69a8f0f0910e0ee6742cac54a41eeb4a9137cde170df766c"
+    },
+    "glob-cases.json": {
+      "size": 106316,
+      "sha256": "05eae06737bb281a9ec3cdea6448abfd42563a372e0de1457e7004907c5a9328"
+    },
+    "glob-golden.ndjson": {
+      "size": 150923,
+      "sha256": "98f7f3c7eb6e1ce84a3fd95ea3fc627f5d0adc16972586f2ee033d87467fff17"
+    },
+    "include-specs.json": {
+      "size": 4254,
+      "sha256": "b1b8eddb0502af8b418f780884bde9aa5c69fdeb92bddac577f1bcf50b2b0a68"
+    },
+    "original/Glob.cpp": {
+      "size": 6112,
+      "sha256": "bf896839dcb97dfc8458ce077a26d8f7051aaa25474b336ea084120a0db3c889"
+    },
+    "original/Glob.h": {
+      "size": 5286,
+      "sha256": "4d5eeb05bef2e80b8748f357905d7b81e653b57dca4d272525222806b8dbc178"
+    },
+    "original/LICENSE": {
+      "size": 1678,
+      "sha256": "c4b1e1e5f36d8331737231fefcc30f5714326aec7c387ad59a8115eb0ba7d6b5"
+    },
+    "original/TextEncoding.h": {
+      "size": 6929,
+      "sha256": "8c8a67667e568ed6c60589769552a28cbebf280cc3b9867061690f9379a64ed7"
+    },
+    "original/TextIterator.cpp": {
+      "size": 2796,
+      "sha256": "8b4c092d5a637bd1487f08819df6548516f6bbb7b55ea7a0d8a7f6b8d6183cb8"
+    },
+    "original/TextIterator.h": {
+      "size": 3416,
+      "sha256": "5b0a46eb888ef9450792b69b474c3bab72049dce6812bcd6449a977fe91943ba"
+    },
+    "original/Unicode.cpp": {
+      "size": 978,
+      "sha256": "6d7bca3abc2bc0aedb781664a534b1613805976a9f2e08ef0a83cddb03faa4e2"
+    },
+    "original/Unicode.h": {
+      "size": 6208,
+      "sha256": "64815d99f3f999fc0707be372620065e0a0bae84736f15ce39cfaeb568335f64"
+    },
+    "original/UTF8Encoding.cpp": {
+      "size": 5654,
+      "sha256": "d61f56ed798ebc3776459979b49246527a16796fa143aec289082722a0ffdeef"
+    },
+    "original/UTF8Encoding.h": {
+      "size": 1732,
+      "sha256": "410daec2a6491a45f77b1a40a3b0f6ea1bd219c3b83eeb35d4d61b6ac10c631d"
+    },
+    "provenance.json": {
+      "size": 2972,
+      "sha256": "cc76285581570c924b2a4250453ffe248fd2616c5a1ce7fe89d2e4037595fd36"
+    },
+    "reproduce.py": {
+      "size": 5255,
+      "sha256": "e3ef2a7572ccef9f70e54d22050a49b7c0ee8529b9f0f54b0ed8aec81d3848a6"
+    },
+    "verify.py": {
+      "size": 7836,
+      "sha256": "f5f803c5bab77eb94a7b836a91e23baf6eff0b2ec061728e6c64215ac047e4ee"
+    }
+  }
+}

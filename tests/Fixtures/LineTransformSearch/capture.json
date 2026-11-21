@@ -1,0 +1,281 @@
+{
+  "command": [
+    "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\cl.exe",
+    "/nologo",
+    "/std:c++20",
+    "/EHsc",
+    "/utf-8",
+    "/IC:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\ltf1011\\search-reference\\build3",
+    "/IC:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\line-transform-search-20261012-78b2e\\reference-prep\\original",
+    "C:\\Users\\IMT\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Codex\\TaskArtifacts\\DiffBeacon\\line-transform-search-20261012-78b2e\\reference-prep\\adapter.cpp",
+    "/FoC:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\ltf1011\\search-reference\\build3\\adapter.obj",
+    "/FeC:\\Users\\IMT\\AppData\\Local\\Temp\\Codex\\DiffBeacon\\ltf1011\\search-reference\\build3\\reference.exe"
+  ],
+  "compilerSha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57",
+  "sourceCommit": "6780924ba35f7f55af0f6f14dd302561175830a6",
+  "sourceBlobs": {
+    "Src/FileTransform.cpp": "a99444d7ced77e805824a807cdf5b803bae1d7d9",
+    "Src/FilterEngine/FilterExpressionNodes.cpp": "afc8bcd2b1256b05dd486e9557860ee7ed2ef833",
+    "Src/FilterEngine/FilterExpressionNodes.h": "c5533753a5d4f3200f077e0302cc28c2f3871cc9",
+    "Src/FilterEngine/FilterExpression.cpp": "538df75d94f20e191f0dea9847d9b1f562ec7b8f",
+    "Src/FilterEngine/FilterParser.y": "2cc89832aee98ab0f6932396eb17b683c5267380",
+    "Src/FilterEngine/ILineDataProvider.h": "c85e30328c157be0bfd166c8695e973585ee5df4",
+    "Src/COPYING": "7d1f8605f8f722063883b7feefec942fe2f28206",
+    "Src/DiffTextBuffer.cpp": "b3878c00f5100ce861a0479e6e474c3dd5439095",
+    "Src/Common/unicoder.cpp": "81e6dbdf90c6a4bfa1c3dd44afc01944c8928c4f",
+    "Src/FilterEngine/FilterParser.h": "fb22d0905005d1598f15d1d9e2625be11fe767b1",
+    "Externals/poco/Foundation/include/Poco/Ascii.h": "5121dba871b7f49b15d2bbff4179b8fed0dfbacb",
+    "Externals/poco/Foundation/include/Poco/String.h": "f47347b01ba18bd761bb2755b1785172fe4f7ef4",
+    "Externals/poco/Foundation/src/Ascii.cpp": "5d5fab79218311816d919e443dc79508b1919457",
+    "Externals/poco/LICENSE": "2f2f957ce4f48733875f0791d0d383e8d9319205"
+  },
+  "pid": 4972,
+  "birthFileTime": 134362055311214662,
+  "startedUtc": "2026-10-11T15:18:51.119988+00:00",
+  "endedUtc": "2026-10-11T15:18:51.139941+00:00",
+  "exitCode": 0,
+  "stdoutEof": true,
+  "stderrEof": true,
+  "stdoutSha256": "bc73b830108585e9d98f4bd7e8b408466568c48888316b24411a491a9c325657",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "caseCount": 68,
+  "heldProcessHandleSignaled": true,
+  "extraction": {
+    "provider.inc": [
+      "FileTransform.cpp",
+      [
+        [
+          790,
+          920
+        ]
+      ]
+    ],
+    "to-string.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2315,
+          2357
+        ]
+      ]
+    ],
+    "convert-string.inc": [
+      "FilterExpression.cpp",
+      [
+        [
+          422,
+          427
+        ]
+      ]
+    ],
+    "bool.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          34,
+          49
+        ]
+      ]
+    ],
+    "if.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2433,
+          2442
+        ]
+      ]
+    ],
+    "range-parse.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          3905,
+          3975
+        ]
+      ]
+    ],
+    "range-evaluate.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          3992,
+          4050
+        ]
+      ]
+    ],
+    "fields.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          1247,
+          1255
+        ],
+        [
+          1267,
+          1274
+        ],
+        [
+          1425,
+          1433
+        ],
+        [
+          1443,
+          1448
+        ]
+      ]
+    ],
+    "line-at.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          3877,
+          3903
+        ]
+      ]
+    ],
+    "trim.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2862,
+          2881
+        ]
+      ]
+    ],
+    "array-functions.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          1720,
+          1835
+        ]
+      ]
+    ],
+    "lifting.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          1693,
+          1704
+        ]
+      ]
+    ],
+    "to-int.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2520,
+          2530
+        ],
+        [
+          2576,
+          2607
+        ]
+      ]
+    ],
+    "len.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          1851,
+          1869
+        ]
+      ]
+    ],
+    "get-string.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          51,
+          58
+        ]
+      ]
+    ],
+    "compute.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          581,
+          845
+        ]
+      ]
+    ],
+    "choices.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2443,
+          2518
+        ]
+      ]
+    ],
+    "logical.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2662,
+          2752
+        ]
+      ]
+    ],
+    "utf8.inc": [
+      "unicoder.cpp",
+      [
+        [
+          112,
+          123
+        ],
+        [
+          145,
+          156
+        ]
+      ]
+    ],
+    "search.inc": [
+      "FilterExpressionNodes.cpp",
+      [
+        [
+          2923,
+          3031
+        ]
+      ]
+    ],
+    "poco-ascii.inc": [
+      "Poco-Ascii.h",
+      [
+        [
+          24,
+          226
+        ]
+      ]
+    ],
+    "poco-table.inc": [
+      "Poco-Ascii.cpp",
+      [
+        [
+          18,
+          154
+        ]
+      ]
+    ],
+    "poco-lower.inc": [
+      "Poco-String.h",
+      [
+        [
+          205,
+          226
+        ]
+      ]
+    ],
+    "apply.inc": [
+      "FileTransform.cpp",
+      [
+        [
+          1051,
+          1075
+        ]
+      ]
+    ]
+  }
+}
