@@ -25,7 +25,17 @@ public sealed partial class ComparisonPane
         {
             syncing = true;
             list.Items.Clear();
-            foreach (var marker in draft) list.Items.Add((marker.Visible ? "✓ " : "") + marker.Text);
+            for (var index = 0; index < draft.Count; index++)
+            {
+                var itemIndex = index;
+                var box = new CheckBox { Name = "marker-item-" + index, Content = draft[index].Text, IsChecked = draft[index].Visible };
+                box.IsCheckedChanged += (_, _) =>
+                {
+                    if (syncing || itemIndex >= draft.Count) return;
+                    draft[itemIndex] = draft[itemIndex] with { Visible = box.IsChecked == true };
+                };
+                list.Items.Add(box);
+            }
             if (draft.Count == 0) selected = -1;
             else selected = Math.Clamp(selected, 0, draft.Count - 1);
             list.SelectedIndex = selected;
@@ -60,7 +70,7 @@ public sealed partial class ComparisonPane
                 Regex = useRegex, Visible = marker.Visible,
             };
             syncing = true;
-            list.Items[selected] = (draft[selected].Visible ? "✓ " : "") + draft[selected].Text;
+            if (list.Items[selected] is CheckBox box) box.Content = draft[selected].Text;
             syncing = false;
             whole.IsEnabled = !useRegex;
             if (useRegex) whole.IsChecked = false;

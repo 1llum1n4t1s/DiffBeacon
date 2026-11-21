@@ -190,6 +190,7 @@ public sealed partial class MainWindow
             ChromeItem("Show Midd&le Unique Items", "view-show-unique-middle", () => _showUniqueMiddleItems, SetShowUniqueMiddleItems),
             ChromeItem("Show Ri&ght Unique Items", "view-show-unique-right", () => _showUniqueRightItems, SetShowUniqueRightItems),
             ChromeItem("Show S&kipped Items", "view-show-skipped", () => _showSkippedItems, SetShowSkippedItems),
+            Labeled("Com&pare Statistics...", null, () => ActivePane.ShowFolderStatisticsAsync()),
             Separator(),
             Labeled("Refresh\tF5", "F5", PaneAction(FrameCommand.Refresh))));
         _displayFilterItem.Click += (_, _) => ToggleDisplayFilterBar();

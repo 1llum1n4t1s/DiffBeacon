@@ -53,6 +53,16 @@ internal static class HeadlessFolderViewChecks
         var list = pane.FolderOptionsRawRows;
         var entries = list.Items.OfType<DirectoryEntry>().ToArray();
         check("folder view lists compared entries", entries.Length >= 6, string.Join("|", entries.Select(entry => entry.RelativePath)));
+        string? statistics = null;
+        pane.FolderStatisticsShown = dialog =>
+        {
+            statistics = dialog.GetVisualDescendants().OfType<TextBlock>().Single(block => block.Name == "folder-statistics").Text;
+            dialog.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "folder-statistics-ok").RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+        };
+        pump(pane.ShowFolderStatisticsAsync());
+        pane.FolderStatisticsShown = null;
+        check("folder statistics count identical and left-only files", statistics is not null && statistics.Contains("同一", StringComparison.Ordinal) && statistics.Contains("ファイル: 1", StringComparison.Ordinal)
+            && statistics.Contains("左側のみ", StringComparison.Ordinal), statistics ?? "");
         ClickMenu(window, "view-show-identical");
         var hiddenIdentical = pane.FolderOptionsRawRows.Items.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).ToArray();
         check("folder view hides identical items", !hiddenIdentical.Contains("same.txt") && hiddenIdentical.Contains("diff.txt") && !window.ShowIdenticalItems,

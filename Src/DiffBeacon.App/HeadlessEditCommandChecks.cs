@@ -176,10 +176,15 @@ internal static class HeadlessEditCommandChecks
             window.ExternalEditorCommand = "";
 
             Select(pane, 2, right.Document.GetLineByNumber(2).Offset, 5);
-            pane.MarkerDialogShown = dialog => dialog.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "marker-ok").RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            pane.MarkerDialogShown = dialog =>
+            {
+                dialog.GetVisualDescendants().OfType<CheckBox>().Single(box => box.Name == "marker-item-0").IsChecked = false;
+                dialog.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "marker-ok").RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+            };
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddMarker));
             pane.MarkerDialogShown = null;
-            check("edit marker records the selection in the first color", pane.TextMarkers.Count == 1 && pane.TextMarkers[0] == "extra" && pane.TextMarkerColors[0] == 0 && pane.DiffEditor(0).Options.EnableRectangularSelection,
+            check("edit marker records the selection in the first color", pane.TextMarkers.Count == 1 && pane.TextMarkers[0] == "extra" && pane.TextMarkerColors[0] == 0
+                && pane.TextMarkerVisible.Count == 1 && pane.TextMarkerVisible[0] == false && pane.DiffEditor(0).Options.EnableRectangularSelection,
                 string.Join("|", pane.TextMarkers));
             pane.ClearTextMarkers();
             var markerFile = Path.Combine(output, "markers", "view-options.json");

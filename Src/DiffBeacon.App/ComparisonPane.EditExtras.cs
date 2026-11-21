@@ -141,6 +141,9 @@ public sealed partial class ComparisonPane
     /// <summary>印の色番号。0 が緑、1 が赤、2 が青。</summary>
     internal IReadOnlyList<int> TextMarkerColors => _diffViews[0].MarkerColorizer.Markers.Select(marker => marker.ColorIndex).ToArray();
 
+    /// <summary>印を塗るか。一覧のチェックを外した印は偽。</summary>
+    internal IReadOnlyList<bool> TextMarkerVisible => _diffViews[0].MarkerColorizer.Markers.Select(marker => marker.Visible).ToArray();
+
     /// <summary>自己検証が、印のダイアログが出たときにボタンを押す。</summary>
     internal Action<Window>? MarkerDialogShown { get; set; }
 
