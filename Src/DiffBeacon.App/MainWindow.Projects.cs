@@ -260,6 +260,7 @@ public sealed partial class ComparisonPane
         ClearArchivePasswords(); _lastArchiveComparison = null;
         _archiveRequestGeneration++;
         _projectMetadata = WorkspaceStore.CloneProject(project);
+        ClearConflictSavePath();
         _hasRestoredImageSettings = true;
         _pendingRestoredImageSettings = true;
         LeftPath.Text = ProjectInputs.IsUntitled(project, 0) ? "" : ProjectInputs.Caption(project, 0);

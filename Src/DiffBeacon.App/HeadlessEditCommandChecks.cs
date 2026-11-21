@@ -207,6 +207,8 @@ internal static class HeadlessEditCommandChecks
             pane.SetSideEncoding(0, "utf-8-bom");
             var encoding = pane.SideEncoding(0);
             check("edit encoding keeps the text and records a BOM", encoding.Name == "utf-8" && encoding.Bom && pane.LeftEditor.Text == "one\r\ntwo\r\nthree" && pane.HasUnsavedChanges, $"{encoding.Name} bom={encoding.Bom}");
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.SaveLeft));
+            check("edit saved encoding is no longer unsaved", !pane.EncodingUnsaved && pane.SideEncoding(0).Bom, pane.EncodingUnsaved.ToString());
             pane.DiscardChanges();
 
             clipboard.Text = "from-clipboard";
@@ -222,11 +224,10 @@ internal static class HeadlessEditCommandChecks
             var leftFull = Path.GetFullPath(pane.LeftPath.Text ?? "");
             var rightFull = Path.GetFullPath(pane.RightPath.Text ?? "");
             window.RememberRecent(pane.LeftPath.Text, pane.RightPath.Text);
-            var recent = window.RecentFiles;
             var recentFolder = Path.Combine(work, "recent-folder");
             Directory.CreateDirectory(recentFolder);
             window.RememberRecent(recentFolder);
-            recent = window.RecentFiles;
+            var recent = window.RecentFiles;
             check("edit recent files keeps existing paths", recent.Count is >= 2 and <= 9 && recent[0] == Path.GetFullPath(recentFolder) && recent.Contains(rightFull) && recent.Contains(leftFull), string.Join("|", recent));
             var cancel = pane.OpenView?.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => Equals(button.Content, "キャンセル"));
             var statusLine = pane.OpenView?.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault(block => block.Name == "open-view-status");
@@ -284,7 +285,7 @@ internal static class HeadlessEditCommandChecks
                 Escape(pane.LeftEditor.Text) + " / " + Escape(pane.RightEditor.Text));
             pane.RightEditor.Text = "common\nresolved\ntail\n";
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.SaveRight));
-            check("edit conflict save overwrites the original file", File.ReadAllText(conflict) == "common\nresolved\ntail\n", Escape(File.ReadAllText(conflict)));
+            check("edit conflict save overwrites the original file", File.ReadAllText(conflict) == "common\nresolved\ntail\n" && pane.ConflictSavePath is null, Escape(File.ReadAllText(conflict)));
 
             var three = Path.Combine(work, "three.conflict");
             File.WriteAllText(three, "common\n<<<<<<< mine\nmine-line\n||||||| base\nbase-line\n=======\ntheirs-line\n>>>>>>> theirs\n", new UTF8Encoding(false));
@@ -298,6 +299,11 @@ internal static class HeadlessEditCommandChecks
             check("open view has a read-only box for each path", readOnlyBoxes.Length == 3 && leftReadOnly.IsChecked == true && pane.LeftEditor.IsReadOnly, $"{leftReadOnly.IsChecked}");
             leftReadOnly.IsChecked = false;
             check("open view read-only box clears the left side", pane.LeftEditor.IsReadOnly == false && leftReadOnly.IsChecked == false, pane.LeftEditor.IsReadOnly.ToString());
+            var bound = pane.RightPath.Text;
+            check("edit conflict save stays on the parsed file", pane.ConflictSavePath == three, pane.ConflictSavePath ?? "");
+            pane.RightPath.Text = conflict;
+            check("edit conflict save target drops when the right path changes", pane.ConflictSavePath is null, pane.ConflictSavePath ?? "");
+            pane.RightPath.Text = bound;
         }
         finally { pane.DiffClipboardBridge = null; }
         pane.DiscardChanges();

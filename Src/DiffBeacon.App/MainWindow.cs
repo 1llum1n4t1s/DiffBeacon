@@ -497,7 +497,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         void PrepareAdoption()
         {
             AdoptLegacyTextRole();
-            ResetMergeSession(); ClearEncodingUnsaved(); _lastPackageComparison = null;
+            ResetMergeSession(); ClearEncodingUnsaved(); ReleaseConflictSaveUnlessCurrent(); _lastPackageComparison = null;
             ResetLineBookmarks();
             _textSaveAllowed = false; _baseText = null; CurrentDiff = null;
         }

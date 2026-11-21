@@ -328,6 +328,7 @@ public sealed partial class ComparisonPane
                     Sha256 = Convert.ToHexString(SHA256.HashData(bytes)), EncodingName = document.EncodingName, HasBom = document.HasBom };
                 _workingTexts.Save(input, revision, snapshot);
                 SetSavedTextInput(side, snapshot.Document(), text);
+                ClearEncodingUnsaved(side);
                 _workingTextRevisions[side] = _workingTexts.Revision(input);
                 foreach (var pane in (_owner as MainWindow)?.SessionPanes ?? [this]) pane.WorkingTextSaved();
                 RefreshArchiveDraftCaptions(); _status.Text = "内包文書の作業版を保存しました。原本アーカイブは保持しています。";

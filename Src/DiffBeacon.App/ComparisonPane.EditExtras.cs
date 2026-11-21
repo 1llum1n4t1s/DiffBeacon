@@ -485,6 +485,7 @@ public sealed partial class ComparisonPane
         if ((_rightDocument?.Text ?? "") != sides.Mine || (_leftDocument?.Text ?? "") != sides.Theirs)
         { _status.Text = "競合ファイルを比較に採用できませんでした。"; return; }
         _conflictSavePath = full;
+        _conflictSourcePath = RightPath.Text;
         SetManualReadOnly(0, true);
         SetManualReadOnly(2, false);
         _leftCaption.Text = "Theirs File（読取り専用）";
@@ -514,11 +515,42 @@ public sealed partial class ComparisonPane
     /// <summary>競合ファイルの右を保存するとき、解析した一時ファイルではなく元のファイルへ書く。</summary>
     private string? _conflictSavePath;
 
-    /// <summary>右の保存先。競合ファイルを開いているときは元のファイル。</summary>
-    internal string? ConflictSavePath => _conflictSavePath;
+    /// <summary>その保存先が有効な、右に開いている解析済みファイル。</summary>
+    private string? _conflictSourcePath;
 
-    /// <summary>競合ファイルの保存先を消す。通常の保存が終わったあと。</summary>
-    internal void ClearConflictSavePath() => _conflictSavePath = null;
+    /// <summary>右の保存先。右のパスが解析済みファイルのままのときだけ、元の競合ファイルを返す。</summary>
+    internal string? ConflictSavePath
+    {
+        get
+        {
+            if (_conflictSavePath is null || _conflictSourcePath is null) return null;
+            if (SamePath(RightPath.Text, _conflictSourcePath)) return _conflictSavePath;
+            _conflictSavePath = null;
+            _conflictSourcePath = null;
+            return null;
+        }
+    }
+
+    /// <summary>右のパスが解析済みファイルでなくなったら、競合ファイルへの保存先を消す。</summary>
+    internal void ReleaseConflictSaveUnlessCurrent()
+    {
+        if (_conflictSourcePath is null) return;
+        if (!SamePath(RightPath.Text, _conflictSourcePath)) ClearConflictSavePath();
+    }
+
+    /// <summary>競合ファイルの保存先を消す。別のファイルを開いたときと、保存が終わったあと。</summary>
+    internal void ClearConflictSavePath()
+    {
+        _conflictSavePath = null;
+        _conflictSourcePath = null;
+    }
+
+    /// <summary>同じファイルを指すパスか。</summary>
+    private static bool SamePath(string? left, string? right)
+    {
+        if (string.IsNullOrWhiteSpace(left) || string.IsNullOrWhiteSpace(right)) return false;
+        return string.Equals(Path.GetFullPath(left), Path.GetFullPath(right), StringComparison.OrdinalIgnoreCase);
+    }
 
     /// <summary>競合ファイル用の一時ファイルを消す。消せないものは状態欄に理由を残す。</summary>
     private void DeleteConflictTemps()
