@@ -290,6 +290,8 @@ public sealed partial class ComparisonPane
         SetAdvancedFilters(project.IgnoreNumbers, project.CommentSyntax, project.Whitespace, project.SubstitutionRules);
         _lineTransformCount.Text = $"行変換 {project.LineTransformRules.Length}件";
         LeftEditor.IsReadOnly = project.LeftReadOnly || project.LeftArchiveInput is not null; RightEditor.IsReadOnly = project.RightReadOnly || project.RightArchiveInput is not null;
+        _manualReadOnly[0] = project.LeftReadOnly && project.LeftArchiveInput is not { InheritedReadOnly: false };
+        _manualReadOnly[2] = project.RightReadOnly && project.RightArchiveInput is not { InheritedReadOnly: false };
         ShowOpenReadOnly(0, project.LeftReadOnly);
         ShowOpenReadOnly(2, project.RightReadOnly);
         ShowOpenReadOnly(1, project.BaseReadOnly);

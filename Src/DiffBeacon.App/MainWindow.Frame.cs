@@ -63,10 +63,10 @@ public sealed partial class MainWindow
                 Labeled("&Image", null, () => ActivePane.RecompareAsAsync(4)),
                 Labeled("A&rchive", null, () => ActivePane.RecompareAsAsync(7))),
             MenuPopup("&File Encoding...",
-                Labeled("UTF-8", null, () => { ActivePane.SetSideEncoding(ActivePane.ActiveDiffSide, "utf-8"); return Task.CompletedTask; }),
-                Labeled("UTF-8 BOM", null, () => { ActivePane.SetSideEncoding(ActivePane.ActiveDiffSide, "utf-8-bom"); return Task.CompletedTask; }),
-                Labeled("UTF-16 LE", null, () => { ActivePane.SetSideEncoding(ActivePane.ActiveDiffSide, "utf-16"); return Task.CompletedTask; }),
-                Labeled("Windows-1252", null, () => { ActivePane.SetSideEncoding(ActivePane.ActiveDiffSide, "windows-1252"); return Task.CompletedTask; })),
+                Labeled("UTF-8", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "utf-8"); return Task.CompletedTask; }),
+                Labeled("UTF-8 BOM", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "utf-8-bom"); return Task.CompletedTask; }),
+                Labeled("UTF-16 LE", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "utf-16"); return Task.CompletedTask; }),
+                Labeled("Windows-1252", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "windows-1252"); return Task.CompletedTask; })),
             _recentFiles = MenuPopup("Recent F&iles or Folders", new MenuItem { Header = UiText.Menu("< Empty >"), IsEnabled = false }),
             Separator(),
             Labeled("Open Pro&ject...\tCtrl+J", "Ctrl+J", PaneAction(FrameCommand.OpenProject)),
@@ -627,7 +627,7 @@ public sealed partial class MainWindow
     {
         foreach (var path in paths)
         {
-            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path)) continue;
+            if (string.IsNullOrWhiteSpace(path) || (!File.Exists(path) && !Directory.Exists(path))) continue;
             var full = Path.GetFullPath(path);
             _recent.RemoveAll(item => string.Equals(item, full, StringComparison.OrdinalIgnoreCase));
             _recent.Insert(0, full);

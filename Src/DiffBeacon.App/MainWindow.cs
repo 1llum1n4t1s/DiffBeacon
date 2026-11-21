@@ -122,6 +122,7 @@ public sealed partial class MainWindow : Window
             SessionSelectionGeneration++;
             if (_tabs.SelectedItem is not TabItem) return;
             ActivePane.PublishFolderActions();
+            SyncDisplayFilterMenu(ActivePane.DisplayFilterBarVisible);
             UpdateImageDisplayVisibility();
             foreach (var pane in SessionPanes) pane.CancelInactiveFolderCopy(ReferenceEquals(pane, ActivePane));
             QueueSelectedHeader();
@@ -232,7 +233,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         private set { _currentDiff = value; OnCurrentDiffChanged(); }
     }
     private DiffResult? _currentDiff;
-    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || MergeResultDirty || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
+    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || EncodingUnsaved || MergeResultDirty || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
     private readonly CheckBox _ignoreCase = new() { Content = "大文字小文字を無視" };
     private readonly CheckBox _ignoreSpace = new() { Content = "空白を無視" };
     private readonly CheckBox _ignoreBlank = new() { Content = "空行を無視" };
@@ -496,7 +497,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         void PrepareAdoption()
         {
             AdoptLegacyTextRole();
-            ResetMergeSession(); _lastPackageComparison = null;
+            ResetMergeSession(); ClearEncodingUnsaved(); _lastPackageComparison = null;
             ResetLineBookmarks();
             _textSaveAllowed = false; _baseText = null; CurrentDiff = null;
         }
@@ -629,6 +630,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             RightEditor.IsReadOnly = _projectMetadata.RightReadOnly;
             LeftEditor.Text = _savedLeft = _leftDocument.Text;
             RightEditor.Text = _savedRight = _rightDocument.Text;
+            ClearEncodingUnsaved();
             _baseText = _baseDocument?.Text;
             _ancestorEditor.Text = _baseText ?? "";
             UpdateEditorLayout(_baseText is not null);
@@ -750,7 +752,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         CopyAll(toRight);
     }
 
-    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; DiscardMergeChanges(); SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
+    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; ClearEncodingUnsaved(); DiscardMergeChanges(); SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
     public void SelectMode(int mode) => _mode.SelectedIndex = mode;
     public void Dispose()
     {

@@ -206,18 +206,28 @@ internal static class HeadlessEditCommandChecks
 
             pane.SetSideEncoding(0, "utf-8-bom");
             var encoding = pane.SideEncoding(0);
-            check("edit encoding keeps the text and records a BOM", encoding.Name == "utf-8" && encoding.Bom && pane.LeftEditor.Text == "one\r\ntwo\r\nthree", $"{encoding.Name} bom={encoding.Bom}");
+            check("edit encoding keeps the text and records a BOM", encoding.Name == "utf-8" && encoding.Bom && pane.LeftEditor.Text == "one\r\ntwo\r\nthree" && pane.HasUnsavedChanges, $"{encoding.Name} bom={encoding.Bom}");
+            pane.DiscardChanges();
 
             clipboard.Text = "from-clipboard";
             pane.FocusDiffEditorRealLine(2, 0);
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenClipboard));
             check("edit open clipboard replaces the focused side", pane.RightEditor.Text == "from-clipboard", Escape(pane.RightEditor.Text));
+            pane.SetManualReadOnly(2, true);
+            clipboard.Text = "blocked";
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenClipboard));
+            check("edit open clipboard refuses a read-only side", pane.RightEditor.Text == "from-clipboard", Escape(pane.RightEditor.Text));
+            pane.SetManualReadOnly(2, false);
 
             var leftFull = Path.GetFullPath(pane.LeftPath.Text ?? "");
             var rightFull = Path.GetFullPath(pane.RightPath.Text ?? "");
             window.RememberRecent(pane.LeftPath.Text, pane.RightPath.Text);
             var recent = window.RecentFiles;
-            check("edit recent files keeps existing paths", recent.Count is >= 2 and <= 9 && recent[0] == rightFull && recent[1] == leftFull, string.Join("|", recent));
+            var recentFolder = Path.Combine(work, "recent-folder");
+            Directory.CreateDirectory(recentFolder);
+            window.RememberRecent(recentFolder);
+            recent = window.RecentFiles;
+            check("edit recent files keeps existing paths", recent.Count is >= 2 and <= 9 && recent[0] == Path.GetFullPath(recentFolder) && recent.Contains(rightFull) && recent.Contains(leftFull), string.Join("|", recent));
             var cancel = pane.OpenView?.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => Equals(button.Content, "キャンセル"));
             var statusLine = pane.OpenView?.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault(block => block.Name == "open-view-status");
             check("open view has cancel and a status line", cancel is not null && statusLine?.Text == "ステータス:", statusLine?.Text ?? "");
@@ -241,6 +251,11 @@ internal static class HeadlessEditCommandChecks
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddToDisplayFilters));
             check("edit display filter keeps a quote inside the phrase", pane.DisplayFilter.Contains("\\\"hi\\\"", StringComparison.Ordinal), pane.DisplayFilter);
 
+            pane.DiscardChanges();
+            Compare(pane, work, "alpha\n", "", pump);
+            Select(pane, 0, 0, 5);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopyLinesToRight));
+            check("edit copy into an empty side inserts the line", pane.RightEditor.Text == "alpha\n", Escape(pane.RightEditor.Text));
             pane.ClearDisplayFilter();
             pane.DiscardChanges();
             Compare(pane, work, "abcd\nefgh\nijkl\n", "abcd\nefgh\nijkl\n", pump);
@@ -265,7 +280,7 @@ internal static class HeadlessEditCommandChecks
             var opened = File.ReadAllText(conflict);
             check("edit conflict file opens theirs and mine without rewriting the file",
                 pane.LeftEditor.Text == "common\ntheirs-line\ntail\n" && pane.RightEditor.Text == "common\nmine-line\ntail\n"
-                && pane.LeftEditor.IsReadOnly && !pane.RightEditor.IsReadOnly && pane.RightPath.Text == conflict && opened.Contains("<<<<<<< mine", StringComparison.Ordinal),
+                && pane.LeftEditor.IsReadOnly && !pane.RightEditor.IsReadOnly && pane.RightPath.Text != conflict && pane.ConflictSavePath == conflict && opened.Contains("<<<<<<< mine", StringComparison.Ordinal),
                 Escape(pane.LeftEditor.Text) + " / " + Escape(pane.RightEditor.Text));
             pane.RightEditor.Text = "common\nresolved\ntail\n";
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.SaveRight));

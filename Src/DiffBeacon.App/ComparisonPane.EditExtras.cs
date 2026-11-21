@@ -111,13 +111,15 @@ public sealed partial class ComparisonPane
                 output.Add(sourceLines[source - 1]);
         }
         while (destinationIndex < destinationLines.Count) output.Add(destinationLines[destinationIndex++]);
-        var newline = destinationLines.FirstOrDefault(line => line.Ending.Length > 0).Ending;
-        if (newline.Length == 0) newline = "\n";
+        var newline = "\n";
+        foreach (var line in destinationLines)
+            if (line.Ending is { Length: > 0 } ending) { newline = ending; break; }
         var joined = new StringBuilder();
         for (var index = 0; index < output.Count; index++)
         {
             joined.Append(output[index].Content);
-            if (output[index].Ending.Length > 0) joined.Append(output[index].Ending);
+            var ending = output[index].Ending ?? "";
+            if (ending.Length > 0) joined.Append(ending);
             else if (index < output.Count - 1) joined.Append(newline);
         }
         ApplyReplacedText(destinationSide, joined.ToString());
@@ -334,19 +336,26 @@ public sealed partial class ComparisonPane
     /// <summary>状態欄へ理由を出す。</summary>
     internal void SetStatus(string text) => _status.Text = text;
 
-    /// <summary>形式を指定して比較し直す。0 自動、1 テキスト、3 バイナリ、4 画像、6 表、7 アーカイブ。</summary>
-    internal Task RecompareAsAsync(int mode)
+    /// <summary>形式を指定して比較し直す。0 自動、1 テキスト、3 バイナリ、4 画像、6 表、7 アーカイブ。取消のときは形式を変えない。</summary>
+    internal async Task RecompareAsAsync(int mode)
     {
         if (mode is < 0 or > 8) throw new ArgumentOutOfRangeException(nameof(mode));
+        if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
+        if (HasUnsavedChanges) DiscardChanges();
         SelectMode(mode);
-        return ComparePathsAsync();
+        await ComparePathsAsync();
     }
 
-    /// <summary>フォーカスのある側の保存文字コードを変える。本文は変えない。</summary>
+    /// <summary>フォーカスのある側。二者比較で中央が選ばれていても左か右へ寄せる。</summary>
+    internal int FocusedTextSide => SearchSideIndex();
+
+    /// <summary>フォーカスのある側の保存文字コードを変える。本文は変えない。保存するまで未保存にする。</summary>
     internal void SetSideEncoding(int side, string name)
     {
+        if (TextEditor(side).IsReadOnly) { _status.Text = "読取り専用のため文字コードを変えられません。"; return; }
         var text = TextEditor(side).Text ?? "";
-        var next = (TextInputDocument(side) ?? DiffBeacon.Core.TextDocument.Create(text)).WithEncoding(name, text);
+        var previous = TextInputDocument(side);
+        var next = (previous ?? DiffBeacon.Core.TextDocument.Create(text)).WithEncoding(name, text);
         switch (side)
         {
             case 0: _leftDocument = next; break;
@@ -354,6 +363,8 @@ public sealed partial class ComparisonPane
             case 2: _rightDocument = next; break;
             default: throw new ArgumentOutOfRangeException(nameof(side));
         }
+        if (previous is null || previous.EncodingName != next.EncodingName || previous.HasBom != next.HasBom)
+            _encodingUnsaved[side] = true;
         _status.Text = $"文字コードを {next.EncodingName}{(next.HasBom ? " BOM" : "")} にしました。";
     }
 
@@ -364,16 +375,21 @@ public sealed partial class ComparisonPane
         return document is null ? ("", false) : (document.EncodingName, document.HasBom);
     }
 
-    /// <summary>クリップボードの文字を、フォーカスのある側へ入れて比較し直す。</summary>
+    /// <summary>クリップボードの文字を、フォーカスのある側へ入れて比較し直す。読取り専用は拒み、未保存なら確認する。</summary>
     internal async Task OpenClipboardTextAsync()
     {
+        if (!DiffEditCommandAvailable(out var side)) return;
+        if (!CanEditText(side, _diffViews[side], "クリップボードを開けません")) return;
         if (DiffClipboard() is not { } clipboard) { _status.Text = "クリップボードを利用できません。"; return; }
         var text = await clipboard.ReadTextAsync();
+        if (_disposed) return;
         if (string.IsNullOrEmpty(text)) { _status.Text = "クリップボードに文字がありません。"; return; }
         if (text.Contains('\0')) { _status.Text = "クリップボードの NUL は本文にできません。"; return; }
-        var side = SearchSideIndex();
-        TextEditor(side).Text = text;
-        CompareEditors();
+        if (!CanEditText(side, _diffViews[side], "クリップボードを開けません")) return;
+        var saved = side switch { 0 => _savedLeft, 1 => _savedMiddle, _ => _savedRight };
+        if ((TextEditor(side).Text ?? "") != saved && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してクリップボードの文字で置き換えますか？")) return;
+        if (!CanEditText(side, _diffViews[side], "クリップボードを開けません")) return;
+        ApplyReplacedText(side, text);
     }
 
     /// <summary>フォーカスのある側の改行を、指定した CR/LF/CRLF にそろえる。</summary>
@@ -468,9 +484,7 @@ public sealed partial class ComparisonPane
         await ComparePathsAsync();
         if ((_rightDocument?.Text ?? "") != sides.Mine || (_leftDocument?.Text ?? "") != sides.Theirs)
         { _status.Text = "競合ファイルを比較に採用できませんでした。"; return; }
-        _rightDocument = _rightDocument!.SavedCopy(full, sides.Mine);
-        RightPath.Text = full;
-        _savedRight = sides.Mine + "\u0001";
+        _conflictSavePath = full;
         SetManualReadOnly(0, true);
         SetManualReadOnly(2, false);
         _leftCaption.Text = "Theirs File（読取り専用）";
@@ -482,25 +496,41 @@ public sealed partial class ComparisonPane
             if (sides.ThreeWay) window.DropRecent(basePath);
             window.RememberRecent(full);
         }
-        try
-        {
-            File.Delete(minePath);
-            _conflictTemps.Remove(minePath);
-        }
-        catch (IOException) { }
-        catch (UnauthorizedAccessException) { }
-        _status.Text = "競合ファイルを開きました。";
+        _status.Text = "競合ファイルを開きました。保存すると元のファイルを上書きします。";
     }
 
-    /// <summary>競合ファイル用の一時ファイルを消す。</summary>
+    /// <summary>保存文字コードを変えた側。本文が同じでも閉じる前に確認する。</summary>
+    private readonly bool[] _encodingUnsaved = [false, false, false];
+
+    /// <summary>文字コードの変更がまだ保存されていないか。</summary>
+    internal bool EncodingUnsaved => _encodingUnsaved[0] || _encodingUnsaved[1] || _encodingUnsaved[2];
+
+    /// <summary>文字コードの未保存を消す。比較を開き直したときと破棄したとき。</summary>
+    internal void ClearEncodingUnsaved() => Array.Clear(_encodingUnsaved);
+
+    /// <summary>その側の文字コードを保存済みにする。</summary>
+    internal void ClearEncodingUnsaved(int side) => _encodingUnsaved[side] = false;
+
+    /// <summary>競合ファイルの右を保存するとき、解析した一時ファイルではなく元のファイルへ書く。</summary>
+    private string? _conflictSavePath;
+
+    /// <summary>右の保存先。競合ファイルを開いているときは元のファイル。</summary>
+    internal string? ConflictSavePath => _conflictSavePath;
+
+    /// <summary>競合ファイルの保存先を消す。通常の保存が終わったあと。</summary>
+    internal void ClearConflictSavePath() => _conflictSavePath = null;
+
+    /// <summary>競合ファイル用の一時ファイルを消す。消せないものは状態欄に理由を残す。</summary>
     private void DeleteConflictTemps()
     {
+        var failed = new List<string>();
         foreach (var path in _conflictTemps)
         {
             try { if (File.Exists(path)) File.Delete(path); }
-            catch (IOException) { }
-            catch (UnauthorizedAccessException) { }
+            catch (IOException ex) { failed.Add(path + ": " + ex.Message); }
+            catch (UnauthorizedAccessException ex) { failed.Add(path + ": " + ex.Message); }
         }
         _conflictTemps.Clear();
+        if (failed.Count > 0 && !_disposed) _status.Text = "一時ファイルを消せませんでした。 " + string.Join(" ", failed);
     }
 }

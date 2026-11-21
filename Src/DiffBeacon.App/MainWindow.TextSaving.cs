@@ -221,7 +221,7 @@ public sealed partial class ComparisonPane
         {
             var target = selectedPath ?? (missing || string.IsNullOrWhiteSpace(originalPath)
                 ? TextSavePathPicker is { } picker ? await picker(right) : await SavePathAsync("テキストを保存", "untitled.txt")
-                : originalPath);
+                : right && ConflictSavePath is { } conflict ? conflict : originalPath);
             Current(); if (target is null) return;
             target = ArchiveActions.ValidatePath(target);
             var ownOriginal = archive is null && sourceDocument is not null && !string.IsNullOrWhiteSpace(sourceDocument.Path)
@@ -270,12 +270,12 @@ public sealed partial class ComparisonPane
             if (right)
             {
                 if (archive is not null) _projectMetadata = _projectMetadata with { RightArchiveInput = null, RightReadOnly = false, RightDescription = Path.GetFileName(target) };
-                RightPath.Text = target; _savedRight = text; _rightDocument = loaded;
+                RightPath.Text = target; _savedRight = text; _rightDocument = loaded; ClearConflictSavePath(); ClearEncodingUnsaved(2);
             }
             else
             {
                 if (archive is not null) _projectMetadata = _projectMetadata with { LeftArchiveInput = null, LeftReadOnly = false, LeftDescription = Path.GetFileName(target) };
-                LeftPath.Text = target; _savedLeft = text; _leftDocument = loaded;
+                LeftPath.Text = target; _savedLeft = text; _leftDocument = loaded; ClearEncodingUnsaved(0);
             }
             ConfigureArchiveInputControls(); _provider.IsEnabled = !ProjectInputs.HasArchives(_projectMetadata);
             if (ProjectInputs.HasArchives(_projectMetadata)) _lastArchiveComparison = ArchiveComparisonIdentity(CaptureProject());
