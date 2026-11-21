@@ -166,10 +166,12 @@ internal static class HeadlessEditCommandChecks
             check("edit open registered application launches the focused file", launched.Count == 1 && launched[0] == pane.RightPath.Text, string.Join("|", launched));
             window.ExternalEditorCommand = "editor $file --line $linenum";
             launched.Clear();
-            pane.FocusDiffEditorRealLine(2, 0);
+            pane.FocusDiffEditorRealLine(0, 1);
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenExternalEditor));
-            var editorPath = pane.RightPath.Text ?? "";
-            check("edit external editor expands the file and the line", launched.Count == 1 && launched[0].Contains(editorPath, StringComparison.Ordinal) && launched[0].Contains("--line 1", StringComparison.Ordinal), launched.FirstOrDefault() ?? "");
+            var editorPath = pane.LeftPath.Text ?? "";
+            var editorCommand = launched.FirstOrDefault() ?? "";
+            check("edit external editor uses the real line after a ghost row", launched.Count == 1 && editorCommand.Contains("\"" + editorPath + "\"", StringComparison.Ordinal) && editorCommand.Contains("--line 2", StringComparison.Ordinal), editorCommand);
+            check("edit external editor keeps a suffix inside the quotes", ComparisonPane.ExpandEditorCommand("code -g $file:$linenum", editorPath, 12) == "code -g \"" + editorPath + ":12\"", ComparisonPane.ExpandEditorCommand("code -g $file:$linenum", editorPath, 12));
             pane.ExternalLauncher = null;
             window.ExternalEditorCommand = "";
 

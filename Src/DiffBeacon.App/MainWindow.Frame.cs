@@ -584,8 +584,8 @@ public sealed partial class MainWindow
     private bool _showOutputPane;
     private bool _tabBarOnTitleBar;
     private string _externalEditorCommand = "";
-    private Border? _outputHost;
-    private TextBox? _outputText;
+    private readonly Border? _outputHost;
+    private readonly TextBox? _outputText;
     private int _toolbarIconSize = 16;
     private bool _darkTheme;
     private bool _mergingMode;

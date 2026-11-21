@@ -328,7 +328,10 @@ public sealed partial class ComparisonPane
         if (FocusedPath() is not { } path) return;
         var line = 1;
         if (DiffTabActive() && CurrentDiff is not null && _diffDisplay.RowCount > 0)
-            line = Math.Max(1, _diffViews[SearchSideIndex()].View.TextArea.Caret.Line);
+        {
+            var view = _diffViews[SearchSideIndex()];
+            line = Math.Max(1, view.RealLineOfDisplay(view.View.TextArea.Caret.Line) + 1);
+        }
         var command = (_owner as MainWindow)?.ExternalEditorCommand ?? "";
         if (command.Length == 0)
         {
@@ -350,13 +353,16 @@ public sealed partial class ComparisonPane
         }
     }
 
-    /// <summary>外部エディターのコマンドの $file と $linenum を、開くファイルと行へ置き換える。</summary>
+    /// <summary>外部エディターのコマンドの $file と $linenum を、開くファイルと行へ置き換える。引用符は $file から次の空白まで。</summary>
     internal static string ExpandEditorCommand(string command, string file, int line)
     {
         var expanded = Environment.ExpandEnvironmentVariables(command).Replace("$linenum", line.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
-        var quoted = "\"" + file.Replace("\"", "") + "\"";
-        if (expanded.Contains("$file", StringComparison.Ordinal)) return expanded.Replace("$file", quoted, StringComparison.Ordinal);
-        return expanded + " " + quoted;
+        var clean = file.Replace("\"", "");
+        var index = expanded.IndexOf("$file", StringComparison.Ordinal);
+        if (index < 0) return expanded + " \"" + clean + "\"";
+        expanded = expanded.Replace("$file", "\"" + clean, StringComparison.Ordinal);
+        var closeAt = expanded.IndexOf(' ', index + clean.Length + 1);
+        return closeAt < 0 ? expanded + "\"" : expanded.Insert(closeAt, "\"");
     }
 
     /// <summary>コマンド文字列を、実行ファイルと引数へ分ける。</summary>
