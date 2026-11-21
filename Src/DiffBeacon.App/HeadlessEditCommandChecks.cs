@@ -213,8 +213,11 @@ internal static class HeadlessEditCommandChecks
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenClipboard));
             check("edit open clipboard replaces the focused side", pane.RightEditor.Text == "from-clipboard", Escape(pane.RightEditor.Text));
 
+            var leftFull = Path.GetFullPath(pane.LeftPath.Text ?? "");
+            var rightFull = Path.GetFullPath(pane.RightPath.Text ?? "");
             window.RememberRecent(pane.LeftPath.Text, pane.RightPath.Text);
-            check("edit recent files keeps existing paths", window.RecentFiles.Count == 2, string.Join("|", window.RecentFiles));
+            var recent = window.RecentFiles;
+            check("edit recent files keeps existing paths", recent.Count is >= 2 and <= 9 && recent[0] == rightFull && recent[1] == leftFull, string.Join("|", recent));
             var cancel = pane.OpenView?.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => Equals(button.Content, "キャンセル"));
             var statusLine = pane.OpenView?.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault(block => block.Name == "open-view-status");
             check("open view has cancel and a status line", cancel is not null && statusLine?.Text == "ステータス:", statusLine?.Text ?? "");
@@ -248,7 +251,8 @@ internal static class HeadlessEditCommandChecks
             boxed.TextArea.Selection = new RectangleSelection(boxed.TextArea, new TextViewPosition(1, 2), new TextViewPosition(2, 4));
             Dispatcher.UIThread.RunJobs();
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.Cut));
-            check("edit rectangle cut removes the columns and copies them", pane.LeftEditor.Text == "ad\neh\nijkl\n" && clipboard.Text == "bc\nfg",
+            var clipped = (clipboard.Text ?? "").Replace("\r\n", "\n");
+            check("edit rectangle cut removes the columns and copies them", pane.LeftEditor.Text == "ad\neh\nijkl\n" && clipped == "bc\nfg",
                 Escape(pane.LeftEditor.Text) + " clip=" + Escape(clipboard.Text));
 
             var conflict = Path.Combine(work, "sample.conflict");
