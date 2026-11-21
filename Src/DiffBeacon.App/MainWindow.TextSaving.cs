@@ -103,12 +103,24 @@ public sealed partial class ComparisonPane
         if (_specialTab.Content is ArchivePanel panel) panel.RefreshWorkingRows();
     }
 
+    /// <summary>メニューで付けた読取り専用。プロジェクトやアーカイブの読取り専用とは別に覚える。</summary>
+    private readonly bool[] _manualReadOnly = [false, false, false];
+
+    /// <summary>側をメニューの読取り専用にする、または外す。祖先の中央は外せない。</summary>
+    internal void SetManualReadOnly(int side, bool value)
+    {
+        if (side == 1 && !IndependentText && value == false && _baseText is not null) { _status.Text = "祖先は読取り専用です。"; return; }
+        _manualReadOnly[side] = value;
+        RefreshTextReadOnly();
+        UpdateDiffEditorReadOnly();
+    }
+
     private void RefreshTextReadOnly()
     {
-        MiddleEditor.IsReadOnly = !IndependentText || !_textSaveAllowed || TextReadOnly(1);
-        LeftEditor.IsReadOnly = !_textSaveAllowed || !CanEditArchiveText(false)
+        MiddleEditor.IsReadOnly = _manualReadOnly[1] || !IndependentText || !_textSaveAllowed || TextReadOnly(1);
+        LeftEditor.IsReadOnly = _manualReadOnly[0] || !_textSaveAllowed || !CanEditArchiveText(false)
             && (_projectMetadata.LeftReadOnly || _projectMetadata.LeftArchiveInput is not null);
-        RightEditor.IsReadOnly = !_textSaveAllowed || !CanEditArchiveText(true)
+        RightEditor.IsReadOnly = _manualReadOnly[2] || !_textSaveAllowed || !CanEditArchiveText(true)
             && (_projectMetadata.RightReadOnly || _projectMetadata.RightArchiveInput is not null);
     }
 

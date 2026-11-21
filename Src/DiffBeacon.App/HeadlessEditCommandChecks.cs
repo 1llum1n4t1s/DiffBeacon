@@ -170,6 +170,15 @@ internal static class HeadlessEditCommandChecks
                 string.Join("|", pane.TextMarkers));
             pane.ClearTextMarkers();
 
+            pane.FocusDiffEditorRealLine(0, 0);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.EolToUnix));
+            check("edit convert line endings to LF", pane.LeftEditor.Text == "one\ntwo\nthree", Escape(pane.LeftEditor.Text));
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.EolToWindows));
+            check("edit convert line endings back to CRLF", pane.LeftEditor.Text == "one\r\ntwo\r\nthree", Escape(pane.LeftEditor.Text));
+            pane.SetManualReadOnly(2, true);
+            check("edit manual read-only blocks the right side", pane.RightEditor.IsReadOnly, pane.RightEditor.IsReadOnly.ToString());
+            pane.SetManualReadOnly(2, false);
+
             // ブックマーク: Ctrl+F2 で作成・削除、F2／Shift+F2 で次・前（端で回り込む）、すべてクリア。印は行番号の欄に出る。
             pane.FocusDiffEditorRealLine(0, 1); Press(window, left, Key.F2, KeyModifiers.Control);
             pane.FocusDiffEditorRealLine(0, 2); Press(window, left, Key.F2, KeyModifiers.Control);

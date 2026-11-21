@@ -293,6 +293,19 @@ public sealed partial class ComparisonPane
     /// <summary>定義へ移動する記号索引は無い。</summary>
     internal void GoToDefinition() => _status.Text = "定義へ移動する言語サービスはありません。";
 
+    /// <summary>フォーカスのある側の改行を、指定した CR/LF/CRLF にそろえる。</summary>
+    internal void ConvertLineEndings(string ending)
+    {
+        if (ending is not ("\r\n" or "\n" or "\r")) throw new ArgumentOutOfRangeException(nameof(ending));
+        if (!DiffEditCommandAvailable(out var side)) return;
+        if (!CanEditText(side, _diffViews[side], "改行を変換できません")) return;
+        var text = TextEditor(side).Text ?? "";
+        var converted = NormalizeLineBreaks(text, ending);
+        if (converted == text) { _status.Text = "改行は既にその形式です。"; return; }
+        ApplyReplacedText(side, converted);
+        _status.Text = "改行を変換しました。";
+    }
+
     /// <summary>フォーカスのある側の、実在するファイルのパス。</summary>
     private string? FocusedPath()
     {
