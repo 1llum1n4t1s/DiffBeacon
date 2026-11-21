@@ -104,6 +104,7 @@ public sealed partial class ComparisonPane
             // どのペインで押しても全ペイン共有の履歴を操作する（本家と同じ）。AvaloniaEdit の固定のキーより先に受け取る。
             side.View.TextArea.AddHandler(InputElement.KeyDownEvent, (_, args) =>
             {
+                if (args.Handled) return;
                 if (Application.Current?.PlatformSettings?.HotkeyConfiguration is not { } hotkeys) return;
                 if (hotkeys.Undo.Any(gesture => gesture.Matches(args))) { UndoText(); args.Handled = true; }
                 else if (hotkeys.Redo.Any(gesture => gesture.Matches(args))) { RedoText(); args.Handled = true; }
@@ -179,6 +180,7 @@ public sealed partial class ComparisonPane
         ApplyDiffContext();
         AlignWrappedLines();
         SyncDiffEditorScroll(_leftDiffView);
+        UpdateSelectedDiffCopyMenu();
     }
 
     /// <summary>

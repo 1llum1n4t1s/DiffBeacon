@@ -10,7 +10,7 @@ internal enum FrameCommand
 {
     Compare, Refresh, Options,
     SaveLeft, SaveRight, SaveLeftAs, SaveRightAs, OpenProject, SaveProject,
-    Undo, Redo, Cut, Copy, Paste, SelectAll, ToggleBookmark, NextBookmark, PreviousBookmark, ClearAllBookmarks, Find, Replace, FindNext, FindPrevious, FindSelectedNext, FindSelectedPrevious, GoTo,
+    Undo, Redo, Cut, Copy, Paste, SelectAll, CopyWithLineNumbers, CopySelectedDifference1, CopySelectedDifference2, CopySelectedDifference3, ToggleBookmark, NextBookmark, PreviousBookmark, ClearAllBookmarks, Find, Replace, FindNext, FindPrevious, FindSelectedNext, FindSelectedPrevious, GoTo,
     FirstDifference, PreviousDifference, CurrentDifference, NextDifference, LastDifference,
     NextConflict, PreviousConflict, SelectLineDifference, SelectPreviousLineDifference,
     CopyToRight, CopyToLeft, CopyToRightAndAdvance, CopyToLeftAndAdvance, CopyAllToRight, CopyAllToLeft, AutoMerge,
@@ -40,6 +40,10 @@ public sealed partial class ComparisonPane
         FrameCommand.Copy => CopyDiffSelectionAsync(cut: false),
         FrameCommand.Paste => PasteDiffTextAsync(),
         FrameCommand.SelectAll => Run(SelectAllDiffText),
+        FrameCommand.CopyWithLineNumbers => CopyDiffLinesWithNumbersAsync(),
+        FrameCommand.CopySelectedDifference1 => CopySelectedDifferenceAsync(0),
+        FrameCommand.CopySelectedDifference2 => CopySelectedDifferenceAsync(1),
+        FrameCommand.CopySelectedDifference3 => CopySelectedDifferenceAsync(2),
         FrameCommand.ToggleBookmark or FrameCommand.NextBookmark or FrameCommand.PreviousBookmark or FrameCommand.ClearAllBookmarks
             => Run(() => ExecuteBookmarkCommand(command)),
         FrameCommand.Find => Run(() => OpenTextSearch(replace: false)),

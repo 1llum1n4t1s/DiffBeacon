@@ -1,4 +1,6 @@
+using System.Text;
 using Avalonia.Controls;
+using DiffBeacon.Core;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 
@@ -22,6 +24,15 @@ public sealed partial class ComparisonPane
 {
     /// <summary>検証用: 設定するとクリップボードの代わりに使う（利用者のクリップボードを置き換えない）。</summary>
     internal IEditorClipboard? DiffClipboardBridge { get; set; }
+
+    /// <summary>右クリックの「選択した差異(右側)」（二者の Ctrl+2）。三者では隠す。</summary>
+    private readonly List<MenuItem> _copyDiffSecondItems = [];
+
+    /// <summary>右クリックの「選択した差異(中央)」（三者の Ctrl+2）。二者では隠す。</summary>
+    private readonly List<MenuItem> _copyDiffMiddleItems = [];
+
+    /// <summary>右クリックの「選択した差異(右側)」（三者の Ctrl+3）。二者では隠す。</summary>
+    private readonly List<MenuItem> _copyDiffThirdItems = [];
 
     private IEditorClipboard? DiffClipboard()
     {
@@ -126,6 +137,122 @@ public sealed partial class ComparisonPane
         return builder.ToString();
     }
 
+    /// <summary>
+    /// 本家の行番号付きコピー（ID_EDIT_COPY_LINENUMBERS、Ctrl+Shift+C）。
+    /// 選択した表示行のうちゴースト行を除き、最後の表示行の本物の行番号の桁に合わせて右寄せする。
+    /// 各行は「番号: 本文」に、その行の改行を続ける（行を連結しないため）。
+    /// </summary>
+    internal async Task CopyDiffLinesWithNumbersAsync()
+    {
+        if (!DiffEditCommandAvailable(out var side)) return;
+        var view = _diffViews[side];
+        var editor = view.View;
+        if (editor.SelectionLength <= 0) { _status.Text = "選択がありません。"; return; }
+        if (DiffClipboard() is not { } clipboard) { _status.Text = "クリップボードを利用できません。"; return; }
+        var document = editor.Document;
+        var startLine = document.GetLineByOffset(editor.SelectionStart).LineNumber;
+        var endOffset = editor.SelectionStart + editor.SelectionLength;
+        var endLine = document.GetLineByOffset(endOffset > editor.SelectionStart ? endOffset - 1 : editor.SelectionStart).LineNumber;
+        var ghosts = view.GhostLineNumbers();
+        var source = DiffEditorSide.SplitLines(view.SourceText);
+        var chosen = new List<(int Number, string Content, string Ending)>();
+        for (var line = startLine; line <= endLine; line++)
+        {
+            if (ghosts.Contains(line)) continue;
+            var real = view.RealLineOfDisplay(line);
+            if (real < 0 || real >= source.Count) continue;
+            chosen.Add((real + 1, source[real].Content, source[real].Ending));
+        }
+        if (chosen.Count == 0) { _status.Text = "選択がありません。"; return; }
+        // 本家は選択末尾の表示行を ComputeRealLine した行番号の桁幅を使う。
+        var width = Math.Max(1, (view.RealLineOfDisplay(endLine) + 1).ToString().Length);
+        var builder = new StringBuilder();
+        foreach (var (number, content, ending) in chosen)
+        {
+            var digits = number.ToString();
+            if (digits.Length < width) builder.Append(' ', width - digits.Length);
+            builder.Append(digits).Append(": ").Append(content).Append(ending);
+        }
+        await clipboard.WriteTextAsync(builder.ToString());
+    }
+
+    /// <summary>
+    /// 本家の選択した差異のコピー（ID_SEL_DIFF_COPY_1ST／2ND／3RD、Ctrl+1／2／3）。
+    /// 二者では 1 が左、2 が右。三者では 1 が左、2 が中央、3 が右。
+    /// ゴースト行は除き、最後の表示行の改行を足す（CMergeEditView::SelDiffCopy）。
+    /// </summary>
+    internal async Task CopySelectedDifferenceAsync(int ordinal)
+    {
+        if (!DiffEditCommandAvailable(out _)) return;
+        if (SelectedDiffOrdinalSide(ordinal) is not int side) { _status.Text = "その側は比較にありません。"; return; }
+        if (CurrentCopyBlock() is not { } block) { _status.Text = "コピーする差異はありません。"; return; }
+        if (DiffClipboard() is not { } clipboard) { _status.Text = "クリップボードを利用できません。"; return; }
+        await clipboard.WriteTextAsync(SelectedDiffText(block, side));
+    }
+
+    /// <summary>WinMerge のバッファ番号（0 始まり）を、この画面の側（左 0、中央 1、右 2）にする。</summary>
+    private int? SelectedDiffOrdinalSide(int ordinal) => ordinal switch
+    {
+        0 => _diffDisplay.PairLeft,
+        1 => _diffDisplay.ThreeWay ? 1 : _diffDisplay.PairRight,
+        2 => _diffDisplay.ThreeWay ? _diffDisplay.PairRight : null,
+        _ => null,
+    };
+
+    /// <summary>選択中の差分。一覧で選んでいなければ、キャレットのある表示行の差分。</summary>
+    private DiffBlock? CurrentCopyBlock()
+    {
+        if (CurrentDiff is not { } diff || diff.Blocks.Count == 0) return null;
+        if (_selectedBlock >= 0 && _selectedBlock < diff.Blocks.Count) return diff.Blocks[_selectedBlock];
+        var display = _diffViews[SearchSideIndex()].View.TextArea.Caret.Line - 1;
+        var row = _diffDisplay.TwoWayRowOf(display);
+        if (row < 0) return null;
+        return diff.Blocks.FirstOrDefault(block => row >= block.RowStart && row < block.RowStart + block.RowCount);
+    }
+
+    /// <summary>差異の範囲の本物の本文。最後の表示行がゴーストでも、その行の改行は足す。</summary>
+    private string SelectedDiffText(DiffBlock block, int side)
+    {
+        var numbers = _diffDisplay.LineNumbers[side];
+        var lines = DiffEditorSide.SplitLines(_diffDisplay.Texts[side]);
+        var builder = new StringBuilder();
+        var lastRow = block.RowStart + block.RowCount - 1;
+        var lastDisplay = -1;
+        for (var row = block.RowStart; row < block.RowStart + block.RowCount; row++)
+        {
+            var display = _diffDisplay.DisplayRowOf(row);
+            if (display < 0) continue;
+            lastDisplay = display;
+            if (display >= numbers.Length || numbers[display] is not int number || number < 1 || number > lines.Count) continue;
+            var line = lines[number - 1];
+            builder.Append(line.Content);
+            if (row != lastRow) builder.Append(line.Ending);
+        }
+        if (lastDisplay >= 0) builder.Append(EndingOfDisplayRow(side, lastDisplay, lines));
+        return builder.ToString();
+    }
+
+    /// <summary>表示行の改行。ゴースト行は直前の本物の行と同じ改行（表示を作るときと同じ）。</summary>
+    private string EndingOfDisplayRow(int side, int display, List<(string Content, string Ending)> lines)
+    {
+        var numbers = _diffDisplay.LineNumbers[side];
+        if (display >= 0 && display < numbers.Length && numbers[display] is int number && number >= 1 && number <= lines.Count)
+            return lines[number - 1].Ending;
+        for (var row = Math.Min(display, numbers.Length) - 1; row >= 0; row--)
+            if (numbers[row] is int previous && previous >= 1 && previous <= lines.Count && lines[previous - 1].Ending.Length > 0)
+                return lines[previous - 1].Ending;
+        return lines.FirstOrDefault(line => line.Ending.Length > 0).Ending is { Length: > 0 } ending ? ending : "\n";
+    }
+
+    /// <summary>二者と三者で、右クリックの差異コピーの出し分けを本家に合わせる。</summary>
+    private void UpdateSelectedDiffCopyMenu()
+    {
+        var three = _diffDisplay.ThreeWay;
+        foreach (var item in _copyDiffSecondItems) item.IsVisible = !three;
+        foreach (var item in _copyDiffMiddleItems) item.IsVisible = three;
+        foreach (var item in _copyDiffThirdItems) item.IsVisible = three;
+    }
+
     /// <summary>本家の「すべて選択」: フォーカスのあるペインの本文をすべて選ぶ。</summary>
     internal void SelectAllDiffText()
     {
@@ -186,10 +313,21 @@ public sealed partial class ComparisonPane
             return item;
         }
         MenuItem Command(string header, string? gesture, FrameCommand command) => Item(header, gesture, () => ExecuteFrameCommandAsync(command));
+        MenuItem DiffCopy(string msgid, int ordinal, List<MenuItem>? group)
+        {
+            var item = Item(msgid, null, () => CopySelectedDifferenceAsync(ordinal));
+            group?.Add(item);
+            return item;
+        }
         var menu = new ContextMenu
         {
             Items =
             {
+                DiffCopy("Copy Selected Diff (Left) to Clipboard\tCtrl+&1", 0, null),
+                DiffCopy("Copy Selected Diff (Right) to Clipboard\tCtrl+&2", 1, _copyDiffSecondItems),
+                DiffCopy("Copy Selected Diff (Middle) to Clipboard\tCtrl+&2", 1, _copyDiffMiddleItems),
+                DiffCopy("Copy Selected Diff (Right) to Clipboard\tCtrl+&3", 2, _copyDiffThirdItems),
+                new Separator(),
                 Command("Select Line &Difference\tF4", "F4", FrameCommand.SelectLineDifference),
                 new Separator(),
                 Command("&Undo\tCtrl+Z", null, FrameCommand.Undo),
@@ -203,8 +341,9 @@ public sealed partial class ComparisonPane
             },
         };
         // 右クリックしたペインを対象にする（本家は右クリックしたビューのメニューを出す）。
-        menu.Opening += (_, _) => _activeLineBookmarkSide = side.SourceSide;
+        menu.Opening += (_, _) => { _activeLineBookmarkSide = side.SourceSide; UpdateSelectedDiffCopyMenu(); };
         side.View.ContextMenu = menu;
+        UpdateSelectedDiffCopyMenu();
     }
 
     /// <summary>headless検証用: その側の本文の右クリックメニュー。</summary>

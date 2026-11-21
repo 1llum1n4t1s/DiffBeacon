@@ -29,7 +29,10 @@ internal static class HeadlessEditCommandChecks
         var menu = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "編集(_E)");
         var headers = menu.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("edit menu lists the WinMerge edit commands", headers.SequenceEqual(["元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "行内差異を選択(_D)",
-            "すべて選択(_A)", "検索(_I)...", "置換(_C)...", "ブックマーク(_B)", "移動(_G)...", "設定(_O)..."]), string.Join("|", headers));
+            "すべて選択(_A)", "検索(_I)...", "置換(_C)...", "高度な操作", "ブックマーク(_B)", "移動(_G)...", "設定(_O)..."]), string.Join("|", headers));
+        var advanced = menu.Items.OfType<MenuItem>().First(item => item.Header as string == "高度な操作");
+        var advancedHeaders = advanced.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
+        check("edit advanced submenu copies with line numbers", advancedHeaders.SequenceEqual(["行番号付きでコピー(_C)"]), string.Join("|", advancedHeaders));
         var bookmarkMenu = menu.Items.OfType<MenuItem>().First(item => item.Header as string == "ブックマーク(_B)");
         var bookmarkHeaders = bookmarkMenu.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("edit bookmark submenu matches WinMerge", bookmarkHeaders.SequenceEqual(["ブックマークの作成・削除(_T)", "次のブックマークへ移動(_N)", "前のブックマークへ移動(_P)", "すべてのブックマークをクリア(_C)"]),
@@ -104,13 +107,38 @@ internal static class HeadlessEditCommandChecks
 
             // 右クリックメニュー: 本家 IDR_POPUP_MERGEVIEW の対応する項目。コピーは開いたペインの選択を写す。
             var context = pane.DiffEditorContextMenu(2);
-            var contextHeaders = context?.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray() ?? [];
+            var contextHeaders = context?.Items.OfType<MenuItem>().Where(item => item.IsVisible).Select(item => item.Header as string ?? "").ToArray() ?? [];
             Select(pane, 2, right.Document.GetLineByNumber(4).Offset, 5);
             clipboard.Text = null;
             var copyItem = context?.Items.OfType<MenuItem>().FirstOrDefault(item => item.Header as string == "コピー(_C)");
             copyItem?.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent)); Dispatcher.UIThread.RunJobs();
-            check("edit context menu lists WinMerge items and copies", contextHeaders.SequenceEqual(["行内差異を選択(_D)", "元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "移動(_G)..."])
+            check("edit context menu lists WinMerge items and copies", contextHeaders.SequenceEqual(["選択した差異(左側)をクリップボードへコピー", "選択した差異(右側)をクリップボードへコピー", "行内差異を選択(_D)", "元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "移動(_G)..."])
                 && clipboard.Text == "three", $"{string.Join("|", contextHeaders)} clip={Escape(clipboard.Text)}");
+
+            // 行番号付きコピー: 左のゴースト行を飛ばし、本物の行番号と改行を残す。
+            Select(pane, 0, 0, left.Document.TextLength);
+            clipboard.Text = null;
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopyWithLineNumbers));
+            var numbered = clipboard.Text;
+            clipboard.Text = null;
+            Press(window, left, Key.C, KeyModifiers.Control | KeyModifiers.Shift);
+            check("edit copy with line numbers skips ghost lines", numbered == "1: one\r\n2: two\r\n3: three" && clipboard.Text == numbered,
+                $"menu={Escape(numbered)} key={Escape(clipboard.Text)}");
+            Select(pane, 0, 0, 0);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopyWithLineNumbers));
+            check("edit copy with line numbers needs a selection", pane.ComparisonStatus == "選択がありません。", pane.ComparisonStatus ?? "");
+
+            // 選択した差異: 右だけの extra を、左は改行だけ、右は本文と改行でコピーする。
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.NextDifference));
+            clipboard.Text = null;
+            Press(window, left, Key.D1, KeyModifiers.Control);
+            var leftDiff = clipboard.Text;
+            clipboard.Text = null;
+            Press(window, right, Key.D2, KeyModifiers.Control);
+            check("edit copy selected difference uses ctrl+1 and ctrl+2", leftDiff == "\r\n" && clipboard.Text == "extra\n",
+                $"left={Escape(leftDiff)} right={Escape(clipboard.Text)}");
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopySelectedDifference3));
+            check("edit copy selected difference ctrl+3 is only for three panes", pane.ComparisonStatus == "その側は比較にありません。", pane.ComparisonStatus ?? "");
 
             // ブックマーク: Ctrl+F2 で作成・削除、F2／Shift+F2 で次・前（端で回り込む）、すべてクリア。印は行番号の欄に出る。
             pane.FocusDiffEditorRealLine(0, 1); Press(window, left, Key.F2, KeyModifiers.Control);
