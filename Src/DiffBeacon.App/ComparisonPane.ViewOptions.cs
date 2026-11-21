@@ -148,7 +148,7 @@ public sealed partial class ComparisonPane
         for (var index = 0; index < _diffViews.Length; index++)
         {
             var side = _diffViews[index];
-            var showAll = options.DiffContextLines < 0 && !options.DiffContextInvert;
+            var showAll = options.DiffContextLines < 0 && !options.DiffContextInvert && !DisplayFilterHidesAny(model);
             var documentLines = side.View.Document.LineCount;
             // 末尾改行があると AvaloniaEdit は空の最終行を1行足す。差分の行数か、その1行多いときだけ折る。
             var aligned = model.RowCount > 0 && documentLines >= model.RowCount && documentLines <= model.RowCount + 1;
@@ -163,6 +163,7 @@ public sealed partial class ComparisonPane
             }
             var manager = _contextFolds[index] ??= FoldingManager.Install(side.View.TextArea);
             var visible = ContextVisibility(model, options);
+            for (var row = 0; row < visible.Length; row++) if (DisplayFilterHides(model, row)) visible[row] = false;
             var folds = new List<NewFolding>();
             var line = 1;
             var last = model.RowCount;

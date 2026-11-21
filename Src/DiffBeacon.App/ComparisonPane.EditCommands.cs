@@ -34,6 +34,9 @@ public sealed partial class ComparisonPane
     /// <summary>右クリックの「選択した差異(右側)」（三者の Ctrl+3）。二者では隠す。</summary>
     private readonly List<MenuItem> _copyDiffThirdItems = [];
 
+    /// <summary>右クリックの「選択した行を中央にコピー」。二者では隠す。</summary>
+    private readonly List<MenuItem> _copyLinesToMiddleItems = [];
+
     private IEditorClipboard? DiffClipboard()
     {
         if (DiffClipboardBridge is { } bridge) return bridge;
@@ -73,6 +76,13 @@ public sealed partial class ComparisonPane
         if (end <= start) return;
         if (cut && !CanEditText(side, view, "切り取れません")) return;
         if (DiffClipboard() is not { } clipboard) { _status.Text = "クリップボードを利用できません。"; return; }
+        if (view.View.TextArea.Selection is AvaloniaEdit.Editing.RectangleSelection rectangle)
+        {
+            if (cut) { _status.Text = "矩形選択の切り取りはまだできません。"; return; }
+            var boxed = rectangle.GetText().Replace(DiffEditorSide.GhostMark.ToString(), "").Replace(DiffEditorSide.GhostMarkAfterBreak.ToString(), "");
+            await clipboard.WriteTextAsync(boxed);
+            return;
+        }
         var selection = (view.View.SelectionStart, view.View.SelectionLength);
         await clipboard.WriteTextAsync(real[start..end]);
         if (!cut || _disposed) return;
@@ -251,6 +261,7 @@ public sealed partial class ComparisonPane
         foreach (var item in _copyDiffSecondItems) item.IsVisible = !three;
         foreach (var item in _copyDiffMiddleItems) item.IsVisible = three;
         foreach (var item in _copyDiffThirdItems) item.IsVisible = three;
+        foreach (var item in _copyLinesToMiddleItems) item.IsVisible = three;
     }
 
     /// <summary>本家の「すべて選択」: フォーカスのあるペインの本文をすべて選ぶ。</summary>
@@ -313,22 +324,45 @@ public sealed partial class ComparisonPane
             return item;
         }
         MenuItem Command(string header, string? gesture, FrameCommand command) => Item(header, gesture, () => ExecuteFrameCommandAsync(command));
+        MenuItem MenuFilters()
+        {
+            var filters = new MenuItem { Header = UiText.Menu("Add to &Filters"), Tag = "Add to &Filters" };
+            filters.Items.Add(Command("Add to &Display Filter", null, FrameCommand.AddToDisplayFilters));
+            filters.Items.Add(Command("Add to &Line Filters", null, FrameCommand.AddToLineFilters));
+            filters.Items.Add(Command("Add to Substitution &Filters", null, FrameCommand.AddToSubstitutionFilters));
+            return filters;
+        }
+        MenuItem MenuPopupOpen()
+        {
+            var open = new MenuItem { Header = UiText.Menu("Op&en"), Tag = "Op&en" };
+            open.Items.Add(Command("With &Registered Application", null, FrameCommand.OpenRegistered));
+            open.Items.Add(Command("With &External Editor\tCtrl+Alt+E", null, FrameCommand.OpenExternalEditor));
+            open.Items.Add(Command("Open &Parent Folder...", null, FrameCommand.OpenParentFolder));
+            return open;
+        }
         MenuItem DiffCopy(string msgid, int ordinal, List<MenuItem>? group)
         {
             var item = Item(msgid, null, () => CopySelectedDifferenceAsync(ordinal));
             group?.Add(item);
             return item;
         }
+        var linesToMiddle = Command("Copy Selected Lines to Middle", null, FrameCommand.CopyLinesToMiddle);
+        _copyLinesToMiddleItems.Add(linesToMiddle);
         var menu = new ContextMenu
         {
             Items =
             {
+                Command("Copy Selected Lines to Right", null, FrameCommand.CopyLinesToRight),
+                Command("Copy Selected Lines to Left", null, FrameCommand.CopyLinesToLeft),
+                linesToMiddle,
+                new Separator(),
                 DiffCopy("Copy Selected Diff (Left) to Clipboard\tCtrl+&1", 0, null),
                 DiffCopy("Copy Selected Diff (Right) to Clipboard\tCtrl+&2", 1, _copyDiffSecondItems),
                 DiffCopy("Copy Selected Diff (Middle) to Clipboard\tCtrl+&2", 1, _copyDiffMiddleItems),
                 DiffCopy("Copy Selected Diff (Right) to Clipboard\tCtrl+&3", 2, _copyDiffThirdItems),
                 new Separator(),
                 Command("Select Line &Difference\tF4", "F4", FrameCommand.SelectLineDifference),
+                MenuFilters(),
                 new Separator(),
                 Command("&Undo\tCtrl+Z", null, FrameCommand.Undo),
                 Command("&Redo\tCtrl+Y", null, FrameCommand.Redo),
@@ -337,7 +371,16 @@ public sealed partial class ComparisonPane
                 Item("&Copy\tCtrl+C", null, () => CopyDiffSelectionAsync(cut: false)),
                 Item("&Paste\tCtrl+V", null, PasteDiffTextAsync),
                 new Separator(),
+                new MenuItem
+                {
+                    Header = UiText.Menu("&Scripts"),
+                    Tag = "&Scripts",
+                    Items = { new MenuItem { Header = UiText.Menu("< Empty >"), IsEnabled = false, Tag = "< Empty >" } },
+                },
+                new Separator(),
                 Command("&Go to...\tCtrl+G", "Ctrl+G", FrameCommand.GoTo),
+                Command("Go to &Definition\tF12", "F12", FrameCommand.GoToDefinition),
+                MenuPopupOpen(),
             },
         };
         // 右クリックしたペインを対象にする（本家は右クリックしたビューのメニューを出す）。

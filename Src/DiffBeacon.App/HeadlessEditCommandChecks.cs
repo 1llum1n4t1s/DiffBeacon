@@ -1,4 +1,5 @@
 using System.Text;
+using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
@@ -29,7 +30,7 @@ internal static class HeadlessEditCommandChecks
         var menu = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "編集(_E)");
         var headers = menu.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("edit menu lists the WinMerge edit commands", headers.SequenceEqual(["元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "行内差異を選択(_D)",
-            "すべて選択(_A)", "検索(_I)...", "置換(_C)...", "高度な操作", "ブックマーク(_B)", "移動(_G)...", "設定(_O)..."]), string.Join("|", headers));
+            "すべて選択(_A)", "検索(_I)...", "置換(_C)...", "マーカー(_M)...", "高度な操作", "ブックマーク(_B)", "移動(_G)...", "設定(_O)..."]), string.Join("|", headers));
         var advanced = menu.Items.OfType<MenuItem>().First(item => item.Header as string == "高度な操作");
         var advancedHeaders = advanced.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("edit advanced submenu copies with line numbers", advancedHeaders.SequenceEqual(["行番号付きでコピー(_C)"]), string.Join("|", advancedHeaders));
@@ -112,7 +113,7 @@ internal static class HeadlessEditCommandChecks
             clipboard.Text = null;
             var copyItem = context?.Items.OfType<MenuItem>().FirstOrDefault(item => item.Header as string == "コピー(_C)");
             copyItem?.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent)); Dispatcher.UIThread.RunJobs();
-            check("edit context menu lists WinMerge items and copies", contextHeaders.SequenceEqual(["選択した差異(左側)をクリップボードへコピー", "選択した差異(右側)をクリップボードへコピー", "行内差異を選択(_D)", "元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "移動(_G)..."])
+            check("edit context menu lists WinMerge items and copies", contextHeaders.SequenceEqual(["選択した行を右側にコピー", "選択した行を左側にコピー", "選択した差異(左側)をクリップボードへコピー", "選択した差異(右側)をクリップボードへコピー", "行内差異を選択(_D)", "フィルターに追加(_F)", "元に戻す(_U)", "やり直し(_R)", "切り取り(_T)", "コピー(_C)", "貼り付け(_P)", "スクリプト(_S)", "移動(_G)...", "定義へ移動(_D)", "開く(_E)"])
                 && clipboard.Text == "three", $"{string.Join("|", contextHeaders)} clip={Escape(clipboard.Text)}");
 
             // 行番号付きコピー: 左のゴースト行を飛ばし、本物の行番号と改行を残す。
@@ -139,6 +140,35 @@ internal static class HeadlessEditCommandChecks
                 $"left={Escape(leftDiff)} right={Escape(clipboard.Text)}");
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopySelectedDifference3));
             check("edit copy selected difference ctrl+3 is only for three panes", pane.ComparisonStatus == "その側は比較にありません。", pane.ComparisonStatus ?? "");
+
+            // 右の extra の行を左へコピーする。
+            var extraLine = right.Document.GetLineByNumber(2);
+            Select(pane, 2, extraLine.Offset, extraLine.Length);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopyLinesToLeft));
+            check("edit copy selected line inserts the right-only line on the left", pane.LeftEditor.Text == "one\r\nextra\ntwo\r\nthree", Escape(pane.LeftEditor.Text));
+            pane.UndoText(); Dispatcher.UIThread.RunJobs();
+
+            Select(pane, 2, right.Document.GetLineByNumber(2).Offset, 5);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddToLineFilters));
+            check("edit add to line filter escapes and stores the selection", pane.LineFilterPattern == "extra", pane.LineFilterPattern);
+            pane.LineFilterPattern = "";
+            pane.CompareEditors();
+
+            Select(pane, 2, right.Document.GetLineByNumber(2).Offset, 5);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddToDisplayFilters));
+            check("edit display filter keeps only lines containing the selection", pane.DisplayFilter == "Line contains \"extra\"", pane.DisplayFilter);
+
+            var launched = new List<string>();
+            pane.ExternalLauncher = launched.Add;
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenRegistered));
+            check("edit open registered application launches the focused file", launched.Count == 1 && launched[0] == pane.RightPath.Text, string.Join("|", launched));
+            pane.ExternalLauncher = null;
+
+            Select(pane, 2, right.Document.GetLineByNumber(2).Offset, 5);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddMarker));
+            check("edit marker records the selection", pane.TextMarkers.Count == 1 && pane.TextMarkers[0] == "extra" && pane.DiffEditor(0).Options.EnableRectangularSelection,
+                string.Join("|", pane.TextMarkers));
+            pane.ClearTextMarkers();
 
             // ブックマーク: Ctrl+F2 で作成・削除、F2／Shift+F2 で次・前（端で回り込む）、すべてクリア。印は行番号の欄に出る。
             pane.FocusDiffEditorRealLine(0, 1); Press(window, left, Key.F2, KeyModifiers.Control);
