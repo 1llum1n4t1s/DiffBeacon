@@ -52,6 +52,12 @@ internal sealed record TextViewSettings
     public int ToolbarIconSize { get; init; } = 16;
     /// <summary>ダークテーマ。既定は明るい配色。</summary>
     public bool DarkTheme { get; init; }
+    /// <summary>本家の出力ペイン。既定は隠す。</summary>
+    public bool ShowOutputPane { get; init; }
+    /// <summary>比較タブをタイトルバー上に置く。既定は通常の見出し。</summary>
+    public bool TabBarOnTitleBar { get; init; }
+    /// <summary>外部エディターのコマンド。空のときは Windows だけメモ帳。</summary>
+    public string ExternalEditorCommand { get; init; } = "";
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true,
@@ -121,6 +127,8 @@ internal sealed class TextViewOptionsStore
             throw new InvalidDataException("表示メニューの設定の言語名が不正です。");
         if (settings.ToolbarIconSize is not (16 or 24 or 32 or 48))
             throw new InvalidDataException($"表示メニューの設定のツールバーの大きさは 16、24、32、48 です: {settings.ToolbarIconSize}");
+        if (settings.ExternalEditorCommand.Length > 1024 || settings.ExternalEditorCommand.IndexOfAny(['\r', '\n', '\0']) >= 0)
+            throw new InvalidDataException("表示メニューの設定の外部エディターは1024文字以下の1行にしてください。");
     }
 
     internal bool Reload()

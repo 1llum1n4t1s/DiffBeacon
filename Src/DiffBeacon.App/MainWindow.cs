@@ -70,6 +70,9 @@ public sealed partial class MainWindow : Window
         _showMenuBar = textViewOptionsStore.Current.ShowMenuBar;
         _toolbarIconSize = textViewOptionsStore.Current.ToolbarIconSize;
         _darkTheme = textViewOptionsStore.Current.DarkTheme;
+        _showOutputPane = textViewOptionsStore.Current.ShowOutputPane;
+        _tabBarOnTitleBar = textViewOptionsStore.Current.TabBarOnTitleBar;
+        _externalEditorCommand = textViewOptionsStore.Current.ExternalEditorCommand;
         if (Application.Current is { } application)
             application.RequestedThemeVariant = _darkTheme ? Avalonia.Styling.ThemeVariant.Dark : Avalonia.Styling.ThemeVariant.Light;
         TextViewOptions.Changed += SaveViewMenuOptions;
@@ -100,6 +103,10 @@ public sealed partial class MainWindow : Window
         var header = BuildFrame();
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
+        _outputText = new TextBox { Name = "output-pane", IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.NoWrap, MinHeight = 72, MaxHeight = 160, FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 12 };
+        _outputHost = new Border { Name = "output-pane-host", IsVisible = _showOutputPane, Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0), Child = _outputText };
+        DockPanel.SetDock(_outputHost, Dock.Bottom);
+        root.Children.Add(_outputHost);
         _tabs.Background = WinMergeColors.FrameFace;
         _tabs.Padding = new Thickness(0);
         root.Children.Add(_tabs);
@@ -113,6 +120,7 @@ public sealed partial class MainWindow : Window
                 VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
             DockPanel.SetDock(SessionHeaders, Dock.Top); dock.Children.Insert(0, SessionHeaders);
             SessionHeaders.IsVisible = _showTabBar;
+            ApplyTabBarOnTitleBar();
             SessionHeaders.SizeChanged += (_, _) => QueueSelectedHeader();
             QueueSelectedHeader();
         };

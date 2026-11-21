@@ -49,7 +49,7 @@ internal static partial class HeadlessViewOptionsChecks
         var headers = view.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
         check("view menu lists the WinMerge text view options", headers.SequenceEqual(["拡大/縮小(_Z)", "空白を表示(_V)", "改行を表示(_O)", "行内差異を表示(_W)", "行番号を表示(_N)",
             "マージンを表示(_M)", "上マージンを表示(_P)", "行を右端で折返す(_R)", "フォント", "シンタックス ハイライト", "Diff コンテキスト(_D)", "ペインをロック(_L)", "垂直分割(_E)",
-            "タブ バーを表示(_V)", "メニューバー(_U)", "表示フィルター(_Y)", "ツールバー(_T)", "Toolbar Size", "ステータス バー(_S)", "Diff ペイン(_P)", "ロケーション ペイン(_C)", "ペインの交換(_A)", "ダーク テーマ(_D)", "言語(_L)", "最新の情報に更新"]), string.Join("|", headers));
+            "タブ バーを表示(_V)", "タイトルバー上に配置(_O)", "メニューバー(_U)", "表示フィルター(_Y)", "ツールバー(_T)", "Toolbar Size", "出力 ペイン", "ステータス バー(_S)", "Diff ペイン(_P)", "ロケーション ペイン(_C)", "ペインの交換(_A)", "ダーク テーマ(_D)", "言語(_L)", "最新の情報に更新"]), string.Join("|", headers));
         var zoomMenu = view.Items.OfType<MenuItem>().First(item => item.Header as string == "拡大/縮小(_Z)");
         var zoomItems = zoomMenu.Items.OfType<MenuItem>().ToArray();
         // メニューに出るキーの文字は、テーマのメニュー項目が使う変換（PlatformKeyGestureConverter）を通した文字列で確かめる。
@@ -73,6 +73,17 @@ internal static partial class HeadlessViewOptionsChecks
         Compare(pane, work, "plain", leftOriginal, rightOriginal, pump);
         var left = pane.DiffEditor(0); var right = pane.DiffEditor(2);
         check("view fixture has ghost lines on the left", pane.DiffEditorGhostLineCount(0) == 2, pane.DiffEditorGhostLineCount(0).ToString());
+        Click(MenuOption(window, "view-output"));
+        window.AppendOutput("hello");
+        var outputHost = window.GetVisualDescendants().OfType<Border>().First(border => border.Name == "output-pane-host");
+        var output = window.GetVisualDescendants().OfType<TextBox>().First(box => box.Name == "output-pane");
+        check("view output pane shows appended lines", outputHost.IsVisible && output.Text == "hello", output.Text ?? "");
+        Click(MenuOption(window, "view-output"));
+        check("view output pane can hide", !outputHost.IsVisible, outputHost.IsVisible.ToString());
+        Click(MenuOption(window, "view-tab-title"));
+        check("view tab bar can move onto the title bar", window.ExtendClientAreaToDecorationsHint, window.ExtendClientAreaToDecorationsHint.ToString());
+        Click(MenuOption(window, "view-tab-title"));
+        check("view tab bar can leave the title bar", !window.ExtendClientAreaToDecorationsHint, window.ExtendClientAreaToDecorationsHint.ToString());
 
         var filterItem = view.Items.OfType<MenuItem>().First(item => item.Header as string == "表示フィルター(_Y)");
         Click(filterItem);

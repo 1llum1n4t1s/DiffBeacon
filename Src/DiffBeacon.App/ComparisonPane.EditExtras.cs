@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using Avalonia.Platform.Storage;
@@ -321,8 +322,56 @@ public sealed partial class ComparisonPane
         LaunchExternal(directory);
     }
 
-    /// <summary>外部エディターは設定画面が無いので開かない。</summary>
-    internal void OpenWithExternalEditor() => _status.Text = "外部エディターは設定されていません。";
+    /// <summary>フォーカスのある側のファイルを、設定した外部エディターで開く。$file と $linenum を置き換える。</summary>
+    internal void OpenWithExternalEditor()
+    {
+        if (FocusedPath() is not { } path) return;
+        var line = 1;
+        if (DiffTabActive() && CurrentDiff is not null && _diffDisplay.RowCount > 0)
+            line = Math.Max(1, _diffViews[SearchSideIndex()].View.TextArea.Caret.Line);
+        var command = (_owner as MainWindow)?.ExternalEditorCommand ?? "";
+        if (command.Length == 0)
+        {
+            if (!OperatingSystem.IsWindows()) { _status.Text = "外部エディターは設定されていません。"; return; }
+            command = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "notepad.exe");
+        }
+        var expanded = ExpandEditorCommand(command, path, line);
+        (_owner as MainWindow)?.AppendOutput(expanded);
+        if (ExternalLauncher is { } launch) { launch(expanded); _status.Text = "外部エディターを起動しました。"; return; }
+        try
+        {
+            var (file, arguments) = SplitCommand(expanded);
+            Process.Start(new ProcessStartInfo(file) { UseShellExecute = false, Arguments = arguments });
+            _status.Text = "外部エディターを起動しました。";
+        }
+        catch (Exception ex) when (ex is Win32Exception or FileNotFoundException or InvalidOperationException)
+        {
+            _status.Text = "外部エディターを起動できませんでした: " + ex.Message;
+        }
+    }
+
+    /// <summary>外部エディターのコマンドの $file と $linenum を、開くファイルと行へ置き換える。</summary>
+    internal static string ExpandEditorCommand(string command, string file, int line)
+    {
+        var expanded = Environment.ExpandEnvironmentVariables(command).Replace("$linenum", line.ToString(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        var quoted = "\"" + file.Replace("\"", "") + "\"";
+        if (expanded.Contains("$file", StringComparison.Ordinal)) return expanded.Replace("$file", quoted, StringComparison.Ordinal);
+        return expanded + " " + quoted;
+    }
+
+    /// <summary>コマンド文字列を、実行ファイルと引数へ分ける。</summary>
+    private static (string FileName, string Arguments) SplitCommand(string command)
+    {
+        var text = command.Trim();
+        if (text.StartsWith('"'))
+        {
+            var end = text.IndexOf('"', 1);
+            if (end < 0) return (text.Trim('"'), "");
+            return (text[1..end], text[(end + 1)..].Trim());
+        }
+        var space = text.IndexOf(' ');
+        return space < 0 ? (text, "") : (text[..space], text[(space + 1)..].Trim());
+    }
 
     /// <summary>定義へ移動する記号索引は無い。</summary>
     internal void GoToDefinition() => _status.Text = "定義へ移動する言語サービスはありません。";

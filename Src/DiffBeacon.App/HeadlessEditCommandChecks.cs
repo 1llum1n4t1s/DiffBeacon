@@ -164,7 +164,14 @@ internal static class HeadlessEditCommandChecks
             pane.ExternalLauncher = launched.Add;
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenRegistered));
             check("edit open registered application launches the focused file", launched.Count == 1 && launched[0] == pane.RightPath.Text, string.Join("|", launched));
+            window.ExternalEditorCommand = "editor $file --line $linenum";
+            launched.Clear();
+            pane.FocusDiffEditorRealLine(2, 0);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenExternalEditor));
+            var editorPath = pane.RightPath.Text ?? "";
+            check("edit external editor expands the file and the line", launched.Count == 1 && launched[0].Contains(editorPath, StringComparison.Ordinal) && launched[0].Contains("--line 1", StringComparison.Ordinal), launched.FirstOrDefault() ?? "");
             pane.ExternalLauncher = null;
+            window.ExternalEditorCommand = "";
 
             Select(pane, 2, right.Document.GetLineByNumber(2).Offset, 5);
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddMarker));

@@ -162,6 +162,7 @@ public sealed partial class MainWindow
             LockPanesItem(options),
             ViewOption("Split V&ertically", "view-split", () => options.VerticalSplit, value => options.VerticalSplit = value),
             tabBarVisible,
+            ChromeItem("&On Title Bar", "view-tab-title", () => _tabBarOnTitleBar, value => SetTabBarOnTitleBar(value, save: true)),
             menuBarVisible,
             _displayFilterItem = new MenuItem
             {
@@ -172,6 +173,7 @@ public sealed partial class MainWindow
             Separator(),
             toolbarVisible,
             toolbarSize,
+            ChromeItem("Output Pane", "view-output", () => _showOutputPane, value => SetOutputPaneVisible(value, save: true)),
             statusVisible,
             diffPaneVisible,
             locationVisible,
@@ -579,6 +581,11 @@ public sealed partial class MainWindow
     private bool _showDiffPane = true;
     private bool _showTabBar = true;
     private bool _showMenuBar = true;
+    private bool _showOutputPane;
+    private bool _tabBarOnTitleBar;
+    private string _externalEditorCommand = "";
+    private Border? _outputHost;
+    private TextBox? _outputText;
     private int _toolbarIconSize = 16;
     private bool _darkTheme;
     private bool _mergingMode;
@@ -705,6 +712,50 @@ public sealed partial class MainWindow
         if (save) SaveViewMenuOptions();
     }
 
+    /// <summary>外部エディターのコマンド。$file と $linenum を使える。</summary>
+    internal string ExternalEditorCommand
+    {
+        get => _externalEditorCommand;
+        set { _externalEditorCommand = value ?? ""; SaveViewMenuOptions(); }
+    }
+
+    /// <summary>出力ペインへ1行足す。本家の出力ウィンドウと同じく、操作の記録用。</summary>
+    internal void AppendOutput(string line)
+    {
+        if (_outputText is null || line.Length == 0) return;
+        var text = _outputText.Text ?? "";
+        if (text.Length > 0 && !text.EndsWith('\n')) text += "\n";
+        text += line.Replace("\r", "").Replace("\n", " ");
+        if (text.Length > 32768) text = text[^16384..];
+        _outputText.Text = text;
+        _outputText.CaretIndex = text.Length;
+    }
+
+    /// <summary>出力ペインを出し入れする。</summary>
+    private void SetOutputPaneVisible(bool visible, bool save)
+    {
+        _showOutputPane = visible;
+        if (_outputHost is not null) _outputHost.IsVisible = visible;
+        if (save) SaveViewMenuOptions();
+    }
+
+    /// <summary>比較タブをタイトルバーの領域へ置く、または通常の見出しへ戻す。</summary>
+    private void SetTabBarOnTitleBar(bool onTitleBar, bool save)
+    {
+        _tabBarOnTitleBar = onTitleBar;
+        ApplyTabBarOnTitleBar();
+        if (save) SaveViewMenuOptions();
+    }
+
+    /// <summary>タイトルバー上のタブ。既定ではシステムタイトルの下に見出しを置く。</summary>
+    private void ApplyTabBarOnTitleBar()
+    {
+        ExtendClientAreaToDecorationsHint = _tabBarOnTitleBar;
+        ExtendClientAreaTitleBarHeightHint = _tabBarOnTitleBar ? 36 : -1;
+        if (SessionHeaders is not null)
+            SessionHeaders.Margin = _tabBarOnTitleBar ? new Thickness(8, 0, 120, 0) : new Thickness(0);
+    }
+
     /// <summary>比較タブの見出しを出し入れする。テンプレート適用前は値だけ覚え、適用時に帯へ写す。</summary>
     private void SetTabBarVisible(bool visible, bool save)
     {
@@ -792,7 +843,7 @@ public sealed partial class MainWindow
     // 本家と同じく、表示メニューの設定は変えるたびに保存する。失敗しても表示はそのまま使い、理由を状態欄へ出す。
     private void SaveViewMenuOptions()
     {
-        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane, _showTabBar, _showMenuBar, _toolbarIconSize, _darkTheme))) return;
+        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane, _showTabBar, _showMenuBar, _toolbarIconSize, _darkTheme, _showOutputPane, _tabBarOnTitleBar, _externalEditorCommand))) return;
         if (_sessions.Count > 0) ActivePane.ShowViewOptionsStatus(TextViewOptionsStorage.Diagnostic + " 表示はこの起動の間だけ変えています。");
     }
 
