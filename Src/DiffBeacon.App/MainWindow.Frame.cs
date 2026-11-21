@@ -54,6 +54,20 @@ public sealed partial class MainWindow
         menu.Items.Add(MenuPopup("&File",
             Labeled("&New", "Ctrl+N", () => AddSessionFromUiAsync()),
             Labeled("&Open...\tCtrl+O", "Ctrl+O", () => { FocusPaths(); return Task.CompletedTask; }),
+            Labeled("Open Conflic&t File...", null, PaneAction(FrameCommand.OpenConflict)),
+            Labeled("Open C&lipboard", null, PaneAction(FrameCommand.OpenClipboard)),
+            MenuPopup("Reco&mpare As",
+                Labeled("&Text", null, () => ActivePane.RecompareAsAsync(1)),
+                Labeled("T&able", null, () => ActivePane.RecompareAsAsync(6)),
+                Labeled("&Binary", null, () => ActivePane.RecompareAsAsync(3)),
+                Labeled("&Image", null, () => ActivePane.RecompareAsAsync(4)),
+                Labeled("A&rchive", null, () => ActivePane.RecompareAsAsync(7))),
+            MenuPopup("&File Encoding...",
+                Labeled("UTF-8", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "utf-8"); return Task.CompletedTask; }),
+                Labeled("UTF-8 BOM", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "utf-8-bom"); return Task.CompletedTask; }),
+                Labeled("UTF-16 LE", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "utf-16"); return Task.CompletedTask; }),
+                Labeled("Windows-1252", null, () => { ActivePane.SetSideEncoding(ActivePane.FocusedTextSide, "windows-1252"); return Task.CompletedTask; })),
+            _recentFiles = MenuPopup("Recent F&iles or Folders", new MenuItem { Header = UiText.Menu("< Empty >"), IsEnabled = false }),
             Separator(),
             Labeled("Open Pro&ject...\tCtrl+J", "Ctrl+J", PaneAction(FrameCommand.OpenProject)),
             Labeled("Sa&ve Project...", null, PaneAction(FrameCommand.SaveProject)),
@@ -67,9 +81,21 @@ public sealed partial class MainWindow
                 Labeled("Save &Left As...", null, PaneAction(FrameCommand.SaveLeftAs)),
                 Labeled("Save &Right As...", null, PaneAction(FrameCommand.SaveRightAs))),
             Separator(),
+            MenuPopup("&Read-Only",
+                Labeled("L&eft Read-Only", null, PaneAction(FrameCommand.ReadOnlyLeft)),
+                Labeled("M&iddle Read-Only", null, PaneAction(FrameCommand.ReadOnlyMiddle)),
+                Labeled("Ri&ght Read-Only", null, PaneAction(FrameCommand.ReadOnlyRight))),
+            MenuPopup("&Convert Line Endings to",
+                Labeled("&Windows (CRLF)", null, PaneAction(FrameCommand.EolToWindows)),
+                Labeled("&Unix (LF)", null, PaneAction(FrameCommand.EolToUnix)),
+                Labeled("&Mac (CR)", null, PaneAction(FrameCommand.EolToMac))),
+            Separator(),
             Item("比較を包装(_K)...", null, ShowPackagingDialogAsync),
             Separator(),
+            _mergeModeItem = new MenuItem { Header = UiText.Menu("Mer&ge Mode\tF9"), Tag = "Mer&ge Mode\tF9", ToggleType = MenuItemToggleType.CheckBox, InputGesture = new KeyGesture(Key.F9) },
+            Separator(),
             Labeled("E&xit\tCtrl+Q", "Ctrl+Q", () => { Close(); return Task.CompletedTask; })));
+        _mergeModeItem.Click += (_, _) => ToggleMergingMode();
         menu.Items.Add(MenuPopup("&Edit",
             Labeled("&Undo\tCtrl+Z", "Ctrl+Z", PaneAction(FrameCommand.Undo)),
             Labeled("&Redo\tCtrl+Y", "Ctrl+Y", PaneAction(FrameCommand.Redo)),
@@ -83,6 +109,9 @@ public sealed partial class MainWindow
             Separator(),
             Labeled("F&ind...\tCtrl+F", "Ctrl+F", PaneAction(FrameCommand.Find)),
             Labeled("Repla&ce...\tCtrl+H", "Ctrl+H", PaneAction(FrameCommand.Replace)),
+            Labeled("&Marker...\tCtrl+Shift+M", "Ctrl+Shift+M", PaneAction(FrameCommand.AddMarker)),
+            MenuPopup("Advanced",
+                Labeled("&Copy With Line Numbers\tCtrl+Shift+C", "Ctrl+Shift+C", PaneAction(FrameCommand.CopyWithLineNumbers))),
             Separator(),
             MenuPopup("&Bookmarks",
                 Labeled("&Toggle Bookmark\tCtrl+F2", "Ctrl+F2", PaneAction(FrameCommand.ToggleBookmark)),
@@ -92,15 +121,18 @@ public sealed partial class MainWindow
             Labeled("&Go to...\tCtrl+G", "Ctrl+G", PaneAction(FrameCommand.GoTo)),
             Separator(),
             Labeled("&Options...\tCtrl+,", "Ctrl+,", PaneAction(FrameCommand.Options))));
-        var darkTheme = new MenuItem { Header = "ダーク テーマ(_D)", ToggleType = MenuItemToggleType.CheckBox };
+        var darkTheme = new MenuItem { Header = "ダーク テーマ(_D)", ToggleType = MenuItemToggleType.CheckBox, IsChecked = _darkTheme };
         darkTheme.Click += (_, _) =>
         {
-            var dark = Application.Current!.ActualThemeVariant != Avalonia.Styling.ThemeVariant.Dark;
-            Application.Current.RequestedThemeVariant = dark ? Avalonia.Styling.ThemeVariant.Dark : Avalonia.Styling.ThemeVariant.Light;
-            darkTheme.IsChecked = dark;
+            _darkTheme = Application.Current!.ActualThemeVariant != Avalonia.Styling.ThemeVariant.Dark;
+            Application.Current.RequestedThemeVariant = _darkTheme ? Avalonia.Styling.ThemeVariant.Dark : Avalonia.Styling.ThemeVariant.Light;
+            darkTheme.IsChecked = _darkTheme;
+            SaveViewMenuOptions();
         };
         var toolbarVisible = _toolbarMenuItem = new MenuItem { Name = "frame-menu-view-toolbar", Header = UiText.Menu("&Toolbar"), Tag = "&Toolbar", ToggleType = MenuItemToggleType.CheckBox, IsChecked = _showToolbar };
         toolbarVisible.Click += (_, _) => SetToolbarVisible(!_showToolbar, save: true);
+        var toolbarSize = MenuPopup("Toolbar Size",
+            ToolbarSizeItem("Small", 16), ToolbarSizeItem("Medium", 24), ToolbarSizeItem("Big", 32), ToolbarSizeItem("Huge", 48));
         var statusVisible = ChromeItem("&Status Bar", "view-status", () => _showStatusBar, value => { _showStatusBar = value; ApplyChrome(); });
         var diffPaneVisible = ChromeItem("Diff &Pane", "view-diff-pane", () => _showDiffPane, value => { _showDiffPane = value; ApplyChrome(); });
         var locationVisible = ChromeItem("Lo&cation Pane", "view-location", () => _showLocationPane, value => { _showLocationPane = value; ApplyChrome(); });
@@ -130,9 +162,18 @@ public sealed partial class MainWindow
             LockPanesItem(options),
             ViewOption("Split V&ertically", "view-split", () => options.VerticalSplit, value => options.VerticalSplit = value),
             tabBarVisible,
+            ChromeItem("&On Title Bar", "view-tab-title", () => _tabBarOnTitleBar, value => SetTabBarOnTitleBar(value, save: true)),
             menuBarVisible,
+            _displayFilterItem = new MenuItem
+            {
+                Header = UiText.Menu("Displa&y Filter Bar\tCtrl+Shift+L"),
+                ToggleType = MenuItemToggleType.CheckBox,
+                InputGesture = new KeyGesture(Key.L, KeyModifiers.Control | KeyModifiers.Shift),
+            },
             Separator(),
             toolbarVisible,
+            toolbarSize,
+            ChromeItem("Output Pane", "view-output", () => _showOutputPane, value => SetOutputPaneVisible(value, save: true)),
             statusVisible,
             diffPaneVisible,
             locationVisible,
@@ -143,7 +184,16 @@ public sealed partial class MainWindow
             darkTheme,
             LanguageMenu(),
             Separator(),
+            ChromeItem("Show &Identical Items", "view-show-identical", () => _showIdenticalItems, SetShowIdenticalItems),
+            ChromeItem("Show &Different Items", "view-show-different", () => _showDifferentItems, SetShowDifferentItems),
+            ChromeItem("Show L&eft Unique Items", "view-show-unique-left", () => _showUniqueLeftItems, SetShowUniqueLeftItems),
+            ChromeItem("Show Midd&le Unique Items", "view-show-unique-middle", () => _showUniqueMiddleItems, SetShowUniqueMiddleItems),
+            ChromeItem("Show Ri&ght Unique Items", "view-show-unique-right", () => _showUniqueRightItems, SetShowUniqueRightItems),
+            ChromeItem("Show S&kipped Items", "view-show-skipped", () => _showSkippedItems, SetShowSkippedItems),
+            Labeled("Com&pare Statistics...", null, () => ActivePane.ShowFolderStatisticsAsync()),
+            Separator(),
             Labeled("Refresh\tF5", "F5", PaneAction(FrameCommand.Refresh))));
+        _displayFilterItem.Click += (_, _) => ToggleDisplayFilterBar();
         menu.Items.Add(MenuPopup("&Merge",
             Labeled("&Next Difference\tAlt+Down", "Alt+Down", PaneAction(FrameCommand.NextDifference)),
             Labeled("&Previous Difference\tAlt+Up", "Alt+Up", PaneAction(FrameCommand.PreviousDifference)),
@@ -233,10 +283,11 @@ public sealed partial class MainWindow
 
     private Button ToolbarButton(ToolbarImage image, string tip, Func<Task>? action)
     {
-        var icon = new Image { Source = ToolbarIcon(image), Width = 16, Height = 16, Stretch = Stretch.Uniform };
+        var icon = new Image { Source = ToolbarIcon(image), Width = _toolbarIconSize, Height = _toolbarIconSize, Stretch = Stretch.Uniform };
+        _toolbarIcons.Add(icon);
         var button = new Button
         {
-            Name = "frame-toolbar-" + image, Content = icon, Width = 24, Height = 24, Padding = new Thickness(3),
+            Name = "frame-toolbar-" + image, Content = icon, Width = _toolbarIconSize + 8, Height = _toolbarIconSize + 8, Padding = new Thickness(3),
             Background = Brushes.Transparent, BorderThickness = new Thickness(0), IsEnabled = action is not null,
         };
         // 本家は未対応・使用不可のボタンを灰色で表示する。Avalonia の既定では画像が薄くならないので明示する。
@@ -538,7 +589,39 @@ public sealed partial class MainWindow
     private bool _showDiffPane = true;
     private bool _showTabBar = true;
     private bool _showMenuBar = true;
+    private bool _showOutputPane;
+    private bool _showIdenticalItems = true;
+    private bool _showDifferentItems = true;
+    private bool _showUniqueLeftItems = true;
+    private bool _showUniqueMiddleItems = true;
+    private bool _showUniqueRightItems = true;
+    private bool _showSkippedItems = true;
+    private bool _tabBarOnTitleBar;
+    private string _externalEditorCommand = "";
+    private readonly Border? _outputHost;
+    private readonly TextBox? _outputText;
+    private int _toolbarIconSize = 16;
+    private bool _darkTheme;
+    private bool _mergingMode;
+    private readonly List<Image> _toolbarIcons = [];
+    private readonly List<MenuItem> _toolbarSizeItems = [];
+    private readonly List<string> _recent = [];
     private MenuItem? _toolbarMenuItem;
+    private MenuItem _recentFiles = new();
+    private MenuItem _mergeModeItem = new();
+    private MenuItem _displayFilterItem = new();
+
+    /// <summary>表示メニューの表示フィルターのチェックを、いまの欄の表示に合わせる。</summary>
+    internal void SyncDisplayFilterMenu(bool visible) => _displayFilterItem.IsChecked = visible;
+
+    /// <summary>アクティブなタブの表示フィルター欄を出す、または隠す。</summary>
+    private void ToggleDisplayFilterBar()
+    {
+        if (_sessions.Count == 0) return;
+        var visible = !ActivePane.DisplayFilterBarVisible;
+        ActivePane.SetDisplayFilterBarVisible(visible);
+        ActivePane.SetStatus(visible ? "表示フィルターを表示しました。" : "表示フィルターを隠しました。");
+    }
 
     /// <summary>自己検証用: メニューバーが表示されているか。</summary>
     internal bool FrameMenuVisible => FrameMenu?.IsVisible != false;
@@ -548,12 +631,143 @@ public sealed partial class MainWindow
     /// <summary>自己検証用: ツールバーの帯が表示されているか。</summary>
     internal bool FrameToolbarVisible => FrameToolbar?.Parent is Control { IsVisible: true };
 
+    /// <summary>自己検証用: ツールバーアイコンの一辺。</summary>
+    internal double FrameToolbarIconSize => _toolbarIcons.FirstOrDefault()?.Width ?? _toolbarIconSize;
+
+    /// <summary>自己検証用: マージモード（矢印で差異を移し、左右でコピーする）。</summary>
+    internal bool MergingMode => _mergingMode;
+
+    /// <summary>自己検証用: マージモードを切り替える。</summary>
+    internal void ToggleMergingModeForTest() => ToggleMergingMode();
+
+    /// <summary>自己検証用: 最近使ったファイル。</summary>
+    internal IReadOnlyList<string> RecentFiles => _recent;
+
+    /// <summary>比較した実在ファイルを、最近使った一覧の先頭へ足す。</summary>
+    internal void RememberRecent(params string?[] paths)
+    {
+        foreach (var path in paths)
+        {
+            if (string.IsNullOrWhiteSpace(path) || (!File.Exists(path) && !Directory.Exists(path))) continue;
+            var full = Path.GetFullPath(path);
+            _recent.RemoveAll(item => string.Equals(item, full, StringComparison.OrdinalIgnoreCase));
+            _recent.Insert(0, full);
+        }
+        while (_recent.Count > 9) _recent.RemoveAt(_recent.Count - 1);
+        RebuildRecentMenu();
+    }
+
+    /// <summary>最近使った一覧から、そのパスを外す。</summary>
+    internal void DropRecent(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return;
+        var full = Path.GetFullPath(path);
+        if (_recent.RemoveAll(item => string.Equals(item, full, StringComparison.OrdinalIgnoreCase)) > 0) RebuildRecentMenu();
+    }
+
+    private void RebuildRecentMenu()
+    {
+        _recentFiles.Items.Clear();
+        if (_recent.Count == 0)
+        {
+            _recentFiles.Items.Add(new MenuItem { Header = UiText.Menu("< Empty >"), IsEnabled = false });
+            return;
+        }
+        foreach (var path in _recent)
+        {
+            var item = new MenuItem { Header = path, Tag = path };
+            var chosen = path;
+            item.Click += (_, _) => OpenRecent(chosen);
+            _recentFiles.Items.Add(item);
+        }
+    }
+
+    private void OpenRecent(string path)
+    {
+        var pane = ActivePane;
+        if (string.IsNullOrWhiteSpace(pane.LeftPath.Text)) pane.LeftPath.Text = path;
+        else if (string.IsNullOrWhiteSpace(pane.RightPath.Text)) pane.RightPath.Text = path;
+        else pane.LeftPath.Text = path;
+    }
+
+    private void ToggleMergingMode()
+    {
+        _mergingMode = !_mergingMode;
+        _mergeModeItem.IsChecked = _mergingMode;
+        if (_sessions.Count > 0) ActivePane.SetStatus(_mergingMode ? "マージモード" : "編集モード");
+    }
+
+    private MenuItem ToolbarSizeItem(string header, int size)
+    {
+        var item = new MenuItem { Header = header, ToggleType = MenuItemToggleType.Radio, IsChecked = _toolbarIconSize == size, Tag = "toolbar-size-" + size };
+        item.Click += (_, _) => SetToolbarIconSize(size);
+        _toolbarSizeItems.Add(item);
+        return item;
+    }
+
+    private void SetToolbarIconSize(int size)
+    {
+        if (size is not (16 or 24 or 32 or 48)) throw new ArgumentOutOfRangeException(nameof(size));
+        _toolbarIconSize = size;
+        foreach (var icon in _toolbarIcons)
+        {
+            icon.Width = icon.Height = size;
+            if (icon.Parent is Button button) button.Width = button.Height = size + 8;
+        }
+        foreach (var item in _toolbarSizeItems) item.IsChecked = item.Tag is string tag && tag == "toolbar-size-" + size;
+        SaveViewMenuOptions();
+    }
+
     private void SetToolbarVisible(bool visible, bool save)
     {
         _showToolbar = visible;
         if (FrameToolbar?.Parent is Control host) host.IsVisible = visible;
         if (_toolbarMenuItem is not null) _toolbarMenuItem.IsChecked = visible;
         if (save) SaveViewMenuOptions();
+    }
+
+    /// <summary>外部エディターのコマンド。$file と $linenum を使える。</summary>
+    internal string ExternalEditorCommand
+    {
+        get => _externalEditorCommand;
+        set { _externalEditorCommand = value ?? ""; SaveViewMenuOptions(); }
+    }
+
+    /// <summary>出力ペインへ1行足す。本家の出力ウィンドウと同じく、操作の記録用。</summary>
+    internal void AppendOutput(string line)
+    {
+        if (_outputText is null || line.Length == 0) return;
+        var text = _outputText.Text ?? "";
+        if (text.Length > 0 && !text.EndsWith('\n')) text += "\n";
+        text += line.Replace("\r", "").Replace("\n", " ");
+        if (text.Length > 32768) text = text[^16384..];
+        _outputText.Text = text;
+        _outputText.CaretIndex = text.Length;
+    }
+
+    /// <summary>出力ペインを出し入れする。</summary>
+    private void SetOutputPaneVisible(bool visible, bool save)
+    {
+        _showOutputPane = visible;
+        if (_outputHost is not null) _outputHost.IsVisible = visible;
+        if (save) SaveViewMenuOptions();
+    }
+
+    /// <summary>比較タブをタイトルバーの領域へ置く、または通常の見出しへ戻す。</summary>
+    private void SetTabBarOnTitleBar(bool onTitleBar, bool save)
+    {
+        _tabBarOnTitleBar = onTitleBar;
+        ApplyTabBarOnTitleBar();
+        if (save) SaveViewMenuOptions();
+    }
+
+    /// <summary>タイトルバー上のタブ。既定ではシステムタイトルの下に見出しを置く。</summary>
+    private void ApplyTabBarOnTitleBar()
+    {
+        ExtendClientAreaToDecorationsHint = _tabBarOnTitleBar;
+        ExtendClientAreaTitleBarHeightHint = _tabBarOnTitleBar ? 36 : -1;
+        if (SessionHeaders is not null)
+            SessionHeaders.Margin = _tabBarOnTitleBar ? new Thickness(8, 0, 120, 0) : new Thickness(0);
     }
 
     /// <summary>比較タブの見出しを出し入れする。テンプレート適用前は値だけ覚え、適用時に帯へ写す。</summary>
@@ -643,7 +857,7 @@ public sealed partial class MainWindow
     // 本家と同じく、表示メニューの設定は変えるたびに保存する。失敗しても表示はそのまま使い、理由を状態欄へ出す。
     private void SaveViewMenuOptions()
     {
-        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane, _showTabBar, _showMenuBar))) return;
+        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane, _showTabBar, _showMenuBar, _toolbarIconSize, _darkTheme, _showOutputPane, _tabBarOnTitleBar, _externalEditorCommand, _showIdenticalItems, _showDifferentItems, _showUniqueLeftItems, _showUniqueMiddleItems, _showUniqueRightItems, _showSkippedItems))) return;
         if (_sessions.Count > 0) ActivePane.ShowViewOptionsStatus(TextViewOptionsStorage.Diagnostic + " 表示はこの起動の間だけ変えています。");
     }
 
@@ -651,6 +865,35 @@ public sealed partial class MainWindow
     private void ApplyChrome()
     {
         foreach (var pane in SessionPanes) pane.ApplyViewChrome(_showStatusBar, _showLocationPane, _showDiffPane);
+        SaveViewMenuOptions();
+    }
+
+    internal bool ShowIdenticalItems => _showIdenticalItems;
+    internal bool ShowDifferentItems => _showDifferentItems;
+    internal bool ShowUniqueLeftItems => _showUniqueLeftItems;
+    internal bool ShowUniqueMiddleItems => _showUniqueMiddleItems;
+    internal bool ShowUniqueRightItems => _showUniqueRightItems;
+    internal bool ShowSkippedItems => _showSkippedItems;
+
+    /// <summary>同一項目を一覧に出す。本家の Show Identical Items。</summary>
+    private void SetShowIdenticalItems(bool value) => SetFolderRowFilter(ref _showIdenticalItems, value);
+    /// <summary>差異項目を一覧に出す。本家の Show Different Items。</summary>
+    private void SetShowDifferentItems(bool value) => SetFolderRowFilter(ref _showDifferentItems, value);
+    /// <summary>左側だけにある項目を一覧に出す。</summary>
+    private void SetShowUniqueLeftItems(bool value) => SetFolderRowFilter(ref _showUniqueLeftItems, value);
+    /// <summary>中央だけにある項目を一覧に出す。</summary>
+    private void SetShowUniqueMiddleItems(bool value) => SetFolderRowFilter(ref _showUniqueMiddleItems, value);
+    /// <summary>右側だけにある項目を一覧に出す。</summary>
+    private void SetShowUniqueRightItems(bool value) => SetFolderRowFilter(ref _showUniqueRightItems, value);
+    /// <summary>スキップされた項目を一覧に出す。</summary>
+    private void SetShowSkippedItems(bool value) => SetFolderRowFilter(ref _showSkippedItems, value);
+
+    /// <summary>フォルダー一覧の表示切替を記憶し、開いている一覧を作り直して保存する。</summary>
+    private void SetFolderRowFilter(ref bool field, bool value)
+    {
+        if (field == value) return;
+        field = value;
+        foreach (var pane in SessionPanes) pane.RefreshFolderDisplay();
         SaveViewMenuOptions();
     }
 
@@ -738,6 +981,12 @@ public sealed partial class MainWindow
             (Key.Up, true, false, false) => FrameCommand.PreviousDifference,
             (Key.Down, true, false, true) => FrameCommand.NextConflict,
             (Key.Up, true, false, true) => FrameCommand.PreviousConflict,
+            (Key.C, false, true, true) when textSearch => FrameCommand.CopyWithLineNumbers,
+            (Key.M, false, true, true) when textSearch => FrameCommand.AddMarker,
+            (Key.F12, false, false, false) when textSearch => FrameCommand.GoToDefinition,
+            (Key.D1 or Key.NumPad1, false, true, false) when textSearch => FrameCommand.CopySelectedDifference1,
+            (Key.D2 or Key.NumPad2, false, true, false) when textSearch => FrameCommand.CopySelectedDifference2,
+            (Key.D3 or Key.NumPad3, false, true, false) when textSearch => FrameCommand.CopySelectedDifference3,
             (Key.F4, false, false, false) => FrameCommand.SelectLineDifference,
             (Key.F4, false, false, true) => FrameCommand.SelectPreviousLineDifference,
             (Key.Home, true, false, false) => FrameCommand.FirstDifference,
@@ -752,6 +1001,35 @@ public sealed partial class MainWindow
             (Key.J, false, true, false) => FrameCommand.OpenProject,
             _ => null,
         };
+        if (MergingMode && textSearch && !alt && !control && !shift)
+        {
+            FrameCommand? merging = e.Key switch
+            {
+                Key.Left => FrameCommand.CopyToLeft,
+                Key.Right => FrameCommand.CopyToRight,
+                Key.Up => FrameCommand.PreviousDifference,
+                Key.Down => FrameCommand.NextDifference,
+                _ => null,
+            };
+            if (merging is { } mergingCommand)
+            {
+                e.Handled = true;
+                await ActivePane.ExecuteFrameCommandAsync(mergingCommand);
+                return true;
+            }
+        }
+        if (e.Key == Key.L && control && shift && !alt && textSearch)
+        {
+            e.Handled = true;
+            ToggleDisplayFilterBar();
+            return true;
+        }
+        if (e.Key == Key.F9 && !alt && !control && !shift)
+        {
+            e.Handled = true;
+            ToggleMergingMode();
+            return true;
+        }
         if (command is { } paneCommand)
         {
             e.Handled = true;

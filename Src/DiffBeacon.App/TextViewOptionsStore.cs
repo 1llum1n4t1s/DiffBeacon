@@ -48,6 +48,28 @@ internal sealed record TextViewSettings
     public bool ShowTabBar { get; init; } = true;
     /// <summary>メニューバー。既定は表示する。隠したあとは Alt か F10 で戻す。</summary>
     public bool ShowMenuBar { get; init; } = true;
+    /// <summary>ツールバーのアイコンの一辺。16、24、32、48。</summary>
+    public int ToolbarIconSize { get; init; } = 16;
+    /// <summary>ダークテーマ。既定は明るい配色。</summary>
+    public bool DarkTheme { get; init; }
+    /// <summary>本家の出力ペイン。既定は隠す。</summary>
+    public bool ShowOutputPane { get; init; }
+    /// <summary>比較タブをタイトルバー上に置く。既定は通常の見出し。</summary>
+    public bool TabBarOnTitleBar { get; init; }
+    /// <summary>外部エディターのコマンド。空のときは Windows だけメモ帳。</summary>
+    public string ExternalEditorCommand { get; init; } = "";
+    /// <summary>フォルダー一覧の同一項目。既定は出す。</summary>
+    public bool ShowIdenticalItems { get; init; } = true;
+    /// <summary>フォルダー一覧の差異項目。既定は出す。</summary>
+    public bool ShowDifferentItems { get; init; } = true;
+    /// <summary>フォルダー一覧の左側だけ。既定は出す。</summary>
+    public bool ShowUniqueLeftItems { get; init; } = true;
+    /// <summary>フォルダー一覧の中央だけ。既定は出す。</summary>
+    public bool ShowUniqueMiddleItems { get; init; } = true;
+    /// <summary>フォルダー一覧の右側だけ。既定は出す。</summary>
+    public bool ShowUniqueRightItems { get; init; } = true;
+    /// <summary>フォルダー一覧のスキップ項目。既定は出す。</summary>
+    public bool ShowSkippedItems { get; init; } = true;
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true,
@@ -115,6 +137,10 @@ internal sealed class TextViewOptionsStore
             throw new InvalidDataException($"表示メニューの設定のペインロックは -1～2 です: {settings.LockedSide}");
         if (settings.UiLanguage.Length is < 2 or > 40 || settings.UiLanguage.Any(character => !char.IsAsciiLetter(character)))
             throw new InvalidDataException("表示メニューの設定の言語名が不正です。");
+        if (settings.ToolbarIconSize is not (16 or 24 or 32 or 48))
+            throw new InvalidDataException($"表示メニューの設定のツールバーの大きさは 16、24、32、48 です: {settings.ToolbarIconSize}");
+        if (settings.ExternalEditorCommand.Length > 1024 || settings.ExternalEditorCommand.IndexOfAny(['\r', '\n', '\0']) >= 0)
+            throw new InvalidDataException("表示メニューの設定の外部エディターは1024文字以下の1行にしてください。");
     }
 
     internal bool Reload()

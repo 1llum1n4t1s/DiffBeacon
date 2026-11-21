@@ -33,6 +33,13 @@ public sealed partial class MainWindow : Window
     /// 省略したときはメモリだけの設定（headless検証が利用者のAppDataへ書かないため）。
     /// </summary>
     internal FolderColumnOptionsStore FolderColumnOptions { get; }
+    private readonly TextMarkerStore _textMarkersStore;
+    private readonly List<TextMarker> _textMarkers = [];
+    private bool _markersEnabled = true;
+    /// <summary>全比較タブで共有する印。本家のメインマーカー。</summary>
+    internal IReadOnlyList<TextMarker> TextMarkers => _textMarkers;
+    /// <summary>印を塗るか。</summary>
+    internal bool MarkersEnabled => _markersEnabled;
     internal long SessionSelectionGeneration { get; private set; }
     internal ArchiveWorkingStore ArchiveTexts { get; private set; } = new();
     internal ArchiveWindowLifetime ArchiveLifetime { get; } = new();
@@ -68,11 +75,29 @@ public sealed partial class MainWindow : Window
         _showDiffPane = textViewOptionsStore.Current.ShowDiffPane;
         _showTabBar = textViewOptionsStore.Current.ShowTabBar;
         _showMenuBar = textViewOptionsStore.Current.ShowMenuBar;
+        _toolbarIconSize = textViewOptionsStore.Current.ToolbarIconSize;
+        _darkTheme = textViewOptionsStore.Current.DarkTheme;
+        _showOutputPane = textViewOptionsStore.Current.ShowOutputPane;
+        _showIdenticalItems = textViewOptionsStore.Current.ShowIdenticalItems;
+        _showDifferentItems = textViewOptionsStore.Current.ShowDifferentItems;
+        _showUniqueLeftItems = textViewOptionsStore.Current.ShowUniqueLeftItems;
+        _showUniqueMiddleItems = textViewOptionsStore.Current.ShowUniqueMiddleItems;
+        _showUniqueRightItems = textViewOptionsStore.Current.ShowUniqueRightItems;
+        _showSkippedItems = textViewOptionsStore.Current.ShowSkippedItems;
+        _tabBarOnTitleBar = textViewOptionsStore.Current.TabBarOnTitleBar;
+        _externalEditorCommand = textViewOptionsStore.Current.ExternalEditorCommand;
+        if (Application.Current is { } application)
+            application.RequestedThemeVariant = _darkTheme ? Avalonia.Styling.ThemeVariant.Dark : Avalonia.Styling.ThemeVariant.Light;
         TextViewOptions.Changed += SaveViewMenuOptions;
         Closed += (_, _) => TextViewOptions.Changed -= SaveViewMenuOptions;
         Action<string> textViewGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
         textViewOptionsStore.AddOutputGuard(textViewGuard);
         Closed += (_, _) => textViewOptionsStore.RemoveOutputGuard(textViewGuard);
+        _textMarkersStore = new TextMarkerStore(textViewOptionsStore.Path);
+        _textMarkersStore.AddOutputGuard(textViewGuard);
+        var loadedMarkers = _textMarkersStore.Load();
+        _markersEnabled = loadedMarkers.Enabled;
+        _textMarkers.AddRange(loadedMarkers.Markers);
         Action<string> folderGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
         Action<string> tableGuard = path => { foreach (var pane in SessionPanes) pane.EnsureTableOptionsOutputWritable(path); };
         FolderOptions.AddOutputGuard(folderGuard);
@@ -96,6 +121,10 @@ public sealed partial class MainWindow : Window
         var header = BuildFrame();
         DockPanel.SetDock(header, Dock.Top);
         root.Children.Add(header);
+        _outputText = new TextBox { Name = "output-pane", IsReadOnly = true, AcceptsReturn = true, TextWrapping = TextWrapping.NoWrap, MinHeight = 72, MaxHeight = 160, FontFamily = new FontFamily("Cascadia Mono, Menlo, Consolas, monospace"), FontSize = 12 };
+        _outputHost = new Border { Name = "output-pane-host", IsVisible = _showOutputPane, Background = WinMergeColors.FrameFace, BorderBrush = WinMergeColors.FrameBorder, BorderThickness = new Thickness(0, 1, 0, 0), Child = _outputText };
+        DockPanel.SetDock(_outputHost, Dock.Bottom);
+        root.Children.Add(_outputHost);
         _tabs.Background = WinMergeColors.FrameFace;
         _tabs.Padding = new Thickness(0);
         root.Children.Add(_tabs);
@@ -109,6 +138,7 @@ public sealed partial class MainWindow : Window
                 VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto };
             DockPanel.SetDock(SessionHeaders, Dock.Top); dock.Children.Insert(0, SessionHeaders);
             SessionHeaders.IsVisible = _showTabBar;
+            ApplyTabBarOnTitleBar();
             SessionHeaders.SizeChanged += (_, _) => QueueSelectedHeader();
             QueueSelectedHeader();
         };
@@ -118,6 +148,7 @@ public sealed partial class MainWindow : Window
             SessionSelectionGeneration++;
             if (_tabs.SelectedItem is not TabItem) return;
             ActivePane.PublishFolderActions();
+            SyncDisplayFilterMenu(ActivePane.DisplayFilterBarVisible);
             UpdateImageDisplayVisibility();
             foreach (var pane in SessionPanes) pane.CancelInactiveFolderCopy(ReferenceEquals(pane, ActivePane));
             QueueSelectedHeader();
@@ -130,6 +161,7 @@ public sealed partial class MainWindow : Window
         if (FolderOptions.Diagnostic is { } folderDiagnostic) optionDiagnostics.Add("フォルダー表示設定: " + folderDiagnostic);
         if (FolderColumnOptions.Diagnostic is { } columnDiagnostic) optionDiagnostics.Add(columnDiagnostic);
         if (textViewOptionsStore.Diagnostic is { } viewDiagnostic) optionDiagnostics.Add(viewDiagnostic);
+        if (loadedMarkers.Error is { } markerDiagnostic) optionDiagnostics.Add(markerDiagnostic);
         // 二種類の読込失敗でもOpenedから一つのdialogだけを開く。
         Opened += (_, _) =>
         {
@@ -182,6 +214,17 @@ public sealed partial class MainWindow : Window
         }, Avalonia.Threading.DispatcherPriority.Background);
     }
 
+    /// <summary>印を全部の比較タブへ写し、markers.json へ保存する。</summary>
+    internal void ReplaceTextMarkers(bool enabled, IReadOnlyList<TextMarker> markers)
+    {
+        _textMarkers.Clear();
+        _textMarkers.AddRange(markers);
+        _markersEnabled = enabled;
+        foreach (var pane in SessionPanes) pane.ApplySharedMarkers(_textMarkers, _markersEnabled);
+        if (_textMarkersStore.Save(enabled, _textMarkers, out var error) || error is null || _sessions.Count == 0) return;
+        ActivePane.ShowViewOptionsStatus(error);
+    }
+
     public ComparisonPane AddSession(string[]? arguments = null)
     {
         if (_sessions.Count >= WorkspaceStore.MaxEntries) throw new InvalidOperationException("比較タブは256件以下にしてください。");
@@ -228,7 +271,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         private set { _currentDiff = value; OnCurrentDiffChanged(); }
     }
     private DiffResult? _currentDiff;
-    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || MergeResultDirty || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
+    public bool HasUnsavedChanges => LeftEditor.Text != _savedLeft || RightEditor.Text != _savedRight || IndependentText && MiddleEditor.Text != _savedMiddle || EncodingUnsaved || MergeResultDirty || SpecializedViews.HasUnsavedChanges(_specialTab.Content as Control);
     private readonly CheckBox _ignoreCase = new() { Content = "大文字小文字を無視" };
     private readonly CheckBox _ignoreSpace = new() { Content = "空白を無視" };
     private readonly CheckBox _ignoreBlank = new() { Content = "空行を無視" };
@@ -492,7 +535,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         void PrepareAdoption()
         {
             AdoptLegacyTextRole();
-            ResetMergeSession(); _lastPackageComparison = null;
+            ResetMergeSession(); ClearEncodingUnsaved(); ReleaseConflictSaveUnlessCurrent(); _lastPackageComparison = null;
             ResetLineBookmarks();
             _textSaveAllowed = false; _baseText = null; CurrentDiff = null;
         }
@@ -625,6 +668,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
             RightEditor.IsReadOnly = _projectMetadata.RightReadOnly;
             LeftEditor.Text = _savedLeft = _leftDocument.Text;
             RightEditor.Text = _savedRight = _rightDocument.Text;
+            ClearEncodingUnsaved();
             _baseText = _baseDocument?.Text;
             _ancestorEditor.Text = _baseText ?? "";
             UpdateEditorLayout(_baseText is not null);
@@ -676,6 +720,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         DiffList.ItemsSource = CurrentDiff.Rows;
         _diffIndex = -1;
         _status.Text = UiText.Say($"{CurrentDiff.Blocks.Count} 個の差分  ·  左 {_leftDocument?.EncodingName ?? "UTF-8"}  /  右 {_rightDocument?.EncodingName ?? "UTF-8"}");
+        NoteOpenedPaths();
         if (diff.InlineFallbackCount > 0) _status.Text += $"  ·  詳細比較を省略した {diff.InlineFallbackCount} 行は行全体を強調";
         if (diff.LineFallback) _status.Text += "  ·  行対応の処理上限に達したため、未確定区間をまとめて表示";
         _views.SelectedItem = _diffTab;
@@ -745,7 +790,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         CopyAll(toRight);
     }
 
-    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; DiscardMergeChanges(); SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
+    public void DiscardChanges() { _savedLeft = LeftEditor.Text ?? ""; _savedMiddle = MiddleEditor.Text ?? ""; _savedRight = RightEditor.Text ?? ""; ClearEncodingUnsaved(); DiscardMergeChanges(); SpecializedViews.DiscardChanges(_specialTab.Content as Control); }
     public void SelectMode(int mode) => _mode.SelectedIndex = mode;
     public void Dispose()
     {
@@ -761,6 +806,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _reportOperation?.Cancel();
         ClearArchivePasswords();
         SpecializedViews.Release(_specialTab.Content as Control);
+        DeleteConflictTemps();
     }
     internal void UpdateImageDisplayVisibility(bool active)
     {

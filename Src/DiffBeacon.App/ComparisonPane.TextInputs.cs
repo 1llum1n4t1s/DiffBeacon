@@ -214,6 +214,7 @@ public sealed partial class ComparisonPane
             }
             ResetMergeSession(); _lastPackageComparison = null; SetSpecialView(null);
             _projectMetadata = WorkspaceStore.CloneProject(project);
+            ReleaseConflictSaveUnlessCurrent();
             _textSaveAllowed = true; _workingDocumentStale = false;
             _lastArchiveComparison = ProjectInputs.HasArchives(project) ? ArchiveComparisonIdentity(project) : null;
             for (var side = 0; side < 3; side++)
@@ -632,6 +633,7 @@ public sealed partial class ComparisonPane
             }
             _projectMetadata = captured with { TextInputs = updated };
             TextPath(side).Text = target; SetSavedTextInput(side, source.SavedCopy(target, text), text);
+            ClearEncodingUnsaved(side);
             _independentInputIdentity = TextSourceIdentity();
             _lastPackageComparison = (LeftPath.Text ?? "", BasePath.Text ?? "", RightPath.Text ?? "", _mode.SelectedIndex, _provider.SelectedItem as string);
             _lastArchiveComparison = ProjectInputs.HasArchives(_projectMetadata) ? ArchiveComparisonIdentity(CaptureProject()) : null;

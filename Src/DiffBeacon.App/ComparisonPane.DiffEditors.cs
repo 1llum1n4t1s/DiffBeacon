@@ -104,6 +104,7 @@ public sealed partial class ComparisonPane
             // どのペインで押しても全ペイン共有の履歴を操作する（本家と同じ）。AvaloniaEdit の固定のキーより先に受け取る。
             side.View.TextArea.AddHandler(InputElement.KeyDownEvent, (_, args) =>
             {
+                if (args.Handled) return;
                 if (Application.Current?.PlatformSettings?.HotkeyConfiguration is not { } hotkeys) return;
                 if (hotkeys.Undo.Any(gesture => gesture.Matches(args))) { UndoText(); args.Handled = true; }
                 else if (hotkeys.Redo.Any(gesture => gesture.Matches(args))) { RedoText(); args.Handled = true; }
@@ -179,6 +180,7 @@ public sealed partial class ComparisonPane
         ApplyDiffContext();
         AlignWrappedLines();
         SyncDiffEditorScroll(_leftDiffView);
+        UpdateSelectedDiffCopyMenu();
     }
 
     /// <summary>
@@ -683,6 +685,9 @@ public sealed partial class ComparisonPane
                 VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Auto,
             };
             View.Options.EnableHyperlinks = false; View.Options.EnableEmailHyperlinks = false;
+            View.Options.EnableRectangularSelection = true;
+            MarkerColorizer = new TextMarkerColorizer();
+            View.TextArea.TextView.LineTransformers.Add(MarkerColorizer);
             View.Options.AllowScrollBelowDocument = false;
             // エディター自身の履歴は使わない（全ペイン共有の履歴を ComparisonPane が持つ）。組込みのキー・コマンドで戻らないよう容量を0にする。
             View.Document.UndoStack.SizeLimit = 0;
@@ -700,6 +705,9 @@ public sealed partial class ComparisonPane
             View.TextArea.LeftMargins.Insert(1, MarginSeparator);
             Ruler = new ColumnRuler(View);
         }
+
+        /// <summary>選択した印の文字列を、その側の本文で塗る。</summary>
+        internal TextMarkerColorizer MarkerColorizer { get; }
 
         /// <summary>本家の上マージン（列のルーラー）。既定では隠す。</summary>
         internal ColumnRuler Ruler { get; }

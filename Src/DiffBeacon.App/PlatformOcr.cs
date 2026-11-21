@@ -8,11 +8,15 @@ namespace DiffBeacon.App;
 /// </summary>
 internal static class PlatformOcr
 {
+    /// <summary>自己検証が、プロセスを起動せず画像ビューの経路を通すために使う。通常は null。</summary>
+    internal static Func<string, CancellationToken, Task<string>>? TestRecognize { get; set; }
+
     /// <summary>認識する。プラットフォームの実装が無ければ外部コマンド、それも無ければ理由を出して失敗する。</summary>
     internal static async Task<string> RecognizeAsync(string imagePath, string? externalCommand, CancellationToken cancellationToken)
     {
+        if (TestRecognize is not null) return await TestRecognize(imagePath, cancellationToken);
 #if DIFFBEACON_WINDOWS_OCR
-        var windows = await WindowsMediaOcr.TryRecognizeAsync(imagePath);
+        var windows = await WindowsMediaOcr.TryRecognizeAsync(imagePath, cancellationToken);
         if (windows is not null) return windows;
 #endif
         if (OperatingSystem.IsMacOS() && MacIntegration.TryRecognize(imagePath, out var text, out _)) return text;
@@ -111,8 +115,9 @@ internal static class MacIntegration
 /// <summary>Windows.Media.Ocr。言語パックが無いときは null。</summary>
 internal static class WindowsMediaOcr
 {
-    internal static async Task<string?> TryRecognizeAsync(string imagePath)
+    internal static async Task<string?> TryRecognizeAsync(string imagePath, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var engine = Windows.Media.Ocr.OcrEngine.TryCreateFromUserProfileLanguages();
         if (engine is null) return null;
         var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(imagePath);
@@ -120,6 +125,7 @@ internal static class WindowsMediaOcr
         var decoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
         var bitmap = await decoder.GetSoftwareBitmapAsync();
         var result = await engine.RecognizeAsync(bitmap);
+        cancellationToken.ThrowIfCancellationRequested();
         return result.Text;
     }
 }

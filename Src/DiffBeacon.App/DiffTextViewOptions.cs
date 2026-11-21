@@ -140,7 +140,7 @@ internal sealed class DiffTextViewOptions
     }
 
     /// <summary>保存する形へ写す。ツールバーの表示は本文の設定ではないので外枠から受け取る。</summary>
-    internal TextViewSettings ToSettings(bool showToolbar, bool showStatusBar, bool showLocationPane, bool showDiffPane, bool showTabBar, bool showMenuBar) => new()
+    internal TextViewSettings ToSettings(bool showToolbar, bool showStatusBar, bool showLocationPane, bool showDiffPane, bool showTabBar, bool showMenuBar, int toolbarIconSize, bool darkTheme, bool showOutputPane, bool tabBarOnTitleBar, string externalEditorCommand, bool showIdenticalItems, bool showDifferentItems, bool showUniqueLeftItems, bool showUniqueMiddleItems, bool showUniqueRightItems, bool showSkippedItems) => new()
     {
         ZoomSteps = _zoomSteps, ViewWhitespace = _whitespace, ViewEndOfLine = _endOfLine, ViewLineDifferences = _lineDifferences,
         ViewLineNumbers = _lineNumbers, ViewMargins = _margins, ViewTopMargin = _topMargin, ShowToolbar = showToolbar,
@@ -148,7 +148,10 @@ internal sealed class DiffTextViewOptions
         WordWrap = _wordWrap, FontFamily = _fontFamily, SyntaxHighlight = _syntaxHighlight,
         DiffContextLines = _diffContextLines, DiffContextLastLines = _diffContextLast, DiffContextInvert = _diffContextInvert,
         VerticalSplit = _verticalSplit, LockedSide = _lockedSide, ShowTabBar = showTabBar, ShowMenuBar = showMenuBar,
-        UiLanguage = UiText.Language,
+        UiLanguage = UiText.Language, ToolbarIconSize = toolbarIconSize, DarkTheme = darkTheme,
+        ShowOutputPane = showOutputPane, TabBarOnTitleBar = tabBarOnTitleBar, ExternalEditorCommand = externalEditorCommand,
+        ShowIdenticalItems = showIdenticalItems, ShowDifferentItems = showDifferentItems, ShowUniqueLeftItems = showUniqueLeftItems,
+        ShowUniqueMiddleItems = showUniqueMiddleItems, ShowUniqueRightItems = showUniqueRightItems, ShowSkippedItems = showSkippedItems,
     };
 
     private void Set<T>(ref T field, T value)

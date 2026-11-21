@@ -98,6 +98,7 @@ public static partial class SpecializedViews
             AddEditButton(panel, "ImageCancelEdit", "中止", "cancel", () => { _operationCancellation?.Cancel(); _saveCancellation?.Cancel(); CancelDisplayDrag(); CancelRectangleInteraction(); return Task.CompletedTask; });
             AddRectangleControls(panel);
             AddEditButton(panel, "ImageSavePng", "PNG/TIFFで別名保存…", "save", PickImageAsync);
+            AddEditButton(panel, "ImageOcr", "文字認識", "ocr", RecognizeChosenAsync);
             return panel;
         }
 
@@ -217,6 +218,22 @@ public static partial class SpecializedViews
             await SaveToAsync(pane, file.TryGetLocalPath() ?? throw new IOException("ローカルの保存先を選択してください。"));
         }
 
+        /// <summary>今選んでいる側の画像ファイルを文字認識し、結果を状態欄と出力ペインへ出す。</summary>
+        private async Task RecognizeChosenAsync()
+        {
+            RequireEditing();
+            var pane = _editPane.SelectedIndex;
+            if (pane < 0 || pane >= _paths.Length || string.IsNullOrWhiteSpace(_paths[pane]) || !File.Exists(_paths[pane]))
+                throw new InvalidOperationException("文字認識する画像ファイルがありません。");
+            var path = _paths[pane];
+            var generation = _generation;
+            var text = await PlatformOcr.RecognizeAsync(path, null, _lifetime.Token);
+            if (_disposed || generation != _generation || pane >= _paths.Length || !string.Equals(_paths[pane], path, StringComparison.Ordinal)) return;
+            var flat = text.Replace("\r", " ").Replace("\n", " ");
+            _status.Text = "文字認識: " + flat;
+            if (TopLevel.GetTopLevel(this) is MainWindow window) window.AppendOutput(flat);
+        }
+
         private static bool IsTiffOutput(string path) => ImagePngStore.IsTiffTarget(path);
 
         private void UpdateEditControls()
@@ -237,6 +254,7 @@ public static partial class SpecializedViews
                     "undo" => ready && _editSession!.CanUndo,
                     "redo" => ready && _editSession!.CanRedo,
                     "save" => ready && canWrite && _paths.Length == _counts.Length,
+                    "ocr" => ready && pane >= 0 && pane < _paths.Length && _paths[pane].Length > 0,
                     "rectangle-select" => RectangleReady,
                     "rectangle-copy" => RectangleReady && RectangleSelection(pane) is not null,
                     "rectangle-cut" or "rectangle-delete" => RectangleReady && canWrite && RectangleSelection(pane) is not null,

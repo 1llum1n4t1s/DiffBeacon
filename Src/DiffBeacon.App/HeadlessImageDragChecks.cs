@@ -24,6 +24,36 @@ internal static class HeadlessImageDragChecks
         var raw = Frame(32, 24); var hashes = new Dictionary<string, string>();
         var sharedMenuResults = new List<(string Name, bool Passed, string Detail)>();
         SharedMenuBoundaryChecks();
+        string? recognizedPath = null;
+        PlatformOcr.TestRecognize = (path, _) => { recognizedPath = path; return Task.FromResult("recognized-text"); };
+        try
+        {
+            var ocr = Open("ocr", [raw, raw]);
+            var ocrButton = ocr.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "ImageOcr");
+            ocrButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            for (var i = 0; i < 30 && recognizedPath is null; i++) Dispatcher.UIThread.RunJobs();
+            var ocrOutput = window.GetVisualDescendants().OfType<TextBox>().Single(box => box.Name == "output-pane").Text ?? "";
+            var status = ocr.GetVisualDescendants().OfType<TextBlock>().Select(block => block.Text ?? "").FirstOrDefault(text => text.StartsWith("文字認識:", StringComparison.Ordinal)) ?? "";
+            check("image view ocr reads the selected file", recognizedPath is not null && recognizedPath.Contains("ocr-input-", StringComparison.Ordinal)
+                && ocrOutput.Contains("recognized-text", StringComparison.Ordinal) && status.Contains("recognized-text", StringComparison.Ordinal),
+                (recognizedPath ?? "null") + " / " + status + " / " + ocrOutput);
+            var started = new TaskCompletionSource();
+            var release = new TaskCompletionSource();
+            PlatformOcr.TestRecognize = async (_, token) =>
+            {
+                started.TrySetResult();
+                await release.Task.WaitAsync(token);
+                return "stale-ocr";
+            };
+            ocrButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            for (var i = 0; i < 30 && !started.Task.IsCompleted; i++) Dispatcher.UIThread.RunJobs();
+            Open("ocr-next", [raw, raw]);
+            release.TrySetResult();
+            for (var i = 0; i < 30; i++) Dispatcher.UIThread.RunJobs();
+            var after = window.GetVisualDescendants().OfType<TextBox>().Single(box => box.Name == "output-pane").Text ?? "";
+            check("image view ocr ignores a result from the previous comparison", started.Task.IsCompleted && !after.Contains("stale-ocr", StringComparison.Ordinal), after);
+        }
+        finally { PlatformOcr.TestRecognize = null; }
         for (var count = 2; count <= 3; count++)
         {
             var panel = Open("offset-" + count, Enumerable.Repeat(raw, count).ToArray()); panel.SetDragMode(ImageDragMode.AdjustOffset);

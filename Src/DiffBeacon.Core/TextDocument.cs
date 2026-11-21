@@ -76,6 +76,21 @@ public sealed class TextDocument
     public TextDocument SavedCopy(string path, string text)
         => new(System.IO.Path.GetFullPath(path), text, encoding, preamble.ToArray());
 
+    /// <summary>本文はそのまま、保存する文字コードだけを変える。</summary>
+    public TextDocument WithEncoding(string encodingName, string? text = null)
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        var (selected, bom) = encodingName switch
+        {
+            "utf-8" => ((Encoding)new UTF8Encoding(false, true), Array.Empty<byte>()),
+            "utf-8-bom" => (new UTF8Encoding(true, true), new byte[] { 0xEF, 0xBB, 0xBF }),
+            "utf-16" => (new UnicodeEncoding(false, true, true), new byte[] { 0xFF, 0xFE }),
+            "windows-1252" => (Encoding.GetEncoding(1252, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback), Array.Empty<byte>()),
+            _ => throw new ArgumentOutOfRangeException(nameof(encodingName)),
+        };
+        return new(Path, text ?? Text, selected, bom);
+    }
+
     // 別文書の出力で読込み元のPath/Textを変更しない。
     public Task SaveCopyAsync(string path, string text, CancellationToken cancellationToken = default,
         Func<string, string, CancellationToken, Task>? publish = null) =>
