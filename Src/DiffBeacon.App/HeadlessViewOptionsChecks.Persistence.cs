@@ -65,7 +65,10 @@ internal static partial class HeadlessViewOptionsChecks
                 && root.GetProperty("uiLanguage").GetString() == "Japanese" && root.GetProperty("toolbarIconSize").GetInt32() == 16
                 && root.GetProperty("darkTheme").GetBoolean() == false && root.GetProperty("showOutputPane").GetBoolean() == false
                 && root.GetProperty("tabBarOnTitleBar").GetBoolean() == false && root.GetProperty("externalEditorCommand").GetString() == ""
-                && root.EnumerateObject().Count() == 27, text);
+                && root.GetProperty("showIdenticalItems").GetBoolean() && root.GetProperty("showDifferentItems").GetBoolean()
+                && root.GetProperty("showUniqueLeftItems").GetBoolean() && root.GetProperty("showUniqueMiddleItems").GetBoolean()
+                && root.GetProperty("showUniqueRightItems").GetBoolean() && root.GetProperty("showSkippedItems").GetBoolean()
+                && root.EnumerateObject().Count() == 33, text);
         }
 
         var bytes = File.ReadAllBytes(path);
@@ -101,7 +104,8 @@ internal static partial class HeadlessViewOptionsChecks
         var empty = Seed(folder, "empty.json", "{}");
         var defaults = new TextViewOptionsStore(empty).Current;
         check("view settings empty object uses defaults", defaults is { ZoomSteps: 0, ViewWhitespace: false, ViewEndOfLine: false, ViewLineDifferences: true,
-            ViewLineNumbers: true, ViewMargins: true, ShowToolbar: true } && new TextViewOptionsStore(empty).Diagnostic is null, defaults.ToString());
+            ViewLineNumbers: true, ViewMargins: true, ShowToolbar: true, ShowIdenticalItems: true, ShowDifferentItems: true,
+            ShowUniqueLeftItems: true, ShowUniqueMiddleItems: true, ShowUniqueRightItems: true, ShowSkippedItems: true } && new TextViewOptionsStore(empty).Diagnostic is null, defaults.ToString());
         var partial = new TextViewOptionsStore(Seed(folder, "partial.json", "{\"viewWhitespace\":true,\"zoomSteps\":-7}")).Current;
         var maximum = new TextViewOptionsStore(Seed(folder, "maximum.json", "{\"zoomSteps\":68}"));
         check("view settings partial file keeps other defaults and accepts the zoom limits", partial is { ViewWhitespace: true, ZoomSteps: -7, ViewLineDifferences: true,

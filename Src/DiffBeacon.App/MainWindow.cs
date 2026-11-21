@@ -71,6 +71,12 @@ public sealed partial class MainWindow : Window
         _toolbarIconSize = textViewOptionsStore.Current.ToolbarIconSize;
         _darkTheme = textViewOptionsStore.Current.DarkTheme;
         _showOutputPane = textViewOptionsStore.Current.ShowOutputPane;
+        _showIdenticalItems = textViewOptionsStore.Current.ShowIdenticalItems;
+        _showDifferentItems = textViewOptionsStore.Current.ShowDifferentItems;
+        _showUniqueLeftItems = textViewOptionsStore.Current.ShowUniqueLeftItems;
+        _showUniqueMiddleItems = textViewOptionsStore.Current.ShowUniqueMiddleItems;
+        _showUniqueRightItems = textViewOptionsStore.Current.ShowUniqueRightItems;
+        _showSkippedItems = textViewOptionsStore.Current.ShowSkippedItems;
         _tabBarOnTitleBar = textViewOptionsStore.Current.TabBarOnTitleBar;
         _externalEditorCommand = textViewOptionsStore.Current.ExternalEditorCommand;
         if (Application.Current is { } application)

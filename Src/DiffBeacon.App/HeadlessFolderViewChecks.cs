@@ -53,6 +53,16 @@ internal static class HeadlessFolderViewChecks
         var list = pane.FolderOptionsRawRows;
         var entries = list.Items.OfType<DirectoryEntry>().ToArray();
         check("folder view lists compared entries", entries.Length >= 6, string.Join("|", entries.Select(entry => entry.RelativePath)));
+        ClickMenu(window, "view-show-identical");
+        var hiddenIdentical = pane.FolderOptionsRawRows.Items.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).ToArray();
+        check("folder view hides identical items", !hiddenIdentical.Contains("same.txt") && hiddenIdentical.Contains("diff.txt") && !window.ShowIdenticalItems,
+            string.Join("|", hiddenIdentical));
+        ClickMenu(window, "view-show-identical");
+        ClickMenu(window, "view-show-unique-left");
+        var hiddenLeft = pane.FolderOptionsRawRows.Items.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).ToArray();
+        check("folder view hides left-only items", hiddenLeft.Contains("same.txt") && !hiddenLeft.Contains("left-only.txt") && !hiddenLeft.Contains("left-dir") && window.ShowIdenticalItems,
+            string.Join("|", hiddenLeft));
+        ClickMenu(window, "view-show-unique-left");
 
         var titles = pane.FolderColumnTitles;
         check("folder view two-way columns follow WinMerge default order",
@@ -512,6 +522,15 @@ internal static class HeadlessFolderViewChecks
     }
 
     private static void Click(Button button) => button.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(Button.ClickEvent));
+
+    /// <summary>表示メニューのチェック項目を押す。</summary>
+    private static void ClickMenu(MainWindow window, string name)
+    {
+        var view = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "表示(_V)");
+        var item = view.Items.OfType<MenuItem>().Single(menu => menu.Name == "frame-menu-" + name);
+        item.RaiseEvent(new Avalonia.Interactivity.RoutedEventArgs(MenuItem.ClickEvent));
+        Dispatcher.UIThread.RunJobs();
+    }
 
     private static Rect Within(Control control, Visual root)
         => new(control.TranslatePoint(new Point(0, 0), root) ?? default, control.Bounds.Size);

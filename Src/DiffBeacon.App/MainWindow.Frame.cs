@@ -184,6 +184,13 @@ public sealed partial class MainWindow
             darkTheme,
             LanguageMenu(),
             Separator(),
+            ChromeItem("Show &Identical Items", "view-show-identical", () => _showIdenticalItems, SetShowIdenticalItems),
+            ChromeItem("Show &Different Items", "view-show-different", () => _showDifferentItems, SetShowDifferentItems),
+            ChromeItem("Show L&eft Unique Items", "view-show-unique-left", () => _showUniqueLeftItems, SetShowUniqueLeftItems),
+            ChromeItem("Show Midd&le Unique Items", "view-show-unique-middle", () => _showUniqueMiddleItems, SetShowUniqueMiddleItems),
+            ChromeItem("Show Ri&ght Unique Items", "view-show-unique-right", () => _showUniqueRightItems, SetShowUniqueRightItems),
+            ChromeItem("Show S&kipped Items", "view-show-skipped", () => _showSkippedItems, SetShowSkippedItems),
+            Separator(),
             Labeled("Refresh\tF5", "F5", PaneAction(FrameCommand.Refresh))));
         _displayFilterItem.Click += (_, _) => ToggleDisplayFilterBar();
         menu.Items.Add(MenuPopup("&Merge",
@@ -582,6 +589,12 @@ public sealed partial class MainWindow
     private bool _showTabBar = true;
     private bool _showMenuBar = true;
     private bool _showOutputPane;
+    private bool _showIdenticalItems = true;
+    private bool _showDifferentItems = true;
+    private bool _showUniqueLeftItems = true;
+    private bool _showUniqueMiddleItems = true;
+    private bool _showUniqueRightItems = true;
+    private bool _showSkippedItems = true;
     private bool _tabBarOnTitleBar;
     private string _externalEditorCommand = "";
     private readonly Border? _outputHost;
@@ -843,7 +856,7 @@ public sealed partial class MainWindow
     // 本家と同じく、表示メニューの設定は変えるたびに保存する。失敗しても表示はそのまま使い、理由を状態欄へ出す。
     private void SaveViewMenuOptions()
     {
-        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane, _showTabBar, _showMenuBar, _toolbarIconSize, _darkTheme, _showOutputPane, _tabBarOnTitleBar, _externalEditorCommand))) return;
+        if (TextViewOptionsStorage.Save(TextViewOptions.ToSettings(_showToolbar, _showStatusBar, _showLocationPane, _showDiffPane, _showTabBar, _showMenuBar, _toolbarIconSize, _darkTheme, _showOutputPane, _tabBarOnTitleBar, _externalEditorCommand, _showIdenticalItems, _showDifferentItems, _showUniqueLeftItems, _showUniqueMiddleItems, _showUniqueRightItems, _showSkippedItems))) return;
         if (_sessions.Count > 0) ActivePane.ShowViewOptionsStatus(TextViewOptionsStorage.Diagnostic + " 表示はこの起動の間だけ変えています。");
     }
 
@@ -851,6 +864,35 @@ public sealed partial class MainWindow
     private void ApplyChrome()
     {
         foreach (var pane in SessionPanes) pane.ApplyViewChrome(_showStatusBar, _showLocationPane, _showDiffPane);
+        SaveViewMenuOptions();
+    }
+
+    internal bool ShowIdenticalItems => _showIdenticalItems;
+    internal bool ShowDifferentItems => _showDifferentItems;
+    internal bool ShowUniqueLeftItems => _showUniqueLeftItems;
+    internal bool ShowUniqueMiddleItems => _showUniqueMiddleItems;
+    internal bool ShowUniqueRightItems => _showUniqueRightItems;
+    internal bool ShowSkippedItems => _showSkippedItems;
+
+    /// <summary>同一項目を一覧に出す。本家の Show Identical Items。</summary>
+    private void SetShowIdenticalItems(bool value) => SetFolderRowFilter(ref _showIdenticalItems, value);
+    /// <summary>差異項目を一覧に出す。本家の Show Different Items。</summary>
+    private void SetShowDifferentItems(bool value) => SetFolderRowFilter(ref _showDifferentItems, value);
+    /// <summary>左側だけにある項目を一覧に出す。</summary>
+    private void SetShowUniqueLeftItems(bool value) => SetFolderRowFilter(ref _showUniqueLeftItems, value);
+    /// <summary>中央だけにある項目を一覧に出す。</summary>
+    private void SetShowUniqueMiddleItems(bool value) => SetFolderRowFilter(ref _showUniqueMiddleItems, value);
+    /// <summary>右側だけにある項目を一覧に出す。</summary>
+    private void SetShowUniqueRightItems(bool value) => SetFolderRowFilter(ref _showUniqueRightItems, value);
+    /// <summary>スキップされた項目を一覧に出す。</summary>
+    private void SetShowSkippedItems(bool value) => SetFolderRowFilter(ref _showSkippedItems, value);
+
+    /// <summary>フォルダー一覧の表示切替を記憶し、開いている一覧を作り直して保存する。</summary>
+    private void SetFolderRowFilter(ref bool field, bool value)
+    {
+        if (field == value) return;
+        field = value;
+        foreach (var pane in SessionPanes) pane.RefreshFolderDisplay();
         SaveViewMenuOptions();
     }
 

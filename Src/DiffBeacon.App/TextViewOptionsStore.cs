@@ -58,6 +58,18 @@ internal sealed record TextViewSettings
     public bool TabBarOnTitleBar { get; init; }
     /// <summary>外部エディターのコマンド。空のときは Windows だけメモ帳。</summary>
     public string ExternalEditorCommand { get; init; } = "";
+    /// <summary>フォルダー一覧の同一項目。既定は出す。</summary>
+    public bool ShowIdenticalItems { get; init; } = true;
+    /// <summary>フォルダー一覧の差異項目。既定は出す。</summary>
+    public bool ShowDifferentItems { get; init; } = true;
+    /// <summary>フォルダー一覧の左側だけ。既定は出す。</summary>
+    public bool ShowUniqueLeftItems { get; init; } = true;
+    /// <summary>フォルダー一覧の中央だけ。既定は出す。</summary>
+    public bool ShowUniqueMiddleItems { get; init; } = true;
+    /// <summary>フォルダー一覧の右側だけ。既定は出す。</summary>
+    public bool ShowUniqueRightItems { get; init; } = true;
+    /// <summary>フォルダー一覧のスキップ項目。既定は出す。</summary>
+    public bool ShowSkippedItems { get; init; } = true;
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true,

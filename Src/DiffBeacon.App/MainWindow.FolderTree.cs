@@ -210,7 +210,7 @@ public sealed partial class ComparisonPane
     private FolderTreeProjection PrepareFolderTree(DirectoryComparisonResult model, HashSet<string> expanded,
         bool tree, CancellationToken token = default)
     {
-        if (!model.Options.Recursive) return new(SortFolderEntries(model.Entries, model.IsThreeWay), new(FolderTreeComparer), new(FolderTreeComparer), new(FolderTreeComparer));
+        if (!model.Options.Recursive) return new(SortFolderEntries(model.Entries.Where(FolderRowVisible).ToArray(), model.IsThreeWay), new(FolderTreeComparer), new(FolderTreeComparer), new(FolderTreeComparer));
         var visible = new HashSet<string>(model.Entries.Select(entry => entry.RelativePath), FolderTreeComparer);
         var rows = new List<DirectoryEntry>();
         var depths = new Dictionary<string, int>(FolderTreeComparer);
@@ -225,7 +225,7 @@ public sealed partial class ComparisonPane
             token.ThrowIfCancellationRequested();
             if (node.Depth >= Math.Min(256, model.Options.MaximumDepth) || seen.Count >= model.Options.MaximumEntries
                 || !seen.Add(node.Entry.RelativePath)) throw new InvalidDataException("ツリー表示の項目数または深度が上限を超えています。");
-            var show = visible.Contains(node.Entry.RelativePath);
+            var show = visible.Contains(node.Entry.RelativePath) && FolderRowVisible(node.Entry);
             if (FolderCanExpand(node.Entry)) present.Add(node.Entry.RelativePath);
             if (tree && show && node.Reachable)
             {
@@ -239,7 +239,8 @@ public sealed partial class ComparisonPane
         }
         token.ThrowIfCancellationRequested();
         expanded.IntersectWith(present);
-        return new(tree ? rows.ToArray() : SortFolderEntries(model.Entries, model.IsThreeWay), depths, parents, expanded);
+        var flat = SortFolderEntries(model.Entries.Where(FolderRowVisible).ToArray(), model.IsThreeWay);
+        return new(tree ? rows.ToArray() : flat, depths, parents, expanded);
     }
 
     private void AdoptFolderTreeProjection(FolderTreeProjection projection, string[] selection)
@@ -253,6 +254,35 @@ public sealed partial class ComparisonPane
         foreach (var entry in projection.Rows)
             if (selected.Contains(entry.RelativePath)) _directoryList.SelectedItems?.Add(entry);
         UpdateFolderTreeControls();
+    }
+
+    /// <summary>同一・差異・片側だけ・スキップの表示切替を、今出しているフォルダー一覧へ反映する。</summary>
+    internal void RefreshFolderDisplay()
+    {
+        if (_disposed || _folderCopyBusy || _folderModelStale || _directoryComparison is not { } model) return;
+        if (!ReferenceEquals(_specialTab.Content, _folderView) || !CompareButton.IsEnabled || !FolderOwnerCurrent()) return;
+        if (FolderFilterStamp() != _directoryFilterStamp) throw new OperationCanceledException("表示の切替前にフィルターが変わりました。再比較してください。");
+        var expanded = new HashSet<string>(_folderExpanded, FolderTreeComparer);
+        var projection = PrepareFolderTree(model, expanded, FolderTreeActive && model.Options.Recursive);
+        var selected = _directoryList.SelectedItems?.OfType<DirectoryEntry>().Select(entry => entry.RelativePath).ToArray() ?? [];
+        InvalidateFolderCopy(false);
+        AdoptFolderTreeProjection(projection, selected);
+    }
+
+    /// <summary>本家の同一・差異・片側・スキップ表示。バイナリは行に種別が無いので、ここでは隠さない。</summary>
+    private bool FolderRowVisible(DirectoryEntry entry)
+    {
+        if (_owner is not MainWindow window) return true;
+        if (entry.IsFiltered) return window.ShowSkippedItems;
+        return entry.Status switch
+        {
+            DirectoryDifferenceKind.Equal => window.ShowIdenticalItems,
+            DirectoryDifferenceKind.Modified or DirectoryDifferenceKind.TypeConflict => window.ShowDifferentItems,
+            DirectoryDifferenceKind.LeftOnly => window.ShowUniqueLeftItems,
+            DirectoryDifferenceKind.RightOnly => window.ShowUniqueRightItems,
+            DirectoryDifferenceKind.MiddleOnly => window.ShowUniqueMiddleItems,
+            _ => true,
+        };
     }
 
     private void ReprojectFolderTree(HashSet<string> expanded)
