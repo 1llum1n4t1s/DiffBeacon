@@ -8,9 +8,13 @@ namespace DiffBeacon.App;
 /// </summary>
 internal static class PlatformOcr
 {
+    /// <summary>自己検証が、プロセスを起動せず画像ビューの経路を通すために使う。通常は null。</summary>
+    internal static Func<string, CancellationToken, Task<string>>? TestRecognize { get; set; }
+
     /// <summary>認識する。プラットフォームの実装が無ければ外部コマンド、それも無ければ理由を出して失敗する。</summary>
     internal static async Task<string> RecognizeAsync(string imagePath, string? externalCommand, CancellationToken cancellationToken)
     {
+        if (TestRecognize is not null) return await TestRecognize(imagePath, cancellationToken);
 #if DIFFBEACON_WINDOWS_OCR
         var windows = await WindowsMediaOcr.TryRecognizeAsync(imagePath);
         if (windows is not null) return windows;
