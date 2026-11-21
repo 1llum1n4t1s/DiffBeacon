@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using Avalonia.Platform.Storage;
 using DiffBeacon.Core;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
@@ -45,11 +46,21 @@ public sealed partial class ComparisonPane
     /// <summary>表示フィルター。本家の「Line contains "…" AND …」。</summary>
     private string _displayFilter = "";
 
+    /// <summary>競合ファイルを開いたときに作った一時ファイル。ペインを閉じるときに消す。</summary>
+    private readonly List<string> _conflictTemps = [];
+
     /// <summary>いまの行フィルター（除外行の正規表現）。</summary>
     internal string LineFilterPattern { get => _ignoreRegex.Text ?? ""; set => _ignoreRegex.Text = value; }
 
     /// <summary>いまの表示フィルター。</summary>
     internal string DisplayFilter => _displayFilter;
+
+    /// <summary>表示フィルターを外す。</summary>
+    internal void ClearDisplayFilter()
+    {
+        _displayFilter = "";
+        ApplyDiffContext();
+    }
 
     /// <summary>印にした文字列。</summary>
     internal IReadOnlyList<string> TextMarkers => _diffViews[0].MarkerColorizer.Markers;
@@ -100,7 +111,16 @@ public sealed partial class ComparisonPane
                 output.Add(sourceLines[source - 1]);
         }
         while (destinationIndex < destinationLines.Count) output.Add(destinationLines[destinationIndex++]);
-        ApplyReplacedText(destinationSide, string.Concat(output.Select(line => line.Content + line.Ending)));
+        var newline = destinationLines.FirstOrDefault(line => line.Ending.Length > 0).Ending;
+        if (newline.Length == 0) newline = "\n";
+        var joined = new StringBuilder();
+        for (var index = 0; index < output.Count; index++)
+        {
+            joined.Append(output[index].Content);
+            if (output[index].Ending.Length > 0) joined.Append(output[index].Ending);
+            else if (index < output.Count - 1) joined.Append(newline);
+        }
+        ApplyReplacedText(destinationSide, joined.ToString());
     }
 
     /// <summary>表示行の本物の行番号（1始まり）。無ければ null。</summary>
@@ -127,7 +147,8 @@ public sealed partial class ComparisonPane
     {
         if (!DiffEditCommandAvailable(out var side)) return;
         var text = SelectedLiteral();
-        if (string.IsNullOrEmpty(text)) text = WordAtCaret(side);
+        if (string.IsNullOrEmpty(text) && PrepareTextSearch(side, out var view, out var real))
+            text = SelectedOrWordAtCaret(view, real, TextSearcher.Lines(real));
         if (string.IsNullOrEmpty(text)) { _status.Text = "表示フィルターに追加する文字列がありません。"; return; }
         var clause = "Line contains \"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
         _displayFilter = _displayFilter.Length == 0 ? clause : _displayFilter + " AND " + clause;
@@ -184,22 +205,6 @@ public sealed partial class ComparisonPane
         return end > start ? real[start..end] : "";
     }
 
-    /// <summary>キャレットの位置の単語。英数字と下線。</summary>
-    private string WordAtCaret(int side)
-    {
-        if (!PrepareTextSearch(side, out var view, out var real)) return "";
-        var lines = TextSearcher.Lines(real);
-        var offset = Math.Clamp(view.View.CaretOffset, 0, real.Length);
-        var start = offset;
-        var end = offset;
-        while (start > 0 && IsWord(real[start - 1])) start--;
-        while (end < real.Length && IsWord(real[end])) end++;
-        return end > start ? real[start..end] : "";
-    }
-
-    /// <summary>単語の文字か。</summary>
-    private static bool IsWord(char value) => value is (>= '0' and <= '9') or (>= 'A' and <= 'Z') or (>= 'a' and <= 'z') or '_';
-
     /// <summary>正規表現の記号を逃がす。本家 to_regex と同じ対象。</summary>
     private static string RegexEscape(string text)
     {
@@ -217,22 +222,33 @@ public sealed partial class ComparisonPane
     private bool DisplayFilterHidesAny(DiffDisplayModel model) => DisplayFilterPhrases().Count > 0 && model.RowCount > 0;
 
     /// <summary>その表示行を表示フィルターで隠すか。どの側の本文にも含まれなければ隠す。</summary>
-    private bool DisplayFilterHides(DiffDisplayModel model, int row)
+    private bool DisplayFilterHides(DiffDisplayModel model, int row, List<(string Content, string Ending)>?[] lines, IReadOnlyList<string> phrases)
     {
-        var phrases = DisplayFilterPhrases();
         if (phrases.Count == 0) return false;
         for (var side = 0; side < 3; side++)
         {
             if (side == 1 && !model.ThreeWay) continue;
             if (NumberAt(model, side, row) is not int number) continue;
-            var lines = DiffEditorSide.SplitLines(model.Texts[side]);
-            if (number < 1 || number > lines.Count) continue;
-            if (phrases.All(phrase => lines[number - 1].Content.Contains(phrase, StringComparison.Ordinal))) return false;
+            var sideLines = lines[side];
+            if (sideLines is null || number < 1 || number > sideLines.Count) continue;
+            if (phrases.All(phrase => sideLines[number - 1].Content.Contains(phrase, StringComparison.Ordinal))) return false;
         }
         return true;
     }
 
-    /// <summary>「Line contains "…"」の中身。</summary>
+    /// <summary>表示フィルター用に、各側の行を一度だけ分ける。</summary>
+    private List<(string Content, string Ending)>?[] DisplayFilterLines(DiffDisplayModel model)
+    {
+        var lines = new List<(string Content, string Ending)>[3];
+        for (var side = 0; side < 3; side++)
+        {
+            if (side == 1 && !model.ThreeWay) continue;
+            lines[side] = DiffEditorSide.SplitLines(model.Texts[side]);
+        }
+        return lines;
+    }
+
+    /// <summary>「Line contains "…"」の中身。\" と \\ を戻す。</summary>
     private List<string> DisplayFilterPhrases()
     {
         var phrases = new List<string>();
@@ -241,12 +257,26 @@ public sealed partial class ComparisonPane
         while ((index = _displayFilter.IndexOf(marker, index, StringComparison.Ordinal)) >= 0)
         {
             index += marker.Length;
-            var end = _displayFilter.IndexOf('"', index);
+            var phrase = ReadQuoted(_displayFilter, index, out var end);
             if (end < 0) break;
-            phrases.Add(_displayFilter[index..end].Replace("\\\"", "\"").Replace("\\\\", "\\"));
+            phrases.Add(phrase);
             index = end + 1;
         }
         return phrases;
+    }
+
+    /// <summary>引用符の中を、バックスラッシュの次の文字をそのまま読んで取り出す。</summary>
+    private static string ReadQuoted(string text, int start, out int end)
+    {
+        var builder = new StringBuilder();
+        for (var index = start; index < text.Length; index++)
+        {
+            if (text[index] == '\\' && index + 1 < text.Length) { builder.Append(text[index + 1]); index++; continue; }
+            if (text[index] == '"') { end = index; return builder.ToString(); }
+            builder.Append(text[index]);
+        }
+        end = -1;
+        return "";
     }
 
     /// <summary>選択を印にして、全ペインで塗る。</summary>
@@ -378,5 +408,97 @@ public sealed partial class ComparisonPane
         var start = new ProcessStartInfo(OperatingSystem.IsMacOS() ? "open" : "xdg-open") { UseShellExecute = false };
         start.ArgumentList.Add(path);
         Process.Start(start);
+    }
+
+    /// <summary>競合ファイルを選んで開く。</summary>
+    internal async Task OpenConflictFromDialogAsync()
+    {
+        var selected = (await _owner.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions { Title = "コンフリクト ファイルを開く", AllowMultiple = false }))
+            .Select(file => file.TryGetLocalPath()).FirstOrDefault();
+        if (string.IsNullOrWhiteSpace(selected)) return;
+        await OpenConflictFileAsync(selected);
+    }
+
+    /// <summary>
+    /// 競合ファイルを、相手を左、自分を右へ開く。三者の印があれば祖先を中央へ置く。
+    /// 左と祖先は読取り専用。右は未保存にし、保存すると元の競合ファイルを上書きする。
+    /// </summary>
+    internal async Task OpenConflictFileAsync(string path)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(path);
+        var full = Path.GetFullPath(path);
+        if (!File.Exists(full)) { _status.Text = "開くファイルがありません。"; return; }
+        var document = await DiffBeacon.Core.TextDocument.LoadAsync(full);
+        if (!ConflictFileParser.TryParse(document.Text, out var sides))
+        {
+            _status.Text = $"ファイル\n{full}\nはコンフリクト ファイルではありません。";
+            return;
+        }
+        if (HasUnsavedChanges && !await Dialogs.ConfirmAsync(_owner, "未保存の変更", "編集内容を破棄してファイルを開き直しますか？")) return;
+        DiscardChanges();
+        DeleteConflictTemps();
+        var folder = Path.Combine(Path.GetTempPath(), "DiffBeacon-conflict");
+        Directory.CreateDirectory(folder);
+        var extension = Path.GetExtension(full);
+        var theirsPath = Path.Combine(folder, "confv_" + Guid.NewGuid().ToString("N") + extension);
+        var minePath = Path.Combine(folder, "confw_" + Guid.NewGuid().ToString("N") + extension);
+        var basePath = Path.Combine(folder, "confb_" + Guid.NewGuid().ToString("N") + extension);
+        await File.WriteAllBytesAsync(theirsPath, document.CaptureBytes(sides.Theirs));
+        await File.WriteAllBytesAsync(minePath, document.CaptureBytes(sides.Mine));
+        _conflictTemps.Add(theirsPath);
+        _conflictTemps.Add(minePath);
+        if (sides.ThreeWay)
+        {
+            await File.WriteAllBytesAsync(basePath, document.CaptureBytes(sides.Base));
+            _conflictTemps.Add(basePath);
+        }
+        SelectIndependentText(false);
+        SelectMode(1);
+        LeftPath.Text = theirsPath;
+        BasePath.Text = sides.ThreeWay ? basePath : "";
+        RightPath.Text = minePath;
+        _projectMetadata = _projectMetadata with
+        {
+            LeftDescription = "Theirs File",
+            RightDescription = "Mine File",
+            BaseDescription = sides.ThreeWay ? "Base File" : null,
+        };
+        await ComparePathsAsync();
+        if ((_rightDocument?.Text ?? "") != sides.Mine || (_leftDocument?.Text ?? "") != sides.Theirs)
+        { _status.Text = "競合ファイルを比較に採用できませんでした。"; return; }
+        _rightDocument = _rightDocument!.SavedCopy(full, sides.Mine);
+        RightPath.Text = full;
+        _savedRight = sides.Mine + "\u0001";
+        SetManualReadOnly(0, true);
+        SetManualReadOnly(2, false);
+        _leftCaption.Text = "Theirs File（読取り専用）";
+        _rightCaption.Text = "Mine File";
+        if (_owner is MainWindow window)
+        {
+            window.DropRecent(theirsPath);
+            window.DropRecent(minePath);
+            if (sides.ThreeWay) window.DropRecent(basePath);
+            window.RememberRecent(full);
+        }
+        try
+        {
+            File.Delete(minePath);
+            _conflictTemps.Remove(minePath);
+        }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
+        _status.Text = "競合ファイルを開きました。";
+    }
+
+    /// <summary>競合ファイル用の一時ファイルを消す。</summary>
+    private void DeleteConflictTemps()
+    {
+        foreach (var path in _conflictTemps)
+        {
+            try { if (File.Exists(path)) File.Delete(path); }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
+        _conflictTemps.Clear();
     }
 }

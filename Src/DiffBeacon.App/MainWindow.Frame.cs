@@ -54,6 +54,7 @@ public sealed partial class MainWindow
         menu.Items.Add(MenuPopup("&File",
             Labeled("&New", "Ctrl+N", () => AddSessionFromUiAsync()),
             Labeled("&Open...\tCtrl+O", "Ctrl+O", () => { FocusPaths(); return Task.CompletedTask; }),
+            Labeled("Open Conflic&t File...", null, PaneAction(FrameCommand.OpenConflict)),
             Labeled("Open C&lipboard", null, PaneAction(FrameCommand.OpenClipboard)),
             MenuPopup("Reco&mpare As",
                 Labeled("&Text", null, () => ActivePane.RecompareAsAsync(1)),
@@ -613,6 +614,14 @@ public sealed partial class MainWindow
         }
         while (_recent.Count > 9) _recent.RemoveAt(_recent.Count - 1);
         RebuildRecentMenu();
+    }
+
+    /// <summary>最近使った一覧から、そのパスを外す。</summary>
+    internal void DropRecent(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return;
+        var full = Path.GetFullPath(path);
+        if (_recent.RemoveAll(item => string.Equals(item, full, StringComparison.OrdinalIgnoreCase)) > 0) RebuildRecentMenu();
     }
 
     private void RebuildRecentMenu()

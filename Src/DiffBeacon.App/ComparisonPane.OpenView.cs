@@ -12,7 +12,7 @@ namespace DiffBeacon.App;
 /// 既存のパス欄・フィルター欄・比較ボタンのインスタンスをそのまま載せ替える（自己検証・プロジェクト復元・
 /// フォルダー一覧のダブルクリックが同じインスタンスへ書き込むため、複製は作らない）。
 /// 文言は Translations/WinMerge/Japanese.po の訳で、アクセスキーの「&amp;」は「_」へ置き換える。
-/// 本家にある各欄の「読み取り専用」と展開／前処理プラグインの選択欄は、対応する機能が無いため置かない。
+/// 各欄の「読み取り専用」はプロジェクトの読取り専用へつなぐ。展開／前処理プラグインの選択欄は、対応する機能が無いため置かない。
 /// </summary>
 public sealed partial class ComparisonPane
 {
@@ -25,6 +25,10 @@ public sealed partial class ComparisonPane
     internal ScrollViewer ComparisonToolbar => _comparisonToolbar;
     internal TextBox FileFilterBox => _fileFilter;
     internal CheckBox RecursiveBox => _recursive;
+    private readonly CheckBox _openReadOnlyLeft = new() { Name = "open-readonly-left", Content = "読み取り専用(_A)" };
+    private readonly CheckBox _openReadOnlyRight = new() { Name = "open-readonly-right", Content = "読み取り専用(_D)" };
+    private readonly CheckBox _openReadOnlyBase = new() { Name = "open-readonly-base", Content = "読み取り専用(_N)" };
+    private bool _syncingOpenReadOnly;
 
     private Control BuildOpenView()
     {
@@ -56,7 +60,35 @@ public sealed partial class ComparisonPane
         view.Children.Add(buttons);
         var status = new TextBlock { Name = "open-view-status", Text = "ステータス:", Margin = new Thickness(4, 2, 0, 0) };
         view.Children.Add(status);
+        _openReadOnlyLeft.IsCheckedChanged += (_, _) => OnOpenReadOnlyChanged(0);
+        _openReadOnlyRight.IsCheckedChanged += (_, _) => OnOpenReadOnlyChanged(2);
+        _openReadOnlyBase.IsCheckedChanged += (_, _) => OnOpenReadOnlyChanged(1);
         return OpenView = view;
+    }
+
+    /// <summary>選択画面の読取り専用を、その側の保存禁止とエディターへ反映する。祖先の中央はエディターを開けない。</summary>
+    private void OnOpenReadOnlyChanged(int side)
+    {
+        if (_syncingOpenReadOnly) return;
+        var box = side switch { 0 => _openReadOnlyLeft, 1 => _openReadOnlyBase, _ => _openReadOnlyRight };
+        var value = box.IsChecked == true;
+        _projectMetadata = side switch
+        {
+            0 => _projectMetadata with { LeftReadOnly = value },
+            1 => _projectMetadata with { BaseReadOnly = value },
+            _ => _projectMetadata with { RightReadOnly = value },
+        };
+        if (side != 1) SetManualReadOnly(side, value);
+    }
+
+    /// <summary>選択画面の読取り専用チェックを、いまの値へそろえる。</summary>
+    private void ShowOpenReadOnly(int side, bool value)
+    {
+        var box = side switch { 0 => _openReadOnlyLeft, 1 => _openReadOnlyBase, _ => _openReadOnlyRight };
+        if (box.IsChecked == value) return;
+        _syncingOpenReadOnly = true;
+        box.IsChecked = value;
+        _syncingOpenReadOnly = false;
     }
 
     private Control PathGroup(string header, TextBox box, string swapLabel, TextBox first, TextBox second)
@@ -71,6 +103,9 @@ public sealed partial class ComparisonPane
         ToolTip.SetTip(swap, swapLabel);
         swap.Click += async (_, _) => await SwapInputsAsync(first, second);
         var swapRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 4 };
+        var readOnly = box == LeftPath ? _openReadOnlyLeft : box == RightPath ? _openReadOnlyRight : _openReadOnlyBase;
+        Detach(readOnly);
+        swapRow.Children.Add(readOnly);
         swapRow.Children.Add(swap);
         swapRow.Children.Add(new TextBlock { Text = swapLabel, FontSize = 12, Foreground = WinMergeColors.FrameText, VerticalAlignment = VerticalAlignment.Center });
         // 本家の「参照」は分割ボタンで、ファイルとフォルダーを選べる。

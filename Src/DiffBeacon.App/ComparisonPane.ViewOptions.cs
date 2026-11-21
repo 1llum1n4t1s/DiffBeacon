@@ -163,7 +163,10 @@ public sealed partial class ComparisonPane
             }
             var manager = _contextFolds[index] ??= FoldingManager.Install(side.View.TextArea);
             var visible = ContextVisibility(model, options);
-            for (var row = 0; row < visible.Length; row++) if (DisplayFilterHides(model, row)) visible[row] = false;
+            var phrases = DisplayFilterPhrases();
+            var filterLines = phrases.Count == 0 ? null : DisplayFilterLines(model);
+            if (filterLines is not null)
+                for (var row = 0; row < visible.Length; row++) if (DisplayFilterHides(model, row, filterLines, phrases)) visible[row] = false;
             var folds = new List<NewFolding>();
             var line = 1;
             var last = model.RowCount;

@@ -766,6 +766,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         _reportOperation?.Cancel();
         ClearArchivePasswords();
         SpecializedViews.Release(_specialTab.Content as Control);
+        DeleteConflictTemps();
     }
     internal void UpdateImageDisplayVisibility(bool active)
     {

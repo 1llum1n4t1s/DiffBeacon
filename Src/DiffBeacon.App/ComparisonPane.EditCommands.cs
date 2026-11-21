@@ -78,9 +78,26 @@ public sealed partial class ComparisonPane
         if (DiffClipboard() is not { } clipboard) { _status.Text = "クリップボードを利用できません。"; return; }
         if (view.View.TextArea.Selection is AvaloniaEdit.Editing.RectangleSelection rectangle)
         {
-            if (cut) { _status.Text = "矩形選択の切り取りはまだできません。"; return; }
             var boxed = rectangle.GetText().Replace(DiffEditorSide.GhostMark.ToString(), "").Replace(DiffEditorSide.GhostMarkAfterBreak.ToString(), "");
             await clipboard.WriteTextAsync(boxed);
+            if (!cut || _disposed) return;
+            if ((TextEditor(side).Text ?? "") != real || view.View.TextArea.Selection is not AvaloniaEdit.Editing.RectangleSelection current)
+            { _status.Text = "本文または選択が変わったため切り取りませんでした。"; return; }
+            if (!CanEditText(side, view, "切り取れません")) return;
+            var ranges = new List<(int Start, int End)>();
+            foreach (var segment in current.Segments)
+            {
+                var rangeStart = RealOffsetOfDisplay(view, real, lines, segment.StartOffset);
+                var rangeEnd = RealOffsetOfDisplay(view, real, lines, segment.EndOffset);
+                if (rangeEnd > rangeStart) ranges.Add((rangeStart, rangeEnd));
+            }
+            var merged = MergeColumnRanges(ranges);
+            if (merged.Count == 0) return;
+            var cutText = real;
+            for (var index = merged.Count - 1; index >= 0; index--)
+                cutText = string.Concat(cutText.AsSpan(0, merged[index].Start), cutText.AsSpan(merged[index].End));
+            ApplyReplacedText(side, cutText);
+            SelectRealRange(side, _diffViews[side], cutText, merged[0].Start, 0);
             return;
         }
         var selection = (view.View.SelectionStart, view.View.SelectionLength);
@@ -115,6 +132,19 @@ public sealed partial class ComparisonPane
         var text = string.Concat(real.AsSpan(0, start), inserted, real.AsSpan(end));
         ApplyReplacedText(side, text);
         SelectRealRange(side, _diffViews[side], text, start + inserted.Length, 0);
+    }
+
+    /// <summary>矩形の各行の範囲を、重なりをまとめて先頭から並べる。</summary>
+    private static List<(int Start, int End)> MergeColumnRanges(List<(int Start, int End)> ranges)
+    {
+        ranges.Sort(static (left, right) => left.Start.CompareTo(right.Start));
+        var merged = new List<(int Start, int End)>();
+        foreach (var range in ranges)
+        {
+            if (merged.Count == 0 || range.Start > merged[^1].End) merged.Add(range);
+            else merged[^1] = (merged[^1].Start, Math.Max(merged[^1].End, range.End));
+        }
+        return merged;
     }
 
     /// <summary>位置を含む行の改行。その行が改行で終わらなければ前の行の改行、それも無ければ本文で最も多い改行、本文に改行が無ければ実行環境の改行。</summary>

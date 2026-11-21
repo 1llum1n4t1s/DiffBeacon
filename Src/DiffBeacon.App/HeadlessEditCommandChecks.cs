@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.VisualTree;
 using Avalonia.Input;
 using Avalonia.Threading;
+using AvaloniaEdit;
+using AvaloniaEdit.Editing;
 
 namespace DiffBeacon.App;
 
@@ -216,6 +218,67 @@ internal static class HeadlessEditCommandChecks
             var cancel = pane.OpenView?.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => Equals(button.Content, "キャンセル"));
             var statusLine = pane.OpenView?.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault(block => block.Name == "open-view-status");
             check("open view has cancel and a status line", cancel is not null && statusLine?.Text == "ステータス:", statusLine?.Text ?? "");
+
+            pane.DiscardChanges();
+            Compare(pane, work, "one\r\ntwo\r\nthree", "one\nextra\ntwo\nthree\nMORE\n", pump);
+            var threeLine = pane.DiffEditor(0).Document.GetLineByNumber(4);
+            Select(pane, 0, threeLine.Offset, threeLine.Length);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.CopyLinesToRight));
+            var copiedRight = pane.RightEditor.Text ?? "";
+            check("edit copy keeps a separator after a line that has no newline", copiedRight.Contains("three\nMORE"), Escape(copiedRight));
+            pane.FocusDiffEditorRealLine(0, 1);
+            var wordEditor = pane.DiffEditor(0);
+            wordEditor.Select(wordEditor.CaretOffset, 0);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddToDisplayFilters));
+            check("edit display filter uses the real word at the caret", pane.DisplayFilter.Contains("two", StringComparison.Ordinal), pane.DisplayFilter);
+            pane.DiscardChanges();
+            Compare(pane, work, "say \"hi\"\n", "say \"hi\"\nx\n", pump);
+            var quoted = pane.DiffEditor(0).Document.Text.IndexOf('"');
+            Select(pane, 0, quoted, 4);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.AddToDisplayFilters));
+            check("edit display filter keeps a quote inside the phrase", pane.DisplayFilter.Contains("\\\"hi\\\"", StringComparison.Ordinal), pane.DisplayFilter);
+
+            pane.ClearDisplayFilter();
+            pane.DiscardChanges();
+            Compare(pane, work, "abcd\nefgh\nijkl\n", "abcd\nefgh\nijkl\n", pump);
+            var boxed = pane.DiffEditor(0);
+            window.UpdateLayout();
+            Dispatcher.UIThread.RunJobs();
+            boxed.TextArea.Focus();
+            boxed.TextArea.Selection = new RectangleSelection(boxed.TextArea, new TextViewPosition(1, 2), new TextViewPosition(2, 4));
+            Dispatcher.UIThread.RunJobs();
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.Cut));
+            check("edit rectangle cut removes the columns and copies them", pane.LeftEditor.Text == "ad\neh\nijkl\n" && clipboard.Text == "bc\nfg",
+                Escape(pane.LeftEditor.Text) + " clip=" + Escape(clipboard.Text));
+
+            var conflict = Path.Combine(work, "sample.conflict");
+            File.WriteAllText(conflict, "common\n<<<<<<< mine\nmine-line\n=======\ntheirs-line\n>>>>>>> theirs\ntail\n", new UTF8Encoding(false));
+            var fileMenu = window.FrameMenu!.Items.OfType<MenuItem>().First(item => item.Header as string == "ファイル(_F)");
+            var fileHeaders = fileMenu.Items.OfType<MenuItem>().Select(item => item.Header as string ?? "").ToArray();
+            check("edit file menu opens a conflict file", fileHeaders.Contains("コンフリクト ファイルを開く(_T)..."), string.Join("|", fileHeaders));
+            pane.DiscardChanges();
+            pump(pane.OpenConflictFileAsync(conflict));
+            var opened = File.ReadAllText(conflict);
+            check("edit conflict file opens theirs and mine without rewriting the file",
+                pane.LeftEditor.Text == "common\ntheirs-line\ntail\n" && pane.RightEditor.Text == "common\nmine-line\ntail\n"
+                && pane.LeftEditor.IsReadOnly && !pane.RightEditor.IsReadOnly && pane.RightPath.Text == conflict && opened.Contains("<<<<<<< mine", StringComparison.Ordinal),
+                Escape(pane.LeftEditor.Text) + " / " + Escape(pane.RightEditor.Text));
+            pane.RightEditor.Text = "common\nresolved\ntail\n";
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.SaveRight));
+            check("edit conflict save overwrites the original file", File.ReadAllText(conflict) == "common\nresolved\ntail\n", Escape(File.ReadAllText(conflict)));
+
+            var three = Path.Combine(work, "three.conflict");
+            File.WriteAllText(three, "common\n<<<<<<< mine\nmine-line\n||||||| base\nbase-line\n=======\ntheirs-line\n>>>>>>> theirs\n", new UTF8Encoding(false));
+            pane.DiscardChanges();
+            pump(pane.OpenConflictFileAsync(three));
+            check("edit three-way conflict opens base, theirs, and mine",
+                pane.ArchiveAncestorText == "common\nbase-line\n" && pane.LeftEditor.Text == "common\ntheirs-line\n" && pane.RightEditor.Text == "common\nmine-line\n" && pane.LeftEditor.IsReadOnly,
+                Escape(pane.ArchiveAncestorText) + " / " + Escape(pane.LeftEditor.Text) + " / " + Escape(pane.RightEditor.Text));
+            var readOnlyBoxes = pane.OpenView!.GetVisualDescendants().OfType<CheckBox>().Where(box => box.Name is "open-readonly-left" or "open-readonly-right" or "open-readonly-base").ToArray();
+            var leftReadOnly = readOnlyBoxes.First(box => box.Name == "open-readonly-left");
+            check("open view has a read-only box for each path", readOnlyBoxes.Length == 3 && leftReadOnly.IsChecked == true && pane.LeftEditor.IsReadOnly, $"{leftReadOnly.IsChecked}");
+            leftReadOnly.IsChecked = false;
+            check("open view read-only box clears the left side", pane.LeftEditor.IsReadOnly == false && leftReadOnly.IsChecked == false, pane.LeftEditor.IsReadOnly.ToString());
         }
         finally { pane.DiffClipboardBridge = null; }
         pane.DiscardChanges();

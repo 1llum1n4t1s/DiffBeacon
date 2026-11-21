@@ -111,6 +111,16 @@ public sealed partial class ComparisonPane
     {
         if (side == 1 && !IndependentText && value == false && _baseText is not null) { _status.Text = "祖先は読取り専用です。"; return; }
         _manualReadOnly[side] = value;
+        if (side == 0)
+        {
+            ShowOpenReadOnly(0, value);
+            _projectMetadata = _projectMetadata with { LeftReadOnly = value };
+        }
+        if (side == 2)
+        {
+            ShowOpenReadOnly(2, value);
+            _projectMetadata = _projectMetadata with { RightReadOnly = value };
+        }
         RefreshTextReadOnly();
         UpdateDiffEditorReadOnly();
     }

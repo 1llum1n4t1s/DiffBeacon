@@ -13,7 +13,7 @@ internal enum FrameCommand
     Undo, Redo, Cut, Copy, Paste, SelectAll, CopyWithLineNumbers, CopySelectedDifference1, CopySelectedDifference2, CopySelectedDifference3,
     CopyLinesToLeft, CopyLinesToRight, CopyLinesToMiddle, AddToLineFilters, AddToDisplayFilters, AddToSubstitutionFilters, AddMarker,
     OpenRegistered, OpenParentFolder, OpenExternalEditor, GoToDefinition,
-    ReadOnlyLeft, ReadOnlyMiddle, ReadOnlyRight, EolToWindows, EolToUnix, EolToMac, OpenClipboard,
+    ReadOnlyLeft, ReadOnlyMiddle, ReadOnlyRight, EolToWindows, EolToUnix, EolToMac, OpenClipboard, OpenConflict,
     ToggleBookmark, NextBookmark, PreviousBookmark, ClearAllBookmarks, Find, Replace, FindNext, FindPrevious, FindSelectedNext, FindSelectedPrevious, GoTo,
     FirstDifference, PreviousDifference, CurrentDifference, NextDifference, LastDifference,
     NextConflict, PreviousConflict, SelectLineDifference, SelectPreviousLineDifference,
@@ -66,6 +66,7 @@ public sealed partial class ComparisonPane
         FrameCommand.EolToUnix => Run(() => ConvertLineEndings("\n")),
         FrameCommand.EolToMac => Run(() => ConvertLineEndings("\r")),
         FrameCommand.OpenClipboard => OpenClipboardTextAsync(),
+        FrameCommand.OpenConflict => OpenConflictFromDialogAsync(),
         FrameCommand.ToggleBookmark or FrameCommand.NextBookmark or FrameCommand.PreviousBookmark or FrameCommand.ClearAllBookmarks
             => Run(() => ExecuteBookmarkCommand(command)),
         FrameCommand.Find => Run(() => OpenTextSearch(replace: false)),
