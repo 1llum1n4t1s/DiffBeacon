@@ -293,6 +293,57 @@ public sealed partial class ComparisonPane
     /// <summary>定義へ移動する記号索引は無い。</summary>
     internal void GoToDefinition() => _status.Text = "定義へ移動する言語サービスはありません。";
 
+    /// <summary>比較した実在ファイルを、外枠の最近使った一覧へ足す。</summary>
+    private void NoteOpenedPaths()
+    {
+        if (_owner is MainWindow window) window.RememberRecent(LeftPath.Text, BasePath.Text, RightPath.Text);
+    }
+
+    /// <summary>状態欄へ理由を出す。</summary>
+    internal void SetStatus(string text) => _status.Text = text;
+
+    /// <summary>形式を指定して比較し直す。0 自動、1 テキスト、3 バイナリ、4 画像、6 表、7 アーカイブ。</summary>
+    internal Task RecompareAsAsync(int mode)
+    {
+        if (mode is < 0 or > 8) throw new ArgumentOutOfRangeException(nameof(mode));
+        SelectMode(mode);
+        return ComparePathsAsync();
+    }
+
+    /// <summary>フォーカスのある側の保存文字コードを変える。本文は変えない。</summary>
+    internal void SetSideEncoding(int side, string name)
+    {
+        var text = TextEditor(side).Text ?? "";
+        var next = (TextInputDocument(side) ?? DiffBeacon.Core.TextDocument.Create(text)).WithEncoding(name, text);
+        switch (side)
+        {
+            case 0: _leftDocument = next; break;
+            case 1: _baseDocument = next; break;
+            case 2: _rightDocument = next; break;
+            default: throw new ArgumentOutOfRangeException(nameof(side));
+        }
+        _status.Text = $"文字コードを {next.EncodingName}{(next.HasBom ? " BOM" : "")} にしました。";
+    }
+
+    /// <summary>フォーカスのある側の保存文字コード。</summary>
+    internal (string Name, bool Bom) SideEncoding(int side)
+    {
+        var document = TextInputDocument(side);
+        return document is null ? ("", false) : (document.EncodingName, document.HasBom);
+    }
+
+    /// <summary>クリップボードの文字を、フォーカスのある側へ入れて比較し直す。</summary>
+    internal async Task OpenClipboardTextAsync()
+    {
+        if (DiffClipboard() is not { } clipboard) { _status.Text = "クリップボードを利用できません。"; return; }
+        var text = await clipboard.ReadTextAsync();
+        if (string.IsNullOrEmpty(text)) { _status.Text = "クリップボードに文字がありません。"; return; }
+        if (text.Contains('\0')) { _status.Text = "クリップボードの NUL は本文にできません。"; return; }
+        var side = SearchSideIndex();
+        TextEditor(side).Text = text;
+        CompareEditors();
+    }
+
     /// <summary>フォーカスのある側の改行を、指定した CR/LF/CRLF にそろえる。</summary>
     internal void ConvertLineEndings(string ending)
     {

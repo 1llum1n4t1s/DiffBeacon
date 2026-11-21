@@ -48,6 +48,10 @@ internal sealed record TextViewSettings
     public bool ShowTabBar { get; init; } = true;
     /// <summary>メニューバー。既定は表示する。隠したあとは Alt か F10 で戻す。</summary>
     public bool ShowMenuBar { get; init; } = true;
+    /// <summary>ツールバーのアイコンの一辺。16、24、32、48。</summary>
+    public int ToolbarIconSize { get; init; } = 16;
+    /// <summary>ダークテーマ。既定は明るい配色。</summary>
+    public bool DarkTheme { get; init; }
 }
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, WriteIndented = true,
@@ -115,6 +119,8 @@ internal sealed class TextViewOptionsStore
             throw new InvalidDataException($"表示メニューの設定のペインロックは -1～2 です: {settings.LockedSide}");
         if (settings.UiLanguage.Length is < 2 or > 40 || settings.UiLanguage.Any(character => !char.IsAsciiLetter(character)))
             throw new InvalidDataException("表示メニューの設定の言語名が不正です。");
+        if (settings.ToolbarIconSize is not (16 or 24 or 32 or 48))
+            throw new InvalidDataException($"表示メニューの設定のツールバーの大きさは 16、24、32、48 です: {settings.ToolbarIconSize}");
     }
 
     internal bool Reload()

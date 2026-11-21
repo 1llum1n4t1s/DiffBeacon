@@ -1,6 +1,6 @@
 using System.Text;
-using System.Collections.Generic;
 using Avalonia.Controls;
+using Avalonia.VisualTree;
 using Avalonia.Input;
 using Avalonia.Threading;
 
@@ -194,6 +194,28 @@ internal static class HeadlessEditCommandChecks
             screenshot("edit-bookmark-margin.png");
             pump(pane.ExecuteFrameCommandAsync(FrameCommand.ClearAllBookmarks));
             check("edit clear all bookmarks removes the marks", pane.LineBookmarkMarks(0).Count == 0, pane.LineBookmarkMarks(0).Count.ToString());
+
+            window.ToggleMergingModeForTest();
+            var before = pane.DiffList.SelectedIndex;
+            Press(window, left, Key.Down, KeyModifiers.None);
+            check("edit merge mode down arrow moves to the next difference", window.MergingMode && pane.DiffList.SelectedIndex != before, $"{before}->{pane.DiffList.SelectedIndex}");
+            window.ToggleMergingModeForTest();
+            check("edit merge mode can be turned off", !window.MergingMode, window.MergingMode.ToString());
+
+            pane.SetSideEncoding(0, "utf-8-bom");
+            var encoding = pane.SideEncoding(0);
+            check("edit encoding keeps the text and records a BOM", encoding.Name == "utf-8" && encoding.Bom && pane.LeftEditor.Text == "one\r\ntwo\r\nthree", $"{encoding.Name} bom={encoding.Bom}");
+
+            clipboard.Text = "from-clipboard";
+            pane.FocusDiffEditorRealLine(2, 0);
+            pump(pane.ExecuteFrameCommandAsync(FrameCommand.OpenClipboard));
+            check("edit open clipboard replaces the focused side", pane.RightEditor.Text == "from-clipboard", Escape(pane.RightEditor.Text));
+
+            window.RememberRecent(pane.LeftPath.Text, pane.RightPath.Text);
+            check("edit recent files keeps existing paths", window.RecentFiles.Count == 2, string.Join("|", window.RecentFiles));
+            var cancel = pane.OpenView?.GetVisualDescendants().OfType<Button>().FirstOrDefault(button => Equals(button.Content, "キャンセル"));
+            var statusLine = pane.OpenView?.GetVisualDescendants().OfType<TextBlock>().FirstOrDefault(block => block.Name == "open-view-status");
+            check("open view has cancel and a status line", cancel is not null && statusLine?.Text == "ステータス:", statusLine?.Text ?? "");
         }
         finally { pane.DiffClipboardBridge = null; }
         pane.DiscardChanges();

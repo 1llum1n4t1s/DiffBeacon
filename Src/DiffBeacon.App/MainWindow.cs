@@ -68,6 +68,10 @@ public sealed partial class MainWindow : Window
         _showDiffPane = textViewOptionsStore.Current.ShowDiffPane;
         _showTabBar = textViewOptionsStore.Current.ShowTabBar;
         _showMenuBar = textViewOptionsStore.Current.ShowMenuBar;
+        _toolbarIconSize = textViewOptionsStore.Current.ToolbarIconSize;
+        _darkTheme = textViewOptionsStore.Current.DarkTheme;
+        if (Application.Current is { } application)
+            application.RequestedThemeVariant = _darkTheme ? Avalonia.Styling.ThemeVariant.Dark : Avalonia.Styling.ThemeVariant.Light;
         TextViewOptions.Changed += SaveViewMenuOptions;
         Closed += (_, _) => TextViewOptions.Changed -= SaveViewMenuOptions;
         Action<string> textViewGuard = path => { foreach (var pane in SessionPanes) pane.EnsureFolderOptionsOutputWritable(path); };
@@ -676,6 +680,7 @@ public sealed partial class ComparisonPane : UserControl, IDisposable
         DiffList.ItemsSource = CurrentDiff.Rows;
         _diffIndex = -1;
         _status.Text = UiText.Say($"{CurrentDiff.Blocks.Count} 個の差分  ·  左 {_leftDocument?.EncodingName ?? "UTF-8"}  /  右 {_rightDocument?.EncodingName ?? "UTF-8"}");
+        NoteOpenedPaths();
         if (diff.InlineFallbackCount > 0) _status.Text += $"  ·  詳細比較を省略した {diff.InlineFallbackCount} 行は行全体を強調";
         if (diff.LineFallback) _status.Text += "  ·  行対応の処理上限に達したため、未確定区間をまとめて表示";
         _views.SelectedItem = _diffTab;

@@ -50,7 +50,12 @@ public sealed partial class ComparisonPane
         DockPanel.SetDock(saveProject, Dock.Left); buttons.Children.Add(saveProject);
         CompareButton.Content = "比較(_M)";
         Detach(CompareButton); DockPanel.SetDock(CompareButton, Dock.Right); buttons.Children.Add(CompareButton);
+        var cancel = new Button { Content = "キャンセル", Name = "open-view-cancel", Margin = new Thickness(8, 0, 0, 0) };
+        cancel.Click += (_, _) => HideSelectFiles();
+        DockPanel.SetDock(cancel, Dock.Right); buttons.Children.Add(cancel);
         view.Children.Add(buttons);
+        var status = new TextBlock { Name = "open-view-status", Text = "ステータス:", Margin = new Thickness(4, 2, 0, 0) };
+        view.Children.Add(status);
         return OpenView = view;
     }
 
